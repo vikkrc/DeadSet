@@ -370,9 +370,9 @@ export function resolveNight(m, rng) {
   const fallen = [...deaths.keys(), ...expired];
   const reveal = m.settings.revealOnDeath && !hasRule(m, 'HIDDEN_ROLES');
   const names = (ids) => ids.map((id) => nameOf(m, id) + (reveal ? ` (${roleName(byId(m, id).roleId)})` : '')).join(', ');
-  if (fallen.length === 0) pub(m, `Dawn of Day ${n + 1}. The night passed and everyone woke up.`, 'dawn');
-  else pub(m, `Dawn of Day ${n + 1}. Found dead: ${names([...deaths.keys()]) || '—'}${expired.length ? `. Their borrowed time ran out: ${names(expired)}` : ''}.`, 'death', { victims: fallen });
-  if (revivals.length) pub(m, `${revivals.map((id) => nameOf(m, id)).join(', ')} returned from the grave — until the next dawn.`, 'revive');
+  if (fallen.length === 0) pub(m, `Dawn of Day ${n + 1}. The night passed and everyone woke up.`, 'dawn', { ev: 'dawn', day: n + 1, victims: [], expired: [] });
+  else pub(m, `Dawn of Day ${n + 1}. Found dead: ${names([...deaths.keys()]) || '—'}${expired.length ? `. Their borrowed time ran out: ${names(expired)}` : ''}.`, 'death', { victims: fallen, ev: 'dawn', day: n + 1, killed: [...deaths.keys()], expired });
+  if (revivals.length) pub(m, `${revivals.map((id) => nameOf(m, id)).join(', ')} returned from the grave — until the next dawn.`, 'revive', { ev: 'revive', ids: revivals });
   return { deaths: [...deaths.keys()], expired, revivals, statuses: queuedStatuses };
 }
 

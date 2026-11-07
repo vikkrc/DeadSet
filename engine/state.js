@@ -39,7 +39,8 @@ export function pub(m, text, kind = 'info', extra = {}) {
 }
 
 export function priv(m, pid, text, kind = 'info', extra = {}) {
-  (m.privateLog[pid] ||= []).push({ at: stamp(m), kind, text, ...extra });
+  const list = (m.privateLog[pid] ||= []);
+  list.push({ i: list.length, at: stamp(m), kind, text, ...extra });
 }
 
 export function stamp(m) {

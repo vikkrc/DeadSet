@@ -46,6 +46,8 @@ const P = {
   down: '<path d="M10 13l6 6 6-6"/>',
   key: '<circle cx="11" cy="16" r="5"/><path d="M16 16h12M24 16v4M28 16v3"/>',
   out: '<path d="M13 8H6v16h7M18 11l5 5-5 5M23 16H11"/>',
+  bell: '<path d="M9 22V14a7 7 0 0 1 14 0v8l2 3H7z"/><path d="M14 28h4"/>',
+  bellOff: '<path d="M9 22V14a7 7 0 0 1 14 0v8l2 3H7z"/><path d="M14 28h4M5 5l22 22"/>',
 };
 
 export function glyph(name, cls = '') {

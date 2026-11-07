@@ -50,4 +50,10 @@ test/              node:test suites
 - All randomness is server-side.
 - Commands are checked against the current phase id, so late or replayed taps are rejected. A ballot is replaced in place; it never counts twice.
 
-**Interface:** a "mourning stationery" identity: soot paper, bone ink, one oxblood accent, Instrument Serif and Instrument Sans. The whole palette cools to ink-blue at night. Dead names are struck through in the ledger, timers burn down as a fuse, and the role and Dream glyphs are hand-drawn SVG. It respects reduced motion, uses 44px+ touch targets, and the card tilt only applies on devices with a fine pointer.
+**Interface:** a "mourning stationery" identity: soot paper, bone ink, one oxblood accent, Instrument Serif and Instrument Sans. The whole palette cools to ink-blue at night.
+- Players sit around a **table ring**, and tapping a seat is how you target anyone.
+- Public events play as short **cinematic moments**: nightfall, dawn, the vote tally and the verdict.
+- There are **synthesized sounds** (no audio files), haptics and canvas particles. They are limited to public events, so nothing leaks a secret.
+- A tiny DOM-morphing renderer (`public/app.js`) keeps elements alive between updates, so transitions animate.
+- Effects live in `public/fx.js`.
+- It respects reduced motion and uses 44px+ touch targets.

@@ -141,9 +141,9 @@ export function startMatch(m, rng, now, { forceRoles = null } = {}) {
   m.winner = null;
   m.endReason = null;
   enterPhase(m, 'NIGHT_0_REVEAL', now, 0);
-  pub(m, `We are ${m.scenario.who}, in ${m.scenario.where}, trying to ${m.scenario.why}.`, 'scenario');
+  pub(m, `We are ${m.scenario.who}, in ${m.scenario.where}, trying to ${m.scenario.why}.`, 'scenario', { ev: 'scenario' });
   if (m.activeRules.length) pub(m, `Rules in force: ${m.activeRules.map((r) => RULE_CARDS[r].name).join(', ')}.`, 'rules');
-  pub(m, 'Night 0. Look only at your own screen.', 'phase');
+  pub(m, 'Night 0. Look only at your own screen.', 'phase', { ev: 'night0' });
   for (const p of m.players) {
     priv(m, p.id, `You are ${ROLES[p.roleId].name}.`, 'role');
     if (p.alignment === 'DEATH') {
@@ -172,7 +172,7 @@ function endMatch(m, result, now) {
   m.endReason = result.reason;
   m.jesterId = result.jesterId ?? null;
   const label = { DEATH: 'Death wins.', NON_DEATH: 'The non-Death faction wins.', JESTER: 'The Jester wins alone.', DRAW: 'Draw.', ABORTED: 'Match aborted by the host.' }[result.winner];
-  pub(m, `${label} ${result.reason}`, 'end');
+  pub(m, `${label} ${result.reason}`, 'end', { ev: 'end', winner: result.winner, reason: result.reason });
   m.night = null;
   enterPhase(m, 'ENDED', now, 0);
 }
@@ -204,7 +204,7 @@ function beginDay(m, now) {
     ballots: {}, ghostBallots: {}, eligibleVoters: [], ghostVoters: [], result: null, retaliation: null,
   };
   enterPhase(m, 'DAY_PREP', now, T(m, 'morning'));
-  if (n === 1) pub(m, 'Day 1 begins. Nobody has died — yet.', 'phase');
+  if (n === 1) pub(m, 'Day 1 begins. Nobody has died — yet.', 'phase', { ev: 'day1' });
 }
 
 function closeMorning(m, now) {
@@ -225,10 +225,10 @@ function closeMorning(m, now) {
     t.alive = false; t.diedAt = `Day ${m.dayNumber}`; t.causes = ['VIGILANTE'];
   }
   if (shots.length) {
-    pub(m, victims.length ? `A shot rang out across the square. ${victims.map((id) => deathName(m, id)).join(', ')} fell.` : 'A shot rang out across the square, but nobody fell.', 'death', { victims });
+    pub(m, victims.length ? `A shot rang out across the square. ${victims.map((id) => deathName(m, id)).join(', ')} fell.` : 'A shot rang out across the square, but nobody fell.', 'death', { victims, ev: 'shot' });
   }
   if (victims.length && victoryOrNull(m, now)) return;
-  pub(m, `Day ${m.dayNumber}: discussion and nominations are open.`, 'phase');
+  pub(m, `Day ${m.dayNumber}: discussion and nominations are open.`, 'phase', { ev: 'discussion' });
   enterPhase(m, 'DAY_DISCUSSION', now, T(m, 'discussion'));
 }
 
@@ -250,12 +250,12 @@ export function nominees(m) {
 function closeDiscussion(m, now) {
   const list = nominees(m);
   if (!list.length) {
-    pub(m, 'Nobody was nominated. There is no vote today.', 'vote');
+    pub(m, 'Nobody was nominated. There is no vote today.', 'vote', { ev: 'novote' });
     resolveDay(m, now, { noVote: true });
     return;
   }
   m.day.defenseIndex = 0;
-  pub(m, `Defence: ${list.map((id) => nameOf(m, id)).join(', ')} will each speak in turn.`, 'phase');
+  pub(m, `Defence: ${list.map((id) => nameOf(m, id)).join(', ')} will each speak in turn.`, 'phase', { ev: 'defense' });
   enterPhase(m, 'DAY_DEFENSE', now, T(m, 'defense'));
 }
 
@@ -271,7 +271,7 @@ function openVoting(m, now) {
   m.day.ghostVoters = hasRule(m, 'VENGEFUL_GHOSTS') ? m.players.filter((p) => !p.alive && !p.tempRevival).map((p) => p.id) : [];
   m.day.ballots = {};
   m.day.ghostBallots = {};
-  pub(m, `The vote is open. Candidates: ${nominees(m).map((id) => nameOf(m, id)).join(', ')}.`, 'vote');
+  pub(m, `The vote is open. Candidates: ${nominees(m).map((id) => nameOf(m, id)).join(', ')}.`, 'vote', { ev: 'vote-open' });
   enterPhase(m, 'DAY_VOTING', now, T(m, 'voting'));
 }
 
@@ -293,18 +293,18 @@ function resolveDay(m, now, { noVote = false } = {}) {
     const t = tally(m);
     d.result = t;
     const line = Object.entries(t.totals).sort((a, b) => b[1] - a[1]).map(([id, w]) => `${nameOf(m, id)} ${w}`).join(' · ');
-    pub(m, `Ballots counted${line ? `: ${line}` : ''}. ${t.abstain ? `${t.abstain} abstained.` : ''}`.trim(), 'vote', { totals: t.totals, majority: t.majority });
-    if (cancelled) pub(m, 'Fate intervened: a wager was won, and today\'s sentence is cancelled.', 'vote');
+    pub(m, `Ballots counted${line ? `: ${line}` : ''}. ${t.abstain ? `${t.abstain} abstained.` : ''}`.trim(), 'vote', { ev: 'tally', totals: t.totals, majority: t.majority, threshold: t.threshold ?? null });
+    if (cancelled) pub(m, 'Fate intervened: a wager was won, and today\'s sentence is cancelled.', 'vote', { ev: 'cancelled' });
     else if (t.winner) sentenced = t.winner;
-    else pub(m, t.reason, 'vote');
+    else pub(m, t.reason, 'vote', { ev: 'nosentence' });
   } else if (cancelled) {
-    pub(m, 'A wager was won, but there was nothing left to cancel.', 'vote');
+    pub(m, 'A wager was won, but there was nothing left to cancel.', 'vote', { ev: 'cancelled' });
   }
 
   if (sentenced) {
     const p = byId(m, sentenced);
     p.alive = false; p.diedAt = `Day ${d.number}`; p.causes = ['SENTENCED']; p.tempRevival = null;
-    pub(m, `${deathName(m, sentenced)} has been sentenced.`, 'sentence', { victims: [sentenced] });
+    pub(m, `${deathName(m, sentenced)} has been sentenced.`, 'sentence', { victims: [sentenced], ev: 'sentence' });
     if (p.roleId === 'JESTER' && p.alignment === 'INDEPENDENT') {
       endMatch(m, checkVictory(m, { jesterSentencedId: p.id }), now);
       return;
@@ -314,7 +314,7 @@ function resolveDay(m, now, { noVote = false } = {}) {
       if (targets.length) {
         d.retaliation = { actorId: p.id, targets, choice: null };
         priv(m, p.id, 'Equal Exchange: you may take one living non-Death player with you.', 'death');
-        pub(m, 'The condemned is granted a final act…', 'vote');
+        pub(m, 'The condemned is granted a final act…', 'vote', { ev: 'final-act' });
         enterPhase(m, 'DAY_RESOLVING', now, T(m, 'retaliation'));
         return;
       }
@@ -324,11 +324,11 @@ function resolveDay(m, now, { noVote = false } = {}) {
     const goat = living(m).filter((p) => p.roleId === 'SCAPEGOAT' && !p.tempRevival).sort((a, b) => a.seat - b.seat)[0];
     if (goat) {
       goat.alive = false; goat.diedAt = `Day ${d.number}`; goat.causes = ['SCAPEGOAT'];
-      pub(m, `No one was sentenced — so the Scapegoat paid. ${deathName(m, goat.id)} is dead.`, 'death', { victims: [goat.id] });
+      pub(m, `No one was sentenced — so the Scapegoat paid. ${deathName(m, goat.id)} is dead.`, 'death', { victims: [goat.id], ev: 'scapegoat' });
     } else if (!noVote && !cancelled) {
       // reason already published
     } else {
-      pub(m, 'No one was sentenced today.', 'vote');
+      pub(m, 'No one was sentenced today.', 'vote', { ev: 'nosentence' });
     }
   }
   finishDay(m, now);
@@ -340,12 +340,12 @@ function resolveRetaliation(m, now) {
     const t = byId(m, r.choice);
     if (t.alive && !t.tempRevival) {
       t.alive = false; t.diedAt = `Day ${m.dayNumber}`; t.causes = ['EQUAL_EXCHANGE'];
-      pub(m, `With a last breath, the condemned took ${deathName(m, t.id)} with them.`, 'death', { victims: [t.id] });
+      pub(m, `With a last breath, the condemned took ${deathName(m, t.id)} with them.`, 'death', { victims: [t.id], ev: 'exchange' });
     } else {
-      pub(m, 'The final act failed to claim anyone.', 'vote');
+      pub(m, 'The final act failed to claim anyone.', 'vote', { ev: 'exchange-none' });
     }
   } else {
-    pub(m, 'The condemned went quietly.', 'vote');
+    pub(m, 'The condemned went quietly.', 'vote', { ev: 'exchange-none' });
   }
   finishDay(m, now);
 }
@@ -372,7 +372,7 @@ function beginNightPhase(m, now) {
     swapDone: {}, done: {}, actions: {}, nightmare: {}, sleepwalk: {}, schemas: {}, surge: null,
     death: null, conspire: {},
   };
-  pub(m, `Night ${n} falls. Keep your screen to yourself.`, 'phase');
+  pub(m, `Night ${n} falls. Keep your screen to yourself.`, 'phase', { ev: 'nightfall', n });
   if (m.config.dreams) {
     for (const id of alive) m.night.initialDreams[id] = pick(rng, DREAM_IDS, 'dream');
     m.night.initialSnatchers = alive.filter((id) => m.night.initialDreams[id] === 'DREAM_SNATCHER');
@@ -632,7 +632,7 @@ export function playerCommand(m, actorId, cmd, rng, now) {
       if (p.roleId !== 'DIPLOMAT' || !(p.charges.DIPLOMAT > 0)) throw new GameError('You have no immunity to declare.');
       p.charges.DIPLOMAT = 0;
       m.day.immune.push(p.id);
-      pub(m, `${p.name} has declared diplomatic immunity: they cannot be nominated today.`, 'immunity');
+      pub(m, `${p.name} has declared diplomatic immunity: they cannot be nominated today.`, 'immunity', { ev: 'immunity', who: p.id });
       break;
     }
 
@@ -657,7 +657,7 @@ export function playerCommand(m, actorId, cmd, rng, now) {
       if (m.day.nominations.some((x) => x.by === p.id)) throw new GameError('You have already made your nomination today.');
       m.day.nominations.push({ by: p.id, target: t.id, at: now });
       const first = m.day.nominations.filter((x) => x.target === t.id).length === 1;
-      pub(m, first ? `${p.name} nominated ${t.name}.` : `${p.name} seconded the nomination of ${t.name}.`, 'nominate');
+      pub(m, first ? `${p.name} nominated ${t.name}.` : `${p.name} seconded the nomination of ${t.name}.`, 'nominate', { ev: 'nominate', by: p.id, target: t.id, first });
       break;
     }
 

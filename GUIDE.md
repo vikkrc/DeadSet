@@ -195,6 +195,15 @@ Charges are spent when a valid action is **submitted**, even if it's then blocke
 
 ---
 
+## 9b. How the app feels to use
+
+- **The table.** Everyone sits around a ring in seating order. To nominate, vote, aim, kill, protect or pick a dream partner, you **tap a seat**. Seats you can pick gently breathe; the rest dim. The ring's outer edge burns down as the phase timer.
+- **Moments.** Big public events get a short full-screen scene on every phone: *Night falls*, *Dawn* (the dead are struck through one by one), *The town decides* (vote bars, then a SENTENCED or SPARED stamp), and the final verdict with a celebration. Tap to skip. After each dawn, every living player also gets a private *Your night* card. Everyone gets one, even if it's empty, so it gives nothing away.
+- **Hold to confirm.** Host advances, starting the match and declaring Diplomat immunity are **press-and-hold** buttons, so nobody skips a phase by accident.
+- **Night privacy.** Your night starts behind a curtain (*Open your eyes*), and you can cover it again at any time. Once you commit, you see a sleeping screen whose moon fills up as players go to sleep. It shows a count only, never who.
+- **Sound and vibration** (toggle in the top bar). They only fire for public events and your own taps. Private information (your role, a Mentalist reading, a Premonition) never makes a noise or a buzz that could give you away across the table.
+- **Reduced motion.** If your device asks for reduced motion, the animations and particles are switched off.
+
 ## 10. Interpretation notes (where the spec was open)
 
 The spec resolves almost everything. Where it left room, this build does the following:
