@@ -1,0 +1,9 @@
+{
+  "name": "Dead Set",
+  "short_name": "Dead Set",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#100e0d",
+  "theme_color": "#100e0d",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
