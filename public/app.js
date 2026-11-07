@@ -394,6 +394,7 @@ function render() {
   const night = !!v && isNight(v.phase) && ['room', 'board'].includes(S.route?.name);
   document.body.dataset.time = night ? 'night' : 'day';
   document.body.classList.toggle('has-moment', !!S.moment);
+  document.body.classList.toggle('has-sheet', !!S.ui.sheet && S.route?.name === 'room');
   ambient(night ? 'night' : null);
   morph(app, view());
   app.querySelectorAll('[data-scroll]').forEach((el) => { if (bottoms[el.dataset.scroll] !== false) el.scrollTop = el.scrollHeight; });
@@ -414,7 +415,7 @@ function view() {
   }
   if (S.moment) html += momentHtml(S.moment);
   if (S.conn === 'lost' && S.code) html += '<div class="conn" data-key="conn" role="status"><span class="pulse-dot"></span>Reconnecting… your choices are safe on the server.</div>';
-  html += `<div class="notes" data-key="notes" aria-live="polite">${S.notes.map((n) => `<div class="note ${n.kind}" data-key="n-${n.id}">${esc(n.text)}</div>`).join('')}</div>`;
+  html += `<div class="toasts" data-key="toasts" aria-live="polite">${S.notes.map((n) => `<div class="toast ${n.kind}" data-key="n-${n.id}">${esc(n.text)}</div>`).join('')}</div>`;
   return html;
 }
 
@@ -706,7 +707,7 @@ function hostBox() {
 }
 
 function holdBtn(act, label, cls = '', { dis = false, key = act } = {}) {
-  return `<button class="btn hold ${cls} ${S.ui.holding === key ? 'holding' : ''}" data-hold="${act}" data-key="hold-${key}" ${dis || S.pending ? 'disabled' : ''}><span class="hold-fill"></span><span class="hold-label">${esc(label)}</span></button>`;
+  return `<button class="btn hold ${cls} ${S.ui.holding === key ? 'holding' : ''}" data-hold="${act}" data-key="hold-${key}" ${dis ? 'disabled' : ''} ${S.pending ? 'data-pending' : ''}><span class="hold-fill"></span><span class="hold-label">${esc(label)}</span></button>`;
 }
 
 function feed(log, cls = '') {
@@ -760,7 +761,7 @@ function sheet(v) {
     body = `${roleCardHtml(me.role, { align: me.alignment, flipKey: 'sheet', flipped: true })}${roleNotes(me)}`;
   } else if (s === 'notes') {
     title = 'Only you were told';
-    body = feed([...(v.private || [])].reverse(), 'notes');
+    body = feed([...(v.private || [])].reverse(), 'feed-private');
   } else if (s === 'rules') {
     title = 'Rules in force';
     body = v.activeRules.map((r) => `<div class="rule-card"><b>${esc(r.name)}</b><p>${esc(r.text)}</p><p class="small muted">${esc(r.enforcement)}</p></div>`).join('');
@@ -1172,7 +1173,7 @@ function endMain(v, me) {
       <span class="seat">${p.role ? glyph(p.role.glyph) : ''}</span>
       <span class="who"><b>${esc(p.name)}</b><small>${p.role ? esc(p.role.name) : '—'}${p.originalRole ? ` (was ${esc(p.originalRole.name)})` : ''} · ${p.alive ? 'alive' : `† ${esc(p.diedAt ?? '')}`}</small></span>
       <span class="tags"><span class="tag ${p.alignment === 'DEATH' ? 'blood' : ''}">${esc(ALIGN[p.alignment] ?? '')}</span></span></li>`).join('')}</ul>` : '<p class="muted">The host chose not to reveal roles.</p>'}</section>
-    ${me && !me.moderator ? `<details class="more" data-key="endnotes"><summary>My notes</summary><div>${feed([...(v.private || [])].reverse(), 'notes')}</div></details>` : ''}
+    ${me && !me.moderator ? `<details class="more" data-key="endnotes"><summary>My notes</summary><div>${feed([...(v.private || [])].reverse(), 'feed-private')}</div></details>` : ''}
     <details class="more" data-key="endrec"><summary>Public record</summary><div>${feed(v.log)}</div></details>
     <div class="row center" data-key="endbtns"><a class="btn" href="/" data-link>Back to start</a></div>`;
 }
@@ -1213,7 +1214,7 @@ function dock(v) {
   const a = v.action;
   const parts = [];
   const hostNext = v.host?.advance && v.phase !== 'LOBBY' ? holdBtn('advance', v.host.advance, 'btn-host', { key: 'dock-adv' }) : '';
-  const btn = (label, act, cls = 'btn-solid', dis = false, key = act, extra = '') => `<button class="btn ${cls}" data-act="${act}" data-key="d-${key}" ${extra} ${dis || S.pending ? 'disabled' : ''}>${label}</button>`;
+  const btn = (label, act, cls = 'btn-solid', dis = false, key = act, extra = '') => `<button class="btn ${cls}" data-act="${act}" data-key="d-${key}" ${extra} ${dis ? 'disabled' : ''} ${S.pending ? 'data-pending' : ''}>${label}</button>`;
   if (me?.moderator) {
     if (v.phase === 'LOBBY' && v.host) parts.push(holdBtn('start', v.setup.notReady ? `Waiting for ${v.setup.notReady} to ready up` : 'Hold to start', 'btn-solid', { dis: !v.setup.ok || !!v.setup.notReady }));
   } else if (me) {
@@ -1430,7 +1431,7 @@ document.addEventListener('click', (e) => {
   if (!el || el.tagName === 'SELECT' || (el.tagName === 'INPUT' && el.type !== 'checkbox')) return;
   if (el.tagName === 'INPUT') { ACT[el.dataset.act]?.(el); return; }
   e.preventDefault();
-  if (el.disabled) return;
+  if (el.disabled || el.hasAttribute('data-pending')) return;
   if (!QUIET.has(el.dataset.act)) { sound.play('tap'); haptic(6); }
   ACT[el.dataset.act]?.(el);
 });
@@ -1444,7 +1445,7 @@ function cancelHold() {
 document.addEventListener('pointerdown', (e) => {
   sound.unlock();
   const el = e.target.closest('[data-hold]');
-  if (!el || el.disabled) return;
+  if (!el || el.disabled || el.hasAttribute('data-pending')) return;
   e.preventDefault();
   cancelHold();
   const key = el.dataset.key.replace(/^hold-/, '');
