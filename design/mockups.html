@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dead Set — concept mockups</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="/public/styles.css">
+<style>
+  /* Mockup canvas: static artboards; animations are described in captions. */
+  *, *::before, *::after { animation-play-state: paused !important; animation-delay: -10s !important; }
+  body { background: #050505; padding: 40px; display: grid; gap: 60px; justify-items: start; }
+  body::before { display: none; }
+  .label { font: 600 13px var(--sans); color: #888; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 10px; }
+  .art { position: relative; overflow: hidden; background: var(--soot); color: var(--bone); }
+  .art::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(110% 55% at 50% -12%, var(--glow), transparent 62%); }
+  .phone { width: 390px; height: 844px; }
+  .desk { width: 1280px; height: 800px; }
+  .tv { width: 1600px; height: 900px; }
+  .art.night { --soot: #090b10; --soot-2: #10131b; --soot-3: #181d28; --bone: #dde2ea; --bone-2: #a9b2c0; --ash: #737d8e; --ash-2: #4b5363; --line: rgba(205,215,232,.11); --line-2: rgba(205,215,232,.24); --glow: rgba(120,155,215,.1); --moonlight: #e6ecf5; }
+  .abs { position: absolute; }
+  .phone .topbar { display: flex !important; }
+  .phone .dock { left: 0 !important; }
+  .phone .mobile-only { display: contents !important; }
+
+  /* ── A: Empty Table ─────────────────────────────────────────── */
+  .a-top { display: flex; justify-content: space-between; align-items: center; padding: 18px 18px 0; position: relative; z-index: 2; }
+  .a-ring { position: relative; width: 350px; aspect-ratio: 1; margin: 6px auto 0; }
+  .a-ring .ring-table { inset: 19%; background: radial-gradient(circle at 50% 42%, rgba(236,229,213,.07), transparent 70%), radial-gradient(circle at 50% 50%, #1c1815, #110f0e); }
+  .a-title { position: absolute; inset: 22%; display: grid; place-content: center; text-align: center; z-index: 3; }
+  .a-title h1 { font: 400 64px/.82 var(--serif); letter-spacing: -.04em; }
+  .a-title h1 i { color: var(--blood-ink); }
+  .a-title p { font: italic 400 14px/1.3 var(--serif); color: var(--bone-2); margin-top: 8px; }
+  .chair { position: absolute; transform: translate(-50%,-50%); width: 46px; height: 46px; border-radius: 50%; border: 1px dashed var(--line-2); display: grid; place-items: center; }
+  .chair .sigil { inset: -6px; width: calc(100% + 12px); height: calc(100% + 12px); position: absolute; stroke: var(--ash-2); fill: none; stroke-width: 1.4; }
+  .chair.ghost { border-style: solid; border-color: rgba(236,229,213,.28); background: radial-gradient(circle, rgba(236,229,213,.06), transparent 70%); }
+  .chair.ghost::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: rgba(236,229,213,.35); box-shadow: 0 0 18px rgba(236,229,213,.35); }
+  .chair.red { border: 1px solid rgba(226,88,94,.7); box-shadow: 0 0 26px rgba(226,88,94,.35), inset 0 0 14px rgba(179,36,45,.35); }
+  .chair.red::after { content: ''; width: 8px; height: 8px; background: var(--blood); transform: rotate(45deg); box-shadow: 0 0 12px rgba(226,88,94,.8); }
+  .whisper { text-align: center; font: italic 400 15px/1.35 var(--serif); color: var(--ash); margin: 8px 30px 0; }
+  .whisper b { color: var(--bone-2); font-weight: 400; }
+  .a-panel { margin: 18px 16px 0; display: grid; gap: 14px; }
+  .code-in { display: flex; gap: 6px; justify-content: center; }
+  .code-in span { width: 44px; height: 54px; border: 1px solid var(--line-2); border-radius: 4px; display: grid; place-items: center; font: 500 24px var(--mono); background: var(--soot-2); }
+  .code-in span.cur { border-color: var(--bone); box-shadow: 0 0 0 3px rgba(236,229,213,.1); }
+  .code-in span.cur::after { content: ''; width: 2px; height: 26px; background: var(--bone); }
+  .foot { text-align: center; font: 600 10px var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--ash-2); }
+
+  /* ── E: Invitation ───────────────────────────────────────────── */
+  .inv-bg { position: absolute; inset: 0; background: radial-gradient(90% 55% at 50% 42%, #221b17, #0b0908 70%); }
+  .envelope { position: absolute; left: 50%; top: 300px; width: 320px; height: 214px; transform: translate(-50%,-50%) rotate(-3deg); background: linear-gradient(160deg, #e9e1cf, #d8ceb8); border-radius: 4px; box-shadow: 0 40px 70px -20px rgba(0,0,0,.9), inset 0 0 0 1px rgba(0,0,0,.08); }
+  .envelope::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom right, transparent 49.6%, rgba(0,0,0,.09) 50%, transparent 50.4%), linear-gradient(to bottom left, transparent 49.6%, rgba(0,0,0,.09) 50%, transparent 50.4%); }
+  .envelope .flap { position: absolute; left: 0; right: 0; top: 0; height: 120px; background: linear-gradient(180deg, #ddd3bd, #cfc4ac); clip-path: polygon(0 0, 100% 0, 50% 100%); }
+  .envelope .addr { position: absolute; left: 0; right: 0; bottom: 22px; text-align: center; color: #3a2f27; font: italic 400 19px/1.2 var(--serif); }
+  .envelope .addr small { display: block; font: 600 9px var(--sans); letter-spacing: .2em; text-transform: uppercase; font-style: normal; color: #7a6b5c; margin-top: 6px; }
+  .wax { position: absolute; left: 50%; top: 104px; width: 74px; height: 74px; transform: translate(-50%,-50%); border-radius: 46% 54% 50% 50% / 52% 48% 52% 48%; background: radial-gradient(circle at 38% 34%, #d0444c, #8f1a22 60%, #6a1118); box-shadow: 0 6px 14px rgba(0,0,0,.45), inset 0 -4px 8px rgba(0,0,0,.35); display: grid; place-items: center; }
+  .wax::before { content: ''; position: absolute; inset: 9px; border-radius: 50%; border: 1px solid rgba(255,220,210,.25); box-shadow: inset 0 2px 4px rgba(0,0,0,.3); }
+  .wax span { font: italic 400 26px/1 var(--serif); color: rgba(255,225,215,.82); text-shadow: 0 1px 1px rgba(0,0,0,.4); }
+  .hold-ring { position: absolute; left: 50%; top: 104px; width: 104px; height: 104px; transform: translate(-50%,-50%); }
+  .hold-ring circle { fill: none; stroke: rgba(255,230,220,.55); stroke-width: 2; stroke-dasharray: 100; stroke-dashoffset: 38; transform: rotate(-90deg); transform-origin: center; stroke-linecap: round; }
+  .inv-hint { position: absolute; left: 0; right: 0; text-align: center; }
+  .letter { position: absolute; left: 22px; right: 22px; top: 92px; padding: 34px 26px 26px; background: linear-gradient(170deg, #efe8d8, #e2d8c3); color: #2a221d; border-radius: 3px; box-shadow: 0 50px 80px -30px rgba(0,0,0,.95); }
+  .letter::before { content: ''; position: absolute; inset: 8px; border: 1px solid rgba(60,45,35,.18); pointer-events: none; }
+  .letter .k { font: 600 9.5px var(--sans); letter-spacing: .22em; text-transform: uppercase; color: #8a7865; }
+  .letter h2 { font: 400 40px/.95 var(--serif); margin: 10px 0 12px; color: #1e1814; }
+  .letter h2 i { color: #a3242b; }
+  .letter p { font: italic 400 17px/1.4 var(--serif); color: #4b3f35; }
+  .letter .meta { display: flex; gap: 6px; flex-wrap: wrap; margin: 16px 0 18px; }
+  .letter .meta span { font: 600 9px var(--sans); letter-spacing: .14em; text-transform: uppercase; border: 1px solid rgba(60,45,35,.3); border-radius: 10px; padding: 4px 8px; color: #5b4c40; }
+  .sign { border-bottom: 1px solid #5b4c40; padding: 8px 2px; font: italic 400 26px var(--serif); color: #1e1814; display: flex; justify-content: space-between; align-items: end; }
+  .sign small { font: 600 9px var(--sans); font-style: normal; letter-spacing: .2em; text-transform: uppercase; color: #8a7865; }
+  .letter .btn { margin-top: 18px; width: 100%; }
+  .seal-halves { position: absolute; left: 50%; top: 92px; transform: translate(-50%,-50%); width: 90px; height: 60px; }
+  .seal-halves i { position: absolute; top: 10px; width: 36px; height: 40px; background: radial-gradient(circle at 55% 35%, #c33a43, #7d151d 80%); box-shadow: inset 0 -3px 5px rgba(0,0,0,.35); }
+  .seal-halves i:first-child { left: 2px; transform: rotate(-24deg) translateY(4px); clip-path: polygon(30% 0, 100% 8%, 82% 34%, 100% 58%, 74% 100%, 18% 88%, 0 52%, 6% 18%); }
+  .seal-halves i:last-child { right: 2px; transform: rotate(19deg) translateY(2px); clip-path: polygon(0 10%, 64% 0, 96% 22%, 100% 70%, 70% 100%, 12% 92%, 22% 62%, 4% 40%); }
+
+  /* ── TV shared ──────────────────────────────────────────────── */
+  .tv-head { position: absolute; top: 0; left: 0; right: 0; height: 92px; display: flex; align-items: center; gap: 24px; padding: 0 44px; z-index: 5; }
+  .tv-head .ph { font: 400 46px/1 var(--serif); }
+  .tv-head .ph i { font-style: italic; }
+  .tv-head .step { font: 600 12px var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--ash); }
+  .tv-head .grow { flex: 1; }
+  .tv-head .clk { font: 500 34px var(--mono); color: var(--bone); }
+  .mute { display: flex; gap: 10px; align-items: center; border: 1px solid var(--line-2); border-radius: 22px; padding: 8px 14px; font: 600 10.5px var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--bone-2); }
+  .mute .glyph { font-size: 18px; }
+  .mute .eq { display: inline-flex; gap: 2px; align-items: end; height: 14px; }
+  .mute .eq i { width: 2px; background: var(--bone-2); }
+  .sky { position: absolute; left: 0; right: 0; top: 0; height: 160px; pointer-events: none; z-index: 1; }
+  .sky path { fill: none; stroke: var(--line); stroke-width: 1; }
+  .sky .done { stroke: var(--line-2); }
+  .sky .orb { filter: drop-shadow(0 0 12px rgba(233,194,122,.7)); }
+  .stage { position: absolute; left: 30px; top: 92px; width: 900px; height: 790px; }
+  .bigring { position: absolute; left: 50%; top: 50%; width: 700px; height: 700px; transform: translate(-50%,-50%); }
+  .bigring .ring { width: 700px; --tok: 74px; }
+  .bigring .tok-name { font-size: 15px; margin-top: 10px; }
+  .bigring .ring-table { inset: 20%; background: radial-gradient(circle at 50% 45%, rgba(233,194,122,.13), rgba(28,22,18,.9) 55%, #0f0c0b 75%); box-shadow: inset 0 0 90px rgba(0,0,0,.75), 0 0 0 18px rgba(30,24,20,.5), 0 0 0 19px var(--line); }
+  .night .bigring .ring-table { background: radial-gradient(circle at 50% 30%, rgba(170,195,235,.14), rgba(16,20,30,.92) 55%, #0a0d14 75%); }
+  .candle { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 16px; height: 60px; }
+  .candle i { position: absolute; left: 3px; bottom: 0; width: 10px; height: 40px; background: linear-gradient(90deg, #cfc6b4, #efe8d8, #bfb5a2); border-radius: 2px; }
+  .candle b { position: absolute; left: 2px; top: 0; width: 12px; height: 20px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: radial-gradient(circle at 50% 70%, #fff6d8, #f4c46c 45%, rgba(230,130,50,.0) 75%); box-shadow: 0 0 40px 18px rgba(240,180,90,.25); }
+  .center-txt { position: absolute; left: 50%; top: 50%; transform: translate(-50%, 34px); text-align: center; width: 300px; }
+  .center-txt .big { font: 400 54px/1 var(--serif); }
+  .center-txt .sub { font: 600 11px var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--ash); margin-top: 6px; }
+  .spot { position: absolute; pointer-events: none; z-index: 1; }
+  .threads { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: visible; }
+  .threads path { fill: none; stroke: var(--blood-ink); stroke-linecap: round; vector-effect: non-scaling-stroke; }
+  .crack { position: absolute; inset: 0; width: 100%; height: 100%; stroke: rgba(226,88,94,.65); fill: none; stroke-width: 1.4; z-index: 2; }
+  .plaques { position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%); display: flex; gap: 12px; z-index: 4; }
+  .plaque { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border: 1px solid var(--line-2); border-radius: 4px; background: var(--soot-2); font: 600 11px var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--ash); }
+  .plaque .glyph { font-size: 20px; }
+  .plaque.on { color: var(--bone); border-color: #e9c27a; box-shadow: 0 0 0 4px rgba(233,194,122,.1), 0 0 30px rgba(233,194,122,.18); }
+  .plaque.on em { font: italic 400 15px var(--serif); text-transform: none; letter-spacing: 0; color: #e9c27a; }
+
+  /* ── Chronicle / Gazette ────────────────────────────────────── */
+  .chron { position: absolute; right: 36px; top: 112px; bottom: 30px; width: 600px; padding: 26px 28px; background: linear-gradient(180deg, color-mix(in srgb, var(--soot-2) 92%, transparent), var(--soot)); border: 1px solid var(--line); border-radius: 6px; z-index: 3; overflow: hidden; }
+  .mast { text-align: center; border-bottom: 3px double var(--line-2); padding-bottom: 10px; }
+  .mast h3 { font: 400 34px/1 var(--serif); letter-spacing: .02em; }
+  .mast h3 i { color: var(--blood-ink); }
+  .mast div { display: flex; justify-content: space-between; font: 600 10px var(--sans); letter-spacing: .18em; text-transform: uppercase; color: var(--ash); margin-top: 8px; border-top: 1px solid var(--line); padding-top: 6px; }
+  .edition { display: grid; grid-template-columns: 54px 1fr; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .edition .when { display: grid; justify-items: center; gap: 4px; align-content: start; }
+  .edition .when .glyph { font-size: 26px; color: var(--bone-2); }
+  .edition .when b { font: 400 22px/1 var(--serif); }
+  .edition .when span { font: 600 9px var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--ash); }
+  .edition h4 { margin: 0 0 8px; font: 400 25px/1.05 var(--serif); }
+  .edition h4.dead { color: var(--blood-ink); }
+  .events { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ev { display: inline-flex; align-items: center; gap: 7px; padding: 5px 10px 5px 6px; border: 1px solid var(--line-2); border-radius: 16px; font: 500 13px var(--sans); color: var(--bone-2); }
+  .ev .glyph { font-size: 16px; }
+  .ev .mini { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line-2); display: grid; place-items: center; font: 400 11px var(--serif); color: var(--bone); }
+  .ev.kill { border-color: rgba(226,88,94,.5); color: var(--bone); }
+  .ev.kill .glyph { color: var(--blood-ink); }
+  .ev .arrow { color: var(--blood-ink); }
+  .ev .tallyv { font: 500 11px var(--mono); color: var(--ash); margin-left: 2px; }
+  .edition.today { background: linear-gradient(90deg, rgba(236,229,213,.04), transparent); }
+
+  /* ── countdown pressure ─────────────────────────────────────── */
+  .vignette { position: absolute; inset: 0; z-index: 6; pointer-events: none; box-shadow: inset 0 0 160px 40px rgba(120,10,16,.75), inset 0 0 0 3px rgba(226,88,94,.55); }
+  .spark { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: #ffb38a; box-shadow: 0 0 10px 3px rgba(255,130,80,.7); z-index: 7; }
+  .heart { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); font: 500 120px/1 var(--mono); color: var(--blood-ink); text-shadow: 0 0 40px rgba(226,88,94,.5); }
+
+  /* ── Opening ceremony ───────────────────────────────────────── */
+  .ccard { width: 230px; height: 322px; border-radius: 10px; border: 1px solid var(--line-2); outline: 1px solid var(--line); outline-offset: -8px; background: radial-gradient(90% 60% at 50% 30%, rgba(236,229,213,.08), transparent 70%), var(--soot-2); display: grid; align-content: center; justify-items: center; gap: 14px; text-align: center; padding: 20px; box-shadow: 0 40px 60px -26px rgba(0,0,0,.95); }
+  .ccard .k { font: 600 11px var(--sans); letter-spacing: .26em; text-transform: uppercase; color: var(--ash); }
+  .ccard .glyph { font-size: 64px; color: var(--bone-2); stroke-width: 1; }
+  .ccard b { font: 400 30px/1.05 var(--serif); font-weight: 400; }
+  .ccard.back { background: repeating-linear-gradient(45deg, transparent 0 9px, var(--line) 9px 10px), repeating-linear-gradient(-45deg, transparent 0 9px, var(--line) 9px 10px), var(--soot-2); }
+  .ccard.back b { font: italic 400 46px var(--serif); background: var(--soot-2); padding: 10px 18px; border: 1px solid var(--line-2); }
+  .rcard { width: 200px; padding: 16px; border: 1px solid #e9c27a55; border-radius: 8px; background: var(--soot-2); display: grid; gap: 6px; }
+  .rcard b { font: 400 22px var(--serif); font-weight: 400; }
+  .rcard p { font-size: 12.5px; color: var(--bone-2); }
+  .rcard .k { font: 600 9.5px var(--sans); letter-spacing: .2em; text-transform: uppercase; color: #e9c27a; }
+
+  /* ── Lobby showcase ─────────────────────────────────────────── */
+  .deckrow { display: flex; gap: 12px; }
+  .dcard { width: 108px; height: 150px; border: 1px solid var(--line-2); border-radius: 8px; background: linear-gradient(165deg, var(--soot-3), var(--soot-2)); display: grid; justify-items: center; align-content: center; gap: 8px; position: relative; }
+  .dcard .glyph { font-size: 38px; stroke-width: 1.1; }
+  .dcard b { font: 600 12px var(--sans); text-align: center; }
+  .dcard i { position: absolute; top: 8px; right: 10px; font: 500 13px var(--mono); color: var(--ash); font-style: normal; }
+  .dcard.death { border-color: rgba(226,88,94,.6); color: var(--blood-ink); }
+  .dcard.secret { border-style: dashed; }
+  .dcard.secret .q { font: italic 400 46px/1 var(--serif); color: var(--bone-2); }
+  .dcard.rule { border-color: #e9c27a66; }
+  .dcard.rule .glyph { color: #e9c27a; }
+  .dcard.fd { background: repeating-linear-gradient(45deg, transparent 0 7px, var(--line) 7px 8px), var(--soot-2); }
+  .drop { position: absolute; width: 2px; background: linear-gradient(transparent, rgba(236,229,213,.5)); }
+  .mini-deck { display: flex; gap: 6px; overflow: hidden; }
+  .mini-deck .dcard { width: 70px; height: 96px; flex: none; }
+  .mini-deck .dcard .glyph { font-size: 26px; }
+  .mini-deck .dcard b { font-size: 9.5px; }
+  .mini-deck .dcard i { font-size: 10px; top: 5px; right: 7px; }
+  .pool-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .pool-grid span { display: grid; justify-items: center; gap: 3px; padding: 7px 2px; border: 1px solid var(--line); border-radius: 6px; font: 600 8.5px var(--sans); text-align: center; color: var(--bone-2); }
+  .pool-grid span .glyph { font-size: 20px; color: var(--bone); }
+  .pool-grid span.off { opacity: .3; }
+  .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .toggle-row b { font-weight: 500; display: block; font-size: 14px; }
+  .toggle-row small { color: var(--ash); font-size: 12px; }
+  .switch { width: 44px; height: 26px; border-radius: 13px; background: var(--bone); position: relative; flex: none; }
+  .switch::after { content: ''; position: absolute; right: 3px; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--soot); }
+  .switch.off { background: var(--soot-3); border: 1px solid var(--line-2); }
+  .switch.off::after { left: 3px; right: auto; background: var(--ash); }
+
+  /* ── Gazette front page ─────────────────────────────────────── */
+  .paper { position: absolute; left: 50%; top: 50%; width: 1080px; height: 760px; transform: translate(-50%,-50%) rotate(-1deg); background: linear-gradient(170deg, #ece4d2, #dcd1ba); color: #1d1814; padding: 34px 46px; box-shadow: 0 60px 120px -30px rgba(0,0,0,.95); }
+  .paper .mh { text-align: center; border-bottom: 4px double #1d1814; padding-bottom: 10px; }
+  .paper .mh h2 { font: 400 76px/1 var(--serif); letter-spacing: .01em; }
+  .paper .mh div { display: flex; justify-content: space-between; font: 600 11px var(--sans); letter-spacing: .2em; text-transform: uppercase; border-top: 1px solid #1d1814; margin-top: 8px; padding-top: 6px; }
+  .paper .hl { font: 400 92px/.92 var(--serif); text-align: center; margin: 22px 0 6px; letter-spacing: -.02em; }
+  .paper .dk { font: italic 400 26px/1.25 var(--serif); text-align: center; color: #4b3f35; }
+  .paper .cols { display: grid; grid-template-columns: 1fr 260px 1fr; gap: 30px; margin-top: 26px; border-top: 1px solid #1d1814; padding-top: 18px; }
+  .paper .cols p { font: 400 16px/1.5 var(--serif); color: #2e2620; text-align: justify; }
+  .paper .cols p::first-letter { font-size: 44px; float: left; line-height: .9; margin: 4px 6px 0 0; }
+  .paper .photo { border: 1px solid #1d1814; padding: 10px; display: grid; justify-items: center; gap: 8px; text-align: center; font: italic 400 14px var(--serif); }
+  .paper .photo .portrait { width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #3a312a, #14100d); display: grid; place-items: center; color: #e9e0cc; font: 400 74px var(--serif); position: relative; }
+  .paper .photo .portrait svg { position: absolute; inset: 0; stroke: #c94a50; fill: none; stroke-width: 1.4; }
+  .paper .facts { display: grid; gap: 8px; align-content: start; }
+  .paper .facts div { display: flex; justify-content: space-between; border-bottom: 1px dotted #1d181466; font: 600 12px var(--sans); letter-spacing: .1em; text-transform: uppercase; padding: 4px 0; }
+  .paper .stampx { position: absolute; right: 70px; top: 190px; border: 4px solid #a3242b; color: #a3242b; font: 700 22px var(--sans); letter-spacing: .3em; padding: 8px 16px; transform: rotate(-10deg); opacity: .85; }
+
+  /* phone-ceremony */
+  .pc-cards { display: grid; gap: 10px; padding: 0 22px; }
+  .pc-card { height: 104px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--soot-2); display: grid; grid-template-columns: 70px 1fr; align-items: center; padding: 0 16px; gap: 12px; }
+  .pc-card .glyph { font-size: 40px; color: var(--bone-2); stroke-width: 1.1; }
+  .pc-card .k { font: 600 9.5px var(--sans); letter-spacing: .22em; text-transform: uppercase; color: var(--ash); }
+  .pc-card b { font: 400 25px/1.05 var(--serif); font-weight: 400; display: block; }
+  .pc-card.back { background: repeating-linear-gradient(45deg, transparent 0 8px, var(--line) 8px 9px), var(--soot-2); }
+  .pc-card.mid { transform: perspective(600px) rotateX(58deg); opacity: .8; }
+</style>
+</head>
+<body>
+<div id="boards"></div>
+<script type="module">
+import { glyph } from '/public/icons.js';
+import { qrSvg } from '/public/qr.js';
+const G = (n, c = '') => glyph(n, c);
+const sig = (seed) => { let h = 2166136261; for (const c of seed) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } h >>>= 0; return `<svg class="sigil" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" stroke-dasharray="${2 + h % 7} ${2 + (h >> 4) % 9}" transform="rotate(${(h >> 8) % 360} 50 50)"/></svg>`; };
+const pos = (i, n, R = 38.5) => { const a = (-90 + i * 360 / n) * Math.PI / 180; return [50 + R * Math.cos(a), 50 + R * Math.sin(a)]; };
+const moonSvg = (f, cls = '', size = 56) => { const r = 40, rx = Math.abs(1 - 2 * f) * r, sw = f < .5 ? 0 : 1; return `<svg class="moon ${cls}" style="width:${size}px;height:${size}px" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" class="dark"/><path class="lit" d="M50 10 A40 40 0 0 1 50 90 A${rx} 40 0 0 ${sw} 50 10Z"/></svg>`; };
+const board = (label, cls, html) => `<section><div class="label">${label}</div><div class="art ${cls}">${html}</div></section>`;
+const crack = '<svg class="crack" viewBox="0 0 100 100"><path d="M52 8 L46 30 L58 42 L44 60 L54 76 L48 94"/><path d="M58 42 L74 46"/><path d="M44 60 L28 58"/></svg>';
+
+function tokens(list, { tok = 74, reveal = false } = {}) {
+  return list.map((p, i) => {
+    const [x, y] = pos(i, list.length);
+    const cls = ['tok', p.dead && 'dead', p.me && 'me', p.sel && 'sel', p.kill && 'kill', p.acc && 'accused', p.speaking && 'speaking', p.ready && 'ready', p.new && 'can'].filter(Boolean).join(' ');
+    const badges = (p.nom ? `<b class="bdg b-nom">${p.nom}</b>` : '') + (p.ok ? `<b class="bdg b-ok">${G('check')}</b>` : '') + (p.host ? '<b class="bdg b-host"></b>' : '');
+    return `<div class="${cls}" style="left:${x}%;top:${y}%"><span class="tok-disc">${sig(p.n)}${p.dead && p.crack ? crack : ''}<span class="tok-ini">${p.n[0]}</span>${badges}</span><span class="tok-name">${p.n}</span></div>`;
+  }).join('');
+}
+
+// ── A: Empty Table (phone) ───────────────────────────────────────
+function emptyTable(w = 350) {
+  const chairs = [{}, { ghost: 1 }, {}, { red: 1 }, {}, { ghost: 1 }, {}];
+  return `<div class="a-ring" style="width:${w}px">
+    <div class="ring-table" style="position:absolute;border-radius:50%;border:1px solid var(--line);box-shadow:inset 0 0 50px rgba(0,0,0,.6), 0 0 0 10px rgba(30,24,20,.45)"></div>
+    ${chairs.map((c, i) => { const [x, y] = pos(i, 7, 41); return `<span class="chair ${c.ghost ? 'ghost' : ''} ${c.red ? 'red' : ''}" style="left:${x}%;top:${y}%">${sig('c' + i)}</span>`; }).join('')}
+    <div class="a-title"><h1>Dead<br><i>Set.</i></h1><p>Seven chairs. One of them is Death.</p></div></div>`;
+}
+const aPhone = `
+  <div class="a-top"><a class="wordmark" style="font-size:20px">Dead<i>Set</i><span class="seal"></span></a><div class="row" style="gap:4px"><span class="chip">${G('bell')}</span><span class="chip">How to play</span></div></div>
+  ${emptyTable()}
+  <p class="whisper">“<b>Bo was found dead.</b> Nobody saw the Whore leave.”</p>
+  <div class="a-panel">
+    <div class="seg"><button aria-pressed="true">Host a table</button><button>Join a table</button></div>
+    <label class="field"><span>Your name</span><input class="input" value="Morgan"></label>
+    <button class="btn btn-solid btn-wide" style="min-height:54px">Pull up a chair</button>
+    <p class="foot">5–13 players · one phone each · no app to install</p>
+  </div>`;
+const aPhoneJoin = `
+  <div class="a-top"><a class="wordmark" style="font-size:20px">Dead<i>Set</i><span class="seal"></span></a><div class="row" style="gap:4px"><span class="chip">${G('bell')}</span><span class="chip">How to play</span></div></div>
+  ${emptyTable()}
+  <p class="whisper">“<b>The town hanged the Jester.</b> He laughed.”</p>
+  <div class="a-panel">
+    <div class="seg"><button>Host a table</button><button aria-pressed="true">Join a table</button></div>
+    <div class="code-in"><span>7</span><span>R</span><span>A</span><span class="cur"></span><span></span><span></span></div>
+    <button class="btn btn-wide" style="min-height:54px" disabled>Find the table</button>
+    <p class="foot">Or scan the QR code on the host's screen</p>
+  </div>`;
+const aDesk = `
+  <div class="a-top" style="padding:28px 44px 0"><a class="wordmark">Dead<i>Set</i><span class="seal"></span></a><div class="row"><span class="chip">${G('bell')} Sound</span><span class="chip">How to play</span></div></div>
+  <div style="position:absolute;left:70px;top:90px">${emptyTable(620).replace('class="a-ring"', 'class="a-ring" ').replace('font: 400 64px', '')}</div>
+  <div style="position:absolute;right:90px;top:200px;width:420px;display:grid;gap:18px">
+    <p class="whisper" style="margin:0;text-align:left;font-size:20px">“<b>Bo was found dead.</b> Nobody saw the Whore leave.”</p>
+    <div class="panel" style="gap:16px">
+      <div class="seg"><button aria-pressed="true">Host a table</button><button>Join a table</button></div>
+      <label class="field"><span>Your name</span><input class="input" value="Morgan"></label>
+      <label class="check"><input type="checkbox"><span><b>I'll moderate, not play</b><small>Sees every secret, holds no seat.</small></span></label>
+      <button class="btn btn-solid btn-wide" style="min-height:54px">Pull up a chair</button>
+    </div>
+    <p class="foot" style="text-align:left">5–13 players · one phone each · 20–60 min</p>
+  </div>`;
+
+// ── E: Invitation ────────────────────────────────────────────────
+const eSealed = `<div class="inv-bg"></div>
+  <div class="a-top"><a class="wordmark" style="font-size:20px">Dead<i>Set</i><span class="seal"></span></a><span class="chip">${G('bell')}</span></div>
+  <p class="inv-hint" style="top:118px"><span class="kicker">A letter for you</span></p>
+  <div class="envelope"><div class="flap"></div><div class="addr">For whoever holds this link<small>Table 7RAUTE · 4 of 13 seated</small></div></div>
+  <svg class="hold-ring" viewBox="0 0 100 100" style="top:${300 - 107 + 104}px"><circle cx="50" cy="50" r="46" pathLength="100"/></svg>
+  <div class="wax" style="top:${300 - 107 + 104}px"><span>DS</span></div>
+  <div class="inv-hint" style="top:470px;display:grid;gap:8px;justify-items:center"><p style="font:italic 400 20px var(--serif);color:var(--bone-2)">Press and hold the seal</p><span class="small muted">Ada has saved you a seat.</span></div>
+  <div class="inv-hint" style="bottom:46px"><span class="small muted" style="text-decoration:underline">Already seated? Recover your seat</span></div>`;
+const eOpen = `<div class="inv-bg"></div>
+  <div class="a-top"><a class="wordmark" style="font-size:20px">Dead<i>Set</i><span class="seal"></span></a><span class="chip">${G('bell')}</span></div>
+  <div class="letter">
+    <span class="k">Table 7RAUTE · an invitation</span>
+    <h2><i>Ada</i> has saved you a seat.</h2>
+    <p>You are invited to a table of strangers. One of them is Death. Nobody will tell you which.</p>
+    <div class="meta"><span>Standard</span><span>4 of 13 seated</span><span>2 rule cards</span></div>
+    <div class="sign"><span>Morgan</span><small>Sign your name</small></div>
+    <button class="btn btn-blood">Take my seat</button>
+    <p style="font:400 11px var(--sans);font-style:normal;color:#8a7865;text-align:center;margin-top:12px">Already seated? Recover your seat</p>
+  </div>
+  <div class="seal-halves" style="top:92px"><i></i><i></i></div>`;
+
+// ── TV: lobby showcase (20) ──────────────────────────────────────
+const lobbyPlayers = [{ n: 'Ada', ready: 1, ok: 1, host: 1 }, { n: 'Bo', ready: 1, ok: 1 }, { n: 'Cy' }, { n: 'Di', ready: 1, ok: 1 }, { n: 'Ed', new: 1 }];
+function lobbyRing(size = 620) {
+  const slots = 7;
+  let html = tokens(lobbyPlayers).replace(/left:([\d.]+)%;top:([\d.]+)%/g, (m) => m);
+  const pl = lobbyPlayers.map((p, i) => { const [x, y] = pos(i, slots); return { ...p, x, y }; });
+  html = pl.map((p) => `<div class="tok ${p.ready ? 'ready' : 'unready'} ${p.new ? 'sel' : ''}" style="left:${p.x}%;top:${p.y}%"><span class="tok-disc">${sig(p.n)}<span class="tok-ini">${p.n[0]}</span>${p.ok ? `<b class="bdg b-ok">${G('check')}</b>` : ''}${p.host ? '<b class="bdg b-host"></b>' : ''}</span><span class="tok-name">${p.n}${p.new ? ' · just arrived' : ''}</span></div>`).join('');
+  for (let i = pl.length; i < slots; i++) { const [x, y] = pos(i, slots); html += `<div class="tok empty" style="left:${x}%;top:${y}%"><span class="tok-disc"></span><span class="tok-name">empty</span></div>`; }
+  const [ex, ey] = pos(4, slots);
+  return `<div class="ring" style="width:${size}px;--tok:72px"><div class="ring-table"></div>${html}
+    <span class="drop" style="left:${ex}%;top:calc(${ey}% - 120px);height:80px"></span>
+    <div class="ring-center"><span class="c-big" style="font-size:64px">5</span><span class="c-sub">seated · 3 ready</span><span class="c-hint" style="font-size:18px">Waiting for the host…</span></div></div>`;
+}
+const tvLobby = `
+  <div class="tv-head"><a class="wordmark" style="font-size:32px">Dead<i>Set</i><span class="seal"></span></a><span class="step">Table 7RAUTE · public board</span><span class="grow"></span><span class="mute">${G('bell')}<span class="eq"><i style="height:6px"></i><i style="height:12px"></i><i style="height:8px"></i></span> Score on</span></div>
+  <div class="abs" style="left:60px;top:150px;width:360px;display:grid;gap:22px;justify-items:center;text-align:center">
+    <span class="kicker" style="font-size:13px">Scan to take a seat</span>
+    <div style="background:#ece5d5;padding:14px;border-radius:8px">${qrSvg('https://deadset.onrender.com/r/7RAUTE').replace('class="qr"', 'class="qr" style="width:250px;height:250px"')}</div>
+    <div class="code-tiles big">${[...'7RAUTE'].map((c, i) => `<span class="tile" style="--i:${i}">${c}</span>`).join('')}</div>
+    <span class="small muted">deadset.onrender.com</span>
+  </div>
+  <div class="abs" style="left:470px;top:100px">${lobbyRing(620)}</div>
+  <div class="abs" style="right:56px;top:150px;width:440px;display:grid;gap:18px">
+    <span class="kicker">Tonight's deck · Standard</span>
+    <div class="deckrow" style="flex-wrap:wrap;gap:10px">
+      <div class="dcard death">${G('death')}<b>Death</b><i>×2</i></div>
+      <div class="dcard">${G('innocent')}<b>Innocent</b><i>×1</i></div>
+      <div class="dcard">${G('guardian')}<b>Guardian</b><i>×1</i></div>
+      <div class="dcard">${G('mentalist')}<b>Mentalist</b><i>×1</i></div>
+      <div class="dcard">${G('psycho')}<b>Psycho</b><i>×1</i></div>
+      <div class="dcard secret"><span class="q">?</span><b>1 extended</b></div>
+    </div>
+    <p class="small muted">The extended seat is drawn secretly from: Whore, Traveling Agent, Terrorist, Mimic, Double Agent, Diplomat, Scapegoat, Necromancer, Conspirator, Magistrate.</p>
+    <span class="kicker" style="margin-top:6px">Rule cards</span>
+    <div class="deckrow"><div class="dcard rule">${G('magistrate')}<b>Majority Rule</b></div><div class="dcard fd"><span class="q" style="font:italic 400 40px var(--serif)">?</span><b>Drawn at start</b></div></div>
+    <span class="kicker" style="margin-top:6px">Story</span><p class="scenario" style="font-size:17px">Drawn when the match begins.</p>
+  </div>`;
+
+// ── Phone lobby: deck & rules reflected (20) ─────────────────────
+const phoneLobbyDeck = `
+  <header class="topbar" style="position:relative"><span class="tb-emblem">${G('sun')}</span><div class="phase-mini"><strong>Lobby</strong><span>Gathering · 5 seated</span></div><button class="btn btn-ghost icon-btn">${G('bell')}</button><button class="btn btn-ghost icon-btn">${G('menu')}</button></header>
+  <div style="padding:16px;display:grid;gap:16px">
+    <div class="rule">Tonight's deck · 7 players</div>
+    <div class="mini-deck">
+      <div class="dcard death">${G('death')}<b>Death</b><i>×2</i></div><div class="dcard">${G('innocent')}<b>Innocent</b><i>×1</i></div><div class="dcard">${G('guardian')}<b>Guardian</b></div><div class="dcard">${G('mentalist')}<b>Mentalist</b></div><div class="dcard">${G('psycho')}<b>Psycho</b></div>
+    </div>
+    <div class="row between"><span class="kicker">+1 extended, drawn secretly from</span><span class="kicker" style="color:var(--bone)">10 of 10</span></div>
+    <div class="pool-grid">
+      ${[['whore', 'Whore'], ['agent', 'Agent'], ['terrorist', 'Terrorist'], ['mimic', 'Mimic'], ['double', 'Double Ag.'], ['diplomat', 'Diplomat'], ['scapegoat', 'Scapegoat'], ['necro', 'Necro'], ['conspirator', 'Conspir.'], ['magistrate', 'Magistrate']].map(([g, n]) => `<span>${G(g)}${n}</span>`).join('')}
+    </div>
+    <div class="rule" style="margin-top:4px">Rule cards in play</div>
+    <div class="mini-deck">
+      <div class="dcard rule" style="width:110px">${G('magistrate')}<b>Majority Rule</b></div>
+      <div class="dcard rule" style="width:110px">${G('scroll')}<b>Fog of War</b></div>
+      <div class="dcard fd" style="width:110px;border-style:dashed"><span style="font:400 26px var(--serif);color:var(--ash)">+</span><b style="color:var(--ash)">Add a card</b></div>
+    </div>
+    <div class="rule" style="margin-top:4px">Table</div>
+    <div class="toggle-row"><span><b>Threads of suspicion</b><small>The TV board draws who accused whom</small></span><span class="switch"></span></div>
+    <div class="toggle-row"><span><b>Atmospheric score</b><small>Music &amp; effects on the TV board</small></span><span class="switch"></span></div>
+  </div>
+  <div class="dock" style="position:absolute"><button class="btn btn-solid glow">Hold to start</button></div>`;
+
+// ── Opening ceremony (19) ────────────────────────────────────────
+const tvCeremony = `
+  <div class="tv-head"><a class="wordmark" style="font-size:32px">Dead<i>Set</i><span class="seal"></span></a><span class="step">The game begins</span><span class="grow"></span><span class="mute">${G('bell')} Score on</span></div>
+  <div class="abs" style="left:0;right:0;top:120px;text-align:center"><span class="kicker" style="font-size:13px">Night 0 · the story is dealt</span><h1 style="font:400 84px/1 var(--serif);margin-top:10px">The game <i>begins</i></h1></div>
+  <div class="abs" style="left:0;right:0;top:290px;display:flex;justify-content:center;gap:40px">
+    <div class="ccard"><span class="k">Who</span>${G('innocent')}<b>Medieval Villagers</b></div>
+    <div class="ccard" style="transform:translateY(-12px)"><span class="k">Where</span>${G('necro')}<b>an Underground Bunker</b></div>
+    <div class="ccard back" style="transform:rotateY(20deg)"><b>DS</b></div>
+  </div>
+  <div class="abs" style="left:0;right:0;top:660px;text-align:center;display:grid;gap:18px;justify-items:center">
+    <p class="scenario" style="font-size:26px;max-width:none">“We are Medieval Villagers, in an Underground Bunker, trying to …”</p>
+    <div class="row" style="gap:16px"><div class="rcard"><span class="k">Rule card</span><b>Majority Rule</b><p>A sentence needs more than half of all eligible voters.</p></div><div class="rcard" style="opacity:.35"><span class="k">Rule card</span><b>· · ·</b><p>Being dealt…</p></div></div>
+  </div>`;
+const phoneCeremony = `
+  <div style="position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 25%, #172033, #06080c 68%)"></div>
+  <div style="position:relative;padding:54px 0 0;display:grid;gap:18px">
+    <div style="text-align:center;display:grid;gap:8px"><span class="kicker">Night 0</span><h1 style="font:400 54px/.9 var(--serif)">The game<br><i>begins</i></h1></div>
+    <div class="pc-cards">
+      <div class="pc-card">${G('innocent')}<span><span class="k">Who</span><b>Medieval Villagers</b></span></div>
+      <div class="pc-card">${G('necro')}<span><span class="k">Where</span><b>an Underground Bunker</b></span></div>
+      <div class="pc-card back mid"></div>
+    </div>
+    <div style="padding:0 22px;display:grid;gap:8px"><span class="kicker" style="color:#e9c27a">Rule card</span><div class="rcard" style="width:auto"><b>Majority Rule</b><p>A sentence needs more than half of all eligible voters.</p></div></div>
+    <p class="foot" style="margin-top:6px">Then: your role card, face down · tap to skip</p>
+  </div>`;
+
+// ── TV: day / vote (1, 2, 4+11, 6, 8, 17) ─────────────────────────
+const dayPlayers = [{ n: 'Ada', dead: 1, crack: 1 }, { n: 'Bo', acc: 1, nom: 'I', speaking: 0 }, { n: 'Cy', dead: 1, crack: 1 }, { n: 'Di' }, { n: 'Ed' }, { n: 'Fay', acc: 1, nom: 'II' }, { n: 'Gus', dead: 1, crack: 1 }, { n: 'Hal' }];
+function threadSvg(pairs, R = 38.5) {
+  const P = (i) => pos(i, 8, R);
+  return `<svg class="threads" viewBox="0 0 100 100">${pairs.map(([a, b, w, o]) => { const [x1, y1] = P(a); const [x2, y2] = P(b); const mx = (x1 + x2) / 2 * 0.7 + 50 * 0.3; const my = (y1 + y2) / 2 * 0.7 + 50 * 0.3; return `<path d="M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}" stroke-width="${w}" opacity="${o}"/><circle cx="${x2}" cy="${y2}" r="${0.5 + w * 0.15}" fill="#e2585e" opacity="${o}"/>`; }).join('')}</svg>`;
+}
+function skyArc(t, night = false) {
+  const W = 1600; const pts = (u) => [80 + u * (W - 160), 150 - Math.sin(u * Math.PI) * 120];
+  const [ox, oy] = pts(t);
+  let d = 'M'; for (let u = 0; u <= 1.001; u += .02) { const [x, y] = pts(u); d += `${x.toFixed(1)} ${y.toFixed(1)} L`; } d = d.slice(0, -2);
+  let dd = 'M'; for (let u = 0; u <= t + .001; u += .02) { const [x, y] = pts(u); dd += `${x.toFixed(1)} ${y.toFixed(1)} L`; } dd = dd.slice(0, -2);
+  const orb = night ? `<g transform="translate(${ox - 16} ${oy - 16})"><circle cx="16" cy="16" r="14" fill="#e6ecf5" style="filter:drop-shadow(0 0 12px rgba(200,215,240,.7))"/><circle cx="22" cy="12" r="12" fill="#090b10"/></g>` : `<circle class="orb" cx="${ox}" cy="${oy}" r="11" fill="#e9c27a"/>`;
+  return `<svg class="sky" viewBox="0 0 ${W} 160"><path d="${d}" stroke-dasharray="2 6"/><path class="done" d="${dd}"/>${orb}</svg>`;
+}
+const chronicle = (todayTitle, night = false) => `<aside class="chron">
+  <div class="mast"><h3>The Dead Set <i>Gazette</i></h3><div><span>Underground Bunker</span><span>Day III edition</span><span>5 of 8 alive</span></div></div>
+  <div class="edition today"><div class="when">${G(night ? 'moon' : 'sun')}<b>${night ? 'II' : 'III'}</b><span>${night ? 'Tonight' : 'Today'}</span></div><div><h4>${todayTitle}</h4><div class="events">${night ? `<span class="ev">${G('moon')} 3 of 5 asleep</span></div></div></div>` : `
+    <span class="ev"><span class="mini">F</span><span class="arrow">⟶</span><span class="mini">B</span> Fay accuses Bo</span>
+    <span class="ev"><span class="mini">D</span><span class="arrow">⟶</span><span class="mini">B</span> Di seconds</span>
+    <span class="ev"><span class="mini">B</span><span class="arrow">⟶</span><span class="mini">F</span> Bo accuses Fay</span></div></div></div>`}
+  <div class="edition"><div class="when">${G('moon')}<b>II</b><span>Night</span></div><div><h4 class="dead">Ada found dead</h4><div class="events"><span class="ev kill">${G('dagger')} Ada</span><span class="ev">${G('sun')} 4 others woke</span></div></div></div>
+  <div class="edition"><div class="when">${G('sun')}<b>II</b><span>Day</span></div><div><h4>The town sentences Gus</h4><div class="events"><span class="ev">${G('magistrate')} Gus 5 · Fay 2<span class="tallyv">1 abstained</span></span><span class="ev kill">${G('dagger')} Gus sentenced</span><span class="ev"><span class="mini">F</span><span class="arrow">⟶</span><span class="mini">B</span> Fay accused Bo</span></div></div></div>
+  <div class="edition"><div class="when">${G('moon')}<b>I</b><span>Night</span></div><div><h4 class="dead">Cy found dead</h4><div class="events"><span class="ev kill">${G('dagger')} Cy</span></div></div></div>
+  <div class="edition" style="border:0"><div class="when">${G('sun')}<b>I</b><span>Day</span></div><div><h4>A quiet first day</h4><div class="events"><span class="ev">${G('scroll')} No sentence · 3–3 tie</span></div></div></div>
+</aside>`;
+function tvDay({ night = false, countdown = false } = {}) {
+  const players = night ? dayPlayers.map((p) => ({ ...p, acc: 0, nom: 0 })) : dayPlayers;
+  const [bx, by] = pos(1, 8);
+  const spot = night ? '' : `<div class="spot" style="left:calc(${bx}% - 120px);top:calc(${by}% - 120px);width:240px;height:240px;background:radial-gradient(circle, rgba(226,88,94,.28), transparent 65%)"></div>
+     <div class="spot" style="left:calc(${bx}% - 50px);top:-120px;width:100px;height:calc(${by}% + 120px);background:linear-gradient(180deg, rgba(226,88,94,0), rgba(226,88,94,.14));clip-path:polygon(40% 0,60% 0,100% 100%,0 100%)"></div>`;
+  const center = night
+    ? `<div class="ring-center" style="z-index:3">${moonSvg(.6, '', 110)}<div class="sub" style="font:600 11px var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--ash);margin-top:10px">3 of 5 asleep</div></div>`
+    : countdown ? `<div class="heart">0:07</div>` : `<div class="candle"><i></i><b></b></div><div class="center-txt"><div class="big">2</div><div class="sub">accused · discussion</div></div>`;
+  const fog = night ? `<div class="abs" style="inset:0;z-index:2;pointer-events:none;background:radial-gradient(40% 18% at 30% 60%, rgba(180,195,220,.10), transparent 70%), radial-gradient(45% 16% at 70% 45%, rgba(180,195,220,.09), transparent 70%), radial-gradient(30% 14% at 55% 75%, rgba(180,195,220,.08), transparent 70%)"></div>` : '';
+  return `${skyArc(night ? 0.35 : 0.62, night)}
+  <div class="tv-head"><span class="ph">${night ? '<i>Night</i>' : 'Day'} <span style="font-size:.5em;vertical-align:.7em;color:var(--ash)">${night ? 'II' : 'III'}</span></span><span class="step">${night ? 'Night actions · Underground Bunker' : countdown ? 'Secret ballot · last seconds' : 'Discussion · Underground Bunker'}</span><span class="grow"></span><span class="clk ${countdown ? 'blood' : ''}">${night ? '1:12' : countdown ? '0:07' : '2:41'}</span><span class="mute">${G('bell')}<span class="eq"><i style="height:6px"></i><i style="height:12px"></i><i style="height:8px"></i></span> ${night ? 'Night score' : 'Day score'}</span></div>
+  <div class="stage">
+    <div class="bigring"><div class="ring" style="--tok:74px">
+      <div class="ring-table"></div>${spot}${!night ? threadSvg([[5, 1, 3.5, .8], [3, 1, 1.8, .6], [1, 5, 1.8, .55], [4, 6, 1.2, .3], [7, 6, 1.2, .3]]) : ''}
+      ${tokens(players)}${center}${fog}
+    </div></div>
+    <div class="plaques">
+      <span class="plaque ${countdown ? 'on' : ''}">${G('magistrate')} Majority Rule ${countdown ? '<em>— in effect: more than 2½ needed</em>' : ''}</span>
+      <span class="plaque ${!night && !countdown ? 'on' : ''}">${G('scroll')} Fog of War ${!night && !countdown ? '<em>— talk only to your neighbours</em>' : ''}</span>
+    </div>
+  </div>
+  ${chronicle(night ? 'The town sleeps' : 'Bo and Fay stand accused', night)}
+  ${countdown ? `<div class="vignette"></div>${Array.from({ length: 18 }, (_, i) => { const side = i % 4; const t = (i * 37) % 100; const s = side === 0 ? `left:${t}%;top:2px` : side === 1 ? `right:2px;top:${t}%` : side === 2 ? `left:${t}%;bottom:2px` : `left:2px;top:${t}%`; return `<span class="spark" style="${s}"></span>`; }).join('')}` : ''}`;
+}
+
+// ── Dawn Gazette front page (11) ─────────────────────────────────
+const gazette = `<div class="paper">
+  <div class="mh"><h2>The Dead Set Gazette</h2><div><span>Underground Bunker</span><span>Dawn of Day III</span><span>Price: one soul</span></div></div>
+  <div class="hl">ADA FOUND DEAD</div>
+  <p class="dk">Villagers wake to an empty chair; four others rose unharmed. The town will choose again before nightfall.</p>
+  <div class="cols">
+    <p>The bunker was quiet when the lamps came on. Ada, who had argued for patience at yesterday's trial, did not answer the morning bell. No one saw who came for her. Five remain, and at least one of them is lying.</p>
+    <div class="photo"><div class="portrait">A<svg viewBox="0 0 100 100"><path d="M52 8 L46 30 L58 42 L44 60 L54 76 L48 94"/><path d="M58 42 L74 46"/></svg></div>Ada · seat I · Night II</div>
+    <div class="facts"><div><span>Alive</span><span>5 of 8</span></div><div><span>Dead</span><span>Cy · Gus · Ada</span></div><div><span>Yesterday</span><span>Gus sentenced 5–2</span></div><div><span>Rules</span><span>Majority · Fog</span></div><div><span>Death wins at</span><span>a strict majority</span></div></div>
+  </div>
+  <div class="stampx">Extra</div>
+</div>`;
+
+const boards = [
+  board('A · Empty Table — phone, host tab', 'phone', aPhone),
+  board('A · Empty Table — phone, join tab', 'phone', aPhoneJoin),
+  board('A · Empty Table — desktop', 'desk', aDesk),
+  board('E · Invitation — sealed (link or QR)', 'phone', eSealed),
+  board('E · Invitation — opened', 'phone', eOpen),
+  board('20 · TV lobby showcase', 'tv', tvLobby),
+  board('20 · Phone lobby — deck & rules reflected', 'phone', phoneLobbyDeck),
+  board('19 · Opening ceremony — TV', 'tv night', tvCeremony),
+  board('19 · Opening ceremony — phone', 'phone night', phoneCeremony),
+  board('1 · 2 · 4 · 6 · 8 · 17 — TV day', 'tv', tvDay()),
+  board('1 · 2 · 4 · 8 — TV night', 'tv night', tvDay({ night: true })),
+  board('13 · Countdown pressure — TV', 'tv', tvDay({ countdown: true })),
+  board('11 · Dawn Gazette front page — TV', 'tv', `<div style="position:absolute;inset:0;background:radial-gradient(80% 70% at 50% 100%, #3a2a1c, #100e0d 65%)"></div>${gazette}`),
+];
+document.getElementById('boards').innerHTML = boards.join('');
+document.body.dataset.ready = '1';
+</script>
+</body>
+</html>
