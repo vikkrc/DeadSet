@@ -1,6 +1,7 @@
 // The public TV board. Everything here is derived from the public view only:
 // it never reacts to private actions, not even with random decoration.
 import { gazetteHtml } from './gazette.js';
+import { seatLayout } from './layout.js';
 
 /** Which Rule cards shape the current phase, with a one-line note. */
 export function activeRuleNotes(v) {
@@ -57,6 +58,7 @@ export function boardScreen(v, h) {
     <span class="b-step">${esc(STEP[v.phase] ?? '')}${place ? ` · ${esc(place)}` : ''}</span>
     <span class="grow"></span>
     <span class="b-clock clock" data-clock></span>
+    ${v.phase === 'ENDED' && v.recap ? `<button class="b-sound start" data-act="recap" data-key="b-recap">${glyph('scroll')} ${t('View recap')}</button>` : ''}
     ${soundCtl}
   </header>`;
 
@@ -99,12 +101,10 @@ export function boardScreen(v, h) {
 
   // ── 1 · Living table + 2 · sky + 6 · threads + 17 · plaques ────────────
   const players = [...v.players].sort((a, b) => a.seat - b.seat);
-  const n = players.length;
-  const R = n <= 6 ? 36 : 38.5;
+  const layout = seatLayout(players.length);
   const pos = (id) => {
-    const i = players.findIndex((p) => p.id === id);
-    const a = (-90 + (i * 360) / n) * (Math.PI / 180);
-    return [50 + R * Math.cos(a), 50 + R * Math.sin(a)];
+    const p = layout.pos[players.findIndex((x) => x.id === id)] ?? { x: 50, y: 50 };
+    return [p.x, p.y];
   };
   let extra = '';
   if (!night && v.day?.nominees?.length && ['DAY_DISCUSSION', 'DAY_DEFENSE', 'DAY_VOTING', 'DAY_RESOLVING'].includes(v.phase)) {

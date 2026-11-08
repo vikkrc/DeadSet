@@ -73,7 +73,7 @@ test('Suggested setups are balanced and fit every count from 5 to 25', () => {
     assert.equal(sug.length, 3);
     for (const g of sug) {
       assert.equal(Object.values(g.roles).reduce((a, b) => a + b, 0), n, `${g.key} @${n}`);
-      const s = applySettingsPatch(applySettingsPatch(defaultSettings(), { preset: 'custom' }), { customRoles: g.roles });
+      const s = applySettingsPatch(applySettingsPatch(defaultSettings(), { preset: 'custom' }), { deckMode: 'exact', customRoles: g.roles });
       const r = validateSetup(n, s);
       assert.deepEqual(r.errors, [], `${g.key} @${n}`);
       if (n < 8) assert.ok(!g.roles.JESTER);
@@ -97,7 +97,7 @@ test('Small tables: random draws skip Double Jeopardy and the Jester', () => {
   for (let seed = 1; seed < 60; seed++) assert.ok(!drawRules(s, seededRng(seed), 6).includes('DOUBLE_JEOPARDY'));
   const full = applySettingsPatch(defaultSettings(), { preset: 'full' });
   for (let seed = 1; seed < 60; seed++) assert.ok(!buildDeck(7, full, seededRng(seed)).includes('JESTER'));
-  const custom = applySettingsPatch(applySettingsPatch(defaultSettings(), { preset: 'custom' }), { customRoles: { DEATH: 1, JESTER: 1, INNOCENT: 3 }, rules: { mode: 'manual', selected: ['DOUBLE_JEOPARDY'] } });
+  const custom = applySettingsPatch(applySettingsPatch(defaultSettings(), { preset: 'custom' }), { deckMode: 'exact', customRoles: { DEATH: 1, JESTER: 1, INNOCENT: 3 }, rules: { mode: 'manual', selected: ['DOUBLE_JEOPARDY'] } });
   const w = JSON.stringify(validateSetup(5, custom).warnings);
   assert.match(w, /Jester at fewer than/);
   assert.match(w, /Double Jeopardy at fewer than/);

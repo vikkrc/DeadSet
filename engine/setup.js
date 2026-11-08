@@ -45,6 +45,7 @@ export function defaultSettings() {
     score: true,
     dreamWeights: { ...DREAM_WEIGHTS },
     customRoles: {},
+    deckMode: 'auto',
     suggestSeed: 0,
     bloodMoon: true,
     finalTwoDeath: false,
@@ -79,7 +80,11 @@ export function applySettingsPatch(settings, patch = {}) {
       if (ROLES[id] && k > 0) out[id] = k;
     }
     s.customRoles = out;
-    if (Object.keys(out).length) s.customDeck = '';
+  }
+  if (['auto', 'exact'].includes(patch.deckMode) && preset.custom) {
+    s.deckMode = patch.deckMode;
+    if (s.deckMode === 'auto') s.customRoles = {};
+    s.customDeck = '';
   }
   if (patch.dreamWeights && typeof patch.dreamWeights === 'object' && preset.custom) {
     s.dreamWeights = { ...DREAM_WEIGHTS, ...s.dreamWeights };
@@ -154,7 +159,7 @@ export function parseCustomDeck(text) {
 export function exactDeck(settings) {
   if (!PRESETS[settings.preset]?.custom) return null;
   const counts = settings.customRoles || {};
-  if (Object.keys(counts).length) {
+  if (settings.deckMode === 'exact') {
     const out = [];
     for (const [id, c] of Object.entries(counts)) for (let i = 0; i < c; i++) out.push(id);
     return { roles: out, errors: [] };

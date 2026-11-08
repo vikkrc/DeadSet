@@ -5,6 +5,7 @@ import { qrSvg } from './qr.js';
 import { renderGuide } from './guide.js';
 import { sound, score, haptic, burstAt, celebrate, ambient } from './fx.js';
 import { boardScreen, activeRuleNotes, moodFor, ruleGlyph } from './board.js';
+import { seatLayout } from './layout.js';
 import { gazetteHtml, frontPageHtml } from './gazette.js';
 import { LANGS, t, th, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, scen, optLabel, list as tlist, loadLang, setContent, browserLang, isLang, getLang, extra as tx } from './i18n.js';
 
@@ -236,6 +237,12 @@ function detectMoments(v) {
   const name = (id) => v.players.find((p) => p.id === id)?.name ?? t('Someone');
   const meId = v.me?.id;
   const out = [];
+  // Private: your Dream was swapped by a Snatcher. Shown only on your phone,
+  // silently, as night actions open (everyone's actions open at the same time).
+  if (v.phase === 'NIGHT_ACTIONS' && v.me?.dreamFrom && v.me?.dream && !S.swapShown?.[v.phaseId]) {
+    (S.swapShown ||= {})[v.phaseId] = true;
+    out.push({ type: 'dreamswap', from: v.me.dreamFrom.id, to: v.me.dream.id, sound: null });
+  }
   for (const l of fresh) {
     switch (l.ev) {
       case 'night0': {
@@ -245,6 +252,7 @@ function detectMoments(v) {
       }
       case 'day1': out.push({ type: 'day1' }); break;
       case 'nightfall': out.push({ type: 'nightfall', n: l.n }); break;
+      case 'bloodmoon': out.push({ type: 'bloodmoon', n: l.n }); break;
       case 'dawn': {
         const rev = fresh.find((x) => x.ev === 'revive' && x.i > l.i);
         out.push({ type: 'dawn', day: l.day, killed: (l.killed ?? []).map(name), expired: (l.expired ?? []).map(name), revived: (rev?.ids ?? []).map(name), meDied: (l.victims ?? []).includes(meId) });
@@ -287,8 +295,8 @@ function detectMoments(v) {
   }
 }
 
-const MOMENT_SOUND = { night0: 'night', day1: 'dawn', nightfall: 'night', dawn: 'dawn', tally: 'knock', death: 'death', revive: 'reveal' };
-const MOMENT_TIME = { night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 5200, death: 3600, revive: 3000, call: 2200 };
+const MOMENT_SOUND = { night0: 'night', day1: 'dawn', nightfall: 'night', dawn: 'dawn', tally: 'knock', death: 'death', revive: 'reveal', bloodmoon: 'bloodmoon' };
+const MOMENT_TIME = { night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 5200, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
 const momentTime = (m) => (onBoard() && m.type === 'dawn' ? 9000 : MOMENT_TIME[m.type] + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
 
 function nextMoment() {
@@ -344,6 +352,14 @@ function momentHtml(m) {
       break;
     case 'nightfall':
       body = `<div class="m-art">${moon(0.35, 'rise')}<span class="stars"><i></i><i></i><i></i><i></i><i></i></span></div><span class="kicker">${t('Night {n}', { n: roman(m.n) })}</span><h1 class="m-title">${letters(t('Night falls'))}</h1><p class="m-sub">${t('Close your eyes. Keep your screen to yourself.')}</p>`;
+      break;
+    case 'bloodmoon':
+      body = `<div class="m-art blood-moon-art">${moon(1, 'rise blood')}<span class="stars"><i></i><i></i><i></i></span></div><span class="kicker blood">${t('Night {n}', { n: roman(m.n) })}</span><h1 class="m-title blood">${letters(t('Blood Moon'))}</h1><p class="m-sub">${t('Two nights passed without a death. Tonight no protection holds, and nothing can stay Death\'s hand.')}</p>`;
+      break;
+    case 'dreamswap':
+      body = `<span class="kicker">${t('A Dream Snatcher struck')}</span><h1 class="m-title">${letters(t('Your dream was stolen'))}</h1>
+        <div class="swap-cards"><div class="swap-card gone">${dreamGlyph(m.from)}<b>${esc(dreamF(m.from, 'name'))}</b></div><span class="swap-arrow">⟶</span><div class="swap-card new">${dreamGlyph(m.to)}<b>${esc(dreamF(m.to, 'name'))}</b><small>${esc(dreamF(m.to, 'text'))}</small></div></div>
+        <p class="m-sub small">${t('Tonight you dream this instead. Keep it to yourself.')}</p>`;
       break;
     case 'dawn': {
       if (onBoard()) { body = frontPageHtml(V(), m, H); break; }
@@ -453,6 +469,9 @@ function render() {
   const night = !!v && isNight(v.phase) && ['room', 'board'].includes(S.route?.name);
   document.body.dataset.time = night ? 'night' : 'day';
   document.body.classList.toggle('has-moment', !!S.moment);
+  document.body.classList.toggle('blood-moon', !!v?.bloodMoon && night);
+  const ghost = !!v?.me && !v.me.moderator && v.me.alive === false && v.phase !== 'LOBBY' && v.phase !== 'ENDED' && S.route?.name === 'room';
+  document.body.classList.toggle('is-dead', ghost);
   document.body.classList.toggle('is-board', onBoard());
   if (onBoard() && v && S.board.audio && v.table?.score !== false) score.play(moodFor(v));
   else score.stop();
@@ -476,6 +495,7 @@ function view() {
     else html = roomScreen();
   }
   if (S.ui.sheet === 'lang' && !(r.name === 'room' && S.token && V())) html += sheet(V());
+  if (S.ui.recap && V()?.recap) html += recapHtml(V());
   if (S.moment) html += momentHtml(S.moment);
   if (S.conn === 'lost' && S.code) html += `<div class="conn" data-key="conn" role="status"><span class="pulse-dot"></span>${t('Reconnecting… your choices are safe on the server.')}</div>`;
   html += `<div class="toasts" data-key="toasts" aria-live="polite">${S.notes.map((n) => `<div class="toast ${n.kind}" data-key="n-${n.id}">${esc(n.text)}</div>`).join('')}</div>`;
@@ -584,6 +604,7 @@ function homeScreen() {
         ${tab === 'host' ? `<div class="stack" data-key="h-host">
           <label class="field"><span>${t('Your name')}</span><input class="input" maxlength="20" autocomplete="nickname" placeholder="${esc(t('e.g. Morgan'))}" data-draft="createName" value="${esc(d.createName ?? '')}"></label>
           <label class="check"><input type="checkbox" data-act="toggleModerated" ${S.ui.moderated ? 'checked' : ''}><span><b>${t('I\'ll moderate, not play')}</b><small>${t('Sees every secret, holds no seat. Everyone is told.')}</small></span></label>
+          ${tutorialToggle()}
           <button class="btn btn-solid btn-wide btn-tall" data-act="create" ${S.pending ? 'disabled' : ''}>${t('Pull up a chair')}</button>
         </div>` : `<div class="stack" data-key="h-join">
           <label class="code-in" aria-label="${esc(t('Room code'))}">
@@ -638,6 +659,7 @@ function joinScreen() {
       <h2>${th('<i>{a}</i> has saved you a seat.', { a: hostName })}</h2>
       <p>${t('You are invited to a table of strangers, with Death roaming amongst them in secret.')}</p>${meta}
       <label class="sign"><input data-draft="joinName" maxlength="20" autocomplete="nickname" placeholder="${esc(t('Your name'))}" value="${esc(d.joinName ?? '')}"><small>${t('Sign your name')}</small></label>
+      <label class="letter-check"><input type="checkbox" data-act="tutorialToggle" ${tipsOn() ? 'checked' : ''}><span>${t('First game? Show me tips as we play')}</span></label>
       <button class="btn btn-blood btn-wide" data-act="join" ${S.pending ? 'disabled' : ''}>${t('Take my seat')}</button>
       <button class="letter-link" data-act="toggleRecover">${t('Already seated? Recover your seat')}</button>`;
   }
@@ -653,7 +675,7 @@ const guideScreen = () => `<main class="main" style="max-width:820px" data-key="
 
 /** Language picker chip (opens the language sheet). */
 function langChip() {
-  return `<button class="chip lang-chip" data-act="langSheet" aria-label="${esc(t('Language'))}">${glyph('whispers')}<span>${esc(LANGS.find((l) => l.code === getLang())?.name ?? 'English')}</span></button>`;
+  return `<button class="chip lang-chip" data-act="langSheet" aria-label="${esc(t('Language'))}">${glyph('whispers')}<span>${esc(getLang().toUpperCase())}</span></button>`;
 }
 
 // ── The table ring ─────────────────────────────────────────────────────────
@@ -664,8 +686,7 @@ function langChip() {
 function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = {}, lobby = false, crack = false, extra = '' } = {}) {
   const players = [...v.players].sort((a, b) => a.seat - b.seat);
   const n = Math.max(players.length, slots);
-  const tok = n <= 6 ? 60 : n <= 8 ? 54 : n <= 10 ? 48 : n <= 13 ? 42 : 38;
-  const R = n <= 6 ? 36 : 38.5;
+  const { pos, tok, dense } = seatLayout(n);
   const me = v.me;
   const d = v.day;
   const nomIdx = (id) => (d?.nominees ?? []).indexOf(id);
@@ -673,9 +694,8 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
   const can = new Set(pick?.ids ?? []);
   const seats = [];
   for (let i = 0; i < n; i++) {
-    const ang = (-90 + (i * 360) / n) * (Math.PI / 180);
-    const x = (50 + R * Math.cos(ang)).toFixed(2);
-    const y = (50 + R * Math.sin(ang)).toFixed(2);
+    const x = pos[i].x.toFixed(2);
+    const y = pos[i].y.toFixed(2);
     const p = players[i];
     if (!p) { seats.push(`<div class="tok empty" data-key="slot-${i}" style="left:${x}%;top:${y}%"><span class="tok-disc"></span><span class="tok-name">${t('empty')}</span></div>`); continue; }
     const selectable = can.has(p.id);
@@ -686,7 +706,7 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
       isSel ? 'sel' : '', selectable ? 'can' : pick ? 'mute' : '', pick?.tone === 'kill' ? 'kill' : '',
       ni >= 0 ? 'accused' : '', d?.speaking === p.id ? 'speaking' : '', p.immune ? 'immune' : '',
       lobby ? (p.ready ? 'ready' : 'unready') : '', reveal && p.alignment === 'DEATH' ? 'death' : '',
-      me?.teammates?.some((t) => t.id === p.id) ? 'mate' : '',
+      me?.teammates?.some((t) => t.id === p.id) ? 'mate' : '', pos[i].inner ? 'inner' : '',
     ].filter(Boolean).join(' ');
     const badges = [];
     if (ni >= 0) badges.push(`<b class="bdg b-nom" data-key="nom">${roman(ni + 1)}</b>`);
@@ -701,7 +721,7 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     seats.push(`<button type="button" class="${cls}" data-key="tok-${p.id}" style="left:${x}%;top:${y}%" ${selectable ? `data-act="${pick.act}" data-id="${p.id}"` : 'tabindex="-1"'} aria-pressed="${isSel}" aria-label="${label}">
       <span class="tok-disc">${sigil(p.id)}${crack && !p.alive ? CRACK : ''}${inner}${badges.join('')}</span><span class="tok-name">${esc(p.name)}</span></button>`);
   }
-  return `<div class="ring-wrap" data-key="ring-wrap"><div class="ring ${pick ? 'picking' : ''} ${pick?.tone === 'kill' ? 'kill' : ''}" style="--tok:${tok}px" data-key="ring">
+  return `<div class="ring-wrap" data-key="ring-wrap"><div class="ring ${dense ? 'dense' : ''} ${pick ? 'picking' : ''} ${pick?.tone === 'kill' ? 'kill' : ''}" style="--tok:${tok}px" data-key="ring">
     <svg class="ring-fuse off" viewBox="0 0 100 100" data-ringfuse aria-hidden="true"><circle class="track" cx="50" cy="50" r="49"/><circle class="burn" cx="50" cy="50" r="49" pathLength="100"/></svg>
     <div class="ring-table" aria-hidden="true"></div>
     ${extra}
@@ -822,7 +842,7 @@ function roomScreen() {
       <button class="btn btn-ghost icon-btn" data-act="sheet" data-id="record" aria-label="${esc(t('Open match record'))}">${glyph('menu')}</button>
       ${fuse()}
     </header>`;
-  return `<div class="shell" data-key="shell">${side}<div class="col">${top}<main class="main" id="main" data-key="main-${v.phase === 'LOBBY' ? 'lobby' : 'game'}">${mainFor(v, v.me)}</main></div></div>${dock(v)}${sheet(v)}`;
+  return `<div class="shell" data-key="shell">${side}<div class="col">${top}<main class="main" id="main" data-key="main-${v.phase === 'LOBBY' ? 'lobby' : 'game'}">${coachCard(v)}${mainFor(v, v.me)}</main></div></div>${dock(v)}${sheet(v)}`;
 }
 
 function hostBox() {
@@ -866,7 +886,7 @@ function head(v, extra = '') {
   const pw = phaseWord(v);
   return `<header class="phase-head" data-key="head-${v.phase}">
     <div class="ph-row"><h1>${pw.night ? `<i>${esc(pw.word)}</i>` : esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</h1>
-    <span class="kicker">${esc(STEP[v.phase] ?? '')}${v.doomsday && v.phase !== 'LOBBY' ? ` · ${t('Doom after Day {n}', { n: roman(v.doomsday) })}` : ''}</span>${extra}</div>
+    <span class="kicker">${esc(STEP[v.phase] ?? '')}${v.doomsday && v.phase !== 'LOBBY' ? ` · ${t('Doom after Day {n}', { n: roman(v.doomsday) })}` : ''}${v.bloodMoon && isNight(v.phase) ? ` · <span class="blood">${t('Blood Moon')}</span>` : ''}</span>${v.me && v.me.alive === false && !v.me.moderator && v.phase !== 'ENDED' ? `<span class="ghost-tag" data-key="ghosttag">${t(isGhostTable(v) ? 'Ghost' : 'Dead')}</span>` : ''}${extra}</div>
   </header>`;
 }
 
@@ -901,7 +921,7 @@ function sheet(v) {
   let body = '';
   if (s === 'record') {
     title = th('Room {code}', { code: v.code });
-    body = `${hostBox()}${langRow(v)}<div>${recordBlock(v)}</div>
+    body = `${hostBox()}${langRow(v)}${v.me?.moderator ? '' : tutorialToggle()}<div>${recordBlock(v)}</div>
       <div class="row"><a class="btn btn-sm btn-ghost" href="/guide" data-link>${t('How to play')}</a><button class="btn btn-sm btn-ghost" data-act="leave">${glyph('out')} ${t('Leave this device')}</button></div>`;
   } else if (s === 'lang') {
     title = t('Language');
@@ -1016,7 +1036,7 @@ function lobbyDeck(v, isHost) {
   const allExt = (S.content?.roles ?? []).filter((r) => r.set !== 'core').map((r) => r.id);
   const poolIds = preset.custom ? allExt : preset.pool;
   const inPool = new Set(deck?.pool ?? (preset.custom ? s.extendedPool : preset.pool));
-  const editable = isHost && preset.custom && !s.customDeck.trim();
+  const editable = isHost && preset.custom && s.deckMode !== 'exact';
   const pool = poolIds.length && !deck?.exact ? `
     <div class="row between"><span class="kicker">${deck?.extended ? t('+{n} extended, drawn secretly from', { n: deck.extended }) : t('Extended pool · used from 7 players')}</span><span class="kicker on">${t('{n} of {total}', { n: [...inPool].filter((id) => poolIds.includes(id)).length, total: poolIds.length })}</span></div>
     <div class="pool-grid">${poolIds.map((id) => {
@@ -1042,6 +1062,8 @@ function lobbyDeck(v, isHost) {
     <div class="rule">${t('The table')}</div>
     ${isHost ? `<label class="toggle-row"><span><b>${t('Table language')}</b><small>${t('The default for everyone. Each player can still pick their own.')}</small></span><select class="input lang-select" data-act-change="tableLang">${LANGS.map((l) => `<option value="${l.code}" ${tableLang === l.code ? 'selected' : ''}>${esc(l.name)}</option>`).join('')}</select></label>`
       : `<div class="toggle-row"><span><b>${t('Table language')}</b><small>${t('Set by the host. You can pick your own above.')}</small></span><span class="tag">${esc(LANGS.find((l) => l.code === tableLang)?.name ?? tableLang)}</span></div>`}
+    ${toggle('bloodMoon', 'Blood Moon', 'After two nights in a row without a death, no protection holds for a night.')}
+    ${toggle('finalTwoDeath', 'Death wins in the final two', 'If a Death is among the last two players alive, Death wins at once.')}
     ${toggle('threads', 'Threads of suspicion', 'Draws who accused whom across the table')}
     ${toggle('score', 'Atmospheric score', 'Music and effects play on the TV board')}
   </section>`;
@@ -1078,7 +1100,8 @@ function setupForm(v) {
     ${preset.custom ? `<details class="more" data-key="d-custom" open><summary>${t('Custom deck')}</summary><div>
       <label class="check"><input type="checkbox" data-set-bool="dreams" ${s.dreams ? 'checked' : ''}><span><b>${t('Dreams')}</b><small>${t('Everyone draws a Dream card each night.')}</small></span></label>
       <label class="check"><input type="checkbox" data-set-bool="doomsday" ${s.doomsday ? 'checked' : ''}><span><b>${t('Doomsday Clock')}</b><small>${t('Death wins if nobody has won when the final Day closes.')}</small></span></label>
-      <label class="field"><span>${t('Exact deck (optional)')}</span><textarea class="input" data-set-text="customDeck" placeholder="Death x2&#10;Guardian&#10;Mentalist&#10;Psycho&#10;Whore">${esc(s.customDeck)}</textarea><small class="muted small">${t('Use the English role names, one per line; "x2" for copies.')}</small></label>
+      ${customDeckEditor(v)}
+      ${s.dreams ? dreamWeightsEditor(v) : ''}
     </div></details>` : ''}
     ${preset.id === 'classic' ? `<label class="check"><input type="checkbox" data-set-bool="dreams" ${s.dreams ? 'checked' : ''}><span><b>${t('Simplified Dreams')}</b><small>${t('Off by default for teaching games.')}</small></span></label>` : ''}
     ${preset.id === 'doomsday' || (preset.custom && s.doomsday) ? `<label class="field"><span>${t('Doomsday after Day')}</span><select class="input" data-set="doomsdayDays">${[1, 2, 3, 4, 5, 6, 7].map((n) => `<option ${s.doomsdayDays === n ? 'selected' : ''}>${n}</option>`).join('')}</select></label>` : ''}
@@ -1097,7 +1120,7 @@ function setupForm(v) {
     <details class="more" data-key="d-table"><summary>${t('Table & timers')}</summary><div>
       <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
       <div class="grid2">${timer('morning', 'Morning')}${timer('discussion', 'Discussion')}${timer('defense', 'Defence (each)')}${timer('voting', 'Voting')}${timer('night', 'Night')}${timer('retaliation', 'Final act')}</div>
-      <p class="small muted">${t('Each night opens with a five-second nightfall before actions begin.')}</p>
+      <p class="small muted">${t(s.dreams ? 'Each night opens with a fifteen-second nightfall: everyone reads their Dream before actions begin.' : 'Each night opens with a five-second nightfall before actions begin.')}</p>
       <label class="check"><input type="checkbox" data-set-bool="revealOnDeath" ${s.revealOnDeath ? 'checked' : ''}><span><b>${t('Reveal roles on death')}</b><small>${t('Never with the Hidden Roles card.')}</small></span></label>
       <label class="check"><input type="checkbox" data-set-bool="endReveal" ${s.endReveal ? 'checked' : ''}><span><b>${t('Reveal every role at the end')}</b></span></label>
       <label class="check"><input type="checkbox" data-set-bool="selfNomination" ${s.selfNomination ? 'checked' : ''}><span><b>${t('Allow self-nomination')}</b></span></label>
@@ -1106,6 +1129,51 @@ function setupForm(v) {
   </div>`;
 }
 const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+
+const SUGGESTION_LABEL = {
+  steady: ['Steady', 'Dependable powers. No conversions, no lone winners.'],
+  sharp: ['Sharp eyes', 'More information and protection for the town.'],
+  wild: ['Wild night', 'The whole deck, swings and all.'],
+};
+const ROLE_GROUPS = [['Death', (r) => r.alignment === 'DEATH'], ['Core', (r) => r.set === 'core' && r.alignment !== 'DEATH'], ['Standard', (r) => r.set === 'standard'], ['Full Deck', (r) => r.set === 'full']];
+
+/** Custom deck: automatic (by player count) or exact role counters, plus suggestions. */
+function customDeckEditor(v) {
+  const s = v.settings;
+  const exact = s.deckMode === 'exact';
+  const n = v.players.length;
+  const counts = s.customRoles || {};
+  const total = Object.values(counts).reduce((a, b) => a + b, 0);
+  const deaths = Object.entries(counts).filter(([id]) => id === 'DEATH').reduce((a, [, c]) => a + c, 0);
+  const all = S.content?.roles ?? [];
+  const sugg = v.setup?.suggestions ?? [];
+  const chipList = (roles) => Object.entries(roles).map(([id, c]) => `<span class="sg-role ${id === 'DEATH' ? 'death' : ''}">${glyph(all.find((r) => r.id === id)?.glyph ?? 'scroll')}${esc(roleF(id, 'name'))}${c > 1 ? `<i>×${c}</i>` : ''}</span>`).join('');
+  const suggestions = sugg.length ? `<div class="row between"><span class="kicker">${t('Suggested for {n} players', { n })}</span><button class="chip" data-act="reshuffleSuggest">${glyph('gambler')}<span>${t('Shuffle')}</span></button></div>
+    <div class="sugg" data-key="sugg">${sugg.map((g) => `<div class="sg" data-key="sg-${g.key}"><div class="sg-head"><b>${t(SUGGESTION_LABEL[g.key][0])}</b><button class="btn btn-sm" data-act="useSuggestion" data-id="${g.key}">${t('Use this')}</button></div><small>${t(SUGGESTION_LABEL[g.key][1])}</small><div class="sg-roles">${chipList(g.roles)}</div></div>`).join('')}</div>` : '';
+  const counter = (r) => {
+    const c = counts[r.id] || 0;
+    return `<div class="rc ${c ? 'on' : ''} ${r.alignment === 'DEATH' ? 'death' : ''}" data-key="rc-${r.id}">
+      <span class="rc-name">${glyph(r.glyph)}<span><b>${esc(roleF(r.id, 'name'))}</b><small>${esc(roleF(r.id, 'summary'))}</small></span></span>
+      <span class="rc-ctl"><button data-act="roleCount" data-id="${r.id}" data-d="-1" ${c ? '' : 'disabled'} aria-label="${esc(t('Fewer: {x}', { x: roleF(r.id, 'name') }))}">−</button><b>${c}</b><button data-act="roleCount" data-id="${r.id}" data-d="1" aria-label="${esc(t('More: {x}', { x: roleF(r.id, 'name') }))}">+</button></span>
+    </div>`;
+  };
+  const status = total === n ? 'ok' : 'off';
+  return `<div class="seg" role="group"><button data-act="deckMode" data-mode="auto" aria-pressed="${!exact}">${t('Automatic deck')}</button><button data-act="deckMode" data-mode="exact" aria-pressed="${exact}">${t('Choose every role')}</button></div>
+    <p class="small muted">${t(exact ? 'Set how many of each role are dealt. The total must match the players seated.' : 'Roles scale with the player count; extended seats come from the pool below.')}</p>
+    ${suggestions}
+    ${exact ? `<div class="rc-sum ${status}" data-key="rcsum"><b>${t('{n} of {total} seats filled', { n: total, total: n })}</b><span>${t('Death {a} · Others {b}', { a: deaths, b: total - deaths })}</span></div>
+      ${ROLE_GROUPS.map(([label, f]) => { const list = all.filter(f); return list.length ? `<div class="rule">${t(label)}</div><div class="rc-grid">${list.map(counter).join('')}</div>` : ''; }).join('')}` : ''}`;
+}
+
+const WEIGHT_LABEL = ['Off', 'Rare', 'Uncommon', 'Common', 'Frequent'];
+/** Custom Dream frequencies: a five-step scale per Dream. */
+function dreamWeightsEditor(v) {
+  const w = v.settings.dreamWeights || {};
+  return `<div class="rule">${t('Dream frequency')}</div>
+    <p class="small muted">${t('How often each Dream is drawn. Insomnia never appears more than twice in a match.')}</p>
+    <div class="dw" data-key="dw">${(S.content?.dreams ?? []).map((d) => `<div class="dw-row" data-key="dw-${d.id}"><span class="dw-name">${dreamGlyph(d.id)}<b>${esc(dreamF(d.id, 'name'))}</b></span>
+      <div class="seg dw-seg" role="group">${WEIGHT_LABEL.map((l, i) => `<button data-act="dreamWeight" data-id="${d.id}" data-w="${i}" aria-pressed="${(w[d.id] ?? 3) === i}">${t(l)}</button>`).join('')}</div></div>`).join('')}</div>`;
+}
 
 // ── Role card ──────────────────────────────────────────────────────────────
 function roleCardHtml(role, { align = null, flipKey = 'role', flipped = null, mini = false } = {}) {
@@ -1188,9 +1256,16 @@ function ruleRibbon(v, me) {
   return `<div class="rule-ribbon" data-key="rr-${v.phase}">${ids.map((id) => `<span class="rr" data-key="rr-${id}">${glyph(ruleGlyph(id))}<b>${esc(ruleF(id, 'name'))}</b><span>${tmh(notes[id])}</span></span>`).join('')}</div>`;
 }
 
+const isGhostTable = (v) => v.activeRules?.some((r) => r.id === 'VENGEFUL_GHOSTS');
+/** The dead see a ghostly screen; "ghost" wording only where ghosts can act. */
+function deadBanner(v) {
+  const ghost = isGhostTable(v);
+  return `<div class="banner dead-banner" data-key="st-dead">${glyph('death')}<div><b>${t(ghost ? 'You are a ghost.' : 'You are dead.')}</b><p>${t(ghost ? 'Vengeful Ghosts: you cast a ghost ballot each Day. You cannot speak or use powers.' : 'Watch in silence, and don\'t help the living.')}</p></div></div>`;
+}
+
 function statusBanners(v, me) {
   const out = [];
-  if (!me.alive) out.push(`<div class="banner" data-key="st-dead">${glyph('death')}<div><b>${t('You are dead.')}</b><p>${t('Watch in silence.')}${v.activeRules.some((r) => r.id === 'VENGEFUL_GHOSTS') ? ` ${t('Vengeful Ghosts: you cast a ghost ballot each Day.')}` : ''}</p></div></div>`);
+  if (!me.alive) out.push(deadBanner(v));
   if (me.statuses.includes('MUTE')) out.push(`<div class="banner blood" data-key="st-mute">${glyph('psycho')}<div><b>${t('You are MUTE today.')}</b><p>${t('No talking in discussion or defence. You can still nominate and vote.')}</p></div></div>`);
   if (me.statuses.includes('NO_VOTE')) out.push(`<div class="banner blood" data-key="st-nov">${glyph('psycho')}<div><b>${t('NO VOTE today.')}</b><p>${t('You may speak, but your ballot is disabled.')}</p></div></div>`);
   if (me.revived) out.push(`<div class="banner" data-key="st-rev">${glyph('necro')}<div><b>${t('Borrowed time.')}</b><p>${th('Nothing can kill you until it runs out after Night {n} — but the town can still sentence you.', { n: roman(me.revived.expiresAfterNight) })}</p></div></div>`);
@@ -1268,7 +1343,7 @@ const progressLine = (p) => (p ? th('{done}/{total} {label}', { done: p.done, to
 function nightMain(v, me) {
   if (!me.alive || v.action.type === 'spectate') {
     return `${head(v)}
-      <div class="banner" data-key="spec">${glyph('death')}<div><b>${me.alive ? t('You returned too late to act tonight.') : t('You are dead.')}</b><p>${t('No dreams, no powers. Dawn will tell.')}</p></div></div>
+      ${me.alive ? `<div class="banner" data-key="spec">${glyph('death')}<div><b>${t('You returned too late to act tonight.')}</b><p>${t('No dreams, no powers. Dawn will tell.')}</p></div></div>` : deadBanner(v)}
       ${ring(v, { center: centerFor(v) })}${chips(v)}`;
   }
   // Nightfall: a fixed five-second grace, then actions open by themselves.
@@ -1286,17 +1361,26 @@ function nightMain(v, me) {
 }
 
 function nightfallStage(v, me, a) {
-  const count = `<div class="nightfall-count" data-key="nfc"><b data-secs></b><span>${t('Shield your screen — your night begins in a moment.')}</span></div>`;
+  const blood = v.bloodMoon ? `<div class="banner blood bm-banner" data-key="bm">${moon(1, 'blood')}<div><b>${t('Blood Moon')}</b><p>${t('No protection holds tonight.')}</p></div></div>` : '';
+  const count = (line) => `<div class="nightfall-count" data-key="nfc"><b data-secs></b><span>${t(line)}</span></div>`;
+  if (!me.dream) {
+    return `<section class="nightfall" data-key="nightfall">${blood}${moon(0.08, 'big drift')}<h2>${t('Night falls')}</h2>${count('Shield your screen — your night begins in a moment.')}</section>`;
+  }
+  // Everyone turns over tonight's Dream; Dream Snatchers may also swap.
+  const reveal = `<div class="dream-reveal" data-key="dr-${me.dream.id}-${v.phaseId}"><div class="dr-in">
+      <div class="dr-face back">${moon(0.08)}</div>
+      <div class="dr-face front">${dreamGlyph(me.dream.id)}<span class="kicker">${t('Tonight\'s dream')}</span><h3>${esc(dreamF(me.dream.id, 'name'))}</h3><p>${esc(dreamF(me.dream.id, 'text'))}</p></div>
+    </div></div>`;
   if (a.type === 'swap' && a.snatcher) {
     const { pick } = activePick(v);
     return `<section class="nightfall snatch" data-key="nightfall-s">
-      ${dreamCard(me.dream)}
-      ${count}
+      ${blood}${reveal}
+      ${count('Night actions open when the count ends.')}
       <p class="small muted center-text" data-key="swaphint">${t('Dream Snatcher: tap a seat to swap Dream cards before the night opens — or leave it and keep yours.')}</p>
       ${ring(v, { pick, center: centerFor(v, pick) })}
     </section>`;
   }
-  return `<section class="nightfall" data-key="nightfall">${moon(0.08, 'big drift')}<h2>${t('Night falls')}</h2>${count}</section>`;
+  return `<section class="nightfall" data-key="nightfall">${blood}${reveal}${count('Shield your screen. Night actions open when the count ends.')}</section>`;
 }
 
 function sleepingHtml(v, line) {
@@ -1399,7 +1483,7 @@ function endMain(v, me) {
       <span class="tags"><span class="tag ${p.alignment === 'DEATH' ? 'blood' : ''}">${esc(ALIGN[p.alignment] ?? '')}</span></span></li>`).join('')}</ul>` : `<p class="muted">${t('The host chose not to reveal roles.')}</p>`}</section>
     ${me && !me.moderator ? `<details class="more" data-key="endnotes"><summary>${t('My notes')}</summary><div>${feed([...(v.private || [])].reverse(), 'feed-private')}</div></details>` : ''}
     <details class="more" data-key="endrec"><summary>${t('Public record')}</summary><div>${recordBlock(v)}</div></details>
-    <div class="row center" data-key="endbtns"><a class="btn" href="/" data-link>${t('Back to start')}</a></div>`;
+    <div class="row center" data-key="endbtns">${v.recap ? `<button class="btn btn-solid" data-act="recap">${glyph('scroll')} ${t('View recap')}</button>` : ''}<a class="btn" href="/" data-link>${t('Back to start')}</a></div>`;
 }
 
 // ── Moderator ──────────────────────────────────────────────────────────────
@@ -1416,6 +1500,139 @@ function moderatorMain(v) {
 
 /** Translation and markup helpers shared with the board, Gazette and guide. */
 const H = { esc, glyph, dreamGlyph, t, th, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, scen, tlist, tx, getLang };
+
+// ── First-game tips ────────────────────────────────────────────────────────
+const TIPS_KEY = 'deadset:tutorial';
+const TIPS_SEEN = 'deadset:tips-seen';
+const tipsOn = () => localStorage.getItem(TIPS_KEY) === '1';
+const tipsSeen = () => { try { return new Set(JSON.parse(localStorage.getItem(TIPS_SEEN) || '[]')); } catch { return new Set(); } };
+function tutorialToggle() {
+  return `<label class="check" data-key="tut"><input type="checkbox" data-act="tutorialToggle" ${tipsOn() ? 'checked' : ''}><span><b>${t('First-game tips')}</b><small>${t('Short hints walk you through each step of your first game.')}</small></span></label>`;
+}
+const TUTORIAL = {
+  lobbyHost: ['You are the host', 'Share the code, the link or the QR. Standard is the best mode for a first game. When everyone is ready, hold Start.'],
+  lobby: ['Welcome to the table', 'Wait for everyone to arrive and read the deck below. Then tap Ready; the host starts the game.'],
+  night0: ['Your secret role', 'Shield your screen and tap the card to turn it over. Read what your role does, then tap Understood. Nobody acts tonight.'],
+  night0Death: ['You are Death', 'You and your teammates know each other. Each night you agree on one victim. By day, blend in and steer suspicion away.'],
+  morning: ['Morning', 'The news tells you who died in the night. Anything only you learned is under Notes. The host opens the discussion.'],
+  discussion: ['Talk it out', 'Share suspicions — lying is allowed. Tap a seat, then confirm, to accuse someone. One accusation per day.'],
+  defense: ['The defence', 'Each accused player speaks in turn. Listen for slips and contradictions.'],
+  voting: ['Your secret vote', 'Tap the accused you trust least, then confirm. Only totals are shown. A tie at the top sentences nobody.'],
+  voteNo: ['No vote today', 'You cannot vote today, but you can still watch and listen.'],
+  resolving: ['A final act', 'The condemned may take someone with them. Wait for their choice.'],
+  nightfall: ['Night falls', 'Shield your screen. Your night actions open by themselves in a moment.'],
+  nightfallDream: ['Tonight\'s Dream', 'Everyone gets a Dream: a twist that lasts one night. Read it before the count ends.'],
+  nightPower: ['Use your power', 'Tap a seat (or an option), then Commit & sleep. If you would rather not, Pass & sleep. Nobody sees what you chose.'],
+  nightDeath: ['Choose a victim', 'Every Death must confirm the same target, or nobody dies tonight. Talk in the Death room, then confirm.'],
+  nightNone: ['A quiet night for you', 'You have nothing to do tonight. Tap Go to sleep and wait for dawn.'],
+  dead: ['You are out', 'Stay and watch, but don\'t give hints to the living. Your role stays secret unless the table reveals it.'],
+  ended: ['Game over', 'Every secret is out. Tap View recap to replay who did what, night by night.'],
+};
+function coachKey(v) {
+  const me = v.me;
+  if (!me || me.moderator) return null;
+  if (v.phase === 'LOBBY') return me.isHost ? 'lobbyHost' : 'lobby';
+  if (v.phase === 'ENDED') return v.recap ? 'ended' : null;
+  if (v.phase === 'NIGHT_0_REVEAL') return me.alignment === 'DEATH' ? 'night0Death' : 'night0';
+  if (!me.alive) return 'dead';
+  const a = v.action || {};
+  switch (v.phase) {
+    case 'DAY_PREP': return 'morning';
+    case 'DAY_DISCUSSION': return 'discussion';
+    case 'DAY_DEFENSE': return 'defense';
+    case 'DAY_VOTING': return a.type === 'ballot' ? 'voting' : 'voteNo';
+    case 'DAY_RESOLVING': return 'resolving';
+    case 'NIGHT_DREAM_SWAP': return me.dream ? 'nightfallDream' : 'nightfall';
+    case 'NIGHT_ACTIONS': return a.death ? 'nightDeath' : a.schema && !a.schema.blocked ? 'nightPower' : 'nightNone';
+    default: return null;
+  }
+}
+function coachCard(v) {
+  if (!tipsOn()) return '';
+  const key = coachKey(v);
+  if (!key || tipsSeen().has(key)) return '';
+  const [title, text] = TUTORIAL[key];
+  return `<aside class="coach" data-key="coach-${key}" role="note">${glyph('scroll')}<div><span class="kicker">${t('First-game tip')}</span><b>${t(title)}</b><p>${t(text)}</p>
+    <div class="row"><button class="btn btn-sm" data-act="coachDone" data-id="${key}">${t('Got it')}</button><button class="btn btn-sm btn-ghost" data-act="tutorialOff">${t('Turn tips off')}</button></div></div></aside>`;
+}
+
+// ── End-of-game recap ──────────────────────────────────────────────────────
+const RECAP_KIND = {
+  DEATH: 'death', TERRORIST: 'death', PSYCHO: 'death', GUARDIAN: 'protect', BODYGUARD: 'protect', ORACLE: 'protect', WITCH: 'protect',
+  MENTALIST: 'info', WHORE: 'other', TRAVELING_AGENT: 'other', MIMIC: 'other', NECROMANCER: 'protect', GAMBLER: 'other', CONSPIRATOR: 'info', SHARED_NIGHTMARE: 'dream',
+};
+const RECAP_ROLE = { accuse: 'Accusation', vote: 'Vote', death: 'Kill or harm', protect: 'Protection', info: 'Reading or whisper', other: 'Other visit', dream: 'Dream link' };
+function recapSteps(v) {
+  const steps = [];
+  const gone = new Set();
+  for (const h of v.recap || []) {
+    const deadBefore = new Set(gone);
+    if (h.kind === 'day') {
+      const arrows = [];
+      for (const n of h.nominations) arrows.push({ from: n.by, to: n.target, cls: 'accuse' });
+      for (const [voter, target] of Object.entries(h.ballots)) if (target !== 'ABSTAIN') arrows.push({ from: voter, to: target, cls: 'vote' });
+      for (const [voter, target] of Object.entries(h.ghostBallots || {})) if (target !== 'ABSTAIN') arrows.push({ from: voter, to: target, cls: 'vote ghost' });
+      for (const [shooter, target] of Object.entries(h.shots || {})) arrows.push({ from: shooter, to: target, cls: 'death' });
+      const lines = [];
+      for (const [shooter, target] of Object.entries(h.shots || {})) lines.push(th('{a} (Vigilante) shot at {b}.', { a: rawName(shooter), b: rawName(target) }));
+      for (const n of h.nominations) lines.push(th('{a} accuses {b}', { a: rawName(n.by), b: rawName(n.target) }));
+      const votes = Object.entries(h.ballots);
+      if (votes.length) lines.push(votes.map(([vtr, tg]) => th(tg === 'ABSTAIN' ? '{a} abstained' : '{a} voted {b}', { a: rawName(vtr), b: tg === 'ABSTAIN' ? '' : rawName(tg) })).join(' · '));
+      if (h.sentenced) { lines.push(`<b>${th('{name} sentenced', { name: rawName(h.sentenced) })}</b>`); gone.add(h.sentenced); } else if (h.nominations.length) lines.push(t(h.cancelled ? 'Sentence cancelled' : 'No sentence'));
+      for (const id of Object.keys(h.shots || {})) { const tg = h.shots[id]; if (!v.players.find((p) => p.id === tg)?.alive) gone.add(tg); }
+      steps.push({ title: t('Day {n}', { n: roman(h.n) }), night: false, arrows, lines, deadBefore, died: h.sentenced ? [h.sentenced] : [] });
+    } else {
+      const arrows = [];
+      for (const a of h.arrows) {
+        const froms = Array.isArray(a.from) ? a.from : [a.from];
+        for (const f of froms) arrows.push({ from: f, to: a.to, cls: `${RECAP_KIND[a.role] ?? 'other'} ${a.ok === false ? 'failed' : ''}` });
+      }
+      const lines = h.lines.map((l) => tmh(l));
+      if (h.bloodMoon) lines.unshift(`<b class="blood">${t('Blood Moon')}</b>`);
+      for (const id of h.died) gone.add(id);
+      steps.push({ title: t('Night {n}', { n: roman(h.n) }), night: true, arrows, lines, deadBefore, died: h.died });
+    }
+  }
+  return steps;
+}
+function recapRing(v, step) {
+  const players = [...v.players].sort((a, b) => a.seat - b.seat);
+  const { pos, dense } = seatLayout(players.length);
+  const at = (id) => pos[players.findIndex((p) => p.id === id)];
+  const r = dense ? 3.4 : 4.8;
+  const paths = step.arrows.map((a, i) => {
+    const p1 = at(a.from); const p2 = at(a.to);
+    if (!p1 || !p2) return '';
+    if (a.from === a.to) return `<path class="ra ${a.cls}" style="--d:${0.15 + i * 0.12}s" pathLength="1" d="M${(p1.x - r * 0.7).toFixed(1)} ${(p1.y - r * 0.7).toFixed(1)} c-6 -9 8 -9 ${(r * 1.4).toFixed(1)} 0" marker-end="url(#rah)"/>`;
+    const dx = p2.x - p1.x; const dy = p2.y - p1.y; const len = Math.hypot(dx, dy) || 1;
+    const sx = p1.x + (dx / len) * r; const sy = p1.y + (dy / len) * r; const ex = p2.x - (dx / len) * (r + 1); const ey = p2.y - (dy / len) * (r + 1);
+    const mx = (sx + ex) / 2 * 0.7 + 50 * 0.3; const my = (sy + ey) / 2 * 0.7 + 50 * 0.3;
+    return `<path class="ra ${a.cls}" style="--d:${0.15 + i * 0.12}s" pathLength="1" d="M${sx.toFixed(1)} ${sy.toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}" marker-end="url(#rah)"/>`;
+  }).join('');
+  const seats = players.map((p, i) => {
+    const q = pos[i];
+    const cls = [step.deadBefore.has(p.id) ? 'gone' : '', step.died.includes(p.id) ? 'falls' : '', p.alignment === 'DEATH' ? 'death' : ''].join(' ');
+    return `<g class="rs ${cls}"><circle cx="${q.x.toFixed(1)}" cy="${q.y.toFixed(1)}" r="${r}"/><text x="${q.x.toFixed(1)}" y="${(q.y + r * 0.38).toFixed(1)}" font-size="${(r * 1.05).toFixed(1)}">${esc(initials(p.name))}</text><text class="rs-name" x="${q.x.toFixed(1)}" y="${(q.y + r + 3.2).toFixed(1)}" font-size="${dense ? 2.2 : 2.8}">${esc(p.name)}</text></g>`;
+  }).join('');
+  return `<svg class="recap-ring" viewBox="-4 -4 108 108" aria-hidden="true"><defs><marker id="rah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z"/></marker></defs><circle class="rr-table" cx="50" cy="50" r="${dense ? 22 : 28}"/>${paths}${seats}</svg>`;
+}
+function recapHtml(v) {
+  const steps = recapSteps(v);
+  if (!steps.length) return '';
+  const i = Math.max(0, Math.min(steps.length - 1, S.ui.recap.i));
+  const st = steps[i];
+  const kinds = [...new Set(st.arrows.map((a) => a.cls.split(' ')[0]))];
+  return `<div class="recap ${st.night ? 'is-night' : ''}" data-key="recap" role="dialog" aria-label="${esc(t('Recap'))}">
+    <div class="recap-top"><span class="kicker">${t('Recap · {a} of {b}', { a: i + 1, b: steps.length })}</span><button class="btn btn-ghost icon-btn" data-act="recapClose" aria-label="${esc(t('Close'))}">${glyph('close')}</button></div>
+    <h2 class="recap-title" data-key="rt-${i}">${st.night ? `<i>${esc(st.title)}</i>` : esc(st.title)}</h2>
+    <div class="recap-body" data-key="rb-${i}">${recapRing(v, st)}
+      <div class="recap-side"><div class="recap-legend">${kinds.map((k) => `<span class="rl ${k}"><i></i>${t(RECAP_ROLE[k] ?? 'Other visit')}</span>`).join('')}</div>
+      <ul class="recap-lines">${st.lines.map((l, k) => `<li style="--d:${0.3 + k * 0.12}s">${l}</li>`).join('') || `<li>${t('Nothing happened.')}</li>`}</ul></div></div>
+    <div class="recap-nav"><button class="btn" data-act="recapStep" data-d="-1" ${i === 0 ? 'disabled' : ''}>‹ ${t('Back')}</button>
+      <button class="btn ${S.ui.recap.play ? '' : 'btn-solid'}" data-act="recapPlay">${t(S.ui.recap.play ? 'Pause' : 'Play')}</button>
+      <button class="btn" data-act="recapStep" data-d="1" ${i === steps.length - 1 ? 'disabled' : ''}>${t('Next')} ›</button></div>
+  </div>`;
+}
 
 // ── Board (public TV display) ──────────────────────────────────────────────
 function boardView() {
@@ -1642,6 +1859,47 @@ const ACT = {
   chatTab(el) { S.ui.chat = el.dataset.id; render(); },
   tab(el) { S.ui.tab = el.dataset.id; render(); },
   momentNext() { nextMoment(); },
+  deckMode(el) {
+    const mode = el.dataset.mode;
+    const sug = V().setup?.suggestions?.[0]?.roles;
+    send('host.settings', mode === 'exact' ? { deckMode: 'exact', customRoles: Object.keys(V().settings.customRoles || {}).length ? V().settings.customRoles : (sug ?? {}) } : { deckMode: 'auto' });
+  },
+  roleCount(el) {
+    const counts = { ...(V().settings.customRoles || {}) };
+    const id = el.dataset.id;
+    counts[id] = Math.max(0, Math.min(25, (counts[id] || 0) + Number(el.dataset.d)));
+    if (!counts[id]) delete counts[id];
+    send('host.settings', { customRoles: counts }, { quiet: true });
+  },
+  useSuggestion(el) {
+    const g = V().setup?.suggestions?.find((x) => x.key === el.dataset.id);
+    if (g) { burstAt(el); send('host.settings', { deckMode: 'exact', customRoles: g.roles }); }
+  },
+  reshuffleSuggest() { send('host.settings', { suggestSeed: (V().settings.suggestSeed || 0) + 1 }, { quiet: true }); },
+  dreamWeight(el) { send('host.settings', { dreamWeights: { [el.dataset.id]: Number(el.dataset.w) } }, { quiet: true }); },
+  tutorialToggle(el) {
+    const on = el.type === 'checkbox' ? el.checked : !tipsOn();
+    localStorage.setItem(TIPS_KEY, on ? '1' : '0');
+    if (on) localStorage.removeItem(TIPS_SEEN);
+    render();
+  },
+  tutorialOff() { localStorage.setItem(TIPS_KEY, '0'); render(); },
+  coachDone(el) { const seen = tipsSeen(); seen.add(el.dataset.id); localStorage.setItem(TIPS_SEEN, JSON.stringify([...seen])); render(); },
+  recap() { S.ui.recap = { i: 0, play: false }; uiSound('whoosh'); render(); },
+  recapClose() { clearInterval(S.recapTimer); S.ui.recap = null; render(); },
+  recapStep(el) { S.ui.recap.i += Number(el.dataset.d); render(); },
+  recapPlay() {
+    S.ui.recap.play = !S.ui.recap.play;
+    clearInterval(S.recapTimer);
+    if (S.ui.recap.play) {
+      S.recapTimer = setInterval(() => {
+        const n = recapSteps(V()).length;
+        if (!S.ui.recap || S.ui.recap.i >= n - 1) { clearInterval(S.recapTimer); if (S.ui.recap) S.ui.recap.play = false; render(); return; }
+        S.ui.recap.i++; pubSound('page'); render();
+      }, 5200);
+    }
+    render();
+  },
   langSheet() { S.ui.sheet = S.ui.sheet === 'lang' ? null : 'lang'; render(); },
   setLang(el) {
     if (el.dataset.id) localStorage.setItem(LANG_KEY, el.dataset.id); else localStorage.removeItem(LANG_KEY);

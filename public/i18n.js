@@ -104,14 +104,24 @@ function fill(s, p, html) {
   return s.replace(/\{(\w+)\}/g, (all, k) => (k in p ? (html ? escH(val(k, p[k])) : val(k, p[k])) : all));
 }
 
+// While testing (localhost or ?i18n=debug), remember strings a dictionary lacks.
+const DEBUG = typeof location !== 'undefined' && (location.hostname === 'localhost' || location.search.includes('i18n=debug'));
+const missing = new Set();
+if (DEBUG && typeof window !== 'undefined') window.__i18nMissing = missing;
+const look = (tpl) => {
+  const hit = D?.ui?.[tpl];
+  if (hit === undefined && D && DEBUG && tpl && /[a-z]/i.test(tpl) && !missing.has(tpl)) { missing.add(tpl); console.warn(`[i18n:${lang}] missing:`, tpl); }
+  return hit ?? tpl;
+};
+
 /** Translate an interface string (plain text). */
 export function t(tpl, p) {
-  const s = D?.ui?.[tpl] ?? tpl;
+  const s = look(tpl);
   return p ? fill(s, p, false) : s;
 }
 /** Translate for HTML: the template is trusted, parameters are escaped. */
 export function th(tpl, p) {
-  const s = D?.ui?.[tpl] ?? tpl;
+  const s = look(tpl);
   return p ? fill(s, p, true) : s;
 }
 /** Render a server message (string or [template, params]) as plain text. */
