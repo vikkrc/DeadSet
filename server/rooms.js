@@ -11,6 +11,7 @@ import { playerView, publicView, moderatorView } from '../engine/views.js';
 import { secureRng } from '../engine/rng.js';
 import { ROLES, PRESETS, LANGS } from '../engine/content.js';
 import { byId, pub } from '../engine/state.js';
+import { botDecide, botAvatar, BOT_NAMES } from './bots.js';
 
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no 0/O/1/I
 const HOST_GRACE_MS = 60_000;
@@ -21,7 +22,8 @@ const newToken = () => randomBytes(32).toString('base64url');
 const newId = () => randomBytes(9).toString('base64url');
 
 export class RoomManager {
-  constructor({ dataFile = null, rng = secureRng(), clock = () => Date.now() } = {}) {
+  constructor({ dataFile = null, rng = secureRng(), clock = () => Date.now(), botDelay = [700, 1800] } = {}) {
+    this.botDelay = botDelay;
     this.rooms = new Map();
     this.dataFile = dataFile;
     this.rng = rng;
@@ -62,13 +64,13 @@ export class RoomManager {
     return pid;
   }
 
-  createRoom({ name, moderated = false, lang = 'en' }) {
+  createRoom({ name, moderated = false, lang = 'en', avatar = null }) {
     const code = this.newCode();
     const hostId = newId();
     const match = newMatch({ id: newId(), code, hostId, moderated });
     const room = { code, match, sessions: new Map(), recovery: new Map(), clients: new Set(), timer: null, touched: this.clock(), hostSeen: this.clock(), transferVotes: new Set() };
     if (LANGS.includes(lang)) match.settings.lang = lang;
-    if (!moderated) addPlayer(match, { id: hostId, name });
+    if (!moderated) addPlayer(match, { id: hostId, name, avatar });
     else room.moderatorName = normaliseName(name) || 'Moderator';
     if (!moderated && match.players[0]) match.players[0].ready = true;
     this.rooms.set(code, room);
@@ -77,10 +79,10 @@ export class RoomManager {
     return { code, token, playerId: hostId };
   }
 
-  joinRoom(code, { name }) {
+  joinRoom(code, { name, avatar = null }) {
     const room = this.room(code);
     const pid = newId();
-    addPlayer(room.match, { id: pid, name });
+    addPlayer(room.match, { id: pid, name, avatar });
     const token = this.issueSession(room, pid);
     this.changed(room);
     return { code: room.code, token, playerId: pid };
@@ -141,6 +143,24 @@ export class RoomManager {
         break;
       }
       case 'host.seat': moveSeat(m, payload.playerId, Number(payload.dir)); break;
+      // Practice bots (hidden test mode): fill seats with automatic players.
+      case 'host.bots': {
+        if (m.phase !== 'LOBBY') throw new GameError('Not in the lobby.');
+        const want = Math.max(0, Math.min(24, Number(payload.count) || 0));
+        const taken = new Set(m.players.map((p) => p.name.toLowerCase()));
+        for (let i = 0; i < want && m.players.length < 25; i++) {
+          const name = BOT_NAMES.find((n) => !taken.has(n.toLowerCase())) ?? `Bot ${m.players.length + 1}`;
+          taken.add(name.toLowerCase());
+          const p = addPlayer(m, { id: newId(), name, avatar: botAvatar(this.rng), bot: true });
+          p.ready = true;
+        }
+        break;
+      }
+      case 'host.botsClear': {
+        if (m.phase !== 'LOBBY') throw new GameError('Not in the lobby.');
+        for (const p of m.players.filter((x) => x.bot)) removePlayer(m, p.id);
+        break;
+      }
       case 'host.assign': {
         if (!m.moderated || m.phase !== 'LOBBY') throw new GameError('Manual assignment is only for trusted moderators in the lobby.');
         if (payload.clear) m.manualRoles = {};
@@ -238,7 +258,7 @@ export class RoomManager {
   }
 
   syncPresence(room) {
-    for (const p of room.match.players) p.connected = this.isConnected(room, p.id);
+    for (const p of room.match.players) p.connected = p.bot || this.isConnected(room, p.id);
   }
 
   viewFor(room, client) {
@@ -287,6 +307,27 @@ export class RoomManager {
     this.arm(room);
     this.broadcast(room);
     this.scheduleSave();
+    this.wakeBots(room);
+  }
+
+  /** Each bot takes its turn a moment after anything changes. */
+  wakeBots(room) {
+    const m = room.match;
+    for (const p of m.players) {
+      if (!p.bot || room.botTimers?.has(p.id)) continue;
+      (room.botTimers ||= new Map()).set(p.id, setTimeout(() => {
+        room.botTimers.delete(p.id);
+        if (this.rooms.get(room.code) !== room || !m.players.includes(p)) return;
+        let move = null;
+        try { move = botDecide(m, p.id, this.rng); } catch { move = null; }
+        if (!move) return;
+        if (move.wait) { this.wakeBots(room); return; }
+        try {
+          playerCommand(m, p.id, { ...move.cmd, phaseId: m.phaseId }, this.rng, this.clock());
+          this.changed(room);
+        } catch { /* the window moved on; try again next change */ }
+      }, this.botDelay[0] + this.rng.int(this.botDelay[1])).unref?.() ?? null);
+    }
   }
 
   arm(room) {

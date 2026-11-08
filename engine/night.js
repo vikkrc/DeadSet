@@ -1,7 +1,7 @@
 // Deterministic night adjudication (§11, §15, §23).
 // All inputs were collected while NIGHT_ACTIONS was open; this function stages
 // every consequence in local sets and commits them atomically at the end.
-import { ROLES, DREAMS, PRODUCTS } from './content.js';
+import { ROLES, DREAMS, PRODUCTS, CLUE_ODDS } from './content.js';
 import { byId, nameOf, hasRule, priv, pub } from './state.js';
 import { pick } from './rng.js';
 
@@ -180,6 +180,7 @@ export function resolveNight(m, rng) {
       const fell = [];
       for (const t of deathCmd.targets) {
         if (!aliveAtOpen.has(t)) continue;
+        if (!blood && roleNow(t) === 'RIPPER') { ins(['Death came for {b}, but the Ripper is not so easily caught.', { b: nameOf(m, t) }]); continue; }
         const prot = protectedFromDeath(t);
         if (prot) { ins(['Death came for {b}, but they were protected.', { b: nameOf(m, t) }]); continue; }
         const oracle = oracles.find((o) => !o.used && o.target === t);
@@ -207,6 +208,43 @@ export function resolveNight(m, rng) {
   } else if (team.length) {
     ins('The Death faction did not agree on a target.');
     for (const id of team) say(id, deathWhy === 'pass' ? 'Your team chose to pass tonight.' : 'Your team never agreed on a target, so nobody was killed by Death.', 'death');
+  }
+
+  // ── R4b: the Ripper's kill (same protections as Death's) ─────────────────
+  for (const it of intents.filter((x) => x.roleId === 'RIPPER')) {
+    if (!it.ok) { ins(['{a} (Ripper) went hunting for {b}, but the night turned against them.', { a: nameOf(m, it.actorId), b: nameOf(m, it.target) }]); say(it.actorId, failText(it.why)); continue; }
+    if (!aliveAtOpen.has(it.target)) continue;
+    const prot = protectedFromDeath(it.target);
+    if (prot) {
+      ins(['The Ripper came for {b}, but they were protected.', { b: nameOf(m, it.target) }]);
+      say(it.actorId, 'Your target survived the night.', 'death');
+      continue;
+    }
+    kill(it.target, 'RIPPER');
+    ins(['{a} (Ripper) killed {b}.', { a: nameOf(m, it.actorId), b: nameOf(m, it.target) }]);
+    say(it.actorId, ['Your blade found {names}.', { names: [nameOf(m, it.target)] }], 'death');
+  }
+
+  // ── R4c: the Cult recruits ───────────────────────────────────────────────
+  for (const it of intents.filter((x) => x.roleId === 'CULT_LEADER')) {
+    if (!it.ok) { ins(['{a} (Cult Leader) called to {b}, but the call was lost.', { a: nameOf(m, it.actorId), b: nameOf(m, it.target) }]); say(it.actorId, failText(it.why)); continue; }
+    if (deaths.has(it.actorId) || deaths.has(it.target)) continue;
+    const t = it.target;
+    if (['DEATH', 'CULT', 'RIPPER'].includes(alignNow(t)) || roleNow(t) === 'JESTER') {
+      ins(['{a} (Cult Leader) called to {b}, who would not answer.', { a: nameOf(m, it.actorId), b: nameOf(m, t) }]);
+      say(it.actorId, ['{b} would not answer your call.', { b: nameOf(m, t) }], 'cult');
+      continue;
+    }
+    if (protectedFromDeath(t)) {
+      ins(['{a} (Cult Leader) called to {b}, but something shielded them.', { a: nameOf(m, it.actorId), b: nameOf(m, t) }]);
+      say(it.actorId, ['Something shielded {b} from your call.', { b: nameOf(m, t) }], 'cult');
+      continue;
+    }
+    staged[t] = { ...(staged[t] || {}), alignment: 'CULT', teamJoinNight: null };
+    ins(['{a} (Cult Leader) recruited {b}.', { a: nameOf(m, it.actorId), b: nameOf(m, t) }]);
+    say(it.actorId, ['{b} has joined the Cult.', { b: nameOf(m, t) }], 'cult');
+    const members = m.players.filter((x) => x.id !== t && aliveAtOpen.has(x.id) && !deaths.has(x.id) && alignNow(x.id) === 'CULT').map((x) => x.name);
+    say(t, ['The Cult has claimed you. You keep your role, but you now win with the Cult. Its members: {names}.', { names: members }], 'cult');
   }
 
   // ── R5: Psycho statuses ──────────────────────────────────────────────────
@@ -318,6 +356,14 @@ export function resolveNight(m, rng) {
         ins(['{a} never woke from the nightmare shared with {b}.', { a: nameOf(m, holder), b: nameOf(m, partner) }]);
       }
     }
+    for (const p of m.players) {
+      if (!p.lover || !deaths.has(p.id)) continue;
+      const lv = p.lover;
+      if (aliveAtOpen.has(lv) && !deaths.has(lv)) {
+        kill(lv, 'HEARTBREAK'); changed = true;
+        ins(['{a} died of a broken heart for {b}.', { a: nameOf(m, lv), b: p.name }]);
+      }
+    }
     for (const [holder, partner] of Object.entries(N.sleepwalk)) {
       if (dreamOf(holder) !== 'SLEEPWALKING' || !aliveAtOpen.has(holder) || !aliveAtOpen.has(partner) || deaths.has(holder)) continue;
       if (deaths.has(partner)) {
@@ -364,6 +410,21 @@ export function resolveNight(m, rng) {
       say(p.id, insomnia.length ? 'Insomnia — you lay awake and saw everything:' : 'Insomnia — you lay awake all night. Nothing stirred.', 'insomnia', insomnia.length ? { lines: insomnia } : {});
     }
   }
+  // Clues: rarely, up to two survivors outside Death's team find a true hint.
+  const odds = m.config?.clues ? (CLUE_ODDS[m.config.clueOdds ?? 1] ?? 0) : 0;
+  if (odds && rng.int(100, 'clue') < odds) {
+    const eligible = survivors.filter((x) => x.alignment !== 'DEATH');
+    const count = eligible.length > 1 && rng.int(2, 'clue') === 1 ? 2 : 1;
+    const picked = [];
+    while (picked.length < count && picked.length < eligible.length) {
+      const x = pick(rng, eligible.filter((e) => !picked.includes(e)), 'clue');
+      picked.push(x);
+    }
+    for (const r of picked) {
+      const clue = makeClue(m, r, rng);
+      if (clue) say(r.id, clue, 'clue');
+    }
+  }
   for (const [pid, list] of Object.entries(reports)) {
     if (!byId(m, pid).alive) continue;
     for (const r of list) priv(m, pid, r.text, r.kind, r.extra);
@@ -383,6 +444,38 @@ export function resolveNight(m, rng) {
   if (deathCmd) for (const t of deathCmd.targets) arrows.push({ from: team, to: t, role: 'DEATH', ok: deathCmd.ok });
   for (const [holder, partner] of Object.entries(N.nightmare)) arrows.push({ from: holder, to: partner, role: 'SHARED_NIGHTMARE', ok: true, dream: true });
   return { deaths: [...deaths.keys()], expired, revivals, statuses: queuedStatuses, arrows, lines: insomnia };
+}
+
+/** One true hint about Death's team, worded so it never names a role. */
+function makeClue(m, recipient, rng) {
+  const alive = m.players.filter((p) => p.alive);
+  const deaths = alive.filter((p) => p.alignment === 'DEATH');
+  if (!deaths.length) return null;
+  const others = alive.filter((p) => p.alignment !== 'DEATH' && p.id !== recipient.id);
+  const seats = [...m.players].sort((a, b) => a.seat - b.seat);
+  const n = seats.length;
+  const dist = (a, b) => { const d = Math.abs(a.seat - b.seat); return Math.min(d, n - d); };
+  const kinds = [];
+  // a) somebody near a named seat
+  const d0 = pick(rng, deaths, 'clue');
+  const near = alive.filter((p) => p.id !== d0.id && p.id !== recipient.id && dist(p, d0) <= 2);
+  if (near.length) kinds.push(() => ['Clue: someone seated within two seats of {b} walks with Death.', { b: pick(rng, near, 'clue').name }]);
+  // b) one of two
+  if (others.length) kinds.push(() => {
+    const pair = [d0.name, pick(rng, others, 'clue').name];
+    if (rng.int(2, 'clue')) pair.reverse();
+    return ['Clue: one of {a} and {b} walks with Death.', { a: pair[0], b: pair[1] }];
+  });
+  // c) a clearing
+  if (others.length) kinds.push(() => ['Clue: {b} is not Death-aligned.', { b: pick(rng, others, 'clue').name }]);
+  // d) yesterday's ballots
+  const day = [...(m.history || [])].reverse().find((h) => h.kind === 'day');
+  if (day) {
+    const targets = Object.entries(day.ballots).filter(([v, tg]) => tg !== 'ABSTAIN' && byId(m, v)?.alignment === 'DEATH').map(([, tg]) => tg);
+    if (targets.length) kinds.push(() => ['Clue: a Death-aligned player voted for {b} yesterday.', { b: nameOf(m, pick(rng, targets, 'clue')) }]);
+  }
+  if (!kinds.length) return null;
+  return pick(rng, kinds, 'clue')();
 }
 
 function failText(why) {

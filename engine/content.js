@@ -180,6 +180,24 @@ export const ROLES = {
   },
 };
 
+// ── Optional sides (switched on in the lobby; never part of an extended pool) ──
+Object.assign(ROLES, {
+  CULT_LEADER: {
+    id: 'CULT_LEADER', name: 'Cult Leader', set: 'side', alignment: 'CULT', glyph: 'cult',
+    when: 'Every night',
+    summary: 'Each night, recruit one player into the Cult. The Cult wins when it outnumbers everyone else.',
+    detail: 'A recruit keeps their role and powers but now wins with the Cult, and learns who the other members are. Death-aligned players, the Ripper and protected players cannot be recruited. If the Leader dies, nobody else can recruit.',
+    night: { kind: 'target', self: false, repeatable: true, verb: 'Recruit' },
+  },
+  RIPPER: {
+    id: 'RIPPER', name: 'The Ripper', set: 'side', alignment: 'RIPPER', glyph: 'ripper',
+    when: 'Every night',
+    summary: 'Kill one player each night, alone. You win when you are the last one standing, or alone with one other who is no killer.',
+    detail: 'Your kill is stopped by the same protections as Death\'s (Guardian, Guardian Angel, Witch Bless, temporary revival). Death cannot kill you at night, except under a Blood Moon. You read as NOT DEATH-ALIGNED.',
+    night: { kind: 'target', self: false, repeatable: true, verb: 'Strike' },
+  },
+});
+
 export const CORE_ROLES = ['DEATH', 'INNOCENT', 'GUARDIAN', 'MENTALIST', 'PSYCHO'];
 export const STANDARD_EXTENDED = ['WHORE', 'TRAVELING_AGENT', 'TERRORIST', 'MIMIC', 'DOUBLE_AGENT',
   'DIPLOMAT', 'SCAPEGOAT', 'NECROMANCER', 'CONSPIRATOR', 'MAGISTRATE'];
@@ -249,6 +267,9 @@ export const RULE_CARDS = {
     text: 'Each eliminated player may cast one weight-1 ghost ballot per Day.',
     enforcement: 'Ghosts cannot nominate, use powers or influence Majority Rule.' },
 };
+RULE_CARDS.OPEN_BALLOT = { id: 'OPEN_BALLOT', name: 'Open Ballot', simple: true,
+  text: 'Every vote is public: everyone sees who is voting for whom as the ballots come in.',
+  enforcement: 'Ballots can still be changed until the vote locks. Ghost ballots are public too.' };
 export const RULE_IDS = Object.keys(RULE_CARDS);
 export const SIMPLE_RULE_IDS = RULE_IDS.filter((r) => RULE_CARDS[r].simple);
 
@@ -299,4 +320,8 @@ export const MIN_PLAYERS = 5;
 export const LANGS = ['en', 'hu', 'sk', 'cs', 'de', 'fr', 'es'];
 export const ABS_MAX_PLAYERS = 25;
 /** Below these counts, random draws skip cards that tend to unbalance small tables. */
-export const SMALL_TABLE = { DOUBLE_JEOPARDY: 7, JESTER: 8 };
+export const SMALL_TABLE = { DOUBLE_JEOPARDY: 7, JESTER: 8, CULT_LEADER: 8, RIPPER: 8 };
+/** Portrait parts: colours, eyes, mouths, hair (the client draws them). */
+export const AVATAR_PARTS = { c: 10, e: 8, m: 8, h: 10 };
+/** Chance per night that clues reach someone (index = odds setting). */
+export const CLUE_ODDS = [0, 15, 30, 50];

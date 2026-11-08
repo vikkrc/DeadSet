@@ -49,6 +49,13 @@ export function defaultSettings() {
     suggestSeed: 0,
     bloodMoon: true,
     finalTwoDeath: false,
+    clues: true,
+    clueOdds: 1,
+    lovers: false,
+    cult: false,
+    ripper: false,
+    tieBreak: 'none',
+    backdrops: true,
   };
 }
 
@@ -70,7 +77,7 @@ export function applySettingsPatch(settings, patch = {}) {
   }
   const preset = PRESETS[s.preset];
   if (Array.isArray(patch.extendedPool)) {
-    s.extendedPool = [...new Set(patch.extendedPool.filter((r) => ROLES[r] && ROLES[r].set !== 'core'))];
+    s.extendedPool = [...new Set(patch.extendedPool.filter((r) => ['standard', 'full'].includes(ROLES[r]?.set)))];
   }
   if (typeof patch.customDeck === 'string') s.customDeck = patch.customDeck.slice(0, 600);
   if (patch.customRoles && typeof patch.customRoles === 'object' && preset.custom) {
@@ -120,7 +127,9 @@ export function applySettingsPatch(settings, patch = {}) {
     s.dreamWeights = { ...DREAM_WEIGHTS };
     s.customRoles = {};
   }
-  for (const k of ['revealOnDeath', 'endReveal', 'selfNomination', 'selfVote', 'threads', 'score', 'bloodMoon', 'finalTwoDeath']) {
+  if (patch.clueOdds !== undefined) s.clueOdds = clampInt(patch.clueOdds, 1, 3, 1);
+  if (['none', 'coin'].includes(patch.tieBreak)) s.tieBreak = patch.tieBreak;
+  for (const k of ['revealOnDeath', 'endReveal', 'selfNomination', 'selfVote', 'threads', 'score', 'bloodMoon', 'finalTwoDeath', 'clues', 'lovers', 'cult', 'ripper', 'backdrops']) {
     if (typeof patch[k] === 'boolean') s[k] = patch[k];
   }
   return s;
@@ -245,6 +254,8 @@ export function validateSetup(n, settings) {
     if (roles.length && !roles.includes('MENTALIST') && !roles.includes('GUARDIAN')) warnings.push('No Mentalist or Guardian: the town has no information or protection.');
     if (roles.filter((x) => x === 'MIMIC').length > 1) warnings.push('Several Mimics may copy each other into powerlessness.');
     if (roles.includes('JESTER') && n < SMALL_TABLE.JESTER) warnings.push(['A Jester at fewer than {n} players can end the game very early.', { n: SMALL_TABLE.JESTER }]);
+    if (roles.includes('CULT_LEADER') && n < SMALL_TABLE.CULT_LEADER) warnings.push(['A Cult at fewer than {n} players can unbalance the game.', { n: SMALL_TABLE.CULT_LEADER }]);
+    if (roles.includes('RIPPER') && n < SMALL_TABLE.RIPPER) warnings.push(['The Ripper at fewer than {n} players can unbalance the game.', { n: SMALL_TABLE.RIPPER }]);
     if (n >= 10 && deaths < Math.round(n / 5)) warnings.push('Few Deaths for this many players: the town is favoured.');
     if (deaths > 0 && deaths * 2.6 > roles.length && deaths <= roles.length - deaths) warnings.push('Many Deaths for this many players: Death is favoured.');
     publicDeck = { exact: countBy(roles) };
@@ -254,19 +265,24 @@ export function validateSetup(n, settings) {
     if (c.EXTENDED > 0 && !preset.innocentFiller && pool.length === 0) {
       warnings.push('The extended pool is empty: extended seats become Innocents.');
     }
+    for (const [flag, id] of [['cult', 'CULT_LEADER'], ['ripper', 'RIPPER']]) {
+      if (settings[flag] && n < SMALL_TABLE[id]) warnings.push([id === 'RIPPER' ? 'The Ripper at fewer than {n} players can unbalance the game.' : 'A Cult at fewer than {n} players can unbalance the game.', { n: SMALL_TABLE[id] }]);
+    }
     if (preset.custom && pool.includes('JESTER')) {
       warnings.push(n < SMALL_TABLE.JESTER
         ? ['A Jester at fewer than {n} players can end the game very early.', { n: SMALL_TABLE.JESTER }]
         : 'Jester is in the pool: it can win alone if sentenced.');
     }
+    const sides = sideRoles(settings);
     publicDeck = {
-      core: { DEATH: c.DEATH, INNOCENT: c.INNOCENT + (preset.innocentFiller ? c.EXTENDED : 0), GUARDIAN: 1, MENTALIST: 1, PSYCHO: 1 },
+      core: { DEATH: c.DEATH, INNOCENT: Math.max(0, c.INNOCENT + (preset.innocentFiller ? c.EXTENDED : 0) - sides.length), GUARDIAN: 1, MENTALIST: 1, PSYCHO: 1, ...Object.fromEntries(sides.map((id) => [id, 1])) },
       extended: preset.innocentFiller ? 0 : c.EXTENDED,
       pool,
     };
   }
   const doomsday = preset.doomsday || (preset.custom && settings.doomsday);
   if (doomsday) warnings.push(['Doomsday Clock: Death wins if nobody has won after Day {n}.', { n: settings.doomsdayDays }]);
+  if (settings.lovers && n < 6) warnings.push('Lovers at a table this small can end the game very quickly.');
   const suggestions = preset.custom ? suggestSetups(n, settings.suggestSeed || 0) : undefined;
   return { ok: errors.length === 0, errors, warnings, publicDeck, suggestions };
 }
@@ -292,8 +308,25 @@ function countBy(arr) {
   return o;
 }
 
+/** Side roles the lobby switched on (automatic decks only; exact decks list them). */
+export function sideRoles(settings) {
+  if (exactDeck(settings)) return [];
+  return [settings.cult && 'CULT_LEADER', settings.ripper && 'RIPPER'].filter(Boolean);
+}
+
 /** Build the concrete list of N roles (server-side, authoritative randomness). */
 export function buildDeck(n, settings, rng) {
+  const deck = buildBaseDeck(n, settings, rng);
+  // Each side role takes the place of an Innocent (or, failing that, an extended seat).
+  for (const id of sideRoles(settings)) {
+    let i = deck.lastIndexOf('INNOCENT');
+    if (i < 0) i = deck.findIndex((r) => ROLES[r].set !== 'core');
+    if (i >= 0) deck[i] = id;
+  }
+  return deck;
+}
+
+function buildBaseDeck(n, settings, rng) {
   const preset = PRESETS[settings.preset];
   const exact = exactDeck(settings);
   if (exact) return exact.roles;

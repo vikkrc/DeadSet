@@ -43,8 +43,14 @@ export function tally(m) {
   const entries = Object.entries(source).filter(([, w]) => w > 0).sort((a, b) => b[1] - a[1]);
   const result = { totals, living, abstain, ghosts, majority, winner: null, reason: '' };
   if (!entries.length) { result.reason = 'No valid votes were cast. No one is sentenced.'; return result; }
-  if (entries.length > 1 && entries[0][1] === entries[1][1]) { result.reason = 'The vote is tied at the top. No one is sentenced.'; return result; }
   const [top, weight] = entries[0];
+  const tiedIds = entries.filter(([, w]) => w === weight).map(([id]) => id);
+  if (majority && !(weight > d.eligibleVoters.length / 2)) {
+    result.threshold = d.eligibleVoters.length / 2;
+    result.reason = ['Majority Rule: {w} is not more than half of {n} eligible voters. No one is sentenced.', { w: weight, n: d.eligibleVoters.length }];
+    return result;
+  }
+  if (tiedIds.length > 1) { result.tied = tiedIds; result.reason = 'The vote is tied at the top. No one is sentenced.'; return result; }
   if (majority) {
     const threshold = d.eligibleVoters.length / 2;
     result.threshold = threshold;

@@ -56,7 +56,8 @@ export function publicView(m, now = Date.now()) {
     doomsday: m.config?.doomsday ? m.config.doomsdayDays : null,
     scenario: m.scenario, activeRules: m.activeRules.map((id) => RULE_CARDS[id]),
     players: m.players.map((p) => ({
-      id: p.id, name: p.name, seat: p.seat, alive: p.alive, connected: p.connected,
+      id: p.id, name: p.name, seat: p.seat, alive: p.alive, connected: p.connected || !!p.bot, avatar: p.avatar ?? null, bot: !!p.bot,
+      lover: revealAll ? p.lover ?? null : undefined,
       ready: m.phase === 'LOBBY' ? p.ready : undefined,
       revived: !!p.tempRevival, immune: !!m.day?.immune.includes(p.id) && isDayPhase(m.phase),
       diedAt: p.alive ? null : p.diedAt ?? null,
@@ -79,6 +80,8 @@ export function publicView(m, now = Date.now()) {
       majority: hasRule(m, 'MAJORITY_RULE') ? m.day.eligibleVoters.length / 2 : null,
       retaliation: !!m.day.retaliation,
     };
+    // Open Ballot: every vote is public as it comes in.
+    if (hasRule(m, 'OPEN_BALLOT') && ['DAY_VOTING', 'DAY_RESOLVING'].includes(m.phase)) v.day.openBallots = { ...m.day.ballots, ...m.day.ghostBallots };
   }
   if (m.phase === 'LOBBY') {
     v.settings = m.settings;
@@ -117,6 +120,8 @@ export function playerView(m, pid, now = Date.now()) {
     acknowledged: p.acknowledged,
     ready: p.ready,
   };
+  if (started && p.lover) me.lover = { id: p.lover, name: nameOf(m, p.lover), alive: !!byId(m, p.lover)?.alive };
+  if (started && p.alignment === 'CULT') me.cultmates = m.players.filter((x) => x.alignment === 'CULT' && x.id !== p.id).map((x) => ({ id: x.id, name: x.name, alive: x.alive }));
   // Death teammates: only for currently active (or about-to-be-active) members.
   if (started && p.alive && p.alignment === 'DEATH' && p.teamJoinNight != null && p.teamJoinNight <= upcomingNight(m)) {
     me.teammates = deathTeam(m).filter((x) => x.id !== p.id).map((x) => ({ id: x.id, name: x.name }));

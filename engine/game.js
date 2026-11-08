@@ -2,7 +2,7 @@
 // Pure functions over a plain serialisable match object. The server wraps each
 // call in a single synchronous critical section (Node is single-threaded), so
 // every command or transition is atomic.
-import { ROLES, DREAMS, DREAM_IDS, RULES_VERSION, PRESETS, RULE_CARDS, ABS_MAX_PLAYERS, INSOMNIA_CAP } from './content.js';
+import { ROLES, DREAMS, DREAM_IDS, RULES_VERSION, PRESETS, RULE_CARDS, ABS_MAX_PLAYERS, INSOMNIA_CAP, AVATAR_PARTS } from './content.js';
 import {
   defaultSettings, applySettingsPatch, validateSetup, buildDeck, drawRules, drawScenario, dreamWeightsFor,
 } from './setup.js';
@@ -39,7 +39,19 @@ export function newMatch({ id, code, hostId, moderated = false }) {
 }
 
 // ── Lobby ──────────────────────────────────────────────────────────────────
-export function addPlayer(m, { id, name }) {
+/** A valid portrait or null: { c, e, m, h } part indices. */
+export function cleanAvatar(a) {
+  if (!a || typeof a !== 'object') return null;
+  const out = {};
+  for (const [k, n] of Object.entries(AVATAR_PARTS)) {
+    const v = Number.parseInt(a[k], 10);
+    if (!Number.isInteger(v) || v < 0 || v >= n) return null;
+    out[k] = v;
+  }
+  return out;
+}
+
+export function addPlayer(m, { id, name, avatar = null, bot = false }) {
   if (m.phase !== 'LOBBY') throw new GameError('The match has already started.');
   const clean = normaliseName(name);
   if (!clean) throw new GameError('Enter a display name.');
@@ -51,6 +63,7 @@ export function addPlayer(m, { id, name }) {
     id, name: clean, seat: m.players.length, alive: true, ready: false, connected: false,
     roleId: null, originalRoleId: null, alignment: null, charges: {}, statuses: [],
     teamJoinNight: null, tempRevival: null, revivedOnce: false, acknowledged: false,
+    avatar: cleanAvatar(avatar), bot: !!bot, lover: null,
   };
   m.players.push(p);
   bump(m);
@@ -122,7 +135,7 @@ export function startMatch(m, rng, now, { forceRoles = null } = {}) {
       roleId: role.id, originalRoleId: role.id, alignment: role.alignment, alive: true,
       charges: {}, statuses: [], teamJoinNight: role.alignment === 'DEATH' ? 1 : null,
       tempRevival: null, revivedOnce: false, acknowledged: false, daSettled: false,
-      mimicPowerless: false, powersFromNight: 1, causes: null, diedAt: null,
+      mimicPowerless: false, powersFromNight: 1, causes: null, diedAt: null, lover: null,
     });
     if (role.night?.charges) p.charges[role.id] = role.night.charges;
     if (role.day?.charges) p.charges[role.id] = role.day.charges;
@@ -136,6 +149,10 @@ export function startMatch(m, rng, now, { forceRoles = null } = {}) {
     dreamWeights: dreamWeightsFor(m.settings),
     bloodMoon: m.settings.bloodMoon !== false,
     finalTwoDeath: !!m.settings.finalTwoDeath,
+    clues: m.settings.clues !== false,
+    clueOdds: m.settings.clueOdds ?? 1,
+    lovers: !!m.settings.lovers,
+    tieBreak: m.settings.tieBreak === 'coin' ? 'coin' : 'none',
   };
   m.history = [];
   m.calm = 0;
@@ -156,8 +173,16 @@ export function startMatch(m, rng, now, { forceRoles = null } = {}) {
   pub(m, ['We are {who}, in {where}, trying to {why}.', { who: m.scenario.who, where: m.scenario.where, why: m.scenario.why }], 'scenario', { ev: 'scenario' });
   if (m.activeRules.length) pub(m, ['Rules in force: {rules}.', { rules: [...m.activeRules] }], 'rules');
   pub(m, 'Night 0. Look only at your own screen.', 'phase', { ev: 'night0' });
+  // Lovers: two random players, from any side, bound together.
+  if (m.config.lovers && n >= 4) {
+    const [a, b] = shuffle(rng, m.players.map((p) => p.id), 'lovers');
+    byId(m, a).lover = b;
+    byId(m, b).lover = a;
+  }
   for (const p of m.players) {
     priv(m, p.id, ['You are {role}.', { role: p.roleId }], 'role');
+    if (p.lover) priv(m, p.id, ['Cupid\'s arrow found you: you are in love with {b}. If one of you dies, so does the other. If you two are the last alive, you win together.', { b: nameOf(m, p.lover) }], 'lover');
+    if (p.alignment === 'CULT') priv(m, p.id, 'You lead the Cult. Each night, recruit one player. The Cult wins when it outnumbers everyone else.', 'cult');
     if (p.alignment === 'DEATH') {
       const mates = m.players.filter((x) => x.alignment === 'DEATH' && x.id !== p.id).map((x) => x.name);
       priv(m, p.id, mates.length ? ['Your Death teammates: {names}.', { names: mates }] : 'You are the only Death. Hunt alone.', 'death');
@@ -183,7 +208,7 @@ function endMatch(m, result, now) {
   m.winner = result.winner;
   m.endReason = result.reason;
   m.jesterId = result.jesterId ?? null;
-  const label = { DEATH: 'Death wins.', NON_DEATH: 'The non-Death faction wins.', JESTER: 'The Jester wins alone.', DRAW: 'Draw.', ABORTED: 'Match aborted by the host.' }[result.winner];
+  const label = { DEATH: 'Death wins.', NON_DEATH: 'The non-Death faction wins.', JESTER: 'The Jester wins alone.', DRAW: 'Draw.', ABORTED: 'Match aborted by the host.', LOVERS: 'The Lovers win.', CULT: 'The Cult wins.', RIPPER: 'The Ripper wins.' }[result.winner];
   pub(m, ['{label} {reason}', { label: [label, {}], reason: typeof result.reason === 'string' ? [result.reason, {}] : result.reason }], 'end', { ev: 'end', winner: result.winner, reason: result.reason });
   m.night = null;
   enterPhase(m, 'ENDED', now, 0);
@@ -238,10 +263,25 @@ function closeMorning(m, now) {
   }
   if (shots.length) {
     pub(m, victims.length ? ['A shot rang out across the square. {dead} fell.', { dead: deadList(m, victims) }] : 'A shot rang out across the square, but nobody fell.', 'death', { victims, ev: 'shot' });
+    victims.push(...heartbreak(m, victims));
   }
   if (victims.length && victoryOrNull(m, now)) return;
   pub(m, ['Day {n}: discussion and nominations are open.', { n: m.dayNumber }], 'phase', { ev: 'discussion' });
   enterPhase(m, 'DAY_DISCUSSION', now, T(m, 'discussion'));
+}
+
+/** Lovers die together: anyone whose lover just died follows them (by day). */
+function heartbreak(m, ids) {
+  const out = [];
+  for (const id of ids) {
+    const lover = byId(m, byId(m, id)?.lover);
+    if (lover?.alive && !ids.includes(lover.id) && !out.includes(lover.id)) {
+      lover.alive = false; lover.diedAt = `Day ${m.dayNumber}`; lover.causes = ['HEARTBREAK']; lover.tempRevival = null;
+      out.push(lover.id);
+    }
+  }
+  if (out.length) pub(m, ['{dead} died of a broken heart.', { dead: deadList(m, out) }], 'death', { victims: out, ev: 'heartbreak' });
+  return out;
 }
 
 function deadList(m, ids) {
@@ -308,7 +348,11 @@ function resolveDay(m, now, { noVote = false } = {}) {
     pub(m, line ? (t.abstain ? ['Ballots counted: {line}. {n} abstained.', { line, n: t.abstain }] : ['Ballots counted: {line}.', { line }]) : (t.abstain ? ['Ballots counted. {n} abstained.', { n: t.abstain }] : 'Ballots counted.'), 'vote', { ev: 'tally', totals: t.totals, majority: t.majority, threshold: t.threshold ?? null });
     if (cancelled) pub(m, 'Fate intervened: a wager was won, and today\'s sentence is cancelled.', 'vote', { ev: 'cancelled' });
     else if (t.winner) sentenced = t.winner;
-    else pub(m, t.reason, 'vote', { ev: 'nosentence' });
+    else if (t.tied && m.config.tieBreak === 'coin') {
+      // The coin decides between the tied players (with more than two, it is tossed among them).
+      sentenced = t.tied[rngRef.int(t.tied.length, 'coin')];
+      pub(m, ['The vote is tied. A coin is tossed between {names}… it falls for {name}.', { names: t.tied.map((id) => nameOf(m, id)), name: nameOf(m, sentenced) }], 'vote', { ev: 'coinflip', tied: t.tied, winner: sentenced });
+    } else pub(m, t.reason, 'vote', { ev: 'nosentence' });
   } else if (cancelled) {
     pub(m, 'A wager was won, but there was nothing left to cancel.', 'vote', { ev: 'cancelled' });
   }
@@ -326,6 +370,7 @@ function resolveDay(m, now, { noVote = false } = {}) {
       endMatch(m, checkVictory(m, { jesterSentencedId: p.id }), now);
       return;
     }
+    heartbreak(m, [sentenced]);
     if (p.alignment === 'DEATH' && hasRule(m, 'EQUAL_EXCHANGE')) {
       const targets = living(m).filter((x) => x.alignment !== 'DEATH').map((x) => x.id);
       if (targets.length) {
@@ -342,6 +387,7 @@ function resolveDay(m, now, { noVote = false } = {}) {
     if (goat) {
       goat.alive = false; goat.diedAt = `Day ${d.number}`; goat.causes = ['SCAPEGOAT'];
       pub(m, ['No one was sentenced — so the Scapegoat paid. {dead} is dead.', { dead: deadList(m, [goat.id]) }], 'death', { victims: [goat.id], ev: 'scapegoat' });
+      heartbreak(m, [goat.id]);
     } else if (!noVote && !cancelled) {
       // reason already published
     } else {
@@ -358,6 +404,7 @@ function resolveRetaliation(m, now) {
     if (t.alive && !t.tempRevival) {
       t.alive = false; t.diedAt = `Day ${m.dayNumber}`; t.causes = ['EQUAL_EXCHANGE'];
       pub(m, ['With a last breath, the condemned took {dead} with them.', { dead: deadList(m, [t.id]) }], 'death', { victims: [t.id], ev: 'exchange' });
+      heartbreak(m, [t.id]);
     } else {
       pub(m, 'The final act failed to claim anyone.', 'vote', { ev: 'exchange-none' });
     }
@@ -597,6 +644,14 @@ export function playerCommand(m, actorId, cmd, rng, now) {
     case 'lobby.ready':
       if (m.phase !== 'LOBBY') throw new GameError('Not in the lobby.');
       p.ready = !!payload.ready; break;
+
+    case 'lobby.avatar': {
+      if (m.phase !== 'LOBBY') throw new GameError('Not in the lobby.');
+      const a = cleanAvatar(payload.avatar);
+      if (!a) throw new GameError('Invalid portrait.');
+      p.avatar = a;
+      break;
+    }
 
     case 'role.ack':
       need(m, 'NIGHT_0_REVEAL');

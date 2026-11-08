@@ -81,7 +81,7 @@ async function api(req, res, url) {
   if (parts[1] === 'rooms' && parts.length === 2 && req.method === 'POST') {
     if (limited(req, 3)) return json(res, 429, { error: 'Too many requests. Wait a moment.' });
     const b = await body(req);
-    return json(res, 200, rooms.createRoom({ name: b.name, moderated: !!b.moderated, lang: b.lang }));
+    return json(res, 200, rooms.createRoom({ name: b.name, moderated: !!b.moderated, lang: b.lang, avatar: b.avatar }));
   }
   if (parts[1] !== 'rooms' || !parts[2]) return json(res, 404, { error: 'Not found' });
   const code = parts[2].toUpperCase();
@@ -111,7 +111,7 @@ async function api(req, res, url) {
   const b = await body(req);
   if (action === 'join') {
     if (limited(req, 2)) return json(res, 429, { error: 'Too many requests. Wait a moment.' });
-    return json(res, 200, rooms.joinRoom(code, { name: b.name }));
+    return json(res, 200, rooms.joinRoom(code, { name: b.name, avatar: b.avatar }));
   }
   if (action === 'recover') {
     if (limited(req, 5)) return json(res, 429, { error: 'Too many attempts. Wait a minute.' });
