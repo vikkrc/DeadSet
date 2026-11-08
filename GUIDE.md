@@ -55,11 +55,11 @@ Each player turns over their role card on their own phone and taps **Understood*
 | **Equal Exchange** (rule card) | A sentenced Death-aligned player may take one living non-Death player with them. |
 
 ### Night
-1. **Dreams are drawn**: one random Dream per living player, duplicates allowed. Only **Dream Snatchers** see their card at this point; they may swap Dreams with another player. Everyone taps *Close my eyes*, so the length of this step doesn't reveal whether anyone held a Snatcher.
-2. **Night actions**: each player sees their final Dream and their own action. Death players share a private room. Everyone commits or passes, then taps **Sleep**.
+1. **Nightfall (5 seconds)**: Dreams are drawn, one random Dream per living player, duplicates allowed. Every phone shows the same countdown. Only **Dream Snatchers** see their card at this point; they may tap a seat to swap Dreams with another player before the countdown ends. Nobody else has to do anything, and the step always lasts exactly five seconds, so its length never reveals whether a Snatcher exists.
+2. **Night actions** open by themselves when the countdown ends: each player sees their final Dream and their own action. Death players share a private room. Everyone commits or passes, then taps **Sleep**.
 3. When everyone is asleep (or the timer ends), the server resolves everything at once (see §8). Survivors get their private reports, and Day *N+1* begins.
 
-The app hides your night behind a privacy veil until you tap **Show my night**, and you can cover it again at any time.
+Shield your screen during nightfall. The **Cover** button hides your night at any time; tap **Open your eyes** to bring it back.
 
 ---
 
@@ -123,7 +123,7 @@ From 14 players the cycle continues: +Extended, +Death, +Innocent (Custom mode o
 | **Premonition** | At dawn, learn the name of one living Death-aligned player. |
 | **Whispers of the Past** | At dawn, learn the exact role of one random dead player. |
 | **Sleepwalking** | Bound to the player seated just before you: if they die tonight, so do you. |
-| **Dream Snatcher** | Before actions open, you may swap Dreams with another player (swaps resolve once each, in seat order). |
+| **Dream Snatcher** | During the five-second nightfall, before actions open, you may swap Dreams with another player (swaps resolve once each, in seat order). |
 | **Night Shift** | One extra use of a repeatable power on a second target. For Death, team capacity becomes 2. |
 | **Shared Nightmare** | Pick a partner. If they die tonight, you die too. |
 | **Insomnia** | At dawn (if you survive) you get a full chronological report of tonight's actions. |
@@ -236,6 +236,19 @@ The spec resolves almost everything. Where it left room, this build does the fol
 - **Witch spells resolve together**: one curse can't cancel another witch's spell, and a Bless also shields its target from a Curse.
 - **Conspirator whisper**: the partner sees the Conspirator only as "Stranger", because the channel's existence would otherwise expose the role. The whisper opens live during the night, so Bard silence can't retroactively close it.
 - **Insomnia report**: names the roles of the actors (it is "deliberately powerful"), but describes the Death kill as "the Death faction" without naming its members.
-- **Dream Snatcher privacy**: every living player has to tap *Close my eyes* in the swap window, so nobody can tell from timing whether a Snatcher exists.
+- **Dream Snatcher privacy**: the swap window is a fixed five-second nightfall for everyone, so nobody can tell from timing whether a Snatcher exists. A Snatcher who doesn't tap a seat in time keeps their own Dream.
 - **Gambler**: a correct bet cancels the sentence even if the Gambler died overnight, because the bet was locked when it was placed.
 - **Nominations**: one formal nomination per player per Day. A MUTE player can still nominate (the MUTE rule says so explicitly).
+
+---
+
+## Languages
+
+The interface is available in **English, Hungarian (Magyar), Slovak (Slovenčina), Czech (Čeština), German (Deutsch), French (Français) and Spanish (Español)**.
+
+- **Each player chooses their own language** with the language button on the start screen, on the invitation (before joining), in the guide, and in the room menu (☰). The choice is stored on that device.
+- **The host sets the table's default language** in the lobby (*The table → Table language*). Players who haven't picked a language follow it, and so does the TV board.
+- Without either choice, the app uses the browser's language when it is one of the seven, and English otherwise.
+- Everything is translated, including roles, Dreams, rule cards, scenario cards, night reports, the Gazette and this guide's in-app version. The server sends events as templates, and each phone renders them in its own language, so one table can mix languages.
+- Custom scenario text that the host writes is shown as written. The custom-deck box still takes English role names.
+
