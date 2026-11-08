@@ -89,8 +89,7 @@ async function api(req, res, url) {
 
   if (req.method === 'GET' && action === 'peek') {
     if (limited(req)) return json(res, 429, { error: 'Too many requests.' });
-    const r = rooms.rooms.get(code);
-    return json(res, 200, r ? { exists: true, phase: r.match.phase, players: r.match.players.length } : { exists: false });
+    return json(res, 200, rooms.peek(code));
   }
   if (req.method === 'GET' && action === 'events') {
     const board = url.searchParams.get('board') === '1';
@@ -118,6 +117,10 @@ async function api(req, res, url) {
     if (limited(req, 5)) return json(res, 429, { error: 'Too many attempts. Wait a minute.' });
     return json(res, 200, rooms.recover(code, b.recoveryCode));
   }
+  if (action === 'board') {
+    if (limited(req, 0.2)) return json(res, 429, { error: 'Too many requests.' });
+    return json(res, 200, rooms.setBoardAudio(code, b.key, b.audio));
+  }
   if (action === 'cmd') {
     return json(res, 200, rooms.command(code, b.t, b));
   }
@@ -126,7 +129,7 @@ async function api(req, res, url) {
 
 async function staticFile(req, res, url) {
   let path = decodeURIComponent(url.pathname);
-  if (path === '/' || path.startsWith('/r/') || path.startsWith('/board') || path === '/guide') path = '/index.html';
+  if (path === '/' || path.startsWith('/r/') || path.startsWith('/board/') || path === '/guide') path = '/index.html';
   const file = normalize(join(PUBLIC, path));
   if (!file.startsWith(PUBLIC)) { res.writeHead(403); return res.end(); }
   try {

@@ -91,6 +91,11 @@ const SOUNDS = {
   win: (a) => [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => bell(a, f, i * 0.16, 0.11, 3)),
   lose: (a) => [392, 349.23, 311.13, 261.63].forEach((f, i) => bell(a, f, i * 0.22, 0.09, 2.6)),
   whoosh: (a) => noise(a, { dur: 0.5, gain: 0.1, type: 'bandpass', freq: 600, sweep: 2400, q: 0.8, attack: 0.15 }),
+  crack: (a) => { noise(a, { dur: 0.09, gain: 0.5, type: 'highpass', freq: 2500 }); noise(a, { dur: 0.25, gain: 0.3, freq: 900, at: 0.03 }); tone(a, { freq: 160, dur: 0.3, gain: 0.25, to: 70, at: 0.02 }); },
+  unfold: (a) => noise(a, { dur: 0.7, gain: 0.08, type: 'bandpass', freq: 3200, sweep: 1200, q: 0.6, attack: 0.2 }),
+  thud: (a) => { tone(a, { freq: 90, dur: 0.35, gain: 0.35, to: 48 }); noise(a, { dur: 0.12, gain: 0.18, freq: 300 }); },
+  heart: (a) => { tone(a, { freq: 62, dur: 0.22, gain: 0.55, to: 40 }); tone(a, { freq: 58, dur: 0.26, gain: 0.4, to: 38, at: 0.24 }); },
+  page: (a) => { noise(a, { dur: 0.35, gain: 0.12, type: 'bandpass', freq: 2200, sweep: 900, q: 0.7, attack: 0.05 }); },
 };
 
 export const sound = {
@@ -99,6 +104,7 @@ export const sound = {
     soundOn = !soundOn;
     localStorage.setItem('deadset:sound', soundOn ? 'on' : 'off');
     if (soundOn) this.play('pick');
+    else score.stop();
     return soundOn;
   },
   unlock() { if (soundOn) audio(); },
@@ -106,6 +112,98 @@ export const sound = {
     const a = audio();
     if (!a || !SOUNDS[name]) return;
     try { SOUNDS[name](a); } catch { /* audio is a nicety */ }
+  },
+};
+
+// ── The score: generated ambient music for the TV board ────────────────────
+// Each mood is a slow detuned pad, a bed of wind and occasional bells. Moods
+// crossfade over a few seconds. Only the TV board ever plays the score.
+const MOODS = {
+  lobby: { root: 98, chord: [1, 1.5, 2.25], cutoff: 650, bells: [392, 440, 587, 659], every: [6, 11], wind: 0.012, gain: 0.5 },
+  day: { root: 110, chord: [1, 1.2, 1.5, 2], cutoff: 820, bells: [440, 523, 587, 659, 784], every: [5, 9], wind: 0.01, gain: 0.45 },
+  vote: { root: 73.4, chord: [1, 1.19, 1.5], cutoff: 620, bells: [], every: null, wind: 0.012, gain: 0.5, pulse: true },
+  night: { root: 55, chord: [1, 1.5, 2, 3], cutoff: 380, bells: [392, 466, 523, 622, 698], every: [3, 7], wind: 0.05, gain: 0.6 },
+  end: { root: 65.4, chord: [1, 1.25, 1.5, 2], cutoff: 900, bells: [523, 659, 784, 1046], every: [2, 5], wind: 0.01, gain: 0.45 },
+};
+let bus = null;
+let layer = null;
+let bellTimer = null;
+let pulseTimer = null;
+function scoreBus(a) {
+  if (!bus) { bus = a.createGain(); bus.gain.value = 0.9; bus.connect(master); }
+  return bus;
+}
+function buildLayer(a, mood) {
+  const m = MOODS[mood];
+  const out = a.createGain();
+  out.gain.value = 0.0001;
+  out.connect(scoreBus(a));
+  const filt = a.createBiquadFilter();
+  filt.type = 'lowpass'; filt.frequency.value = m.cutoff; filt.Q.value = 0.7;
+  filt.connect(out);
+  const lfo = a.createOscillator(); lfo.frequency.value = 0.045;
+  const lfoAmt = a.createGain(); lfoAmt.gain.value = m.cutoff * 0.35;
+  lfo.connect(lfoAmt).connect(filt.frequency);
+  const nodes = [lfo];
+  m.chord.forEach((r, i) => {
+    for (const det of [-4, 4]) {
+      const o = a.createOscillator();
+      o.type = i === 0 ? 'sine' : 'triangle';
+      o.frequency.value = m.root * r;
+      o.detune.value = det + i * 1.5;
+      const g = a.createGain(); g.gain.value = (i === 0 ? 0.16 : 0.07) / m.chord.length * 3;
+      o.connect(g).connect(filt);
+      nodes.push(o);
+    }
+  });
+  // wind: looping filtered noise
+  const len = a.sampleRate * 4;
+  const buf = a.createBuffer(1, len, a.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  const src = a.createBufferSource(); src.buffer = buf; src.loop = true;
+  const bp = a.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 500; bp.Q.value = 0.6;
+  const wlfo = a.createOscillator(); wlfo.frequency.value = 0.07;
+  const wAmt = a.createGain(); wAmt.gain.value = 260;
+  wlfo.connect(wAmt).connect(bp.frequency);
+  const wg = a.createGain(); wg.gain.value = m.wind;
+  src.connect(bp).connect(wg).connect(out);
+  nodes.push(src, wlfo);
+  nodes.forEach((n) => n.start());
+  out.gain.exponentialRampToValueAtTime(m.gain, a.currentTime + 3.5);
+  return { out, nodes, mood };
+}
+function dropLayer(a, l) {
+  if (!l) return;
+  const t = a.currentTime;
+  l.out.gain.cancelScheduledValues(t);
+  l.out.gain.setValueAtTime(Math.max(0.0001, l.out.gain.value), t);
+  l.out.gain.exponentialRampToValueAtTime(0.0001, t + 3);
+  setTimeout(() => { l.nodes.forEach((n) => { try { n.stop(); } catch { /* stopped */ } }); l.out.disconnect(); }, 3300);
+}
+export const score = {
+  get mood() { return layer?.mood ?? null; },
+  play(mood) {
+    if (!MOODS[mood]) return;
+    const a = audio();
+    if (!a) { this.stop(); return; }
+    if (layer?.mood === mood) return;
+    dropLayer(a, layer);
+    layer = buildLayer(a, mood);
+    clearTimeout(bellTimer); clearInterval(pulseTimer);
+    const m = MOODS[mood];
+    const ring = () => {
+      if (!layer || layer.mood !== mood) return;
+      if (m.bells.length) bell(a, m.bells[Math.floor(Math.random() * m.bells.length)] / 2, 0, 0.05, 4);
+      bellTimer = setTimeout(ring, (m.every[0] + Math.random() * (m.every[1] - m.every[0])) * 1000);
+    };
+    if (m.every) bellTimer = setTimeout(ring, 1500);
+    if (m.pulse) pulseTimer = setInterval(() => { const x = audio(); if (x) tone(x, { freq: 880, type: 'sine', dur: 0.05, gain: 0.025 }); }, 1000);
+  },
+  stop() {
+    clearTimeout(bellTimer); clearInterval(pulseTimer);
+    if (ctx && layer) dropLayer(ctx, layer);
+    layer = null;
   },
 };
 

@@ -3,7 +3,9 @@
 import { glyph, dreamGlyph } from './icons.js';
 import { qrSvg } from './qr.js';
 import { renderGuide } from './guide.js';
-import { sound, haptic, burstAt, celebrate, ambient } from './fx.js';
+import { sound, score, haptic, burstAt, celebrate, ambient } from './fx.js';
+import { boardScreen, activeRuleNotes, moodFor, ruleGlyph } from './board.js';
+import { gazetteHtml, frontPageHtml } from './gazette.js';
 
 const app = document.getElementById('app');
 const S = {
@@ -11,8 +13,8 @@ const S = {
   view: null, conn: 'idle', es: null, content: null,
   pending: false, drafts: {}, sel: {}, selPhase: null,
   moments: [], moment: null, momentTimer: null, notes: [],
-  seenLog: null, seenPriv: null,
-  ui: { sheet: null, unveiled: {}, flipped: {}, chat: null, recover: false, moderated: false, tab: null, holding: null },
+  seenLog: null, seenPriv: null, peek: null, board: { key: null, audio: false },
+  ui: { sheet: null, unveiled: {}, flipped: {}, chat: null, recover: false, moderated: false, tab: null, holding: null, homeTab: 'host', invite: false, recordList: localStorage.getItem('deadset:record') === 'list' },
 };
 
 // ── Utilities ──────────────────────────────────────────────────────────────
@@ -75,6 +77,19 @@ function notify(text, kind = '') {
 }
 const toast = (text, kind = '') => notify(text, kind === 'err' ? 'err' : kind);
 
+// Sound policy. Public-event sounds: the TV board carries them when it's open
+// and unmuted; phones then stay quiet. Interaction sounds: never at night (or
+// for role-revealing taps), so nobody can be identified by what their phone does.
+const onBoard = () => S.route?.name === 'board';
+function pubSound(name) {
+  if (onBoard()) { if (S.board.audio) sound.play(name); return; }
+  if (V()?.boardAudio) return;
+  sound.play(name);
+}
+const secretPhase = () => { const v = V(); return !!v && isNight(v.phase); };
+function uiSound(name) { if (!secretPhase()) sound.play(name); }
+function uiHaptic(p) { if (!secretPhase()) haptic(p); }
+
 async function api(path, body) {
   const res = await fetch(path, { method: body ? 'POST' : 'GET', headers: { 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
   const data = await res.json().catch(() => ({}));
@@ -125,7 +140,8 @@ function boot() {
       const sess = loadSession(r.code);
       S.token = sess?.token ?? null;
       S.pid = sess?.playerId ?? null;
-      if (S.token) connect();
+      S.ui.invite = false; S.peek = null;
+      if (S.token) connect(); else loadPeek();
     }
   } else if (r.name === 'board') {
     if (S.code !== r.code || !S.es) { disconnect(); S.code = r.code; S.token = null; connect(true); }
@@ -135,6 +151,11 @@ function boot() {
   }
   if (!S.content) loadContent();
   render();
+}
+
+async function reportBoardAudio(on) {
+  if (!S.board.key) return;
+  try { await api(`/api/rooms/${S.code}/board`, { key: S.board.key, audio: on }); } catch { /* best effort */ }
 }
 
 async function loadContent() {
@@ -150,10 +171,16 @@ function connect(board = false) {
     const v = JSON.parse(ev.data);
     clockSkew = v.serverNow - Date.now();
     if (S.selPhase !== v.phaseId) { S.sel = {}; S.selPhase = v.phaseId; S.ui.tab = null; }
+    const prev = S.view;
     detectMoments(v);
+    if (board && prev && v.phase === 'LOBBY' && v.players.length > prev.players.length) pubSound('thud');
     S.view = v;
     S.conn = 'live';
     render();
+  });
+  es.addEventListener('board', (ev) => {
+    S.board.key = JSON.parse(ev.data).key;
+    if (S.board.audio) reportBoardAudio(true); // reconnected: tell the server again
   });
   es.addEventListener('revoked', () => {
     es.close();
@@ -195,7 +222,7 @@ function detectMoments(v) {
     switch (l.ev) {
       case 'night0': {
         const sc = fresh.find((x) => x.ev === 'scenario');
-        out.push({ type: 'night0', scenario: sc?.text ?? '', rules: v.activeRules.map((r) => r.name) });
+        out.push({ type: 'night0', scenario: sc?.text ?? '', sc: v.scenario, rules: v.activeRules.map((r) => ({ id: r.id, name: r.name, text: r.text })), tapOnly: false });
         break;
       }
       case 'day1': out.push({ type: 'day1' }); break;
@@ -230,7 +257,7 @@ function detectMoments(v) {
       case 'discussion': notify(`Day ${roman(v.dayNumber)} · the floor is open`); break;
       case 'defense': notify('Defence: each nominee speaks in turn'); break;
       case 'novote': notify('Nobody was nominated. No vote today.'); break;
-      case 'nominate': notify(`${name(l.by)} ${l.first ? 'accuses' : 'seconds'} ${name(l.target)}`, 'accuse'); sound.play('knock'); break;
+      case 'nominate': notify(`${name(l.by)} ${l.first ? 'accuses' : 'seconds'} ${name(l.target)}`, 'accuse'); pubSound('knock'); break;
       case 'immunity': notify(`${name(l.who)} claims diplomatic immunity`); break;
       case 'exchange-none': notify('The condemned went quietly.'); break;
       default: break;
@@ -243,8 +270,8 @@ function detectMoments(v) {
 }
 
 const MOMENT_SOUND = { night0: 'night', day1: 'dawn', nightfall: 'night', dawn: 'dawn', tally: 'knock', death: 'death', revive: 'reveal' };
-const MOMENT_TIME = { night0: 4200, day1: 3200, nightfall: 3000, dawn: 4200, tally: 5200, death: 3600, revive: 3000, call: 2200 };
-const momentTime = (m) => MOMENT_TIME[m.type] + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0);
+const MOMENT_TIME = { night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 5200, death: 3600, revive: 3000, call: 2200 };
+const momentTime = (m) => (onBoard() && m.type === 'dawn' ? 9000 : MOMENT_TIME[m.type] + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
 
 function nextMoment() {
   clearTimeout(S.momentTimer);
@@ -252,14 +279,15 @@ function nextMoment() {
   const m = S.moment;
   if (m) {
     const snd = m.sound ?? MOMENT_SOUND[m.type];
-    if (snd) sound.play(snd);
-    if (m.type === 'dawn' && (m.killed.length || m.expired.length)) { setTimeout(() => sound.play('death'), 900); haptic([30, 80, 120]); }
-    if (m.type === 'tally') setTimeout(() => { sound.play(m.sentenced || m.goat ? 'gavel' : 'tap'); if (m.sentenced) haptic([40, 50, 90]); }, 1700);
+    if (snd) pubSound(snd);
+    if (m.type === 'dawn' && onBoard()) setTimeout(() => pubSound('page'), 300);
+    if (m.type === 'dawn' && (m.killed.length || m.expired.length)) { setTimeout(() => pubSound('death'), 900); haptic([30, 80, 120]); }
+    if (m.type === 'tally') setTimeout(() => { pubSound(m.sentenced || m.goat ? 'gavel' : 'tap'); if (m.sentenced) haptic([40, 50, 90]); }, 1700);
     if (m.type === 'death') haptic([30, 80, 120]);
     if (m.type === 'nightfall' || m.type === 'night0') haptic(20);
     if (m.type === 'end') {
       const won = didIWin(V(), m.winner);
-      setTimeout(() => { celebrate(m.winner === 'ABORTED' || m.winner === 'DRAW' ? 'neutral' : m.winner); sound.play(won === false ? 'lose' : 'win'); haptic([40, 60, 40, 60, 120]); }, 500);
+      setTimeout(() => { celebrate(m.winner === 'ABORTED' || m.winner === 'DRAW' ? 'neutral' : m.winner); pubSound(won === false ? 'lose' : 'win'); haptic([40, 60, 40, 60, 120]); }, 500);
     }
     if (!m.tapOnly) S.momentTimer = setTimeout(nextMoment, calm.matches ? Math.min(momentTime(m), 2500) : momentTime(m));
   }
@@ -277,11 +305,17 @@ function momentHtml(m) {
   const names = (list, cls = '') => list.map((n, i) => `<li class="victim ${cls}" style="--d:${0.9 + i * 0.5}s"><span>${esc(n)}</span></li>`).join('');
   let body = '';
   switch (m.type) {
-    case 'night0':
-      body = `<div class="m-art">${moon(0.15, 'rise')}</div><span class="kicker">Night 0</span><h1 class="m-title">${letters('The game begins')}</h1>
-        <p class="m-sub">${esc(m.scenario)}</p>${m.rules.length ? `<div class="m-rules">${m.rules.map((r) => `<span class="tag">${esc(r)}</span>`).join('')}</div>` : ''}
-        <p class="m-sub small">Look only at your own screen.</p>`;
+    case 'night0': {
+      // 19 · The opening ceremony: the story cards are dealt and turned, then the rules.
+      const sc = m.sc ?? { who: '?', where: '?', why: '?' };
+      const cards = [['Who', 'mentalist', sc.who], ['Where', 'necro', sc.where], ['Why', 'scroll', sc.why]];
+      body = `<span class="kicker">Night 0 · the story is dealt</span><h1 class="m-title">${letters('The game begins')}</h1>
+        <div class="cer-cards">${cards.map(([k, g, t], i) => `<div class="cer-card" style="--d:${0.9 + i * 0.85}s"><div class="cer-in"><div class="cer-face back"><b>DS</b></div><div class="cer-face front">${glyph(g)}<span class="k">${k}</span><b>${esc(t)}</b></div></div></div>`).join('')}</div>
+        <p class="m-sub cer-line" style="--d:3.6s">${esc(m.scenario)}</p>
+        ${m.rules.length ? `<div class="cer-rules">${m.rules.map((r, i) => `<div class="cer-rule" style="--d:${4.2 + i * 0.7}s">${glyph(ruleGlyph(r.id))}<span><span class="k">Rule card</span><b>${esc(r.name)}</b><small>${esc(r.text)}</small></span></div>`).join('')}</div>` : ''}
+        <p class="m-sub small cer-line" style="--d:${4.6 + m.rules.length * 0.7}s">${onBoard() ? 'Players: look only at your own screen.' : 'Next: your role card, face down. Look only at your own screen.'}</p>`;
       break;
+    }
     case 'day1':
       body = `<div class="m-art sunrise">${glyph('sun')}</div><span class="kicker">Day I</span><h1 class="m-title">${letters('Morning')}</h1><p class="m-sub">Nobody has died — yet.</p>`;
       break;
@@ -289,6 +323,7 @@ function momentHtml(m) {
       body = `<div class="m-art">${moon(0.35, 'rise')}<span class="stars"><i></i><i></i><i></i><i></i><i></i></span></div><span class="kicker">Night ${roman(m.n)}</span><h1 class="m-title">${letters('Night falls')}</h1><p class="m-sub">Close your eyes. Keep your screen to yourself.</p>`;
       break;
     case 'dawn': {
+      if (onBoard()) { body = frontPageHtml(V(), m, { esc }); break; }
       const dead = m.killed.length + m.expired.length;
       body = `<div class="m-art sunrise">${glyph('sun')}</div><span class="kicker">Dawn · Day ${roman(m.day)}</span>
         <h1 class="m-title ${m.meDied ? 'blood' : ''}">${letters(m.meDied ? 'You did not wake' : dead ? 'Found dead' : 'Everyone woke')}</h1>
@@ -333,7 +368,7 @@ function momentHtml(m) {
     default: break;
   }
   const auto = !m.tapOnly;
-  return `<div class="moment m-${m.type} ${m.winner === 'DEATH' || m.type === 'death' ? 'grim' : ''}" data-key="moment-${m.id}" data-act="momentNext" role="dialog" aria-live="assertive">
+  return `<div class="moment m-${m.type} ${m.winner === 'DEATH' || m.type === 'death' ? 'grim' : ''} ${onBoard() && m.type === 'dawn' ? 'front' : ''}" data-key="moment-${m.id}" data-act="momentNext" role="dialog" aria-live="assertive">
     <div class="m-body">${body}</div>
     <div class="m-foot">${auto ? `<span class="m-timer" style="--t:${momentTime(m)}ms"><i></i></span>` : ''}<span class="kicker">${auto ? 'Tap to skip' : 'Tap to continue'}${S.moments.length ? ` · ${S.moments.length} more` : ''}</span></div>
   </div>`;
@@ -358,7 +393,7 @@ function morphNode(a, b) {
     a.removeAttribute(name);
   }
   if (a.tagName === 'INPUT') {
-    if (a.type === 'checkbox' || a.type === 'radio') a.checked = b.hasAttribute('checked');
+    if (a.type === 'checkbox' || a.type === 'radio') { if (!(S.pending && a === document.activeElement)) a.checked = b.hasAttribute('checked'); }
     else if (a !== document.activeElement && a.value !== (b.getAttribute('value') ?? '')) a.value = b.getAttribute('value') ?? '';
     return;
   }
@@ -394,6 +429,9 @@ function render() {
   const night = !!v && isNight(v.phase) && ['room', 'board'].includes(S.route?.name);
   document.body.dataset.time = night ? 'night' : 'day';
   document.body.classList.toggle('has-moment', !!S.moment);
+  document.body.classList.toggle('is-board', onBoard());
+  if (onBoard() && v && S.board.audio && v.table?.score !== false) score.play(moodFor(v));
+  else score.stop();
   document.body.classList.toggle('has-sheet', !!S.ui.sheet && S.route?.name === 'room');
   ambient(night ? 'night' : null);
   morph(app, view());
@@ -406,7 +444,7 @@ function view() {
   let html = '';
   if (r.name === 'home') html = homeScreen();
   else if (r.name === 'guide') html = guideScreen();
-  else if (r.name === 'board') html = boardScreen();
+  else if (r.name === 'board') html = boardView();
   else if (r.name === 'room') {
     if (S.conn === 'gone') html = goneScreen();
     else if (!S.token) html = joinScreen();
@@ -439,11 +477,23 @@ function tickClock() {
     el.querySelector('.burn').style.strokeDashoffset = String(100 - frac * 100);
   });
   const secs = left == null ? null : Math.ceil(left / 1000);
+  if (onBoard()) {
+    // 2 · the sun / moon rides the table's own timer ring, at the burning end
+    const orb = document.querySelector('[data-orb]');
+    if (orb) {
+      const a = (-90 + frac * 360) * (Math.PI / 180);
+      orb.style.left = `${50 + 49 * Math.cos(a)}%`;
+      orb.style.top = `${50 + 49 * Math.sin(a)}%`;
+    }
+    const pressure = secs != null && secs <= 10 && secs > 0;
+    document.body.classList.toggle('pressure', pressure);
+    if (pressure && secs !== lastTick && !S.moment) pubSound('heart');
+  }
   document.querySelectorAll('[data-clock]').forEach((el) => {
     el.textContent = secs == null ? '' : `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`;
     el.classList.toggle('low', secs != null && secs <= 10);
   });
-  if (secs != null && secs <= 5 && secs > 0 && secs !== lastTick && S.route?.name === 'room' && !S.moment) sound.play('tick');
+  if (secs != null && secs <= 5 && secs > 0 && secs !== lastTick && S.route?.name === 'room' && !S.moment) pubSound('tick');
   lastTick = secs;
 }
 setInterval(tickClock, 250);
@@ -465,47 +515,107 @@ const ALIGN = { DEATH: 'Death', NON_DEATH: 'Non-Death', INDEPENDENT: 'Independen
 const wordmark = () => '<a class="wordmark" href="/" data-link data-key="wm">Dead<i>Set</i><span class="seal"></span></a>';
 
 // ── Home / join / guide ────────────────────────────────────────────────────
+const WHISPERS = [
+  'Bo was found dead. Nobody saw the Whore leave.',
+  'The town hanged the Jester. He laughed.',
+  'The Mentalist knew. Nobody believed her.',
+  'Two votes short. The Scapegoat paid.',
+  'Fay swore she was the Guardian. So did Gus.',
+  'The Necromancer raised the wrong friend.',
+  'A bomb at the door. A coin, flipped.',
+  'Everyone woke. Somehow that was worse.',
+  'Death voted with the town. Of course it did.',
+];
+let whisperTimer = null;
+function seatXY(i, n, R) {
+  const a = (-90 + (i * 360) / n) * (Math.PI / 180);
+  return [(50 + R * Math.cos(a)).toFixed(2), (50 + R * Math.sin(a)).toFixed(2)];
+}
+
+// ── A · The Empty Table (home) ─────────────────────────────────────────────
 function homeScreen() {
   const d = S.drafts;
-  return `<main class="main home" data-key="home">
-    <header class="hero">
-      ${wordmark()}
-      <h1 class="hero-title"><span class="h-dead">${letters('Dead')}</span><span class="h-set">${letters('Set.')}</span></h1>
-      <p class="lede">Hidden roles, bad dreams and worse alibis. Everyone plays on their own phone — the app is the narrator.</p>
-      <div class="facts"><span>5–13 players</span><span>One phone each</span><span>20–60 min</span></div>
-    </header>
-    <div class="split">
-      <section class="panel">
-        <div class="rule"><span class="idx">01</span>Open a table</div>
-        <label class="field"><span>Your name</span><input class="input" maxlength="20" autocomplete="nickname" placeholder="e.g. Morgan" data-draft="createName" value="${esc(d.createName ?? '')}"></label>
-        <label class="check"><input type="checkbox" data-act="toggleModerated" ${S.ui.moderated ? 'checked' : ''}><span><b>I'll moderate, not play</b><small>Trusted moderator: sees every secret, holds no seat. Everyone is told.</small></span></label>
-        <button class="btn btn-solid btn-wide" data-act="create" ${S.pending ? 'disabled' : ''}>Create game</button>
+  const tab = S.ui.homeTab;
+  if (!whisperTimer) whisperTimer = setInterval(() => { if (S.route?.name === 'home') { S.whisper = (S.whisper ?? 0) + 1; render(); } }, 6500);
+  const line = WHISPERS[(S.whisper ?? 0) % WHISPERS.length];
+  const chairs = Array.from({ length: 7 }, (_, i) => { const [x, y] = seatXY(i, 7, 41); return `<span class="chair" style="left:${x}%;top:${y}%;--i:${i}">${sigil(`chair${i}`)}<i></i></span>`; }).join('');
+  const code = (d.joinCode ?? '').toUpperCase();
+  return `<main class="home2" data-key="home">
+    <div class="h-top">${wordmark()}<div class="row" style="gap:6px"><button class="chip" data-act="sound" aria-label="${sound.on ? 'Mute' : 'Sound on'}">${glyph(sound.on ? 'bell' : 'bellOff')}</button><a class="chip" href="/guide" data-link>How to play</a></div></div>
+    <div class="h-grid">
+      <section class="h-table" aria-hidden="true">
+        <div class="h-ring"><div class="h-tabletop"></div>${chairs}
+          <div class="h-title"><h1>${letters('Dead')}<br><i>${letters('Set.')}</i></h1><p>Death sits among you.</p></div>
+        </div>
+        <p class="whisper" data-key="wh-${S.whisper ?? 0}">“${esc(line)}”</p>
       </section>
-      <section class="panel">
-        <div class="rule"><span class="idx">02</span>Take a seat</div>
-        <label class="field"><span>Room code</span><input class="input input-code" maxlength="6" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="······" data-draft="joinCode" value="${esc(d.joinCode ?? '')}"></label>
-        <button class="btn btn-wide" data-act="gotoRoom">Join</button>
+      <section class="h-panel">
+        <p class="h-tag">Hidden roles. Secret votes. Find them before they outnumber you.</p>
+        <div class="seg" role="tablist"><button role="tab" data-act="homeTab" data-id="host" aria-pressed="${tab === 'host'}">Host a table</button><button role="tab" data-act="homeTab" data-id="join" aria-pressed="${tab === 'join'}">Join a table</button></div>
+        ${tab === 'host' ? `<div class="stack" data-key="h-host">
+          <label class="field"><span>Your name</span><input class="input" maxlength="20" autocomplete="nickname" placeholder="e.g. Morgan" data-draft="createName" value="${esc(d.createName ?? '')}"></label>
+          <label class="check"><input type="checkbox" data-act="toggleModerated" ${S.ui.moderated ? 'checked' : ''}><span><b>I'll moderate, not play</b><small>Sees every secret, holds no seat. Everyone is told.</small></span></label>
+          <button class="btn btn-solid btn-wide btn-tall" data-act="create" ${S.pending ? 'disabled' : ''}>Pull up a chair</button>
+        </div>` : `<div class="stack" data-key="h-join">
+          <label class="code-in" aria-label="Room code">
+            <input data-draft="joinCode" maxlength="6" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" value="${esc(code)}">
+            ${Array.from({ length: 6 }, (_, i) => `<span class="${i === Math.min(code.length, 5) ? 'cur' : ''} ${code[i] ? 'on' : ''}">${esc(code[i] ?? '')}</span>`).join('')}
+          </label>
+          <button class="btn btn-wide btn-tall ${code.length === 6 ? 'btn-solid' : ''}" data-act="gotoRoom" ${code.length === 6 ? '' : 'disabled'}>Find the table</button>
+          <p class="foot">Or scan the QR code on the host's screen</p>
+        </div>`}
+        <p class="foot">5–13 players · one phone each · no app to install</p>
       </section>
     </div>
-    <a class="btn btn-ghost" href="/guide" data-link>How to play →</a>
   </main>`;
 }
 
+// ── E · The Invitation (link or QR, no seat yet) ───────────────────────────
+async function loadPeek() {
+  try { S.peek = await api(`/api/rooms/${S.code}/peek`); if (!S.peek.exists) S.conn = 'gone'; } catch { S.peek = { exists: true, phase: 'LOBBY' }; }
+  render();
+}
 function joinScreen() {
   const d = S.drafts;
-  return `<main class="main narrow" data-key="join">
-    ${wordmark()}
-    <header class="phase-head"><span class="kicker">Room <span class="mono">${esc(S.code)}</span></span><h1>Take a <i>seat.</i></h1></header>
-    ${S.ui.recover ? `<section class="stack panel" data-key="rec">
-        <p class="muted small">Lost your phone or switched browsers? Ask the host for a one-time recovery code. Your old device will be signed out.</p>
-        <label class="field"><span>Recovery code</span><input class="input input-code" maxlength="8" data-draft="recCode" value="${esc(d.recCode ?? '')}" autocomplete="off"></label>
-        <button class="btn btn-solid btn-wide" data-act="recover">Recover seat</button>
-        <button class="btn btn-ghost" data-act="toggleRecover">Join as a new player instead</button>
-      </section>` : `<section class="stack panel" data-key="new">
-        <label class="field"><span>Your name</span><input class="input" maxlength="20" autocomplete="nickname" placeholder="Name shown at the table" data-draft="joinName" value="${esc(d.joinName ?? '')}"></label>
-        <button class="btn btn-solid btn-wide" data-act="join" ${S.pending ? 'disabled' : ''}>Join the table</button>
-        <button class="btn btn-ghost" data-act="toggleRecover">I already have a seat in this game</button>
-      </section>`}
+  const pk = S.peek;
+  const host = esc(pk?.host ?? 'Someone');
+  if (!S.ui.invite) {
+    return `<main class="invite2" data-key="inv-sealed">
+      <div class="h-top">${wordmark()}<span></span></div>
+      <span class="kicker inv-kicker">A letter for you</span>
+      <div class="envelope"><div class="flap"></div><div class="addr">For whoever holds this link<small>Table ${esc(S.code)}${pk?.seated != null ? ` · ${pk.seated} seated` : ''}</small></div></div>
+      <button class="wax-btn ${S.ui.holding === 'seal' ? 'holding' : ''}" data-hold="openSeal" data-key="hold-seal" aria-label="Press and hold to break the seal">
+        <svg class="wax-ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" pathLength="100"/></svg><span class="wax"><span>DS</span></span>
+      </button>
+      <div class="inv-hint"><p>Press and hold the seal</p><span class="small muted">${pk?.host ? `${host} has saved you a seat.` : 'Someone has saved you a seat.'}</span></div>
+      <button class="inv-recover" data-act="recoverInvite">Already seated? Recover your seat</button>
+    </main>`;
+  }
+  const started = pk && pk.phase !== 'LOBBY';
+  const meta = pk ? `<div class="meta"><span>${esc(pk.preset ?? '')}</span><span>${pk.seated} of ${pk.max} seated</span><span>${pk.rules} rule card${pk.rules === 1 ? '' : 's'}</span></div>` : '';
+  let body;
+  if (S.ui.recover) {
+    body = `<span class="k">Table ${esc(S.code)} · recover your seat</span><h2>Back to <i>your chair.</i></h2>
+      <p>Ask the host for a one-time recovery code. Your old device will be signed out.</p>
+      <label class="sign"><input data-draft="recCode" maxlength="8" autocomplete="off" placeholder="Recovery code" value="${esc(d.recCode ?? '')}"><small>Code</small></label>
+      <button class="btn btn-blood btn-wide" data-act="recover">Recover my seat</button>
+      <button class="letter-link" data-act="toggleRecover">Join as a new player instead</button>`;
+  } else if (started) {
+    body = `<span class="k">Table ${esc(S.code)}</span><h2>The table has <i>already begun.</i></h2>
+      <p>New seats can't be added mid-game. If this is your seat, recover it with a code from the host.</p>${meta}
+      <button class="btn btn-blood btn-wide" data-act="toggleRecover">Recover my seat</button>`;
+  } else {
+    body = `<span class="k">Table ${esc(S.code)} · an invitation</span>
+      <h2><i>${host}</i> has saved you a seat.</h2>
+      <p>You are invited to a table of strangers, with Death roaming amongst them in secret.</p>${meta}
+      <label class="sign"><input data-draft="joinName" maxlength="20" autocomplete="nickname" placeholder="Your name" value="${esc(d.joinName ?? '')}"><small>Sign your name</small></label>
+      <button class="btn btn-blood btn-wide" data-act="join" ${S.pending ? 'disabled' : ''}>Take my seat</button>
+      <button class="letter-link" data-act="toggleRecover">Already seated? Recover your seat</button>`;
+  }
+  return `<main class="invite2" data-key="inv-open">
+    <div class="h-top">${wordmark()}<span></span></div>
+    <div class="seal-shards" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="letter">${body}</div>
   </main>`;
 }
 const loadingScreen = () => `<main class="main narrow" data-key="load">${wordmark()}<div class="loading"><span class="pulse-dot"></span> Finding your seat…</div></main>`;
@@ -517,7 +627,7 @@ const guideScreen = () => `<main class="main" style="max-width:820px" data-key="
  * Seats drawn around a table in seating order. When `pick` is set, the
  * selectable seats become buttons: tapping a seat is how you target anyone.
  */
-function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = {}, lobby = false } = {}) {
+function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = {}, lobby = false, crack = false, extra = '' } = {}) {
   const players = [...v.players].sort((a, b) => a.seat - b.seat);
   const n = Math.max(players.length, slots);
   const tok = n <= 6 ? 60 : n <= 8 ? 54 : n <= 10 ? 48 : n <= 13 ? 42 : 38;
@@ -555,11 +665,12 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     const inner = reveal && p.role ? glyph(p.role.glyph) : `<span class="tok-ini">${initials(p.name)}</span>`;
     const label = `${esc(p.name)}${p.alive ? '' : ', dead'}${isSel ? ', selected' : ''}`;
     seats.push(`<button type="button" class="${cls}" data-key="tok-${p.id}" style="left:${x}%;top:${y}%" ${selectable ? `data-act="${pick.act}" data-id="${p.id}"` : 'tabindex="-1"'} aria-pressed="${isSel}" aria-label="${label}">
-      <span class="tok-disc">${sigil(p.id)}${inner}${badges.join('')}</span><span class="tok-name">${esc(p.name)}</span></button>`);
+      <span class="tok-disc">${sigil(p.id)}${crack && !p.alive ? CRACK : ''}${inner}${badges.join('')}</span><span class="tok-name">${esc(p.name)}</span></button>`);
   }
   return `<div class="ring-wrap" data-key="ring-wrap"><div class="ring ${pick ? 'picking' : ''} ${pick?.tone === 'kill' ? 'kill' : ''}" style="--tok:${tok}px" data-key="ring">
     <svg class="ring-fuse off" viewBox="0 0 100 100" data-ringfuse aria-hidden="true"><circle class="track" cx="50" cy="50" r="49"/><circle class="burn" cx="50" cy="50" r="49" pathLength="100"/></svg>
     <div class="ring-table" aria-hidden="true"></div>
+    ${extra}
     ${seats.join('')}
     <div class="ring-center" data-key="center">${center}</div>
   </div></div>`;
@@ -586,6 +697,8 @@ function centerFor(v, pick) {
     default: return '';
   }
 }
+
+const CRACK = '<svg class="crack" viewBox="0 0 100 100" aria-hidden="true"><path d="M52 6 L46 30 L58 42 L44 60 L54 76 L48 96"/><path d="M58 42 L76 47"/><path d="M44 60 L26 57"/></svg>';
 
 /** What, if anything, tapping a seat does right now. */
 function pickContexts(v) {
@@ -730,7 +843,7 @@ function chips(v) {
   return `<nav class="chips" data-key="chips">
     <button class="chip" data-act="sheet" data-id="role">${me.role ? glyph(me.role.glyph) : ''}<span>My role</span></button>
     <button class="chip" data-act="sheet" data-id="notes">${glyph('scroll')}<span>Notes</span>${notes ? `<b>${notes}</b>` : ''}</button>
-    ${v.activeRules?.length ? `<button class="chip" data-act="sheet" data-id="rules">${glyph('magistrate')}<span>Rules</span><b>${v.activeRules.length}</b></button>` : ''}
+    ${v.activeRules?.length ? `<button class="chip ${Object.keys(activeRuleNotes(v)).length ? 'live' : ''}" data-act="sheet" data-id="rules">${glyph('magistrate')}<span>Rules</span><b>${v.activeRules.length}</b></button>` : ''}
     ${v.scenario ? `<button class="chip" data-act="sheet" data-id="story">${glyph('whispers')}<span>Story</span></button>` : ''}
   </nav>`;
 }
@@ -754,7 +867,7 @@ function sheet(v) {
   let body = '';
   if (s === 'record') {
     title = `Room ${esc(v.code)}`;
-    body = `${hostBox()}<div><div class="rule">Public record</div>${feed(v.log)}</div>
+    body = `${hostBox()}<div>${recordBlock(v)}</div>
       <div class="row"><a class="btn btn-sm btn-ghost" href="/guide" data-link>How to play</a><button class="btn btn-sm btn-ghost" data-act="leave">${glyph('out')} Leave this device</button></div>`;
   } else if (s === 'role' && me?.role) {
     title = 'My role';
@@ -764,7 +877,8 @@ function sheet(v) {
     body = feed([...(v.private || [])].reverse(), 'feed-private');
   } else if (s === 'rules') {
     title = 'Rules in force';
-    body = v.activeRules.map((r) => `<div class="rule-card"><b>${esc(r.name)}</b><p>${esc(r.text)}</p><p class="small muted">${esc(r.enforcement)}</p></div>`).join('');
+    const live = activeRuleNotes(v);
+    body = v.activeRules.map((r) => `<div class="rule-card ${live[r.id] ? 'live' : ''}">${glyph(ruleGlyph(r.id))}<div><b>${esc(r.name)}</b>${live[r.id] ? `<span class="in-effect">In effect now · ${esc(live[r.id])}</span>` : ''}<p>${esc(r.text)}</p><p class="small muted">${esc(r.enforcement)}</p></div></div>`).join('');
   } else if (s === 'story') {
     title = 'The story';
     body = `<p class="scenario">${esc(`We are ${v.scenario.who}, in ${v.scenario.where}, trying to ${v.scenario.why}.`)}</p><p class="small muted">Pure flavour — it never changes the rules. Play it up.</p>`;
@@ -790,6 +904,12 @@ function sheet(v) {
     </div>`;
 }
 
+/** Public record: the Gazette by default, a plain list when toggled. */
+function recordBlock(v) {
+  return `<div class="row between rec-head"><span class="kicker">Public record</span><button class="chip" data-act="recordMode">${S.ui.recordList ? 'Gazette view' : 'List view'}</button></div>
+    ${S.ui.recordList ? feed(v.log) : gazetteHtml(v, { glyph, esc })}`;
+}
+
 function codeTiles(code) {
   return [...code].map((c, i) => `<span class="tile" style="--i:${i}">${esc(c)}</span>`).join('');
 }
@@ -812,25 +932,60 @@ function lobbyMain(v, me) {
     </section>
     ${ring(v, { pick, slots: Math.max(5, v.players.length), lobby: true, center: centerFor(v) })}
     ${isHost ? '<p class="small muted center-text" data-key="seathint">Tap a seat to move or remove a player.</p>' : ''}
+    ${lobbyDeck(v, isHost)}
     <section data-key="setup">
       <div class="rule">Setup</div>
       ${isHost ? setupForm(v) : setupSummary(v)}
     </section>
     <section class="stack" data-key="report">
-      ${report.publicDeck ? deckPreview(report.publicDeck) : ''}
       ${report.errors.map((e, i) => `<div class="banner blood" data-key="err-${i}">${glyph('dagger')}<div><p>${esc(e)}</p></div></div>`).join('')}
       ${report.warnings.map((w, i) => `<div class="banner" data-key="warn-${i}">${glyph('scroll')}<div><p>${esc(w)}</p></div></div>`).join('')}
     </section>`;
 }
 
-function deckPreview(deck) {
-  const names = S.content?.roles ? Object.fromEntries(S.content.roles.map((r) => [r.id, r])) : {};
-  const chip = (id, n, cls = '') => `<span class="deck-card ${cls}" data-key="dc-${id}">${names[id] ? glyph(names[id].glyph) : ''}<b>${esc(names[id]?.name ?? id)}</b><i>×${n}</i></span>`;
-  if (deck.exact) return `<div class="deck" data-key="deck"><span class="kicker">Exact deck</span><div class="deck-row">${Object.entries(deck.exact).map(([id, n]) => chip(id, n, id === 'DEATH' ? 'death' : '')).join('')}</div></div>`;
-  return `<div class="deck" data-key="deck"><span class="kicker">The deck</span><div class="deck-row">
-    ${Object.entries(deck.core).filter(([, n]) => n > 0).map(([id, n]) => chip(id, n, id === 'DEATH' ? 'death' : '')).join('')}
-    ${deck.extended ? `<span class="deck-card secret" data-key="dc-ext"><span class="q">?</span><b>Extended</b><i>×${deck.extended}</i></span>` : ''}
-  </div>${deck.extended ? `<p class="small muted">Extended seats are drawn secretly from: ${deck.pool.map((id) => esc(names[id]?.name ?? id)).join(', ')}.</p>` : ''}</div>`;
+/** 20 · Tonight's deck, the extended pool, rule cards and table switches. */
+function lobbyDeck(v, isHost) {
+  const s = v.settings;
+  const deck = v.setup?.publicDeck;
+  const preset = v.presets.find((p) => p.id === s.preset);
+  const roles = Object.fromEntries((S.content?.roles ?? []).map((r) => [r.id, r]));
+  const rules = Object.fromEntries((S.content?.rules ?? []).map((r) => [r.id, r]));
+  const card = (id, n, cls = '') => `<div class="dcard ${cls}" data-key="ld-${id}">${roles[id] ? glyph(roles[id].glyph) : ''}<b>${esc(roles[id]?.name ?? id)}</b>${n > 1 ? `<i>×${n}</i>` : ''}</div>`;
+  let cards = '';
+  if (deck?.exact) cards = Object.entries(deck.exact).map(([id, n]) => card(id, n, roles[id]?.alignment === 'DEATH' ? 'death' : '')).join('');
+  else if (deck) {
+    cards = Object.entries(deck.core).filter(([, n]) => n > 0).map(([id, n]) => card(id, n, id === 'DEATH' ? 'death' : '')).join('')
+      + (deck.extended ? `<div class="dcard secret" data-key="ld-ext"><span class="q">?</span><b>${deck.extended} extended</b></div>` : '');
+  }
+  const allExt = (S.content?.roles ?? []).filter((r) => r.set !== 'core').map((r) => r.id);
+  const poolIds = preset.custom ? allExt : preset.pool;
+  const inPool = new Set(deck?.pool ?? (preset.custom ? s.extendedPool : preset.pool));
+  const editable = isHost && preset.custom && !s.customDeck.trim();
+  const pool = poolIds.length && !deck?.exact ? `
+    <div class="row between"><span class="kicker">${deck?.extended ? `+${deck.extended} extended, drawn secretly from` : 'Extended pool · used from 7 players'}</span><span class="kicker on">${[...inPool].filter((id) => poolIds.includes(id)).length} of ${poolIds.length}</span></div>
+    <div class="pool-grid">${poolIds.map((id) => {
+      const on = inPool.has(id);
+      const inner = `${roles[id] ? glyph(roles[id].glyph) : ''}<span>${esc(roles[id]?.name ?? id)}</span>`;
+      return editable ? `<button class="${on ? '' : 'off'}" data-act="poolToggle" data-id="${id}" aria-pressed="${on}" data-key="pg-${id}">${inner}</button>` : `<span class="${on ? '' : 'off'}" data-key="pg-${id}">${inner}</span>`;
+    }).join('')}</div>${editable ? '<p class="small muted">Tap to add or remove roles from the pool.</p>' : ''}` : '';
+  const ruleCards = s.rules.mode === 'manual'
+    ? (s.rules.selected.length ? s.rules.selected.map((id) => isHost
+      ? `<button class="dcard rcard" data-act="ruleToggle" data-id="${id}" data-key="lr-${id}" aria-label="Remove ${esc(rules[id]?.name ?? id)}">${glyph(ruleGlyph(id))}<b>${esc(rules[id]?.name ?? id)}</b><i>×</i></button>`
+      : `<div class="dcard rcard" data-key="lr-${id}">${glyph(ruleGlyph(id))}<b>${esc(rules[id]?.name ?? id)}</b></div>`).join('') : '<p class="small muted">No rule cards chosen.</p>')
+    : Array.from({ length: s.rules.count }, (_, i) => `<div class="dcard rcard fd" data-key="lr-r${i}"><span class="q">?</span><b>Drawn at start</b></div>`).join('') || '<p class="small muted">No rule cards.</p>';
+  const toggle = (key, title, sub) => isHost
+    ? `<label class="toggle-row"><span><b>${title}</b><small>${sub}</small></span><input type="checkbox" class="switch" data-set-bool="${key}" ${v.table?.[key] ? 'checked' : ''}></label>`
+    : `<div class="toggle-row"><span><b>${title}</b><small>${sub}</small></span><span class="tag ${v.table?.[key] ? 'solid' : ''}">${v.table?.[key] ? 'On' : 'Off'}</span></div>`;
+  return `<section class="lobby-deck" data-key="ldeck">
+    <div class="rule">Tonight's deck · ${v.players.length} player${v.players.length === 1 ? '' : 's'}</div>
+    <div class="deckrow">${cards || '<p class="small muted">Seat at least 5 players to see the deck.</p>'}</div>
+    ${pool}
+    <div class="rule">Rule cards in play</div>
+    <div class="deckrow">${ruleCards}</div>
+    <div class="rule">The TV board</div>
+    ${toggle('threads', 'Threads of suspicion', 'Draws who accused whom across the table')}
+    ${toggle('score', 'Atmospheric score', 'Music and effects play on the TV board')}
+  </section>`;
 }
 
 function setupSummary(v) {
@@ -853,7 +1008,6 @@ function setupForm(v) {
   const s = v.settings;
   const preset = v.presets.find((p) => p.id === s.preset);
   const rules = (S.content?.rules ?? []).filter((r) => preset.ruleIds.includes(r.id));
-  const ext = (S.content?.roles ?? []).filter((r) => r.set !== 'core');
   const t = s.timers;
   const OPTS = [0, 15, 30, 45, 60, 90, 120, 180, 300, 600];
   const timer = (key, label) => `<label class="field"><span>${label}</span><select class="input" data-set="timers.${key}">
@@ -863,7 +1017,6 @@ function setupForm(v) {
     <div class="carousel" data-key="presets">${v.presets.map((p) => `<button class="preset" data-act="preset" data-id="${p.id}" aria-pressed="${s.preset === p.id}" data-key="pr-${p.id}"><b>${esc(p.name)}</b>${p.recommended ? '<span class="tag solid">Best first game</span>' : ''}<small>${esc(p.blurb)}</small><span class="kicker">${p.min}–${p.max} players</span></button>`).join('')}</div>
 
     ${preset.custom ? `<details class="more" data-key="d-custom" open><summary>Custom deck</summary><div>
-      <div class="rule-grid">${ext.map((r) => `<label class="check"><input type="checkbox" data-act-change="pool" data-id="${r.id}" ${s.extendedPool.includes(r.id) ? 'checked' : ''}><span><b>${esc(r.name)} <span class="muted small">${r.set === 'full' ? 'Full Deck' : 'Standard'}</span></b><small>${esc(r.summary)}</small></span></label>`).join('')}</div>
       <label class="check"><input type="checkbox" data-set-bool="dreams" ${s.dreams ? 'checked' : ''}><span><b>Dreams</b><small>Everyone draws a Dream card each night.</small></span></label>
       <label class="check"><input type="checkbox" data-set-bool="doomsday" ${s.doomsday ? 'checked' : ''}><span><b>Doomsday Clock</b><small>Death wins if nobody has won when the final Day closes.</small></span></label>
       <label class="field"><span>Exact deck (optional)</span><textarea class="input" data-set-text="customDeck" placeholder="Death x2&#10;Guardian&#10;Mentalist&#10;Psycho&#10;Whore">${esc(s.customDeck)}</textarea></label>
@@ -954,11 +1107,25 @@ function dayMain(v, me) {
   if (v.phase === 'DAY_RESOLVING') stage = v.action.type === 'retaliate' ? '<p class="center-text blood" data-key="ret">You were sentenced. You may take one living non-Death player with you.</p>' : '<p class="center-text muted" data-key="ret">The condemned is making a final choice…</p>';
   return `${head(v)}
     ${statusBanners(v, me)}
+    ${ruleRibbon(v, me)}
     ${pickTabs(ctx, pick)}
     ${ring(v, { pick, center: centerFor(v, pick) })}
     ${stage}
     ${chatBlock(v)}
     ${chips(v)}`;
+}
+
+/** 17 · Rule cards shaping the current phase, highlighted. */
+function ruleRibbon(v, me) {
+  const notes = activeRuleNotes(v);
+  const ids = Object.keys(notes);
+  if (!ids.length) return '';
+  if (notes.FOG_OF_WAR && me?.alive && me.seat != null) {
+    const seats = [...v.players].sort((x, y) => x.seat - y.seat);
+    const n = seats.length; const l = seats[(me.seat - 1 + n) % n]; const r = seats[(me.seat + 1) % n];
+    notes.FOG_OF_WAR = `Talk only with ${l.name} and ${r.name}`;
+  }
+  return `<div class="rule-ribbon" data-key="rr-${v.phase}">${ids.map((id) => `<span class="rr" data-key="rr-${id}">${glyph(ruleGlyph(id))}<b>${esc(v.activeRules.find((r) => r.id === id)?.name ?? '')}</b><span>${esc(notes[id])}</span></span>`).join('')}</div>`;
 }
 
 function statusBanners(v, me) {
@@ -967,15 +1134,6 @@ function statusBanners(v, me) {
   if (me.statuses.includes('MUTE')) out.push(`<div class="banner blood" data-key="st-mute">${glyph('psycho')}<div><b>You are MUTE today.</b><p>No talking in discussion or defence. You can still nominate and vote.</p></div></div>`);
   if (me.statuses.includes('NO_VOTE')) out.push(`<div class="banner blood" data-key="st-nov">${glyph('psycho')}<div><b>NO VOTE today.</b><p>You may speak, but your ballot is disabled.</p></div></div>`);
   if (me.revived) out.push(`<div class="banner" data-key="st-rev">${glyph('necro')}<div><b>Borrowed time.</b><p>Nothing can kill you until it runs out after Night ${roman(me.revived.expiresAfterNight)} — but the town can still sentence you.</p></div></div>`);
-  const ids = v.activeRules.map((r) => r.id);
-  if (me.alive && (v.phase === 'DAY_DISCUSSION' || v.phase === 'DAY_DEFENSE')) {
-    if (ids.includes('CURSED_SILENCE')) out.push(`<div class="banner" data-key="st-cs">${glyph('scroll')}<div><b>Cursed Silence</b><p>Speak only when someone addresses you directly.</p></div></div>`);
-    if (ids.includes('FOG_OF_WAR')) {
-      const seats = [...v.players].sort((x, y) => x.seat - y.seat);
-      const n = seats.length; const l = seats[(me.seat - 1 + n) % n]; const r = seats[(me.seat + 1) % n];
-      out.push(`<div class="banner" data-key="st-fog">${glyph('scroll')}<div><b>Fog of War</b><p>Talk only with ${esc(l.name)} and ${esc(r.name)}.</p></div></div>`);
-    }
-  }
   return out.join('');
 }
 
@@ -1060,7 +1218,7 @@ function nightMain(v, me) {
       </section>${chips(v)}`;
   }
   const body = v.phase === 'NIGHT_DREAM_SWAP' ? swapStage(v, me, v.action) : actionsStage(v, me, v.action);
-  return `${head(v, `<button class="btn btn-sm btn-ghost cover" data-act="veil" data-key="cover">${glyph('veil')} Cover</button>`)}<div class="night-body" data-key="nightbody">${body}</div>${chips(v)}`;
+  return `${head(v, `<button class="btn btn-sm btn-ghost cover" data-act="veil" data-key="cover">${glyph('veil')} Cover</button>`)}${ruleRibbon(v, me)}<div class="night-body" data-key="nightbody">${body}</div>${chips(v)}`;
 }
 
 function swapStage(v, me, a) {
@@ -1174,7 +1332,7 @@ function endMain(v, me) {
       <span class="who"><b>${esc(p.name)}</b><small>${p.role ? esc(p.role.name) : '—'}${p.originalRole ? ` (was ${esc(p.originalRole.name)})` : ''} · ${p.alive ? 'alive' : `† ${esc(p.diedAt ?? '')}`}</small></span>
       <span class="tags"><span class="tag ${p.alignment === 'DEATH' ? 'blood' : ''}">${esc(ALIGN[p.alignment] ?? '')}</span></span></li>`).join('')}</ul>` : '<p class="muted">The host chose not to reveal roles.</p>'}</section>
     ${me && !me.moderator ? `<details class="more" data-key="endnotes"><summary>My notes</summary><div>${feed([...(v.private || [])].reverse(), 'feed-private')}</div></details>` : ''}
-    <details class="more" data-key="endrec"><summary>Public record</summary><div>${feed(v.log)}</div></details>
+    <details class="more" data-key="endrec"><summary>Public record</summary><div>${recordBlock(v)}</div></details>
     <div class="row center" data-key="endbtns"><a class="btn" href="/" data-link>Back to start</a></div>`;
 }
 
@@ -1191,21 +1349,11 @@ function moderatorMain(v) {
 }
 
 // ── Board (public TV display) ──────────────────────────────────────────────
-function boardScreen() {
+function boardView() {
   const v = V();
   if (S.conn === 'gone') return goneScreen();
   if (!v) return loadingScreen();
-  return `<main class="board" data-key="board">
-    <div class="row between">${wordmark()}<span class="kicker">Room <span class="mono">${esc(v.code)}</span> · public board</span></div>
-    <div class="cols">
-      <section>${head(v)}${v.scenario ? `<p class="scenario">${esc(`We are ${v.scenario.who}, in ${v.scenario.where}, trying to ${v.scenario.why}.`)}</p>` : ''}
-        ${ring(v, { center: centerFor(v), lobby: v.phase === 'LOBBY', slots: v.phase === 'LOBBY' ? Math.max(5, v.players.length) : 0, reveal: v.phase === 'ENDED' })}
-        ${v.phase === 'LOBBY' ? `<div class="row center" data-key="bqr">${qrSvg(`${location.origin}/r/${v.code}`)}<span class="code-tiles big">${codeTiles(v.code)}</span></div>` : ''}
-        ${v.day?.nominees?.length ? nominationList(v) : ''}
-      </section>
-      <section><div class="rule">Public record</div><div data-scroll="board-tl" class="board-feed">${feed(v.log)}</div>
-        ${v.activeRules?.length ? `<div class="rule">Rules in force</div>${v.activeRules.map((r) => `<p><b>${esc(r.name)}</b> <span class="muted small">${esc(r.text)}</span></p>`).join('')}` : ''}</section>
-    </div></main>`;
+  return boardScreen(v, { esc, glyph, ring, centerFor, roman, codeTiles, qrSvg, STEP, phaseWord, content: S.content, audio: S.board.audio, wordmark });
 }
 
 // ── Dock (primary action) ──────────────────────────────────────────────────
@@ -1275,10 +1423,9 @@ function commitReady(a) {
 }
 
 // ── Actions ────────────────────────────────────────────────────────────────
-const picked = (el, kill = false) => {
+const picked = (el, kill = false, secret = false) => {
   const on = el.getAttribute('aria-pressed') !== 'true';
-  sound.play(on ? 'pick' : 'unpick');
-  haptic(on ? 10 : 5);
+  if (!secret) { uiSound(on ? 'pick' : 'unpick'); uiHaptic(on ? 10 : 5); }
   if (on) burstAt(el, { colors: kill ? ['#e2585e', '#b3242d', '#ece5d5'] : ['#ece5d5', '#bdb4a4'], count: 12, power: 2.6 });
 };
 
@@ -1316,6 +1463,12 @@ const ACT = {
     } finally { S.pending = false; render(); }
   },
   toggleRecover() { S.ui.recover = !S.ui.recover; render(); },
+  poolToggle(el) { const pool = new Set(V().settings.extendedPool); if (pool.has(el.dataset.id)) pool.delete(el.dataset.id); else pool.add(el.dataset.id); send('host.settings', { extendedPool: [...pool] }); },
+  ruleToggle(el) { const sel = V().settings.rules.selected.filter((x) => x !== el.dataset.id); send('host.settings', { rules: { selected: sel } }); },
+  recordMode() { S.ui.recordList = !S.ui.recordList; localStorage.setItem('deadset:record', S.ui.recordList ? 'list' : 'gazette'); render(); },
+  homeTab(el) { S.ui.homeTab = el.dataset.id; render(); },
+  openSeal(el) { S.ui.invite = true; sound.play('crack'); setTimeout(() => sound.play('unfold'), 250); haptic([25, 40, 25]); burstAt(el, { colors: ['#c33a43', '#7d151d', '#ece5d5'], count: 22, power: 4 }); render(); },
+  recoverInvite() { S.ui.invite = true; S.ui.recover = true; render(); },
   async recover() {
     try {
       const r = await api(`/api/rooms/${S.code}/recover`, { recoveryCode: S.drafts.recCode });
@@ -1329,7 +1482,7 @@ const ACT = {
     clearSession(S.code); disconnect(); S.token = null; go('/');
   },
   back() { if (history.length > 1) history.back(); else go('/'); },
-  sheet(el) { const id = el.dataset.id; S.ui.sheet = id && S.ui.sheet !== id ? id : null; if (S.ui.sheet) sound.play('whoosh'); render(); },
+  sheet(el) { const id = el.dataset.id; S.ui.sheet = id && S.ui.sheet !== id ? id : null; if (S.ui.sheet) uiSound('whoosh'); render(); },
   seatSheet(el) { S.ui.sheet = `seat:${el.dataset.id}`; render(); },
   sound() { sound.toggle(); render(); },
   copy(el) { navigator.clipboard?.writeText(el.dataset.text).then(() => toast('Invite link copied'), () => toast(el.dataset.text)); burstAt(el); },
@@ -1356,14 +1509,14 @@ const ACT = {
     const k = el.dataset.key;
     if (k === 'sheet') return;
     S.ui.flipped[k] = !S.ui.flipped[k];
-    if (S.ui.flipped[k]) { sound.play('reveal'); haptic(12); }
+    if (S.ui.flipped[k]) { uiSound('reveal'); uiHaptic(12); }
     render();
   },
   ack(el) { burstAt(el); send('role.ack'); },
-  unveil() { S.ui.unveiled[V().phaseId] = true; sound.play('whoosh'); render(); },
+  unveil() { S.ui.unveiled[V().phaseId] = true; render(); },
   veil() { S.ui.unveiled[V().phaseId] = false; render(); },
   async immunity() { await send('day.immunity'); },
-  shoot(el) { picked(el, true); const cur = V().action.abilities.find((x) => x.kind === 'shoot')?.choice; send('day.shoot', { target: cur === el.dataset.id ? null : el.dataset.id }); },
+  shoot(el) { picked(el, true, true); const cur = V().action.abilities.find((x) => x.kind === 'shoot')?.choice; send('day.shoot', { target: cur === el.dataset.id ? null : el.dataset.id }); },
   pickNominate(el) { picked(el); S.sel.nominate = S.sel.nominate === el.dataset.id ? null : el.dataset.id; render(); },
   async nominate(el) { burstAt(el, { colors: ['#e2585e', '#ece5d5'] }); if (S.sel.nominate) await send('day.nominate', { target: S.sel.nominate }); },
   pickVote(el) { picked(el, true); S.sel.vote = el.dataset.id; render(); },
@@ -1375,7 +1528,7 @@ const ACT = {
   pickRetaliate(el) { picked(el, true); S.sel.retaliate = el.dataset.id; render(); },
   retaliate(el) { send('day.retaliate', { target: el.dataset.none ? null : S.sel.retaliate }); },
   pickSwap(el) { picked(el); S.sel.swap = S.sel.swap === el.dataset.id ? null : el.dataset.id; render(); },
-  swap(el) { sound.play('sleep'); send('dream.swap', { target: el.dataset.none ? null : S.sel.swap }); },
+  swap(el) { send('dream.swap', { target: el.dataset.none ? null : S.sel.swap }); },
   pickTarget(el) {
     picked(el, el.classList.contains('kill'));
     const s = V().action.schema;
@@ -1389,7 +1542,7 @@ const ACT = {
     else { sel.shift(); sel.push({ target: id }); }
     S.sel.uses = sel; render();
   },
-  pickUseOption(el) { sound.play('pick'); const sel = [...(S.sel.uses ?? [])]; sel[Number(el.dataset.i)] = { ...sel[Number(el.dataset.i)], option: el.dataset.id }; S.sel.uses = sel; render(); },
+  pickUseOption(el) { uiSound('pick'); const sel = [...(S.sel.uses ?? [])]; sel[Number(el.dataset.i)] = { ...sel[Number(el.dataset.i)], option: el.dataset.id }; S.sel.uses = sel; render(); },
   pickOption(el) { picked(el); S.sel.uses = S.sel.uses?.[0]?.option === el.dataset.id ? [] : [{ option: el.dataset.id }]; render(); },
   pickNightmare(el) { picked(el); S.sel.nightmare = S.sel.nightmare === el.dataset.id ? null : el.dataset.id; render(); },
   pickConspire(el) { picked(el); S.sel.conspire = el.dataset.id; render(); },
@@ -1415,15 +1568,17 @@ const ACT = {
     if (a.nightmare) payload.nightmare = S.sel.nightmare ?? a.nightmare.choice ?? null;
     burstAt(el, { colors: ['#a9bcd0', '#dde2ea'] });
     const ok = await send('night.commit', payload);
-    if (ok) { sound.play('sleep'); haptic(15); }
+
   },
   reopen() { send('night.reopen'); },
   chatTab(el) { S.ui.chat = el.dataset.id; render(); },
   tab(el) { S.ui.tab = el.dataset.id; render(); },
   momentNext() { nextMoment(); },
+  boardScore() { sound.unlock(); if (!sound.on) sound.toggle(); S.board.audio = true; reportBoardAudio(true); render(); },
+  boardMute() { S.board.audio = false; score.stop(); reportBoardAudio(false); render(); },
 };
 
-const QUIET = new Set(['pickNominate', 'pickVote', 'pickRetaliate', 'pickSwap', 'pickTarget', 'pickOption', 'pickNightmare', 'pickConspire', 'pickDeath', 'shoot', 'sound', 'pickUseOption', 'momentNext']);
+const QUIET = new Set(['boardScore', 'boardMute', 'pickNominate', 'pickVote', 'pickRetaliate', 'pickSwap', 'pickTarget', 'pickOption', 'pickNightmare', 'pickConspire', 'pickDeath', 'shoot', 'sound', 'pickUseOption', 'momentNext']);
 document.addEventListener('click', (e) => {
   const link = e.target.closest('a[data-link]');
   if (link && link.origin === location.origin && !e.metaKey && !e.ctrlKey) { e.preventDefault(); go(link.pathname); return; }
@@ -1432,7 +1587,7 @@ document.addEventListener('click', (e) => {
   if (el.tagName === 'INPUT') { ACT[el.dataset.act]?.(el); return; }
   e.preventDefault();
   if (el.disabled || el.hasAttribute('data-pending')) return;
-  if (!QUIET.has(el.dataset.act)) { sound.play('tap'); haptic(6); }
+  if (!QUIET.has(el.dataset.act)) { uiSound('tap'); uiHaptic(6); }
   ACT[el.dataset.act]?.(el);
 });
 
@@ -1449,14 +1604,15 @@ document.addEventListener('pointerdown', (e) => {
   e.preventDefault();
   cancelHold();
   const key = el.dataset.key.replace(/^hold-/, '');
+  if (el.dataset.hold === 'openSeal') sound.unlock();
   S.ui.holding = key;
   el.classList.add('holding');
-  haptic(8);
+  uiHaptic(8);
   holdTimer = setTimeout(() => {
     holdTimer = null; S.ui.holding = null; el.classList.remove('holding');
-    haptic([20, 30, 40]); sound.play('stamp'); burstAt(el);
+    if (el.dataset.hold !== 'openSeal') { uiHaptic([20, 30, 40]); uiSound('stamp'); burstAt(el); }
     ACT[el.dataset.hold]?.(el);
-  }, calm.matches ? 450 : 750);
+  }, calm.matches ? 450 : el.dataset.hold === 'openSeal' ? 900 : 750);
 });
 ['pointerup', 'pointercancel'].forEach((t) => document.addEventListener(t, () => { if (holdTimer) cancelHold(); }, true));
 document.addEventListener('pointerout', (e) => { if (holdTimer && e.target.closest?.('[data-hold]') && !e.target.closest('[data-hold]').contains(e.relatedTarget)) cancelHold(); }, true);
@@ -1479,8 +1635,9 @@ document.addEventListener('input', (e) => {
   const el = e.target;
   if (el.dataset.draft) {
     let v = el.value;
-    if (el.dataset.draft === 'joinCode') { v = v.toUpperCase().replace(/[^A-Z0-9]/g, ''); el.value = v; }
+    if (el.dataset.draft === 'joinCode') { v = v.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6); el.value = v; }
     S.drafts[el.dataset.draft] = v;
+    if (el.dataset.draft === 'joinCode') { render(); if (v.length === 6) setTimeout(() => ACT.gotoRoom(), 250); }
   }
   if (el.dataset.setText) {
     const path = el.dataset.setText;

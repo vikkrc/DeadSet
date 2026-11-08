@@ -96,3 +96,34 @@ test('T28 offline phone: committed action persists, missing input passes at dead
     assert.equal(m.dayNumber, 2);
   });
 });
+
+test('peek previews a room for the invitation without secrets', () => {
+  const { rm, code } = table(6);
+  const p = rm.peek(code);
+  assert.equal(p.exists, true);
+  assert.equal(p.host, 'Ada');
+  assert.equal(p.seated, 6);
+  assert.equal(p.phase, 'LOBBY');
+  assert.equal(p.preset, 'Standard');
+  assert.equal(rm.peek('ZZZZZZ').exists, false);
+  assert.ok(!JSON.stringify(p).includes('token'));
+});
+
+test('a connected, unmuted TV board silences public sounds on phones', () => {
+  const { rm, code, seats } = table();
+  const phone = fakeRes();
+  rm.attach(code, seats[1].token, phone);
+  assert.equal(phone.last().boardAudio, false);
+  const tv = fakeRes();
+  rm.attach(code, null, tv, { board: true });
+  const key = JSON.parse(tv.chunks.find((c) => c.startsWith('event: board')).split('data: ')[1]).key;
+  assert.throws(() => rm.setBoardAudio(code, 'nope', true), /Unknown board/);
+  rm.setBoardAudio(code, key, true);
+  assert.equal(phone.last().boardAudio, true);
+  rm.command(code, seats[0].token, { type: 'host.settings', payload: { score: false } });
+  assert.equal(phone.last().boardAudio, false, 'host disabled the score');
+  rm.command(code, seats[0].token, { type: 'host.settings', payload: { score: true } });
+  tv.handlers.close();
+  assert.equal(phone.last().boardAudio, false, 'board left');
+  assert.equal(phone.last().table.threads, false, 'threads default off');
+});

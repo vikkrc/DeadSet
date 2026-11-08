@@ -55,5 +55,6 @@ test/              node:test suites
 - Public events play as short **cinematic moments**: nightfall, dawn, the vote tally and the verdict.
 - There are **synthesized sounds** (no audio files), haptics and canvas particles. They are limited to public events, so nothing leaks a secret.
 - A tiny DOM-morphing renderer (`public/app.js`) keeps elements alive between updates, so transitions animate.
-- Effects live in `public/fx.js`.
+- Effects and the generated TV score live in `public/fx.js`; the TV board is `public/board.js`; the Gazette is `public/gazette.js`.
+- Concept mockups are in `design/`.
 - It respects reduced motion and uses 44px+ touch targets.

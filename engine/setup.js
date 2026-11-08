@@ -39,6 +39,8 @@ export function defaultSettings() {
     endReveal: true,
     selfNomination: false,
     selfVote: true,
+    threads: false,
+    score: true,
   };
 }
 
@@ -85,7 +87,7 @@ export function applySettingsPatch(settings, patch = {}) {
     }
   }
   if (['in-person', 'remote'].includes(patch.transport)) s.transport = patch.transport;
-  for (const k of ['revealOnDeath', 'endReveal', 'selfNomination', 'selfVote']) {
+  for (const k of ['revealOnDeath', 'endReveal', 'selfNomination', 'selfVote', 'threads', 'score']) {
     if (typeof patch[k] === 'boolean') s[k] = patch[k];
   }
   return s;

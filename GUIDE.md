@@ -201,8 +201,30 @@ Charges are spent when a valid action is **submitted**, even if it's then blocke
 - **Moments.** Big public events get a short full-screen scene on every phone: *Night falls*, *Dawn* (the dead are struck through one by one), *The town decides* (vote bars, then a SENTENCED or SPARED stamp), and the final verdict with a celebration. Tap to skip. After each dawn, every living player also gets a private *Your night* card. Everyone gets one, even if it's empty, so it gives nothing away.
 - **Hold to confirm.** Host advances, starting the match and declaring Diplomat immunity are **press-and-hold** buttons, so nobody skips a phase by accident.
 - **Night privacy.** Your night starts behind a curtain (*Open your eyes*), and you can cover it again at any time. Once you commit, you see a sleeping screen whose moon fills up as players go to sleep. It shows a count only, never who.
-- **Sound and vibration** (toggle in the top bar). They only fire for public events and your own taps. Private information (your role, a Mentalist reading, a Premonition) never makes a noise or a buzz that could give you away across the table.
+- **Sound and vibration** (toggle in the top bar):
+  - Phones only play sounds for public moments and for your own taps.
+  - At night every phone stays silent and still, and so do role-specific taps such as aiming the Vigilante's shot. Nothing anyone's phone does can give away what they are.
+  - When a TV board is open with its score playing, the TV carries all public sounds and the music, and phones keep only their own (non-revealing) tap sounds.
 - **Reduced motion.** If your device asks for reduced motion, the animations and particles are switched off.
+
+## 9c. The TV board and the invitation
+
+**Open `/board/ROOMCODE` on a TV or laptop.** It only ever shows public information:
+- **Lobby:** a big QR code and the room code, the table filling up as people join, tonight's deck (core cards, a secret "?" for each extended seat, the possible pool), the rule cards (face-down when they'll be drawn at random) and the story.
+- **Opening ceremony:** at the start the WHO / WHERE / WHY cards are dealt and turned over, then the Rule cards. Phones show the same ceremony in a vertical layout.
+- **The living table:**
+  - By day, a candle burns in the centre and accused players are lit red.
+  - At night the table turns cold, fog drifts across it, and the moon fills as players fall asleep (a count only).
+  - The sun or moon rides the table's timer ring. The dead are cracked.
+- **Threads of suspicion** (lobby switch, off by default): red lines from accuser to accused, thicker when repeated and fading over the days.
+- **Rule plaques:** a Rule card glows gold while it's shaping the current phase, e.g. "Majority Rule: more than 3.5 weight needed". Phones show the same highlight above the table.
+- **The Dead Set Gazette:** the public record as illustrated editions, one per day and night.
+  - At each dawn the TV prints a full front page, written in the match's own story ("The Space Explorers woke in an Underground Bunker to an empty chair…").
+  - On phones the record uses the Gazette look by default; *List view* switches back to a plain list.
+- **The last ten seconds:** red closes in from the edges, sparks run around the border, and a heartbeat plays.
+- **The score:** press *Start the score* on the TV (browsers need one tap before playing sound). Generated music follows the phase (lobby, day, vote, night, verdict), along with effects for public events. The host can turn the score off in the lobby; the TV button mutes it.
+
+**The invitation:** opening a join link or scanning the QR code shows a sealed letter. Press and hold the wax seal to break it, sign your name, and take your seat. *Already seated? Recover your seat* is on both sides of the letter.
 
 ## 10. Interpretation notes (where the spec was open)
 

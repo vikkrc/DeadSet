@@ -9,7 +9,7 @@ import {
 } from '../engine/game.js';
 import { playerView, publicView, moderatorView } from '../engine/views.js';
 import { secureRng } from '../engine/rng.js';
-import { ROLES } from '../engine/content.js';
+import { ROLES, PRESETS } from '../engine/content.js';
 import { byId, pub } from '../engine/state.js';
 
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no 0/O/1/I
@@ -182,6 +182,33 @@ export class RoomManager {
     }
   }
 
+  /** True while a TV board in this room is connected and playing the score. */
+  boardAudio(room) {
+    if (room.match.settings.score === false) return false;
+    for (const c of room.clients) if (c.board && c.audio) return true;
+    return false;
+  }
+
+  setBoardAudio(code, key, on) {
+    const room = this.room(code);
+    const client = [...room.clients].find((c) => c.board && c.key && c.key === String(key || ''));
+    if (!client) throw new GameError('Unknown board.', 'AUTH');
+    client.audio = !!on;
+    this.broadcast(room);
+    return { ok: true };
+  }
+
+  /** Public, pre-join preview of a room (used by the invitation screen). */
+  peek(code) {
+    const r = this.rooms.get(String(code || '').toUpperCase());
+    if (!r) return { exists: false };
+    const m = r.match;
+    const host = m.moderated ? r.moderatorName : m.players.find((p) => p.id === m.hostId)?.name;
+    const preset = PRESETS[m.settings.preset];
+    const rules = m.phase === 'LOBBY' ? (m.settings.rules.mode === 'random' ? m.settings.rules.count : m.settings.rules.selected.length) : m.activeRules.length;
+    return { exists: true, phase: m.phase, players: m.players.length, host: host ?? null, seated: m.players.length, max: preset.max, preset: preset.name, rules, moderated: !!m.moderated };
+  }
+
   // ── Streams ──────────────────────────────────────────────────────────────
   isConnected(room, pid) {
     for (const c of room.clients) if (c.pid === pid) return true;
@@ -191,8 +218,9 @@ export class RoomManager {
   attach(code, token, res, { board = false } = {}) {
     const room = this.room(code);
     const pid = board ? null : this.auth(room, token);
-    const client = { res, pid, board, last: '' };
+    const client = { res, pid, board, last: '', key: board ? newToken() : null, audio: false };
     room.clients.add(client);
+    if (board) res.write(`event: board\ndata: ${JSON.stringify({ key: client.key })}\n\n`);
     if (pid && pid === room.match.hostId) room.hostSeen = this.clock();
     this.syncPresence(room);
     this.send(room, client, true);
@@ -215,7 +243,7 @@ export class RoomManager {
   viewFor(room, client) {
     const m = room.match;
     const now = this.clock();
-    if (client.board) return publicView(m, now);
+    if (client.board) return { ...publicView(m, now), boardAudio: this.boardAudio(room) };
     if (m.moderated && client.pid === m.moderatorId) {
       const v = moderatorView(m, now);
       v.moderatorName = room.moderatorName;
@@ -227,6 +255,7 @@ export class RoomManager {
 
   decorate(room, client, v) {
     const m = room.match;
+    v.boardAudio = this.boardAudio(room);
     v.moderatorName = m.moderated ? room.moderatorName : null;
     if (v.host && room.lastRecovery?.forHost === client.pid && room.lastRecovery.expires > this.clock()) {
       v.host.recovery = { playerId: room.lastRecovery.playerId, code: room.lastRecovery.code };
