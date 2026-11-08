@@ -44,7 +44,7 @@ function strings(src) {
 }
 
 // Client: every string literal inside a t( / th( / tm( / tmh( call (balanced parens).
-for (const f of ['public/app.js', 'public/board.js', 'public/gazette.js', 'public/guide.js']) {
+for (const f of ['public/app.js', 'public/board.js', 'public/gazette.js', 'public/guide.js', 'public/gifts.js']) {
   const src = read(f);
   const re = /\b(?:t|th)\(/g;
   let m;
@@ -79,7 +79,10 @@ for (const m of read('public/app.js').matchAll(/\bcount\('((?:[^'\\]|\\.)*)'\)/g
 // Ceremony card labels (translated through a variable).
 for (const k of ['Who', 'Where', 'Why']) keys.add(k);
 // Tables of labels the client translates at render time.
-for (const m of read('public/app.js').matchAll(/const (?:SUGGESTION_LABEL|WEIGHT_LABEL|ROLE_GROUPS|TUTORIAL|RECAP_ROLE) = ([\s\S]*?);\n/g)) for (const x of m[1].matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/[A-Za-z]/.test(s) && !/^[A-Z_]+$/.test(s) && !/^[a-z]+$/.test(s)) keys.add(s); }
+for (const m of read('public/app.js').matchAll(/const (?:SUGGESTION_LABEL|WEIGHT_LABEL|ROLE_GROUPS|TUTORIAL|RECAP_ROLE|AV_ROWS) = ([\s\S]*?);\n/g)) for (const x of m[1].matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/[A-Za-z]/.test(s) && !/^[A-Z_]+$/.test(s) && !/^[a-z]+$/.test(s)) keys.add(s); }
+
+// The gift quips (gifts.js), translated at render time.
+for (const m of read('public/gifts.js').matchAll(/const QUIP = \[([\s\S]*?)\];/g)) for (const x of m[1].matchAll(lit)) keys.add(unq(x[1] ?? x[2]));
 
 // Engine: message templates (strings shaped like sentences or containing {params}).
 for (const m of read('engine/content.js').matchAll(/verb: '([^']+)'/g)) keys.add(m[1]);
@@ -89,7 +92,7 @@ for (const f of ['engine/game.js', 'engine/night.js', 'engine/day.js', 'engine/s
     else if (/^(ready|asleep|ballots recorded|have seen their role|Table|Lobby|End)$/.test(s)) keys.add(s);
   }
 }
-const SKIP = new Set(['DEATH', 'INDEPENDENT', 'ABSTAIN', 'Dead Set', 'Payload too large', 'Invalid JSON', 'Method not allowed', 'Could not restore rooms:']);
+const SKIP = new Set(['coin', 'DEATH', 'INDEPENDENT', 'ABSTAIN', 'Dead Set', 'Payload too large', 'Invalid JSON', 'Method not allowed', 'Could not restore rooms:']);
 const list = [...keys].filter((k) => !SKIP.has(k) && !k.startsWith('deadline')).sort();
 const lang = process.argv[2];
 if (lang) {

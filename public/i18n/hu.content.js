@@ -3,6 +3,8 @@ export default {
   and: 'és',
   numbers: ['nulla', 'egy', 'két', 'három', 'négy', 'öt', 'hat', 'hét', 'nyolc', 'kilenc', 'tíz'],
   roles: {
+    CULT_LEADER: { name: "Szektavezér", when: "Minden éjszaka", summary: "Minden éjjel szervezz be egy játékost a Szektába. A Szekta akkor győz, ha többen vannak, mint mindenki más.", detail: "A beszervezett megtartja szerepét és képességeit, de mostantól a Szektával győz, és megtudja, kik a többi tagok. Halál-oldali játékosok, a Hasfelmetsző és a védett játékosok nem szervezhetők be. Ha a Vezér meghal, senki más nem szervezhet be." },
+    RIPPER: { name: "A Hasfelmetsző", when: "Minden éjszaka", summary: "Ölj meg minden éjjel egy játékost, egyedül. Akkor győzöl, ha utolsóként maradsz állva, vagy egyedül maradsz egy olyan játékossal, aki nem gyilkos.", detail: "A gyilkosságodat ugyanazok a védelmek állítják meg, mint a Halálét (Őrző, Őrangyal, Boszorkányáldás, ideiglenes feltámasztás). A Halál éjjel nem ölhet meg, kivéve Vérholdkor. NEM HALÁL-OLDALINAK látszol." },
     DEATH: { name: 'Halál', when: 'Minden éjszaka', summary: 'Minden éjjel egyetlen közös gyilkosságban kell megegyeznetek az élő Halál-társaitokkal.', detail: 'Minden aktív Halál-játékosnak pontosan ugyanazt a célpontot kell megerősítenie, különben a frakció passzol. Alapból egy gyilkosság jár; a Kettős veszély, az Éjszakai műszak vagy az Erőhullám legfeljebb kettőre emelheti — soha nem jár egy-egy minden Halálnak.' },
     INNOCENT: { name: 'Ártatlan', when: 'Nappal', summary: 'Nincs képességed. A hangod és a szavazatod a fegyvered.', detail: 'Érvelj, vádolj, szavazz. Éjszakánként te is kapsz Álmot, és hathatnak rád állapotok.' },
     MENTALIST: { name: 'Mentalista', when: 'Minden éjszaka', summary: 'Olvass ki egy másik játékost: a Halál oldalán áll-e vagy sem.', detail: 'Csak a célpont jelenlegi hovatartozását tudod meg (HALÁL OLDALÁN / NEM A HALÁL OLDALÁN), a pontos szerepét soha. A blokkolt olvasás nem ad eredményt.' },
@@ -38,6 +40,7 @@ export default {
     GUARDIAN_ANGEL: { name: 'Őrangyal', text: 'Ma éjjel nem árthat neked a Halál, a Pszichopata, bomba, a Boszorkány átka és az összekötött halál sem.' },
   },
   rules: {
+    OPEN_BALLOT: { name: "Nyílt szavazás", text: "Minden szavazat nyilvános: mindenki látja, ki kire szavaz, ahogy a voksok beérkeznek.", enforcement: "A szavazatok a lezárásig még módosíthatók. A szellemek szavazatai is nyilvánosak." },
     FOG_OF_WAR: { name: 'A háború köde', text: 'A vita alatt csak a közvetlenül melletted ülő játékosokkal beszélhetsz.', enforcement: 'Személyesen becsületbeli szabály. Távoli játékban az asztali csevegést szomszédsuttogás váltja fel.' },
     DOUBLE_JEOPARDY: { name: 'Kettős veszély', text: 'A Halál frakció éjszakánként legfeljebb két játékost ölhet meg (felső határ: 2).', enforcement: 'A blokkolások, például a Szajha látogatása vagy a bénulás, továbbra is 0-ra csökkentik.' },
     PARANOIA: { name: 'Paranoia', text: 'Minden élő szavazat +1 súlyt kap. A Bíró hármat ér; az Összeesküvő még +1-et ad.', enforcement: 'A szellemszavazatok súlya 1 marad.' },
@@ -74,6 +77,16 @@ export default {
     'A Halál a várossal szavazott. Hát persze.',
   ],
   guide: {
+    sidesH: "Más oldalak és fordulatok",
+    sides: `<p>Választhatók, a váróban kapcsolhatók be (vagy egyéni játékban a szerepszámlálókkal adhatók hozzá). A város csak akkor győz, ha a Halál, a Szekta és a Hasfelmetsző is eltűnt.</p>
+<ul>
+<li><b>Szerelmesek:</b> két véletlenszerű játékos, bármelyik oldalról, egymásba szeret. Mindketten megtudják a másik nevét. Ha az egyik meghal, a másik belehal a szívfájdalomba. Ha ők ketten maradnak utolsóként, együtt győznek.</li>
+<li><b>A Szekta:</b> a Szektavezér minden éjjel beszervez egy játékost. A beszervezettek megtartják szerepüket, de a Szektával győznek, amely akkor nyer, ha többen vannak, mint mindenki más. A Halál, a Hasfelmetsző és a védett játékosok nem szervezhetők be.</li>
+<li><b>A Hasfelmetsző:</b> magányos gyilkos, aki minden éjjel lecsap. A Halál éjjel nem ölheti meg (kivéve Vérholdkor). Akkor győz, ha utolsóként marad állva, vagy egyedül marad egy olyan játékossal, aki nem gyilkos.</li>
+<li><b>Nyomok</b> (alapból bekapcsolva, ritkák): néhány hajnalon egy-két, a Halál csapatán kívüli játékos igaz nyomot kap, például „A és B közül az egyik a Halállal jár”.</li>
+<li><b>Pénzfeldobás döntetlennél</b> (választható): az élen kialakult döntetlent pénzfeldobás dönti el, ahelyett hogy mindenki megmenekülne.</li>
+<li><b>Nyílt szavazás</b> (szabálykártya): minden szavazat azonnal nyilvános.</li>
+</ul>`,
     kicker: 'A szabályok, v1.0',
     title: 'Hogyan<br><i>játssz.</i>',
     intro: 'A legtöbben túl akartok élni. Néhányan közületek a Halál. Senki sem tudja, ki kicsoda — kivéve a Halált, aki ismeri a társait.',

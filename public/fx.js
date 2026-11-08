@@ -186,6 +186,32 @@ const SOUNDS = {
     tone(a, { freq: 300, type: 'triangle', dur: 0.8, gain: 0.05, to: 900, at: 1 });
     tone(a, { freq: 900, type: 'triangle', dur: 0.6, gain: 0.04, to: 200, at: 1.8 });
   },
+  winLovers: (a) => {
+    // a tender waltz of music box and warm bells
+    [[523.25, 0], [659.25, 0.5], [783.99, 1], [659.25, 1.5], [880, 2], [783.99, 2.6]].forEach(([f, at]) => box(a, f, at, 0.07));
+    [[261.63, 0], [329.63, 1], [392, 2]].forEach(([f, at]) => tone(a, { freq: f, type: 'triangle', dur: 1.6, gain: 0.08, attack: 0.3, at }));
+    bell(a, 1046.5, 2.9, 0.06, 3);
+  },
+  winCult: (a) => {
+    // a chanted minor chord swelling under a single tolling bell
+    [[110, 0], [130.81, 0.15], [164.81, 0.3], [220, 0.45]].forEach(([f, at]) => tone(a, { freq: f, type: 'sawtooth', dur: 4.5, gain: 0.025, attack: 1.4, at }));
+    [0, 1.6, 3.2].forEach((at) => bell(a, 146.83, at, 0.12, 3.5));
+    noise(a, { dur: 3.5, gain: 0.05, type: 'bandpass', freq: 300, sweep: 900, q: 1.2, attack: 1.5 });
+  },
+  winRipper: (a) => {
+    // three blade swishes, a low thud, and a cold high whine
+    [0, 0.42, 0.82].forEach((at) => { noise(a, { dur: 0.22, gain: 0.25, type: 'highpass', freq: 2500, sweep: 6000, at, attack: 0.02 }); tone(a, { freq: 1800, dur: 0.18, gain: 0.03, to: 600, at }); });
+    tone(a, { freq: 55, dur: 2.5, gain: 0.45, to: 30, at: 1.2 });
+    tone(a, { freq: 2637, type: 'sine', dur: 3, gain: 0.015, attack: 1, at: 1.4 });
+    [261.63, 246.94, 233.08].forEach((f, i) => box(a, f, 1.8 + i * 0.6, 0.05));
+  },
+  coin: (a) => {
+    // a flick, the coin ringing as it spins, and the landing
+    tone(a, { freq: 2400, type: 'triangle', dur: 0.08, gain: 0.08 });
+    for (let i = 0; i < 9; i++) tone(a, { freq: 3100 + (i % 2) * 200, dur: 0.05, gain: 0.03 * (1 - i / 10), at: 0.15 + i * 0.13 });
+    noise(a, { dur: 0.08, gain: 0.25, type: 'highpass', freq: 1800, at: 1.45 });
+    bell(a, 1975.5, 1.48, 0.05, 1.5);
+  },
   draw: (a) => { [[110, 0], [164.81, 0.4], [146.83, 1.2]].forEach(([f, at]) => tone(a, { freq: f, dur: 3.5, gain: 0.1, attack: 0.8, at })); },
 };
 
@@ -229,6 +255,9 @@ const MOODS = {
   endDeath: { root: 65.4, scale: [0, 2, 3, 5, 7, 8, 10], chord: [1, 1.19, 1.5, 2], cutoff: 700, wind: 0.02, gain: 0.5, choir: 0.02, motif: { voice: 'bell', every: [5, 8], len: [1, 2], beat: 1.3, oct: 2 } },
   endLiving: { root: 87.3, scale: [0, 2, 4, 5, 7, 9, 11], chord: [1, 1.25, 1.5, 2], cutoff: 950, wind: 0.008, gain: 0.45, motif: { voice: 'bell', every: [4, 7], len: [3, 5], beat: 0.55, oct: 3 } },
   endJester: { root: 98, scale: [0, 1, 4, 6, 7, 10], chord: [1, 1.26, 1.5], cutoff: 900, wind: 0.008, gain: 0.45, pluck: { bpm: 110, pattern: [1, 0, 1, 0, 1, 1, 0, 1], notes: [0, 6, 4, 1] }, motif: { voice: 'box', every: [3, 6], len: [4, 6], beat: 0.32, oct: 4 } },
+  endLovers: { root: 87.3, scale: [0, 2, 4, 7, 9], chord: [1, 1.25, 1.5], cutoff: 900, wind: 0.006, gain: 0.45, motif: { voice: 'box', every: [4, 7], len: [3, 5], beat: 0.6, oct: 4 } },
+  endCult: { root: 55, scale: [0, 2, 3, 5, 7, 8, 10], chord: [1, 1.19, 1.5, 2], cutoff: 520, wind: 0.03, gain: 0.55, choir: 0.03, swell: [6, 10], motif: { voice: 'bell', every: [5, 8], len: [1, 2], beat: 1.2, oct: 2 } },
+  endRipper: { root: 51.9, scale: [0, 1, 5, 6, 7, 11], chord: [1, 1.06, 1.41], cutoff: 450, wind: 0.04, gain: 0.5, heart: 50, motif: { voice: 'box', every: [6, 10], len: [2, 3], beat: 1, oct: 4 } },
   endDraw: { root: 61.7, scale: [0, 5, 7], chord: [1, 1.5], cutoff: 500, wind: 0.03, gain: 0.45, motif: { voice: 'bell', every: [8, 13], len: [1, 2], beat: 1.4, oct: 2 } },
   // Overlay mixed on top of any mood when the table is down to its last few.
   tension: { root: 110, scale: [0, 1], chord: [], cutoff: 3000, wind: 0, gain: 0.5, shimmer: 0.012, heart: 104 },
@@ -489,6 +518,22 @@ function draw(p) {
       c2.beginPath(); c2.moveTo(0, 0); c2.lineTo(-p.vx * 3, -p.vy * 3); c2.stroke();
       break;
     }
+    case 'heart': {
+      const r = p.size;
+      c2.beginPath();
+      c2.moveTo(0, r * 0.35);
+      c2.bezierCurveTo(-r * 1.2, -r * 0.5, -r * 0.45, -r * 1.25, 0, -r * 0.45);
+      c2.bezierCurveTo(r * 0.45, -r * 1.25, r * 1.2, -r * 0.5, 0, r * 0.35);
+      c2.fill();
+      break;
+    }
+    case 'slash': {
+      c2.strokeStyle = p.color; c2.lineWidth = p.size; c2.lineCap = 'round';
+      c2.shadowColor = '#e2585e'; c2.shadowBlur = 16;
+      const len = p.len * Math.min(1, (1 - p.life) * 6);
+      c2.beginPath(); c2.moveTo(-p.len / 2, 0); c2.lineTo(-p.len / 2 + len, 0); c2.stroke();
+      break;
+    }
     case 'flash': {
       const g = c2.createRadialGradient(0, 0, 0, 0, 0, p.size * (1.6 - p.life * 0.6));
       g.addColorStop(0, p.color); g.addColorStop(1, 'rgba(0,0,0,0)');
@@ -546,6 +591,34 @@ export function celebrate(kind) {
   } else if (kind === 'NON_DEATH' || kind === 'win') {
     livingCelebration();
     return;
+  } else if (kind === 'LOVERS') {
+    // hearts rising in waves, rose petals drifting down
+    for (let w = 0; w < 4; w++) {
+      setTimeout(() => {
+        for (let i = 0; i < 26; i++) add({ kind: 'heart', x: rand(0, W), y: H + rand(0, 80), vx: rand(-0.6, 0.6), vy: rand(-5.5, -2.5), g: -0.01, drag: 0.995, sway: 0.05, size: rand(5, 13), decay: rand(0.003, 0.006), color: ['#ff6b8a', '#ffb3c4', '#e2585e', '#ffd1dc'][i % 4], alpha: 0.9 });
+        kick();
+      }, w * 650);
+    }
+    for (let i = 0; i < 70; i++) add({ kind: 'petal', x: rand(0, W), y: rand(-H * 0.8, -10), vx: rand(-0.6, 0.6), vy: rand(1, 2.4), g: 0.005, drag: 0.996, sway: 0.04, vr: rand(-0.06, 0.06), rot: rand(0, 6), size: rand(5, 9), decay: rand(0.0025, 0.004), color: ['#c33a5a', '#ff8fa6', '#9e1c3a'][i % 3] });
+  } else if (kind === 'CULT') {
+    // a slow purple vortex of embers around the centre, then candle sparks rising
+    const cx = W / 2; const cy = H * 0.38;
+    for (let i = 0; i < 140; i++) {
+      const a = (i / 140) * Math.PI * 12; const r = 30 + i * 2.2;
+      add({ kind: i % 4 ? 'spark' : 'glitter', x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r * 0.6, vx: -Math.sin(a) * 2.2, vy: Math.cos(a) * 1.3 - 0.3, g: -0.004, drag: 0.985, size: rand(1.2, 2.6), decay: rand(0.006, 0.01), color: ['#b59be0', '#7d4fd6', '#9fe0b0', '#e0d0ff'][i % 4] });
+    }
+    setTimeout(() => {
+      for (let i = 0; i < 80; i++) add({ kind: 'spark', x: rand(W * 0.1, W * 0.9), y: H + 10, vx: rand(-0.4, 0.4), vy: rand(-6, -3), g: -0.01, drag: 0.99, sway: 0.03, size: rand(1.2, 2.4), decay: rand(0.005, 0.009), color: ['#9fe0b0', '#b59be0', '#e9c27a'][i % 3] });
+      kick();
+    }, 1300);
+  } else if (kind === 'RIPPER') {
+    // three blade slashes across the screen, then a fine red mist falling
+    [[0, -0.42], [420, 0.36], [820, -0.12]].forEach(([d, ang]) => setTimeout(() => {
+      add({ kind: 'slash', x: W / 2 + rand(-40, 40), y: H * rand(0.3, 0.6), rot: ang, len: Math.hypot(W, H) * 0.9, size: rand(5, 8), decay: 0.012, color: '#f2e6e6' });
+      for (let i = 0; i < 40; i++) add({ kind: 'spark', x: W / 2 + rand(-W / 2, W / 2), y: H * 0.45 + rand(-60, 60), vx: rand(-1, 1), vy: rand(0.5, 3), g: 0.12, drag: 0.98, size: rand(1.5, 3.5), decay: rand(0.008, 0.016), color: ['#b3242d', '#e2585e', '#7e1820'][i % 3] });
+      kick();
+    }, d));
+    for (let i = 0; i < 90; i++) add({ kind: 'spark', x: rand(0, W), y: rand(-H, -10), vx: rand(-0.2, 0.2), vy: rand(0.8, 2), g: 0.004, drag: 0.998, size: rand(0.8, 1.8), decay: rand(0.002, 0.004), color: '#b3242d', alpha: 0.7 });
   } else {
     for (let i = 0; i < 40; i++) add({ kind: 'spark', x: rand(0, W), y: rand(0, H), vx: rand(-0.3, 0.3), vy: rand(-0.6, -0.1), size: rand(1, 2), decay: rand(0.004, 0.008), color: '#bdb4a4', alpha: 0.6 });
   }

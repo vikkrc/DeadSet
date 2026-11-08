@@ -3,6 +3,8 @@ export default {
   and: 'et',
   numbers: ['aucun', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix'],
   roles: {
+    CULT_LEADER: { name: "Gourou", when: "Chaque nuit", summary: "Chaque nuit, recrute un joueur dans la Secte. La Secte gagne quand elle est plus nombreuse que tous les autres.", detail: "Une recrue garde son rôle et ses pouvoirs mais gagne désormais avec la Secte, et apprend qui en sont les autres membres. Les joueurs du camp de la Mort, l'Éventreur et les joueurs protégés ne peuvent pas être recrutés. Si le Gourou meurt, plus personne ne peut recruter." },
+    RIPPER: { name: "L'Éventreur", when: "Chaque nuit", summary: "Tue un joueur chaque nuit, seul. Tu gagnes si tu es le dernier debout, ou seul avec un autre joueur qui n'est pas un tueur.", detail: "Ton meurtre est arrêté par les mêmes protections que celui de la Mort (Gardien, Ange gardien, Bénédiction de la Sorcière, résurrection temporaire). La Mort ne peut pas te tuer la nuit, sauf sous une Lune de sang. Tu apparais comme N'APPARTENANT PAS AU CAMP DE LA MORT." },
     DEATH: { name: 'La Mort', when: 'Chaque nuit', summary: 'Mettez-vous d’accord avec tous vos coéquipiers Mort vivants sur un seul meurtre commun chaque nuit.', detail: 'Tous les joueurs Mort actifs doivent confirmer exactement les mêmes cibles, sinon la faction passe. La capacité de base est d’un meurtre ; Double Péril, Équipe de nuit ou Surcharge peuvent la porter à deux au maximum — jamais un meurtre par joueur Mort.' },
     INNOCENT: { name: 'Innocent', when: 'Jour', summary: 'Aucun pouvoir. Ta voix et ton vote sont tes armes.', detail: 'Argumente, accuse et vote. Tu reçois quand même un Rêve chaque nuit et peux subir des états.' },
     MENTALIST: { name: 'Mentaliste', when: 'Chaque nuit', summary: 'Lis un autre joueur : est-il du côté de la Mort ou non ?', detail: 'Tu apprends seulement l’allégeance actuelle de la cible (DU CÔTÉ DE LA MORT / PAS DU CÔTÉ DE LA MORT), jamais son rôle exact. Une lecture bloquée ne donne rien.' },
@@ -38,6 +40,7 @@ export default {
     GUARDIAN_ANGEL: { name: 'Ange gardien', text: 'Cette nuit, tu es immunisé contre la Mort, le Psychopathe, les bombes, la Malédiction et les morts liées.' },
   },
   rules: {
+    OPEN_BALLOT: { name: "Vote à découvert", text: "Chaque vote est public : tout le monde voit qui vote pour qui à mesure que les bulletins arrivent.", enforcement: "Les votes peuvent encore changer jusqu'au verrouillage. Les votes des fantômes sont publics aussi." },
     FOG_OF_WAR: { name: 'Brouillard de guerre', text: 'Pendant la discussion, tu ne peux parler directement qu’aux joueurs assis juste à côté de toi.', enforcement: 'Sur l’honneur en présentiel. À distance, le chat de table est remplacé par des murmures entre voisins.' },
     DOUBLE_JEOPARDY: { name: 'Double Péril', text: 'La faction Mort peut tuer jusqu’à deux joueurs chaque nuit (plafond strict : 2).', enforcement: 'Les blocages comme la visite d’une Catin ou la paralysie la ramènent toujours à 0.' },
     PARANOIA: { name: 'Paranoïa', text: 'Chaque bulletin vivant gagne +1 de poids. Le Magistrat pèse 3 ; le Conspirateur ajoute encore +1.', enforcement: 'Les bulletins fantômes restent à 1.' },
@@ -74,6 +77,16 @@ export default {
     'La Mort a voté avec la ville. Évidemment.',
   ],
   guide: {
+    sidesH: "Autres camps et rebondissements",
+    sides: `<p>Optionnels, à activer dans le salon (ou à ajouter avec les compteurs de rôles en partie personnalisée). La ville ne gagne qu'une fois la Mort, la Secte et l'Éventreur tous éliminés.</p>
+<ul>
+<li><b>Amoureux :</b> deux joueurs au hasard, de n'importe quel camp, tombent amoureux. Chacun apprend le nom de l'autre. Si l'un meurt, l'autre meurt de chagrin. S'ils sont les deux derniers vivants, ils gagnent ensemble.</li>
+<li><b>La Secte :</b> un Gourou recrute un joueur chaque nuit. Les recrues gardent leur rôle mais gagnent avec la Secte, qui gagne quand elle est plus nombreuse que tous les autres. La Mort, l'Éventreur et les joueurs protégés ne peuvent pas être recrutés.</li>
+<li><b>L'Éventreur :</b> un tueur solitaire qui frappe chaque nuit. La Mort ne peut pas le tuer la nuit (sauf sous une Lune de sang). Il gagne s'il est le dernier debout, ou seul avec un joueur qui n'est pas un tueur.</li>
+<li><b>Indices</b> (activés par défaut, rares) : certaines aubes, un ou deux joueurs hors de l'équipe de la Mort reçoivent un indice véridique, comme « A ou B marche avec la Mort ».</li>
+<li><b>Pile ou face en cas d'égalité</b> (optionnel) : une égalité en tête est tranchée à pile ou face au lieu d'épargner tout le monde.</li>
+<li><b>Vote à découvert</b> (une carte de règle) : chaque vote est public dès qu'il est déposé.</li>
+</ul>`,
     kicker: 'Les règles, v1.0',
     title: 'Comment<br><i>jouer.</i>',
     intro: 'La plupart d’entre vous veulent survivre. Quelques-uns sont la Mort. Personne ne sait qui est qui — sauf la Mort, qui connaît les siens.',

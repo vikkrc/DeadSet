@@ -6,6 +6,8 @@ import { renderGuide } from './guide.js';
 import { sound, score, haptic, burstAt, celebrate, ambient } from './fx.js';
 import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './board.js';
 import { seatLayout } from './layout.js';
+import { avatarSvg, randomAvatar, PARTS, COLORS } from './avatar.js';
+import { giftHtml, productIndex } from './gifts.js';
 import { gazetteHtml, frontPageHtml } from './gazette.js';
 import { LANGS, t, th, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, scen, optLabel, list as tlist, loadLang, setContent, browserLang, isLang, getLang, extra as tx } from './i18n.js';
 
@@ -258,13 +260,19 @@ function detectMoments(v) {
         out.push({ type: 'dawn', day: l.day, killed: (l.killed ?? []).map(name), expired: (l.expired ?? []).map(name), revived: (rev?.ids ?? []).map(name), meDied: (l.victims ?? []).includes(meId) });
         if (v.me && !v.me.moderator && v.me.alive) {
           const reports = freshPriv.filter((x) => (x.at === `Night ${l.day - 1}` || x.at === `Day ${l.day}`) && !['dreamdraw', 'surge', 'chat', 'role'].includes(x.kind));
-          out.push({ type: 'private', reports: reports.map((x) => ({ msg: entryMsg(x), lines: x.lines })), tapOnly: true });
+          for (const g of reports.filter((x) => x.kind === 'gift')) {
+            const prod = Array.isArray(g.msg) ? g.msg[1]?.product : null;
+            if (prod) out.push({ type: 'gift', product: prod, idx: productIndex(S.content?.products ?? [], prod), sound: null, tapOnly: true });
+          }
+          out.push({ type: 'private', reports: reports.map((x) => ({ msg: entryMsg(x), lines: x.lines, kind: x.kind })), tapOnly: true });
         }
         break;
       }
       case 'revive': if (!fresh.some((x) => x.ev === 'dawn')) out.push({ type: 'revive', names: (l.ids ?? []).map(name) }); break;
       case 'vote-open': out.push({ type: 'call', kicker: ['Day {n}', { n: roman(v.dayNumber) }], title: 'The vote', sub: 'Cast your ballot in secret. You can change it until it locks.', sound: 'knock' }); break;
       case 'tally': {
+        const coin = fresh.find((x) => x.i > l.i && x.ev === 'coinflip');
+        if (coin) { out.push({ type: 'tally', totals: Object.entries(l.totals || {}).map(([id, w]) => ({ name: name(id), w, id })).sort((a, b) => b.w - a.w), threshold: l.threshold, outcome: 'tie', reason: '', sentenced: null, goat: null }); break; }
         const outcomeEv = fresh.find((x) => x.i > l.i && ['sentence', 'nosentence', 'cancelled', 'scapegoat'].includes(x.ev));
         const goat = fresh.find((x) => x.i > l.i && x.ev === 'scapegoat');
         const sentence = fresh.find((x) => x.i > l.i && x.ev === 'sentence');
@@ -273,6 +281,8 @@ function detectMoments(v) {
           meSentenced: !!sentence?.victims?.includes(meId), goat: goat ? name(goat.victims[0]) : null });
         break;
       }
+      case 'coinflip': out.push({ type: 'coin', tied: (l.tied ?? []).map(name), winner: name(l.winner), meSentenced: l.winner === meId, sound: 'coin' }); break;
+      case 'heartbreak': out.push({ type: 'death', sound: 'death', art: 'heart', title: 'A broken heart', names: (l.victims ?? []).map(name), sub: 'Love would not let them stay.' }); break;
       case 'scapegoat':
         if (!fresh.some((x) => x.ev === 'tally')) out.push({ type: 'death', sound: 'scapegoat', title: 'The Scapegoat pays', names: (l.victims ?? []).map(name), sub: 'No one was sentenced.' });
         break;
@@ -301,8 +311,8 @@ function detectMoments(v) {
 }
 
 const MOMENT_SOUND = { night0: 'night', day1: 'dawn', nightfall: 'night', dawn: 'dawn', tally: 'knock', death: 'death', revive: 'revive', bloodmoon: 'bloodmoon' };
-const END_THEME = { DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester' };
-const MOMENT_TIME = { night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 5200, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
+const END_THEME = { DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester', LOVERS: 'winLovers', CULT: 'winCult', RIPPER: 'winRipper' };
+const MOMENT_TIME = { coin: 5200, gift: 5600, night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 5200, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
 const momentTime = (m) => (!onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : MOMENT_TIME[m.type] + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
 
 function nextMoment() {
@@ -337,10 +347,16 @@ function reportHtml(msg, lines) {
   return `${tmh(msg)}${lines?.length ? `<ul class="ins-lines">${lines.map((l) => `<li>${tmh(l)}</li>`).join('')}</ul>` : ''}`;
 }
 
+const WIN_GLYPH = { DEATH: 'death', JESTER: 'jester', NON_DEATH: 'innocent', LOVERS: 'heart', CULT: 'cult', RIPPER: 'ripper' };
+const WIN_CLASS = { NON_DEATH: 'living', LOVERS: 'lovers', CULT: 'cult', RIPPER: 'ripper' };
+
 function didIWin(v, winner) {
   const me = v?.me;
   if (!me || me.moderator || winner === 'DRAW' || winner === 'ABORTED') return null;
   if (winner === 'JESTER') return v.jesterId === me.id;
+  if (winner === 'LOVERS') return !!me.lover;
+  if (winner === 'RIPPER') return me.alignment === 'RIPPER';
+  if (winner === 'CULT') return me.alignment === 'CULT';
   return (winner === 'DEATH' && me.alignment === 'DEATH') || (winner === 'NON_DEATH' && me.alignment === 'NON_DEATH');
 }
 
@@ -397,6 +413,7 @@ function momentHtml(m) {
       const max = Math.max(1, ...m.totals.map((x) => x.w));
       const outcome = m.sentenced
         ? `<div class="verdict-stamp ${m.meSentenced ? 'me' : ''}"><span class="v-name">${esc(m.meSentenced ? t('You') : m.sentenced)}</span><span class="stamp">${t('Sentenced')}</span></div>`
+        : m.outcome === 'tie' ? `<div class="verdict-stamp"><span class="v-name">${t('A tie')}</span><span class="stamp soft">${t('Coin toss')}</span></div>`
         : m.outcome === 'cancelled' ? `<div class="verdict-stamp"><span class="v-name">${t('Fate intervenes')}</span><span class="stamp soft">${t('Cancelled')}</span></div><p class="m-sub small">${t('A wager was won. Nobody hangs today.')}</p>`
           : `<div class="verdict-stamp"><span class="v-name">${t('No one')}</span><span class="stamp soft">${t('Spared')}</span></div><p class="m-sub small">${tmh(m.reason)}</p>`;
       body = `<span class="kicker">${t('The ballots')}</span><h1 class="m-title">${letters(t('The town decides'))}</h1>
@@ -405,13 +422,23 @@ function momentHtml(m) {
         <div class="m-outcome">${outcome}${m.goat ? `<p class="m-sub blood">${th('The Scapegoat pays: {a} dies.', { a: m.goat })}</p>` : ''}</div>`;
       break;
     }
+    case 'coin': {
+      const faces = m.tied.length === 2 ? m.tied : [m.winner, '?'];
+      const lands = faces[0] === m.winner ? 0 : 1;
+      body = `<span class="kicker">${t('The vote is tied')}</span><h1 class="m-title">${letters(t('A coin decides'))}</h1>
+        <div class="coin-stage"><div class="coin lands-${lands}"><div class="coin-face heads"><span>${esc(faces[0])}</span></div><div class="coin-face tails"><span>${esc(faces[1])}</span></div></div><div class="coin-shadow"></div></div>
+        ${m.tied.length > 2 ? `<p class="m-sub small">${th('Tied: {names}', { names: m.tied })}</p>` : ''}
+        <div class="verdict-stamp coin-verdict ${m.meSentenced ? 'me' : ''}"><span class="v-name">${esc(m.meSentenced ? t('You') : m.winner)}</span><span class="stamp">${t('Sentenced')}</span></div>`;
+      break;
+    }
+    case 'gift': body = giftHtml(m.idx, { t, th, esc, product: m.product }); break;
     case 'death':
-      body = `<div class="m-art">${glyph('dagger')}</div><h1 class="m-title">${letters(t(m.title))}</h1>${m.names.length ? `<ul class="victims">${names(m.names)}</ul>` : ''}<p class="m-sub">${tmh(m.sub)}</p>`;
+      body = `<div class="m-art">${glyph(m.art || 'dagger')}</div><h1 class="m-title">${letters(t(m.title))}</h1>${m.names.length ? `<ul class="victims">${names(m.names)}</ul>` : ''}<p class="m-sub">${tmh(m.sub)}</p>`;
       break;
     case 'end': {
-      const title = t({ DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned' }[m.winner] ?? 'The end');
+      const title = t({ DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[m.winner] ?? 'The end');
       const won = didIWin(V(), m.winner);
-      body = `<div class="m-art">${glyph(m.winner === 'DEATH' ? 'death' : m.winner === 'JESTER' ? 'jester' : m.winner === 'NON_DEATH' ? 'innocent' : 'scroll')}</div>
+      body = `<div class="m-art">${glyph(WIN_GLYPH[m.winner] ?? 'scroll')}</div>
         <span class="kicker">${t('The verdict')}</span><h1 class="m-title ${m.winner === 'DEATH' ? 'blood' : ''}">${letters(title)}</h1><p class="m-sub">${tmh(m.reason)}</p>
         ${won === null ? '' : `<div class="result-stamp ${won ? 'win' : 'loss'}">${t(won ? 'Victory' : 'Defeat')}</div>`}`;
       break;
@@ -419,8 +446,8 @@ function momentHtml(m) {
     default: break;
   }
   const auto = !m.tapOnly;
-  return `<div class="moment m-${m.type} ${m.winner === 'DEATH' || m.type === 'death' ? 'grim' : ''} ${m.type === 'end' && m.winner === 'NON_DEATH' ? 'living' : ''} ${onBoard() && m.type === 'dawn' ? 'front' : ''}" data-key="moment-${m.id}" data-act="momentNext" role="dialog" aria-live="assertive">
-    ${m.type === 'end' && m.winner === 'NON_DEATH' ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<div class="m-body">${body}</div>
+  return `<div class="moment m-${m.type} ${m.winner === 'DEATH' || m.type === 'death' ? 'grim' : ''} ${m.type === 'end' ? WIN_CLASS[m.winner] ?? '' : ''} ${onBoard() && m.type === 'dawn' ? 'front' : ''}" data-key="moment-${m.id}" data-act="momentNext" role="dialog" aria-live="assertive">
+    ${m.type === 'end' && WIN_CLASS[m.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<div class="m-body">${body}</div>
     <div class="m-foot">${auto ? `<span class="m-timer" style="--t:${momentTime(m)}ms"><i></i></span>` : ''}<span class="kicker">${t(auto ? 'Tap to skip' : 'Tap to continue')}${S.moments.length ? ` · ${t('{n} more', { n: S.moments.length })}` : ''}</span></div>
   </div>`;
 }
@@ -486,7 +513,7 @@ function render() {
   document.body.classList.toggle('is-dead', ghost);
   document.body.classList.toggle('is-board', onBoard());
   if (onBoard() && v && S.board.audio && v.table?.score !== false) { score.play(moodFor(v)); score.tension(tenseFor(v)); } else score.stop();
-  document.body.classList.toggle('has-sheet', !!S.ui.sheet && (S.route?.name === 'room' || S.ui.sheet === 'lang'));
+  document.body.classList.toggle('has-sheet', !!S.ui.sheet && (S.route?.name === 'room' || S.ui.sheet === 'lang' || S.ui.sheet === 'avatar'));
   ambient(night ? 'night' : null);
   morph(app, view());
   app.querySelectorAll('[data-scroll]').forEach((el) => { if (bottoms[el.dataset.scroll] !== false) el.scrollTop = el.scrollHeight; });
@@ -505,7 +532,7 @@ function view() {
     else if (!V()) html = loadingScreen();
     else html = roomScreen();
   }
-  if (S.ui.sheet === 'lang' && !(r.name === 'room' && S.token && V())) html += sheet(V());
+  if ((S.ui.sheet === 'lang' || S.ui.sheet === 'avatar') && !(r.name === 'room' && S.token && V())) html += sheet(V());
   if (S.ui.recap && V()?.recap) html += recapHtml(V());
   if (S.moment) html += momentHtml(S.moment);
   if (S.conn === 'lost' && S.code) html += `<div class="conn" data-key="conn" role="status"><span class="pulse-dot"></span>${t('Reconnecting… your choices are safe on the server.')}</div>`;
@@ -569,7 +596,9 @@ const STEP_EN = {
   DAY_DEFENSE: 'Defence', DAY_VOTING: 'Secret ballot', DAY_RESOLVING: 'Final act', NIGHT_DREAM_SWAP: 'Nightfall', NIGHT_ACTIONS: 'Night actions', ENDED: 'Match over',
 };
 const STEP = new Proxy(STEP_EN, { get: (o, k) => (o[k] ? t(o[k]) : undefined) });
-const ALIGN_EN = { DEATH: 'Death', NON_DEATH: 'Non-Death', INDEPENDENT: 'Independent' };
+// The phase label, aware of the Open Ballot rule (votes are public then).
+const stepOf = (v) => (v.phase === 'DAY_VOTING' && v.day?.openBallots ? t('Open ballot') : STEP[v.phase] ?? '');
+const ALIGN_EN = { DEATH: 'Death', NON_DEATH: 'Non-Death', INDEPENDENT: 'Independent', CULT: 'Cult', RIPPER: 'The Ripper' };
 const ALIGN = new Proxy(ALIGN_EN, { get: (o, k) => (o[k] ? t(o[k]) : undefined) });
 const wordmark = () => '<a class="wordmark" href="/" data-link data-key="wm">Dead<i>Set</i><span class="seal"></span></a>';
 
@@ -614,6 +643,7 @@ function homeScreen() {
         <div class="seg" role="tablist"><button role="tab" data-act="homeTab" data-id="host" aria-pressed="${tab === 'host'}">${t('Host a table')}</button><button role="tab" data-act="homeTab" data-id="join" aria-pressed="${tab === 'join'}">${t('Join a table')}</button></div>
         ${tab === 'host' ? `<div class="stack" data-key="h-host">
           <label class="field"><span>${t('Your name')}</span><input class="input" maxlength="20" autocomplete="nickname" placeholder="${esc(t('e.g. Morgan'))}" data-draft="createName" value="${esc(d.createName ?? '')}"></label>
+          ${S.ui.moderated ? '' : portraitRow(null)}
           <label class="check"><input type="checkbox" data-act="toggleModerated" ${S.ui.moderated ? 'checked' : ''}><span><b>${t('I\'ll moderate, not play')}</b><small>${t('Sees every secret, holds no seat. Everyone is told.')}</small></span></label>
           ${tutorialToggle()}
           <button class="btn btn-solid btn-wide btn-tall" data-act="create" ${S.pending ? 'disabled' : ''}>${t('Pull up a chair')}</button>
@@ -670,6 +700,7 @@ function joinScreen() {
       <h2>${th('<i>{a}</i> has saved you a seat.', { a: hostName })}</h2>
       <p>${t('You are invited to a table of strangers, with Death roaming amongst them in secret.')}</p>${meta}
       <label class="sign"><input data-draft="joinName" maxlength="20" autocomplete="nickname" placeholder="${esc(t('Your name'))}" value="${esc(d.joinName ?? '')}"><small>${t('Sign your name')}</small></label>
+ <button class="letter-portrait" data-act="avatarSheet">${avatarSvg(myAvatar(), 'lp-av')}<span>${t('Your portrait')}</span></button>
       <label class="letter-check"><input type="checkbox" data-act="tutorialToggle" ${tipsOn() ? 'checked' : ''}><span>${t('First game? Show me tips as we play')}</span></label>
       <button class="btn btn-blood btn-wide" data-act="join" ${S.pending ? 'disabled' : ''}>${t('Take my seat')}</button>
       <button class="letter-link" data-act="toggleRecover">${t('Already seated? Recover your seat')}</button>`;
@@ -727,7 +758,8 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     if (lobby && p.ready) badges.push(`<b class="bdg b-ok" data-key="ok">${glyph('check')}</b>`);
     if (marks[p.id]) badges.push(`<b class="bdg b-mark" data-key="mark">${marks[p.id]}</b>`);
     if (pick?.stamp === p.id) badges.push(`<b class="bdg b-stamp" data-key="stamp-${p.id}">${glyph('check')}</b>`);
-    const inner = reveal && p.role ? glyph(p.role.glyph) : `<span class="tok-ini">${initials(p.name)}</span>`;
+    const inner = reveal && p.role ? glyph(p.role.glyph) : p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${initials(p.name)}</span>`;
+    if (p.bot && (lobby || v.phase === 'LOBBY')) badges.push(`<b class="bdg b-bot" data-key="bot">${glyph('bot')}</b>`);
     const label = `${esc(p.name)}${p.alive ? '' : `, ${t('dead')}`}${isSel ? `, ${t('selected')}` : ''}`;
     seats.push(`<button type="button" class="${cls}" data-key="tok-${p.id}" style="left:${x}%;top:${y}%" ${selectable ? `data-act="${pick.act}" data-id="${p.id}"` : 'tabindex="-1"'} aria-pressed="${isSel}" aria-label="${label}">
       <span class="tok-disc">${sigil(p.id)}${crack && !p.alive ? CRACK : ''}${inner}${badges.join('')}</span><span class="tok-name">${esc(p.name)}</span></button>`);
@@ -758,7 +790,7 @@ function centerFor(v, pick) {
     case 'DAY_RESOLVING': return `<span class="c-emblem">${glyph('dagger')}</span><span class="c-sub">${t('A final act')}</span>${hint}${clock}`;
     case 'NIGHT_DREAM_SWAP': return `${moon(0.08, 'c-moon')}<span class="c-sub">${t('Nightfall')}</span>${hint}${clock}`;
     case 'NIGHT_ACTIONS': return `${moon(prog ? prog.done / Math.max(1, prog.total) : 0, 'c-moon')}<span class="c-sub">${prog ? t('{n}/{total} asleep', { n: prog.done, total: prog.total }) : ''}</span>${hint}${clock}`;
-    case 'ENDED': return `<span class="c-emblem">${glyph(v.winner === 'DEATH' ? 'death' : v.winner === 'JESTER' ? 'jester' : 'innocent')}</span><span class="c-sub">${t({ DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'Jester wins', DRAW: 'Draw', ABORTED: 'Abandoned' }[v.winner] ?? '')}</span>`;
+    case 'ENDED': return `<span class="c-emblem">${glyph(WIN_GLYPH[v.winner] ?? 'scroll')}</span><span class="c-sub">${t({ DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'Jester wins', DRAW: 'Draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[v.winner] ?? '')}</span>`;
     default: return '';
   }
 }
@@ -836,7 +868,7 @@ function roomScreen() {
   const side = `<aside class="side" aria-label="${esc(t('Match'))}" data-key="side">
       ${wordmark()}
       <div class="count">
-        <div><b>${esc(pw.word)} ${esc(pw.num)}</b><span>${esc(STEP[v.phase] ?? '')}</span></div>
+        <div><b>${esc(pw.word)} ${esc(pw.num)}</b><span>${esc(stepOf(v))}</span></div>
         <div>${v.phase === 'LOBBY' ? `<b>${v.players.length}</b><span>${t('Seated')}</span>` : `<b>${aliveCount}<span class="muted">/${v.players.length}</span></b><span>${t('Alive')}</span>`}</div>
       </div>
       <div class="row between"><span class="kicker">${t('Room')} <span class="mono">${esc(v.code)}</span></span><span class="clock" data-clock></span></div>
@@ -847,7 +879,7 @@ function roomScreen() {
     </aside>`;
   const top = `<header class="topbar" data-key="top">
       <span class="tb-emblem">${isNight(v.phase) ? glyph('moon') : glyph('sun')}</span>
-      <div class="phase-mini"><strong>${esc(pw.word)} ${esc(pw.num)}</strong><span>${esc(STEP[v.phase] ?? '')} · ${v.phase === 'LOBBY' ? t('{n} seated', { n: v.players.length }) : t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}</span></div>
+      <div class="phase-mini"><strong>${esc(pw.word)} ${esc(pw.num)}</strong><span>${esc(stepOf(v))} · ${v.phase === 'LOBBY' ? t('{n} seated', { n: v.players.length }) : t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}</span></div>
       <span class="clock" data-clock></span>
       <button class="btn btn-ghost icon-btn" data-act="sound" aria-label="${esc(t(sound.on ? 'Mute sounds' : 'Turn sounds on'))}">${glyph(sound.on ? 'bell' : 'bellOff')}</button>
       <button class="btn btn-ghost icon-btn" data-act="sheet" data-id="record" aria-label="${esc(t('Open match record'))}">${glyph('menu')}</button>
@@ -897,7 +929,7 @@ function head(v, extra = '') {
   const pw = phaseWord(v);
   return `<header class="phase-head" data-key="head-${v.phase}">
     <div class="ph-row"><h1>${pw.night ? `<i>${esc(pw.word)}</i>` : esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</h1>
-    <span class="kicker">${esc(STEP[v.phase] ?? '')}${v.doomsday && v.phase !== 'LOBBY' ? ` · ${t('Doom after Day {n}', { n: roman(v.doomsday) })}` : ''}${v.bloodMoon && isNight(v.phase) ? ` · <span class="blood">${t('Blood Moon')}</span>` : ''}</span>${v.me && v.me.alive === false && !v.me.moderator && v.phase !== 'ENDED' ? `<span class="ghost-tag" data-key="ghosttag">${t(isGhostTable(v) ? 'Ghost' : 'Dead')}</span>` : ''}${extra}</div>
+    <span class="kicker">${esc(stepOf(v))}${v.doomsday && v.phase !== 'LOBBY' ? ` · ${t('Doom after Day {n}', { n: roman(v.doomsday) })}` : ''}${v.bloodMoon && isNight(v.phase) ? ` · <span class="blood">${t('Blood Moon')}</span>` : ''}</span>${v.me && v.me.alive === false && !v.me.moderator && v.phase !== 'ENDED' ? `<span class="ghost-tag" data-key="ghosttag">${t(isGhostTable(v) ? 'Ghost' : 'Dead')}</span>` : ''}${extra}</div>
   </header>`;
 }
 
@@ -934,6 +966,9 @@ function sheet(v) {
     title = th('Room {code}', { code: v.code });
     body = `${hostBox()}${langRow(v)}${v.me?.moderator ? '' : tutorialToggle()}<div>${recordBlock(v)}</div>
       <div class="row"><a class="btn btn-sm btn-ghost" href="/guide" data-link>${t('How to play')}</a><button class="btn btn-sm btn-ghost" data-act="leave">${glyph('out')} ${t('Leave this device')}</button></div>`;
+  } else if (s === 'avatar') {
+    title = t('Your portrait');
+    body = avatarEditor();
   } else if (s === 'lang') {
     title = t('Language');
     body = langList(v);
@@ -1011,7 +1046,7 @@ function lobbyMain(v, me) {
   return `${head(v)}
     ${v.moderated ? `<div class="banner blood" data-key="mod">${glyph('mentalist')}<div><b>${th('Trusted moderator: {a}', { a: v.moderatorName ?? '' })}</b><p>${t('A non-playing moderator can see every role, dream and vote.')}</p></div></div>` : ''}
     <section class="invite" data-key="invite">
-      <button class="code-tiles" data-act="copy" data-text="${esc(url)}" aria-label="${esc(t('Copy invite link'))}">${codeTiles(v.code)}</button>
+      <button class="code-tiles" data-act="${isHost ? 'codeTap' : 'copy'}" data-text="${esc(url)}" aria-label="${esc(t('Copy invite link'))}">${codeTiles(v.code)}</button>
       <div class="row center">
         <button class="btn btn-sm" data-act="share" data-text="${esc(url)}">${t('Invite')}</button>
         <button class="btn btn-sm" data-act="sheet" data-id="qr">${t('Show QR')}</button>
@@ -1020,6 +1055,8 @@ function lobbyMain(v, me) {
     </section>
     ${ring(v, { pick, slots: Math.max(5, v.players.length), lobby: true, center: centerFor(v) })}
     ${isHost ? `<p class="small muted center-text" data-key="seathint">${t('Tap a seat to move or remove a player.')}</p>` : ''}
+    ${me && !me.moderator ? portraitRow(v.players.find((p) => p.id === me.id)?.avatar) : ''}
+    ${isHost && S.ui.botsPanel ? botsPanel(v) : ''}
     ${lobbyDeck(v, isHost)}
     <section data-key="setup">
       <div class="rule">${t('Setup')}</div>
@@ -1029,6 +1066,47 @@ function lobbyMain(v, me) {
       ${report.errors.map((e, i) => `<div class="banner blood" data-key="err-${i}">${glyph('dagger')}<div><p>${tmh(e)}</p></div></div>`).join('')}
       ${report.warnings.map((w, i) => `<div class="banner" data-key="warn-${i}">${glyph('scroll')}<div><p>${tmh(w)}</p></div></div>`).join('')}
     </section>`;
+}
+
+// ── Portraits ──────────────────────────────────────────────────────────────
+const AV_KEY = 'deadset:avatar';
+function myAvatar() {
+  try { const a = JSON.parse(localStorage.getItem(AV_KEY)); if (a && Object.keys(PARTS).every((k) => Number.isInteger(a[k]) && a[k] >= 0 && a[k] < PARTS[k])) return a; } catch { /* fresh */ }
+  const a = randomAvatar();
+  localStorage.setItem(AV_KEY, JSON.stringify(a));
+  return a;
+}
+function portraitRow(current) {
+  return `<button class="portrait-row" data-act="avatarSheet" data-key="prow">${avatarSvg(current ?? myAvatar(), 'pr-av')}<span><b>${t('Your portrait')}</b><small>${t('Tap to change how you appear at the table.')}</small></span></button>`;
+}
+const AV_ROWS = [['c', 'Colour'], ['e', 'Eyes'], ['m', 'Mouth'], ['h', 'Hair']];
+function avatarEditor() {
+  const a = myAvatar();
+  return `<div class="av-editor">
+    <div class="av-preview" data-key="avp-${a.c}-${a.e}-${a.m}-${a.h}">${avatarSvg(a, 'av-big')}</div>
+    ${AV_ROWS.map(([k, label]) => `<div class="av-row"><span class="kicker">${t(label)}</span><div class="av-opts">${Array.from({ length: PARTS[k] }, (_, i) => {
+      const sample = { ...a, [k]: i };
+      const inner = k === 'c' ? `<i style="background:${COLORS[i]}"></i>` : avatarSvg(sample, 'av-mini');
+      return `<button class="av-opt ${a[k] === i ? 'on' : ''}" data-act="avPart" data-k="${k}" data-v="${i}" aria-pressed="${a[k] === i}">${inner}</button>`;
+    }).join('')}</div></div>`).join('')}
+    <div class="row center"><button class="btn btn-sm" data-act="avRandom">${glyph('gambler')} ${t('Surprise me')}</button><button class="btn btn-sm btn-solid" data-act="sheet">${t('Done')}</button></div>
+  </div>`;
+}
+
+function saveAvatar(a) {
+  localStorage.setItem(AV_KEY, JSON.stringify(a));
+  uiSound('pick');
+  if (V()?.phase === 'LOBBY' && V()?.me && !V().me.moderator) send('lobby.avatar', { avatar: a }, { quiet: true });
+  render();
+}
+
+// ── Practice bots (hidden test mode) ───────────────────────────────────────
+function botsPanel(v) {
+  const bots = v.players.filter((p) => p.bot).length;
+  return `<section class="panel bots-panel" data-key="bots">${glyph('bot')}<div><span class="kicker">${t('Practice bots')}</span>
+    <p class="small muted">${t('Test mode: bots take seats, ready up and play on their own. They never chat.')}</p>
+    <div class="row"><button class="btn btn-sm" data-act="addBots" data-n="1">+1</button><button class="btn btn-sm" data-act="addBots" data-n="4">+4</button><button class="btn btn-sm" data-act="addBots" data-n="fill10">${t('Fill to {n}', { n: 10 })}</button>
+    ${bots ? `<button class="btn btn-sm btn-ghost danger" data-act="clearBots">${t('Remove bots ({n})', { n: bots })}</button>` : ''}</div></div></section>`;
 }
 
 /** 20 · Tonight's deck, the extended pool, rule cards and table switches. */
@@ -1044,7 +1122,7 @@ function lobbyDeck(v, isHost) {
     cards = Object.entries(deck.core).filter(([, n]) => n > 0).map(([id, n]) => card(id, n, id === 'DEATH' ? 'death' : '')).join('')
       + (deck.extended ? `<div class="dcard secret" data-key="ld-ext"><span class="q">?</span><b>${t('{n} extended', { n: deck.extended })}</b></div>` : '');
   }
-  const allExt = (S.content?.roles ?? []).filter((r) => r.set !== 'core').map((r) => r.id);
+  const allExt = (S.content?.roles ?? []).filter((r) => r.set === 'standard' || r.set === 'full').map((r) => r.id);
   const poolIds = preset.custom ? allExt : preset.pool;
   const inPool = new Set(deck?.pool ?? (preset.custom ? s.extendedPool : preset.pool));
   const editable = isHost && preset.custom && s.deckMode !== 'exact';
@@ -1073,10 +1151,20 @@ function lobbyDeck(v, isHost) {
     <div class="rule">${t('The table')}</div>
     ${isHost ? `<label class="toggle-row"><span><b>${t('Table language')}</b><small>${t('The default for everyone. Each player can still pick their own.')}</small></span><select class="input lang-select" data-act-change="tableLang">${LANGS.map((l) => `<option value="${l.code}" ${tableLang === l.code ? 'selected' : ''}>${esc(l.name)}</option>`).join('')}</select></label>`
       : `<div class="toggle-row"><span><b>${t('Table language')}</b><small>${t('Set by the host. You can pick your own above.')}</small></span><span class="tag">${esc(LANGS.find((l) => l.code === tableLang)?.name ?? tableLang)}</span></div>`}
+    <div class="rule">${t('Other sides')}</div>
+    ${toggle('lovers', 'Lovers', 'Two random players fall in love. If one dies, so does the other; if they are the last two alive, they win together.')}
+    ${s.deckMode === 'exact' && preset.custom ? `<p class="small muted">${t('With "Choose every role", add the Cult Leader or the Ripper with the role counters.')}</p>` : `${toggle('cult', 'The Cult', 'A Cult Leader recruits one player each night. The Cult wins when it outnumbers everyone else.')}
+    ${toggle('ripper', 'The Ripper', 'A lone killer strikes each night and wins as the last one standing.')}`}
+    <div class="rule">${t('Twists')}</div>
+    ${toggle('clues', 'Clues', 'Rarely, at dawn, one or two players find a true hint about Death\'s team.')}
+    ${v.table?.clues ? (isHost ? `<label class="toggle-row sub"><span><b>${t('How often')}</b></span><select class="input lang-select" data-act-change="clueOdds">${[[1, 'Rare'], [2, 'Uncommon'], [3, 'Common']].map(([n, l]) => `<option value="${n}" ${v.table.clueOdds === n ? 'selected' : ''}>${t(l)}</option>`).join('')}</select></label>` : `<div class="toggle-row sub"><span><b>${t('How often')}</b></span><span class="tag">${t(['', 'Rare', 'Uncommon', 'Common'][v.table.clueOdds] ?? 'Rare')}</span></div>`) : ''}
+    ${isHost ? `<label class="toggle-row"><span><b>${t('Coin-toss tiebreak')}</b><small>${t('A tied vote is settled by a coin toss instead of sparing everyone.')}</small></span><input type="checkbox" class="switch" data-act-change="tieBreak" ${v.table?.tieBreak === 'coin' ? 'checked' : ''}></label>`
+      : `<div class="toggle-row"><span><b>${t('Coin-toss tiebreak')}</b><small>${t('A tied vote is settled by a coin toss instead of sparing everyone.')}</small></span><span class="tag ${v.table?.tieBreak === 'coin' ? 'solid' : ''}">${t(v.table?.tieBreak === 'coin' ? 'On' : 'Off')}</span></div>`}
     ${toggle('bloodMoon', 'Blood Moon', 'After two nights in a row without a death, no protection holds for a night.')}
     ${toggle('finalTwoDeath', 'Death wins in the final two', 'If a Death is among the last two players alive, Death wins at once.')}
     ${toggle('threads', 'Threads of suspicion', 'Draws who accused whom across the table')}
     ${toggle('score', 'Atmospheric score', 'Music and effects play on the TV board')}
+    ${toggle('backdrops', 'Location backdrops', 'The TV board shows a scene for the story\'s WHERE card.')}
   </section>`;
 }
 
@@ -1146,7 +1234,7 @@ const SUGGESTION_LABEL = {
   sharp: ['Sharp eyes', 'More information and protection for the town.'],
   wild: ['Wild night', 'The whole deck, swings and all.'],
 };
-const ROLE_GROUPS = [['Death', (r) => r.alignment === 'DEATH'], ['Core', (r) => r.set === 'core' && r.alignment !== 'DEATH'], ['Standard', (r) => r.set === 'standard'], ['Full Deck', (r) => r.set === 'full']];
+const ROLE_GROUPS = [['Death', (r) => r.alignment === 'DEATH'], ['Core', (r) => r.set === 'core' && r.alignment !== 'DEATH'], ['Standard', (r) => r.set === 'standard'], ['Full Deck', (r) => r.set === 'full'], ['Other sides', (r) => r.set === 'side']];
 
 /** Custom deck: automatic (by player count) or exact role counters, plus suggestions. */
 function customDeckEditor(v) {
@@ -1220,6 +1308,10 @@ function roleNotes(me) {
 }
 
 function teammates(me) {
+  const extra = `${me.lover ? `<div class="panel tight love-panel">${glyph('heart')}<div><span class="kicker">${t('Your love')}</span><p>${th('You are in love with <b>{name}</b>. If one of you dies, so does the other. If you two are the last alive, you win together.', { name: me.lover.name })}</p></div></div>` : ''}${me.cultmates ? `<div class="panel tight cult-panel"><span class="kicker">${t('The Cult')}</span><p>${me.cultmates.length ? esc(me.cultmates.map((x) => x.name).join(', ')) : t('No other members yet.')}</p></div>` : ''}`;
+  return deathTeam(me) + extra;
+}
+function deathTeam(me) {
   if (me.teammates) return `<div class="panel tight seal"><span class="kicker blood">${t('Your Death team')}</span>${me.teammates.length ? `<p>${me.teammates.map((x) => esc(x.name)).join(', ')}</p>` : `<p>${t('You are alone. Every kill is your call.')}</p>`}</div>`;
   if (me.joinsTeamNight) return `<div class="panel tight seal"><span class="kicker blood">${t('Death team')}</span><p>${t('You join the Death team room on Night {n}.', { n: roman(me.joinsTeamNight) })}</p></div>`;
   return '';
@@ -1248,7 +1340,7 @@ function dayMain(v, me) {
     ${statusBanners(v, me)}
     ${ruleRibbon(v, me)}
     ${pickTabs(ctx, pick)}
-    ${ring(v, { pick, center: centerFor(v, pick) })}
+    ${ring(v, { pick, center: centerFor(v, pick), marks: openBallotMarks(v) })}
     ${stage}
     ${chatBlock(v)}
     ${chips(v)}`;
@@ -1331,8 +1423,21 @@ function votingStage(v) {
     </div>
     ${a.ghost && a.majority ? `<p class="small muted center-text">${t('Majority Rule: ghost ballots never decide the sentence.')}</p>` : ''}
     ${v.day.majority != null ? `<p class="small muted center-text">${th('Majority Rule: more than {n} weight needed.', { n: v.day.majority })}</p>` : ''}
-    <p class="small muted center-text">${t('Secret until it locks. Only totals are published. A tie sentences nobody.')}</p>
+    ${v.day.openBallots ? openBallotList(v) : `<p class="small muted center-text">${t(v.table?.tieBreak === 'coin' ? 'Secret until it locks. Only totals are published. A tie is settled by a coin toss.' : 'Secret until it locks. Only totals are published. A tie sentences nobody.')}</p>`}
   </section>`;
+}
+
+/** Open Ballot: who is voting for whom, live. */
+function openBallotList(v) {
+  const by = {};
+  for (const [voter, tg] of Object.entries(v.day.openBallots)) (by[tg] ||= []).push(voter);
+  const rows = Object.entries(by).sort((a, b) => b[1].length - a[1].length);
+  return `<div class="open-ballots" data-key="ob"><span class="kicker">${t('Open Ballot')}</span>${rows.length ? rows.map(([tg, voters]) => `<div class="ob-row" data-key="ob-${tg}"><b>${tg === 'ABSTAIN' ? t('Abstain') : pname(tg)}</b><span>${voters.map(pname).join(', ')}</span></div>`).join('') : `<p class="small muted">${t('No votes yet.')}</p>`}</div>`;
+}
+function openBallotMarks(v) {
+  const marks = {};
+  for (const [voter, tg] of Object.entries(v.day?.openBallots ?? {})) if (tg !== 'ABSTAIN') marks[tg] = (marks[tg] ?? '') + initials(rawName(voter));
+  return marks;
 }
 
 // ── Chat ───────────────────────────────────────────────────────────────────
@@ -1483,16 +1588,16 @@ function deathRoom(v, me, D) {
 
 // ── End ────────────────────────────────────────────────────────────────────
 function endMain(v, me) {
-  const title = t({ DEATH: 'Death wins.', NON_DEATH: 'The living win.', JESTER: 'The Jester wins.', DRAW: 'A draw.', ABORTED: 'Abandoned.' }[v.winner] ?? 'The End');
+  const title = t({ DEATH: 'Death wins.', NON_DEATH: 'The living win.', JESTER: 'The Jester wins.', DRAW: 'A draw.', ABORTED: 'Abandoned.', LOVERS: 'The Lovers win.', CULT: 'The Cult wins.', RIPPER: 'The Ripper wins.' }[v.winner] ?? 'The End');
   const won = didIWin(v, v.winner);
   const revealed = v.players.some((p) => p.role);
-  return `<section class="verdict ${v.winner === 'DEATH' ? 'death' : v.winner === 'NON_DEATH' ? 'living' : ''}" data-key="verdict">${v.winner === 'NON_DEATH' ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<span class="kicker">${t('Verdict')}</span><h1>${letters(title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
+  return `<section class="verdict ${v.winner === 'DEATH' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<span class="kicker">${t('Verdict')}</span><h1>${letters(title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
       ${won === null ? '' : `<div class="result-stamp ${won ? 'win' : 'loss'}">${won ? t('Victory') : t('Defeat')}</div>`}</section>
     ${revealed ? ring(v, { reveal: true, center: centerFor(v) }) : ''}
     <section data-key="reveal"><div class="rule">${t('Every secret')}</div>${revealed ? `<ul class="ledger">${v.players.map((p, i) => `<li class="${p.alive ? '' : 'dead'} ${p.id === me?.id ? 'me' : ''}" style="--i:${i}" data-key="rv-${p.id}">
       <span class="seat">${p.role ? glyph(p.role.glyph) : ''}</span>
       <span class="who"><b>${esc(p.name)}</b><small>${p.role ? esc(roleF(p.role.id, 'name')) : '—'}${p.originalRole ? ` ${th('(was {role})', { role: p.originalRole.id })}` : ''} · ${p.alive ? t('alive') : `† ${esc(stamp(p.diedAt))}`}</small></span>
-      <span class="tags"><span class="tag ${p.alignment === 'DEATH' ? 'blood' : ''}">${esc(ALIGN[p.alignment] ?? '')}</span></span></li>`).join('')}</ul>` : `<p class="muted">${t('The host chose not to reveal roles.')}</p>`}</section>
+      <span class="tags">${p.lover ? `<span class="tag love" title="${esc(t('Lovers'))}">${glyph('heart')}</span>` : ''}<span class="tag ${p.alignment === 'DEATH' ? 'blood' : ''}">${esc(ALIGN[p.alignment] ?? '')}</span></span></li>`).join('')}</ul>` : `<p class="muted">${t('The host chose not to reveal roles.')}</p>`}</section>
     ${me && !me.moderator ? `<details class="more" data-key="endnotes"><summary>${t('My notes')}</summary><div>${feed([...(v.private || [])].reverse(), 'feed-private')}</div></details>` : ''}
     <details class="more" data-key="endrec"><summary>${t('Public record')}</summary><div>${recordBlock(v)}</div></details>
     <div class="row center" data-key="endbtns">${v.recap ? `<button class="btn btn-solid" data-act="recap">${glyph('scroll')} ${t('View recap')}</button>` : ''}<a class="btn" href="/" data-link>${t('Back to start')}</a></div>`;
@@ -1572,8 +1677,9 @@ function coachCard(v) {
 const RECAP_KIND = {
   DEATH: 'death', TERRORIST: 'death', PSYCHO: 'death', GUARDIAN: 'protect', BODYGUARD: 'protect', ORACLE: 'protect', WITCH: 'protect',
   MENTALIST: 'info', WHORE: 'other', TRAVELING_AGENT: 'other', MIMIC: 'other', NECROMANCER: 'protect', GAMBLER: 'other', CONSPIRATOR: 'info', SHARED_NIGHTMARE: 'dream',
+  RIPPER: 'death', CULT_LEADER: 'cult',
 };
-const RECAP_ROLE = { accuse: 'Accusation', vote: 'Vote', death: 'Kill or harm', protect: 'Protection', info: 'Reading or whisper', other: 'Other visit', dream: 'Dream link' };
+const RECAP_ROLE = { accuse: 'Accusation', vote: 'Vote', death: 'Kill or harm', protect: 'Protection', info: 'Reading or whisper', other: 'Other visit', dream: 'Dream link', cult: 'Recruitment' };
 function recapSteps(v) {
   const steps = [];
   const gone = new Set();
@@ -1651,7 +1757,7 @@ function boardView() {
   const v = V();
   if (S.conn === 'gone') return goneScreen();
   if (!v) return loadingScreen();
-  return boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, phaseWord, content: S.content, audio: S.board.audio, wordmark });
+  return boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, content: S.content, audio: S.board.audio, wordmark });
 }
 
 // ── Dock (primary action) ──────────────────────────────────────────────────
@@ -1733,7 +1839,7 @@ const ACT = {
     if (!name) return toast('Enter your name first.', 'err');
     S.pending = true; render();
     try {
-      const r = await api('/api/rooms', { name, moderated: S.ui.moderated, lang: getLang() });
+      const r = await api('/api/rooms', { name, moderated: S.ui.moderated, lang: getLang(), avatar: S.ui.moderated ? null : myAvatar() });
       saveSession(r.code, r);
       sound.play('reveal');
       go(`/r/${r.code}`);
@@ -1750,7 +1856,7 @@ const ACT = {
     if (!name) return toast('Enter your name first.', 'err');
     S.pending = true; render();
     try {
-      const r = await api(`/api/rooms/${S.code}/join`, { name });
+      const r = await api(`/api/rooms/${S.code}/join`, { name, avatar: myAvatar() });
       saveSession(r.code, r);
       S.token = r.token; S.pid = r.playerId;
       sound.play('reveal');
@@ -1783,7 +1889,7 @@ const ACT = {
   sheet(el) { const id = el.dataset.id; S.ui.sheet = id && S.ui.sheet !== id ? id : null; if (S.ui.sheet) uiSound('whoosh'); render(); },
   seatSheet(el) { S.ui.sheet = `seat:${el.dataset.id}`; render(); },
   sound() { sound.toggle(); render(); },
-  copy(el) { navigator.clipboard?.writeText(el.dataset.text).then(() => toast(t('Invite link copied')), () => toast(el.dataset.text)); burstAt(el); },
+  copy(el) { navigator.clipboard?.writeText(el.dataset.text).then(() => toast(t('Invite link copied')), () => notify(el.dataset.text)); burstAt(el); },
   share(el) {
     if (navigator.share) navigator.share({ title: 'Dead Set', text: t('Take a seat at my Dead Set table'), url: el.dataset.text }).catch(() => {});
     else ACT.copy(el);
@@ -1895,6 +2001,21 @@ const ACT = {
   },
   reshuffleSuggest() { send('host.settings', { suggestSeed: (V().settings.suggestSeed || 0) + 1 }, { quiet: true }); },
   dreamWeight(el) { send('host.settings', { dreamWeights: { [el.dataset.id]: Number(el.dataset.w) } }, { quiet: true }); },
+  avatarSheet() { S.ui.sheet = 'avatar'; uiSound('whoosh'); render(); },
+  avPart(el) { const a = { ...myAvatar(), [el.dataset.k]: Number(el.dataset.v) }; saveAvatar(a); },
+  avRandom() { saveAvatar(randomAvatar()); },
+  codeTap(el) {
+    // Five quick taps on the room code open the hidden practice-bots panel.
+    const now = Date.now();
+    S.codeTaps = (S.codeTaps || []).filter((x) => now - x < 3000).concat(now);
+    if (S.codeTaps.length >= 5) { S.codeTaps = []; S.ui.botsPanel = !S.ui.botsPanel; render(); return; }
+    if (S.codeTaps.length === 1) ACT.copy(el); // only the first tap of a burst copies the link
+  },
+  addBots(el) {
+    const n = el.dataset.n === 'fill10' ? Math.max(0, 10 - V().players.length) : Number(el.dataset.n);
+    if (n > 0) send('host.bots', { count: n });
+  },
+  clearBots() { send('host.botsClear'); },
   tutorialToggle(el) {
     const on = el.type === 'checkbox' ? el.checked : !tipsOn();
     localStorage.setItem(TIPS_KEY, on ? '1' : '0');
@@ -1928,7 +2049,7 @@ const ACT = {
   boardMute() { S.board.audio = false; score.stop(); reportBoardAudio(false); render(); },
 };
 
-const QUIET = new Set(['boardScore', 'boardMute', 'pickNominate', 'pickVote', 'pickRetaliate', 'pickSwap', 'pickTarget', 'pickOption', 'pickNightmare', 'pickConspire', 'pickDeath', 'shoot', 'sound', 'pickUseOption', 'momentNext']);
+const QUIET = new Set(['avPart', 'avRandom', 'codeTap', 'boardScore', 'boardMute', 'pickNominate', 'pickVote', 'pickRetaliate', 'pickSwap', 'pickTarget', 'pickOption', 'pickNightmare', 'pickConspire', 'pickDeath', 'shoot', 'sound', 'pickUseOption', 'momentNext']);
 document.addEventListener('click', (e) => {
   const link = e.target.closest('a[data-link]');
   if (link && link.origin === location.origin && !e.metaKey && !e.ctrlKey) { e.preventDefault(); go(link.pathname); return; }
@@ -2012,6 +2133,8 @@ document.addEventListener('change', (e) => {
     send('host.settings', { rules: { selected: [...sel] } });
   }
   if (el.dataset.actChange === 'tableLang') send('host.settings', { lang: el.value });
+  if (el.dataset.actChange === 'clueOdds') send('host.settings', { clueOdds: Number(el.value) });
+  if (el.dataset.actChange === 'tieBreak') send('host.settings', { tieBreak: el.checked ? 'coin' : 'none' });
   if (el.dataset.actChange === 'assign') send('host.assign', { playerId: el.dataset.pid, roleId: el.value || null });
 });
 document.addEventListener('submit', (e) => {

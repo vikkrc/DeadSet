@@ -2,6 +2,7 @@
 // it never reacts to private actions, not even with random decoration.
 import { gazetteHtml } from './gazette.js';
 import { seatLayout } from './layout.js';
+import { backdropHtml } from './backdrops.js';
 
 /** Which Rule cards shape the current phase, with a one-line note. */
 export function activeRuleNotes(v) {
@@ -33,7 +34,7 @@ export function activeRuleNotes(v) {
 export function moodFor(v) {
   switch (v.phase) {
     case 'LOBBY': return 'lobby';
-    case 'ENDED': return { DEATH: 'endDeath', NON_DEATH: 'endLiving', JESTER: 'endJester' }[v.winner] ?? 'endDraw';
+    case 'ENDED': return { DEATH: 'endDeath', NON_DEATH: 'endLiving', JESTER: 'endJester', LOVERS: 'endLovers', CULT: 'endCult', RIPPER: 'endRipper' }[v.winner] ?? 'endDraw';
     case 'NIGHT_0_REVEAL': return 'ceremony';
     case 'NIGHT_DREAM_SWAP': case 'NIGHT_ACTIONS': case 'NIGHT_RESOLVING': return v.bloodMoon ? 'bloodmoon' : 'night';
     case 'DAY_PREP': return 'morning';
@@ -55,7 +56,7 @@ const RULE_GLYPH = {
 export const ruleGlyph = (id) => RULE_GLYPH[id] ?? 'scroll';
 
 export function boardScreen(v, h) {
-  const { esc, glyph, ring, centerFor, codeTiles, qrSvg, STEP, phaseWord, audio, wordmark, t, th, tmh, roleF, ruleF, presetF, scen, tlist } = h;
+  const { esc, glyph, ring, centerFor, codeTiles, qrSvg, stepOf, phaseWord, audio, wordmark, t, th, tmh, roleF, ruleF, presetF, scen, tlist } = h;
   const pw = phaseWord(v);
   const night = ['NIGHT_0_REVEAL', 'NIGHT_DREAM_SWAP', 'NIGHT_ACTIONS'].includes(v.phase);
   const place = v.scenario ? scen('WHERE', v.scenario.where).replace(/^(a|an|the)\s+/i, '') : '';
@@ -65,7 +66,7 @@ export function boardScreen(v, h) {
   const header = `<header class="b-head" data-key="bhead">
     ${wordmark()}
     <span class="b-phase">${pw.night ? `<i>${esc(pw.word)}</i>` : esc(pw.word)}${pw.num ? `<sup>${esc(pw.num)}</sup>` : ''}</span>
-    <span class="b-step">${esc(STEP[v.phase] ?? '')}${place ? ` · ${esc(place)}` : ''}</span>
+    <span class="b-step">${esc(stepOf(v))}${place ? ` · ${esc(place)}` : ''}</span>
     <span class="grow"></span>
     <span class="b-clock clock" data-clock></span>
     ${v.phase === 'ENDED' && v.recap ? `<button class="b-sound start" data-act="recap" data-key="b-recap">${glyph('scroll')} ${t('View recap')}</button>` : ''}
@@ -145,13 +146,24 @@ export function boardScreen(v, h) {
     }).join('');
     extra += `<svg class="b-threads" viewBox="0 0 100 100" data-key="threads" aria-hidden="true">${paths}</svg>`;
   }
+  // Open Ballot: live vote lines from voter to target.
+  if (v.day?.openBallots) {
+    const lines = Object.entries(v.day.openBallots).filter(([, tg]) => tg !== 'ABSTAIN').map(([voter, tg]) => {
+      const [x1, y1] = pos(voter); const [x2, y2] = pos(tg);
+      return `<path d="M${x1.toFixed(2)} ${y1.toFixed(2)} Q${(((x1 + x2) / 2) * 0.7 + 15).toFixed(2)} ${(((y1 + y2) / 2) * 0.7 + 15).toFixed(2)} ${x2.toFixed(2)} ${y2.toFixed(2)}"/>`;
+    }).join('');
+    extra += `<svg class="b-votes" viewBox="0 0 100 100" data-key="votes" aria-hidden="true">${lines}</svg>`;
+  }
   extra += `<div class="sky-orb ${night ? 'moon' : 'sun'}" data-orb aria-hidden="true"></div>`;
   if (night) extra += '<div class="b-fog" data-key="fog" aria-hidden="true"><i></i><i></i><i></i></div>';
   const centerExtra = !night && v.phase !== 'ENDED' && v.phase !== 'DAY_VOTING' ? '<div class="b-candle" aria-hidden="true"><i></i><b></b></div>' : '';
   const live = activeRuleNotes(v);
   const plaques = (v.activeRules || []).map((r) => `<span class="plaque ${live[r.id] ? 'on' : ''}" data-key="pl-${r.id}">${glyph(ruleGlyph(r.id))}<span>${esc(ruleF(r.id, 'name'))}${live[r.id] ? `<em>${tmh(live[r.id])}</em>` : ''}</span></span>`).join('');
   const table = ring(v, { center: centerExtra + centerFor(v), reveal: v.phase === 'ENDED', crack: true, extra });
-  return `<main class="board2 ${night ? 'is-night' : 'is-day'}" data-key="board-game">
+  const where = (h.content?.scenario?.WHERE ?? []).indexOf(v.scenario?.where);
+  const backdrop = v.table?.backdrops !== false && where >= 0 ? backdropHtml(where, night) : '';
+  return `<main class="board2 ${night ? 'is-night' : 'is-day'} ${backdrop ? 'has-backdrop' : ''}" data-key="board-game">
+    ${backdrop}
     ${header}
     <div class="b-cols">
       <section class="b-stage">${table}<div class="plaques">${plaques}</div>

@@ -53,11 +53,14 @@ function nightMove(m, v, rng) {
     if (others.length) payload.nightmare = pick(rng, others);
   }
   if (a.death) {
-    // The Death team agrees: copy any teammate's proposal, or the lowest seat picks.
+    // The Death team agrees: copy any teammate's proposal, or the lowest-seated
+    // bot picks (a human teammate can still overrule it with their own pick).
     const D = a.death;
     const theirs = D.members.filter((x) => x.id !== v.me.id).map((x) => D.proposals[x.id]).find((p) => p?.length);
     if (theirs) { payload.death = theirs; return { cmd: { type: 'night.commit', payload } }; }
-    const lead = [...D.members].sort((x, y) => (m.players.find((p) => p.id === x.id).seat - m.players.find((p) => p.id === y.id).seat))[0];
+    const seat = (id) => m.players.find((p) => p.id === id);
+    const lead = D.members.filter((x) => seat(x.id)?.bot).sort((x, y) => seat(x.id).seat - seat(y.id).seat)[0];
+    if (!lead) return null;
     if (lead.id !== v.me.id) return { wait: true };
     payload.death = D.targets?.length ? [pick(rng, D.targets)] : [];
     return { cmd: { type: 'night.commit', payload } };

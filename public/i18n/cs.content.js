@@ -3,6 +3,8 @@ export default {
   and: 'a',
   numbers: ['žádný', 'jeden', 'dva', 'tři', 'čtyři', 'pět', 'šest', 'sedm', 'osm', 'devět', 'deset'],
   roles: {
+    CULT_LEADER: { name: "Vůdce sekty", when: "Každou noc", summary: "Každou noc naverbuj jednoho hráče do Sekty. Sekta vyhrává, když přečíslí všechny ostatní.", detail: "Naverbovaný si ponechá roli i schopnosti, ale nyní vyhrává se Sektou a dozví se, kdo jsou ostatní členové. Hráče na straně Smrti, Rozparovače a chráněné hráče naverbovat nelze. Pokud Vůdce zemře, nikdo jiný už verbovat nemůže." },
+    RIPPER: { name: "Rozparovač", when: "Každou noc", summary: "Každou noc sám zabij jednoho hráče. Vyhraješ, pokud zůstaneš poslední na nohou, nebo sám s jedním hráčem, který není vrah.", detail: "Tvou vraždu zastaví stejné ochrany jako vraždu Smrti (Strážce, Anděl strážný, Požehnání čarodějnice, dočasné oživení). Smrt tě v noci nemůže zabít, s výjimkou Krvavého měsíce. Jevíš se jako NE NA STRANĚ SMRTI." },
     DEATH: { name: 'Smrt', when: 'Každou noc', summary: 'Každou noc se dohodněte se všemi živými spoluhráči Smrti na jedné společné vraždě.', detail: 'Všichni aktivní hráči Smrti musí potvrdit přesně stejný výběr cílů, jinak frakce pasuje. Základní kapacita je jedna vražda; Dvojí nebezpečí, Noční směna nebo Nápor síly ji mohou zvýšit nejvýš na dvě — nikdy ne jedna vražda na každého hráče Smrti.' },
     INNOCENT: { name: 'Nevinný', when: 'Den', summary: 'Žádná schopnost. Tvou zbraní je hlas a hlasování.', detail: 'Argumentuj, obviňuj a hlasuj. I ty každou noc dostáváš Sen a mohou na tebe působit stavy.' },
     MENTALIST: { name: 'Mentalista', when: 'Každou noc', summary: 'Přečti jiného hráče: stojí na straně Smrti, nebo ne?', detail: 'Zjistíš jen aktuální příslušnost cíle (NA STRANĚ SMRTI / NE NA STRANĚ SMRTI), nikdy jeho přesnou roli. Zablokované čtení nic nepřinese.' },
@@ -38,6 +40,7 @@ export default {
     GUARDIAN_ANGEL: { name: 'Anděl strážný', text: 'Dnes v noci jsi imunní vůči Smrti, Psychopatovi, bombám, Kletbě čarodějnice i propojeným smrtím.' },
   },
   rules: {
+    OPEN_BALLOT: { name: "Veřejné hlasování", text: "Každý hlas je veřejný: všichni vidí, kdo hlasuje pro koho, jakmile hlasy přicházejí.", enforcement: "Hlasy lze měnit až do uzamčení. I hlasy duchů jsou veřejné." },
     FOG_OF_WAR: { name: 'Mlha války', text: 'Během diskuse smíš přímo mluvit jen s hráči na místech hned vedle tebe.', enforcement: 'Naživo na čestné slovo. Na dálku nahradí stolní chat šepot se sousedy.' },
     DOUBLE_JEOPARDY: { name: 'Dvojí nebezpečí', text: 'Frakce Smrti může každou noc zabít až dva hráče (pevný strop 2).', enforcement: 'Blokace jako návštěva Děvky nebo paralýza ji stále sníží na 0.' },
     PARANOIA: { name: 'Paranoia', text: 'Každý živý hlas získá +1 váhu. Soudce váží 3; Spiklenec přidává další +1.', enforcement: 'Hlasy duchů zůstávají s váhou 1.' },
@@ -74,6 +77,16 @@ export default {
     'Smrt hlasovala s městem. Samozřejmě.',
   ],
   guide: {
+    sidesH: "Další strany a zvraty",
+    sides: `<p>Volitelné, zapínají se v lobby (nebo se přidávají počítadly rolí ve vlastních hrách). Město vyhraje, až zmizí Smrt, Sekta i Rozparovač.</p>
+<ul>
+<li><b>Milenci:</b> dva náhodní hráči z jakékoli strany se do sebe zamilují. Každý se dozví jméno toho druhého. Pokud jeden zemře, druhý zemře žalem. Pokud zůstanou dva poslední živí, vyhrají spolu.</li>
+<li><b>Sekta:</b> Vůdce sekty každou noc naverbuje jednoho hráče. Naverbovaní si ponechají roli, ale vyhrávají se Sektou, která vyhraje, když přečíslí všechny ostatní. Smrt, Rozparovače a chráněné hráče naverbovat nelze.</li>
+<li><b>Rozparovač:</b> osamělý vrah, který udeří každou noc. Smrt ho v noci nemůže zabít (kromě Krvavého měsíce). Vyhraje, pokud zůstane poslední na nohou, nebo sám s hráčem, který není vrah.</li>
+<li><b>Stopy</b> (výchozí zapnuté, vzácné): za některých úsvitů dostane jeden či dva hráči mimo tým Smrti pravdivou stopu, například „jeden z A a B kráčí se Smrtí“.</li>
+<li><b>Hod mincí při rovnosti</b> (volitelné): rovnost na čele rozhodne hod mincí, místo aby byli všichni ušetřeni.</li>
+<li><b>Veřejné hlasování</b> (karta pravidla): každý hlas je veřejný, jakmile je odevzdán.</li>
+</ul>`,
     kicker: 'Pravidla, v1.0',
     title: 'Jak se<br><i>hraje.</i>',
     intro: 'Většina z vás chce přežít. Několik z vás je Smrt. Nikdo neví, kdo je kdo — kromě Smrti, která zná své.',

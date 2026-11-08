@@ -3,6 +3,8 @@ export default {
   and: 'und',
   numbers: ['kein', 'ein', 'zwei', 'drei', 'vier', 'fünf', 'sechs', 'sieben', 'acht', 'neun', 'zehn'],
   roles: {
+    CULT_LEADER: { name: "Sektenführer", when: "Jede Nacht", summary: "Wirb jede Nacht einen Spieler für die Sekte an. Die Sekte gewinnt, sobald sie in der Überzahl ist.", detail: "Ein Angeworbener behält Rolle und Fähigkeiten, gewinnt aber jetzt mit der Sekte und erfährt, wer die anderen Mitglieder sind. Tod-gesinnte Spieler, der Ripper und geschützte Spieler können nicht angeworben werden. Stirbt der Führer, kann niemand mehr anwerben." },
+    RIPPER: { name: "Der Ripper", when: "Jede Nacht", summary: "Töte jede Nacht allein einen Spieler. Du gewinnst als Letzter, der noch steht, oder allein mit einem anderen, der kein Mörder ist.", detail: "Dein Mord wird von denselben Schutzwirkungen gestoppt wie der des Todes (Wächter, Schutzengel, Hexensegen, vorübergehende Wiederbelebung). Der Tod kann dich nachts nicht töten, außer bei Blutmond. Du giltst als NICHT TOD-GESINNT." },
     DEATH: { name: 'Tod', when: 'Jede Nacht', summary: 'Einigt euch mit allen lebenden Tod-Mitspielern jede Nacht auf einen gemeinsamen Mord.', detail: 'Alle aktiven Tod-Spieler müssen genau dieselbe Zielmenge bestätigen, sonst passt die Fraktion. Grundsätzlich gibt es einen Mord; Doppelte Gefahr, Nachtschicht oder Kraftschub können ihn auf höchstens zwei erhöhen — nie einen Mord pro Tod-Spieler.' },
     INNOCENT: { name: 'Unschuldiger', when: 'Tag', summary: 'Keine Fähigkeit. Deine Stimme und dein Votum sind deine Waffe.', detail: 'Argumentiere, beschuldige, stimme ab. Auch du erhältst jede Nacht einen Traum und kannst von Zuständen betroffen sein.' },
     MENTALIST: { name: 'Mentalist', when: 'Jede Nacht', summary: 'Lies einen anderen Spieler: Steht er auf der Seite des Todes oder nicht?', detail: 'Du erfährst nur die aktuelle Gesinnung des Ziels (TOD-GESINNT / NICHT TOD-GESINNT), nie seine genaue Rolle. Eine blockierte Lesung ergibt nichts.' },
@@ -38,6 +40,7 @@ export default {
     GUARDIAN_ANGEL: { name: 'Schutzengel', text: 'Heute Nacht bist du immun gegen Tod, Psycho, Bomben, Hexenfluch und verbundene Tode.' },
   },
   rules: {
+    OPEN_BALLOT: { name: "Offene Abstimmung", text: "Jede Stimme ist öffentlich: Alle sehen, wer für wen stimmt, während die Stimmen eingehen.", enforcement: "Stimmen können bis zur Sperrung noch geändert werden. Auch Geisterstimmen sind öffentlich." },
     FOG_OF_WAR: { name: 'Nebel des Krieges', text: 'Während der Diskussion darfst du nur direkt mit den Spielern auf den Plätzen neben dir sprechen.', enforcement: 'Am Tisch Ehrensache. Online ersetzt Nachbarflüstern den Tischchat.' },
     DOUBLE_JEOPARDY: { name: 'Doppelte Gefahr', text: 'Die Tod-Fraktion darf jede Nacht bis zu zwei Spieler töten (feste Obergrenze 2).', enforcement: 'Blockaden wie der Besuch einer Hure oder Paralyse senken sie trotzdem auf 0.' },
     PARANOIA: { name: 'Paranoia', text: 'Jede lebende Stimme erhält +1 Gewicht. Der Richter wiegt 3; der Verschwörer gibt noch +1 dazu.', enforcement: 'Geisterstimmen bleiben bei Gewicht 1.' },
@@ -74,6 +77,16 @@ export default {
     'Der Tod stimmte mit der Stadt. Natürlich.',
   ],
   guide: {
+    sidesH: "Weitere Seiten und Wendungen",
+    sides: `<p>Optional, in der Lobby einschaltbar (oder in eigenen Spielen über die Rollenzähler). Die Stadt gewinnt erst, wenn Tod, Sekte und Ripper alle verschwunden sind.</p>
+<ul>
+<li><b>Liebende:</b> Zwei zufällige Spieler, egal von welcher Seite, verlieben sich. Jeder erfährt den Namen des anderen. Stirbt einer, stirbt der andere an gebrochenem Herzen. Sind sie die letzten beiden Lebenden, gewinnen sie gemeinsam.</li>
+<li><b>Die Sekte:</b> Ein Sektenführer wirbt jede Nacht einen Spieler an. Angeworbene behalten ihre Rolle, gewinnen aber mit der Sekte, die gewinnt, sobald sie in der Überzahl ist. Tod, Ripper und geschützte Spieler können nicht angeworben werden.</li>
+<li><b>Der Ripper:</b> ein einsamer Mörder, der jede Nacht zuschlägt. Der Tod kann den Ripper nachts nicht töten (außer bei Blutmond). Der Ripper gewinnt als Letzter, der noch steht, oder allein mit einem Spieler, der kein Mörder ist.</li>
+<li><b>Hinweise</b> (standardmäßig an, selten): An manchen Morgen erhalten ein oder zwei Spieler außerhalb des Todesteams einen wahren Hinweis, etwa „A oder B geht mit dem Tod“.</li>
+<li><b>Münzwurf bei Gleichstand</b> (optional): Ein Gleichstand an der Spitze wird per Münzwurf entschieden, statt alle zu verschonen.</li>
+<li><b>Offene Abstimmung</b> (eine Regelkarte): Jede Stimme ist öffentlich, sobald sie abgegeben wird.</li>
+</ul>`,
     kicker: 'Die Regeln, v1.0',
     title: 'So wird<br><i>gespielt.</i>',
     intro: 'Die meisten von euch wollen überleben. Ein paar von euch sind der Tod. Niemand weiß, wer wer ist — außer dem Tod, der seine Mitspieler kennt.',

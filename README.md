@@ -33,16 +33,19 @@ engine/            pure rules engine: plain JSON state in, plain JSON state out
   game.js          phase machine and command handling
   night.js         night resolver, in the fixed order R0–R9
   day.js           ballot weights and tally (plurality / Majority Rule / ghosts)
-  victory.js       win check (strict majority, Jester, draw)
+  victory.js       win check (strict majority, Jester, Lovers, Cult, Ripper, draw)
   views.js         per-audience views: public, player, Death team, moderator
   rng.js           crypto RNG in production; seeded/scripted RNG in tests
 server/
   rooms.js         rooms, session tokens (hashed), recovery codes, timers,
                    idempotency, host hand-over, persistence, broadcasting
   index.js         zero-dependency HTTP server + SSE streams + static files
+  bots.js          practice bots: act from their own player view, never chat
 public/            vanilla-JS phone-first client (no build step)
 test/              node:test suites
 ```
+
+**Testing alone:** in the lobby, the host taps the room code five times to open a hidden *Practice bots* panel that fills the table with bots (see [GUIDE.md](GUIDE.md#9d-practice-bots-secret-test-mode)).
 
 **Security model:**
 - The six-character room code only *finds* a room. Each phone holds a high-entropy session token, and the server stores only its hash.
@@ -59,5 +62,6 @@ test/              node:test suites
 - There are **synthesized sounds** (no audio files), haptics and canvas particles. They are limited to public events, so nothing leaks a secret.
 - A tiny DOM-morphing renderer (`public/app.js`) keeps elements alive between updates, so transitions animate.
 - Effects and the generated TV score live in `public/fx.js`; the TV board is `public/board.js`; the Gazette is `public/gazette.js`.
+- Portraits are `public/avatar.js` (vector parts), the Traveling Agent's gift scenes are `public/gifts.js`, and the TV's location backdrops are `public/backdrops.js`.
 - Concept mockups are in `design/`.
 - It respects reduced motion and uses 44px+ touch targets.

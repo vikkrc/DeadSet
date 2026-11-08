@@ -26,10 +26,12 @@ Checked after every complete resolution, never halfway through a night:
 
 1. **Jester** (Full Deck only): if the Jester is **sentenced by the daytime vote**, they win alone, instantly.
 2. If nobody is alive at all → **draw**.
-3. If no Death-aligned player is alive → **non-Death wins**.
-4. If living Death-aligned players **strictly outnumber** everyone else alive → **Death wins**. *Equal numbers is not a win.*
-5. **Doomsday Clock** (optional): if nobody has won when Day *N* closes (default 3), Death wins. There is no Night *N*.
-6. **Death wins in the final two** (optional lobby switch, off by default): if a Death is among the last two players alive, Death wins at once.
+3. **Lovers** (optional side): if the last two alive are the Lovers → **the Lovers win**, whichever sides they started on.
+4. **The Ripper** (optional side): if the Ripper is the last one standing, or alone with one player who is no killer → **the Ripper wins**.
+5. If no Death-aligned, Cult or Ripper player is alive → **non-Death wins**. The town has to clear every hostile side.
+6. If living Death-aligned players **strictly outnumber** everyone else alive → **Death wins**. *Equal numbers is not a win.* The **Cult** wins the same way when its members strictly outnumber everyone else.
+7. **Doomsday Clock** (optional): if nobody has won when Day *N* closes (default 3), Death wins. There is no Night *N*.
+8. **Death wins in the final two** (optional lobby switch, off by default): if a Death is among the last two players alive, Death wins at once.
 
 **Blood Moon** (lobby switch, on by default): after **two nights in a row without a death** (a death by day restarts the count), the next night is a Blood Moon. Everyone is told at nightfall. That night **no protection holds** (Guardian, Guardian Angel, Witch Bless, Bodyguard, Oracle, temporary revival) and **nothing can block Death's kill** (Sleep Paralysis, a Whore's visit, a Witch's Curse, the Bard's silence, Unreliable Power). It ends stalemates such as a lone Guardian shielding themself against a lone Death. If Death still passes, every following night stays a Blood Moon until someone dies.
 
@@ -102,6 +104,17 @@ Shield your screen during nightfall. The **Cover** button hides your night at an
 | **Bard** | Once: *Silence the Night*. Every role power that night fails, Death included. Dreams still work. |
 | **Witch** | Each night: **Bless** (protects from harmful role actions and bombs) or **Curse** (the target's next targeted action fizzles; cursing an active Death blocks the kill). Never on yourself. |
 
+### Other sides (optional lobby switches)
+Each switch puts one more side into the deck, replacing an Innocent (or an extended seat). In **Choose every role** decks, add the Cult Leader or the Ripper with the role counters instead. The lobby warns below 8 players for the Cult or the Ripper, and below 6 for Lovers.
+
+| Side | How it works |
+|---|---|
+| **Lovers** | Two random players (any side, even two Deaths) fall in love at the start and learn each other's name. If one dies, by day or by night, the other dies of a broken heart at once (only revival or a Guardian Angel stops it). If they are the last two alive, they win together. |
+| **The Cult** | The **Cult Leader** recruits one player each night. A recruit keeps their role and powers but now wins with the Cult, and every member learns who the others are. Death-aligned players, the Ripper, the Jester and protected players cannot be recruited. The Cult wins when it strictly outnumbers everyone else. If the Leader dies, recruiting stops. |
+| **The Ripper** | A lone killer who strikes each night. Its kill is stopped by the same protections as Death's. Death cannot kill the Ripper at night, except under a Blood Moon. The Ripper reads as *not Death-aligned*. Wins as the last one standing, or alone with one player who is no killer. |
+
+Each side has its own win screen: rose-pink hearts for the Lovers, a turning violet sunburst for the Cult, and a red, shaking slash for the Ripper.
+
 ### Role counts
 | Players | Death | Innocent | Guardian / Mentalist / Psycho | Extended |
 |---:|---:|---:|---|---:|
@@ -150,8 +163,13 @@ Dreams are drawn by weight, not evenly. Default frequencies: **Common** for Slee
 | **Majority Rule** | A sentence needs **more than half** of all eligible living voters' weight. Abstainers still count in the denominator. |
 | **Hidden Roles** | Roles of the dead are never shown before the end (this is already the default). |
 | **Vengeful Ghosts** | The dead cast one weight-1 ghost ballot per Day. Ghost ballots never count under Majority Rule. |
+| **Open Ballot** | Every vote is public as it comes in: phones list who votes for whom and the TV draws a line from each voter to their choice. Votes can still change until the vote locks. |
 
 The lobby warns about combinations that interact or overlap (for example Majority Rule + Vengeful Ghosts).
+
+### Twists (lobby switches)
+- **Clues** (on by default): at the end of each night there is a chance (Rare 15%, Uncommon 30%, Common 50%) that up to **two** living players outside Death's team find a true clue in their private night report, e.g. *"one of A and B walks with Death"*, *"someone seated within two seats of B walks with Death"*, *"B is not Death-aligned"* or *"a Death-aligned player voted for B yesterday"*. Like the Premonition Dream, a clue is always true but never a full answer.
+- **Coin-toss tiebreak** (off by default): when the top of the vote is tied, a coin is tossed between the tied players (with an animation on every screen) and the one it falls for is sentenced. Off means a tie spares everyone.
 
 ---
 
@@ -215,6 +233,8 @@ Charges are spent when a valid action is **submitted**, even if it's then blocke
 - **Big tables.** Up to 14 players sit on one ring. From 15 to 25 the table uses two staggered rings in a zigzag, so seat order still reads clockwise and every seat stays a comfortable tap target.
 - **The dead.** A dead player's screen turns cold and faded with a *Dead* tag and *You are dead*. Only when Vengeful Ghosts is in play does it say *You are a ghost*, since ghosts can then vote.
 - **First-game tips.** Tick *First-game tips* when creating a room, on the invitation, or in the room menu. A short tip then explains each step the first time you reach it (lobby, your role, morning, accusing, voting, nightfall, your night action, being dead, the end). Turn them off at any time.
+- **Portraits.** Everyone builds a small portrait (skin colour, eyes, mouth, hair) on the home screen, the invitation or in the lobby (*Your portrait*), and it becomes their seat on the table ring on every phone and the TV. *Surprise me* picks one at random. Your choice is remembered on that phone.
+- **Gifts.** When a Traveling Agent delivers to you, your dawn opens with a parcel that drops, shakes and pops open, and the product does its own little gag: the warm sand trickles, the ticket flies off, the watch runs backwards, the candle won't stay lit. Only the recipient sees it, silently.
 - **Recap.** At the end, *View recap* (on phones and the TV) replays the match step by step: who accused and voted for whom each day, and who targeted whom each night, drawn as arrows around the table with the night's full account beside it. It is available whenever roles are revealed at the end.
 
 ## 9c. The TV board and the invitation
@@ -226,6 +246,7 @@ Charges are spent when a valid action is **submitted**, even if it's then blocke
   - By day, a candle burns in the centre and accused players are lit red.
   - At night the table turns cold, fog drifts across it, and the moon fills as players fall asleep (a count only).
   - The sun or moon rides the table's timer ring. The dead are cracked.
+- **Location backdrops** (lobby switch, on by default): each WHERE card has its own quiet, slowly moving line-art scene behind the table: a rocking ship, a turning Ferris wheel, a swinging bunker lamp, a lighthouse beam, gears in the clockwork museum, and more. Host-written locations, or the switch turned off, keep the plain room.
 - **Threads of suspicion** (lobby switch, off by default): red lines from accuser to accused, thicker when repeated and fading over the days.
 - **Rule plaques:** a Rule card glows gold while it's shaping the current phase, e.g. "Majority Rule: more than 3.5 weight needed". Phones show the same highlight above the table.
 - **The Dead Set Gazette:** the public record as illustrated editions, one per day and night.
@@ -235,6 +256,14 @@ Charges are spent when a valid action is **submitted**, even if it's then blocke
 - **The score:** press *Start the score* on the TV (browsers need one tap before playing sound). The music is generated live and changes with every phase: lobby, the opening ceremony, morning, discussion (a plucked ostinato), defence, the vote and the verdict (a heartbeat), night (choir, music box and wind), the Blood Moon, and a separate ending for each outcome. Phrases are improvised each time, so no two games sound the same. When only a few players are left, a tension layer joins in. Public events have their own stings: accusations climb in pitch as more voices join, plus shots, immunity, revivals, the Blood Moon and the final theme. The host can turn the score off in the lobby; the TV button mutes it.
 
 **The invitation:** opening a join link or scanning the QR code shows a sealed letter. Press and hold the wax seal to break it, sign your name, and take your seat. *Already seated? Recover your seat* is on both sides of the letter.
+
+## 9d. Practice bots (secret test mode)
+
+To try a table alone: create a game, then **tap the room-code tiles five times quickly** in the lobby (host only). A hidden *Practice bots* panel opens with **+1**, **+4**, **Fill to 10** and **Remove bots**. Bots take seats with random portraits, ready up, and then play by themselves using only what a real player in their seat would see: they nominate, vote, use their night powers, agree on Death's kill and retaliate. They never chat. Tap the code five times again to hide the panel.
+
+Tips:
+- Create the room as a **trusted moderator** and fill it with bots to watch a whole game run on its own, with every role visible.
+- If you play alongside bots and share Death's team with them, confirm their pick (or your own): Death needs every member to agree.
 
 ## 10. Interpretation notes (where the spec was open)
 

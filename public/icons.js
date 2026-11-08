@@ -23,6 +23,13 @@ const P = {
   bodyguard: '<path d="M13 4l9 4v7c0 6-4 9-9 12-5-3-9-6-9-12V8z"/><path d="M22 10l6 2v6c0 4-3 7-6 9" />',
   bard: '<path d="M10 26c-4 0-5-5-2-8 2-2 5-1 6-3l6-10 3 2-6 10c1 2 3 4 1 7-2 2-5 2-8 2z"/><circle cx="12" cy="21" r="2"/>',
   witch: '<path d="M20 5a11 11 0 1 0 7 17A9 9 0 0 1 20 5z"/><path d="M24 9l1 2 2 .5-2 1-1 2-1-2-2-1 2-.5z"/>',
+  cult: '<path d="M16 4c-6 0-9 6-9 12v11h18V16c0-6-3-12-9-12z"/><path d="M12 17c1-2 7-2 8 0M13.5 21h5"/><circle cx="16" cy="13" r="1.3" fill="currentColor"/>',
+  ripper: '<path d="M8 25L22 6l3 2-12 19z"/><path d="M8 25l-3 3M11 22l3 3"/><path d="M20 12c3 2 5 6 4 11" stroke-dasharray="1.5 2"/>',
+  heart: '<path d="M16 27S4 19.5 4 11.5A6 6 0 0 1 16 9a6 6 0 0 1 12 2.5C28 19.5 16 27 16 27z"/>',
+  coin: '<circle cx="16" cy="16" r="11"/><circle cx="16" cy="16" r="7.5" stroke-dasharray="2 2"/><path d="M16 11v10M13 13.5c0-1.5 6-1.5 6 0s-6 2-6 4 6 2 6 0"/>',
+  gift: '<rect x="5" y="13" width="22" height="14" rx="1"/><path d="M4 9h24v4H4zM16 9v18M16 9c-2-5-8-5-7-1 1 2 5 1 7 1zM16 9c2-5 8-5 7-1-1 2-5 1-7 1z"/>',
+  bot: '<rect x="7" y="10" width="18" height="14" rx="4"/><circle cx="12.5" cy="17" r="1.6" fill="currentColor"/><circle cx="19.5" cy="17" r="1.6" fill="currentColor"/><path d="M16 10V6M13 21h6"/><circle cx="16" cy="5" r="1.2"/>',
+  clue: '<circle cx="13" cy="13" r="7"/><path d="M18 18l8 8"/><path d="M10 12a3 3 0 0 1 3-3"/>',
   // dreams
   paralysis: '<rect x="5" y="12" width="9" height="8" rx="4"/><rect x="18" y="12" width="9" height="8" rx="4"/><path d="M12 16h8"/>',
   premonition: '<path d="M3 16s5-8 13-8 13 8 13 8-5 8-13 8S3 16 3 16z"/><path d="M16 11l1.3 3.7L21 16l-3.7 1.3L16 21l-1.3-3.7L11 16l3.7-1.3z"/>',

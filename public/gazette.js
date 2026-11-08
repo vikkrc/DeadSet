@@ -56,6 +56,8 @@ export function editions(v, h) {
         case 'sentence': ed.chips.push({ icon: 'dagger', cls: 'kill', text: t('{name} sentenced', { name: name(l.victims[0]) }) }); break;
         case 'nosentence': case 'novote': ed.chips.push({ icon: 'scroll', text: l.ev === 'novote' ? t('No nominations') : t('No sentence') }); break;
         case 'cancelled': ed.chips.push({ icon: 'gambler', text: t('Sentence cancelled') }); break;
+        case 'coinflip': ed.chips.push({ icon: 'coin', text: t('A coin decided: {name}', { name: name(l.winner) }) }); break;
+        case 'heartbreak': for (const id of l.victims ?? []) ed.chips.push({ icon: 'heart', cls: 'kill', text: t('{name} died of a broken heart', { name: name(id) }) }); break;
         case 'scapegoat': ed.chips.push({ icon: 'scapegoat', cls: 'kill', text: t('The Scapegoat pays: {name}', { name: name(l.victims[0]) }) }); break;
         case 'exchange': ed.chips.push({ icon: 'dagger', cls: 'kill', text: t('{name} taken in exchange', { name: name(l.victims[0]) }) }); break;
         case 'dawn': {
@@ -67,7 +69,7 @@ export function editions(v, h) {
         }
         case 'revive': ed.chips.push({ icon: 'necro', text: t('{names} returned', { names: (l.ids ?? []).map(name) }) }); break;
         case 'rules': break;
-        case 'end': ed.chips.push({ icon: l.winner === 'DEATH' ? 'death' : l.winner === 'JESTER' ? 'jester' : 'innocent', cls: l.winner === 'DEATH' ? 'kill' : '', text: tm(l.reason) }); break;
+        case 'end': ed.chips.push({ icon: { DEATH: 'death', JESTER: 'jester', LOVERS: 'heart', CULT: 'cult', RIPPER: 'ripper' }[l.winner] ?? 'innocent', cls: ['DEATH', 'RIPPER'].includes(l.winner) ? 'kill' : '', text: tm(l.reason) }); break;
         default: break;
       }
     }
@@ -88,8 +90,8 @@ export function editions(v, h) {
       if (ex && !s) ed.tone = 'dead';
     } else {
       const e = has('end');
-      ed.title = t({ DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned' }[e?.winner] ?? 'The end');
-      ed.tone = e?.winner === 'DEATH' ? 'dead' : '';
+      ed.title = t({ DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[e?.winner] ?? 'The end');
+      ed.tone = ['DEATH', 'RIPPER'].includes(e?.winner) ? 'dead' : '';
     }
     out.push(ed);
   }

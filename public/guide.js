@@ -68,6 +68,16 @@ export const GUIDE_EN = {
 <li><b>Linked fates.</b> Whores die with a visited Death victim; Shared Nightmare and Sleepwalking holders die with their partner. Only revival or Guardian Angel prevents a linked death. Then any borrowed time expires.</li>
 <li><b>Dawn.</b> Survivors receive their private reports. The public learns only who died.</li>
 </ol>`,
+  sidesH: 'Other sides and twists',
+  sides: `<p>Optional, switched on in the lobby (or added with the role counters in Custom games). The town wins only once Death, the Cult and the Ripper are all gone.</p>
+<ul>
+<li><b>Lovers:</b> two random players, from any side, fall in love. Each learns the other's name. If one dies, the other dies of a broken heart. If they are the last two alive, they win together.</li>
+<li><b>The Cult:</b> a Cult Leader recruits one player each night. Recruits keep their role but win with the Cult, which wins when it outnumbers everyone else. Death, the Ripper and protected players cannot be recruited.</li>
+<li><b>The Ripper:</b> a lone killer who strikes each night. Death cannot kill the Ripper at night (except under a Blood Moon). The Ripper wins as the last one standing, or alone with one player who is no killer.</li>
+<li><b>Clues</b> (on by default, rare): at some dawns, one or two players outside Death's team receive a true hint, such as "one of A and B walks with Death".</li>
+<li><b>Coin-toss tiebreak</b> (optional): a tie at the top is settled by a coin toss instead of sparing everyone.</li>
+<li><b>Open Ballot</b> (a Rule card): every vote is public as it comes in.</li>
+</ul>`,
   phonesH: 'Playing on phones',
   phones: `<ul>
 <li>The host creates a room and shares the six-character code or QR. Everyone else opens the link, enters a name, taps <em>Ready</em>.</li>
@@ -84,14 +94,14 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   const G = { ...GUIDE_EN, ...(tx('guide', null) ?? {}) };
   const roles = c?.roles ?? [];
   const bySet = (set) => roles.filter((r) => r.set === set);
-  const align = (a) => t(a === 'DEATH' ? 'Death' : a === 'INDEPENDENT' ? 'Independent' : 'Non-Death');
+  const align = (a) => t({ DEATH: 'Death', INDEPENDENT: 'Independent', CULT: 'Cult', RIPPER: 'The Ripper' }[a] ?? 'Non-Death');
   const entry = (r) => { const alias = roleF(r.id, 'alias'); return `<div class="entry">${glyph(r.glyph)}<div><div class="when">${esc(align(r.alignment))} · ${esc(roleF(r.id, 'when'))}</div><h4>${esc(roleF(r.id, 'name'))}${alias ? ` <span class="small muted">(${esc(alias)})</span>` : ''}</h4><p>${esc(roleF(r.id, 'summary'))} ${esc(roleF(r.id, 'detail'))}</p></div></div>`; };
   const scaling = c?.scaling ?? {};
   const row = (cells, tag = 'td') => `<tr>${cells.map((x) => `<${tag}>${x}</${tag}>`).join('')}</tr>`;
   return `<div class="guide">
   <header class="phase-head"><span class="kicker">${G.kicker}</span><h1>${G.title}</h1>
     <p class="scenario">${G.intro}</p></header>
-  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}</nav>
+  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}<a class="tag" href="#g11">${G.sidesH}</a></nav>
   <section id="g0"><h2>${G.basicsH}</h2>${G.basics}</section>
   <section id="g1"><h2>${G.roundH}</h2>${G.round}</section>
   <section id="g2"><h2>${G.winH}</h2>${G.win}</section>
@@ -115,5 +125,6 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
     <p class="small">${G.modesNote}</p></section>
   <section id="g9"><h2>${G.orderH}</h2>${G.order}</section>
   <section id="g10"><h2>${G.phonesH}</h2>${G.phones}</section>
+  <section id="g11"><h2>${G.sidesH}</h2>${G.sides}${roles.filter((r) => r.set === 'side').map(entry).join('')}</section>
   </div>`;
 }

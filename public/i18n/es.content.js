@@ -3,6 +3,8 @@ export default {
   and: 'y',
   numbers: ['ningún', 'un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'],
   roles: {
+    CULT_LEADER: { name: "Líder de la Secta", when: "Cada noche", summary: "Cada noche, recluta a un jugador para la Secta. La Secta gana cuando supera en número a todos los demás.", detail: "Un recluta conserva su rol y sus poderes, pero ahora gana con la Secta y descubre quiénes son los demás miembros. Los jugadores del bando de la Muerte, el Destripador y los jugadores protegidos no pueden ser reclutados. Si el Líder muere, nadie más puede reclutar." },
+    RIPPER: { name: "El Destripador", when: "Cada noche", summary: "Mata a un jugador cada noche, en solitario. Ganas si eres el último en pie, o si quedas solo con otro jugador que no es un asesino.", detail: "Tu asesinato lo detienen las mismas protecciones que el de la Muerte (Guardián, Ángel de la guarda, Bendición de la Bruja, resurrección temporal). La Muerte no puede matarte de noche, salvo bajo una Luna de sangre. Apareces como NO ALINEADO CON LA MUERTE." },
     DEATH: { name: 'La Muerte', when: 'Cada noche', summary: 'Poneos de acuerdo con todos los compañeros Muerte vivos en un único asesinato compartido cada noche.', detail: 'Todos los jugadores Muerte activos deben confirmar exactamente los mismos objetivos o la facción pasa. La capacidad base es un asesinato; Doble Peligro, Turno de Noche o Sobrecarga pueden subirla hasta un máximo de dos — nunca un asesinato por cada jugador Muerte.' },
     INNOCENT: { name: 'Inocente', when: 'Día', summary: 'Sin poder. Tu voz y tu voto son tu arma.', detail: 'Argumenta, acusa y vota. Igualmente recibes un Sueño cada noche y pueden afectarte estados.' },
     MENTALIST: { name: 'Mentalista', when: 'Cada noche', summary: 'Lee a otro jugador: ¿está del lado de la Muerte o no?', detail: 'Solo averiguas la lealtad actual del objetivo (DEL LADO DE LA MUERTE / NO DEL LADO DE LA MUERTE), nunca su rol exacto. Una lectura bloqueada no devuelve nada.' },
@@ -38,6 +40,7 @@ export default {
     GUARDIAN_ANGEL: { name: 'Ángel de la guarda', text: 'Esta noche eres inmune a la Muerte, al Psicópata, a las bombas, a la Maldición y a las muertes ligadas.' },
   },
   rules: {
+    OPEN_BALLOT: { name: "Voto a la vista", text: "Cada voto es público: todos ven quién vota a quién a medida que llegan las papeletas.", enforcement: "Los votos se pueden cambiar hasta que se cierre la votación. Los votos de los fantasmas también son públicos." },
     FOG_OF_WAR: { name: 'Niebla de guerra', text: 'Durante la discusión solo puedes hablar directamente con los jugadores sentados a tu lado.', enforcement: 'En persona, por honor. A distancia, el chat de mesa se sustituye por susurros entre vecinos.' },
     DOUBLE_JEOPARDY: { name: 'Doble Peligro', text: 'La facción Muerte puede matar hasta a dos jugadores cada noche (tope fijo 2).', enforcement: 'Los bloqueos como la visita de una Ramera o la parálisis la siguen reduciendo a 0.' },
     PARANOIA: { name: 'Paranoia', text: 'Cada papeleta viva gana +1 de peso. El Magistrado pesa 3; el Conspirador suma otro +1.', enforcement: 'Las papeletas fantasma siguen pesando 1.' },
@@ -74,6 +77,16 @@ export default {
     'La Muerte votó con el pueblo. Cómo no.',
   ],
   guide: {
+    sidesH: "Otros bandos y giros",
+    sides: `<p>Opcionales, se activan en la sala (o se añaden con los contadores de roles en partidas personalizadas). El pueblo solo gana cuando la Muerte, la Secta y el Destripador han desaparecido.</p>
+<ul>
+<li><b>Enamorados:</b> dos jugadores al azar, de cualquier bando, se enamoran. Cada uno conoce el nombre del otro. Si uno muere, el otro muere de pena. Si son los dos últimos vivos, ganan juntos.</li>
+<li><b>La Secta:</b> un Líder de la Secta recluta a un jugador cada noche. Los reclutas conservan su rol pero ganan con la Secta, que gana cuando supera en número a todos los demás. La Muerte, el Destripador y los jugadores protegidos no pueden ser reclutados.</li>
+<li><b>El Destripador:</b> un asesino solitario que ataca cada noche. La Muerte no puede matarlo de noche (salvo bajo una Luna de sangre). Gana si es el último en pie, o si queda solo con un jugador que no es un asesino.</li>
+<li><b>Pistas</b> (activadas por defecto, raras): algunos amaneceres, uno o dos jugadores fuera del equipo de la Muerte reciben una pista verdadera, como «A o B camina con la Muerte».</li>
+<li><b>Desempate a cara o cruz</b> (opcional): un empate en cabeza se decide a cara o cruz en lugar de perdonar a todos.</li>
+<li><b>Voto a la vista</b> (una carta de regla): cada voto es público en cuanto se emite.</li>
+</ul>`,
     kicker: 'Las reglas, v1.0',
     title: 'Cómo<br><i>jugar.</i>',
     intro: 'La mayoría queréis sobrevivir. Unos pocos sois la Muerte. Nadie sabe quién es quién — salvo la Muerte, que conoce a los suyos.',
