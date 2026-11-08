@@ -38,6 +38,18 @@ test('Blood Moon also overrides a blocked Death kill, and can be switched off', 
   assert.equal(alive(u, 'Cy'), false, 'a Whore visit and a Guardian shield both fail');
 });
 
+test('A death during the Day restarts the count of quiet nights', () => {
+  const t = setup(['DEATH', 'GUARDIAN', 'INNOCENT', 'MENTALIST', 'PSYCHO', 'INNOCENT', 'DEATH']);
+  runDay(t, { nominate: [['Bo', 'Cy']], votes: { Bo: 'Cy', Di: 'Cy', Ed: 'Cy', Fay: 'Cy' } });
+  assert.equal(alive(t, 'Cy'), false);
+  runNight(t, { death: { all: [] } });
+  runDay(t);
+  assert.ok(!t.m.night.bloodMoon, 'only one quiet night since the sentence');
+  runNight(t, { death: { all: [] } });
+  runDay(t);
+  assert.equal(t.m.night.bloodMoon, true, 'two quiet nights after the Day death');
+});
+
 test('Final-two rule: a Death among the last two wins when enabled', () => {
   const players = [{ alive: true, alignment: 'DEATH' }, { alive: true, alignment: 'NON_DEATH' }, { alive: false, alignment: 'NON_DEATH' }];
   assert.equal(checkVictory({ players, config: { finalTwoDeath: false } }), null);

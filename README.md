@@ -53,7 +53,9 @@ test/              node:test suites
 **Interface:** a "mourning stationery" identity: soot paper, bone ink, one oxblood accent, Instrument Serif and Instrument Sans. The whole palette cools to ink-blue at night.
 - Players sit around a **table ring**, and tapping a seat is how you target anyone.
 - Public events play as short **cinematic moments**: nightfall, dawn, the vote tally and the verdict.
-- **Seven languages** (en, hu, sk, cs, de, fr, es). Each player picks their own; the host sets the table default. UI strings are keyed by their English text (`public/i18n.js`, dictionaries in `public/i18n/`), and the server sends events as `[template, params]` so every phone renders them in its own language. `node scripts/i18n-keys.mjs <lang>` lists missing strings, and `node scripts/i18n-check.mjs` checks placeholders.
+- **Seven languages** (en, hu, sk, cs, de, fr, es). Each player picks their own; the host sets the table default. UI strings are keyed by their English text (`public/i18n.js`, dictionaries in `public/i18n/`), and the server sends events as `[template, params]` so every phone renders them in its own language. `node scripts/i18n-keys.mjs <lang>` lists missing strings, and `node scripts/i18n-check.mjs` checks placeholders. On localhost (or with `?i18n=debug`) the browser console also warns about any string a dictionary lacks.
+- **Tables of 5–25.** `public/layout.js` places seats on one ring up to 14 and on two staggered rings above that, shared by phones and the TV board.
+- **Generated score** (`public/fx.js`): each phase has its own mood built from a pad, wind, improvised music-box or bell motifs, plucked ostinatos, a choir, a heartbeat and swells, plus a tension layer for the last few players.
 - There are **synthesized sounds** (no audio files), haptics and canvas particles. They are limited to public events, so nothing leaks a secret.
 - A tiny DOM-morphing renderer (`public/app.js`) keeps elements alive between updates, so transitions animate.
 - Effects and the generated TV score live in `public/fx.js`; the TV board is `public/board.js`; the Gazette is `public/gazette.js`.

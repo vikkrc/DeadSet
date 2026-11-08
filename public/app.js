@@ -1798,7 +1798,7 @@ const ACT = {
   kick(el) { if (confirm(t('Remove {name} from the table?', { name: rawName(el.dataset.pid) }))) { S.ui.sheet = null; send('host.kick', { playerId: el.dataset.pid }); } },
   advance(el) { S.ui.sheet = null; send('host.advance', { skipAll: !!el.dataset.skip }); },
   extend() { send('host.extend', { seconds: 30 }); },
-  end() { if (confirm(t('End the match now? It will be recorded as abandoned — no faction wins.'))) send('host.end'); },
+  end() { if (confirm(t('End the match now? It will be recorded as abandoned — no faction wins.'))) { S.ui.sheet = null; send('host.end'); } },
   rematch() { S.ui.sheet = null; send('host.rematch'); },
   claim() { send('host.claim'); },
   issueRecovery() { const id = S.drafts.recPick || V().players.find((p) => p.id !== V().me?.id)?.id; if (id) send('host.recovery', { playerId: id }); },

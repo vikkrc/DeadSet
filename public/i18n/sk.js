@@ -896,5 +896,10 @@ export default {
     "{a} abstained": "{a} sa zdržal",
     "{a} voted {b}": "{a} hlasoval: {b}",
     "{n} of {total} seats filled": "obsadené {n} z {total} miest",
+    "Night actions open when the count ends.": "Nočné akcie sa otvoria, keď odpočet skončí.",
+    "Shield your screen. Night actions open when the count ends.": "Zakry obrazovku. Nočné akcie sa otvoria, keď odpočet skončí.",
+    "Who": "Kto",
+    "Where": "Kde",
+    "Why": "Prečo",
   },
 };

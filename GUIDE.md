@@ -1,6 +1,6 @@
 # Dead Set — How the game works
 
-Dead Set is a social-deduction party game for **5–13 players** (Custom mode goes up to 18 as an experimental setting). Every player uses **their own phone**. The server acts as narrator, so nobody has to sit out to run the game, and the host sees no more secrets than any other player.
+Dead Set is a social-deduction party game for **5–13 players** (Custom mode goes up to 25, with suggested setups for big tables). Every player uses **their own phone**. The server acts as narrator, so nobody has to sit out to run the game, and the host sees no more secrets than any other player.
 
 This guide covers everything the app does. It follows the *Dead Set Complete Game Specification v1.0*. The decisions this implementation had to make on its own are listed at the end.
 
@@ -29,6 +29,9 @@ Checked after every complete resolution, never halfway through a night:
 3. If no Death-aligned player is alive → **non-Death wins**.
 4. If living Death-aligned players **strictly outnumber** everyone else alive → **Death wins**. *Equal numbers is not a win.*
 5. **Doomsday Clock** (optional): if nobody has won when Day *N* closes (default 3), Death wins. There is no Night *N*.
+6. **Death wins in the final two** (optional lobby switch, off by default): if a Death is among the last two players alive, Death wins at once.
+
+**Blood Moon** (lobby switch, on by default): after **two nights in a row without a death** (a death by day restarts the count), the next night is a Blood Moon. Everyone is told at nightfall. That night **no protection holds** (Guardian, Guardian Angel, Witch Bless, Bodyguard, Oracle, temporary revival) and **nothing can block Death's kill** (Sleep Paralysis, a Whore's visit, a Witch's Curse, the Bard's silence, Unreliable Power). It ends stalemates such as a lone Guardian shielding themself against a lone Death. If Death still passes, every following night stays a Blood Moon until someone dies.
 
 ---
 
@@ -55,7 +58,7 @@ Each player turns over their role card on their own phone and taps **Understood*
 | **Equal Exchange** (rule card) | A sentenced Death-aligned player may take one living non-Death player with them. |
 
 ### Night
-1. **Nightfall (5 seconds)**: Dreams are drawn, one random Dream per living player, duplicates allowed. Every phone shows the same countdown. Only **Dream Snatchers** see their card at this point; they may tap a seat to swap Dreams with another player before the countdown ends. Nobody else has to do anything, and the step always lasts exactly five seconds, so its length never reveals whether a Snatcher exists.
+1. **Nightfall (15 seconds with Dreams, 5 without)**: Dreams are drawn, one per living player. Every phone shows the same countdown, and everyone's Dream card turns over with its description. **Dream Snatchers** may tap a seat to swap Dreams with another player before the countdown ends. The step always lasts exactly as long, so its length never reveals whether a Snatcher exists. When night actions open, a player whose Dream was stolen sees a short *Your dream was stolen* scene on their own phone (silently) showing the old and new card.
 2. **Night actions** open by themselves when the countdown ends: each player sees their final Dream and their own action. Death players share a private room. Everyone commits or passes, then taps **Sleep**.
 3. When everyone is asleep (or the timer ends), the server resolves everything at once (see §8). Survivors get their private reports, and Day *N+1* begins.
 
@@ -117,6 +120,9 @@ From 14 players the cycle continues: +Extended, +Death, +Innocent (Custom mode o
 ---
 
 ## 5. Dreams (from Night 1, one per living player per night)
+
+Dreams are drawn by weight, not evenly. Default frequencies: **Common** for Sleep Paralysis, Whispers of the Past, Sleepwalking, Dream Snatcher, Night Shift and Shared Nightmare; **Uncommon** for Premonition and Guardian Angel; **Rare** for Insomnia, which also **never appears more than twice in a match**. Custom games can set every Dream to Off, Rare, Uncommon, Common or Frequent.
+
 | Dream | Effect |
 |---|---|
 | **Sleep Paralysis** | You can't use your role tonight. If you're an active Death, the whole kill is blocked. |
@@ -156,7 +162,7 @@ The lobby warns about combinations that interact or overlap (for example Majorit
 | **Classic / Learn** | 5–13 | Core roles only; extended seats become Innocents (and the lobby says so). Dreams off by default; 0–1 simple Rule (Double Jeopardy, Paranoia, Majority Rule or Hidden Roles). |
 | **Full Deck / Chaos** | 7–13 | All 17 extended roles, including Jester, Bard and Witch. |
 | **Doomsday** | 5–13 | Standard + the Doomsday Clock (default 3 Days, configurable). |
-| **Custom** | 5–18 | Choose the extended pool, Dreams on/off, the clock, 0–3 rules, or type an **exact deck** (`Death x2`, `Guardian`, …). It validates the count, requires at least one Death and forbids a starting Death majority. |
+| **Custom** | 5–25 | **Automatic deck** (roles scale with the player count, extended seats from a pool you choose) or **Choose every role** with +/− counters labelled in your language. Three **suggested setups** (Steady, Sharp eyes, Wild night) are generated for the current player count and can be reshuffled. Also: Dreams on/off and their frequency, the clock, 0–3 rules. It checks the count, requires at least one Death, forbids a starting Death majority, and warns about lopsided decks. |
 
 **How you play is a separate choice from the mode:**
 - **Same room**: talk face to face. MUTE, Fog of War and Cursed Silence are honour rules.
@@ -206,6 +212,10 @@ Charges are spent when a valid action is **submitted**, even if it's then blocke
   - At night every phone stays silent and still, and so do role-specific taps such as aiming the Vigilante's shot. Nothing anyone's phone does can give away what they are.
   - When a TV board is open with its score playing, the TV carries all public sounds and the music, and phones keep only their own (non-revealing) tap sounds.
 - **Reduced motion.** If your device asks for reduced motion, the animations and particles are switched off.
+- **Big tables.** Up to 14 players sit on one ring. From 15 to 25 the table uses two staggered rings in a zigzag, so seat order still reads clockwise and every seat stays a comfortable tap target.
+- **The dead.** A dead player's screen turns cold and faded with a *Dead* tag and *You are dead*. Only when Vengeful Ghosts is in play does it say *You are a ghost*, since ghosts can then vote.
+- **First-game tips.** Tick *First-game tips* when creating a room, on the invitation, or in the room menu. A short tip then explains each step the first time you reach it (lobby, your role, morning, accusing, voting, nightfall, your night action, being dead, the end). Turn them off at any time.
+- **Recap.** At the end, *View recap* (on phones and the TV) replays the match step by step: who accused and voted for whom each day, and who targeted whom each night, drawn as arrows around the table with the night's full account beside it. It is available whenever roles are revealed at the end.
 
 ## 9c. The TV board and the invitation
 
@@ -222,7 +232,7 @@ Charges are spent when a valid action is **submitted**, even if it's then blocke
   - At each dawn the TV prints a full front page, written in the match's own story ("The Space Explorers woke in an Underground Bunker to an empty chair…").
   - On phones the record uses the Gazette look by default; *List view* switches back to a plain list.
 - **The last ten seconds:** red closes in from the edges, sparks run around the border, and a heartbeat plays.
-- **The score:** press *Start the score* on the TV (browsers need one tap before playing sound). Generated music follows the phase (lobby, day, vote, night, verdict), along with effects for public events. The host can turn the score off in the lobby; the TV button mutes it.
+- **The score:** press *Start the score* on the TV (browsers need one tap before playing sound). The music is generated live and changes with every phase: lobby, the opening ceremony, morning, discussion (a plucked ostinato), defence, the vote and the verdict (a heartbeat), night (choir, music box and wind), the Blood Moon, and a separate ending for each outcome. Phrases are improvised each time, so no two games sound the same. When only a few players are left, a tension layer joins in. Public events have their own stings: accusations climb in pitch as more voices join, plus shots, immunity, revivals, the Blood Moon and the final theme. The host can turn the score off in the lobby; the TV button mutes it.
 
 **The invitation:** opening a join link or scanning the QR code shows a sealed letter. Press and hold the wax seal to break it, sign your name, and take your seat. *Already seated? Recover your seat* is on both sides of the letter.
 
@@ -236,7 +246,8 @@ The spec resolves almost everything. Where it left room, this build does the fol
 - **Witch spells resolve together**: one curse can't cancel another witch's spell, and a Bless also shields its target from a Curse.
 - **Conspirator whisper**: the partner sees the Conspirator only as "Stranger", because the channel's existence would otherwise expose the role. The whisper opens live during the night, so Bard silence can't retroactively close it.
 - **Insomnia report**: names the roles of the actors (it is "deliberately powerful"), but describes the Death kill as "the Death faction" without naming its members.
-- **Dream Snatcher privacy**: the swap window is a fixed five-second nightfall for everyone, so nobody can tell from timing whether a Snatcher exists. A Snatcher who doesn't tap a seat in time keeps their own Dream.
+- **Dream Snatcher privacy**: the swap window is a fixed-length nightfall for everyone, so nobody can tell from timing whether a Snatcher exists. A Snatcher who doesn't tap a seat in time keeps their own Dream. Only the robbed player sees the swap, with no sound or vibration.
+- **Small tables**: random rule draws never deal Double Jeopardy below 7 players, and the presets leave the Jester out below 8. A host can still pick either in Custom; the lobby then warns about the balance.
 - **Gambler**: a correct bet cancels the sentence even if the Gambler died overnight, because the bet was locked when it was placed.
 - **Nominations**: one formal nomination per player per Day. A MUTE player can still nominate (the MUTE rule says so explicitly).
 
@@ -246,7 +257,7 @@ The spec resolves almost everything. Where it left room, this build does the fol
 
 The interface is available in **English, Hungarian (Magyar), Slovak (Slovenčina), Czech (Čeština), German (Deutsch), French (Français) and Spanish (Español)**.
 
-- **Each player chooses their own language** with the language button on the start screen, on the invitation (before joining), in the guide, and in the room menu (☰). The choice is stored on that device.
+- **Each player chooses their own language** with the language button (EN, HU, SK…) on the start screen, on the invitation (before joining), in the guide, and in the room menu (☰). The choice is stored on that device.
 - **The host sets the table's default language** in the lobby (*The table → Table language*). Players who haven't picked a language follow it, and so does the TV board.
 - Without either choice, the app uses the browser's language when it is one of the seven, and English otherwise.
 - Everything is translated, including roles, Dreams, rule cards, scenario cards, night reports, the Gazette and this guide's in-app version. The server sends events as templates, and each phone renders them in its own language, so one table can mix languages.

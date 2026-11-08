@@ -390,6 +390,10 @@ function beginNightPhase(m, now) {
     death: null, conspire: {},
   };
   pub(m, ['Night {n} falls. Keep your screen to yourself.', { n }], 'phase', { ev: 'nightfall', n });
+  // A death during the Day breaks the run of quiet nights.
+  const deadNow = m.players.filter((p) => !p.alive).map((p) => p.id);
+  if (deadNow.some((id) => !(m.deadSnap || []).includes(id))) m.calm = 0;
+  m.deadSnap = deadNow;
   if (m.config.bloodMoon && (m.calm ?? 0) >= BLOOD_MOON_AFTER) {
     m.night.bloodMoon = true;
     pub(m, 'A Blood Moon rises. Tonight no protection holds, and nothing can stay Death\'s hand.', 'phase', { ev: 'bloodmoon', n });

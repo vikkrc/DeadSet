@@ -896,5 +896,10 @@ export default {
     "{a} abstained": "{a} tartózkodott",
     "{a} voted {b}": "{a} szavazata: {b}",
     "{n} of {total} seats filled": "{n} / {total} hely betöltve",
+    "Night actions open when the count ends.": "Az éjszakai akciók a visszaszámlálás végén nyílnak meg.",
+    "Shield your screen. Night actions open when the count ends.": "Takard el a képernyőd. Az éjszakai akciók a visszaszámlálás végén nyílnak meg.",
+    "Who": "Ki",
+    "Where": "Hol",
+    "Why": "Miért",
   },
 };

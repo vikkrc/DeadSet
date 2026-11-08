@@ -75,6 +75,9 @@ for (const m of read('public/app.js').matchAll(/(?:title|sub|kicker): '((?:[^'\\
 for (const m of read('public/app.js').matchAll(/toggle\('\w+', '((?:[^'\\]|\\.)*)', '((?:[^'\\]|\\.)*)'\)/g)) { keys.add(unq(m[1])); keys.add(unq(m[2])); }
 // Labels passed through small helpers that call t() themselves.
 for (const m of read('public/app.js').matchAll(/timer\('\w+', '((?:[^'\\]|\\.)*)'\)/g)) keys.add(unq(m[1]));
+for (const m of read('public/app.js').matchAll(/\bcount\('((?:[^'\\]|\\.)*)'\)/g)) keys.add(unq(m[1]));
+// Ceremony card labels (translated through a variable).
+for (const k of ['Who', 'Where', 'Why']) keys.add(k);
 // Tables of labels the client translates at render time.
 for (const m of read('public/app.js').matchAll(/const (?:SUGGESTION_LABEL|WEIGHT_LABEL|ROLE_GROUPS|TUTORIAL|RECAP_ROLE) = ([\s\S]*?);\n/g)) for (const x of m[1].matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/[A-Za-z]/.test(s) && !/^[A-Z_]+$/.test(s) && !/^[a-z]+$/.test(s)) keys.add(s); }
 

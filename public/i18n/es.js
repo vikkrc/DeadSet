@@ -896,5 +896,10 @@ export default {
     "{a} abstained": "{a} se abstuvo",
     "{a} voted {b}": "{a} votó a {b}",
     "{n} of {total} seats filled": "{n} de {total} asientos cubiertos",
+    "Night actions open when the count ends.": "Las acciones nocturnas se abren cuando acaba la cuenta atrás.",
+    "Shield your screen. Night actions open when the count ends.": "Tapa tu pantalla. Las acciones nocturnas se abren cuando acaba la cuenta atrás.",
+    "Who": "Quién",
+    "Where": "Dónde",
+    "Why": "Por qué",
   },
 };
