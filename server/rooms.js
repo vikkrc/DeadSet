@@ -9,7 +9,7 @@ import {
 } from '../engine/game.js';
 import { playerView, publicView, moderatorView } from '../engine/views.js';
 import { secureRng } from '../engine/rng.js';
-import { ROLES, PRESETS } from '../engine/content.js';
+import { ROLES, PRESETS, LANGS } from '../engine/content.js';
 import { byId, pub } from '../engine/state.js';
 
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no 0/O/1/I
@@ -62,11 +62,12 @@ export class RoomManager {
     return pid;
   }
 
-  createRoom({ name, moderated = false }) {
+  createRoom({ name, moderated = false, lang = 'en' }) {
     const code = this.newCode();
     const hostId = newId();
     const match = newMatch({ id: newId(), code, hostId, moderated });
     const room = { code, match, sessions: new Map(), recovery: new Map(), clients: new Set(), timer: null, touched: this.clock(), hostSeen: this.clock(), transferVotes: new Set() };
+    if (LANGS.includes(lang)) match.settings.lang = lang;
     if (!moderated) addPlayer(match, { id: hostId, name });
     else room.moderatorName = normaliseName(name) || 'Moderator';
     if (!moderated && match.players[0]) match.players[0].ready = true;
@@ -206,7 +207,7 @@ export class RoomManager {
     const host = m.moderated ? r.moderatorName : m.players.find((p) => p.id === m.hostId)?.name;
     const preset = PRESETS[m.settings.preset];
     const rules = m.phase === 'LOBBY' ? (m.settings.rules.mode === 'random' ? m.settings.rules.count : m.settings.rules.selected.length) : m.activeRules.length;
-    return { exists: true, phase: m.phase, players: m.players.length, host: host ?? null, seated: m.players.length, max: preset.max, preset: preset.name, rules, moderated: !!m.moderated };
+    return { exists: true, phase: m.phase, players: m.players.length, host: host ?? null, seated: m.players.length, max: preset.max, preset: preset.id, rules, moderated: !!m.moderated, lang: m.settings.lang || 'en' };
   }
 
   // ── Streams ──────────────────────────────────────────────────────────────

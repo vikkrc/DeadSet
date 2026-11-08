@@ -181,7 +181,7 @@ test('T10 Double Jeopardy + Night Shift still caps Death at 2', () => {
   for (const pid of swap.aliveAtOpen) swap.initialDreams[pid] = swap.dreams[pid] = 'PREMONITION';
   swap.dreams[t.id('Ada')] = swap.initialDreams[t.id('Ada')] = 'NIGHT_SHIFT';
   swap.initialSnatchers = [];
-  for (const pid of swap.aliveAtOpen) t.cmd(t.m.players.find((p) => p.id === pid).name, 'dream.swap', {});
+  t.advance();
   assert.equal(t.m.night.death.capacity, 2);
   assert.throws(() => t.cmd('Ada', 'death.propose', { targets: [t.id('Bo'), t.id('Cy'), t.id('Di')] }), /at most 2/);
   runNight(t, { death: { all: ['Bo', 'Cy'] } });
@@ -195,7 +195,7 @@ test('T11 Death actor with Sleep Paralysis blocks the entire kill', () => {
   runNight(t, { dreams: { Ada: 'SLEEP_PARALYSIS', Bo: 'INSOMNIA', Cy: 'INSOMNIA', Di: 'INSOMNIA', Ed: 'INSOMNIA', Fay: 'INSOMNIA', Gus: 'INSOMNIA' }, death: { all: ['Bo'] } });
   assert.equal(alive(t, 'Bo'), true);
   const report = t.m.privateLog[t.id('Cy')].find((x) => x.kind === 'insomnia');
-  assert.ok(report && /stayed/.test(report.text), 'Insomnia sees the stayed hand');
+  assert.ok(report && report.lines.some((l) => /stayed/.test(l[0])), 'Insomnia sees the stayed hand');
 });
 
 test('T12 Dream Snatcher swaps apply once in seat order', () => {
@@ -207,7 +207,10 @@ test('T12 Dream Snatcher swaps apply once in seat order', () => {
   N.initialSnatchers = [t.id('Ada'), t.id('Bo')];
   t.cmd('Bo', 'dream.swap', { target: t.id('Di') });
   t.cmd('Ada', 'dream.swap', { target: t.id('Bo') });
-  for (const n of ['Cy', 'Di', 'Ed']) t.cmd(n, 'dream.swap', {});
+  assert.throws(() => t.cmd('Cy', 'dream.swap', { target: t.id('Ed') }), /Dream Snatcher/);
+  assert.equal(t.m.phase, 'NIGHT_DREAM_SWAP', 'the grace period never ends early');
+  assert.ok(t.m.deadline - t.m.openedAt === 5000, 'five-second grace');
+  t.advance();
   // Ada↔Bo first (seat 0): Ada=SNATCHER, Bo=SNATCHER; then Bo↔Di: Bo=ANGEL, Di=SNATCHER.
   assert.equal(N.dreams[t.id('Ada')], 'DREAM_SNATCHER');
   assert.equal(N.dreams[t.id('Bo')], 'GUARDIAN_ANGEL');
@@ -361,7 +364,7 @@ test('T19 Equal Exchange: sentenced Death takes one non-Death, then win check', 
   t.cmd('Ada', 'day.retaliate', { target: t.id('Cy') });
   assert.equal(alive(t, 'Cy'), false);
   assert.deepEqual(t.P('Cy').causes, ['EQUAL_EXCHANGE']);
-  assert.equal(t.m.phase, 'NIGHT_ACTIONS');
+  assert.equal(t.m.phase, 'NIGHT_DREAM_SWAP', 'night begins with its five-second grace');
 });
 
 test('T20 Jester: bombed → no win; sentenced → instant Jester win', () => {
@@ -541,7 +544,7 @@ test('Conspirator whisper is anonymous to the partner', () => {
 test('T27/§25 no view leaks another living player\'s role, dream or choice', () => {
   const t = setup(['DEATH', 'INNOCENT', 'GUARDIAN', 'MENTALIST', 'PSYCHO', 'INNOCENT', 'DEATH'], { dreams: true });
   toNight(t);
-  for (const pid of t.m.night.aliveAtOpen) t.cmd(t.m.players.find((p) => p.id === pid).name, 'dream.swap', {});
+  t.advance();
   t.cmd('Cy', 'night.commit', { uses: [{ target: t.id('Bo') }] });
   t.cmd('Ada', 'death.propose', { targets: [t.id('Di')] });
   const host = JSON.stringify(playerView(t.m, t.id('Ada') === t.m.hostId ? t.id('Bo') : t.id('Bo')));

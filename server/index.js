@@ -7,7 +7,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { join, extname, normalize, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { RoomManager } from './rooms.js';
-import { ROLES, DREAMS, RULE_CARDS, PRESETS, SCENARIO, RETIRED_RULES } from '../engine/content.js';
+import { ROLES, DREAMS, RULE_CARDS, PRESETS, SCENARIO, RETIRED_RULES, PRODUCTS, LANGS } from '../engine/content.js';
 import { scaling } from '../engine/setup.js';
 import { GameError } from '../engine/state.js';
 
@@ -41,7 +41,7 @@ function limited(req, cost = 1, perMinute = 30) {
 
 const content = {
   roles: Object.values(ROLES), dreams: Object.values(DREAMS), rules: Object.values(RULE_CARDS),
-  presets: Object.values(PRESETS), scenario: SCENARIO, retired: RETIRED_RULES,
+  presets: Object.values(PRESETS), scenario: SCENARIO, retired: RETIRED_RULES, products: PRODUCTS, langs: LANGS,
   scaling: Object.fromEntries([5, 6, 7, 8, 9, 10, 11, 12, 13].map((n) => [n, scaling(n)])),
 };
 
@@ -66,7 +66,7 @@ async function body(req) {
 function fail(res, e) {
   if (e instanceof GameError) {
     const status = { AUTH: 401, NOT_FOUND: 404, STALE: 409 }[e.code] ?? 400;
-    return json(res, status, { error: e.message, code: e.code });
+    return json(res, status, { error: e.message, code: e.code, msg: e.msg });
   }
   if (e.status) return json(res, e.status, { error: e.message });
   console.error(e);
@@ -81,7 +81,7 @@ async function api(req, res, url) {
   if (parts[1] === 'rooms' && parts.length === 2 && req.method === 'POST') {
     if (limited(req, 3)) return json(res, 429, { error: 'Too many requests. Wait a moment.' });
     const b = await body(req);
-    return json(res, 200, rooms.createRoom({ name: b.name, moderated: !!b.moderated }));
+    return json(res, 200, rooms.createRoom({ name: b.name, moderated: !!b.moderated, lang: b.lang }));
   }
   if (parts[1] !== 'rooms' || !parts[2]) return json(res, 404, { error: 'Not found' });
   const code = parts[2].toUpperCase();

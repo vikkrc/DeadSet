@@ -1,6 +1,6 @@
 // Lobby settings, role scaling (§5.3), deck building and validation.
 import {
-  ROLES, PRESETS, RULE_CARDS, RULE_IDS, COPY_SENSITIVE, SCENARIO, MIN_PLAYERS, ABS_MAX_PLAYERS,
+  ROLES, PRESETS, RULE_CARDS, RULE_IDS, COPY_SENSITIVE, SCENARIO, MIN_PLAYERS, ABS_MAX_PLAYERS, LANGS,
 } from './content.js';
 import { shuffle, pick } from './rng.js';
 
@@ -40,6 +40,7 @@ export function defaultSettings() {
     selfNomination: false,
     selfVote: true,
     threads: false,
+    lang: 'en',
     score: true,
   };
 }
@@ -87,6 +88,7 @@ export function applySettingsPatch(settings, patch = {}) {
     }
   }
   if (['in-person', 'remote'].includes(patch.transport)) s.transport = patch.transport;
+  if (LANGS.includes(patch.lang)) s.lang = patch.lang;
   for (const k of ['revealOnDeath', 'endReveal', 'selfNomination', 'selfVote', 'threads', 'score']) {
     if (typeof patch[k] === 'boolean') s[k] = patch[k];
   }
@@ -116,7 +118,7 @@ export function parseCustomDeck(text) {
     const name = (m?.[1] || line).trim().toLowerCase().replace(/_/g, ' ');
     const count = Number(m?.[2] || m?.[3] || 1);
     const id = byName[name] || byName[name.replace(/ /g, '_')];
-    if (!id) { errors.push(`Unknown role "${line}"`); continue; }
+    if (!id) { errors.push(['Unknown role "{x}"', { x: line }]); continue; }
     for (let i = 0; i < Math.min(count, 18); i++) out.push(id);
   }
   return { roles: out, errors };
@@ -130,16 +132,16 @@ export function validateSetup(n, settings) {
   const errors = [];
   const warnings = [];
   const preset = PRESETS[settings.preset];
-  if (n < MIN_PLAYERS) errors.push(`At least ${MIN_PLAYERS} players are needed (currently ${n}).`);
-  if (n > preset.max) errors.push(`${preset.name} supports at most ${preset.max} players.`);
-  if (n < preset.min) errors.push(`${preset.name} needs at least ${preset.min} players.`);
+  if (n < MIN_PLAYERS) errors.push(['At least {min} players are needed (currently {n}).', { min: MIN_PLAYERS, n }]);
+  if (n > preset.max) errors.push(['{preset} supports at most {n} players.', { preset: preset.name, n: preset.max }]);
+  if (n < preset.min) errors.push(['{preset} needs at least {n} players.', { preset: preset.name, n: preset.min }]);
   if (n > 13 && n <= ABS_MAX_PLAYERS) warnings.push('More than 13 players is experimental: balance is untested.');
 
   // Rules
   const r = settings.rules;
   if (r.mode === 'manual') {
-    if (r.selected.length < preset.rulesMin) errors.push(`Select at least ${preset.rulesMin} Rule card(s).`);
-    if (r.selected.length > preset.rulesMax) errors.push(`Select at most ${preset.rulesMax} Rule card(s).`);
+    if (r.selected.length < preset.rulesMin) errors.push(['Select at least {n} Rule card(s).', { n: preset.rulesMin }]);
+    if (r.selected.length > preset.rulesMax) errors.push(['Select at most {n} Rule card(s).', { n: preset.rulesMax }]);
     warnings.push(...ruleWarnings(r.selected));
   }
   if (settings.scenario.mode === 'manual' && !(settings.scenario.who && settings.scenario.where && settings.scenario.why)) {
@@ -150,7 +152,7 @@ export function validateSetup(n, settings) {
   if (preset.custom && settings.customDeck.trim()) {
     const { roles, errors: e } = parseCustomDeck(settings.customDeck);
     errors.push(...e);
-    if (roles.length !== n) errors.push(`The custom deck has ${roles.length} roles but ${n} players are seated.`);
+    if (roles.length !== n) errors.push(['The custom deck has {r} roles but {n} players are seated.', { r: roles.length, n }]);
     const deaths = roles.filter((x) => ROLES[x].alignment === 'DEATH').length;
     if (deaths < 1) errors.push('The deck needs at least one Death.');
     if (deaths > roles.length - deaths) errors.push('Death would start with a strict majority.');
@@ -172,7 +174,7 @@ export function validateSetup(n, settings) {
     };
   }
   const doomsday = preset.doomsday || (preset.custom && settings.doomsday);
-  if (doomsday) warnings.push(`Doomsday Clock: Death wins if nobody has won after Day ${settings.doomsdayDays}.`);
+  if (doomsday) warnings.push(['Doomsday Clock: Death wins if nobody has won after Day {n}.', { n: settings.doomsdayDays }]);
   return { ok: errors.length === 0, errors, warnings, publicDeck };
 }
 

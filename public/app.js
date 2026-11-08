@@ -6,6 +6,7 @@ import { renderGuide } from './guide.js';
 import { sound, score, haptic, burstAt, celebrate, ambient } from './fx.js';
 import { boardScreen, activeRuleNotes, moodFor, ruleGlyph } from './board.js';
 import { gazetteHtml, frontPageHtml } from './gazette.js';
+import { LANGS, t, th, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, scen, optLabel, list as tlist, loadLang, setContent, browserLang, isLang, getLang, extra as tx } from './i18n.js';
 
 const app = document.getElementById('app');
 const S = {
@@ -14,7 +15,7 @@ const S = {
   pending: false, drafts: {}, sel: {}, selPhase: null,
   moments: [], moment: null, momentTimer: null, notes: [],
   seenLog: null, seenPriv: null, peek: null, board: { key: null, audio: false },
-  ui: { sheet: null, unveiled: {}, flipped: {}, chat: null, recover: false, moderated: false, tab: null, holding: null, homeTab: 'host', invite: false, recordList: localStorage.getItem('deadset:record') === 'list' },
+  ui: { sheet: null, veiled: {}, flipped: {}, chat: null, recover: false, moderated: false, tab: null, holding: null, homeTab: 'host', invite: false, recordList: localStorage.getItem('deadset:record') === 'list' },
 };
 
 // ── Utilities ──────────────────────────────────────────────────────────────
@@ -23,7 +24,8 @@ const ROMAN = ['0', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X',
 const roman = (n) => ROMAN[n] ?? String(n);
 const V = () => S.view;
 const player = (id) => V()?.players.find((p) => p.id === id);
-const pname = (id) => esc(player(id)?.name ?? 'Someone');
+const pname = (id) => esc(player(id)?.name ?? t('Someone'));
+const rawName = (id) => player(id)?.name ?? t('Someone');
 const isNight = (phase) => phase === 'NIGHT_0_REVEAL' || phase === 'NIGHT_DREAM_SWAP' || phase === 'NIGHT_ACTIONS';
 const sessionKey = (code) => `deadset:${code}`;
 const saveSession = (code, data) => localStorage.setItem(sessionKey(code), JSON.stringify(data));
@@ -62,7 +64,7 @@ function tally(n, total) {
     if (k === 5) d += '<line x1="1" y1="18" x2="22" y2="6"/>';
     groups.push(`<svg viewBox="0 0 24 24" class="tally-g">${d}</svg>`);
   }
-  return `<span class="tally" aria-label="${n} of ${total}">${n ? groups.join('') : '<span class="muted small">—</span>'}</span>`;
+  return `<span class="tally" aria-label="${esc(t('{n} of {total}', { n, total }))}">${n ? groups.join('') : '<span class="muted small">—</span>'}</span>`;
 }
 function letters(text) {
   let i = 0;
@@ -75,7 +77,23 @@ function notify(text, kind = '') {
   render();
   setTimeout(() => { S.notes = S.notes.filter((n) => n.id !== id); render(); }, 3400);
 }
-const toast = (text, kind = '') => notify(text, kind === 'err' ? 'err' : kind);
+const toast = (text, kind = '') => notify(t(text), kind === 'err' ? 'err' : kind);
+
+// Language: the player's own choice, else the table's default, else the browser's.
+const LANG_KEY = 'deadset:lang';
+const wantedLang = () => {
+  const pref = localStorage.getItem(LANG_KEY);
+  if (isLang(pref)) return pref;
+  const table = S.view?.table?.lang ?? S.peek?.lang;
+  return isLang(table) ? table : browserLang();
+};
+let langLoading = null;
+function syncLang() {
+  const want = wantedLang();
+  if (want === getLang() || langLoading === want) return;
+  langLoading = want;
+  loadLang(want).then(() => { langLoading = null; render(); });
+}
 
 // Sound policy. Public-event sounds: the TV board carries them when it's open
 // and unmuted; phones then stay quiet. Interaction sounds: never at night (or
@@ -93,7 +111,7 @@ function uiHaptic(p) { if (!secretPhase()) haptic(p); }
 async function api(path, body) {
   const res = await fetch(path, { method: body ? 'POST' : 'GET', headers: { 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw Object.assign(new Error(data.error || `Request failed (${res.status})`), { status: res.status, code: data.code });
+  if (!res.ok) throw Object.assign(new Error(data.msg ? tm(data.msg) : data.error ? t(data.error) : t('Request failed ({n})', { n: res.status })), { status: res.status, code: data.code });
   return data;
 }
 
@@ -159,7 +177,7 @@ async function reportBoardAudio(on) {
 }
 
 async function loadContent() {
-  try { S.content = await api('/api/content'); render(); } catch { /* offline */ }
+  try { S.content = await api('/api/content'); setContent(S.content); render(); } catch { /* offline */ }
 }
 
 function connect(board = false) {
@@ -186,7 +204,7 @@ function connect(board = false) {
     es.close();
     clearSession(S.code);
     S.token = null; S.view = null; S.es = null;
-    toast('This seat was opened on another device, or you were removed.', 'err');
+    toast(t('This seat was opened on another device, or you were removed.'), 'err');
     render();
   });
   es.onerror = async () => {
@@ -195,7 +213,7 @@ function connect(board = false) {
       try {
         const peek = await api(`/api/rooms/${S.code}/peek`);
         if (!peek.exists) { S.conn = 'gone'; S.view = null; clearSession(S.code); }
-        else if (!board) { clearSession(S.code); S.token = null; S.view = null; S.conn = 'idle'; toast('Your session for this room has expired. Rejoin or recover your seat.', 'err'); }
+        else if (!board) { clearSession(S.code); S.token = null; S.view = null; S.conn = 'idle'; toast(t('Your session for this room has expired. Rejoin or recover your seat.'), 'err'); }
       } catch { S.conn = 'lost'; setTimeout(() => { if (!S.es && S.code) connect(board); }, 3000); }
       render();
     } else {
@@ -215,14 +233,14 @@ function detectMoments(v) {
   const fresh = v.log.filter((l) => l.i > S.seenLog);
   const freshPriv = (v.private || []).filter((l) => l.i > S.seenPriv);
   S.seenLog = top; S.seenPriv = ptop;
-  const name = (id) => v.players.find((p) => p.id === id)?.name ?? 'Someone';
+  const name = (id) => v.players.find((p) => p.id === id)?.name ?? t('Someone');
   const meId = v.me?.id;
   const out = [];
   for (const l of fresh) {
     switch (l.ev) {
       case 'night0': {
         const sc = fresh.find((x) => x.ev === 'scenario');
-        out.push({ type: 'night0', scenario: sc?.text ?? '', sc: v.scenario, rules: v.activeRules.map((r) => ({ id: r.id, name: r.name, text: r.text })), tapOnly: false });
+        out.push({ type: 'night0', scenario: sc ? entryMsg(sc) : '', sc: v.scenario, rules: v.activeRules.map((r) => ({ id: r.id })), tapOnly: false });
         break;
       }
       case 'day1': out.push({ type: 'day1' }); break;
@@ -232,18 +250,18 @@ function detectMoments(v) {
         out.push({ type: 'dawn', day: l.day, killed: (l.killed ?? []).map(name), expired: (l.expired ?? []).map(name), revived: (rev?.ids ?? []).map(name), meDied: (l.victims ?? []).includes(meId) });
         if (v.me && !v.me.moderator && v.me.alive) {
           const reports = freshPriv.filter((x) => (x.at === `Night ${l.day - 1}` || x.at === `Day ${l.day}`) && !['dreamdraw', 'surge', 'chat', 'role'].includes(x.kind));
-          out.push({ type: 'private', reports: reports.map((x) => x.text), tapOnly: true });
+          out.push({ type: 'private', reports: reports.map((x) => ({ msg: entryMsg(x), lines: x.lines })), tapOnly: true });
         }
         break;
       }
       case 'revive': if (!fresh.some((x) => x.ev === 'dawn')) out.push({ type: 'revive', names: (l.ids ?? []).map(name) }); break;
-      case 'vote-open': out.push({ type: 'call', kicker: `Day ${roman(v.dayNumber)}`, title: 'The vote', sub: 'Cast your ballot in secret. You can change it until it locks.', sound: 'knock' }); break;
+      case 'vote-open': out.push({ type: 'call', kicker: ['Day {n}', { n: roman(v.dayNumber) }], title: 'The vote', sub: 'Cast your ballot in secret. You can change it until it locks.', sound: 'knock' }); break;
       case 'tally': {
         const outcomeEv = fresh.find((x) => x.i > l.i && ['sentence', 'nosentence', 'cancelled', 'scapegoat'].includes(x.ev));
         const goat = fresh.find((x) => x.i > l.i && x.ev === 'scapegoat');
         const sentence = fresh.find((x) => x.i > l.i && x.ev === 'sentence');
         out.push({ type: 'tally', totals: Object.entries(l.totals || {}).map(([id, w]) => ({ name: name(id), w, id })).sort((a, b) => b.w - a.w),
-          threshold: l.threshold, outcome: outcomeEv?.ev ?? 'nosentence', reason: outcomeEv?.text ?? '', sentenced: sentence ? name(sentence.victims[0]) : null,
+          threshold: l.threshold, outcome: outcomeEv?.ev ?? 'nosentence', reason: outcomeEv ? entryMsg(outcomeEv) : '', sentenced: sentence ? name(sentence.victims[0]) : null,
           meSentenced: !!sentence?.victims?.includes(meId), goat: goat ? name(goat.victims[0]) : null });
         break;
       }
@@ -251,15 +269,15 @@ function detectMoments(v) {
         if (!fresh.some((x) => x.ev === 'tally')) out.push({ type: 'death', title: 'The Scapegoat pays', names: (l.victims ?? []).map(name), sub: 'No one was sentenced.' });
         break;
       case 'shot': out.push({ type: 'death', title: 'A shot rings out', names: (l.victims ?? []).map(name), sub: l.victims?.length ? 'Nobody saw who pulled the trigger.' : 'The bullet found no one.' }); break;
-      case 'final-act': out.push({ type: 'call', kicker: 'Equal Exchange', title: 'A final act', sub: 'The condemned may take one more with them.', sound: 'knock' }); break;
+      case 'final-act': out.push({ type: 'call', kicker: ruleF('EQUAL_EXCHANGE', 'name'), title: 'A final act', sub: 'The condemned may take one more with them.', sound: 'knock' }); break;
       case 'exchange': out.push({ type: 'death', title: 'An equal exchange', names: (l.victims ?? []).map(name), sub: 'The condemned did not go alone.' }); break;
       case 'end': out.push({ type: 'end', winner: l.winner, reason: l.reason, tapOnly: true }); break;
-      case 'discussion': notify(`Day ${roman(v.dayNumber)} · the floor is open`); break;
-      case 'defense': notify('Defence: each nominee speaks in turn'); break;
-      case 'novote': notify('Nobody was nominated. No vote today.'); break;
-      case 'nominate': notify(`${name(l.by)} ${l.first ? 'accuses' : 'seconds'} ${name(l.target)}`, 'accuse'); pubSound('knock'); break;
-      case 'immunity': notify(`${name(l.who)} claims diplomatic immunity`); break;
-      case 'exchange-none': notify('The condemned went quietly.'); break;
+      case 'discussion': notify(t('Day {n} · the floor is open', { n: roman(v.dayNumber) })); break;
+      case 'defense': notify(t('Defence: each nominee speaks in turn')); break;
+      case 'novote': notify(t('Nobody was nominated. No vote today.')); break;
+      case 'nominate': notify(t(l.first ? '{a} accuses {b}' : '{a} seconds {b}', { a: name(l.by), b: name(l.target) }), 'accuse'); pubSound('knock'); break;
+      case 'immunity': notify(t('{a} claims diplomatic immunity', { a: name(l.who) })); break;
+      case 'exchange-none': notify(t('The condemned went quietly.')); break;
       default: break;
     }
   }
@@ -294,6 +312,11 @@ function nextMoment() {
   render();
 }
 
+/** A private report, with Insomnia's chronological lines when present. */
+function reportHtml(msg, lines) {
+  return `${tmh(msg)}${lines?.length ? `<ul class="ins-lines">${lines.map((l) => `<li>${tmh(l)}</li>`).join('')}</ul>` : ''}`;
+}
+
 function didIWin(v, winner) {
   const me = v?.me;
   if (!me || me.moderator || winner === 'DRAW' || winner === 'ABORTED') return null;
@@ -308,61 +331,61 @@ function momentHtml(m) {
     case 'night0': {
       // 19 · The opening ceremony: the story cards are dealt and turned, then the rules.
       const sc = m.sc ?? { who: '?', where: '?', why: '?' };
-      const cards = [['Who', 'mentalist', sc.who], ['Where', 'necro', sc.where], ['Why', 'scroll', sc.why]];
-      body = `<span class="kicker">Night 0 · the story is dealt</span><h1 class="m-title">${letters('The game begins')}</h1>
-        <div class="cer-cards">${cards.map(([k, g, t], i) => `<div class="cer-card" style="--d:${0.9 + i * 0.85}s"><div class="cer-in"><div class="cer-face back"><b>DS</b></div><div class="cer-face front">${glyph(g)}<span class="k">${k}</span><b>${esc(t)}</b></div></div></div>`).join('')}</div>
-        <p class="m-sub cer-line" style="--d:3.6s">${esc(m.scenario)}</p>
-        ${m.rules.length ? `<div class="cer-rules">${m.rules.map((r, i) => `<div class="cer-rule" style="--d:${4.2 + i * 0.7}s">${glyph(ruleGlyph(r.id))}<span><span class="k">Rule card</span><b>${esc(r.name)}</b><small>${esc(r.text)}</small></span></div>`).join('')}</div>` : ''}
-        <p class="m-sub small cer-line" style="--d:${4.6 + m.rules.length * 0.7}s">${onBoard() ? 'Players: look only at your own screen.' : 'Next: your role card, face down. Look only at your own screen.'}</p>`;
+      const cards = [['Who', 'mentalist', scen('WHO', sc.who)], ['Where', 'necro', scen('WHERE', sc.where)], ['Why', 'scroll', scen('WHY', sc.why)]];
+      body = `<span class="kicker">${t('Night 0 · the story is dealt')}</span><h1 class="m-title">${letters(t('The game begins'))}</h1>
+        <div class="cer-cards">${cards.map(([k, g, txt], i) => `<div class="cer-card" style="--d:${0.9 + i * 0.85}s"><div class="cer-in"><div class="cer-face back"><b>DS</b></div><div class="cer-face front">${glyph(g)}<span class="k">${t(k)}</span><b>${esc(txt)}</b></div></div></div>`).join('')}</div>
+        <p class="m-sub cer-line" style="--d:3.6s">${tmh(m.scenario)}</p>
+        ${m.rules.length ? `<div class="cer-rules">${m.rules.map((r, i) => `<div class="cer-rule" style="--d:${4.2 + i * 0.7}s">${glyph(ruleGlyph(r.id))}<span><span class="k">${t('Rule card')}</span><b>${esc(ruleF(r.id, 'name'))}</b><small>${esc(ruleF(r.id, 'text'))}</small></span></div>`).join('')}</div>` : ''}
+        <p class="m-sub small cer-line" style="--d:${4.6 + m.rules.length * 0.7}s">${onBoard() ? t('Players: look only at your own screen.') : t('Next: your role card, face down. Look only at your own screen.')}</p>`;
       break;
     }
     case 'day1':
-      body = `<div class="m-art sunrise">${glyph('sun')}</div><span class="kicker">Day I</span><h1 class="m-title">${letters('Morning')}</h1><p class="m-sub">Nobody has died — yet.</p>`;
+      body = `<div class="m-art sunrise">${glyph('sun')}</div><span class="kicker">${t('Day {n}', { n: 'I' })}</span><h1 class="m-title">${letters(t('Morning'))}</h1><p class="m-sub">${t('Nobody has died — yet.')}</p>`;
       break;
     case 'nightfall':
-      body = `<div class="m-art">${moon(0.35, 'rise')}<span class="stars"><i></i><i></i><i></i><i></i><i></i></span></div><span class="kicker">Night ${roman(m.n)}</span><h1 class="m-title">${letters('Night falls')}</h1><p class="m-sub">Close your eyes. Keep your screen to yourself.</p>`;
+      body = `<div class="m-art">${moon(0.35, 'rise')}<span class="stars"><i></i><i></i><i></i><i></i><i></i></span></div><span class="kicker">${t('Night {n}', { n: roman(m.n) })}</span><h1 class="m-title">${letters(t('Night falls'))}</h1><p class="m-sub">${t('Close your eyes. Keep your screen to yourself.')}</p>`;
       break;
     case 'dawn': {
-      if (onBoard()) { body = frontPageHtml(V(), m, { esc }); break; }
+      if (onBoard()) { body = frontPageHtml(V(), m, H); break; }
       const dead = m.killed.length + m.expired.length;
-      body = `<div class="m-art sunrise">${glyph('sun')}</div><span class="kicker">Dawn · Day ${roman(m.day)}</span>
-        <h1 class="m-title ${m.meDied ? 'blood' : ''}">${letters(m.meDied ? 'You did not wake' : dead ? 'Found dead' : 'Everyone woke')}</h1>
-        ${dead ? `<ul class="victims">${names(m.killed)}${names(m.expired, 'expired')}</ul>${m.expired.length ? '<p class="m-sub small">Borrowed time ran out for some.</p>' : ''}` : '<p class="m-sub">The night passed quietly.</p>'}
-        ${m.revived.length ? `<p class="m-sub revive">${esc(m.revived.join(', '))} ${m.revived.length > 1 ? 'have' : 'has'} returned from the grave.</p>` : ''}`;
+      body = `<div class="m-art sunrise">${glyph('sun')}</div><span class="kicker">${t('Dawn · Day {n}', { n: roman(m.day) })}</span>
+        <h1 class="m-title ${m.meDied ? 'blood' : ''}">${letters(t(m.meDied ? 'You did not wake' : dead ? 'Found dead' : 'Everyone woke'))}</h1>
+        ${dead ? `<ul class="victims">${names(m.killed)}${names(m.expired, 'expired')}</ul>${m.expired.length ? `<p class="m-sub small">${t('Borrowed time ran out for some.')}</p>` : ''}` : `<p class="m-sub">${t('The night passed quietly.')}</p>`}
+        ${m.revived.length ? `<p class="m-sub revive">${th(m.revived.length > 1 ? '{names} have returned from the grave.' : '{names} has returned from the grave.', { names: m.revived })}</p>` : ''}`;
       break;
     }
     case 'private':
-      body = `<div class="m-art">${glyph('mentalist')}</div><span class="kicker">Only you know</span><h1 class="m-title">${letters('Your night')}</h1>
-        ${m.reports.length ? `<ul class="m-reports">${m.reports.map((r, i) => `<li style="--d:${0.5 + i * 0.35}s">${esc(r)}</li>`).join('')}</ul>` : '<p class="m-sub">You slept. Nothing reached you.</p>'}
-        <p class="m-sub small">Keep this to yourself — or don't.</p>`;
+      body = `<div class="m-art">${glyph('mentalist')}</div><span class="kicker">${t('Only you know')}</span><h1 class="m-title">${letters(t('Your night'))}</h1>
+        ${m.reports.length ? `<ul class="m-reports">${m.reports.map((r, i) => `<li style="--d:${0.5 + i * 0.35}s">${reportHtml(r.msg, r.lines)}</li>`).join('')}</ul>` : `<p class="m-sub">${t('You slept. Nothing reached you.')}</p>`}
+        <p class="m-sub small">${t('Keep this to yourself — or don\'t.')}</p>`;
       break;
     case 'revive':
-      body = `<div class="m-art">${glyph('necro')}</div><span class="kicker">The grave opens</span><h1 class="m-title">${letters('Returned')}</h1><p class="m-sub">${esc(m.names.join(', '))} walk among you — until the next dawn.</p>`;
+      body = `<div class="m-art">${glyph('necro')}</div><span class="kicker">${t('The grave opens')}</span><h1 class="m-title">${letters(t('Returned'))}</h1><p class="m-sub">${th('{names} walk among you — until the next dawn.', { names: m.names })}</p>`;
       break;
     case 'call':
-      body = `<span class="kicker">${esc(m.kicker)}</span><h1 class="m-title">${letters(m.title)}</h1><p class="m-sub">${esc(m.sub)}</p>`;
+      body = `<span class="kicker">${tmh(m.kicker)}</span><h1 class="m-title">${letters(t(m.title))}</h1><p class="m-sub">${tmh(m.sub)}</p>`;
       break;
     case 'tally': {
-      const max = Math.max(1, ...m.totals.map((t) => t.w));
+      const max = Math.max(1, ...m.totals.map((x) => x.w));
       const outcome = m.sentenced
-        ? `<div class="verdict-stamp ${m.meSentenced ? 'me' : ''}"><span class="v-name">${esc(m.meSentenced ? 'You' : m.sentenced)}</span><span class="stamp">Sentenced</span></div>`
-        : m.outcome === 'cancelled' ? '<div class="verdict-stamp"><span class="v-name">Fate intervenes</span><span class="stamp soft">Cancelled</span></div><p class="m-sub small">A wager was won. Nobody hangs today.</p>'
-          : `<div class="verdict-stamp"><span class="v-name">No one</span><span class="stamp soft">Spared</span></div><p class="m-sub small">${esc(m.reason)}</p>`;
-      body = `<span class="kicker">The ballots</span><h1 class="m-title">${letters('The town decides')}</h1>
-        ${m.totals.length ? `<ul class="bars">${m.totals.map((t, i) => `<li style="--w:${(t.w / max) * 100}%;--d:${0.3 + i * 0.15}s"><span class="b-name">${esc(t.name)}</span><span class="b-bar"><i></i></span><span class="b-n">${t.w}</span></li>`).join('')}</ul>` : '<p class="m-sub">No valid votes.</p>'}
-        ${m.threshold != null ? `<p class="m-sub small">Majority Rule: more than ${m.threshold} needed.</p>` : ''}
-        <div class="m-outcome">${outcome}${m.goat ? `<p class="m-sub blood">The Scapegoat pays: ${esc(m.goat)} dies.</p>` : ''}</div>`;
+        ? `<div class="verdict-stamp ${m.meSentenced ? 'me' : ''}"><span class="v-name">${esc(m.meSentenced ? t('You') : m.sentenced)}</span><span class="stamp">${t('Sentenced')}</span></div>`
+        : m.outcome === 'cancelled' ? `<div class="verdict-stamp"><span class="v-name">${t('Fate intervenes')}</span><span class="stamp soft">${t('Cancelled')}</span></div><p class="m-sub small">${t('A wager was won. Nobody hangs today.')}</p>`
+          : `<div class="verdict-stamp"><span class="v-name">${t('No one')}</span><span class="stamp soft">${t('Spared')}</span></div><p class="m-sub small">${tmh(m.reason)}</p>`;
+      body = `<span class="kicker">${t('The ballots')}</span><h1 class="m-title">${letters(t('The town decides'))}</h1>
+        ${m.totals.length ? `<ul class="bars">${m.totals.map((x, i) => `<li style="--w:${(x.w / max) * 100}%;--d:${0.3 + i * 0.15}s"><span class="b-name">${esc(x.name)}</span><span class="b-bar"><i></i></span><span class="b-n">${x.w}</span></li>`).join('')}</ul>` : `<p class="m-sub">${t('No valid votes.')}</p>`}
+        ${m.threshold != null ? `<p class="m-sub small">${t('Majority Rule: more than {n} needed.', { n: m.threshold })}</p>` : ''}
+        <div class="m-outcome">${outcome}${m.goat ? `<p class="m-sub blood">${th('The Scapegoat pays: {a} dies.', { a: m.goat })}</p>` : ''}</div>`;
       break;
     }
     case 'death':
-      body = `<div class="m-art">${glyph('dagger')}</div><h1 class="m-title">${letters(m.title)}</h1>${m.names.length ? `<ul class="victims">${names(m.names)}</ul>` : ''}<p class="m-sub">${esc(m.sub)}</p>`;
+      body = `<div class="m-art">${glyph('dagger')}</div><h1 class="m-title">${letters(t(m.title))}</h1>${m.names.length ? `<ul class="victims">${names(m.names)}</ul>` : ''}<p class="m-sub">${tmh(m.sub)}</p>`;
       break;
     case 'end': {
-      const title = { DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned' }[m.winner] ?? 'The end';
+      const title = t({ DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned' }[m.winner] ?? 'The end');
       const won = didIWin(V(), m.winner);
       body = `<div class="m-art">${glyph(m.winner === 'DEATH' ? 'death' : m.winner === 'JESTER' ? 'jester' : m.winner === 'NON_DEATH' ? 'innocent' : 'scroll')}</div>
-        <span class="kicker">The verdict</span><h1 class="m-title ${m.winner === 'DEATH' ? 'blood' : ''}">${letters(title)}</h1><p class="m-sub">${esc(m.reason)}</p>
-        ${won === null ? '' : `<div class="result-stamp ${won ? 'win' : 'loss'}">${won ? 'Victory' : 'Defeat'}</div>`}`;
+        <span class="kicker">${t('The verdict')}</span><h1 class="m-title ${m.winner === 'DEATH' ? 'blood' : ''}">${letters(title)}</h1><p class="m-sub">${tmh(m.reason)}</p>
+        ${won === null ? '' : `<div class="result-stamp ${won ? 'win' : 'loss'}">${t(won ? 'Victory' : 'Defeat')}</div>`}`;
       break;
     }
     default: break;
@@ -370,7 +393,7 @@ function momentHtml(m) {
   const auto = !m.tapOnly;
   return `<div class="moment m-${m.type} ${m.winner === 'DEATH' || m.type === 'death' ? 'grim' : ''} ${onBoard() && m.type === 'dawn' ? 'front' : ''}" data-key="moment-${m.id}" data-act="momentNext" role="dialog" aria-live="assertive">
     <div class="m-body">${body}</div>
-    <div class="m-foot">${auto ? `<span class="m-timer" style="--t:${momentTime(m)}ms"><i></i></span>` : ''}<span class="kicker">${auto ? 'Tap to skip' : 'Tap to continue'}${S.moments.length ? ` · ${S.moments.length} more` : ''}</span></div>
+    <div class="m-foot">${auto ? `<span class="m-timer" style="--t:${momentTime(m)}ms"><i></i></span>` : ''}<span class="kicker">${t(auto ? 'Tap to skip' : 'Tap to continue')}${S.moments.length ? ` · ${t('{n} more', { n: S.moments.length })}` : ''}</span></div>
   </div>`;
 }
 
@@ -423,6 +446,7 @@ function morphChildren(a, b) {
 }
 
 function render() {
+  syncLang();
   const bottoms = {};
   document.querySelectorAll('[data-scroll]').forEach((el) => { bottoms[el.dataset.scroll] = el.scrollHeight - el.scrollTop - el.clientHeight < 30; });
   const v = V();
@@ -432,7 +456,7 @@ function render() {
   document.body.classList.toggle('is-board', onBoard());
   if (onBoard() && v && S.board.audio && v.table?.score !== false) score.play(moodFor(v));
   else score.stop();
-  document.body.classList.toggle('has-sheet', !!S.ui.sheet && S.route?.name === 'room');
+  document.body.classList.toggle('has-sheet', !!S.ui.sheet && (S.route?.name === 'room' || S.ui.sheet === 'lang'));
   ambient(night ? 'night' : null);
   morph(app, view());
   app.querySelectorAll('[data-scroll]').forEach((el) => { if (bottoms[el.dataset.scroll] !== false) el.scrollTop = el.scrollHeight; });
@@ -451,8 +475,9 @@ function view() {
     else if (!V()) html = loadingScreen();
     else html = roomScreen();
   }
+  if (S.ui.sheet === 'lang' && !(r.name === 'room' && S.token && V())) html += sheet(V());
   if (S.moment) html += momentHtml(S.moment);
-  if (S.conn === 'lost' && S.code) html += '<div class="conn" data-key="conn" role="status"><span class="pulse-dot"></span>Reconnecting… your choices are safe on the server.</div>';
+  if (S.conn === 'lost' && S.code) html += `<div class="conn" data-key="conn" role="status"><span class="pulse-dot"></span>${t('Reconnecting… your choices are safe on the server.')}</div>`;
   html += `<div class="toasts" data-key="toasts" aria-live="polite">${S.notes.map((n) => `<div class="toast ${n.kind}" data-key="n-${n.id}">${esc(n.text)}</div>`).join('')}</div>`;
   return html;
 }
@@ -493,7 +518,8 @@ function tickClock() {
     el.textContent = secs == null ? '' : `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`;
     el.classList.toggle('low', secs != null && secs <= 10);
   });
-  if (secs != null && secs <= 5 && secs > 0 && secs !== lastTick && S.route?.name === 'room' && !S.moment) pubSound('tick');
+  document.querySelectorAll('[data-secs]').forEach((el) => { el.textContent = secs == null ? '' : String(secs); });
+  if (secs != null && secs <= 5 && secs > 0 && secs !== lastTick && S.route?.name === 'room' && !S.moment && v.phase !== 'NIGHT_DREAM_SWAP') pubSound('tick');
   lastTick = secs;
 }
 setInterval(tickClock, 250);
@@ -501,17 +527,19 @@ const fuse = () => '<div class="fuse" data-fuse data-key="fuse" hidden><i></i></
 
 // ── Labels ─────────────────────────────────────────────────────────────────
 function phaseWord(v) {
-  if (v.phase === 'LOBBY') return { word: 'Lobby', num: '' };
-  if (v.phase === 'ENDED') return { word: 'The End', num: '' };
-  if (v.phase === 'NIGHT_0_REVEAL') return { word: 'Night', num: '0' };
-  if (isNight(v.phase) || v.phase === 'NIGHT_RESOLVING') return { word: 'Night', num: roman(v.nightNumber) };
-  return { word: 'Day', num: roman(v.dayNumber) };
+  if (v.phase === 'LOBBY') return { word: t('Lobby'), num: '', night: false };
+  if (v.phase === 'ENDED') return { word: t('The End'), num: '', night: false };
+  if (v.phase === 'NIGHT_0_REVEAL') return { word: t('Night'), num: '0', night: true };
+  if (isNight(v.phase) || v.phase === 'NIGHT_RESOLVING') return { word: t('Night'), num: roman(v.nightNumber), night: true };
+  return { word: t('Day'), num: roman(v.dayNumber), night: false };
 }
-const STEP = {
+const STEP_EN = {
   LOBBY: 'Gathering', NIGHT_0_REVEAL: 'Role reveal', DAY_PREP: 'Morning', DAY_DISCUSSION: 'Discussion',
-  DAY_DEFENSE: 'Defence', DAY_VOTING: 'Secret ballot', DAY_RESOLVING: 'Final act', NIGHT_DREAM_SWAP: 'Dreaming', NIGHT_ACTIONS: 'Night actions', ENDED: 'Match over',
+  DAY_DEFENSE: 'Defence', DAY_VOTING: 'Secret ballot', DAY_RESOLVING: 'Final act', NIGHT_DREAM_SWAP: 'Nightfall', NIGHT_ACTIONS: 'Night actions', ENDED: 'Match over',
 };
-const ALIGN = { DEATH: 'Death', NON_DEATH: 'Non-Death', INDEPENDENT: 'Independent' };
+const STEP = new Proxy(STEP_EN, { get: (o, k) => (o[k] ? t(o[k]) : undefined) });
+const ALIGN_EN = { DEATH: 'Death', NON_DEATH: 'Non-Death', INDEPENDENT: 'Independent' };
+const ALIGN = new Proxy(ALIGN_EN, { get: (o, k) => (o[k] ? t(o[k]) : undefined) });
 const wordmark = () => '<a class="wordmark" href="/" data-link data-key="wm">Dead<i>Set</i><span class="seal"></span></a>';
 
 // ── Home / join / guide ────────────────────────────────────────────────────
@@ -537,34 +565,35 @@ function homeScreen() {
   const d = S.drafts;
   const tab = S.ui.homeTab;
   if (!whisperTimer) whisperTimer = setInterval(() => { if (S.route?.name === 'home') { S.whisper = (S.whisper ?? 0) + 1; render(); } }, 6500);
-  const line = WHISPERS[(S.whisper ?? 0) % WHISPERS.length];
+  const lines = tx('whispers', WHISPERS);
+  const line = lines[(S.whisper ?? 0) % lines.length];
   const chairs = Array.from({ length: 7 }, (_, i) => { const [x, y] = seatXY(i, 7, 41); return `<span class="chair" style="left:${x}%;top:${y}%;--i:${i}">${sigil(`chair${i}`)}<i></i></span>`; }).join('');
   const code = (d.joinCode ?? '').toUpperCase();
   return `<main class="home2" data-key="home">
-    <div class="h-top">${wordmark()}<div class="row" style="gap:6px"><button class="chip" data-act="sound" aria-label="${sound.on ? 'Mute' : 'Sound on'}">${glyph(sound.on ? 'bell' : 'bellOff')}</button><a class="chip" href="/guide" data-link>How to play</a></div></div>
+    <div class="h-top">${wordmark()}<div class="row" style="gap:6px">${langChip()}<button class="chip" data-act="sound" aria-label="${t(sound.on ? 'Mute' : 'Sound on')}">${glyph(sound.on ? 'bell' : 'bellOff')}</button><a class="chip" href="/guide" data-link>${t('How to play')}</a></div></div>
     <div class="h-grid">
       <section class="h-table" aria-hidden="true">
         <div class="h-ring"><div class="h-tabletop"></div>${chairs}
-          <div class="h-title"><h1>${letters('Dead')}<br><i>${letters('Set.')}</i></h1><p>Death sits among you.</p></div>
+          <div class="h-title"><h1>${letters('Dead')}<br><i>${letters('Set.')}</i></h1><p>${t('Death sits among you.')}</p></div>
         </div>
         <p class="whisper" data-key="wh-${S.whisper ?? 0}">“${esc(line)}”</p>
       </section>
       <section class="h-panel">
-        <p class="h-tag">Hidden roles. Secret votes. Find them before they outnumber you.</p>
-        <div class="seg" role="tablist"><button role="tab" data-act="homeTab" data-id="host" aria-pressed="${tab === 'host'}">Host a table</button><button role="tab" data-act="homeTab" data-id="join" aria-pressed="${tab === 'join'}">Join a table</button></div>
+        <p class="h-tag">${t('Hidden roles. Secret votes. Find them before they outnumber you.')}</p>
+        <div class="seg" role="tablist"><button role="tab" data-act="homeTab" data-id="host" aria-pressed="${tab === 'host'}">${t('Host a table')}</button><button role="tab" data-act="homeTab" data-id="join" aria-pressed="${tab === 'join'}">${t('Join a table')}</button></div>
         ${tab === 'host' ? `<div class="stack" data-key="h-host">
-          <label class="field"><span>Your name</span><input class="input" maxlength="20" autocomplete="nickname" placeholder="e.g. Morgan" data-draft="createName" value="${esc(d.createName ?? '')}"></label>
-          <label class="check"><input type="checkbox" data-act="toggleModerated" ${S.ui.moderated ? 'checked' : ''}><span><b>I'll moderate, not play</b><small>Sees every secret, holds no seat. Everyone is told.</small></span></label>
-          <button class="btn btn-solid btn-wide btn-tall" data-act="create" ${S.pending ? 'disabled' : ''}>Pull up a chair</button>
+          <label class="field"><span>${t('Your name')}</span><input class="input" maxlength="20" autocomplete="nickname" placeholder="${esc(t('e.g. Morgan'))}" data-draft="createName" value="${esc(d.createName ?? '')}"></label>
+          <label class="check"><input type="checkbox" data-act="toggleModerated" ${S.ui.moderated ? 'checked' : ''}><span><b>${t('I\'ll moderate, not play')}</b><small>${t('Sees every secret, holds no seat. Everyone is told.')}</small></span></label>
+          <button class="btn btn-solid btn-wide btn-tall" data-act="create" ${S.pending ? 'disabled' : ''}>${t('Pull up a chair')}</button>
         </div>` : `<div class="stack" data-key="h-join">
-          <label class="code-in" aria-label="Room code">
+          <label class="code-in" aria-label="${esc(t('Room code'))}">
             <input data-draft="joinCode" maxlength="6" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" value="${esc(code)}">
             ${Array.from({ length: 6 }, (_, i) => `<span class="${i === Math.min(code.length, 5) ? 'cur' : ''} ${code[i] ? 'on' : ''}">${esc(code[i] ?? '')}</span>`).join('')}
           </label>
-          <button class="btn btn-wide btn-tall ${code.length === 6 ? 'btn-solid' : ''}" data-act="gotoRoom" ${code.length === 6 ? '' : 'disabled'}>Find the table</button>
-          <p class="foot">Or scan the QR code on the host's screen</p>
+          <button class="btn btn-wide btn-tall ${code.length === 6 ? 'btn-solid' : ''}" data-act="gotoRoom" ${code.length === 6 ? '' : 'disabled'}>${t('Find the table')}</button>
+          <p class="foot">${t('Or scan the QR code on the host\'s screen')}</p>
         </div>`}
-        <p class="foot">5–13 players · one phone each · no app to install</p>
+        <p class="foot">${t('5–13 players · one phone each · no app to install')}</p>
       </section>
     </div>
   </main>`;
@@ -578,49 +607,54 @@ async function loadPeek() {
 function joinScreen() {
   const d = S.drafts;
   const pk = S.peek;
-  const host = esc(pk?.host ?? 'Someone');
+  const hostName = pk?.host ?? t('Someone');
   if (!S.ui.invite) {
     return `<main class="invite2" data-key="inv-sealed">
-      <div class="h-top">${wordmark()}<span></span></div>
-      <span class="kicker inv-kicker">A letter for you</span>
-      <div class="envelope"><div class="flap"></div><div class="addr">For whoever holds this link<small>Table ${esc(S.code)}${pk?.seated != null ? ` · ${pk.seated} seated` : ''}</small></div></div>
-      <button class="wax-btn ${S.ui.holding === 'seal' ? 'holding' : ''}" data-hold="openSeal" data-key="hold-seal" aria-label="Press and hold to break the seal">
+      <div class="h-top">${wordmark()}${langChip()}</div>
+      <span class="kicker inv-kicker">${t('A letter for you')}</span>
+      <div class="envelope"><div class="flap"></div><div class="addr">${t('For whoever holds this link')}<small>${th('Table {code}', { code: S.code })}${pk?.seated != null ? ` · ${t('{n} seated', { n: pk.seated })}` : ''}</small></div></div>
+      <button class="wax-btn ${S.ui.holding === 'seal' ? 'holding' : ''}" data-hold="openSeal" data-key="hold-seal" aria-label="${esc(t('Press and hold to break the seal'))}">
         <svg class="wax-ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" pathLength="100"/></svg><span class="wax"><span>DS</span></span>
       </button>
-      <div class="inv-hint"><p>Press and hold the seal</p><span class="small muted">${pk?.host ? `${host} has saved you a seat.` : 'Someone has saved you a seat.'}</span></div>
-      <button class="inv-recover" data-act="recoverInvite">Already seated? Recover your seat</button>
+      <div class="inv-hint"><p>${t('Press and hold the seal')}</p><span class="small muted">${th('{a} has saved you a seat.', { a: hostName })}</span></div>
+      <button class="inv-recover" data-act="recoverInvite">${t('Already seated? Recover your seat')}</button>
     </main>`;
   }
   const started = pk && pk.phase !== 'LOBBY';
-  const meta = pk ? `<div class="meta"><span>${esc(pk.preset ?? '')}</span><span>${pk.seated} of ${pk.max} seated</span><span>${pk.rules} rule card${pk.rules === 1 ? '' : 's'}</span></div>` : '';
+  const meta = pk ? `<div class="meta"><span>${esc(presetF(pk.preset, 'name'))}</span><span>${t('{n} of {max} seated', { n: pk.seated, max: pk.max })}</span><span>${t(pk.rules === 1 ? '{n} rule card' : '{n} rule cards', { n: pk.rules })}</span></div>` : '';
   let body;
   if (S.ui.recover) {
-    body = `<span class="k">Table ${esc(S.code)} · recover your seat</span><h2>Back to <i>your chair.</i></h2>
-      <p>Ask the host for a one-time recovery code. Your old device will be signed out.</p>
-      <label class="sign"><input data-draft="recCode" maxlength="8" autocomplete="off" placeholder="Recovery code" value="${esc(d.recCode ?? '')}"><small>Code</small></label>
-      <button class="btn btn-blood btn-wide" data-act="recover">Recover my seat</button>
-      <button class="letter-link" data-act="toggleRecover">Join as a new player instead</button>`;
+    body = `<span class="k">${th('Table {code} · recover your seat', { code: S.code })}</span><h2>${t('Back to <i>your chair.</i>')}</h2>
+      <p>${t('Ask the host for a one-time recovery code. Your old device will be signed out.')}</p>
+      <label class="sign"><input data-draft="recCode" maxlength="8" autocomplete="off" placeholder="${esc(t('Recovery code'))}" value="${esc(d.recCode ?? '')}"><small>${t('Code')}</small></label>
+      <button class="btn btn-blood btn-wide" data-act="recover">${t('Recover my seat')}</button>
+      <button class="letter-link" data-act="toggleRecover">${t('Join as a new player instead')}</button>`;
   } else if (started) {
-    body = `<span class="k">Table ${esc(S.code)}</span><h2>The table has <i>already begun.</i></h2>
-      <p>New seats can't be added mid-game. If this is your seat, recover it with a code from the host.</p>${meta}
-      <button class="btn btn-blood btn-wide" data-act="toggleRecover">Recover my seat</button>`;
+    body = `<span class="k">${th('Table {code}', { code: S.code })}</span><h2>${t('The table has <i>already begun.</i>')}</h2>
+      <p>${t('New seats can\'t be added mid-game. If this is your seat, recover it with a code from the host.')}</p>${meta}
+      <button class="btn btn-blood btn-wide" data-act="toggleRecover">${t('Recover my seat')}</button>`;
   } else {
-    body = `<span class="k">Table ${esc(S.code)} · an invitation</span>
-      <h2><i>${host}</i> has saved you a seat.</h2>
-      <p>You are invited to a table of strangers, with Death roaming amongst them in secret.</p>${meta}
-      <label class="sign"><input data-draft="joinName" maxlength="20" autocomplete="nickname" placeholder="Your name" value="${esc(d.joinName ?? '')}"><small>Sign your name</small></label>
-      <button class="btn btn-blood btn-wide" data-act="join" ${S.pending ? 'disabled' : ''}>Take my seat</button>
-      <button class="letter-link" data-act="toggleRecover">Already seated? Recover your seat</button>`;
+    body = `<span class="k">${th('Table {code} · an invitation', { code: S.code })}</span>
+      <h2>${th('<i>{a}</i> has saved you a seat.', { a: hostName })}</h2>
+      <p>${t('You are invited to a table of strangers, with Death roaming amongst them in secret.')}</p>${meta}
+      <label class="sign"><input data-draft="joinName" maxlength="20" autocomplete="nickname" placeholder="${esc(t('Your name'))}" value="${esc(d.joinName ?? '')}"><small>${t('Sign your name')}</small></label>
+      <button class="btn btn-blood btn-wide" data-act="join" ${S.pending ? 'disabled' : ''}>${t('Take my seat')}</button>
+      <button class="letter-link" data-act="toggleRecover">${t('Already seated? Recover your seat')}</button>`;
   }
   return `<main class="invite2" data-key="inv-open">
-    <div class="h-top">${wordmark()}<span></span></div>
+    <div class="h-top">${wordmark()}${langChip()}</div>
     <div class="seal-shards" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="letter">${body}</div>
   </main>`;
 }
-const loadingScreen = () => `<main class="main narrow" data-key="load">${wordmark()}<div class="loading"><span class="pulse-dot"></span> Finding your seat…</div></main>`;
-const goneScreen = () => `<main class="main narrow" data-key="gone">${wordmark()}<header class="phase-head"><h1>No such <i>table.</i></h1><p class="muted">Room ${esc(S.code)} doesn't exist, or it has been cleared away.</p></header><a class="btn" href="/" data-link>Back to start</a></main>`;
-const guideScreen = () => `<main class="main" style="max-width:820px" data-key="guide"><div class="row between">${wordmark()}<button class="btn btn-sm" data-act="back">Back</button></div>${renderGuide(S.content, { glyph, dreamGlyph, esc })}</main>`;
+const loadingScreen = () => `<main class="main narrow" data-key="load">${wordmark()}<div class="loading"><span class="pulse-dot"></span> ${t('Finding your seat…')}</div></main>`;
+const goneScreen = () => `<main class="main narrow" data-key="gone">${wordmark()}<header class="phase-head"><h1>${t('No such <i>table.</i>')}</h1><p class="muted">${th('Room {code} doesn\'t exist, or it has been cleared away.', { code: S.code })}</p></header><a class="btn" href="/" data-link>${t('Back to start')}</a></main>`;
+const guideScreen = () => `<main class="main" style="max-width:820px" data-key="guide"><div class="row between">${wordmark()}<div class="row">${langChip()}<button class="btn btn-sm" data-act="back">${t('Back')}</button></div></div>${renderGuide(S.content, H)}</main>`;
+
+/** Language picker chip (opens the language sheet). */
+function langChip() {
+  return `<button class="chip lang-chip" data-act="langSheet" aria-label="${esc(t('Language'))}">${glyph('whispers')}<span>${esc(LANGS.find((l) => l.code === getLang())?.name ?? 'English')}</span></button>`;
+}
 
 // ── The table ring ─────────────────────────────────────────────────────────
 /**
@@ -643,7 +677,7 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     const x = (50 + R * Math.cos(ang)).toFixed(2);
     const y = (50 + R * Math.sin(ang)).toFixed(2);
     const p = players[i];
-    if (!p) { seats.push(`<div class="tok empty" data-key="slot-${i}" style="left:${x}%;top:${y}%"><span class="tok-disc"></span><span class="tok-name">empty</span></div>`); continue; }
+    if (!p) { seats.push(`<div class="tok empty" data-key="slot-${i}" style="left:${x}%;top:${y}%"><span class="tok-disc"></span><span class="tok-name">${t('empty')}</span></div>`); continue; }
     const selectable = can.has(p.id);
     const isSel = sel.has(p.id);
     const ni = nomIdx(p.id);
@@ -663,7 +697,7 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     if (marks[p.id]) badges.push(`<b class="bdg b-mark" data-key="mark">${marks[p.id]}</b>`);
     if (pick?.stamp === p.id) badges.push(`<b class="bdg b-stamp" data-key="stamp-${p.id}">${glyph('check')}</b>`);
     const inner = reveal && p.role ? glyph(p.role.glyph) : `<span class="tok-ini">${initials(p.name)}</span>`;
-    const label = `${esc(p.name)}${p.alive ? '' : ', dead'}${isSel ? ', selected' : ''}`;
+    const label = `${esc(p.name)}${p.alive ? '' : `, ${t('dead')}`}${isSel ? `, ${t('selected')}` : ''}`;
     seats.push(`<button type="button" class="${cls}" data-key="tok-${p.id}" style="left:${x}%;top:${y}%" ${selectable ? `data-act="${pick.act}" data-id="${p.id}"` : 'tabindex="-1"'} aria-pressed="${isSel}" aria-label="${label}">
       <span class="tok-disc">${sigil(p.id)}${crack && !p.alive ? CRACK : ''}${inner}${badges.join('')}</span><span class="tok-name">${esc(p.name)}</span></button>`);
   }
@@ -683,17 +717,17 @@ function centerFor(v, pick) {
   switch (v.phase) {
     case 'LOBBY': {
       const need = Math.max(0, 5 - v.players.length);
-      return `<span class="c-big">${v.players.length}</span><span class="c-sub">${need ? `${need} more needed` : `${prog.done}/${prog.total} ready`}</span>`;
+      return `<span class="c-big">${v.players.length}</span><span class="c-sub">${need ? t('{n} more needed', { n: need }) : t('{n}/{total} ready', { n: prog.done, total: prog.total })}</span>`;
     }
-    case 'NIGHT_0_REVEAL': return `${moon(prog.done / Math.max(1, prog.total), 'c-moon')}<span class="c-sub">${prog.done}/${prog.total} have seen their role</span>`;
-    case 'DAY_PREP': return `<span class="c-emblem sun">${glyph('sun')}</span><span class="c-sub">Morning</span>${hint}${clock}`;
-    case 'DAY_DISCUSSION': return `<span class="c-big">${v.day.nominees.length}</span><span class="c-sub">accused</span>${hint}${clock}`;
-    case 'DAY_DEFENSE': return `<span class="c-sub">Speaking</span><span class="c-name">${v.day.speaking ? pname(v.day.speaking) : '—'}</span>${clock}`;
-    case 'DAY_VOTING': return `${tally(prog.done, prog.total)}<span class="c-sub">${prog.done}/${prog.total} voted</span>${hint}${clock}`;
-    case 'DAY_RESOLVING': return `<span class="c-emblem">${glyph('dagger')}</span><span class="c-sub">A final act</span>${hint}${clock}`;
-    case 'NIGHT_DREAM_SWAP':
-    case 'NIGHT_ACTIONS': return `${moon(prog ? prog.done / Math.max(1, prog.total) : 0, 'c-moon')}<span class="c-sub">${prog ? `${prog.done}/${prog.total} ${esc(prog.label)}` : ''}</span>${hint}${clock}`;
-    case 'ENDED': return `<span class="c-emblem">${glyph(v.winner === 'DEATH' ? 'death' : v.winner === 'JESTER' ? 'jester' : 'innocent')}</span><span class="c-sub">${esc({ DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'Jester wins', DRAW: 'Draw', ABORTED: 'Abandoned' }[v.winner] ?? '')}</span>`;
+    case 'NIGHT_0_REVEAL': return `${moon(prog.done / Math.max(1, prog.total), 'c-moon')}<span class="c-sub">${t('{n}/{total} have seen their role', { n: prog.done, total: prog.total })}</span>`;
+    case 'DAY_PREP': return `<span class="c-emblem sun">${glyph('sun')}</span><span class="c-sub">${t('Morning')}</span>${hint}${clock}`;
+    case 'DAY_DISCUSSION': return `<span class="c-big">${v.day.nominees.length}</span><span class="c-sub">${t('accused')}</span>${hint}${clock}`;
+    case 'DAY_DEFENSE': return `<span class="c-sub">${t('Speaking')}</span><span class="c-name">${v.day.speaking ? pname(v.day.speaking) : '—'}</span>${clock}`;
+    case 'DAY_VOTING': return `${tally(prog.done, prog.total)}<span class="c-sub">${t('{n}/{total} voted', { n: prog.done, total: prog.total })}</span>${hint}${clock}`;
+    case 'DAY_RESOLVING': return `<span class="c-emblem">${glyph('dagger')}</span><span class="c-sub">${t('A final act')}</span>${hint}${clock}`;
+    case 'NIGHT_DREAM_SWAP': return `${moon(0.08, 'c-moon')}<span class="c-sub">${t('Nightfall')}</span>${hint}${clock}`;
+    case 'NIGHT_ACTIONS': return `${moon(prog ? prog.done / Math.max(1, prog.total) : 0, 'c-moon')}<span class="c-sub">${prog ? t('{n}/{total} asleep', { n: prog.done, total: prog.total }) : ''}</span>${hint}${clock}`;
+    case 'ENDED': return `<span class="c-emblem">${glyph(v.winner === 'DEATH' ? 'death' : v.winner === 'JESTER' ? 'jester' : 'innocent')}</span><span class="c-sub">${t({ DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'Jester wins', DRAW: 'Draw', ABORTED: 'Abandoned' }[v.winner] ?? '')}</span>`;
     default: return '';
   }
 }
@@ -709,41 +743,41 @@ function pickContexts(v) {
   switch (v.phase) {
     case 'DAY_PREP':
       for (const ab of a.abilities || []) {
-        if (ab.kind === 'shoot') out.push({ key: 'shoot', label: 'Vigilante', act: 'shoot', ids: ab.targets, selected: [ab.choice], tone: 'kill', hint: ab.choice ? 'Aimed · tap to holster' : 'Tap to aim' });
+        if (ab.kind === 'shoot') out.push({ key: 'shoot', label: roleF('VIGILANTE', 'name'), act: 'shoot', ids: ab.targets, selected: [ab.choice], tone: 'kill', hint: t(ab.choice ? 'Aimed · tap to holster' : 'Tap to aim') });
       }
       break;
     case 'DAY_DISCUSSION':
-      if (a.type === 'nominate' && !a.mine) out.push({ key: 'nom', label: 'Nominate', act: 'pickNominate', ids: a.targets, selected: [S.sel.nominate], hint: 'Tap to accuse' });
+      if (a.type === 'nominate' && !a.mine) out.push({ key: 'nom', label: t('Nominate'), act: 'pickNominate', ids: a.targets, selected: [S.sel.nominate], hint: t('Tap to accuse') });
       break;
     case 'DAY_VOTING':
       if (a.type === 'ballot') {
         const cands = a.candidates.filter((id) => a.selfVote || id !== me.id || a.ghost);
         const sel = S.sel.vote ?? a.choice;
-        out.push({ key: 'vote', label: 'Vote', act: 'pickVote', ids: cands, selected: [sel], tone: 'kill', stamp: a.choice !== 'ABSTAIN' ? a.choice : null, hint: a.choice ? 'Recorded · tap to change' : 'Tap to vote' });
+        out.push({ key: 'vote', label: t('Vote'), act: 'pickVote', ids: cands, selected: [sel], tone: 'kill', stamp: a.choice !== 'ABSTAIN' ? a.choice : null, hint: t(a.choice ? 'Recorded · tap to change' : 'Tap to vote') });
       }
       break;
     case 'DAY_RESOLVING':
-      if (a.type === 'retaliate') out.push({ key: 'ret', label: 'Final act', act: 'pickRetaliate', ids: a.targets, selected: [S.sel.retaliate], tone: 'kill', hint: 'Take one with you' });
+      if (a.type === 'retaliate') out.push({ key: 'ret', label: t('Final act'), act: 'pickRetaliate', ids: a.targets, selected: [S.sel.retaliate], tone: 'kill', hint: t('Take one with you') });
       break;
     case 'NIGHT_DREAM_SWAP':
-      if (a.type === 'swap' && a.snatcher && !a.done) out.push({ key: 'swap', label: 'Swap', act: 'pickSwap', ids: a.targets, selected: [S.sel.swap], hint: 'Steal a dream' });
+      if (a.type === 'swap' && a.snatcher) out.push({ key: 'swap', label: t('Swap'), act: 'pickSwap', ids: a.targets, selected: [a.choice ?? S.sel.swap], hint: t('Steal a dream') });
       break;
     case 'NIGHT_ACTIONS': {
       if (a.type !== 'night' || a.done) break;
       if (a.death) {
         const mine = S.sel.death ?? a.death.proposals[me.id] ?? [];
-        out.push({ key: 'death', label: 'The kill', act: 'pickDeath', ids: a.death.targets, selected: mine, tone: 'kill', hint: `Choose up to ${a.death.capacity}` });
+        out.push({ key: 'death', label: t('The kill'), act: 'pickDeath', ids: a.death.targets, selected: mine, tone: 'kill', hint: t('Choose up to {n}', { n: a.death.capacity }) });
       }
       const s = a.schema;
       if (s && !s.blocked) {
         if (s.kind === 'target' || s.kind === 'dead') {
-          out.push({ key: 'role', label: s.role.name, act: 'pickTarget', ids: s.targets, selected: (S.sel.uses ?? []).map((u) => u.target), tone: ['TERRORIST', 'PSYCHO'].includes(s.role.id) ? 'kill' : null, hint: s.kind === 'dead' ? 'Tap the dead' : s.uses > 1 ? 'Pick two seats' : `${s.verb ?? 'Choose'}…` });
+          out.push({ key: 'role', label: roleF(s.role.id, 'name'), act: 'pickTarget', ids: s.targets, selected: (S.sel.uses ?? []).map((u) => u.target), tone: ['TERRORIST', 'PSYCHO'].includes(s.role.id) ? 'kill' : null, hint: s.kind === 'dead' ? t('Tap the dead') : s.uses > 1 ? t('Pick two seats') : `${t(s.verb ?? 'Choose')}…` });
         }
         if (s.kind === 'chat' && !a.conspire && !v.chats?.some((c) => c.id.startsWith(`consp:${v.nightNumber}:${me.id}`))) {
-          out.push({ key: 'role', label: 'Whisper', act: 'pickConspire', ids: s.targets, selected: [S.sel.conspire], hint: 'Whisper to…' });
+          out.push({ key: 'role', label: t('Whisper'), act: 'pickConspire', ids: s.targets, selected: [S.sel.conspire], hint: t('Whisper to…') });
         }
       }
-      if (a.nightmare) out.push({ key: 'dream', label: 'Dream partner', act: 'pickNightmare', ids: a.nightmare.targets, selected: [S.sel.nightmare ?? a.nightmare.choice], hint: 'Bind your dream' });
+      if (a.nightmare) out.push({ key: 'dream', label: t('Dream partner'), act: 'pickNightmare', ids: a.nightmare.targets, selected: [S.sel.nightmare ?? a.nightmare.choice], hint: t('Bind your dream') });
       break;
     }
     default: break;
@@ -768,24 +802,24 @@ function roomScreen() {
   const v = V();
   const pw = phaseWord(v);
   const aliveCount = v.players.filter((p) => p.alive).length;
-  const side = `<aside class="side" aria-label="Match" data-key="side">
+  const side = `<aside class="side" aria-label="${esc(t('Match'))}" data-key="side">
       ${wordmark()}
       <div class="count">
         <div><b>${esc(pw.word)} ${esc(pw.num)}</b><span>${esc(STEP[v.phase] ?? '')}</span></div>
-        <div>${v.phase === 'LOBBY' ? `<b>${v.players.length}</b><span>Seated</span>` : `<b>${aliveCount}<span class="muted">/${v.players.length}</span></b><span>Alive</span>`}</div>
+        <div>${v.phase === 'LOBBY' ? `<b>${v.players.length}</b><span>${t('Seated')}</span>` : `<b>${aliveCount}<span class="muted">/${v.players.length}</span></b><span>${t('Alive')}</span>`}</div>
       </div>
-      <div class="row between"><span class="kicker">Room <span class="mono">${esc(v.code)}</span></span><span class="clock" data-clock></span></div>
+      <div class="row between"><span class="kicker">${t('Room')} <span class="mono">${esc(v.code)}</span></span><span class="clock" data-clock></span></div>
       ${fuse()}
       ${hostBox()}
-      <div class="timeline" data-scroll="side-tl"><div class="rule">Public record</div>${feed(v.log)}</div>
-      <button class="btn btn-ghost btn-sm" data-act="sound">${glyph(sound.on ? 'bell' : 'bellOff')} ${sound.on ? 'Sound on' : 'Sound off'}</button>
+      <div class="timeline" data-scroll="side-tl"><div class="rule">${t('Public record')}</div>${feed(v.log)}</div>
+      <div class="row">${langChip()}<button class="btn btn-ghost btn-sm" data-act="sound">${glyph(sound.on ? 'bell' : 'bellOff')} ${t(sound.on ? 'Sound on' : 'Sound off')}</button></div>
     </aside>`;
   const top = `<header class="topbar" data-key="top">
       <span class="tb-emblem">${isNight(v.phase) ? glyph('moon') : glyph('sun')}</span>
-      <div class="phase-mini"><strong>${esc(pw.word)} ${esc(pw.num)}</strong><span>${esc(STEP[v.phase] ?? '')} · ${v.phase === 'LOBBY' ? `${v.players.length} seated` : `${aliveCount}/${v.players.length} alive`}</span></div>
+      <div class="phase-mini"><strong>${esc(pw.word)} ${esc(pw.num)}</strong><span>${esc(STEP[v.phase] ?? '')} · ${v.phase === 'LOBBY' ? t('{n} seated', { n: v.players.length }) : t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}</span></div>
       <span class="clock" data-clock></span>
-      <button class="btn btn-ghost icon-btn" data-act="sound" aria-label="${sound.on ? 'Mute sounds' : 'Turn sounds on'}">${glyph(sound.on ? 'bell' : 'bellOff')}</button>
-      <button class="btn btn-ghost icon-btn" data-act="sheet" data-id="record" aria-label="Open match record">${glyph('menu')}</button>
+      <button class="btn btn-ghost icon-btn" data-act="sound" aria-label="${esc(t(sound.on ? 'Mute sounds' : 'Turn sounds on'))}">${glyph(sound.on ? 'bell' : 'bellOff')}</button>
+      <button class="btn btn-ghost icon-btn" data-act="sheet" data-id="record" aria-label="${esc(t('Open match record'))}">${glyph('menu')}</button>
       ${fuse()}
     </header>`;
   return `<div class="shell" data-key="shell">${side}<div class="col">${top}<main class="main" id="main" data-key="main-${v.phase === 'LOBBY' ? 'lobby' : 'game'}">${mainFor(v, v.me)}</main></div></div>${dock(v)}${sheet(v)}`;
@@ -795,26 +829,26 @@ function hostBox() {
   const v = V();
   if (!v.host) {
     if (v.hostAway) {
-      return `<div class="host-box" data-key="hostbox"><div class="rule">Host away</div><p class="small muted">The host has been gone for over a minute. A majority of connected players can hand the public controls to someone else.</p>
-        <button class="btn btn-sm" data-act="claim" ${v.claimVoted ? 'disabled' : ''}>${v.claimVoted ? 'Vote cast' : 'Vote to take over'}</button></div>`;
+      return `<div class="host-box" data-key="hostbox"><div class="rule">${t('Host away')}</div><p class="small muted">${t('The host has been gone for over a minute. A majority of connected players can hand the public controls to someone else.')}</p>
+        <button class="btn btn-sm" data-act="claim" ${v.claimVoted ? 'disabled' : ''}>${t(v.claimVoted ? 'Vote cast' : 'Vote to take over')}</button></div>`;
     }
     return '';
   }
   const h = v.host;
-  const rec = `<details class="more" data-key="recover"><summary>Recover a player's seat</summary><div>
-      <p class="small muted">If someone's phone dies, issue a one-time code. They open the room link, choose "I already have a seat" and enter it.</p>
+  const rec = `<details class="more" data-key="recover"><summary>${t('Recover a player\'s seat')}</summary><div>
+      <p class="small muted">${t('If someone\'s phone dies, issue a one-time code. They open the room link, choose "Already seated?" and enter it.')}</p>
       <select class="input" data-draft="recPick">${v.players.filter((p) => p.id !== v.me?.id).map((p) => `<option value="${p.id}" ${S.drafts.recPick === p.id ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select>
-      <button class="btn btn-sm" data-act="issueRecovery">Issue code</button>
-      ${h.recovery ? `<p>Code for <b>${pname(h.recovery.playerId)}</b>: <span class="mono code-sm">${esc(h.recovery.code)}</span><br><span class="small muted">Valid 15 minutes, once.</span></p>` : ''}
+      <button class="btn btn-sm" data-act="issueRecovery">${t('Issue code')}</button>
+      ${h.recovery ? `<p>${th('Code for <b>{a}</b>:', { a: rawName(h.recovery.playerId) })} <span class="mono code-sm">${esc(h.recovery.code)}</span><br><span class="small muted">${t('Valid 15 minutes, once.')}</span></p>` : ''}
     </div></details>`;
-  if (v.phase === 'LOBBY') return `<div class="host-box" data-key="hostbox"><div class="rule">Host</div><p class="small muted">You see only what everyone sees.</p>${rec}</div>`;
-  return `<div class="host-box" data-key="hostbox"><div class="rule">Host controls</div>
-    ${h.advance ? holdBtn('advance', h.advance, 'btn-solid', { key: 'side-adv' }) : ''}
-    ${h.skipAll ? `<button class="btn btn-sm" data-act="advance" data-skip="1">${esc(h.skipAll)}</button>` : ''}
-    <div class="row">${h.extend ? '<button class="btn btn-sm" data-act="extend">+30 s</button>' : ''}
-    ${h.end ? '<button class="btn btn-sm btn-ghost" data-act="end">End match</button>' : ''}
-    ${h.rematch ? '<button class="btn btn-sm btn-solid" data-act="rematch">New match, same table</button>' : ''}</div>
-    ${h.advance ? '<p class="small muted">Hold to advance. Anything not submitted becomes a pass or abstention.</p>' : ''}
+  if (v.phase === 'LOBBY') return `<div class="host-box" data-key="hostbox"><div class="rule">${t('Host')}</div><p class="small muted">${t('You see only what everyone sees.')}</p>${rec}</div>`;
+  return `<div class="host-box" data-key="hostbox"><div class="rule">${t('Host controls')}</div>
+    ${h.advance ? holdBtn('advance', t(h.advance), 'btn-solid', { key: 'side-adv' }) : ''}
+    ${h.skipAll ? `<button class="btn btn-sm" data-act="advance" data-skip="1">${esc(t(h.skipAll))}</button>` : ''}
+    <div class="row">${h.extend ? `<button class="btn btn-sm" data-act="extend">${t('+30 s')}</button>` : ''}
+    ${h.end ? `<button class="btn btn-sm btn-ghost" data-act="end">${t('End match')}</button>` : ''}
+    ${h.rematch ? `<button class="btn btn-sm btn-solid" data-act="rematch">${t('New match, same table')}</button>` : ''}</div>
+    ${h.advance ? `<p class="small muted">${t('Hold to advance. Anything not submitted becomes a pass or abstention.')}</p>` : ''}
     ${rec}
   </div>`;
 }
@@ -824,15 +858,15 @@ function holdBtn(act, label, cls = '', { dis = false, key = act } = {}) {
 }
 
 function feed(log, cls = '') {
-  if (!log?.length) return '<p class="small muted">Nothing yet.</p>';
-  return `<ul class="feed ${cls}">${log.map((l) => `<li class="k-${esc(l.kind)}" data-key="f-${l.i}"><span class="at">${esc(l.at)}</span><span class="txt">${esc(l.text)}</span></li>`).join('')}</ul>`;
+  if (!log?.length) return `<p class="small muted">${t('Nothing yet.')}</p>`;
+  return `<ul class="feed ${cls}">${log.map((l) => `<li class="k-${esc(l.kind)}" data-key="f-${l.i}"><span class="at">${esc(stamp(l.at))}</span><span class="txt">${reportHtml(entryMsg(l), l.lines)}</span></li>`).join('')}</ul>`;
 }
 
 function head(v, extra = '') {
   const pw = phaseWord(v);
   return `<header class="phase-head" data-key="head-${v.phase}">
-    <div class="ph-row"><h1>${pw.word === 'Night' ? `<i>${pw.word}</i>` : esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</h1>
-    <span class="kicker">${esc(STEP[v.phase] ?? '')}${v.doomsday && v.phase !== 'LOBBY' ? ` · Doom after Day ${roman(v.doomsday)}` : ''}</span>${extra}</div>
+    <div class="ph-row"><h1>${pw.night ? `<i>${esc(pw.word)}</i>` : esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</h1>
+    <span class="kicker">${esc(STEP[v.phase] ?? '')}${v.doomsday && v.phase !== 'LOBBY' ? ` · ${t('Doom after Day {n}', { n: roman(v.doomsday) })}` : ''}</span>${extra}</div>
   </header>`;
 }
 
@@ -841,10 +875,10 @@ function chips(v) {
   if (!me || me.moderator || v.phase === 'LOBBY') return '';
   const notes = (v.private || []).length;
   return `<nav class="chips" data-key="chips">
-    <button class="chip" data-act="sheet" data-id="role">${me.role ? glyph(me.role.glyph) : ''}<span>My role</span></button>
-    <button class="chip" data-act="sheet" data-id="notes">${glyph('scroll')}<span>Notes</span>${notes ? `<b>${notes}</b>` : ''}</button>
-    ${v.activeRules?.length ? `<button class="chip ${Object.keys(activeRuleNotes(v)).length ? 'live' : ''}" data-act="sheet" data-id="rules">${glyph('magistrate')}<span>Rules</span><b>${v.activeRules.length}</b></button>` : ''}
-    ${v.scenario ? `<button class="chip" data-act="sheet" data-id="story">${glyph('whispers')}<span>Story</span></button>` : ''}
+    <button class="chip" data-act="sheet" data-id="role">${me.role ? glyph(me.role.glyph) : ''}<span>${t('My role')}</span></button>
+    <button class="chip" data-act="sheet" data-id="notes">${glyph('scroll')}<span>${t('Notes')}</span>${notes ? `<b>${notes}</b>` : ''}</button>
+    ${v.activeRules?.length ? `<button class="chip ${Object.keys(activeRuleNotes(v)).length ? 'live' : ''}" data-act="sheet" data-id="rules">${glyph('magistrate')}<span>${t('Rules')}</span><b>${v.activeRules.length}</b></button>` : ''}
+    ${v.scenario ? `<button class="chip" data-act="sheet" data-id="story">${glyph('whispers')}<span>${t('Story')}</span></button>` : ''}
   </nav>`;
 }
 
@@ -862,52 +896,75 @@ function mainFor(v, me) {
 function sheet(v) {
   const s = S.ui.sheet;
   if (!s) return '';
-  const me = v.me;
+  const me = v?.me;
   let title = '';
   let body = '';
   if (s === 'record') {
-    title = `Room ${esc(v.code)}`;
-    body = `${hostBox()}<div>${recordBlock(v)}</div>
-      <div class="row"><a class="btn btn-sm btn-ghost" href="/guide" data-link>How to play</a><button class="btn btn-sm btn-ghost" data-act="leave">${glyph('out')} Leave this device</button></div>`;
+    title = th('Room {code}', { code: v.code });
+    body = `${hostBox()}${langRow(v)}<div>${recordBlock(v)}</div>
+      <div class="row"><a class="btn btn-sm btn-ghost" href="/guide" data-link>${t('How to play')}</a><button class="btn btn-sm btn-ghost" data-act="leave">${glyph('out')} ${t('Leave this device')}</button></div>`;
+  } else if (s === 'lang') {
+    title = t('Language');
+    body = langList(v);
   } else if (s === 'role' && me?.role) {
-    title = 'My role';
+    title = t('My role');
     body = `${roleCardHtml(me.role, { align: me.alignment, flipKey: 'sheet', flipped: true })}${roleNotes(me)}`;
   } else if (s === 'notes') {
-    title = 'Only you were told';
+    title = t('Only you were told');
     body = feed([...(v.private || [])].reverse(), 'feed-private');
   } else if (s === 'rules') {
-    title = 'Rules in force';
+    title = t('Rules in force');
     const live = activeRuleNotes(v);
-    body = v.activeRules.map((r) => `<div class="rule-card ${live[r.id] ? 'live' : ''}">${glyph(ruleGlyph(r.id))}<div><b>${esc(r.name)}</b>${live[r.id] ? `<span class="in-effect">In effect now · ${esc(live[r.id])}</span>` : ''}<p>${esc(r.text)}</p><p class="small muted">${esc(r.enforcement)}</p></div></div>`).join('');
+    body = v.activeRules.map((r) => `<div class="rule-card ${live[r.id] ? 'live' : ''}">${glyph(ruleGlyph(r.id))}<div><b>${esc(ruleF(r.id, 'name'))}</b>${live[r.id] ? `<span class="in-effect">${t('In effect now')} · ${tmh(live[r.id])}</span>` : ''}<p>${esc(ruleF(r.id, 'text'))}</p><p class="small muted">${esc(ruleF(r.id, 'enforcement'))}</p></div></div>`).join('');
   } else if (s === 'story') {
-    title = 'The story';
-    body = `<p class="scenario">${esc(`We are ${v.scenario.who}, in ${v.scenario.where}, trying to ${v.scenario.why}.`)}</p><p class="small muted">Pure flavour — it never changes the rules. Play it up.</p>`;
+    title = t('The story');
+    body = `<p class="scenario">${storyLine(v.scenario)}</p><p class="small muted">${t('Pure flavour — it never changes the rules. Play it up.')}</p>`;
   } else if (s === 'qr') {
-    title = 'Scan to join';
+    title = t('Scan to join');
     body = `<div class="qr-big">${qrSvg(`${location.origin}/r/${v.code}`)}</div><p class="code-tiles big">${codeTiles(v.code)}</p>`;
   } else if (s.startsWith('seat:')) {
     const p = player(s.slice(5));
     if (!p) return '';
     const i = p.seat;
     title = esc(p.name);
-    body = `<p class="small muted">Seat ${i + 1} of ${v.players.length}. Seating matters for Fog of War and Sleepwalking.</p>
-      <div class="row"><button class="btn btn-sm" data-act="seat" data-pid="${p.id}" data-dir="-1" ${i === 0 ? 'disabled' : ''}>${glyph('up')} Move earlier</button>
-      <button class="btn btn-sm" data-act="seat" data-pid="${p.id}" data-dir="1" ${i === v.players.length - 1 ? 'disabled' : ''}>${glyph('down')} Move later</button></div>
-      ${me?.moderator ? `<label class="field"><span>Assign role</span><select class="input" data-act-change="assign" data-pid="${p.id}"><option value="">Random</option>${v.allRoles.map((r) => `<option value="${r.id}" ${v.manualRoles?.[p.id] === r.id ? 'selected' : ''}>${esc(r.name)}</option>`).join('')}</select></label>` : ''}
-      ${p.id !== me?.id ? `<button class="btn btn-sm btn-ghost danger" data-act="kick" data-pid="${p.id}">${glyph('close')} Remove from table</button>` : ''}`;
+    body = `<p class="small muted">${t('Seat {n} of {total}. Seating matters for Fog of War and Sleepwalking.', { n: i + 1, total: v.players.length })}</p>
+      <div class="row"><button class="btn btn-sm" data-act="seat" data-pid="${p.id}" data-dir="-1" ${i === 0 ? 'disabled' : ''}>${glyph('up')} ${t('Move earlier')}</button>
+      <button class="btn btn-sm" data-act="seat" data-pid="${p.id}" data-dir="1" ${i === v.players.length - 1 ? 'disabled' : ''}>${glyph('down')} ${t('Move later')}</button></div>
+      ${me?.moderator ? `<label class="field"><span>${t('Assign role')}</span><select class="input" data-act-change="assign" data-pid="${p.id}"><option value="">${t('Random')}</option>${v.allRoles.map((r) => `<option value="${r.id}" ${v.manualRoles?.[p.id] === r.id ? 'selected' : ''}>${esc(roleF(r.id, 'name'))}</option>`).join('')}</select></label>` : ''}
+      ${p.id !== me?.id ? `<button class="btn btn-sm btn-ghost danger" data-act="kick" data-pid="${p.id}">${glyph('close')} ${t('Remove from table')}</button>` : ''}`;
   }
   return `<div class="sheet-scrim" data-act="sheet" data-key="scrim"></div>
     <div class="sheet" role="dialog" aria-label="${title}" data-key="sheet-${s}">
       <div class="sheet-grip" aria-hidden="true"></div>
-      <div class="row between"><h2>${title}</h2><button class="btn btn-ghost icon-btn" data-act="sheet" aria-label="Close">${glyph('close')}</button></div>
+      <div class="row between"><h2>${title}</h2><button class="btn btn-ghost icon-btn" data-act="sheet" aria-label="${esc(t('Close'))}">${glyph('close')}</button></div>
       <div class="sheet-body">${body}</div>
     </div>`;
 }
 
 /** Public record: the Gazette by default, a plain list when toggled. */
 function recordBlock(v) {
-  return `<div class="row between rec-head"><span class="kicker">Public record</span><button class="chip" data-act="recordMode">${S.ui.recordList ? 'Gazette view' : 'List view'}</button></div>
-    ${S.ui.recordList ? feed(v.log) : gazetteHtml(v, { glyph, esc })}`;
+  return `<div class="row between rec-head"><span class="kicker">${t('Public record')}</span><button class="chip" data-act="recordMode">${t(S.ui.recordList ? 'Gazette view' : 'List view')}</button></div>
+    ${S.ui.recordList ? feed(v.log) : gazetteHtml(v, H)}`;
+}
+
+/** "We are …, in …, trying to …" in the player's language. */
+function storyLine(sc) {
+  if (!sc) return '';
+  return th('We are {who}, in {where}, trying to {why}.', { who: sc.who, where: sc.where, why: sc.why });
+}
+
+/** The language picker: each player's own choice overrides the table's default. */
+function langList(v) {
+  const pref = localStorage.getItem('deadset:lang');
+  const tableLang = v?.table?.lang ?? S.peek?.lang ?? null;
+  const row = (code, label, on) => `<button class="lang-opt ${on ? 'on' : ''}" data-act="setLang" data-id="${code}" aria-pressed="${on}">${esc(label)}${on ? glyph('check') : ''}</button>`;
+  return `<div class="lang-list">
+    ${tableLang ? row('', t('Table default ({lang})', { lang: LANGS.find((l) => l.code === tableLang)?.name ?? tableLang }), !pref) : ''}
+    ${LANGS.map((l) => row(l.code, l.name, pref ? pref === l.code : !tableLang && getLang() === l.code)).join('')}
+  </div><p class="small muted">${t('Your choice applies to this device only. The host sets the table\'s default language in the lobby.')}</p>`;
+}
+function langRow() {
+  return `<div class="row between"><span class="kicker">${t('Language')}</span>${langChip()}</div>`;
 }
 
 function codeTiles(code) {
@@ -921,25 +978,25 @@ function lobbyMain(v, me) {
   const report = v.setup;
   const pick = isHost ? { act: 'seatSheet', ids: v.players.map((p) => p.id), selected: [] } : null;
   return `${head(v)}
-    ${v.moderated ? `<div class="banner blood" data-key="mod">${glyph('mentalist')}<div><b>Trusted moderator: ${esc(v.moderatorName ?? '')}</b><p>A non-playing moderator can see every role, dream and vote.</p></div></div>` : ''}
+    ${v.moderated ? `<div class="banner blood" data-key="mod">${glyph('mentalist')}<div><b>${th('Trusted moderator: {a}', { a: v.moderatorName ?? '' })}</b><p>${t('A non-playing moderator can see every role, dream and vote.')}</p></div></div>` : ''}
     <section class="invite" data-key="invite">
-      <button class="code-tiles" data-act="copy" data-text="${esc(url)}" aria-label="Copy invite link">${codeTiles(v.code)}</button>
+      <button class="code-tiles" data-act="copy" data-text="${esc(url)}" aria-label="${esc(t('Copy invite link'))}">${codeTiles(v.code)}</button>
       <div class="row center">
-        <button class="btn btn-sm" data-act="share" data-text="${esc(url)}">Invite</button>
-        <button class="btn btn-sm" data-act="sheet" data-id="qr">Show QR</button>
-        <a class="btn btn-sm btn-ghost" href="/board/${esc(v.code)}" target="_blank" rel="noopener">TV board ↗</a>
+        <button class="btn btn-sm" data-act="share" data-text="${esc(url)}">${t('Invite')}</button>
+        <button class="btn btn-sm" data-act="sheet" data-id="qr">${t('Show QR')}</button>
+        <a class="btn btn-sm btn-ghost" href="/board/${esc(v.code)}" target="_blank" rel="noopener">${t('TV board ↗')}</a>
       </div>
     </section>
     ${ring(v, { pick, slots: Math.max(5, v.players.length), lobby: true, center: centerFor(v) })}
-    ${isHost ? '<p class="small muted center-text" data-key="seathint">Tap a seat to move or remove a player.</p>' : ''}
+    ${isHost ? `<p class="small muted center-text" data-key="seathint">${t('Tap a seat to move or remove a player.')}</p>` : ''}
     ${lobbyDeck(v, isHost)}
     <section data-key="setup">
-      <div class="rule">Setup</div>
+      <div class="rule">${t('Setup')}</div>
       ${isHost ? setupForm(v) : setupSummary(v)}
     </section>
     <section class="stack" data-key="report">
-      ${report.errors.map((e, i) => `<div class="banner blood" data-key="err-${i}">${glyph('dagger')}<div><p>${esc(e)}</p></div></div>`).join('')}
-      ${report.warnings.map((w, i) => `<div class="banner" data-key="warn-${i}">${glyph('scroll')}<div><p>${esc(w)}</p></div></div>`).join('')}
+      ${report.errors.map((e, i) => `<div class="banner blood" data-key="err-${i}">${glyph('dagger')}<div><p>${tmh(e)}</p></div></div>`).join('')}
+      ${report.warnings.map((w, i) => `<div class="banner" data-key="warn-${i}">${glyph('scroll')}<div><p>${tmh(w)}</p></div></div>`).join('')}
     </section>`;
 }
 
@@ -949,40 +1006,42 @@ function lobbyDeck(v, isHost) {
   const deck = v.setup?.publicDeck;
   const preset = v.presets.find((p) => p.id === s.preset);
   const roles = Object.fromEntries((S.content?.roles ?? []).map((r) => [r.id, r]));
-  const rules = Object.fromEntries((S.content?.rules ?? []).map((r) => [r.id, r]));
-  const card = (id, n, cls = '') => `<div class="dcard ${cls}" data-key="ld-${id}">${roles[id] ? glyph(roles[id].glyph) : ''}<b>${esc(roles[id]?.name ?? id)}</b>${n > 1 ? `<i>×${n}</i>` : ''}</div>`;
+  const card = (id, n, cls = '') => `<div class="dcard ${cls}" data-key="ld-${id}">${roles[id] ? glyph(roles[id].glyph) : ''}<b>${esc(roleF(id, 'name'))}</b>${n > 1 ? `<i>×${n}</i>` : ''}</div>`;
   let cards = '';
   if (deck?.exact) cards = Object.entries(deck.exact).map(([id, n]) => card(id, n, roles[id]?.alignment === 'DEATH' ? 'death' : '')).join('');
   else if (deck) {
     cards = Object.entries(deck.core).filter(([, n]) => n > 0).map(([id, n]) => card(id, n, id === 'DEATH' ? 'death' : '')).join('')
-      + (deck.extended ? `<div class="dcard secret" data-key="ld-ext"><span class="q">?</span><b>${deck.extended} extended</b></div>` : '');
+      + (deck.extended ? `<div class="dcard secret" data-key="ld-ext"><span class="q">?</span><b>${t('{n} extended', { n: deck.extended })}</b></div>` : '');
   }
   const allExt = (S.content?.roles ?? []).filter((r) => r.set !== 'core').map((r) => r.id);
   const poolIds = preset.custom ? allExt : preset.pool;
   const inPool = new Set(deck?.pool ?? (preset.custom ? s.extendedPool : preset.pool));
   const editable = isHost && preset.custom && !s.customDeck.trim();
   const pool = poolIds.length && !deck?.exact ? `
-    <div class="row between"><span class="kicker">${deck?.extended ? `+${deck.extended} extended, drawn secretly from` : 'Extended pool · used from 7 players'}</span><span class="kicker on">${[...inPool].filter((id) => poolIds.includes(id)).length} of ${poolIds.length}</span></div>
+    <div class="row between"><span class="kicker">${deck?.extended ? t('+{n} extended, drawn secretly from', { n: deck.extended }) : t('Extended pool · used from 7 players')}</span><span class="kicker on">${t('{n} of {total}', { n: [...inPool].filter((id) => poolIds.includes(id)).length, total: poolIds.length })}</span></div>
     <div class="pool-grid">${poolIds.map((id) => {
       const on = inPool.has(id);
-      const inner = `${roles[id] ? glyph(roles[id].glyph) : ''}<span>${esc(roles[id]?.name ?? id)}</span>`;
+      const inner = `${roles[id] ? glyph(roles[id].glyph) : ''}<span>${esc(roleF(id, 'name'))}</span>`;
       return editable ? `<button class="${on ? '' : 'off'}" data-act="poolToggle" data-id="${id}" aria-pressed="${on}" data-key="pg-${id}">${inner}</button>` : `<span class="${on ? '' : 'off'}" data-key="pg-${id}">${inner}</span>`;
-    }).join('')}</div>${editable ? '<p class="small muted">Tap to add or remove roles from the pool.</p>' : ''}` : '';
+    }).join('')}</div>${editable ? `<p class="small muted">${t('Tap to add or remove roles from the pool.')}</p>` : ''}` : '';
   const ruleCards = s.rules.mode === 'manual'
     ? (s.rules.selected.length ? s.rules.selected.map((id) => isHost
-      ? `<button class="dcard rcard" data-act="ruleToggle" data-id="${id}" data-key="lr-${id}" aria-label="Remove ${esc(rules[id]?.name ?? id)}">${glyph(ruleGlyph(id))}<b>${esc(rules[id]?.name ?? id)}</b><i>×</i></button>`
-      : `<div class="dcard rcard" data-key="lr-${id}">${glyph(ruleGlyph(id))}<b>${esc(rules[id]?.name ?? id)}</b></div>`).join('') : '<p class="small muted">No rule cards chosen.</p>')
-    : Array.from({ length: s.rules.count }, (_, i) => `<div class="dcard rcard fd" data-key="lr-r${i}"><span class="q">?</span><b>Drawn at start</b></div>`).join('') || '<p class="small muted">No rule cards.</p>';
+      ? `<button class="dcard rcard" data-act="ruleToggle" data-id="${id}" data-key="lr-${id}" aria-label="${esc(t('Remove {x}', { x: ruleF(id, 'name') }))}">${glyph(ruleGlyph(id))}<b>${esc(ruleF(id, 'name'))}</b><i>×</i></button>`
+      : `<div class="dcard rcard" data-key="lr-${id}">${glyph(ruleGlyph(id))}<b>${esc(ruleF(id, 'name'))}</b></div>`).join('') : `<p class="small muted">${t('No rule cards chosen.')}</p>`)
+    : Array.from({ length: s.rules.count }, (_, i) => `<div class="dcard rcard fd" data-key="lr-r${i}"><span class="q">?</span><b>${t('Drawn at start')}</b></div>`).join('') || `<p class="small muted">${t('No rule cards.')}</p>`;
   const toggle = (key, title, sub) => isHost
-    ? `<label class="toggle-row"><span><b>${title}</b><small>${sub}</small></span><input type="checkbox" class="switch" data-set-bool="${key}" ${v.table?.[key] ? 'checked' : ''}></label>`
-    : `<div class="toggle-row"><span><b>${title}</b><small>${sub}</small></span><span class="tag ${v.table?.[key] ? 'solid' : ''}">${v.table?.[key] ? 'On' : 'Off'}</span></div>`;
+    ? `<label class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><input type="checkbox" class="switch" data-set-bool="${key}" ${v.table?.[key] ? 'checked' : ''}></label>`
+    : `<div class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><span class="tag ${v.table?.[key] ? 'solid' : ''}">${t(v.table?.[key] ? 'On' : 'Off')}</span></div>`;
+  const tableLang = v.table?.lang ?? 'en';
   return `<section class="lobby-deck" data-key="ldeck">
-    <div class="rule">Tonight's deck · ${v.players.length} player${v.players.length === 1 ? '' : 's'}</div>
-    <div class="deckrow">${cards || '<p class="small muted">Seat at least 5 players to see the deck.</p>'}</div>
+    <div class="rule">${t(v.players.length === 1 ? 'Tonight\'s deck · {n} player' : 'Tonight\'s deck · {n} players', { n: v.players.length })}</div>
+    <div class="deckrow">${cards || `<p class="small muted">${t('Seat at least 5 players to see the deck.')}</p>`}</div>
     ${pool}
-    <div class="rule">Rule cards in play</div>
+    <div class="rule">${t('Rule cards in play')}</div>
     <div class="deckrow">${ruleCards}</div>
-    <div class="rule">The TV board</div>
+    <div class="rule">${t('The table')}</div>
+    ${isHost ? `<label class="toggle-row"><span><b>${t('Table language')}</b><small>${t('The default for everyone. Each player can still pick their own.')}</small></span><select class="input lang-select" data-act-change="tableLang">${LANGS.map((l) => `<option value="${l.code}" ${tableLang === l.code ? 'selected' : ''}>${esc(l.name)}</option>`).join('')}</select></label>`
+      : `<div class="toggle-row"><span><b>${t('Table language')}</b><small>${t('Set by the host. You can pick your own above.')}</small></span><span class="tag">${esc(LANGS.find((l) => l.code === tableLang)?.name ?? tableLang)}</span></div>`}
     ${toggle('threads', 'Threads of suspicion', 'Draws who accused whom across the table')}
     ${toggle('score', 'Atmospheric score', 'Music and effects play on the TV board')}
   </section>`;
@@ -991,16 +1050,16 @@ function lobbyDeck(v, isHost) {
 function setupSummary(v) {
   const s = v.settings;
   const preset = v.presets.find((p) => p.id === s.preset);
-  const ruleNames = (ids) => ids.map((id) => esc(S.content?.rules.find((r) => r.id === id)?.name ?? id)).join(', ');
+  const ruleNames = (ids) => ids.map((id) => esc(ruleF(id, 'name'))).join(', ');
   return `<div class="stack">
-    <div class="preset" aria-pressed="true" style="cursor:default"><b>${esc(preset.name)}</b><small>${esc(preset.blurb)}</small></div>
+    <div class="preset" aria-pressed="true" style="cursor:default"><b>${esc(presetF(preset.id, 'name'))}</b><small>${esc(presetF(preset.id, 'blurb'))}</small></div>
     <div class="pill-row">
-      <span class="tag">${s.rules.mode === 'random' ? `${s.rules.count} random rule card${s.rules.count === 1 ? '' : 's'}` : ruleNames(s.rules.selected) || 'No rule cards'}</span>
-      <span class="tag">${s.dreams ? 'Dreams on' : 'No dreams'}</span>
-      <span class="tag">${s.transport === 'remote' ? 'Remote · chat' : 'Same room'}</span>
+      <span class="tag">${s.rules.mode === 'random' ? t(s.rules.count === 1 ? '{n} random rule card' : '{n} random rule cards', { n: s.rules.count }) : ruleNames(s.rules.selected) || t('No rule cards')}</span>
+      <span class="tag">${t(s.dreams ? 'Dreams on' : 'No dreams')}</span>
+      <span class="tag">${t(s.transport === 'remote' ? 'Remote · chat' : 'Same room')}</span>
       ${s.scenario.mode === 'manual' ? `<span class="tag">${esc(s.scenario.who)}</span>` : ''}
     </div>
-    <p class="muted small">Tap <b>Ready</b> when you've read the setup. The host starts the match.</p>
+    <p class="muted small">${t('Tap <b>Ready</b> when you\'ve read the setup. The host starts the match.')}</p>
   </div>`;
 }
 
@@ -1008,40 +1067,41 @@ function setupForm(v) {
   const s = v.settings;
   const preset = v.presets.find((p) => p.id === s.preset);
   const rules = (S.content?.rules ?? []).filter((r) => preset.ruleIds.includes(r.id));
-  const t = s.timers;
+  const tm8 = s.timers;
   const OPTS = [0, 15, 30, 45, 60, 90, 120, 180, 300, 600];
-  const timer = (key, label) => `<label class="field"><span>${label}</span><select class="input" data-set="timers.${key}">
-      ${OPTS.map((n) => `<option value="${n}" ${t[key] === n ? 'selected' : ''}>${n === 0 ? 'Untimed' : n < 60 ? `${n} s` : `${n / 60} min`}</option>`).join('')}
-      ${OPTS.includes(t[key]) ? '' : `<option selected value="${t[key]}">${t[key]} s</option>`}</select></label>`;
+  const timer = (key, label) => `<label class="field"><span>${t(label)}</span><select class="input" data-set="timers.${key}">
+      ${OPTS.map((n) => `<option value="${n}" ${tm8[key] === n ? 'selected' : ''}>${n === 0 ? t('Untimed') : n < 60 ? t('{n} s', { n }) : t('{n} min', { n: n / 60 })}</option>`).join('')}
+      ${OPTS.includes(tm8[key]) ? '' : `<option selected value="${tm8[key]}">${t('{n} s', { n: tm8[key] })}</option>`}</select></label>`;
   return `<div class="stack" style="gap:18px">
-    <div class="carousel" data-key="presets">${v.presets.map((p) => `<button class="preset" data-act="preset" data-id="${p.id}" aria-pressed="${s.preset === p.id}" data-key="pr-${p.id}"><b>${esc(p.name)}</b>${p.recommended ? '<span class="tag solid">Best first game</span>' : ''}<small>${esc(p.blurb)}</small><span class="kicker">${p.min}–${p.max} players</span></button>`).join('')}</div>
+    <div class="carousel" data-key="presets">${v.presets.map((p) => `<button class="preset" data-act="preset" data-id="${p.id}" aria-pressed="${s.preset === p.id}" data-key="pr-${p.id}"><b>${esc(presetF(p.id, 'name'))}</b>${p.recommended ? `<span class="tag solid">${t('Best first game')}</span>` : ''}<small>${esc(presetF(p.id, 'blurb'))}</small><span class="kicker">${t('{a}–{b} players', { a: p.min, b: p.max })}</span></button>`).join('')}</div>
 
-    ${preset.custom ? `<details class="more" data-key="d-custom" open><summary>Custom deck</summary><div>
-      <label class="check"><input type="checkbox" data-set-bool="dreams" ${s.dreams ? 'checked' : ''}><span><b>Dreams</b><small>Everyone draws a Dream card each night.</small></span></label>
-      <label class="check"><input type="checkbox" data-set-bool="doomsday" ${s.doomsday ? 'checked' : ''}><span><b>Doomsday Clock</b><small>Death wins if nobody has won when the final Day closes.</small></span></label>
-      <label class="field"><span>Exact deck (optional)</span><textarea class="input" data-set-text="customDeck" placeholder="Death x2&#10;Guardian&#10;Mentalist&#10;Psycho&#10;Whore">${esc(s.customDeck)}</textarea></label>
+    ${preset.custom ? `<details class="more" data-key="d-custom" open><summary>${t('Custom deck')}</summary><div>
+      <label class="check"><input type="checkbox" data-set-bool="dreams" ${s.dreams ? 'checked' : ''}><span><b>${t('Dreams')}</b><small>${t('Everyone draws a Dream card each night.')}</small></span></label>
+      <label class="check"><input type="checkbox" data-set-bool="doomsday" ${s.doomsday ? 'checked' : ''}><span><b>${t('Doomsday Clock')}</b><small>${t('Death wins if nobody has won when the final Day closes.')}</small></span></label>
+      <label class="field"><span>${t('Exact deck (optional)')}</span><textarea class="input" data-set-text="customDeck" placeholder="Death x2&#10;Guardian&#10;Mentalist&#10;Psycho&#10;Whore">${esc(s.customDeck)}</textarea><small class="muted small">${t('Use the English role names, one per line; "x2" for copies.')}</small></label>
     </div></details>` : ''}
-    ${preset.id === 'classic' ? `<label class="check"><input type="checkbox" data-set-bool="dreams" ${s.dreams ? 'checked' : ''}><span><b>Simplified Dreams</b><small>Off by default for teaching games.</small></span></label>` : ''}
-    ${preset.id === 'doomsday' || (preset.custom && s.doomsday) ? `<label class="field"><span>Doomsday after Day</span><select class="input" data-set="doomsdayDays">${[1, 2, 3, 4, 5, 6, 7].map((n) => `<option ${s.doomsdayDays === n ? 'selected' : ''}>${n}</option>`).join('')}</select></label>` : ''}
+    ${preset.id === 'classic' ? `<label class="check"><input type="checkbox" data-set-bool="dreams" ${s.dreams ? 'checked' : ''}><span><b>${t('Simplified Dreams')}</b><small>${t('Off by default for teaching games.')}</small></span></label>` : ''}
+    ${preset.id === 'doomsday' || (preset.custom && s.doomsday) ? `<label class="field"><span>${t('Doomsday after Day')}</span><select class="input" data-set="doomsdayDays">${[1, 2, 3, 4, 5, 6, 7].map((n) => `<option ${s.doomsdayDays === n ? 'selected' : ''}>${n}</option>`).join('')}</select></label>` : ''}
 
-    <details class="more" data-key="d-rules" open><summary>Rule cards</summary><div>
-      ${preset.rulesMax === 0 ? '' : `<div class="seg" role="group"><button data-act="rulesMode" data-mode="random" aria-pressed="${s.rules.mode === 'random'}">Draw at random</button><button data-act="rulesMode" data-mode="manual" aria-pressed="${s.rules.mode === 'manual'}">Choose</button></div>`}
-      ${s.rules.mode === 'random' ? `<div class="stepper"><span>How many</span>${range(preset.rulesMin, preset.rulesMax).map((n) => `<button data-act="ruleCount" data-n="${n}" aria-pressed="${s.rules.count === n}">${n}</button>`).join('')}</div><small class="muted small">Drawn secretly when the match starts.</small>`
-        : `<div class="rule-grid">${rules.map((r) => `<label class="check"><input type="checkbox" data-act-change="rule" data-id="${r.id}" ${s.rules.selected.includes(r.id) ? 'checked' : ''}><span><b>${esc(r.name)}</b><small>${esc(r.text)}</small></span></label>`).join('')}</div><small class="muted small">Choose ${preset.rulesMin}–${preset.rulesMax}.</small>`}
+    <details class="more" data-key="d-rules" open><summary>${t('Rule cards')}</summary><div>
+      ${preset.rulesMax === 0 ? '' : `<div class="seg" role="group"><button data-act="rulesMode" data-mode="random" aria-pressed="${s.rules.mode === 'random'}">${t('Draw at random')}</button><button data-act="rulesMode" data-mode="manual" aria-pressed="${s.rules.mode === 'manual'}">${t('Choose')}</button></div>`}
+      ${s.rules.mode === 'random' ? `<div class="stepper"><span>${t('How many')}</span>${range(preset.rulesMin, preset.rulesMax).map((n) => `<button data-act="ruleCount" data-n="${n}" aria-pressed="${s.rules.count === n}">${n}</button>`).join('')}</div><small class="muted small">${t('Drawn secretly when the match starts.')}</small>`
+        : `<div class="rule-grid">${rules.map((r) => `<label class="check"><input type="checkbox" data-act-change="rule" data-id="${r.id}" ${s.rules.selected.includes(r.id) ? 'checked' : ''}><span><b>${esc(ruleF(r.id, 'name'))}</b><small>${esc(ruleF(r.id, 'text'))}</small></span></label>`).join('')}</div><small class="muted small">${t('Choose {a}–{b}.', { a: preset.rulesMin, b: preset.rulesMax })}</small>`}
     </div></details>
 
-    <details class="more" data-key="d-story"><summary>Story · WHO / WHERE / WHY</summary><div>
-      <div class="seg" role="group"><button data-act="scenMode" data-mode="random" aria-pressed="${s.scenario.mode === 'random'}">Random</button><button data-act="scenMode" data-mode="manual" aria-pressed="${s.scenario.mode === 'manual'}">Write our own</button></div>
-      ${s.scenario.mode === 'manual' ? ['who', 'where', 'why'].map((k) => `<label class="field"><span>${k.toUpperCase()}</span><input class="input" maxlength="80" data-set-text="scenario.${k}" value="${esc(s.scenario[k])}" placeholder="${{ who: 'Lost Tourists', where: 'a Haunted Mansion', why: 'Solve a Murder' }[k]}"></label>`).join('') : '<p class="small muted">Pure storytelling. It never changes the rules.</p>'}
+    <details class="more" data-key="d-story"><summary>${t('Story · WHO / WHERE / WHY')}</summary><div>
+      <div class="seg" role="group"><button data-act="scenMode" data-mode="random" aria-pressed="${s.scenario.mode === 'random'}">${t('Random')}</button><button data-act="scenMode" data-mode="manual" aria-pressed="${s.scenario.mode === 'manual'}">${t('Write our own')}</button></div>
+      ${s.scenario.mode === 'manual' ? ['who', 'where', 'why'].map((k) => `<label class="field"><span>${t(k.toUpperCase())}</span><input class="input" maxlength="80" data-set-text="scenario.${k}" value="${esc(s.scenario[k])}" placeholder="${esc(scen(k.toUpperCase(), { who: 'Lost Tourists', where: 'a Haunted Mansion', why: 'Solve a Murder' }[k]))}"></label>`).join('') : `<p class="small muted">${t('Pure storytelling. It never changes the rules.')}</p>`}
     </div></details>
 
-    <details class="more" data-key="d-table"><summary>Table & timers</summary><div>
-      <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">Same room</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">Remote · chat</button></div>
-      <div class="grid2">${timer('morning', 'Morning')}${timer('discussion', 'Discussion')}${timer('defense', 'Defence (each)')}${timer('voting', 'Voting')}${timer('swap', 'Dream swap')}${timer('night', 'Night')}${timer('retaliation', 'Final act')}</div>
-      <label class="check"><input type="checkbox" data-set-bool="revealOnDeath" ${s.revealOnDeath ? 'checked' : ''}><span><b>Reveal roles on death</b><small>Never with the Hidden Roles card.</small></span></label>
-      <label class="check"><input type="checkbox" data-set-bool="endReveal" ${s.endReveal ? 'checked' : ''}><span><b>Reveal every role at the end</b></span></label>
-      <label class="check"><input type="checkbox" data-set-bool="selfNomination" ${s.selfNomination ? 'checked' : ''}><span><b>Allow self-nomination</b></span></label>
-      <label class="check"><input type="checkbox" data-set-bool="selfVote" ${s.selfVote ? 'checked' : ''}><span><b>Nominees may vote for themselves</b></span></label>
+    <details class="more" data-key="d-table"><summary>${t('Table & timers')}</summary><div>
+      <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
+      <div class="grid2">${timer('morning', 'Morning')}${timer('discussion', 'Discussion')}${timer('defense', 'Defence (each)')}${timer('voting', 'Voting')}${timer('night', 'Night')}${timer('retaliation', 'Final act')}</div>
+      <p class="small muted">${t('Each night opens with a five-second nightfall before actions begin.')}</p>
+      <label class="check"><input type="checkbox" data-set-bool="revealOnDeath" ${s.revealOnDeath ? 'checked' : ''}><span><b>${t('Reveal roles on death')}</b><small>${t('Never with the Hidden Roles card.')}</small></span></label>
+      <label class="check"><input type="checkbox" data-set-bool="endReveal" ${s.endReveal ? 'checked' : ''}><span><b>${t('Reveal every role at the end')}</b></span></label>
+      <label class="check"><input type="checkbox" data-set-bool="selfNomination" ${s.selfNomination ? 'checked' : ''}><span><b>${t('Allow self-nomination')}</b></span></label>
+      <label class="check"><input type="checkbox" data-set-bool="selfVote" ${s.selfVote ? 'checked' : ''}><span><b>${t('Nominees may vote for themselves')}</b></span></label>
     </div></details>
   </div>`;
 }
@@ -1053,17 +1113,17 @@ function roleCardHtml(role, { align = null, flipKey = 'role', flipped = null, mi
   const a = align ?? role.alignment;
   const isFlipped = flipped ?? !!S.ui.flipped[flipKey];
   if (mini) {
-    return `<button class="role-mini ${a === 'DEATH' ? 'death' : ''}" data-act="sheet" data-id="role" data-key="rolemini">${glyph(role.glyph)}<span><b>${esc(role.name)}</b><small>${esc(role.summary)}</small></span></button>`;
+    return `<button class="role-mini ${a === 'DEATH' ? 'death' : ''}" data-act="sheet" data-id="role" data-key="rolemini">${glyph(role.glyph)}<span><b>${esc(roleF(role.id, 'name'))}</b><small>${esc(roleF(role.id, 'summary'))}</small></span></button>`;
   }
   return `<div class="card-stage" data-key="stage-${flipKey}">
-    <button class="flipcard ${isFlipped ? 'flipped' : ''}" data-act="flip" data-key="${flipKey}" data-tilt aria-label="${isFlipped ? `Your role: ${esc(role.name)}` : 'Turn over your role card'}">
-      <span class="face back"><span class="mono-gram">DS</span><span class="hint kicker">Tap to turn over</span></span>
+    <button class="flipcard ${isFlipped ? 'flipped' : ''}" data-act="flip" data-key="${flipKey}" data-tilt aria-label="${isFlipped ? esc(t('Your role: {x}', { x: roleF(role.id, 'name') })) : esc(t('Turn over your role card'))}">
+      <span class="face back"><span class="mono-gram">DS</span><span class="hint kicker">${t('Tap to turn over')}</span></span>
       <span class="face front ${a === 'DEATH' ? 'death' : ''}">
-        <span class="corner"><b>${esc(ALIGN[a])}</b><span>${esc(role.when)}</span></span>
+        <span class="corner"><b>${esc(ALIGN[a])}</b><span>${esc(roleF(role.id, 'when'))}</span></span>
         <span class="art">${glyph(role.glyph)}</span>
-        <span class="nm">${esc(role.name)}</span>
-        ${role.alias ? `<span class="small muted">also called ${esc(role.alias)}</span>` : ''}
-        <span class="sum">${esc(role.summary)}</span>
+        <span class="nm">${esc(roleF(role.id, 'name'))}</span>
+        ${roleF(role.id, 'alias') ? `<span class="small muted">${th('also called {x}', { x: roleF(role.id, 'alias') })}</span>` : ''}
+        <span class="sum">${esc(roleF(role.id, 'summary'))}</span>
         <span class="shine" aria-hidden="true"></span>
       </span>
     </button></div>`;
@@ -1071,18 +1131,18 @@ function roleCardHtml(role, { align = null, flipKey = 'role', flipped = null, mi
 
 function roleNotes(me) {
   return `<div class="stack" style="gap:10px">
-    <p class="muted small">${esc(me.role.detail)}</p>
-    ${me.originalRole ? `<p class="small muted">You began as ${esc(me.originalRole.name)}.</p>` : ''}
-    ${me.alignment === 'DEATH' && me.role.id !== 'DEATH' ? '<p class="blood small">You are Death-aligned.</p>' : ''}
-    ${me.mimicPowerless ? '<p class="small muted">Your copy failed: you are a powerless Mimic.</p>' : ''}
-    ${Object.values(me.charges || {}).map((n) => `<p class="small muted">${n > 0 ? 'One use remaining.' : 'Your once-per-game power is spent.'}</p>`).join('')}
+    <p class="muted small">${esc(roleF(me.role.id, 'detail'))}</p>
+    ${me.originalRole ? `<p class="small muted">${th('You began as {x}.', { x: roleF(me.originalRole.id, 'name') })}</p>` : ''}
+    ${me.alignment === 'DEATH' && me.role.id !== 'DEATH' ? `<p class="blood small">${t('You are Death-aligned.')}</p>` : ''}
+    ${me.mimicPowerless ? `<p class="small muted">${t('Your copy failed: you are a powerless Mimic.')}</p>` : ''}
+    ${Object.values(me.charges || {}).map((n) => `<p class="small muted">${t(n > 0 ? 'One use remaining.' : 'Your once-per-game power is spent.')}</p>`).join('')}
     ${teammates(me)}
   </div>`;
 }
 
 function teammates(me) {
-  if (me.teammates) return `<div class="panel tight seal"><span class="kicker blood">Your Death team</span>${me.teammates.length ? `<p>${me.teammates.map((t) => esc(t.name)).join(', ')}</p>` : '<p>You are alone. Every kill is your call.</p>'}</div>`;
-  if (me.joinsTeamNight) return `<div class="panel tight seal"><span class="kicker blood">Death team</span><p>You join the Death team room on Night ${roman(me.joinsTeamNight)}.</p></div>`;
+  if (me.teammates) return `<div class="panel tight seal"><span class="kicker blood">${t('Your Death team')}</span>${me.teammates.length ? `<p>${me.teammates.map((x) => esc(x.name)).join(', ')}</p>` : `<p>${t('You are alone. Every kill is your call.')}</p>`}</div>`;
+  if (me.joinsTeamNight) return `<div class="panel tight seal"><span class="kicker blood">${t('Death team')}</span><p>${t('You join the Death team room on Night {n}.', { n: roman(me.joinsTeamNight) })}</p></div>`;
   return '';
 }
 
@@ -1090,7 +1150,7 @@ function teammates(me) {
 function revealMain(v, me) {
   const key = `n0-${v.phaseId}`;
   return `${head(v)}
-    <p class="muted center-text" data-key="n0hint">${me.acknowledged ? `Waiting for the others · ${v.progress.done}/${v.progress.total}` : 'Shield your screen, then tap the card.'}</p>
+    <p class="muted center-text" data-key="n0hint">${me.acknowledged ? th('Waiting for the others · {done}/{total}', v.progress) : t('Shield your screen, then tap the card.')}</p>
     ${roleCardHtml(me.role, { align: me.alignment, flipKey: key })}
     ${S.ui.flipped[key] ? `<div data-key="n0notes" class="rise-in">${roleNotes(me)}</div>` : ''}
     ${chips(v)}`;
@@ -1104,7 +1164,7 @@ function dayMain(v, me) {
   if (v.phase === 'DAY_DISCUSSION') stage = discussionStage(v);
   if (v.phase === 'DAY_DEFENSE') stage = defenseStage(v, me);
   if (v.phase === 'DAY_VOTING') stage = votingStage(v);
-  if (v.phase === 'DAY_RESOLVING') stage = v.action.type === 'retaliate' ? '<p class="center-text blood" data-key="ret">You were sentenced. You may take one living non-Death player with you.</p>' : '<p class="center-text muted" data-key="ret">The condemned is making a final choice…</p>';
+  if (v.phase === 'DAY_RESOLVING') stage = v.action.type === 'retaliate' ? `<p class="center-text blood" data-key="ret">${t('You were sentenced. You may take one living non-Death player with you.')}</p>` : `<p class="center-text muted" data-key="ret">${t('The condemned is making a final choice…')}</p>`;
   return `${head(v)}
     ${statusBanners(v, me)}
     ${ruleRibbon(v, me)}
@@ -1123,17 +1183,17 @@ function ruleRibbon(v, me) {
   if (notes.FOG_OF_WAR && me?.alive && me.seat != null) {
     const seats = [...v.players].sort((x, y) => x.seat - y.seat);
     const n = seats.length; const l = seats[(me.seat - 1 + n) % n]; const r = seats[(me.seat + 1) % n];
-    notes.FOG_OF_WAR = `Talk only with ${l.name} and ${r.name}`;
+    notes.FOG_OF_WAR = ['Talk only with {a} and {b}', { a: l.name, b: r.name }];
   }
-  return `<div class="rule-ribbon" data-key="rr-${v.phase}">${ids.map((id) => `<span class="rr" data-key="rr-${id}">${glyph(ruleGlyph(id))}<b>${esc(v.activeRules.find((r) => r.id === id)?.name ?? '')}</b><span>${esc(notes[id])}</span></span>`).join('')}</div>`;
+  return `<div class="rule-ribbon" data-key="rr-${v.phase}">${ids.map((id) => `<span class="rr" data-key="rr-${id}">${glyph(ruleGlyph(id))}<b>${esc(ruleF(id, 'name'))}</b><span>${tmh(notes[id])}</span></span>`).join('')}</div>`;
 }
 
 function statusBanners(v, me) {
   const out = [];
-  if (!me.alive) out.push(`<div class="banner" data-key="st-dead">${glyph('death')}<div><b>You are dead.</b><p>Watch in silence.${v.activeRules.some((r) => r.id === 'VENGEFUL_GHOSTS') ? ' Vengeful Ghosts: you cast a ghost ballot each Day.' : ''}</p></div></div>`);
-  if (me.statuses.includes('MUTE')) out.push(`<div class="banner blood" data-key="st-mute">${glyph('psycho')}<div><b>You are MUTE today.</b><p>No talking in discussion or defence. You can still nominate and vote.</p></div></div>`);
-  if (me.statuses.includes('NO_VOTE')) out.push(`<div class="banner blood" data-key="st-nov">${glyph('psycho')}<div><b>NO VOTE today.</b><p>You may speak, but your ballot is disabled.</p></div></div>`);
-  if (me.revived) out.push(`<div class="banner" data-key="st-rev">${glyph('necro')}<div><b>Borrowed time.</b><p>Nothing can kill you until it runs out after Night ${roman(me.revived.expiresAfterNight)} — but the town can still sentence you.</p></div></div>`);
+  if (!me.alive) out.push(`<div class="banner" data-key="st-dead">${glyph('death')}<div><b>${t('You are dead.')}</b><p>${t('Watch in silence.')}${v.activeRules.some((r) => r.id === 'VENGEFUL_GHOSTS') ? ` ${t('Vengeful Ghosts: you cast a ghost ballot each Day.')}` : ''}</p></div></div>`);
+  if (me.statuses.includes('MUTE')) out.push(`<div class="banner blood" data-key="st-mute">${glyph('psycho')}<div><b>${t('You are MUTE today.')}</b><p>${t('No talking in discussion or defence. You can still nominate and vote.')}</p></div></div>`);
+  if (me.statuses.includes('NO_VOTE')) out.push(`<div class="banner blood" data-key="st-nov">${glyph('psycho')}<div><b>${t('NO VOTE today.')}</b><p>${t('You may speak, but your ballot is disabled.')}</p></div></div>`);
+  if (me.revived) out.push(`<div class="banner" data-key="st-rev">${glyph('necro')}<div><b>${t('Borrowed time.')}</b><p>${th('Nothing can kill you until it runs out after Night {n} — but the town can still sentence you.', { n: roman(me.revived.expiresAfterNight) })}</p></div></div>`);
   return out.join('');
 }
 
@@ -1141,51 +1201,51 @@ function morningStage(v) {
   const news = v.log.filter((l) => (l.ev === 'dawn' && l.day === v.dayNumber) || (l.at === `Day ${v.dayNumber}` && ['death', 'immunity'].includes(l.kind)) || (l.ev === 'revive' && l.at === `Night ${v.dayNumber - 1}`));
   const ab = v.action.abilities || [];
   let abilities = '';
-  if (ab.some((x) => x.kind === 'immunity')) abilities += `<div class="panel tight" data-key="dip"><span class="kicker">Diplomat · once per game</span><p class="small">Declare immunity now and nobody can nominate you today. Everyone will see it.</p>${holdBtn('immunity', 'Hold to declare immunity')}</div>`;
-  if (ab.some((x) => x.kind === 'immune')) abilities += `<div class="banner" data-key="imm">${glyph('diplomat')}<div><b>You are immune today.</b></div></div>`;
-  if (ab.some((x) => x.kind === 'shoot')) abilities += '<p class="small muted center-text" data-key="vig">Vigilante: tap a seat to aim. The shot fires when the host opens discussion. Nobody will know it was you.</p>';
+  if (ab.some((x) => x.kind === 'immunity')) abilities += `<div class="panel tight" data-key="dip"><span class="kicker">${t('Diplomat · once per game')}</span><p class="small">${t('Declare immunity now and nobody can nominate you today. Everyone will see it.')}</p>${holdBtn('immunity', t('Hold to declare immunity'))}</div>`;
+  if (ab.some((x) => x.kind === 'immune')) abilities += `<div class="banner" data-key="imm">${glyph('diplomat')}<div><b>${t('You are immune today.')}</b></div></div>`;
+  if (ab.some((x) => x.kind === 'shoot')) abilities += `<p class="small muted center-text" data-key="vig">${t('Vigilante: tap a seat to aim. The shot fires when the host opens discussion. Nobody will know it was you.')}</p>`;
   return `<section class="stack" data-key="morning">
-    ${news.length ? news.map((l) => `<div class="report ${l.kind === 'death' ? 'alarm' : ''}" data-key="news-${l.i}"><p>${esc(l.text)}</p></div>`).join('') : `<div class="report" data-key="news-none"><p>${v.dayNumber === 1 ? 'Nobody has died yet. Introduce yourselves — or don\'t.' : 'Nothing to report.'}</p></div>`}
+    ${news.length ? news.map((l) => `<div class="report ${l.kind === 'death' ? 'alarm' : ''}" data-key="news-${l.i}"><p>${tmh(entryMsg(l))}</p></div>`).join('') : `<div class="report" data-key="news-none"><p>${v.dayNumber === 1 ? t('Nobody has died yet. Introduce yourselves — or don\'t.') : t('Nothing to report.')}</p></div>`}
     ${abilities}
-    ${!v.host ? '<p class="small muted center-text">The host will open discussion shortly.</p>' : ''}
+    ${!v.host ? `<p class="small muted center-text">${t('The host will open discussion shortly.')}</p>` : ''}
   </section>`;
 }
 
 function nominationList(v) {
   const d = v.day;
-  if (!d?.nominations.length) return '<p class="muted small center-text" data-key="nonom">No one is accused yet.</p>';
+  if (!d?.nominations.length) return `<p class="muted small center-text" data-key="nonom">${t('No one is accused yet.')}</p>`;
   const by = {};
   for (const n of d.nominations) (by[n.target] ||= []).push(n.by);
-  return `<ol class="accused" data-key="accused">${d.nominees.map((id, i) => `<li data-key="acc-${id}" class="${d.speaking === id ? 'speaking' : ''}"><span class="num">${roman(i + 1)}</span><b>${pname(id)}</b><small>by ${by[id].map(pname).join(', ')}</small></li>`).join('')}</ol>`;
+  return `<ol class="accused" data-key="accused">${d.nominees.map((id, i) => `<li data-key="acc-${id}" class="${d.speaking === id ? 'speaking' : ''}"><span class="num">${roman(i + 1)}</span><b>${pname(id)}</b><small>${th('by {names}', { names: by[id].map(rawName) })}</small></li>`).join('')}</ol>`;
 }
 
 function discussionStage(v) {
   const a = v.action;
   return `<section class="stack" data-key="disc">${nominationList(v)}
-    ${a.type === 'nominate' && a.mine ? `<p class="small muted center-text">You accused <b>${pname(a.mine)}</b>. One nomination per Day.</p>` : ''}
-    <p class="small muted center-text">${v.day.nominees.length ? 'When nominations close, each nominee defends themselves.' : 'No nominations means no vote — and no sentence.'}</p></section>`;
+    ${a.type === 'nominate' && a.mine ? `<p class="small muted center-text">${th('You accused <b>{name}</b>. One nomination per Day.', { name: rawName(a.mine) })}</p>` : ''}
+    <p class="small muted center-text">${v.day.nominees.length ? t('When nominations close, each nominee defends themselves.') : t('No nominations means no vote — and no sentence.')}</p></section>`;
 }
 
 function defenseStage(v, me) {
   const d = v.day;
   return `<section class="stack" data-key="def">${nominationList(v)}
-    ${d.speaking === me.id ? (me.statuses.includes('MUTE') ? '<div class="banner blood" data-key="myturn"><div><b>Your turn — but you are muted.</b><p>Plead without words.</p></div></div>' : '<div class="banner spot" data-key="myturn"><div><b>Your turn to speak.</b><p>Make your case to the table.</p></div></div>') : ''}
+    ${d.speaking === me.id ? (me.statuses.includes('MUTE') ? `<div class="banner blood" data-key="myturn"><div><b>${t('Your turn — but you are muted.')}</b><p>${t('Plead without words.')}</p></div></div>` : `<div class="banner spot" data-key="myturn"><div><b>${t('Your turn to speak.')}</b><p>${t('Make your case to the table.')}</p></div></div>`) : ''}
   </section>`;
 }
 
 function votingStage(v) {
   const a = v.action;
-  if (a.type === 'novote') return '<div class="banner blood" data-key="nov"><div><b>Voting disabled.</b><p>You have no vote today.</p></div></div>';
+  if (a.type === 'novote') return `<div class="banner blood" data-key="nov"><div><b>${t('Voting disabled.')}</b><p>${t('You have no vote today.')}</p></div></div>`;
   if (a.type !== 'ballot') return '';
   const sel = S.sel.vote ?? a.choice;
   return `<section class="stack" data-key="ballot">
     <div class="row center">
-      <span class="tag ${a.ghost ? '' : 'solid'}">${a.ghost ? 'Ghost ballot · weight 1' : `Your weight · ${a.weight}`}</span>
-      <button class="btn btn-sm ${sel === 'ABSTAIN' ? 'btn-solid' : ''}" data-act="pickVote" data-id="ABSTAIN">Abstain</button>
+      <span class="tag ${a.ghost ? '' : 'solid'}">${a.ghost ? t('Ghost ballot · weight 1') : th('Your weight · {n}', { n: a.weight })}</span>
+      <button class="btn btn-sm ${sel === 'ABSTAIN' ? 'btn-solid' : ''}" data-act="pickVote" data-id="ABSTAIN">${t('Abstain')}</button>
     </div>
-    ${a.ghost && a.majority ? '<p class="small muted center-text">Majority Rule: ghost ballots never decide the sentence.</p>' : ''}
-    ${v.day.majority != null ? `<p class="small muted center-text">Majority Rule: more than ${v.day.majority} weight needed.</p>` : ''}
-    <p class="small muted center-text">Secret until it locks. Only totals are published. A tie sentences nobody.</p>
+    ${a.ghost && a.majority ? `<p class="small muted center-text">${t('Majority Rule: ghost ballots never decide the sentence.')}</p>` : ''}
+    ${v.day.majority != null ? `<p class="small muted center-text">${th('Majority Rule: more than {n} weight needed.', { n: v.day.majority })}</p>` : ''}
+    <p class="small muted center-text">${t('Secret until it locks. Only totals are published. A tie sentences nobody.')}</p>
   </section>`;
 }
 
@@ -1193,44 +1253,50 @@ function votingStage(v) {
 function chatBlock(v) {
   if (!v.chats?.length) return '';
   const active = v.chats.find((c) => c.id === S.ui.chat) ?? v.chats[0];
+  const myId = v.me?.id;
+  const who = (m) => (m.from === myId ? t('You') : m.from == null ? t('Stranger') : m.name);
   return `<section class="chat" data-key="chat">
-    <div class="tabs-row">${v.chats.map((c) => `<button class="chip ${c.id === active.id ? 'on' : ''}" data-act="chatTab" data-id="${esc(c.id)}">${esc(c.label)}</button>`).join('')}</div>
-    <div class="log" data-scroll="chat-${esc(active.id)}" data-key="log-${esc(active.id)}">${active.messages.length ? active.messages.map((m, i) => `<div class="msg ${m.name === 'You' ? 'mine' : ''}" data-key="m-${m.ts}-${i}"><b>${esc(m.name)}</b><span>${esc(m.text)}</span></div>`).join('') : '<p class="small muted">No messages yet.</p>'}</div>
-    ${active.canSend ? `<form data-form="chat" data-id="${esc(active.id)}"><input class="input" maxlength="280" placeholder="Say something…" data-draft="chat" value="${esc(S.drafts.chat ?? '')}" autocomplete="off"><button class="btn btn-sm" type="submit">Send</button></form>` : '<p class="small muted">You cannot speak here right now.</p>'}
+    <div class="tabs-row">${v.chats.map((c) => `<button class="chip ${c.id === active.id ? 'on' : ''}" data-act="chatTab" data-id="${esc(c.id)}">${tmh(c.label)}</button>`).join('')}</div>
+    <div class="log" data-scroll="chat-${esc(active.id)}" data-key="log-${esc(active.id)}">${active.messages.length ? active.messages.map((m, i) => `<div class="msg ${m.from === myId ? 'mine' : ''}" data-key="m-${m.ts}-${i}"><b>${esc(who(m))}</b><span>${esc(m.text)}</span></div>`).join('') : `<p class="small muted">${t('No messages yet.')}</p>`}</div>
+    ${active.canSend ? `<form data-form="chat" data-id="${esc(active.id)}"><input class="input" maxlength="280" placeholder="${esc(t('Say something…'))}" data-draft="chat" value="${esc(S.drafts.chat ?? '')}" autocomplete="off"><button class="btn btn-sm" type="submit">${t('Send')}</button></form>` : `<p class="small muted">${t('You cannot speak here right now.')}</p>`}
   </section>`;
 }
 
 // ── Night ──────────────────────────────────────────────────────────────────
+const progressLine = (p) => (p ? th('{done}/{total} {label}', { done: p.done, total: p.total, label: t(p.label) }) : '');
+
 function nightMain(v, me) {
   if (!me.alive || v.action.type === 'spectate') {
     return `${head(v)}
-      <div class="banner" data-key="spec">${glyph('death')}<div><b>${me.alive ? 'You returned too late to act tonight.' : 'You are dead.'}</b><p>No dreams, no powers. Dawn will tell.</p></div></div>
+      <div class="banner" data-key="spec">${glyph('death')}<div><b>${me.alive ? t('You returned too late to act tonight.') : t('You are dead.')}</b><p>${t('No dreams, no powers. Dawn will tell.')}</p></div></div>
       ${ring(v, { center: centerFor(v) })}${chips(v)}`;
   }
-  const unveiled = S.ui.unveiled[v.phaseId];
-  if (!unveiled) {
+  // Nightfall: a fixed five-second grace, then actions open by themselves.
+  if (v.phase === 'NIGHT_DREAM_SWAP') return `${head(v)}<div class="night-body" data-key="nightbody">${nightfallStage(v, me, v.action)}</div>${chips(v)}`;
+  if (S.ui.veiled[v.phaseId]) {
     return `${head(v)}
       <section class="curtain" data-key="curtain">
         ${moon(0.3, 'big')}
-        <p>Make sure nobody can see your screen.</p>
-        <button class="btn btn-solid" data-act="unveil">Open your eyes</button>
-        <span class="small muted">${v.progress ? `${v.progress.done}/${v.progress.total} ${esc(v.progress.label)}` : ''}</span>
+        <p>${t('Make sure nobody can see your screen.')}</p>
+        <button class="btn btn-solid" data-act="unveil">${t('Open your eyes')}</button>
+        <span class="small muted">${progressLine(v.progress)}</span>
       </section>${chips(v)}`;
   }
-  const body = v.phase === 'NIGHT_DREAM_SWAP' ? swapStage(v, me, v.action) : actionsStage(v, me, v.action);
-  return `${head(v, `<button class="btn btn-sm btn-ghost cover" data-act="veil" data-key="cover">${glyph('veil')} Cover</button>`)}${ruleRibbon(v, me)}<div class="night-body" data-key="nightbody">${body}</div>${chips(v)}`;
+  return `${head(v, `<button class="btn btn-sm btn-ghost cover" data-act="veil" data-key="cover">${glyph('veil')} ${t('Cover')}</button>`)}${ruleRibbon(v, me)}<div class="night-body" data-key="nightbody">${actionsStage(v, me, v.action)}</div>${chips(v)}`;
 }
 
-function swapStage(v, me, a) {
-  if (a.done) return sleepingHtml(v, 'Dreams are settling…');
-  const { pick } = activePick(v);
-  if (a.snatcher) {
-    return `${dreamCard(me.dream)}
-      <p class="small muted center-text" data-key="swaphint">Swap Dream cards with another player before actions open — or keep yours. Swaps resolve in seat order.</p>
+function nightfallStage(v, me, a) {
+  const count = `<div class="nightfall-count" data-key="nfc"><b data-secs></b><span>${t('Shield your screen — your night begins in a moment.')}</span></div>`;
+  if (a.type === 'swap' && a.snatcher) {
+    const { pick } = activePick(v);
+    return `<section class="nightfall snatch" data-key="nightfall-s">
+      ${dreamCard(me.dream)}
+      ${count}
+      <p class="small muted center-text" data-key="swaphint">${t('Dream Snatcher: tap a seat to swap Dream cards before the night opens — or leave it and keep yours.')}</p>
       ${ring(v, { pick, center: centerFor(v, pick) })}
-      <div class="row center" data-key="keep"><button class="btn btn-ghost btn-sm" data-act="swap" data-none="1">Keep my dream</button></div>`;
+    </section>`;
   }
-  return `<section class="curtain small" data-key="forming">${moon(0.5, 'big drift')}<p>Your dream is forming…</p><button class="btn btn-solid" data-act="swap" data-none="1">Close my eyes</button></section>`;
+  return `<section class="nightfall" data-key="nightfall">${moon(0.08, 'big drift')}<h2>${t('Night falls')}</h2>${count}</section>`;
 }
 
 function sleepingHtml(v, line) {
@@ -1238,23 +1304,24 @@ function sleepingHtml(v, line) {
     <div class="zz" aria-hidden="true"><span>z</span><span>z</span><span>z</span></div>
     ${moon(v.progress ? v.progress.done / Math.max(1, v.progress.total) : 0, 'big')}
     <p>${esc(line)}</p>
-    <span class="small muted">${v.progress ? `${v.progress.done}/${v.progress.total} ${esc(v.progress.label)}` : ''} — dawn comes when everyone sleeps, or when time runs out.</span>
+    <span class="small muted">${v.progress ? `${progressLine(v.progress)} — ` : ''}${t('dawn comes when everyone sleeps, or when time runs out.')}</span>
   </section>`;
 }
 
 function dreamCard(d) {
   if (!d) return '';
-  return `<div class="dream" data-key="dream-${d.id}">${dreamGlyph(d.id)}<div><span class="kicker">Tonight's dream</span><h3>${esc(d.name)}</h3><p>${esc(d.text)}</p></div></div>`;
+  return `<div class="dream" data-key="dream-${d.id}">${dreamGlyph(d.id)}<div><span class="kicker">${t('Tonight\'s dream')}</span><h3>${esc(dreamF(d.id, 'name'))}</h3><p>${esc(dreamF(d.id, 'text'))}</p></div></div>`;
 }
 
 function actionsStage(v, me, a) {
   if (a.done) {
-    return `${sleepingHtml(v, 'You are asleep.')}${submittedSummary(a)}<div class="row center" data-key="wake"><button class="btn btn-ghost btn-sm" data-act="reopen">Wake up and change my mind</button></div>${chatBlock(v)}`;
+    return `${sleepingHtml(v, t('You are asleep.'))}${submittedSummary(a)}<div class="row center" data-key="wake"><button class="btn btn-ghost btn-sm" data-act="reopen">${t('Wake up and change my mind')}</button></div>${chatBlock(v)}`;
   }
   const { ctx, pick } = activePick(v);
   const parts = [dreamCard(me.dream)];
   const s = a.schema;
-  if (me.sleepwalkPartner) parts.push(`<p class="small muted center-text" data-key="sw">You are bound to ${esc(me.sleepwalkPartner)}, seated just before you.</p>`);
+  const rname = s?.role ? esc(roleF(s.role.id, 'name')) : '';
+  if (me.sleepwalkPartner) parts.push(`<p class="small muted center-text" data-key="sw">${th('You are bound to {name}, seated just before you.', { name: me.sleepwalkPartner })}</p>`);
   // The ring (the actual decision) comes first; details follow beneath it.
   if (ctx.length) {
     parts.push(pickTabs(ctx, pick));
@@ -1262,26 +1329,26 @@ function actionsStage(v, me, a) {
     if (a.death && pick.key === 'death') {
       for (const m of a.death.members) {
         if (m.id === me.id) continue;
-        for (const t of a.death.proposals[m.id] ?? []) marks[t] = (marks[t] ?? '') + initials(m.name);
+        for (const x of a.death.proposals[m.id] ?? []) marks[x] = (marks[x] ?? '') + initials(m.name);
       }
     }
     parts.push(ring(v, { pick, center: centerFor(v, pick), marks }));
     if (pick.key === 'role' && s?.options && (S.sel.uses ?? []).length) {
-      parts.push(`<div class="stack" data-key="useopts">${(S.sel.uses ?? []).map((u, i) => `<div class="optrow" data-key="uo-${u.target}"><span>${pname(u.target)}</span><div class="seg">${s.options.map((o) => `<button data-act="pickUseOption" data-i="${i}" data-id="${o.id}" aria-pressed="${u.option === o.id}">${esc(o.label)}</button>`).join('')}</div></div>`).join('')}</div>`);
+      parts.push(`<div class="stack" data-key="useopts">${(S.sel.uses ?? []).map((u, i) => `<div class="optrow" data-key="uo-${u.target}"><span>${pname(u.target)}</span><div class="seg">${s.options.map((o) => `<button data-act="pickUseOption" data-i="${i}" data-id="${o.id}" aria-pressed="${u.option === o.id}">${esc(optLabel(o.id))}</button>`).join('')}</div></div>`).join('')}</div>`);
     }
-    if (pick.key === 'role' && s?.kind === 'chat') parts.push(`<div class="row center" data-key="conspbtn"><button class="btn" data-act="conspire" ${S.sel.conspire ? '' : 'disabled'}>Open whisper</button></div>`);
+    if (pick.key === 'role' && s?.kind === 'chat') parts.push(`<div class="row center" data-key="conspbtn"><button class="btn" data-act="conspire" ${S.sel.conspire ? '' : 'disabled'}>${t('Open whisper')}</button></div>`);
   }
   if (a.death) parts.push(deathRoom(v, me, a.death));
-  else if (!s) parts.push(`<p class="muted center-text" data-key="noact">${noActionReason(me, v)}</p>`);
-  else if (s.blocked === 'paralysis') parts.push(`<div class="banner blood" data-key="para">${dreamGlyph('SLEEP_PARALYSIS')}<div><b>Sleep Paralysis</b><p>You cannot use your role tonight.</p></div></div>`);
+  else if (!s) parts.push(`<p class="muted center-text" data-key="noact">${esc(noActionReason(me, v))}</p>`);
+  else if (s.blocked === 'paralysis') parts.push(`<div class="banner blood" data-key="para">${dreamGlyph('SLEEP_PARALYSIS')}<div><b>${esc(dreamF('SLEEP_PARALYSIS', 'name'))}</b><p>${t('You cannot use your role tonight.')}</p></div></div>`);
   else if (s.kind === 'choice') {
     const sel = S.sel.uses ?? [];
-    parts.push(`<section class="stack" data-key="choice"><div class="rule">${esc(s.role.name)}${s.charges === 1 ? ' · once per game' : ''}</div><div class="options">${s.options.map((o) => `<button class="option" data-act="pickOption" data-id="${o.id}" aria-pressed="${sel[0]?.option === o.id}" data-key="o-${o.id}">${esc(o.label)}</button>`).join('')}</div>
-      ${s.role.id === 'DOUBLE_AGENT' ? '<p class="small muted">Mandatory and permanent. No choice means you stay non-Death.</p>' : ''}</section>`);
+    parts.push(`<section class="stack" data-key="choice"><div class="rule">${rname}${s.charges === 1 ? ` · ${t('once per game')}` : ''}</div><div class="options">${s.options.map((o) => `<button class="option" data-act="pickOption" data-id="${o.id}" aria-pressed="${sel[0]?.option === o.id}" data-key="o-${o.id}">${esc(optLabel(o.id))}</button>`).join('')}</div>
+      ${s.role.id === 'DOUBLE_AGENT' ? `<p class="small muted">${t('Mandatory and permanent. No choice means you stay non-Death.')}</p>` : ''}</section>`);
   } else if (s.kind === 'chat' && (a.conspire || v.chats?.some((c) => c.id.startsWith(`consp:${v.nightNumber}:${me.id}`)))) {
-    parts.push('<p class="small muted center-text" data-key="wh">Your whisper is open below. Your partner sees only "Stranger".</p>');
+    parts.push(`<p class="small muted center-text" data-key="wh">${t('Your whisper is open below. Your partner sees only "Stranger".')}</p>`);
   } else {
-    parts.push(`<p class="small muted center-text" data-key="rolehint">${esc(s.role.name)}${s.charges === 1 ? ' · once per game' : ''}${s.uses > 1 ? ' · twice tonight' : ''}${s.role.id === 'MIMIC' ? ' · mandatory, or you stay powerless' : ''}${s.kind === 'dead' ? ' · you must survive the night' : ''}</p>`);
+    parts.push(`<p class="small muted center-text" data-key="rolehint">${rname}${s.charges === 1 ? ` · ${t('once per game')}` : ''}${s.uses > 1 ? ` · ${t('twice tonight')}` : ''}${s.role.id === 'MIMIC' ? ` · ${t('mandatory, or you stay powerless')}` : ''}${s.kind === 'dead' ? ` · ${t('you must survive the night')}` : ''}</p>`);
   }
   if (!a.death && !ctx.length && me.role) parts.push(roleCardHtml(me.role, { align: me.alignment, mini: true }));
   parts.push(chatBlock(v));
@@ -1291,20 +1358,19 @@ function actionsStage(v, me, a) {
 function submittedSummary(a) {
   if (a.death) {
     const mine = a.death.proposals?.[V().me.id] ?? [];
-    return `<p class="small muted center-text" data-key="sub">${mine.length ? `You confirmed: ${mine.map(pname).join(' and ')}.` : 'You confirmed a pass.'}</p>`;
+    return `<p class="small muted center-text" data-key="sub">${mine.length ? th('You confirmed: {names}.', { names: mine.map(rawName) }) : t('You confirmed a pass.')}</p>`;
   }
-  if (a.submitted?.length) return `<p class="small muted center-text" data-key="sub">Submitted: ${a.submitted.map((u) => [u.target ? pname(u.target) : '', u.option ? optionLabel(a.schema, u.option) : ''].filter(Boolean).join(' · ')).join('; ')}.</p>`;
+  if (a.submitted?.length) return `<p class="small muted center-text" data-key="sub">${th('Submitted: {what}.', { what: a.submitted.map((u) => [u.target ? rawName(u.target) : '', u.option ? optLabel(u.option) : ''].filter(Boolean).join(' · ')).join('; ') })}</p>`;
   return '';
 }
-const optionLabel = (schema, id) => esc(schema?.options?.find((o) => o.id === id)?.label ?? id);
 
 function noActionReason(me, v) {
-  if (me.mimicPowerless) return 'Your copy failed. No action — waiting for dawn.';
-  if (me.role?.id === 'MIMIC' || me.role?.id === 'DOUBLE_AGENT') return 'Your choice was made on Night 1. Waiting for dawn.';
-  if (Object.values(me.charges || {}).some((n) => n === 0)) return 'Your once-per-game power is spent. Waiting for dawn.';
-  if (me.alignment === 'DEATH' && me.joinsTeamNight) return `You join the Death team on Night ${roman(me.joinsTeamNight)}.`;
-  if (me.originalRole && v.nightNumber < 2) return 'Your new powers begin next night.';
-  return 'No action tonight. Close your eyes and wait for dawn.';
+  if (me.mimicPowerless) return t('Your copy failed. No action — waiting for dawn.');
+  if (me.role?.id === 'MIMIC' || me.role?.id === 'DOUBLE_AGENT') return t('Your choice was made on Night 1. Waiting for dawn.');
+  if (Object.values(me.charges || {}).some((n) => n === 0)) return t('Your once-per-game power is spent. Waiting for dawn.');
+  if (me.alignment === 'DEATH' && me.joinsTeamNight) return t('You join the Death team on Night {n}.', { n: roman(me.joinsTeamNight) });
+  if (me.originalRole && v.nightNumber < 2) return t('Your new powers begin next night.');
+  return t('No action tonight. Close your eyes and wait for dawn.');
 }
 
 function deathRoom(v, me, D) {
@@ -1312,28 +1378,28 @@ function deathRoom(v, me, D) {
   const props = D.members.map((m) => ({ ...m, picks: m.id === me.id ? (S.sel.death ?? D.proposals[m.id] ?? null) : D.proposals[m.id] ?? null, confirmed: D.confirmed[m.id] }));
   const agree = props.every((p) => p.picks && keyOf(p.picks) === keyOf(props[0].picks));
   return `<section class="death-room" data-key="droom">
-    <div class="dr-head"><span class="kicker blood">The Death room</span><span class="tag blood">Capacity ${D.capacity}</span></div>
-    ${D.paralysed ? `<div class="banner blood" data-key="dpara">${dreamGlyph('SLEEP_PARALYSIS')}<div><b>You hold Sleep Paralysis.</b><p>The whole kill is blocked tonight. Your team does not know.</p></div></div>` : ''}
-    <ul class="mates">${props.map((p) => `<li class="${p.confirmed ? 'ok' : ''}" data-key="mate-${p.id}"><span class="mate-ini">${initials(p.name)}</span><span><b>${esc(p.id === me.id ? 'You' : p.name)}</b><small>${p.picks ? (p.picks.length ? p.picks.map(pname).join(' + ') : 'pass') : 'thinking…'}</small></span>${p.confirmed ? `<i class="ok-mark">${glyph('check')}</i>` : ''}</li>`).join('')}</ul>
-    <p class="agree ${agree ? 'yes' : 'no'}" data-key="agree-${agree}">${D.members.length === 1 ? 'You hunt alone.' : agree ? 'Your team agrees.' : 'Not agreed. Unless every one of you confirms the same target, nobody dies.'}</p>
+    <div class="dr-head"><span class="kicker blood">${t('The Death room')}</span><span class="tag blood">${th('Capacity {n}', { n: D.capacity })}</span></div>
+    ${D.paralysed ? `<div class="banner blood" data-key="dpara">${dreamGlyph('SLEEP_PARALYSIS')}<div><b>${t('You hold Sleep Paralysis.')}</b><p>${t('The whole kill is blocked tonight. Your team does not know.')}</p></div></div>` : ''}
+    <ul class="mates">${props.map((p) => `<li class="${p.confirmed ? 'ok' : ''}" data-key="mate-${p.id}"><span class="mate-ini">${initials(p.name)}</span><span><b>${esc(p.id === me.id ? t('You') : p.name)}</b><small>${p.picks ? (p.picks.length ? p.picks.map(pname).join(' + ') : t('pass')) : t('thinking…')}</small></span>${p.confirmed ? `<i class="ok-mark">${glyph('check')}</i>` : ''}</li>`).join('')}</ul>
+    <p class="agree ${agree ? 'yes' : 'no'}" data-key="agree-${agree}">${D.members.length === 1 ? t('You hunt alone.') : agree ? t('Your team agrees.') : t('Not agreed. Unless every one of you confirms the same target, nobody dies.')}</p>
   </section>`;
 }
 
 // ── End ────────────────────────────────────────────────────────────────────
 function endMain(v, me) {
-  const title = { DEATH: 'Death wins.', NON_DEATH: 'The living win.', JESTER: 'The Jester wins.', DRAW: 'A draw.', ABORTED: 'Abandoned.' }[v.winner] ?? 'The End';
+  const title = t({ DEATH: 'Death wins.', NON_DEATH: 'The living win.', JESTER: 'The Jester wins.', DRAW: 'A draw.', ABORTED: 'Abandoned.' }[v.winner] ?? 'The End');
   const won = didIWin(v, v.winner);
   const revealed = v.players.some((p) => p.role);
-  return `<section class="verdict ${v.winner === 'DEATH' ? 'death' : ''}" data-key="verdict"><span class="kicker">Verdict</span><h1>${letters(title)}</h1><p class="scenario">${esc(v.endReason)}</p>
-      ${won === null ? '' : `<div class="result-stamp ${won ? 'win' : 'loss'}">${won ? 'Victory' : 'Defeat'}</div>`}</section>
+  return `<section class="verdict ${v.winner === 'DEATH' ? 'death' : ''}" data-key="verdict"><span class="kicker">${t('Verdict')}</span><h1>${letters(title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
+      ${won === null ? '' : `<div class="result-stamp ${won ? 'win' : 'loss'}">${won ? t('Victory') : t('Defeat')}</div>`}</section>
     ${revealed ? ring(v, { reveal: true, center: centerFor(v) }) : ''}
-    <section data-key="reveal"><div class="rule">Every secret</div>${revealed ? `<ul class="ledger">${v.players.map((p, i) => `<li class="${p.alive ? '' : 'dead'} ${p.id === me?.id ? 'me' : ''}" style="--i:${i}" data-key="rv-${p.id}">
+    <section data-key="reveal"><div class="rule">${t('Every secret')}</div>${revealed ? `<ul class="ledger">${v.players.map((p, i) => `<li class="${p.alive ? '' : 'dead'} ${p.id === me?.id ? 'me' : ''}" style="--i:${i}" data-key="rv-${p.id}">
       <span class="seat">${p.role ? glyph(p.role.glyph) : ''}</span>
-      <span class="who"><b>${esc(p.name)}</b><small>${p.role ? esc(p.role.name) : '—'}${p.originalRole ? ` (was ${esc(p.originalRole.name)})` : ''} · ${p.alive ? 'alive' : `† ${esc(p.diedAt ?? '')}`}</small></span>
-      <span class="tags"><span class="tag ${p.alignment === 'DEATH' ? 'blood' : ''}">${esc(ALIGN[p.alignment] ?? '')}</span></span></li>`).join('')}</ul>` : '<p class="muted">The host chose not to reveal roles.</p>'}</section>
-    ${me && !me.moderator ? `<details class="more" data-key="endnotes"><summary>My notes</summary><div>${feed([...(v.private || [])].reverse(), 'feed-private')}</div></details>` : ''}
-    <details class="more" data-key="endrec"><summary>Public record</summary><div>${recordBlock(v)}</div></details>
-    <div class="row center" data-key="endbtns"><a class="btn" href="/" data-link>Back to start</a></div>`;
+      <span class="who"><b>${esc(p.name)}</b><small>${p.role ? esc(roleF(p.role.id, 'name')) : '—'}${p.originalRole ? ` ${th('(was {role})', { role: p.originalRole.id })}` : ''} · ${p.alive ? t('alive') : `† ${esc(stamp(p.diedAt))}`}</small></span>
+      <span class="tags"><span class="tag ${p.alignment === 'DEATH' ? 'blood' : ''}">${esc(ALIGN[p.alignment] ?? '')}</span></span></li>`).join('')}</ul>` : `<p class="muted">${t('The host chose not to reveal roles.')}</p>`}</section>
+    ${me && !me.moderator ? `<details class="more" data-key="endnotes"><summary>${t('My notes')}</summary><div>${feed([...(v.private || [])].reverse(), 'feed-private')}</div></details>` : ''}
+    <details class="more" data-key="endrec"><summary>${t('Public record')}</summary><div>${recordBlock(v)}</div></details>
+    <div class="row center" data-key="endbtns"><a class="btn" href="/" data-link>${t('Back to start')}</a></div>`;
 }
 
 // ── Moderator ──────────────────────────────────────────────────────────────
@@ -1341,19 +1407,22 @@ function moderatorMain(v) {
   if (v.phase === 'LOBBY') return lobbyMain(v, v.me);
   const sec = Object.fromEntries((v.secrets || []).map((s) => [s.id, s]));
   return `${head(v)}
-    <div class="banner blood" data-key="modb">${glyph('mentalist')}<div><b>Trusted moderator view</b><p>You see everything. Do not show this screen to players.</p></div></div>
+    <div class="banner blood" data-key="modb">${glyph('mentalist')}<div><b>${t('Trusted moderator view')}</b><p>${t('You see everything. Do not show this screen to players.')}</p></div></div>
     ${ring(v, { center: centerFor(v) })}
-    ${v.deathTeam ? `<div class="panel seal tight" data-key="moddt"><span class="kicker blood">Death room · capacity ${v.deathTeam.capacity}</span>${v.deathTeam.members.map((id) => `<p>${pname(id)}: ${(v.deathTeam.proposals[id] || []).map(pname).join(' + ') || '—'} ${v.deathTeam.confirmed[id] ? '(confirmed)' : ''}</p>`).join('')}</div>` : ''}
+    ${v.deathTeam ? `<div class="panel seal tight" data-key="moddt"><span class="kicker blood">${th('Death room · capacity {n}', { n: v.deathTeam.capacity })}</span>${v.deathTeam.members.map((id) => `<p>${pname(id)}: ${(v.deathTeam.proposals[id] || []).map(pname).join(' + ') || '—'} ${v.deathTeam.confirmed[id] ? `(${t('confirmed')})` : ''}</p>`).join('')}</div>` : ''}
     ${v.day ? nominationList(v) : ''}
-    <section data-key="modall"><div class="rule">Everyone</div><ul class="ledger">${v.players.map((p) => { const s = sec[p.id] || {}; return `<li class="${p.alive ? '' : 'dead'}" data-key="mod-${p.id}"><span class="seat">${String(p.seat + 1).padStart(2, '0')}</span><span class="who"><b>${esc(p.name)}</b><small>${esc(s.role ?? '')} · ${esc(ALIGN[s.alignment] ?? '')}${s.dream ? ` · dreams ${esc(s.dream)}` : ''}${s.statuses?.length ? ` · ${s.statuses.join(', ')}` : ''}${s.action ? ` · ${s.action.map((u) => [u.target ? pname(u.target) : '', u.option ?? ''].filter(Boolean).join(' ')).join('; ')}` : ''}${s.ballot ? ` · votes ${s.ballot === 'ABSTAIN' ? 'abstain' : pname(s.ballot)}` : ''}</small></span><span class="tags">${s.done ? '<span class="tag solid">Done</span>' : ''}</span></li>`; }).join('')}</ul></section>`;
+    <section data-key="modall"><div class="rule">${t('Everyone')}</div><ul class="ledger">${v.players.map((p) => { const s = sec[p.id] || {}; return `<li class="${p.alive ? '' : 'dead'}" data-key="mod-${p.id}"><span class="seat">${String(p.seat + 1).padStart(2, '0')}</span><span class="who"><b>${esc(p.name)}</b><small>${s.roleId ? esc(roleF(s.roleId, 'name')) : ''} · ${esc(ALIGN[s.alignment] ?? '')}${s.dreamId ? ` · ${th('dreams {dream}', { dream: s.dreamId })}` : ''}${s.statuses?.length ? ` · ${s.statuses.map(optLabel).join(', ')}` : ''}${s.action ? ` · ${s.action.map((u) => [u.target ? pname(u.target) : '', u.option ? esc(optLabel(u.option)) : ''].filter(Boolean).join(' ')).join('; ')}` : ''}${s.ballot ? ` · ${s.ballot === 'ABSTAIN' ? t('abstains') : th('votes {name}', { name: rawName(s.ballot) })}` : ''}</small></span><span class="tags">${s.done ? `<span class="tag solid">${t('Done')}</span>` : ''}</span></li>`; }).join('')}</ul></section>`;
 }
+
+/** Translation and markup helpers shared with the board, Gazette and guide. */
+const H = { esc, glyph, dreamGlyph, t, th, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, scen, tlist, tx, getLang };
 
 // ── Board (public TV display) ──────────────────────────────────────────────
 function boardView() {
   const v = V();
   if (S.conn === 'gone') return goneScreen();
   if (!v) return loadingScreen();
-  return boardScreen(v, { esc, glyph, ring, centerFor, roman, codeTiles, qrSvg, STEP, phaseWord, content: S.content, audio: S.board.audio, wordmark });
+  return boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, phaseWord, content: S.content, audio: S.board.audio, wordmark });
 }
 
 // ── Dock (primary action) ──────────────────────────────────────────────────
@@ -1361,45 +1430,45 @@ function dock(v) {
   const me = v.me;
   const a = v.action;
   const parts = [];
-  const hostNext = v.host?.advance && v.phase !== 'LOBBY' ? holdBtn('advance', v.host.advance, 'btn-host', { key: 'dock-adv' }) : '';
+  const hostNext = v.host?.advance && v.phase !== 'LOBBY' ? holdBtn('advance', t(v.host.advance), 'btn-host', { key: 'dock-adv' }) : '';
   const btn = (label, act, cls = 'btn-solid', dis = false, key = act, extra = '') => `<button class="btn ${cls}" data-act="${act}" data-key="d-${key}" ${extra} ${dis ? 'disabled' : ''} ${S.pending ? 'data-pending' : ''}>${label}</button>`;
+  const startLabel = () => (v.setup.notReady ? th('Waiting for {n} to ready up', { n: v.setup.notReady }) : v.setup.ok ? t('Hold to start') : t('Fix setup first'));
   if (me?.moderator) {
-    if (v.phase === 'LOBBY' && v.host) parts.push(holdBtn('start', v.setup.notReady ? `Waiting for ${v.setup.notReady} to ready up` : 'Hold to start', 'btn-solid', { dis: !v.setup.ok || !!v.setup.notReady }));
+    if (v.phase === 'LOBBY' && v.host) parts.push(holdBtn('start', startLabel(), 'btn-solid', { dis: !v.setup.ok || !!v.setup.notReady }));
   } else if (me) {
     switch (v.phase) {
-      case 'LOBBY':
-        if (v.host) parts.push(holdBtn('start', v.players.length < 5 ? `Need ${5 - v.players.length} more player${5 - v.players.length === 1 ? '' : 's'}` : v.setup.notReady ? `Waiting for ${v.setup.notReady} to ready up` : v.setup.ok ? 'Hold to start' : 'Fix setup first', `btn-solid ${v.setup.ok && !v.setup.notReady ? 'glow' : ''}`, { dis: !v.setup.ok || !!v.setup.notReady }));
-        else parts.push(btn(me.ready ? `${glyph('check')} Ready` : 'I\'m ready', 'ready', me.ready ? 'is-on' : 'btn-solid glow'));
+      case 'LOBBY': {
+        const need = 5 - v.players.length;
+        if (v.host) parts.push(holdBtn('start', need > 0 ? (need === 1 ? t('Need 1 more player') : th('Need {n} more players', { n: need })) : startLabel(), `btn-solid ${v.setup.ok && !v.setup.notReady ? 'glow' : ''}`, { dis: !v.setup.ok || !!v.setup.notReady }));
+        else parts.push(btn(me.ready ? `${glyph('check')} ${t('Ready')}` : t('I\'m ready'), 'ready', me.ready ? 'is-on' : 'btn-solid glow'));
         break;
+      }
       case 'NIGHT_0_REVEAL':
-        if (!me.acknowledged) parts.push(btn('Understood', 'ack', 'btn-solid', !S.ui.flipped[`n0-${v.phaseId}`]));
+        if (!me.acknowledged) parts.push(btn(t('Understood'), 'ack', 'btn-solid', !S.ui.flipped[`n0-${v.phaseId}`]));
         break;
       case 'DAY_PREP': {
         const shot = a.abilities?.find((x) => x.kind === 'shoot' && x.choice);
-        if (shot) parts.push(`<span class="dock-note blood" data-key="aim">${glyph('vigilante')} Aimed at ${pname(shot.choice)}</span>`);
+        if (shot) parts.push(`<span class="dock-note blood" data-key="aim">${glyph('vigilante')} ${th('Aimed at {name}', { name: rawName(shot.choice) })}</span>`);
         break;
       }
       case 'DAY_DISCUSSION':
-        if (a.type === 'nominate' && !a.mine && S.sel.nominate) parts.push(btn(`Accuse ${pname(S.sel.nominate)}`, 'nominate', 'btn-blood'));
+        if (a.type === 'nominate' && !a.mine && S.sel.nominate) parts.push(btn(th('Accuse {name}', { name: rawName(S.sel.nominate) }), 'nominate', 'btn-blood'));
         break;
       case 'DAY_VOTING':
         if (a.type === 'ballot') {
           const sel = S.sel.vote ?? a.choice;
-          if (sel && sel !== a.choice) parts.push(btn(sel === 'ABSTAIN' ? 'Abstain' : `Vote ${pname(sel)}`, 'vote', 'btn-blood'));
-          else if (a.choice) parts.push(`<span class="dock-note stamped" data-key="rec-${a.choice}">${glyph('check')} ${a.choice === 'ABSTAIN' ? 'Abstained' : `Voted ${pname(a.choice)}`}</span>`);
+          if (sel && sel !== a.choice) parts.push(btn(sel === 'ABSTAIN' ? t('Abstain') : th('Vote {name}', { name: rawName(sel) }), 'vote', 'btn-blood'));
+          else if (a.choice) parts.push(`<span class="dock-note stamped" data-key="rec-${a.choice}">${glyph('check')} ${a.choice === 'ABSTAIN' ? t('Abstained') : th('Voted {name}', { name: rawName(a.choice) })}</span>`);
         }
         break;
       case 'DAY_RESOLVING':
         if (a.type === 'retaliate') {
-          parts.push(btn('Go quietly', 'retaliate', 'btn-ghost', false, 'quiet', 'data-none="1"'));
-          if (S.sel.retaliate) parts.push(btn(`Take ${pname(S.sel.retaliate)}`, 'retaliate', 'btn-blood'));
+          parts.push(btn(t('Go quietly'), 'retaliate', 'btn-ghost', false, 'quiet', 'data-none="1"'));
+          if (S.sel.retaliate) parts.push(btn(th('Take {name}', { name: rawName(S.sel.retaliate) }), 'retaliate', 'btn-blood'));
         }
         break;
-      case 'NIGHT_DREAM_SWAP':
-        if (a.type === 'swap' && a.snatcher && !a.done && S.sel.swap && S.ui.unveiled[v.phaseId]) parts.push(btn(`Swap with ${pname(S.sel.swap)}`, 'swap', 'btn-solid'));
-        break;
       case 'NIGHT_ACTIONS':
-        if (a.type === 'night' && !a.done && S.ui.unveiled[v.phaseId]) { const r = commitReady(a); parts.push(btn(`${glyph('moon')} ${esc(r.label)}`, 'commit', a.death ? 'btn-blood' : 'btn-solid', !r.ok)); }
+        if (a.type === 'night' && !a.done && !S.ui.veiled[v.phaseId]) { const r = commitReady(a); parts.push(btn(`${glyph('moon')} ${esc(r.label)}`, 'commit', a.death ? 'btn-blood' : 'btn-solid', !r.ok)); }
         break;
       default: break;
     }
@@ -1412,14 +1481,14 @@ function dock(v) {
 function commitReady(a) {
   if (a.death) {
     const picks = S.sel.death ?? a.death.proposals[V().me.id] ?? [];
-    return { ok: true, label: picks.length ? `Confirm ${picks.map((id) => player(id)?.name).join(' + ')}` : 'Confirm: pass' };
+    return { ok: true, label: picks.length ? t('Confirm {x}', { x: picks.map(rawName).join(' + ') }) : t('Confirm: pass') };
   }
   const s = a.schema;
-  if (!s || s.blocked || s.kind === 'chat') return { ok: true, label: 'Go to sleep' };
+  if (!s || s.blocked || s.kind === 'chat') return { ok: true, label: t('Go to sleep') };
   const sel = S.sel.uses ?? [];
-  if (!sel.length) return { ok: true, label: s.role.id === 'MIMIC' || s.role.id === 'DOUBLE_AGENT' ? 'Skip (not advised)' : 'Pass & sleep' };
-  if (s.options && sel.some((u) => !u.option)) return { ok: false, label: 'Choose an option' };
-  return { ok: true, label: 'Commit & sleep' };
+  if (!sel.length) return { ok: true, label: s.role.id === 'MIMIC' || s.role.id === 'DOUBLE_AGENT' ? t('Skip (not advised)') : t('Pass & sleep') };
+  if (s.options && sel.some((u) => !u.option)) return { ok: false, label: t('Choose an option') };
+  return { ok: true, label: t('Commit & sleep') };
 }
 
 // ── Actions ────────────────────────────────────────────────────────────────
@@ -1435,7 +1504,7 @@ const ACT = {
     if (!name) return toast('Enter your name first.', 'err');
     S.pending = true; render();
     try {
-      const r = await api('/api/rooms', { name, moderated: S.ui.moderated });
+      const r = await api('/api/rooms', { name, moderated: S.ui.moderated, lang: getLang() });
       saveSession(r.code, r);
       sound.play('reveal');
       go(`/r/${r.code}`);
@@ -1478,16 +1547,16 @@ const ACT = {
     } catch (e) { toast(e.message, 'err'); }
   },
   leave() {
-    if (!confirm('Forget this seat on this device? You can only get it back with a recovery code from the host.')) return;
+    if (!confirm(t('Forget this seat on this device? You can only get it back with a recovery code from the host.'))) return;
     clearSession(S.code); disconnect(); S.token = null; go('/');
   },
   back() { if (history.length > 1) history.back(); else go('/'); },
   sheet(el) { const id = el.dataset.id; S.ui.sheet = id && S.ui.sheet !== id ? id : null; if (S.ui.sheet) uiSound('whoosh'); render(); },
   seatSheet(el) { S.ui.sheet = `seat:${el.dataset.id}`; render(); },
   sound() { sound.toggle(); render(); },
-  copy(el) { navigator.clipboard?.writeText(el.dataset.text).then(() => toast('Invite link copied'), () => toast(el.dataset.text)); burstAt(el); },
+  copy(el) { navigator.clipboard?.writeText(el.dataset.text).then(() => toast(t('Invite link copied')), () => toast(el.dataset.text)); burstAt(el); },
   share(el) {
-    if (navigator.share) navigator.share({ title: 'Dead Set', text: 'Take a seat at my Dead Set table', url: el.dataset.text }).catch(() => {});
+    if (navigator.share) navigator.share({ title: 'Dead Set', text: t('Take a seat at my Dead Set table'), url: el.dataset.text }).catch(() => {});
     else ACT.copy(el);
   },
   ready(el) { if (!V().me.ready) burstAt(el); send('lobby.ready', { ready: !V().me.ready }); },
@@ -1498,10 +1567,10 @@ const ACT = {
   scenMode(el) { send('host.settings', { scenario: { mode: el.dataset.mode } }); },
   transport(el) { send('host.settings', { transport: el.dataset.mode }); },
   seat(el) { send('host.seat', { playerId: el.dataset.pid, dir: Number(el.dataset.dir) }); },
-  kick(el) { if (confirm(`Remove ${player(el.dataset.pid)?.name} from the table?`)) { S.ui.sheet = null; send('host.kick', { playerId: el.dataset.pid }); } },
+  kick(el) { if (confirm(t('Remove {name} from the table?', { name: rawName(el.dataset.pid) }))) { S.ui.sheet = null; send('host.kick', { playerId: el.dataset.pid }); } },
   advance(el) { S.ui.sheet = null; send('host.advance', { skipAll: !!el.dataset.skip }); },
   extend() { send('host.extend', { seconds: 30 }); },
-  end() { if (confirm('End the match now? It will be recorded as abandoned — no faction wins.')) send('host.end'); },
+  end() { if (confirm(t('End the match now? It will be recorded as abandoned — no faction wins.'))) send('host.end'); },
   rematch() { S.ui.sheet = null; send('host.rematch'); },
   claim() { send('host.claim'); },
   issueRecovery() { const id = S.drafts.recPick || V().players.find((p) => p.id !== V().me?.id)?.id; if (id) send('host.recovery', { playerId: id }); },
@@ -1513,8 +1582,8 @@ const ACT = {
     render();
   },
   ack(el) { burstAt(el); send('role.ack'); },
-  unveil() { S.ui.unveiled[V().phaseId] = true; render(); },
-  veil() { S.ui.unveiled[V().phaseId] = false; render(); },
+  unveil() { S.ui.veiled[V().phaseId] = false; render(); },
+  veil() { S.ui.veiled[V().phaseId] = true; render(); },
   async immunity() { await send('day.immunity'); },
   shoot(el) { picked(el, true, true); const cur = V().action.abilities.find((x) => x.kind === 'shoot')?.choice; send('day.shoot', { target: cur === el.dataset.id ? null : el.dataset.id }); },
   pickNominate(el) { picked(el); S.sel.nominate = S.sel.nominate === el.dataset.id ? null : el.dataset.id; render(); },
@@ -1527,8 +1596,7 @@ const ACT = {
   },
   pickRetaliate(el) { picked(el, true); S.sel.retaliate = el.dataset.id; render(); },
   retaliate(el) { send('day.retaliate', { target: el.dataset.none ? null : S.sel.retaliate }); },
-  pickSwap(el) { picked(el); S.sel.swap = S.sel.swap === el.dataset.id ? null : el.dataset.id; render(); },
-  swap(el) { send('dream.swap', { target: el.dataset.none ? null : S.sel.swap }); },
+  pickSwap(el) { picked(el, false, true); S.sel.swap = S.sel.swap === el.dataset.id ? null : el.dataset.id; send('dream.swap', { target: S.sel.swap }); render(); },
   pickTarget(el) {
     picked(el, el.classList.contains('kill'));
     const s = V().action.schema;
@@ -1574,6 +1642,12 @@ const ACT = {
   chatTab(el) { S.ui.chat = el.dataset.id; render(); },
   tab(el) { S.ui.tab = el.dataset.id; render(); },
   momentNext() { nextMoment(); },
+  langSheet() { S.ui.sheet = S.ui.sheet === 'lang' ? null : 'lang'; render(); },
+  setLang(el) {
+    if (el.dataset.id) localStorage.setItem(LANG_KEY, el.dataset.id); else localStorage.removeItem(LANG_KEY);
+    S.ui.sheet = null;
+    loadLang(wantedLang()).then(render);
+  },
   boardScore() { sound.unlock(); if (!sound.on) sound.toggle(); S.board.audio = true; reportBoardAudio(true); render(); },
   boardMute() { S.board.audio = false; score.stop(); reportBoardAudio(false); render(); },
 };
@@ -1661,6 +1735,7 @@ document.addEventListener('change', (e) => {
     if (el.checked) sel.add(el.dataset.id); else sel.delete(el.dataset.id);
     send('host.settings', { rules: { selected: [...sel] } });
   }
+  if (el.dataset.actChange === 'tableLang') send('host.settings', { lang: el.value });
   if (el.dataset.actChange === 'assign') send('host.assign', { playerId: el.dataset.pid, roleId: el.value || null });
 });
 document.addEventListener('submit', (e) => {
@@ -1696,4 +1771,4 @@ document.addEventListener('pointermove', (e) => {
 });
 
 loadContent();
-boot();
+loadLang(wantedLang()).finally(boot);

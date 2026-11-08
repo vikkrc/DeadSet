@@ -278,4 +278,7 @@ export const PRESETS = {
 };
 
 export const MIN_PLAYERS = 5;
+
+/** Interface languages. The table sets a default; each player may override it. */
+export const LANGS = ['en', 'hu', 'sk', 'cs', 'de', 'fr', 'es'];
 export const ABS_MAX_PLAYERS = 18;

@@ -49,7 +49,7 @@ export function tally(m) {
     const threshold = d.eligibleVoters.length / 2;
     result.threshold = threshold;
     if (!(weight > threshold)) {
-      result.reason = `Majority Rule: ${weight} is not more than half of ${d.eligibleVoters.length} eligible voters. No one is sentenced.`;
+      result.reason = ['Majority Rule: {w} is not more than half of {n} eligible voters. No one is sentenced.', { w: weight, n: d.eligibleVoters.length }];
       return result;
     }
   }

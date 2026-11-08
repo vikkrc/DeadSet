@@ -78,14 +78,14 @@ test('T28 offline phone: committed action persists, missing input passes at dead
   const seats = [host];
   for (let i = 1; i < 5; i++) seats.push(rm.joinRoom(host.code, { name: `P${i}` }));
   for (const s of seats.slice(1)) rm.command(host.code, s.token, { type: 'lobby.ready', payload: { ready: true } });
-  rm.command(host.code, host.token, { type: 'host.settings', payload: { timers: { night: 30, swap: 10 } } });
+  rm.command(host.code, host.token, { type: 'host.settings', payload: { timers: { night: 30 } } });
   rm.command(host.code, host.token, { type: 'host.start' });
   const m = rm.rooms.get(host.code).match;
   for (const s of seats) rm.command(host.code, s.token, { type: 'role.ack', phaseId: m.phaseId });
   rm.command(host.code, host.token, { type: 'host.advance', phaseId: m.phaseId });
   rm.command(host.code, host.token, { type: 'host.advance', phaseId: m.phaseId }); // no nominations → night
   assert.equal(m.phase, 'NIGHT_DREAM_SWAP');
-  now += 11_000;
+  now += 6_000;
   // Drive the deadline directly rather than waiting on real timers.
   return import('../engine/game.js').then(({ onDeadline: od }) => {
     assert.ok(od(m, rm.rng, now));
@@ -104,7 +104,8 @@ test('peek previews a room for the invitation without secrets', () => {
   assert.equal(p.host, 'Ada');
   assert.equal(p.seated, 6);
   assert.equal(p.phase, 'LOBBY');
-  assert.equal(p.preset, 'Standard');
+  assert.equal(p.preset, 'standard');
+  assert.equal(p.lang, 'en');
   assert.equal(rm.peek('ZZZZZZ').exists, false);
   assert.ok(!JSON.stringify(p).includes('token'));
 });

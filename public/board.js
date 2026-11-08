@@ -14,7 +14,7 @@ export function activeRuleNotes(v) {
     switch (r.id) {
       case 'FOG_OF_WAR': if (talk) note = 'Talk only to your seat neighbours'; break;
       case 'CURSED_SILENCE': if (talk) note = 'Speak only when addressed'; break;
-      case 'MAJORITY_RULE': if (vote) note = v.day?.majority != null ? `More than ${v.day.majority} weight needed` : 'A strict majority is needed'; break;
+      case 'MAJORITY_RULE': if (vote) note = v.day?.majority != null ? ['More than {n} weight needed', { n: v.day.majority }] : 'A strict majority is needed'; break;
       case 'PARANOIA': if (vote) note = 'Every ballot weighs one more'; break;
       case 'VENGEFUL_GHOSTS': if (vote) note = 'The dead cast ghost ballots'; break;
       case 'EQUAL_EXCHANGE': if (vote || ph === 'DAY_RESOLVING') note = 'A sentenced Death takes one along'; break;
@@ -44,16 +44,16 @@ const RULE_GLYPH = {
 export const ruleGlyph = (id) => RULE_GLYPH[id] ?? 'scroll';
 
 export function boardScreen(v, h) {
-  const { esc, glyph, ring, centerFor, roman, codeTiles, qrSvg, STEP, phaseWord, content, audio, wordmark } = h;
+  const { esc, glyph, ring, centerFor, codeTiles, qrSvg, STEP, phaseWord, audio, wordmark, t, th, tmh, roleF, ruleF, presetF, scen, tlist } = h;
   const pw = phaseWord(v);
   const night = ['NIGHT_0_REVEAL', 'NIGHT_DREAM_SWAP', 'NIGHT_ACTIONS'].includes(v.phase);
-  const place = v.scenario ? v.scenario.where.replace(/^(a|an|the)\s+/i, '') : '';
-  const soundCtl = !v.table?.score ? '<span class="b-sound off">Score off</span>'
-    : !audio ? `<button class="b-sound start" data-act="boardScore">${glyph('bell')} Start the score</button>`
-      : `<button class="b-sound on" data-act="boardMute">${glyph('bell')}<span class="eq"><i></i><i></i><i></i><i></i></span> ${night ? 'Night' : 'Day'} score</button>`;
+  const place = v.scenario ? scen('WHERE', v.scenario.where).replace(/^(a|an|the)\s+/i, '') : '';
+  const soundCtl = !v.table?.score ? `<span class="b-sound off">${t('Score off')}</span>`
+    : !audio ? `<button class="b-sound start" data-act="boardScore">${glyph('bell')} ${t('Start the score')}</button>`
+      : `<button class="b-sound on" data-act="boardMute">${glyph('bell')}<span class="eq"><i></i><i></i><i></i><i></i></span> ${night ? t('Night score') : t('Day score')}</button>`;
   const header = `<header class="b-head" data-key="bhead">
     ${wordmark()}
-    <span class="b-phase">${pw.word === 'Night' ? `<i>${pw.word}</i>` : esc(pw.word)}${pw.num ? `<sup>${esc(pw.num)}</sup>` : ''}</span>
+    <span class="b-phase">${pw.night ? `<i>${esc(pw.word)}</i>` : esc(pw.word)}${pw.num ? `<sup>${esc(pw.num)}</sup>` : ''}</span>
     <span class="b-step">${esc(STEP[v.phase] ?? '')}${place ? ` · ${esc(place)}` : ''}</span>
     <span class="grow"></span>
     <span class="b-clock clock" data-clock></span>
@@ -65,35 +65,34 @@ export function boardScreen(v, h) {
     const url = `${location.origin}/r/${v.code}`;
     const s = v.settings;
     const deck = v.setup?.publicDeck;
-    const roles = Object.fromEntries((content?.roles ?? []).map((r) => [r.id, r]));
-    const rules = Object.fromEntries((content?.rules ?? []).map((r) => [r.id, r]));
-    const card = (id, n, cls = '') => `<div class="dcard ${cls}" data-key="dk-${id}">${roles[id] ? glyph(roles[id].glyph) : ''}<b>${esc(roles[id]?.name ?? id)}</b>${n > 1 ? `<i>×${n}</i>` : ''}</div>`;
+    const roles = Object.fromEntries((h.content?.roles ?? []).map((r) => [r.id, r]));
+    const card = (id, n, cls = '') => `<div class="dcard ${cls}" data-key="dk-${id}">${roles[id] ? glyph(roles[id].glyph) : ''}<b>${esc(roleF(id, 'name'))}</b>${n > 1 ? `<i>×${n}</i>` : ''}</div>`;
     let deckHtml = '';
     if (deck?.exact) deckHtml = Object.entries(deck.exact).map(([id, n]) => card(id, n, roles[id]?.alignment === 'DEATH' ? 'death' : '')).join('');
     else if (deck) {
       deckHtml = Object.entries(deck.core).filter(([, n]) => n > 0).map(([id, n]) => card(id, n, id === 'DEATH' ? 'death' : '')).join('')
-        + (deck.extended ? `<div class="dcard secret" data-key="dk-ext"><span class="q">?</span><b>${deck.extended} extended</b></div>` : '');
+        + (deck.extended ? `<div class="dcard secret" data-key="dk-ext"><span class="q">?</span><b>${th('{n} extended', { n: deck.extended })}</b></div>` : '');
     }
     const ruleCards = s.rules.mode === 'manual'
-      ? (s.rules.selected.length ? s.rules.selected.map((id) => `<div class="dcard rcard" data-key="rc-${id}">${glyph(ruleGlyph(id))}<b>${esc(rules[id]?.name ?? id)}</b></div>`).join('') : '<p class="small muted">No rule cards.</p>')
-      : Array.from({ length: s.rules.count }, (_, i) => `<div class="dcard rcard fd" data-key="rc-r${i}"><span class="q">?</span><b>Drawn at start</b></div>`).join('') || '<p class="small muted">No rule cards.</p>';
+      ? (s.rules.selected.length ? s.rules.selected.map((id) => `<div class="dcard rcard" data-key="rc-${id}">${glyph(ruleGlyph(id))}<b>${esc(ruleF(id, 'name'))}</b></div>`).join('') : `<p class="small muted">${t('No rule cards.')}</p>`)
+      : Array.from({ length: s.rules.count }, (_, i) => `<div class="dcard rcard fd" data-key="rc-r${i}"><span class="q">?</span><b>${t('Drawn at start')}</b></div>`).join('') || `<p class="small muted">${t('No rule cards.')}</p>`;
     return `<main class="board2 lobby" data-key="board-lobby">${header}
       <div class="b-lobby">
         <section class="b-join">
-          <span class="kicker">Scan to take a seat</span>
+          <span class="kicker">${t('Scan to take a seat')}</span>
           <div class="qr-frame">${qrSvg(url)}</div>
           <div class="code-tiles big">${codeTiles(v.code)}</div>
           <span class="small muted">${esc(location.host)}</span>
         </section>
         <section class="b-table">${ring(v, { center: centerFor(v), lobby: true, slots: Math.max(5, v.players.length) })}</section>
         <section class="b-deck">
-          <span class="kicker">Tonight's deck · ${esc(v.presets?.find((p) => p.id === s.preset)?.name ?? '')}</span>
+          <span class="kicker">${t('Tonight\'s deck')} · ${esc(presetF(s.preset, 'name'))}</span>
           <div class="deckrow">${deckHtml}</div>
-          ${deck?.extended ? `<p class="small muted">Extended seats are drawn secretly from: ${deck.pool.map((id) => esc(roles[id]?.name ?? id)).join(', ')}.</p>` : ''}
-          <span class="kicker">Rule cards</span>
+          ${deck?.extended ? `<p class="small muted">${th('Extended seats are drawn secretly from: {names}.', { names: deck.pool.map((id) => roleF(id, 'name')) })}</p>` : ''}
+          <span class="kicker">${t('Rule cards')}</span>
           <div class="deckrow">${ruleCards}</div>
-          <span class="kicker">Story</span>
-          <p class="scenario">${s.scenario.mode === 'manual' && s.scenario.who ? esc(`${s.scenario.who} · ${s.scenario.where} · ${s.scenario.why}`) : 'Dealt when the match begins.'}</p>
+          <span class="kicker">${t('Story')}</span>
+          <p class="scenario">${s.scenario.mode === 'manual' && s.scenario.who ? esc(`${scen('WHO', s.scenario.who)} · ${scen('WHERE', s.scenario.where)} · ${scen('WHY', s.scenario.why)}`) : t('Dealt when the match begins.')}</p>
         </section>
       </div></main>`;
   }
@@ -140,14 +139,14 @@ export function boardScreen(v, h) {
   if (night) extra += '<div class="b-fog" data-key="fog" aria-hidden="true"><i></i><i></i><i></i></div>';
   const centerExtra = !night && v.phase !== 'ENDED' && v.phase !== 'DAY_VOTING' ? '<div class="b-candle" aria-hidden="true"><i></i><b></b></div>' : '';
   const live = activeRuleNotes(v);
-  const plaques = (v.activeRules || []).map((r) => `<span class="plaque ${live[r.id] ? 'on' : ''}" data-key="pl-${r.id}">${glyph(ruleGlyph(r.id))}<span>${esc(r.name)}${live[r.id] ? `<em>${esc(live[r.id])}</em>` : ''}</span></span>`).join('');
+  const plaques = (v.activeRules || []).map((r) => `<span class="plaque ${live[r.id] ? 'on' : ''}" data-key="pl-${r.id}">${glyph(ruleGlyph(r.id))}<span>${esc(ruleF(r.id, 'name'))}${live[r.id] ? `<em>${tmh(live[r.id])}</em>` : ''}</span></span>`).join('');
   const table = ring(v, { center: centerExtra + centerFor(v), reveal: v.phase === 'ENDED', crack: true, extra });
   return `<main class="board2 ${night ? 'is-night' : 'is-day'}" data-key="board-game">
     ${header}
     <div class="b-cols">
       <section class="b-stage">${table}<div class="plaques">${plaques}</div>
       </section>
-      <aside class="b-side" data-scroll="b-gz">${gazetteHtml(v, { glyph, esc })}</aside>
+      <aside class="b-side" data-scroll="b-gz">${gazetteHtml(v, h)}</aside>
     </div>
     <div class="b-pressure" aria-hidden="true">${Array.from({ length: 22 }, (_, i) => `<i style="--i:${i}"></i>`).join('')}</div>
   </main>`;

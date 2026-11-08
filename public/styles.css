@@ -1018,3 +1018,24 @@ body.pressure.is-board .b-clock { color: var(--blood-ink); }
 .is-board .toasts { top: auto; bottom: 28px; left: 50%; }
 .letter > * { min-width: 0; }
 .letter p, .letter h2 { overflow-wrap: anywhere; }
+
+/* ── Language ───────────────────────────────────────────────────────────── */
+.lang-chip span { letter-spacing: 0.08em; }
+.lang-list { display: grid; gap: 6px; margin-bottom: 10px; }
+.lang-opt { display: flex; align-items: center; justify-content: space-between; min-height: 46px; padding: 0 16px; border: 1px solid var(--line-2); border-radius: 12px; background: transparent; color: var(--bone-2); font: 500 16px/1 var(--sans); text-align: left; cursor: pointer; transition: background 0.2s, border-color 0.2s, color 0.2s; }
+.lang-opt:active { transform: scale(0.98); }
+.lang-opt.on { border-color: var(--bone); color: var(--bone); background: rgba(236, 229, 213, 0.06); }
+.lang-opt .glyph { font-size: 18px; }
+.lang-select { width: auto; min-width: 140px; min-height: 40px; padding: 0 10px; }
+.ins-lines { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 3px; font-size: 0.92em; color: var(--bone-2); }
+
+/* ── Nightfall (five-second grace before night actions) ─────────────────── */
+.nightfall { display: grid; justify-items: center; gap: 14px; padding: 22px 12px 8px; text-align: center; animation: fadeUp 0.6s var(--ease) both; }
+.nightfall h2 { font: italic 400 30px/1.1 var(--serif); color: var(--bone); margin: 0; }
+.nightfall .moon.big { animation: float 5s ease-in-out infinite; }
+.nightfall.snatch { padding-top: 6px; }
+.nightfall-count { display: grid; justify-items: center; gap: 6px; }
+.nightfall-count b { font: 400 54px/1 var(--serif); color: var(--bone); font-variant-numeric: tabular-nums; min-height: 54px; animation: nfPulse 1s ease-in-out infinite; }
+.nightfall-count span { font-size: 13px; color: var(--muted, var(--bone-2)); max-width: 26ch; }
+@keyframes nfPulse { 0%, 100% { opacity: 0.55; transform: scale(0.96); } 50% { opacity: 1; transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .nightfall-count b { animation: none; } }

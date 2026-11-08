@@ -17,6 +17,7 @@ import { ballotWeight, tally } from './day.js';
 export { GameError };
 
 const MAX_CHAT = 280;
+export const NIGHT_GRACE_SECONDS = 5;
 
 export function newMatch({ id, code, hostId, moderated = false }) {
   return {
@@ -141,14 +142,14 @@ export function startMatch(m, rng, now, { forceRoles = null } = {}) {
   m.winner = null;
   m.endReason = null;
   enterPhase(m, 'NIGHT_0_REVEAL', now, 0);
-  pub(m, `We are ${m.scenario.who}, in ${m.scenario.where}, trying to ${m.scenario.why}.`, 'scenario', { ev: 'scenario' });
-  if (m.activeRules.length) pub(m, `Rules in force: ${m.activeRules.map((r) => RULE_CARDS[r].name).join(', ')}.`, 'rules');
+  pub(m, ['We are {who}, in {where}, trying to {why}.', { who: m.scenario.who, where: m.scenario.where, why: m.scenario.why }], 'scenario', { ev: 'scenario' });
+  if (m.activeRules.length) pub(m, ['Rules in force: {rules}.', { rules: [...m.activeRules] }], 'rules');
   pub(m, 'Night 0. Look only at your own screen.', 'phase', { ev: 'night0' });
   for (const p of m.players) {
-    priv(m, p.id, `You are ${ROLES[p.roleId].name}.`, 'role');
+    priv(m, p.id, ['You are {role}.', { role: p.roleId }], 'role');
     if (p.alignment === 'DEATH') {
       const mates = m.players.filter((x) => x.alignment === 'DEATH' && x.id !== p.id).map((x) => x.name);
-      priv(m, p.id, mates.length ? `Your Death teammates: ${mates.join(', ')}.` : 'You are the only Death. Hunt alone.', 'death');
+      priv(m, p.id, mates.length ? ['Your Death teammates: {names}.', { names: mates }] : 'You are the only Death. Hunt alone.', 'death');
     }
   }
 }
@@ -172,7 +173,7 @@ function endMatch(m, result, now) {
   m.endReason = result.reason;
   m.jesterId = result.jesterId ?? null;
   const label = { DEATH: 'Death wins.', NON_DEATH: 'The non-Death faction wins.', JESTER: 'The Jester wins alone.', DRAW: 'Draw.', ABORTED: 'Match aborted by the host.' }[result.winner];
-  pub(m, `${label} ${result.reason}`, 'end', { ev: 'end', winner: result.winner, reason: result.reason });
+  pub(m, ['{label} {reason}', { label: [label, {}], reason: typeof result.reason === 'string' ? [result.reason, {}] : result.reason }], 'end', { ev: 'end', winner: result.winner, reason: result.reason });
   m.night = null;
   enterPhase(m, 'ENDED', now, 0);
 }
@@ -216,27 +217,27 @@ function closeMorning(m, now) {
     a.charges.VIGILANTE = 0;
     const t = byId(m, target);
     if (!t.alive) continue;
-    if (t.tempRevival) { priv(m, actorId, `Your shot passed through ${t.name} — the dead cannot die twice while borrowed time lasts.`); continue; }
+    if (t.tempRevival) { priv(m, actorId, ['Your shot passed through {b} — the dead cannot die twice while borrowed time lasts.', { b: t.name }]); continue; }
     if (!victims.includes(t.id)) victims.push(t.id);
-    priv(m, actorId, `Your shot killed ${t.name}.`);
+    priv(m, actorId, ['Your shot killed {b}.', { b: t.name }]);
   }
   for (const id of victims) {
     const t = byId(m, id);
     t.alive = false; t.diedAt = `Day ${m.dayNumber}`; t.causes = ['VIGILANTE'];
   }
   if (shots.length) {
-    pub(m, victims.length ? `A shot rang out across the square. ${victims.map((id) => deathName(m, id)).join(', ')} fell.` : 'A shot rang out across the square, but nobody fell.', 'death', { victims, ev: 'shot' });
+    pub(m, victims.length ? ['A shot rang out across the square. {dead} fell.', { dead: deadList(m, victims) }] : 'A shot rang out across the square, but nobody fell.', 'death', { victims, ev: 'shot' });
   }
   if (victims.length && victoryOrNull(m, now)) return;
-  pub(m, `Day ${m.dayNumber}: discussion and nominations are open.`, 'phase', { ev: 'discussion' });
+  pub(m, ['Day {n}: discussion and nominations are open.', { n: m.dayNumber }], 'phase', { ev: 'discussion' });
   enterPhase(m, 'DAY_DISCUSSION', now, T(m, 'discussion'));
 }
 
-function deathName(m, id) {
-  const p = byId(m, id);
+function deadList(m, ids) {
   const reveal = m.settings.revealOnDeath && !hasRule(m, 'HIDDEN_ROLES');
-  return reveal ? `${p.name} (${ROLES[p.roleId].name})` : p.name;
+  return ids.map((id) => [byId(m, id).name, reveal ? byId(m, id).roleId : null]);
 }
+
 
 export function nominees(m) {
   if (!m.day) return [];
@@ -255,7 +256,7 @@ function closeDiscussion(m, now) {
     return;
   }
   m.day.defenseIndex = 0;
-  pub(m, `Defence: ${list.map((id) => nameOf(m, id)).join(', ')} will each speak in turn.`, 'phase', { ev: 'defense' });
+  pub(m, ['Defence: {names} will each speak in turn.', { names: list.map((id) => nameOf(m, id)) }], 'phase', { ev: 'defense' });
   enterPhase(m, 'DAY_DEFENSE', now, T(m, 'defense'));
 }
 
@@ -271,7 +272,7 @@ function openVoting(m, now) {
   m.day.ghostVoters = hasRule(m, 'VENGEFUL_GHOSTS') ? m.players.filter((p) => !p.alive && !p.tempRevival).map((p) => p.id) : [];
   m.day.ballots = {};
   m.day.ghostBallots = {};
-  pub(m, `The vote is open. Candidates: ${nominees(m).map((id) => nameOf(m, id)).join(', ')}.`, 'vote', { ev: 'vote-open' });
+  pub(m, ['The vote is open. Candidates: {names}.', { names: nominees(m).map((id) => nameOf(m, id)) }], 'vote', { ev: 'vote-open' });
   enterPhase(m, 'DAY_VOTING', now, T(m, 'voting'));
 }
 
@@ -293,7 +294,7 @@ function resolveDay(m, now, { noVote = false } = {}) {
     const t = tally(m);
     d.result = t;
     const line = Object.entries(t.totals).sort((a, b) => b[1] - a[1]).map(([id, w]) => `${nameOf(m, id)} ${w}`).join(' · ');
-    pub(m, `Ballots counted${line ? `: ${line}` : ''}. ${t.abstain ? `${t.abstain} abstained.` : ''}`.trim(), 'vote', { ev: 'tally', totals: t.totals, majority: t.majority, threshold: t.threshold ?? null });
+    pub(m, line ? (t.abstain ? ['Ballots counted: {line}. {n} abstained.', { line, n: t.abstain }] : ['Ballots counted: {line}.', { line }]) : (t.abstain ? ['Ballots counted. {n} abstained.', { n: t.abstain }] : 'Ballots counted.'), 'vote', { ev: 'tally', totals: t.totals, majority: t.majority, threshold: t.threshold ?? null });
     if (cancelled) pub(m, 'Fate intervened: a wager was won, and today\'s sentence is cancelled.', 'vote', { ev: 'cancelled' });
     else if (t.winner) sentenced = t.winner;
     else pub(m, t.reason, 'vote', { ev: 'nosentence' });
@@ -304,7 +305,7 @@ function resolveDay(m, now, { noVote = false } = {}) {
   if (sentenced) {
     const p = byId(m, sentenced);
     p.alive = false; p.diedAt = `Day ${d.number}`; p.causes = ['SENTENCED']; p.tempRevival = null;
-    pub(m, `${deathName(m, sentenced)} has been sentenced.`, 'sentence', { victims: [sentenced], ev: 'sentence' });
+    pub(m, ['{dead} has been sentenced.', { dead: deadList(m, [sentenced]) }], 'sentence', { victims: [sentenced], ev: 'sentence' });
     if (p.roleId === 'JESTER' && p.alignment === 'INDEPENDENT') {
       endMatch(m, checkVictory(m, { jesterSentencedId: p.id }), now);
       return;
@@ -324,7 +325,7 @@ function resolveDay(m, now, { noVote = false } = {}) {
     const goat = living(m).filter((p) => p.roleId === 'SCAPEGOAT' && !p.tempRevival).sort((a, b) => a.seat - b.seat)[0];
     if (goat) {
       goat.alive = false; goat.diedAt = `Day ${d.number}`; goat.causes = ['SCAPEGOAT'];
-      pub(m, `No one was sentenced — so the Scapegoat paid. ${deathName(m, goat.id)} is dead.`, 'death', { victims: [goat.id], ev: 'scapegoat' });
+      pub(m, ['No one was sentenced — so the Scapegoat paid. {dead} is dead.', { dead: deadList(m, [goat.id]) }], 'death', { victims: [goat.id], ev: 'scapegoat' });
     } else if (!noVote && !cancelled) {
       // reason already published
     } else {
@@ -340,7 +341,7 @@ function resolveRetaliation(m, now) {
     const t = byId(m, r.choice);
     if (t.alive && !t.tempRevival) {
       t.alive = false; t.diedAt = `Day ${m.dayNumber}`; t.causes = ['EQUAL_EXCHANGE'];
-      pub(m, `With a last breath, the condemned took ${deathName(m, t.id)} with them.`, 'death', { victims: [t.id], ev: 'exchange' });
+      pub(m, ['With a last breath, the condemned took {dead} with them.', { dead: deadList(m, [t.id]) }], 'death', { victims: [t.id], ev: 'exchange' });
     } else {
       pub(m, 'The final act failed to claim anyone.', 'vote', { ev: 'exchange-none' });
     }
@@ -354,7 +355,7 @@ function finishDay(m, now) {
   for (const p of m.players) p.statuses = [];
   if (victoryOrNull(m, now)) return;
   if (m.config.doomsday && m.dayNumber >= m.config.doomsdayDays) {
-    endMatch(m, { winner: 'DEATH', reason: `The Doomsday Clock struck after Day ${m.dayNumber}.` }, now);
+    endMatch(m, { winner: 'DEATH', reason: ['The Doomsday Clock struck after Day {n}.', { n: m.dayNumber }] }, now);
     return;
   }
   beginNightPhase(m, now);
@@ -372,15 +373,15 @@ function beginNightPhase(m, now) {
     swapDone: {}, done: {}, actions: {}, nightmare: {}, sleepwalk: {}, schemas: {}, surge: null,
     death: null, conspire: {},
   };
-  pub(m, `Night ${n} falls. Keep your screen to yourself.`, 'phase', { ev: 'nightfall', n });
+  pub(m, ['Night {n} falls. Keep your screen to yourself.', { n }], 'phase', { ev: 'nightfall', n });
   if (m.config.dreams) {
     for (const id of alive) m.night.initialDreams[id] = pick(rng, DREAM_IDS, 'dream');
     m.night.initialSnatchers = alive.filter((id) => m.night.initialDreams[id] === 'DREAM_SNATCHER');
     m.night.dreams = { ...m.night.initialDreams };
-    enterPhase(m, 'NIGHT_DREAM_SWAP', now, T(m, 'swap'));
-  } else {
-    openActions(m, now);
   }
+  // A fixed grace period: eyes close, Dream Snatchers may pick a swap, then
+  // night actions open on their own. Nobody has to tap anything.
+  enterPhase(m, 'NIGHT_DREAM_SWAP', now, NIGHT_GRACE_SECONDS);
 }
 
 function applySwaps(m) {
@@ -432,7 +433,7 @@ function openActions(m, now) {
     const d = N.dreams[id];
     if (d) {
       const swapped = N.initialDreams[id] !== d;
-      priv(m, id, `${swapped ? 'Your dream shifted. ' : ''}Tonight you dream of ${DREAMS[d].name}: ${DREAMS[d].text}`, 'dreamdraw');
+      priv(m, id, [swapped ? 'Your dream shifted. Tonight you dream of {dream}: {dreamText}' : 'Tonight you dream of {dream}: {dreamText}', { dream: d, dreamText: d }], 'dreamdraw');
     }
     if (N.surge === id) priv(m, id, 'Power Surge: your power answers twice tonight.', 'surge');
     if (N.surge === 'DEATH' && team.includes(id)) priv(m, id, 'Power Surge: the Death faction may take two lives tonight.', 'surge');
@@ -514,7 +515,7 @@ export function extendDeadline(m, seconds, now) {
   if (!m.deadline) throw new GameError('This phase has no timer.');
   if (now >= m.deadline) throw new GameError('The window has already closed.');
   m.deadline += seconds * 1000;
-  pub(m, `The host extended the timer by ${seconds}s.`, 'host');
+  pub(m, ['The host extended the timer by {n}s.', { n: seconds }], 'host');
   bump(m);
 }
 
@@ -562,9 +563,9 @@ export function playerCommand(m, actorId, cmd, rng, now) {
       if (N.initialSnatchers.includes(p.id) && payload.target !== undefined) {
         if (payload.target !== null && (!N.aliveAtOpen.includes(payload.target) || payload.target === p.id)) throw new GameError('Pick another living player.');
         N.swaps[p.id] = payload.target;
+      } else {
+        throw new GameError('Only a Dream Snatcher can swap dreams.');
       }
-      N.swapDone[p.id] = true;
-      if (N.aliveAtOpen.every((id) => N.swapDone[id])) closeSwap(m, now);
       break;
     }
 
@@ -632,7 +633,7 @@ export function playerCommand(m, actorId, cmd, rng, now) {
       if (p.roleId !== 'DIPLOMAT' || !(p.charges.DIPLOMAT > 0)) throw new GameError('You have no immunity to declare.');
       p.charges.DIPLOMAT = 0;
       m.day.immune.push(p.id);
-      pub(m, `${p.name} has declared diplomatic immunity: they cannot be nominated today.`, 'immunity', { ev: 'immunity', who: p.id });
+      pub(m, ['{a} has declared diplomatic immunity: they cannot be nominated today.', { a: p.name }], 'immunity', { ev: 'immunity', who: p.id });
       break;
     }
 
@@ -653,11 +654,11 @@ export function playerCommand(m, actorId, cmd, rng, now) {
       const t = byId(m, payload.target);
       if (!t || !t.alive) throw new GameError('You can only nominate a living player.');
       if (t.id === p.id && !m.settings.selfNomination) throw new GameError('You cannot nominate yourself.');
-      if (m.day.immune.includes(t.id)) throw new GameError(`${t.name} has diplomatic immunity today.`);
+      if (m.day.immune.includes(t.id)) throw new GameError(['{b} has diplomatic immunity today.', { b: t.name }]);
       if (m.day.nominations.some((x) => x.by === p.id)) throw new GameError('You have already made your nomination today.');
       m.day.nominations.push({ by: p.id, target: t.id, at: now });
       const first = m.day.nominations.filter((x) => x.target === t.id).length === 1;
-      pub(m, first ? `${p.name} nominated ${t.name}.` : `${p.name} seconded the nomination of ${t.name}.`, 'nominate', { ev: 'nominate', by: p.id, target: t.id, first });
+      pub(m, [first ? '{a} nominated {b}.' : '{a} seconded the nomination of {b}.', { a: p.name, b: t.name }], 'nominate', { ev: 'nominate', by: p.id, target: t.id, first });
       break;
     }
 
@@ -707,7 +708,7 @@ function validateDeathTargets(m, targets) {
   const D = m.night.death;
   if (!Array.isArray(targets)) throw new GameError('Invalid targets.');
   const uniq = [...new Set(targets)];
-  if (uniq.length > D.capacity) throw new GameError(`Your team can take at most ${D.capacity} tonight.`);
+  if (uniq.length > D.capacity) throw new GameError(['Your team can take at most {n} tonight.', { n: D.capacity }]);
   for (const t of uniq) {
     if (!m.night.aliveAtOpen.includes(t) || D.members.includes(t)) throw new GameError('Pick living players outside your team.');
   }
@@ -716,7 +717,7 @@ function validateDeathTargets(m, targets) {
 
 function validateUses(schema, uses) {
   if (!Array.isArray(uses) || uses.length === 0) throw new GameError('Choose a target or pass.');
-  if (uses.length > schema.uses) throw new GameError(`You can act ${schema.uses} time(s) tonight.`);
+  if (uses.length > schema.uses) throw new GameError(['You can act {n} time(s) tonight.', { n: schema.uses }]);
   const out = [];
   const seen = new Set();
   for (const u of uses) {
@@ -751,7 +752,7 @@ export function chatChannels(m, p) {
       const right = seats[(p.seat + 1) % n];
       for (const nb of [left, right]) {
         const pair = [p.seat, nb.seat].sort((a, b) => a - b);
-        out.push({ id: `fog:${pair[0]}-${pair[1]}`, label: `Whisper · ${nb.name}`, canSend: p.alive && !muted && nb.alive, members: [p.id, nb.id] });
+        out.push({ id: `fog:${pair[0]}-${pair[1]}`, label: ['Whisper · {name}', { name: nb.name }], canSend: p.alive && !muted && nb.alive, members: [p.id, nb.id] });
       }
     } else {
       out.push({ id: 'table', label: 'Table', canSend: p.alive && !muted, members: null });
@@ -762,7 +763,7 @@ export function chatChannels(m, p) {
     for (const [ch, c] of Object.entries(m.chats)) {
       if (c.kind === 'conspire' && c.night === m.nightNumber && c.members.includes(p.id)) {
         const other = c.members.find((x) => x !== p.id);
-        out.push({ id: ch, label: `Whisper · ${c.members[0] === p.id ? nameOf(m, other) : 'unknown'}`, canSend: true, members: c.members });
+        out.push({ id: ch, label: c.members[0] === p.id ? ['Whisper · {name}', { name: nameOf(m, other) }] : 'Whisper · Stranger', canSend: true, members: c.members });
       }
     }
   }

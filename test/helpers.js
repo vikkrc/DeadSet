@@ -36,6 +36,8 @@ export function runDay(t, { nominate = [], votes = {} } = {}) {
     for (const [voter, target] of Object.entries(votes)) cmd(voter, 'day.ballot', { target: target === 'ABSTAIN' ? 'ABSTAIN' : id(target) });
     advance();
   }
+  // Without dreams there is nothing to set up during the night's grace period.
+  if (m.phase === 'NIGHT_DREAM_SWAP' && !m.config.dreams) advance();
 }
 
 /** In NIGHT_ACTIONS: everybody listed commits, everyone else passes; then dawn. */
@@ -43,7 +45,7 @@ export function runNight(t, { death = null, actions = {}, nightmare = {}, dreams
   const { m, cmd, id } = t;
   if (m.phase === 'NIGHT_DREAM_SWAP') {
     if (dreams) for (const [name, d] of Object.entries(dreams)) m.night.dreams[id(name)] = d, (m.night.initialDreams[id(name)] = d);
-    for (const pid of m.night.aliveAtOpen) if (!m.night.swapDone[pid]) cmd(m.players.find((p) => p.id === pid).name, 'dream.swap', {});
+    t.advance(); // the grace period ends
   }
   if (m.phase !== 'NIGHT_ACTIONS') throw new Error(`expected NIGHT_ACTIONS, got ${m.phase}`);
   const team = m.night.death?.members ?? [];

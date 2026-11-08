@@ -1,0 +1,152 @@
+// Magyar: játéktartalom (szerepek, álmok, szabálykártyák, módok, történetkártyák, útmutató).
+export default {
+  and: 'és',
+  numbers: ['nulla', 'egy', 'két', 'három', 'négy', 'öt', 'hat', 'hét', 'nyolc', 'kilenc', 'tíz'],
+  roles: {
+    DEATH: { name: 'Halál', when: 'Minden éjszaka', summary: 'Minden éjjel egyetlen közös gyilkosságban kell megegyeznetek az élő Halál-társaitokkal.', detail: 'Minden aktív Halál-játékosnak pontosan ugyanazt a célpontot kell megerősítenie, különben a frakció passzol. Alapból egy gyilkosság jár; a Kettős veszély, az Éjszakai műszak vagy az Erőhullám legfeljebb kettőre emelheti — soha nem jár egy-egy minden Halálnak.' },
+    INNOCENT: { name: 'Ártatlan', when: 'Nappal', summary: 'Nincs képességed. A hangod és a szavazatod a fegyvered.', detail: 'Érvelj, vádolj, szavazz. Éjszakánként te is kapsz Álmot, és hathatnak rád állapotok.' },
+    MENTALIST: { name: 'Mentalista', when: 'Minden éjszaka', summary: 'Olvass ki egy másik játékost: a Halál oldalán áll-e vagy sem.', detail: 'Csak a célpont jelenlegi hovatartozását tudod meg (HALÁL OLDALÁN / NEM A HALÁL OLDALÁN), a pontos szerepét soha. A blokkolt olvasás nem ad eredményt.' },
+    GUARDIAN: { name: 'Őrző', when: 'Minden éjszaka', summary: 'Védj meg egy játékost (akár magadat) a Haláltól és a Pszichopatától.', detail: 'Csak a Halál frakció gyilkossága és a Pszichopata állapota ellen véd. Bomba, Önbíráskodó, Bűnbak, összekötött sorsok és lejárat ellen nem. Ugyanazt a célpontot többször is választhatod.' },
+    PSYCHO: { name: 'Pszichopata', when: 'Egyszer játékonként, éjjel', summary: 'Egyszer: némítsd el valakit, vagy vedd el a szavazatát a következő napra.', detail: 'NÉMA: nem szólalhat meg a vitában, de jelölhet és szavazhat. NINCS SZAVAZAT: beszélhet, de nem adhat le szavazatot. Az Őrző, az Őrangyal és a Boszorkány áldása kivédi. A képesség blokkolva is elhasználódik.' },
+    WHORE: { name: 'Szajha', alias: 'Kísérő', when: 'Minden éjszaka', summary: 'Látogass meg valakit. Ha egy Halált látogatsz, az egész csapat gyilkossága elmarad.', detail: 'Ha az általad meglátogatott személy aktív Halál, a frakció gyilkossági kerete 0 lesz. Ha a meglátogatottat a Halál öli meg, vele halsz; ha bomba éri, téged is elér a robbanás.' },
+    TRAVELING_AGENT: { name: 'Utazó ügynök', when: 'Minden éjszaka', summary: 'Kézbesíts egy rejtélyes terméket. Csak hangulat — és névjegy.', detail: 'A címzett hajnalban megtudja, hogy egy Utazó ügynök járt nála. A terméknek nincs hatása, de maga a látogatás információ, amit mindketten felhasználhattok.' },
+    TERRORIST: { name: 'Terrorista', when: 'Minden éjszaka', summary: 'Helyezz bombát egy ajtó elé. Fele-fele eséllyel robban.', detail: 'A szerver feldob egy érmét. IGEN esetén a célpont meghal, és az őt látogató Szajha is a robbanás áldozata lesz. Az Őrző nem állítja meg a bombát; az Őrangyal, a Boszorkány áldása és az ideiglenes feltámasztás igen.' },
+    MIMIC: { name: 'Utánzó', when: 'Csak az 1. éjszaka (kötelező)', summary: 'Az 1. éjszakán végleg lemásolod valaki más szerepét.', detail: 'Átveszed a célpont szerepét és hovatartozását, friss használatokkal. A másolt képességek a 2. éjszakától működnek; a lemásolt Halál a 2. éjszakától csatlakozik a csapathoz. Ha Utánzót másolsz — vagy nem választasz —, a meccs végéig erőtlen Utánzó maradsz.' },
+    DOUBLE_AGENT: { name: 'Kettős ügynök', when: 'Csak az 1. éjszaka (kötelező)', summary: 'Az 1. éjszakán titokban eldöntöd, melyik oldalon állsz a játék végéig.', detail: 'Válaszd a HALÁL vagy a NEM HALÁL oldalt. Ha a Halált választod, az 1. éjszaka végén átállsz; a 2. éjszakától a Halál-csapat szobájában vagy, és osztoztok az egyetlen gyilkosságon. Ha nem választasz, a nem-Halál oldalon maradsz.' },
+    DIPLOMAT: { name: 'Diplomata', when: 'Egyszer játékonként, nappal (jelölések előtt)', summary: 'Egyszer: egy napra mentességet hirdethetsz az ítélet alól.', detail: 'A reggeli ablakban, nyilvánosan jelented be. Aznap nem jelölhetnek. Az éjszakai gyilkosság, a bomba, az Önbíráskodó és a Bűnbak ellen nem véd.' },
+    SCAPEGOAT: { name: 'Bűnbak', when: 'Passzív, nappal', summary: 'Ha egy nap úgy ér véget, hogy senkit sem ítéltek el, helyette te halsz meg.', detail: 'Döntetlen, jelölés hiánya, szavazat hiánya, a Többségi szabály kudarca vagy a Szerencsejátékos érvénytelenítése mind „nincs ítélet”-nek számít. Ez gyilkosság, nem ítélet. Naponta csak egy Bűnbak (a legalacsonyabb székszámú) hal meg.' },
+    NECROMANCER: { name: 'Nekromanta', when: 'Egyszer játékonként, éjjel', summary: 'Egyszer: feltámaszthatsz egy kiesett játékost egy napra és egy éjszakára.', detail: 'A visszatérő megtartja a szerepét és hovatartozását, a feltámasztás alatt semmi sem ölheti meg, és a következő éjszaka után távozik. A rituáléhoz túl kell élned az éjszakát. Mindenkit csak egyszer lehet feltámasztani.' },
+    CONSPIRATOR: { name: 'Összeesküvő', when: 'Passzív nappali szavazat, éjszakai csevegés', summary: 'A szavazatod +1-gyel többet ér. Éjjel privát suttogást nyithatsz egy játékossal.', detail: 'A szavazatod egy plusz súlyt kap ugyanarra a jelöltre. Minden éjjel nyithatsz egy rövid, kétszemélyes szöveges csatornát egy élő játékossal; ez önmagában nem fed fel szerepet.' },
+    MAGISTRATE: { name: 'Bíró', when: 'Passzív, nappal', summary: 'A szavazatod kettőt ér (Paranoiánál hármat).', detail: 'Egy szavazat, egy jelölt, dupla súly. A Pszichopata „Nincs szavazat” hatása nullára csökkenti.' },
+    ORACLE: { name: 'Orákulum', when: 'Egyszer játékonként, éjjel', summary: 'Egyszer: tippeld meg, kire sújt le ma éjjel a Halál. Ha eltalálod, életben marad.', detail: 'Ha a jóslatod benne van a Halál frakció megerősített célpontjai között, az a játékos egy Halál-gyilkosság ellen védett. Rossz tipp vagy Halál-passz esetén nincs hatás.' },
+    GAMBLER: { name: 'Szerencsejátékos', when: 'Egyszer játékonként, éjjel', summary: 'Egyszer: fogadj a holnapi első jelöltre. Ha nyersz, senkit sem akasztanak.', detail: 'Ha a következő nap első hivatalos jelölése egyezik a fogadásoddal, aznap az ítélet elmarad a számlálás előtt. Az ebből fakadó „nincs ítélet” miatt a Bűnbak még meghalhat.' },
+    VIGILANTE: { name: 'Önbíráskodó', when: 'Egyszer játékonként, nappal (jelölések előtt)', summary: 'Egyszer: reggel lelőhetsz egy játékost, szavazás nélkül.', detail: 'Szerep általi gyilkosság, nem ítélet. A Diplomata mentessége nem állítja meg. Utána azonnal ellenőrizzük a győzelmet.' },
+    JESTER: { name: 'Bolond', when: 'Független', summary: 'Egyedül nyersz — de csak ha a város megszavazza az elítélésedet.', detail: 'Ha más módon halsz meg (éjszakai gyilkosság, bomba, Önbíráskodó, Bűnbak), az nem számít. A túlélés a végéig sem győzelem. A Halál többségének számításakor „egyéb” játékosnak számítasz.' },
+    BODYGUARD: { name: 'Testőr', when: 'Minden éjszaka', summary: 'Állj valaki mellé. Ha a Halál érte jön, te kapod a pengét.', detail: 'Ha a védenced a Halál gyilkosságától halna meg, és semmi más nem mentené meg, te halsz meg helyette. Magadat nem őrizheted, bombát és összekötött halált nem állítasz meg, éjszakánként legfeljebb egy gyilkosságot fogsz fel.' },
+    BARD: { name: 'Bárd', when: 'Egyszer játékonként, éjjel', summary: 'Egyszer: elcsendesíted az éjszakát. Minden szerepképesség kudarcot vall, a Halálé is.', detail: 'Aznap éjjel minden aktív szerepképesség elnémul. Az Álmok, a lejáratok és a szabálykártyák továbbra is érvényesek. Ha a Bárdon Alvási bénulás van, a csend elmarad.' },
+    WITCH: { name: 'Boszorkány', when: 'Minden éjszaka', summary: 'Áldd meg a játékost a bajjal szemben, vagy átkozd meg, hogy következő akciója kudarcot valljon.', detail: 'Áldás: ma éjjel véd az ártó szerepakciók és a bombák ellen (az összekötött sorsok ellen nem). Átok: a célpont következő célzott szerepakciója hatástalan; egy aktív Halál megátkozása blokkolja a frakció gyilkosságát. Magadra soha.' },
+  },
+  dreams: {
+    SLEEP_PARALYSIS: { name: 'Alvási bénulás', text: 'Nem használhatod az éjszakai szerepakciódat. Ha aktív Halál vagy, az egész frakció gyilkossága elmarad.' },
+    PREMONITION: { name: 'Előérzet', text: 'Hajnalban megtudod egy élő, a Halál oldalán álló játékos nevét.' },
+    WHISPERS: { name: 'A múlt suttogásai', text: 'Hajnalban megtudod egy véletlenszerű kiesett játékos pontos szerepét.' },
+    SLEEPWALKING: { name: 'Alvajárás', text: 'A közvetlenül előtted ülő játékoshoz vagy kötve. Ha ő ma éjjel meghal, te is meghalsz az éjszaka végén.' },
+    DREAM_SNATCHER: { name: 'Álomrabló', text: 'Mielőtt az akciók megnyílnak, Álomkártyát cserélhetsz egy másik élő játékossal.' },
+    NIGHT_SHIFT: { name: 'Éjszakai műszak', text: 'Egy ismételhető éjszakai képességet egy második célpontra is használhatsz. A Halálnak: a csapat kerete 2 lesz.' },
+    SHARED_NIGHTMARE: { name: 'Közös rémálom', text: 'Válassz álomtársat. Ha ő ma éjjel meghal, vele halsz.' },
+    INSOMNIA: { name: 'Álmatlanság', text: 'Hajnalban teljes, időrendi jelentést kapsz az éjszaka eseményeiről — ha túléled.' },
+    GUARDIAN_ANGEL: { name: 'Őrangyal', text: 'Ma éjjel nem árthat neked a Halál, a Pszichopata, bomba, a Boszorkány átka és az összekötött halál sem.' },
+  },
+  rules: {
+    FOG_OF_WAR: { name: 'A háború köde', text: 'A vita alatt csak a közvetlenül melletted ülő játékosokkal beszélhetsz.', enforcement: 'Személyesen becsületbeli szabály. Távoli játékban az asztali csevegést szomszédsuttogás váltja fel.' },
+    DOUBLE_JEOPARDY: { name: 'Kettős veszély', text: 'A Halál frakció éjszakánként legfeljebb két játékost ölhet meg (felső határ: 2).', enforcement: 'A blokkolások, például a Szajha látogatása vagy a bénulás, továbbra is 0-ra csökkentik.' },
+    PARANOIA: { name: 'Paranoia', text: 'Minden élő szavazat +1 súlyt kap. A Bíró hármat ér; az Összeesküvő még +1-et ad.', enforcement: 'A szellemszavazatok súlya 1 marad.' },
+    UNRELIABLE_POWER: { name: 'Megbízhatatlan erő', text: 'Minden éjszakai szerepakció dob egy hatoldalú kockával: 1–3 kudarc, 4–6 siker. A Halál egyszer dob a csapatért.', enforcement: 'A kudarcot vallott egyszeri képesség is elhasználódik.' },
+    POWER_SURGE: { name: 'Erőhullám', text: 'Minden éjjel egy véletlen, jogosult ismételhető képesség plusz használatot kap. A Halál egy bejegyzésnek számít.', enforcement: 'Senki sem kaphat kettőnél több használatot; a Halál kerete legfeljebb 2.' },
+    EQUAL_EXCHANGE: { name: 'Egyenlő csere', text: 'A szavazással elítélt, a Halál oldalán álló játékos magával vihet egy élő, nem-Halál játékost.', enforcement: 'Az éjszakai gyilkosság, az Önbíráskodó lövése és az összekötött halál nem váltja ki.' },
+    CURSED_SILENCE: { name: 'Átkozott csend', text: 'A vita alatt csak akkor szólalhatsz meg, ha közvetlenül hozzád szólnak.', enforcement: 'Becsületbeli szabály. A jelölésekre és a szavazásra nincs hatással.' },
+    MAJORITY_RULE: { name: 'Többségi szabály', text: 'Az ítélethez az összes jogosult élő szavazó súlyának több mint fele kell egy jelöltre.', enforcement: 'A tartózkodók és a nem szavazók is beszámítanak a nevezőbe. A szellemszavazatok sosem számítanak.' },
+    HIDDEN_ROLES: { name: 'Rejtett szerepek', text: 'A kiesett játékosok szerepét a játék végéig senki sem látja nyilvánosan.', enforcement: 'Ez amúgy is az alapbeállítás; ez a kártya rögzíti.' },
+    VENGEFUL_GHOSTS: { name: 'Bosszúálló szellemek', text: 'Minden kiesett játékos naponta egy 1 súlyú szellemszavazatot adhat le.', enforcement: 'A szellemek nem jelölhetnek, nem használhatnak képességet, és nem befolyásolják a Többségi szabályt.' },
+  },
+  presets: {
+    standard: { name: 'Alap', blurb: 'Az igazi Dead Set-élmény. Tíz kiegészítő szerep 7 játékostól, mindenkinek Álom minden éjjel, 1–3 szabálykártya.' },
+    classic: { name: 'Klasszikus / Tanuló', blurb: 'Tanításhoz. Csak alapszerepek — a kiegészítő helyekre Ártatlanok kerülnek. Álmok alapból kikapcsolva, legfeljebb egy egyszerű szabály.' },
+    full: { name: 'Teljes pakli / Káosz', blurb: 'Mind a 17 kiegészítő szerep, köztük a Bolond, a Bárd és a Boszorkány. Nagy véletlenszerűség, csak tapasztalt társaságoknak.' },
+    doomsday: { name: 'Világvége', blurb: 'Alap mód, az óra ellen. Ha az utolsó nap végéig senki sem nyert, a Halál győz.' },
+    custom: { name: 'Egyéni', blurb: 'Te választod a kiegészítő készletet, az Álmokat, a szabályokat és az órát — vagy beírod a pontos paklit. Figyelmeztet a kiegyensúlyozatlan beállításokra.' },
+  },
+  scenario: {
+    WHO: ['Időutazók', 'Űrfelfedezők', 'Mitikus lények', 'Történelmi alakok szellemei', 'Mutánsok', 'Titkos társaság tagjai', 'Eltévedt turisták', 'Mesterséges intelligenciák', 'Középkori falusiak', 'Hírességek hasonmásai'],
+    WHERE: ['Süllyedő hajó', 'Elhagyatott vidámpark', 'Földalatti bunker', 'Kísértetjárta kúria', 'Hóborította tundra'],
+    WHY: ['Egy rejtett kincs megtalálása', 'Menekülés, mielőtt lejár az idő', 'Egy rituálé befejezése', 'Egy gyilkosság felderítése', 'Egy közelgő katasztrófa megállítása'],
+  },
+  products: ['egy rézkulcs, amely egyetlen zárba sem illik', 'egy befőttesüveg meleg homok', 'egy jegy egy vonatra, amely tegnap elment', 'egyetlen fekete toll', 'egy visszafelé járó zsebóra', 'egy lepecsételt levél, neked címezve', 'egy fiola szürke parfüm', 'egy pakli kártya, amelyből hiányzik a dáma', 'egy esőillatú gyertya', 'egy fénykép egy üres szobáról', 'egy bársonnyal bélelt doboz (üres)', 'egy iránytű, amely rád mutat'],
+  whispers: [
+    'Bo holtan került elő. Senki sem látta a Szajhát távozni.',
+    'A város felakasztotta a Bolondot. Ő csak nevetett.',
+    'A Mentalista tudta. Senki sem hitt neki.',
+    'Két szavazat hiányzott. A Bűnbak fizetett.',
+    'Fay megesküdött, hogy ő az Őrző. Gus is.',
+    'A Nekromanta a rossz barátot támasztotta fel.',
+    'Bomba az ajtó előtt. Egy feldobott érme.',
+    'Mindenki felébredt. Valahogy ez volt a legrosszabb.',
+    'A Halál a várossal szavazott. Hát persze.',
+  ],
+  guide: {
+    kicker: 'A szabályok, v1.0',
+    title: 'Hogyan<br><i>játssz.</i>',
+    intro: 'A legtöbben túl akartok élni. Néhányan közületek a Halál. Senki sem tudja, ki kicsoda — kivéve a Halált, aki ismeri a társait.',
+    toc: ['Alapok', 'Egy kör', 'Győzelem', 'Alapszerepek', 'Kiegészítő szerepek', 'Teljes pakli', 'Álmok', 'Szabálykártyák', 'Módok', 'Éjszakai sorrend', 'Telefonok'],
+    basicsH: 'Az alapok',
+    basics: `<p>A Dead Set társasági dedukciós partijáték 5–13 játékosnak. Mindenki a saját telefonjáról lép be ugyanabba a szobába, és titkos <b>szerepet</b> kap. A legtöbb szerep a <b>nem-Halál</b> frakcióhoz tartozik; egy vagy több játékos titokban a <b>Halál</b>.</p>
+<ul>
+<li>A <b>szerepek</b> az egész meccsre szólnak: a hovatartozásod és a képességed.</li>
+<li>Az <b>Álmok</b> egyéjszakás hatások: az 1. éjszakától minden élő játékos titokban húz egyet minden éjjel.</li>
+<li>A <b>szabálykártyák</b> (1–3, a beállításkor húzva) az egész meccset meghajlítják — dupla gyilkosság, súlyozott szavazatok, szavazó szellemek.</li>
+<li>A <b>történet</b> (KI / HOL / MIÉRT) tiszta mesélés. Soha nem változtat a szabályokon.</li>
+</ul>
+<p>Mondhatsz igazat a szerepedről, hazudhatsz, vagy hallgathatsz. Soha ne mutasd meg a képernyődet. Az alkalmazás a mesélő: senkinek sem kell kimaradnia, és a házigazda sem lát több titkot, mint bárki más.</p>`,
+    roundH: 'Egy kör',
+    round: `<ol>
+<li><b>0. éjszaka — a felfedés.</b> Fordítsd meg a szerepkártyádat, olvasd el, koppints a <em>Értem</em> gombra. Más nem történik: nincs gyilkosság, Álom vagy képesség. A Halál-játékosok látják a társaikat.</li>
+<li><b>Reggel.</b> Elhangzanak a hajnali hírek: ki halt meg az éjjel (soha nem az, hogyan, és soha nem a szerepe). Amit privát módon megtudtál, az a <em>Csak te tudod</em> alatt jelenik meg. A Diplomata itt hirdethet mentességet; az Önbíráskodó itt lőhet.</li>
+<li><b>Vita és jelölések.</b> Beszélgessetek. Minden élő játékos naponta <b>egy hivatalos jelölést</b> tehet. Egy már jelölt játékos újbóli jelölése csak megerősíti azt.</li>
+<li><b>Védekezés.</b> Minden jelölt, a jelölés sorrendjében, szót kap.</li>
+<li><b>Titkos szavazás.</b> Minden jogosult élő játékos a saját telefonján szavaz egy jelöltre, vagy tartózkodik. A szavazatodat addig módosíthatod, amíg a házigazda le nem zárja. Csak az összesítés nyilvános.</li>
+<li><b>Ítélet.</b> Az egyetlen legmagasabb összesítésű játékost elítélik (kiesik). <b>Holtverseny az élen: senkit sem ítélnek el.</b> Naponta legfeljebb egy embert ítélnek el.</li>
+<li><b>Éjszaka.</b> A képernyők elsötétülnek. Öt másodperc alkonyat (az Álmokat kihúzzuk, az Álomrablók cserélhetnek), aztán az éjszakai akciók maguktól megnyílnak. Akinek éjszakai képessége van, titokban leadja; a Halál megegyezik a gyilkosságban. Amikor mindenki alszik — vagy lejár az idő —, a szerver egyszerre feldolgoz minden akciót, és felvirrad a következő nap.</li>
+</ol>
+<p class="small">Amit egy ablak bezárásáig nem adsz le, az passz (vagy tartózkodás) lesz. A kapcsolatot vesztett telefon megtartja a helyét és a titkait.</p>`,
+    winH: 'Győzelem',
+    win: `<ul>
+<li>A <b>nem-Halál oldal nyer</b>, amint egyetlen Halál-oldali játékos sem él.</li>
+<li>A <b>Halál nyer</b>, amint az élő Halál-oldali játékosok <b>szigorúan többen vannak</b>, mint az összes többi élő játékos. Az egyenlőség nem elég.</li>
+<li>A <b>Bolond</b> (csak Teljes paklinál) egyedül és azonnal nyer, ha a város szavazással elítéli.</li>
+<li>Ha egy éjszaka után senki sem marad életben, a meccs <b>döntetlen</b>.</li>
+<li>A <b>Világvége-órával</b> a Halál akkor is nyer, ha az utolsó nap végéig senki sem győzött.</li>
+</ul>
+<p>A győzelmet minden teljes feldolgozás után ellenőrizzük — soha nem egy éjszaka közepén.</p>`,
+    coreH: 'Alapszerepek',
+    coreP: 'Mindig játékban vannak.',
+    killH: 'Hogyan öl a Halál-csapat',
+    kill: 'Minden élő Halál-társ egy szobán osztozik. Mindenki célpontokat javasol; a gyilkosság csak akkor történik meg, ha <b>mindannyian pontosan ugyanazt a célpontot erősítik meg</b>. Bármilyen nézeteltérés vagy egy hiányzó megerősítés, és a Halál passzol. A csapat éjszakánként <b>egy</b> játékost öl meg, akárhány Halál is van — kettőt Kettős veszéllyel, Éjszakai műszakkal vagy Erőhullámmal, de soha nem többet kettőnél.',
+    extH: 'Kiegészítő szerepek — Alap',
+    extP: '7 játékostól a plusz helyeket ebből a készletből töltjük fel (titokban húzva). 7 játékos → 1 kiegészítő hely, 10 → 2, 11+ → 3.',
+    fullH: 'A Teljes pakli kiegészítései',
+    fullP: 'Csak Teljes pakli / Káosz vagy Egyéni módban. Tapasztalt társaságoknak.',
+    dreamsH: 'Álmok',
+    dreamsP: 'Az 1. éjszakától minden élő játékos minden éjjel véletlenszerűen húz egy Álomkártyát (ismétlődhet). Csak arra az éjszakára szól. Elmondhatod, mit álmodtál — igazat vagy sem.',
+    dreamsNote: 'Az Álomrablók cseréi az öt másodperces alkonyat alatt történnek, mielőtt az akciók megnyílnak, ülésrendben, mindenkinél egyszer. Az a kártya számít, amelyik végül nálad van.',
+    rulesH: 'Szabálykártyák',
+    rulesP: 'A beállításkor 1–3 kártyát húzunk (vagy választunk), és ezek az egész meccs alatt érvényesek. Egyesek csak becsületbeli szabályként működnek, ha egy szobában játszotok.',
+    modesH: 'Módok',
+    modesTh: ['Mód', 'Játékosok', 'Mi változik'],
+    countsH: 'Szerepek száma',
+    countsTh: ['Játékosok', 'Halál', 'Ártatlan', 'Őrző · Mentalista · Pszichopata', 'Kiegészítő'],
+    modesNote: 'A Klasszikus / Tanuló mód a kiegészítő helyeket Ártatlanokkal tölti fel. Az, hogy egy szobában vagy távolról játszotok, csak a lebonyolítás módja, nem másik játék: távoli módban asztali csevegés is van (és A háború ködénél szomszédsuttogás).',
+    orderH: 'Ki kit győz le éjjel',
+    order: `<p>Mindenki egyszerre adja le az akcióját; a szerver aztán rögzített sorrendben dolgozza fel őket, így az eredmény sosem függ attól, ki koppintott előbb.</p>
+<ol>
+<li><b>Elfojtás.</b> A Bárd csendje minden szerepképességet semmissé tesz. Az Alvási bénulás megállítja a viselőjét — és ha egy aktív Halálnál van, az egész gyilkosságot. A Megbízhatatlan erő itt dob.</li>
+<li><b>Átkok és látogatások.</b> A Boszorkány átka hatástalanítja a célpont akcióját (vagy az egész Halál-gyilkosságot). Ha a Szajha bármelyik aktív Halált meglátogatja, a gyilkosság nullára csökken.</li>
+<li><b>Átváltozások.</b> Először a Kettős ügynök fogadalma, aztán az Utánzó másolása. Ma éjjel már számítanak a Mentalistának, de az új Halál-tagok csak a következő éjjeltől vesznek részt a gyilkosságban.</li>
+<li><b>A Halál gyilkossága.</b> A célpont túléli, ha ebben a sorrendben van neki: ideiglenes feltámasztás, Őrangyal, Boszorkány áldása, Őrző pajzsa, helyes Orákulum-jóslat. Ha nincs, egy Testőr kapja a pengét — ha az sincs, meghal.</li>
+<li><b>Pszichopata.</b> A jel megmarad, kivéve ha a célpont halott vagy védett (feltámasztás, Őrangyal, áldás, Őrző).</li>
+<li><b>Bombák és a többi.</b> A bomba tiszta érmedobás; az Őrző nem állítja meg. A látogató Szajhák is a robbanás áldozatai. Olvasások, kézbesítések, fogadások.</li>
+<li>A <b>Nekromanta</b> feltámasztja a halottat — de csak ha ő maga túlélte az éjszakát.</li>
+<li><b>Összekötött sorsok.</b> A Szajhák meghalnak a meglátogatott Halál-áldozattal; a Közös rémálom és az Alvajárás viselői a társukkal halnak. Összekötött halált csak a feltámasztás vagy az Őrangyal akadályoz meg. Ezután lejár a kölcsönidő.</li>
+<li><b>Hajnal.</b> A túlélők megkapják a privát jelentéseiket. A nyilvánosság csak azt tudja meg, ki halt meg.</li>
+</ol>`,
+    phonesH: 'Játék telefonon',
+    phones: `<ul>
+<li>A házigazda létrehoz egy szobát, és megosztja a hatkarakteres kódot vagy a QR-kódot. Mindenki más megnyitja a linket, beírja a nevét, és a <em>Kész</em> gombra koppint.</li>
+<li>A helyed a böngésződhöz kötődik. Ha lemerül egy telefon, a házigazda a vezérlőiből egyszer használatos <b>visszaállítási kódot</b> adhat; ha ezt egy új eszközön beírod, a helyed átkerül oda, a régi eszköz pedig kijelentkezik.</li>
+<li>A házigazda telefonja egy átlagos játékostelefon néhány extra gombbal: fázis léptetése, +30 másodperc, meccs vége. A házigazda nem látja a szerepeket, az Álmokat és a szavazatokat.</li>
+<li>Egy <b>nyilvános tábla</b> (titkok nélkül) TV-n is megjeleníthető: nyisd meg a <span class="mono">/board/KÓD</span> címet.</li>
+<li>Ha valaki vezetné az asztalt és mindent látna, hozd létre a szobát <b>megbízható moderátorként</b>. Ő nem kaphat helyet, és erről mindenki tud.</li>
+<li>Mindenki maga választja a nyelvét a nyelvi gombbal a kezdőképernyőn, a meghívón vagy a szoba menüjében. Az asztal alapértelmezett nyelvét a házigazda állítja be az előtérben.</li>
+<li>A NÉMA, A háború köde és az Átkozott csend személyesen becsületbeli szabályok. Távoli játékban a csevegés kikényszeríti őket.</li>
+</ul>`,
+  },
+};

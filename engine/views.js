@@ -18,7 +18,6 @@ function progress(m) {
   switch (m.phase) {
     case 'LOBBY': return { label: 'ready', done: m.players.filter((p) => p.ready).length, total: m.players.length };
     case 'NIGHT_0_REVEAL': return { label: 'have seen their role', done: m.players.filter((p) => p.acknowledged).length, total: m.players.length };
-    case 'NIGHT_DREAM_SWAP': return { label: 'dreaming', done: N.aliveAtOpen.filter((id) => N.swapDone[id]).length, total: N.aliveAtOpen.length };
     case 'NIGHT_ACTIONS': return { label: 'asleep', done: N.aliveAtOpen.filter((id) => N.done[id]).length, total: N.aliveAtOpen.length };
     case 'DAY_VOTING': {
       const d = m.day;
@@ -37,7 +36,7 @@ const ADVANCE_LABEL = {
   DAY_DEFENSE: 'Next defence',
   DAY_VOTING: 'Lock the vote',
   DAY_RESOLVING: 'Skip final act',
-  NIGHT_DREAM_SWAP: 'Open night actions',
+  NIGHT_DREAM_SWAP: 'Open night actions now',
   NIGHT_ACTIONS: 'Bring the dawn',
 };
 
@@ -52,7 +51,7 @@ export function publicView(m, now = Date.now()) {
     hostId: m.hostId, moderated: m.moderated,
     preset: m.config?.preset ?? m.settings.preset,
     transport: m.settings.transport,
-    table: { threads: !!m.settings.threads, score: m.settings.score !== false },
+    table: { threads: !!m.settings.threads, score: m.settings.score !== false, lang: m.settings.lang || 'en' },
     doomsday: m.config?.doomsday ? m.config.doomsdayDays : null,
     scenario: m.scenario, activeRules: m.activeRules.map((id) => RULE_CARDS[id]),
     players: m.players.map((p) => ({
@@ -141,7 +140,7 @@ function actionFor(m, p) {
     case 'NIGHT_DREAM_SWAP':
       if (!p.alive || !N.aliveAtOpen.includes(p.id)) return { type: 'spectate' };
       return {
-        type: 'swap', done: !!N.swapDone[p.id], snatcher: N.initialSnatchers.includes(p.id),
+        type: 'swap', done: false, snatcher: N.initialSnatchers.includes(p.id),
         targets: N.initialSnatchers.includes(p.id) ? N.aliveAtOpen.filter((id) => id !== p.id) : [],
         choice: N.swaps[p.id] ?? null,
       };
@@ -229,8 +228,8 @@ export function moderatorView(m, now = Date.now()) {
   v.manualRoles = m.phase === 'LOBBY' ? m.manualRoles : undefined;
   v.allRoles = Object.values(ROLES).map((r) => ({ id: r.id, name: r.name, set: r.set }));
   v.secrets = m.phase === 'LOBBY' ? null : m.players.map((p) => ({
-    id: p.id, role: roleCard(p.roleId)?.name, alignment: p.alignment, charges: p.charges,
-    dream: N?.dreams[p.id] ? DREAMS[N.dreams[p.id]].name : null,
+    id: p.id, role: roleCard(p.roleId)?.name, roleId: p.roleId, alignment: p.alignment, charges: p.charges,
+    dream: N?.dreams[p.id] ? DREAMS[N.dreams[p.id]].name : null, dreamId: N?.dreams[p.id] ?? null,
     statuses: p.statuses.map((s) => s.type),
     action: N?.actions[p.id]?.uses ?? null, done: N ? !!N.done[p.id] : null,
     ballot: m.day?.ballots[p.id] ?? null,
