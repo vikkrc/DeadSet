@@ -127,3 +127,27 @@ test('The recap lists every night and day once the match ends', () => {
   assert.ok(recap[1].arrows.some((a) => a.role === 'DEATH' && a.to === t.id('Cy')));
   assert.equal(recap[2].ballots[t.id('Bo')], t.id('Ada'));
 });
+
+test('Dream swap: the Snatcher sees a stolen dream, the victim sees theirs was taken', () => {
+  const t = setup(['DEATH', 'GUARDIAN', 'INNOCENT', 'MENTALIST', 'PSYCHO'], { dreams: true });
+  runDay(t);
+  const N = t.m.night;
+  for (const p of t.m.players) N.initialDreams[p.id] = N.dreams[p.id] = 'WHISPERS';
+  N.initialDreams[t.id('Ada')] = N.dreams[t.id('Ada')] = 'DREAM_SNATCHER';
+  N.initialDreams[t.id('Bo')] = N.dreams[t.id('Bo')] = 'PREMONITION';
+  N.initialSnatchers = [t.id('Ada')];
+  assert.equal(playerView(t.m, t.id('Ada')).action.snatcher, true);
+  assert.equal(playerView(t.m, t.id('Bo')).me.dream.id, 'PREMONITION', 'everyone reads their Dream at nightfall');
+  t.cmd('Ada', 'dream.swap', { target: t.id('Bo') });
+  t.cmd('Ada', 'dream.swap', { target: null });
+  t.cmd('Ada', 'dream.swap', { target: t.id('Bo') });
+  t.advance();
+  const ada = playerView(t.m, t.id('Ada')).me;
+  const bo = playerView(t.m, t.id('Bo')).me;
+  assert.equal(ada.dream.id, 'PREMONITION');
+  assert.equal(ada.dreamStole, true);
+  assert.equal(bo.dream.id, 'DREAM_SNATCHER');
+  assert.equal(bo.dreamFrom.id, 'PREMONITION');
+  assert.equal(bo.dreamStole, false);
+  assert.equal(playerView(t.m, t.id('Cy')).me.dreamFrom, undefined, 'bystanders see nothing');
+});

@@ -901,5 +901,6 @@ export default {
     "Who": "Kdo",
     "Where": "Kde",
     "Why": "Proč",
+    "You stole a dream": "Ukradl jsi sen",
   },
 };

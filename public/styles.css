@@ -1191,3 +1191,36 @@ body.is-dead::after { content: ''; position: fixed; inset: 0; pointer-events: no
 .ring.dense { container-type: inline-size; }
 .ring.dense .tok { --tok: clamp(26px, 8cqw, 56px); }
 .board2 .ring.dense .tok-name { font-size: clamp(9px, 2.4cqw, 13px); }
+
+/* Rings always take the full width of their column, even inside centred grids
+   (otherwise a shrink-to-fit parent collapses the ring to zero width). */
+.ring-wrap { width: 100%; justify-self: stretch; }
+.nightfall.snatch { gap: 8px; }
+.nightfall.snatch .dream { width: 100%; text-align: left; }
+.nightfall.snatch .swaphint { color: var(--bone); margin: 0; }
+.nightfall.snatch .nightfall-count { grid-auto-flow: column; align-items: center; gap: 10px; }
+.nightfall.snatch .nightfall-count b { font-size: 34px; min-height: 0; }
+
+/* ── The living win: a golden dawn celebration ──────────────────────────── */
+.moment.living { background: radial-gradient(120% 90% at 50% 38%, #5a3f12, #1f160b 48%, #0b0806 78%); overflow: hidden; }
+.sunburst { position: absolute; left: 50%; top: 36%; width: 170vmax; height: 170vmax; margin: -85vmax 0 0 -85vmax; pointer-events: none; z-index: 0;
+  background: repeating-conic-gradient(from 0deg, rgba(255, 214, 120, 0.1) 0deg 7deg, transparent 7deg 18deg);
+  -webkit-mask: radial-gradient(circle, #000 0, rgba(0, 0, 0, 0.6) 22%, transparent 55%); mask: radial-gradient(circle, #000 0, rgba(0, 0, 0, 0.6) 22%, transparent 55%);
+  animation: burstIn 1.4s var(--ease) both, spin 40s linear infinite; }
+.moment.living > :not(.sunburst), .verdict.living > :not(.sunburst) { position: relative; z-index: 1; }
+@keyframes burstIn { from { opacity: 0; transform: scale(0.4) rotate(-20deg); } }
+.moment.living .m-art { color: #ffd36b; animation: artIn 1s var(--spring) both, livingPulse 2.4s 1s ease-in-out infinite; }
+.moment.living .m-art .glyph { filter: drop-shadow(0 0 18px rgba(255, 211, 107, 0.75)); }
+.moment.living .m-art::before { content: ''; position: absolute; inset: -34px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 220, 140, 0.55), transparent 65%); animation: halo 2.4s ease-in-out infinite; z-index: -1; }
+@keyframes livingPulse { 50% { transform: scale(1.08); } }
+@keyframes halo { 50% { transform: scale(1.25); opacity: 0.6; } }
+.moment.living .m-title, .verdict.living h1 { color: #ffe3a3; text-shadow: 0 0 18px rgba(255, 196, 84, 0.65), 0 0 46px rgba(255, 170, 60, 0.35), 0 3px 0 #8a5a14; animation: goldGlow 2.6s 1.2s ease-in-out infinite; }
+.moment.living .m-title .l, .verdict.living h1 .l { animation: letterBounce 0.9s var(--spring) both; animation-delay: calc(var(--i) * 55ms + 0.25s); }
+@keyframes letterBounce { 0% { opacity: 0; transform: translateY(60px) scale(0.3) rotate(-12deg); } 60% { opacity: 1; transform: translateY(-14px) scale(1.12) rotate(3deg); } 100% { transform: none; } }
+@keyframes goldGlow { 50% { color: #fff4d6; text-shadow: 0 0 26px rgba(255, 214, 120, 0.95), 0 0 70px rgba(255, 170, 60, 0.55), 0 3px 0 #8a5a14; } }
+.moment.living .kicker { color: #ffd36b; letter-spacing: 0.3em; }
+.moment.living .result-stamp.win, .verdict.living .result-stamp.win { border-color: #ffd36b; color: #ffd36b; background: rgba(255, 211, 107, 0.08); box-shadow: 0 0 40px rgba(255, 211, 107, 0.45), inset 0 0 0 1px rgba(255, 211, 107, 0.5); animation: stamp 0.5s var(--spring) 1.3s both, stampGlow 1.8s 2s ease-in-out infinite; }
+@keyframes stampGlow { 50% { box-shadow: 0 0 70px rgba(255, 211, 107, 0.7), inset 0 0 0 1px rgba(255, 211, 107, 0.7); } }
+.verdict.living { position: relative; overflow: hidden; border-radius: 22px; background: radial-gradient(90% 80% at 50% 30%, rgba(233, 178, 79, 0.16), transparent 70%); }
+.verdict.living .sunburst { top: 30%; width: 900px; height: 900px; margin: -450px 0 0 -450px; }
+@media (prefers-reduced-motion: reduce) { .sunburst, .moment.living .m-art, .moment.living .m-title, .verdict.living h1, .moment.living .result-stamp.win { animation: none !important; } }

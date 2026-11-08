@@ -169,9 +169,17 @@ const SOUNDS = {
     [392, 349.23, 311.13, 293.66, 261.63].forEach((f, i) => box(a, f, 0.6 + i * 0.5, 0.05));
   },
   winLiving: (a) => {
-    [261.63, 329.63, 392, 523.25, 659.25].forEach((f, i) => bell(a, f, i * 0.2, 0.1, 3.2));
-    noise(a, { dur: 3, gain: 0.03, type: 'highpass', freq: 4000, attack: 1 });
-    tone(a, { freq: 130.81, dur: 4, gain: 0.12, attack: 1.2 });
+    // a bright rising fanfare, a warm major chord, and fireworks crackling overhead
+    [261.63, 329.63, 392, 523.25, 659.25, 783.99, 1046.5].forEach((f, i) => bell(a, f, i * 0.13, 0.11, 3.4));
+    [[130.81, 0.16], [164.81, 0.1], [196, 0.1], [261.63, 0.08]].forEach(([f, g]) => tone(a, { freq: f, type: 'triangle', dur: 4.5, gain: g, attack: 0.5, at: 0.9 }));
+    [523.25, 659.25, 783.99].forEach((f, i) => tone(a, { freq: f, type: 'triangle', dur: 0.5, gain: 0.06, at: 1 + i * 0.09 }));
+    for (let i = 0; i < 8; i++) {
+      const at = 0.6 + i * 0.45 + Math.random() * 0.12;
+      noise(a, { dur: 0.08, gain: 0.22, type: 'highpass', freq: 1800, at });
+      tone(a, { freq: 95, dur: 0.35, gain: 0.18, to: 50, at });
+      for (let k = 0; k < 5; k++) noise(a, { dur: 0.03, gain: 0.06, type: 'highpass', freq: 5000, at: at + 0.12 + k * 0.05 + Math.random() * 0.04 });
+    }
+    noise(a, { dur: 3.5, gain: 0.03, type: 'highpass', freq: 6000, attack: 1.2, at: 3 });
   },
   winJester: (a) => {
     [523.25, 554.37, 659.25, 622.25, 783.99, 739.99, 1046.5].forEach((f, i) => box(a, f, i * 0.13, 0.07));
@@ -209,19 +217,19 @@ export const sound = {
 // Each time a mood starts it picks a fresh transposition and phrase seed, so
 // the same phase never sounds identical twice. Only the TV board plays it.
 const MOODS = {
-  lobby: { root: 98, scale: [0, 2, 3, 5, 7, 9, 10], chord: [1, 1.5, 2.25], cutoff: 650, wind: 0.012, gain: 0.5, motif: { voice: 'box', every: [4, 8], len: [3, 5], beat: 0.42, oct: 4 } },
-  ceremony: { root: 73.4, scale: [0, 2, 3, 5, 7, 8, 10], chord: [1, 1.5, 2], cutoff: 520, wind: 0.02, gain: 0.55, choir: 0.018, motif: { voice: 'bell', every: [3, 6], len: [2, 4], beat: 0.7, oct: 3 }, swell: [8, 14] },
-  morning: { root: 110, scale: [0, 2, 3, 7, 9], chord: [1, 1.2, 1.5, 2], cutoff: 820, wind: 0.008, gain: 0.45, motif: { voice: 'bell', every: [3, 6], len: [3, 5], beat: 0.36, oct: 3 } },
-  discussion: { root: 110, scale: [0, 2, 3, 5, 7, 8, 10], chord: [1, 1.2, 1.5], cutoff: 700, wind: 0.008, gain: 0.42, pluck: { bpm: 84, pattern: [1, 0, 0, 1, 0, 1, 0, 0], notes: [0, 0, 7, 3] }, motif: { voice: 'box', every: [6, 11], len: [3, 4], beat: 0.36, oct: 4 } },
-  defense: { root: 98, scale: [0, 1, 3, 5, 7, 8, 10], chord: [1, 1.19, 1.5], cutoff: 600, wind: 0.01, gain: 0.45, pluck: { bpm: 66, pattern: [1, 0, 0, 0, 1, 0, 1, 0], notes: [0, 1, 0, 7] }, choir: 0.008 },
-  vote: { root: 73.4, scale: [0, 1, 3, 5, 7, 8, 10], chord: [1, 1.19, 1.5], cutoff: 620, wind: 0.012, gain: 0.5, heart: 72, motif: { voice: 'box', every: [5, 9], len: [2, 3], beat: 0.5, oct: 4 } },
+  lobby: { root: 98, scale: [0, 2, 3, 5, 7, 9, 10], chord: [1, 1.5, 2.25], cutoff: 650, wind: 0.012, gain: 0.5, motif: { voice: 'box', every: [8, 14], len: [3, 4], beat: 0.85, oct: 4 } },
+  ceremony: { root: 73.4, scale: [0, 2, 3, 5, 7, 8, 10], chord: [1, 1.5, 2], cutoff: 520, wind: 0.02, gain: 0.55, choir: 0.018, motif: { voice: 'bell', every: [6, 10], len: [2, 3], beat: 1.15, oct: 3 }, swell: [9, 15] },
+  morning: { root: 110, scale: [0, 2, 3, 7, 9], chord: [1, 1.2, 1.5, 2], cutoff: 820, wind: 0.008, gain: 0.45, motif: { voice: 'bell', every: [7, 12], len: [3, 4], beat: 0.8, oct: 3 } },
+  discussion: { root: 110, scale: [0, 2, 3, 5, 7, 8, 10], chord: [1, 1.2, 1.5], cutoff: 700, wind: 0.008, gain: 0.42, pluck: { bpm: 72, pattern: [1, 0, 0, 1, 0, 1, 0, 0], notes: [0, 0, 7, 3] }, motif: { voice: 'box', every: [10, 16], len: [2, 4], beat: 0.7, oct: 4 } },
+  defense: { root: 98, scale: [0, 1, 3, 5, 7, 8, 10], chord: [1, 1.19, 1.5], cutoff: 600, wind: 0.01, gain: 0.45, pluck: { bpm: 60, pattern: [1, 0, 0, 0, 1, 0, 1, 0], notes: [0, 1, 0, 7] }, choir: 0.008 },
+  vote: { root: 73.4, scale: [0, 1, 3, 5, 7, 8, 10], chord: [1, 1.19, 1.5], cutoff: 620, wind: 0.012, gain: 0.5, heart: 72, motif: { voice: 'box', every: [6, 10], len: [2, 3], beat: 0.6, oct: 4 } },
   resolving: { root: 69.3, scale: [0, 1, 4, 5, 7, 8, 11], chord: [1, 1.19, 1.41], cutoff: 560, wind: 0.015, gain: 0.5, heart: 96, swell: [5, 9] },
-  night: { root: 55, scale: [0, 2, 3, 5, 7, 8, 10], chord: [1, 1.5, 2, 3], cutoff: 380, wind: 0.05, gain: 0.6, choir: 0.01, shimmer: 0.006, motif: { voice: 'box', every: [5, 10], len: [3, 6], beat: 0.55, oct: 5 } },
-  bloodmoon: { root: 51.9, scale: [0, 1, 4, 5, 6, 8, 10], chord: [1, 1.06, 1.5, 2], cutoff: 420, wind: 0.06, gain: 0.62, choir: 0.03, heart: 56, swell: [4, 8], motif: { voice: 'bell', every: [4, 7], len: [2, 3], beat: 0.8, oct: 3 } },
-  endDeath: { root: 65.4, scale: [0, 2, 3, 5, 7, 8, 10], chord: [1, 1.19, 1.5, 2], cutoff: 700, wind: 0.02, gain: 0.5, choir: 0.02, motif: { voice: 'bell', every: [3.5, 5], len: [1, 2], beat: 1, oct: 2 } },
-  endLiving: { root: 87.3, scale: [0, 2, 4, 5, 7, 9, 11], chord: [1, 1.25, 1.5, 2], cutoff: 950, wind: 0.008, gain: 0.45, motif: { voice: 'bell', every: [2, 4], len: [3, 5], beat: 0.3, oct: 3 } },
-  endJester: { root: 98, scale: [0, 1, 4, 6, 7, 10], chord: [1, 1.26, 1.5], cutoff: 900, wind: 0.008, gain: 0.45, pluck: { bpm: 110, pattern: [1, 0, 1, 0, 1, 1, 0, 1], notes: [0, 6, 4, 1] }, motif: { voice: 'box', every: [1.5, 3], len: [4, 7], beat: 0.18, oct: 4 } },
-  endDraw: { root: 61.7, scale: [0, 5, 7], chord: [1, 1.5], cutoff: 500, wind: 0.03, gain: 0.45, motif: { voice: 'bell', every: [6, 10], len: [1, 2], beat: 1, oct: 2 } },
+  night: { root: 55, scale: [0, 2, 3, 5, 7, 8, 10], chord: [1, 1.5, 2, 3], cutoff: 380, wind: 0.05, gain: 0.6, choir: 0.01, shimmer: 0.006, motif: { voice: 'box', every: [9, 16], len: [3, 5], beat: 1.05, oct: 5 } },
+  bloodmoon: { root: 51.9, scale: [0, 1, 4, 5, 6, 8, 10], chord: [1, 1.06, 1.5, 2], cutoff: 420, wind: 0.06, gain: 0.62, choir: 0.03, heart: 56, swell: [4, 8], motif: { voice: 'bell', every: [5, 8], len: [2, 3], beat: 0.9, oct: 3 } },
+  endDeath: { root: 65.4, scale: [0, 2, 3, 5, 7, 8, 10], chord: [1, 1.19, 1.5, 2], cutoff: 700, wind: 0.02, gain: 0.5, choir: 0.02, motif: { voice: 'bell', every: [5, 8], len: [1, 2], beat: 1.3, oct: 2 } },
+  endLiving: { root: 87.3, scale: [0, 2, 4, 5, 7, 9, 11], chord: [1, 1.25, 1.5, 2], cutoff: 950, wind: 0.008, gain: 0.45, motif: { voice: 'bell', every: [4, 7], len: [3, 5], beat: 0.55, oct: 3 } },
+  endJester: { root: 98, scale: [0, 1, 4, 6, 7, 10], chord: [1, 1.26, 1.5], cutoff: 900, wind: 0.008, gain: 0.45, pluck: { bpm: 110, pattern: [1, 0, 1, 0, 1, 1, 0, 1], notes: [0, 6, 4, 1] }, motif: { voice: 'box', every: [3, 6], len: [4, 6], beat: 0.32, oct: 4 } },
+  endDraw: { root: 61.7, scale: [0, 5, 7], chord: [1, 1.5], cutoff: 500, wind: 0.03, gain: 0.45, motif: { voice: 'bell', every: [8, 13], len: [1, 2], beat: 1.4, oct: 2 } },
   // Overlay mixed on top of any mood when the table is down to its last few.
   tension: { root: 110, scale: [0, 1], chord: [], cutoff: 3000, wind: 0, gain: 0.5, shimmer: 0.012, heart: 104 },
 };
@@ -312,11 +320,13 @@ function buildLayer(a, mood) {
     const phrase = () => {
       const x = audio(); if (!x) return;
       const len = Math.round(span(m.motif.len));
+      let at = 0;
       for (let i = 0; i < len; i++) {
-        deg = Math.max(0, Math.min(m.scale.length * 2 - 1, deg + [-2, -1, -1, 1, 1, 2][Math.floor(Math.random() * 6)]));
+        deg = Math.max(0, Math.min(m.scale.length * 2 - 1, deg + [-1, -1, -1, 1, 1, 1, 2, -2, 0][Math.floor(Math.random() * 9)]));
         const n = m.scale[deg % m.scale.length] + 12 * Math.floor(deg / m.scale.length);
         const f = root * 2 ** m.motif.oct * 2 ** (n / 12) / 4;
-        const at = i * m.motif.beat * (0.85 + Math.random() * 0.3);
+        // unhurried rubato: notes drift apart a little, and phrases breathe at the end
+        at += m.motif.beat * (i === 0 ? 0 : 0.9 + Math.random() * 0.35) * (i === len - 1 ? 1.35 : 1);
         if (m.motif.voice === 'box') box(x, f, at, 0.045, out); else bell(x, f, at, 0.045, 3.2, out);
       }
       later(phrase, span(m.motif.every));
@@ -465,6 +475,26 @@ function draw(p) {
     case 'petal':
       c2.beginPath(); c2.ellipse(0, 0, p.size, p.size * 0.45, 0, 0, Math.PI * 2); c2.fill();
       break;
+    case 'glitter': {
+      c2.globalAlpha = a * (0.45 + 0.55 * Math.abs(Math.sin(p.phase + p.life * 40)));
+      c2.shadowColor = p.color; c2.shadowBlur = 6;
+      c2.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+      break;
+    }
+    case 'streak': {
+      // a spark with a short tail along its velocity
+      c2.rotate(-p.rot);
+      c2.strokeStyle = p.color; c2.lineWidth = p.size; c2.lineCap = 'round';
+      c2.shadowColor = p.color; c2.shadowBlur = 10;
+      c2.beginPath(); c2.moveTo(0, 0); c2.lineTo(-p.vx * 3, -p.vy * 3); c2.stroke();
+      break;
+    }
+    case 'flash': {
+      const g = c2.createRadialGradient(0, 0, 0, 0, 0, p.size * (1.6 - p.life * 0.6));
+      g.addColorStop(0, p.color); g.addColorStop(1, 'rgba(0,0,0,0)');
+      c2.fillStyle = g; c2.beginPath(); c2.arc(0, 0, p.size * 1.6, 0, Math.PI * 2); c2.fill();
+      break;
+    }
     case 'tri':
       c2.beginPath(); c2.moveTo(0, -p.size); c2.lineTo(p.size, p.size); c2.lineTo(-p.size, p.size); c2.closePath(); c2.fill();
       break;
@@ -514,16 +544,61 @@ export function celebrate(kind) {
         vr: rand(-0.3, 0.3), size: rand(3, 6), decay: rand(0.004, 0.008), color: ['#ece5d5', '#e2585e', '#d6a24a', '#8fb59a'][i % 4] });
     }
   } else if (kind === 'NON_DEATH' || kind === 'win') {
-    // embers and bone paper slips rising from the bottom like candle sparks
-    for (let i = 0; i < 130; i++) {
-      add({ kind: i % 2 ? 'spark' : 'slip', x: rand(W * 0.1, W * 0.9), y: H + rand(0, 60), vx: rand(-2.2, 2.2), vy: rand(-15, -7), g: 0.2, drag: 0.985, sway: 0.02,
-        vr: rand(-0.25, 0.25), size: i % 2 ? rand(1.2, 2.6) : rand(3, 6), decay: rand(0.005, 0.01),
-        color: ['#ece5d5', '#e9c27a', '#d6964f', '#bdb4a4'][i % 4] });
-    }
+    livingCelebration();
+    return;
   } else {
     for (let i = 0; i < 40; i++) add({ kind: 'spark', x: rand(0, W), y: rand(0, H), vx: rand(-0.3, 0.3), vy: rand(-0.6, -0.1), size: rand(1, 2), decay: rand(0.004, 0.008), color: '#bdb4a4', alpha: 0.6 });
   }
   kick();
+}
+
+/** The living win: confetti cannons, waves of fireworks, then a glitter shower. */
+const FIRE = [['#ffd36b', '#fff1c2', '#e9a43a'], ['#f2f2f2', '#c9e3ff', '#8fb4e6'], ['#ff8a6b', '#ffd0b8', '#e9c27a'], ['#b8f0c2', '#f6ffe8', '#7fd39a'], ['#e0b8ff', '#fff0ff', '#b59be0']];
+const CONF = ['#e9c27a', '#ece5d5', '#e2585e', '#8fd3a5', '#8fb4e6', '#f2b66b'];
+function firework(x, y, colors, n = 96) {
+  const scale = Math.min(1.4, Math.max(0.8, Math.min(W, H) / 500));
+  add({ kind: 'flash', x, y, size: 70 * scale, decay: 0.06, alpha: 0.55, color: colors[1] });
+  for (let i = 0; i < n; i++) {
+    const ang = (i / n) * Math.PI * 2 + rand(-0.05, 0.05);
+    const sp = rand(2.8, 8) * scale;
+    add({ kind: i % 3 ? 'streak' : 'spark', x, y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, g: 0.065, drag: 0.962, size: rand(1.4, 2.8), decay: rand(0.008, 0.014), color: colors[i % colors.length] });
+  }
+  for (let i = 0; i < 18; i++) add({ kind: 'glitter', x, y, vx: rand(-1.5, 1.5), vy: rand(-1.5, 1), g: 0.03, drag: 0.98, size: rand(1.5, 2.6), decay: rand(0.006, 0.01), color: colors[0] });
+  kick();
+}
+function rocket(x, colors, delay) {
+  setTimeout(() => {
+    const top = rand(H * 0.12, H * 0.4);
+    const r = { kind: 'streak', x, y: H + 10, vx: rand(-0.6, 0.6), vy: -Math.sqrt(2 * 0.12 * (H + 10 - top)), g: 0.12, drag: 1, size: 2, decay: 0.012, color: colors[1] };
+    add(r);
+    kick();
+    const t = Math.abs(r.vy / r.g) * 16;
+    setTimeout(() => firework(x + r.vx * t / 16, top, colors), Math.max(250, t));
+  }, delay);
+}
+function livingCelebration() {
+  // confetti cannons from both bottom corners
+  for (const [delay, side] of [[0, 1], [80, -1], [1600, 1], [1680, -1]]) {
+    setTimeout(() => {
+      for (let i = 0; i < 70; i++) {
+        const x = side > 0 ? -10 : W + 10;
+        add({ kind: i % 4 ? 'slip' : 'petal', x, y: H * rand(0.7, 0.95), vx: side * rand(5, 14), vy: rand(-17, -8), g: 0.24, drag: 0.982, sway: 0.03,
+          vr: rand(-0.35, 0.35), rot: rand(0, 6), size: rand(3, 6.5), decay: rand(0.003, 0.006), color: CONF[i % CONF.length] });
+      }
+      kick();
+    }, delay);
+  }
+  // waves of fireworks
+  const shots = Math.round(rand(7, 9));
+  for (let i = 0; i < shots; i++) rocket(rand(W * 0.15, W * 0.85), FIRE[i % FIRE.length], 250 + i * rand(380, 520));
+  // a slow golden glitter shower to finish
+  setTimeout(() => {
+    for (let i = 0; i < 120; i++) {
+      add({ kind: i % 3 ? 'glitter' : 'slip', x: rand(0, W), y: rand(-H * 0.5, -10), vx: rand(-0.4, 0.4), vy: rand(1, 2.6), g: 0.01, drag: 0.995, sway: 0.025,
+        vr: rand(-0.1, 0.1), size: i % 3 ? rand(1.4, 2.8) : rand(3, 5), decay: rand(0.002, 0.004), color: ['#ffd36b', '#ece5d5', '#e9c27a', '#fff1c2'][i % 4] });
+    }
+    kick();
+  }, 3600);
 }
 
 /** Very faint drifting motes at night. */

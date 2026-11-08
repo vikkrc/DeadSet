@@ -241,7 +241,7 @@ function detectMoments(v) {
   // silently, as night actions open (everyone's actions open at the same time).
   if (v.phase === 'NIGHT_ACTIONS' && v.me?.dreamFrom && v.me?.dream && !S.swapShown?.[v.phaseId]) {
     (S.swapShown ||= {})[v.phaseId] = true;
-    out.push({ type: 'dreamswap', from: v.me.dreamFrom.id, to: v.me.dream.id, sound: null });
+    out.push({ type: 'dreamswap', from: v.me.dreamFrom.id, to: v.me.dream.id, stole: !!v.me.dreamStole, sound: null });
   }
   for (const l of fresh) {
     switch (l.ev) {
@@ -303,7 +303,7 @@ function detectMoments(v) {
 const MOMENT_SOUND = { night0: 'night', day1: 'dawn', nightfall: 'night', dawn: 'dawn', tally: 'knock', death: 'death', revive: 'revive', bloodmoon: 'bloodmoon' };
 const END_THEME = { DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester' };
 const MOMENT_TIME = { night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 5200, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
-const momentTime = (m) => (onBoard() && m.type === 'dawn' ? 9000 : MOMENT_TIME[m.type] + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
+const momentTime = (m) => (!onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : MOMENT_TIME[m.type] + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
 
 function nextMoment() {
   clearTimeout(S.momentTimer);
@@ -369,7 +369,7 @@ function momentHtml(m) {
       body = `<div class="m-art blood-moon-art">${moon(1, 'rise blood')}<span class="stars"><i></i><i></i><i></i></span></div><span class="kicker blood">${t('Night {n}', { n: roman(m.n) })}</span><h1 class="m-title blood">${letters(t('Blood Moon'))}</h1><p class="m-sub">${t('Two nights passed without a death. Tonight no protection holds, and nothing can stay Death\'s hand.')}</p>`;
       break;
     case 'dreamswap':
-      body = `<span class="kicker">${t('A Dream Snatcher struck')}</span><h1 class="m-title">${letters(t('Your dream was stolen'))}</h1>
+      body = `<span class="kicker">${m.stole ? esc(dreamF('DREAM_SNATCHER', 'name')) : t('A Dream Snatcher struck')}</span><h1 class="m-title">${letters(t(m.stole ? 'You stole a dream' : 'Your dream was stolen'))}</h1>
         <div class="swap-cards"><div class="swap-card gone">${dreamGlyph(m.from)}<b>${esc(dreamF(m.from, 'name'))}</b></div><span class="swap-arrow">⟶</span><div class="swap-card new">${dreamGlyph(m.to)}<b>${esc(dreamF(m.to, 'name'))}</b><small>${esc(dreamF(m.to, 'text'))}</small></div></div>
         <p class="m-sub small">${t('Tonight you dream this instead. Keep it to yourself.')}</p>`;
       break;
@@ -419,8 +419,8 @@ function momentHtml(m) {
     default: break;
   }
   const auto = !m.tapOnly;
-  return `<div class="moment m-${m.type} ${m.winner === 'DEATH' || m.type === 'death' ? 'grim' : ''} ${onBoard() && m.type === 'dawn' ? 'front' : ''}" data-key="moment-${m.id}" data-act="momentNext" role="dialog" aria-live="assertive">
-    <div class="m-body">${body}</div>
+  return `<div class="moment m-${m.type} ${m.winner === 'DEATH' || m.type === 'death' ? 'grim' : ''} ${m.type === 'end' && m.winner === 'NON_DEATH' ? 'living' : ''} ${onBoard() && m.type === 'dawn' ? 'front' : ''}" data-key="moment-${m.id}" data-act="momentNext" role="dialog" aria-live="assertive">
+    ${m.type === 'end' && m.winner === 'NON_DEATH' ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<div class="m-body">${body}</div>
     <div class="m-foot">${auto ? `<span class="m-timer" style="--t:${momentTime(m)}ms"><i></i></span>` : ''}<span class="kicker">${t(auto ? 'Tap to skip' : 'Tap to continue')}${S.moments.length ? ` · ${t('{n} more', { n: S.moments.length })}` : ''}</span></div>
   </div>`;
 }
@@ -791,7 +791,7 @@ function pickContexts(v) {
       if (a.type === 'retaliate') out.push({ key: 'ret', label: t('Final act'), act: 'pickRetaliate', ids: a.targets, selected: [S.sel.retaliate], tone: 'kill', hint: t('Take one with you') });
       break;
     case 'NIGHT_DREAM_SWAP':
-      if (a.type === 'swap' && a.snatcher) out.push({ key: 'swap', label: t('Swap'), act: 'pickSwap', ids: a.targets, selected: [a.choice ?? S.sel.swap], hint: t('Steal a dream') });
+      if (a.type === 'swap' && a.snatcher) out.push({ key: 'swap', label: t('Swap'), act: 'pickSwap', ids: a.targets, selected: [S.sel.swap !== undefined ? S.sel.swap : a.choice], hint: t('Steal a dream') });
       break;
     case 'NIGHT_ACTIONS': {
       if (a.type !== 'night' || a.done) break;
@@ -1383,12 +1383,13 @@ function nightfallStage(v, me, a) {
       <div class="dr-face front">${dreamGlyph(me.dream.id)}<span class="kicker">${t('Tonight\'s dream')}</span><h3>${esc(dreamF(me.dream.id, 'name'))}</h3><p>${esc(dreamF(me.dream.id, 'text'))}</p></div>
     </div></div>`;
   if (a.type === 'swap' && a.snatcher) {
+    // Snatchers need the table, so their card is compact and the ring comes first.
     const { pick } = activePick(v);
     return `<section class="nightfall snatch" data-key="nightfall-s">
-      ${blood}${reveal}
-      ${count('Night actions open when the count ends.')}
-      <p class="small muted center-text" data-key="swaphint">${t('Dream Snatcher: tap a seat to swap Dream cards before the night opens — or leave it and keep yours.')}</p>
+      ${blood}${dreamCard(me.dream)}
+      <p class="small center-text swaphint" data-key="swaphint">${t('Dream Snatcher: tap a seat to swap Dream cards before the night opens — or leave it and keep yours.')}</p>
       ${ring(v, { pick, center: centerFor(v, pick) })}
+      ${count('Night actions open when the count ends.')}
     </section>`;
   }
   return `<section class="nightfall" data-key="nightfall">${blood}${reveal}${count('Shield your screen. Night actions open when the count ends.')}</section>`;
@@ -1485,7 +1486,7 @@ function endMain(v, me) {
   const title = t({ DEATH: 'Death wins.', NON_DEATH: 'The living win.', JESTER: 'The Jester wins.', DRAW: 'A draw.', ABORTED: 'Abandoned.' }[v.winner] ?? 'The End');
   const won = didIWin(v, v.winner);
   const revealed = v.players.some((p) => p.role);
-  return `<section class="verdict ${v.winner === 'DEATH' ? 'death' : ''}" data-key="verdict"><span class="kicker">${t('Verdict')}</span><h1>${letters(title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
+  return `<section class="verdict ${v.winner === 'DEATH' ? 'death' : v.winner === 'NON_DEATH' ? 'living' : ''}" data-key="verdict">${v.winner === 'NON_DEATH' ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<span class="kicker">${t('Verdict')}</span><h1>${letters(title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
       ${won === null ? '' : `<div class="result-stamp ${won ? 'win' : 'loss'}">${won ? t('Victory') : t('Defeat')}</div>`}</section>
     ${revealed ? ring(v, { reveal: true, center: centerFor(v) }) : ''}
     <section data-key="reveal"><div class="rule">${t('Every secret')}</div>${revealed ? `<ul class="ledger">${v.players.map((p, i) => `<li class="${p.alive ? '' : 'dead'} ${p.id === me?.id ? 'me' : ''}" style="--i:${i}" data-key="rv-${p.id}">
@@ -1824,7 +1825,13 @@ const ACT = {
   },
   pickRetaliate(el) { picked(el, true); S.sel.retaliate = el.dataset.id; render(); },
   retaliate(el) { send('day.retaliate', { target: el.dataset.none ? null : S.sel.retaliate }); },
-  pickSwap(el) { picked(el, false, true); S.sel.swap = S.sel.swap === el.dataset.id ? null : el.dataset.id; send('dream.swap', { target: S.sel.swap }); render(); },
+  pickSwap(el) {
+    picked(el, false, true);
+    const cur = S.sel.swap !== undefined ? S.sel.swap : V().action.choice;
+    S.sel.swap = cur === el.dataset.id ? null : el.dataset.id;
+    send('dream.swap', { target: S.sel.swap }, { quiet: true });
+    render();
+  },
   pickTarget(el) {
     picked(el, el.classList.contains('kill'));
     const s = V().action.schema;

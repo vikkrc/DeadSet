@@ -129,7 +129,10 @@ export function playerView(m, pid, now = Date.now()) {
   if (N && m.phase === 'NIGHT_DREAM_SWAP' && N.initialDreams[p.id]) me.dream = DREAMS[N.initialDreams[p.id]];
   if (N && m.phase === 'NIGHT_ACTIONS' && N.dreams[p.id]) {
     me.dream = DREAMS[N.dreams[p.id]];
-    if (N.initialDreams[p.id] && N.initialDreams[p.id] !== N.dreams[p.id]) me.dreamFrom = DREAMS[N.initialDreams[p.id]];
+    if (N.initialDreams[p.id] && N.initialDreams[p.id] !== N.dreams[p.id]) {
+      me.dreamFrom = DREAMS[N.initialDreams[p.id]];
+      me.dreamStole = N.initialSnatchers.includes(p.id) && !!N.swaps[p.id];
+    }
   }
   if (N?.sleepwalk[p.id] && m.phase === 'NIGHT_ACTIONS') me.sleepwalkPartner = nameOf(m, N.sleepwalk[p.id]);
 

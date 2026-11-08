@@ -901,5 +901,6 @@ export default {
     "Who": "Quién",
     "Where": "Dónde",
     "Why": "Por qué",
+    "You stole a dream": "Has robado un sueño",
   },
 };

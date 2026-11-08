@@ -901,5 +901,6 @@ export default {
     "Who": "Ki",
     "Where": "Hol",
     "Why": "Miért",
+    "You stole a dream": "Elloptál egy álmot",
   },
 };
