@@ -1,8 +1,9 @@
 // Lobby settings, role scaling (§5.3), deck building and validation.
 import {
   ROLES, PRESETS, RULE_CARDS, RULE_IDS, COPY_SENSITIVE, SCENARIO, MIN_PLAYERS, ABS_MAX_PLAYERS, LANGS,
+  DREAM_WEIGHTS, DREAM_WEIGHT_MAX, SMALL_TABLE, STANDARD_EXTENDED, FULL_EXTENDED,
 } from './content.js';
-import { shuffle, pick } from './rng.js';
+import { shuffle, pick, seededRng } from './rng.js';
 
 const TABLE = {
   5: [1, 1, 0], 6: [2, 1, 0], 7: [2, 1, 1], 8: [3, 1, 1], 9: [3, 2, 1],
@@ -42,6 +43,11 @@ export function defaultSettings() {
     threads: false,
     lang: 'en',
     score: true,
+    dreamWeights: { ...DREAM_WEIGHTS },
+    customRoles: {},
+    suggestSeed: 0,
+    bloodMoon: true,
+    finalTwoDeath: false,
   };
 }
 
@@ -66,6 +72,22 @@ export function applySettingsPatch(settings, patch = {}) {
     s.extendedPool = [...new Set(patch.extendedPool.filter((r) => ROLES[r] && ROLES[r].set !== 'core'))];
   }
   if (typeof patch.customDeck === 'string') s.customDeck = patch.customDeck.slice(0, 600);
+  if (patch.customRoles && typeof patch.customRoles === 'object' && preset.custom) {
+    const out = {};
+    for (const [id, c] of Object.entries(patch.customRoles)) {
+      const k = clampInt(c, 0, ABS_MAX_PLAYERS, 0);
+      if (ROLES[id] && k > 0) out[id] = k;
+    }
+    s.customRoles = out;
+    if (Object.keys(out).length) s.customDeck = '';
+  }
+  if (patch.dreamWeights && typeof patch.dreamWeights === 'object' && preset.custom) {
+    s.dreamWeights = { ...DREAM_WEIGHTS, ...s.dreamWeights };
+    for (const id of Object.keys(DREAM_WEIGHTS)) {
+      if (patch.dreamWeights[id] !== undefined) s.dreamWeights[id] = clampInt(patch.dreamWeights[id], 0, DREAM_WEIGHT_MAX, DREAM_WEIGHTS[id]);
+    }
+  }
+  if (patch.suggestSeed !== undefined) s.suggestSeed = clampInt(patch.suggestSeed, 0, 1e6, 0);
   if (typeof patch.dreams === 'boolean' && (preset.custom || preset.id === 'classic')) s.dreams = patch.dreams;
   if (typeof patch.doomsday === 'boolean' && preset.custom) s.doomsday = patch.doomsday;
   if (patch.doomsdayDays !== undefined) s.doomsdayDays = clampInt(patch.doomsdayDays, 1, 9, 3);
@@ -89,7 +111,11 @@ export function applySettingsPatch(settings, patch = {}) {
   }
   if (['in-person', 'remote'].includes(patch.transport)) s.transport = patch.transport;
   if (LANGS.includes(patch.lang)) s.lang = patch.lang;
-  for (const k of ['revealOnDeath', 'endReveal', 'selfNomination', 'selfVote', 'threads', 'score']) {
+  if (patch.preset && PRESETS[patch.preset] && !PRESETS[patch.preset].custom) {
+    s.dreamWeights = { ...DREAM_WEIGHTS };
+    s.customRoles = {};
+  }
+  for (const k of ['revealOnDeath', 'endReveal', 'selfNomination', 'selfVote', 'threads', 'score', 'bloodMoon', 'finalTwoDeath']) {
     if (typeof patch[k] === 'boolean') s[k] = patch[k];
   }
   return s;
@@ -124,6 +150,56 @@ export function parseCustomDeck(text) {
   return { roles: out, errors };
 }
 
+/** The exact role list a Custom game asked for (role counters, or typed text), or null. */
+export function exactDeck(settings) {
+  if (!PRESETS[settings.preset]?.custom) return null;
+  const counts = settings.customRoles || {};
+  if (Object.keys(counts).length) {
+    const out = [];
+    for (const [id, c] of Object.entries(counts)) for (let i = 0; i < c; i++) out.push(id);
+    return { roles: out, errors: [] };
+  }
+  if (settings.customDeck?.trim()) return parseCustomDeck(settings.customDeck);
+  return null;
+}
+
+/** Dream weights in force (only Custom may change them). */
+export function dreamWeightsFor(settings) {
+  return PRESETS[settings.preset]?.custom ? { ...DREAM_WEIGHTS, ...(settings.dreamWeights || {}) } : { ...DREAM_WEIGHTS };
+}
+
+const SUGGESTION_POOLS = {
+  // Steady: dependable powers, no conversions or lone winners.
+  steady: STANDARD_EXTENDED.filter((r) => !['MIMIC', 'DOUBLE_AGENT'].includes(r)),
+  // Sharp eyes: information and protection for the town.
+  sharp: ['ORACLE', 'BODYGUARD', 'DIPLOMAT', 'MAGISTRATE', 'CONSPIRATOR', 'NECROMANCER', 'WHORE', 'TRAVELING_AGENT', 'GAMBLER'],
+  // Wild night: the whole deck, swings included.
+  wild: FULL_EXTENDED,
+};
+
+/** Three balanced role setups for N players, reshuffled by `seed`. */
+export function suggestSetups(n, seed = 0) {
+  if (n < MIN_PLAYERS || n > ABS_MAX_PLAYERS) return [];
+  return Object.entries(SUGGESTION_POOLS).map(([key, poolAll], vi) => {
+    const rng = seededRng(n * 7919 + seed * 104729 + vi * 31 + 1);
+    const c = scaling(n);
+    const roles = { DEATH: c.DEATH, INNOCENT: c.INNOCENT, GUARDIAN: 1, MENTALIST: 1, PSYCHO: 1 };
+    const swap = (id) => { if (roles.INNOCENT > 1) { roles.INNOCENT--; roles[id] = (roles[id] || 0) + 1; } };
+    if (n >= 16) swap('GUARDIAN');
+    if (n >= 19) swap('MENTALIST');
+    if (key === 'sharp' && n >= 9) swap('MENTALIST');
+    const pool = poolAll.filter((r) => !(r === 'JESTER' && n < SMALL_TABLE.JESTER));
+    const unique = shuffle(rng, pool, 'suggest');
+    const dupable = pool.filter((r) => !COPY_SENSITIVE.includes(r));
+    for (let i = 0; i < c.EXTENDED; i++) {
+      const id = i < unique.length ? unique[i] : dupable.length ? pick(rng, dupable, 'suggest') : 'INNOCENT';
+      roles[id] = (roles[id] || 0) + 1;
+    }
+    for (const k of Object.keys(roles)) if (!roles[k]) delete roles[k];
+    return { key, roles };
+  });
+}
+
 /**
  * Validate a setup for N seated players. Returns errors (blocking) and
  * warnings (shown, not blocking) plus a public description of the deck.
@@ -135,7 +211,7 @@ export function validateSetup(n, settings) {
   if (n < MIN_PLAYERS) errors.push(['At least {min} players are needed (currently {n}).', { min: MIN_PLAYERS, n }]);
   if (n > preset.max) errors.push(['{preset} supports at most {n} players.', { preset: preset.name, n: preset.max }]);
   if (n < preset.min) errors.push(['{preset} needs at least {n} players.', { preset: preset.name, n: preset.min }]);
-  if (n > 13 && n <= ABS_MAX_PLAYERS) warnings.push('More than 13 players is experimental: balance is untested.');
+  if (n > 13 && n <= ABS_MAX_PLAYERS) warnings.push('More than 13 players: balance is less tested. The suggested setups are a good start.');
 
   // Rules
   const r = settings.rules;
@@ -143,14 +219,18 @@ export function validateSetup(n, settings) {
     if (r.selected.length < preset.rulesMin) errors.push(['Select at least {n} Rule card(s).', { n: preset.rulesMin }]);
     if (r.selected.length > preset.rulesMax) errors.push(['Select at most {n} Rule card(s).', { n: preset.rulesMax }]);
     warnings.push(...ruleWarnings(r.selected));
+    if (r.selected.includes('DOUBLE_JEOPARDY') && n < SMALL_TABLE.DOUBLE_JEOPARDY) {
+      warnings.push(['Double Jeopardy at fewer than {n} players can let Death win in a single night.', { n: SMALL_TABLE.DOUBLE_JEOPARDY }]);
+    }
   }
   if (settings.scenario.mode === 'manual' && !(settings.scenario.who && settings.scenario.where && settings.scenario.why)) {
     errors.push('Fill in WHO, WHERE and WHY, or switch the scenario to random.');
   }
 
   let publicDeck = null;
-  if (preset.custom && settings.customDeck.trim()) {
-    const { roles, errors: e } = parseCustomDeck(settings.customDeck);
+  const exact = exactDeck(settings);
+  if (exact) {
+    const { roles, errors: e } = exact;
     errors.push(...e);
     if (roles.length !== n) errors.push(['The custom deck has {r} roles but {n} players are seated.', { r: roles.length, n }]);
     const deaths = roles.filter((x) => ROLES[x].alignment === 'DEATH').length;
@@ -159,6 +239,9 @@ export function validateSetup(n, settings) {
     if (deaths === roles.length - deaths && deaths > 0) warnings.push('Death starts at parity — one night kill decides it.');
     if (roles.length && !roles.includes('MENTALIST') && !roles.includes('GUARDIAN')) warnings.push('No Mentalist or Guardian: the town has no information or protection.');
     if (roles.filter((x) => x === 'MIMIC').length > 1) warnings.push('Several Mimics may copy each other into powerlessness.');
+    if (roles.includes('JESTER') && n < SMALL_TABLE.JESTER) warnings.push(['A Jester at fewer than {n} players can end the game very early.', { n: SMALL_TABLE.JESTER }]);
+    if (n >= 10 && deaths < Math.round(n / 5)) warnings.push('Few Deaths for this many players: the town is favoured.');
+    if (deaths > 0 && deaths * 2.6 > roles.length && deaths <= roles.length - deaths) warnings.push('Many Deaths for this many players: Death is favoured.');
     publicDeck = { exact: countBy(roles) };
   } else if (n >= MIN_PLAYERS) {
     const c = scaling(n);
@@ -166,7 +249,11 @@ export function validateSetup(n, settings) {
     if (c.EXTENDED > 0 && !preset.innocentFiller && pool.length === 0) {
       warnings.push('The extended pool is empty: extended seats become Innocents.');
     }
-    if (preset.custom && pool.includes('JESTER')) warnings.push('Jester is in the pool: it can win alone if sentenced.');
+    if (preset.custom && pool.includes('JESTER')) {
+      warnings.push(n < SMALL_TABLE.JESTER
+        ? ['A Jester at fewer than {n} players can end the game very early.', { n: SMALL_TABLE.JESTER }]
+        : 'Jester is in the pool: it can win alone if sentenced.');
+    }
     publicDeck = {
       core: { DEATH: c.DEATH, INNOCENT: c.INNOCENT + (preset.innocentFiller ? c.EXTENDED : 0), GUARDIAN: 1, MENTALIST: 1, PSYCHO: 1 },
       extended: preset.innocentFiller ? 0 : c.EXTENDED,
@@ -175,7 +262,8 @@ export function validateSetup(n, settings) {
   }
   const doomsday = preset.doomsday || (preset.custom && settings.doomsday);
   if (doomsday) warnings.push(['Doomsday Clock: Death wins if nobody has won after Day {n}.', { n: settings.doomsdayDays }]);
-  return { ok: errors.length === 0, errors, warnings, publicDeck };
+  const suggestions = preset.custom ? suggestSetups(n, settings.suggestSeed || 0) : undefined;
+  return { ok: errors.length === 0, errors, warnings, publicDeck, suggestions };
 }
 
 export function ruleWarnings(ids) {
@@ -202,13 +290,15 @@ function countBy(arr) {
 /** Build the concrete list of N roles (server-side, authoritative randomness). */
 export function buildDeck(n, settings, rng) {
   const preset = PRESETS[settings.preset];
-  if (preset.custom && settings.customDeck.trim()) return parseCustomDeck(settings.customDeck).roles;
+  const exact = exactDeck(settings);
+  if (exact) return exact.roles;
   const c = scaling(n);
   const deck = [];
   for (const id of ['DEATH', 'INNOCENT', 'GUARDIAN', 'MENTALIST', 'PSYCHO']) {
     for (let i = 0; i < c[id]; i++) deck.push(id);
   }
-  const pool = extendedPoolFor(settings);
+  // Presets skip the Jester at small tables; Custom keeps what the host chose.
+  const pool = extendedPoolFor(settings).filter((r) => preset.custom || !(r === 'JESTER' && n < SMALL_TABLE.JESTER));
   if (preset.innocentFiller || pool.length === 0) {
     for (let i = 0; i < c.EXTENDED; i++) deck.push('INNOCENT');
     return deck;
@@ -223,11 +313,13 @@ export function buildDeck(n, settings, rng) {
   return deck;
 }
 
-export function drawRules(settings, rng) {
+export function drawRules(settings, rng, n = 99) {
   const preset = PRESETS[settings.preset];
   if (settings.rules.mode === 'manual') return [...settings.rules.selected];
   const count = Math.max(preset.rulesMin, Math.min(preset.rulesMax, settings.rules.count));
-  return shuffle(rng, preset.ruleIds.filter((id) => RULE_CARDS[id]), 'rules').slice(0, count);
+  // Random draws never deal Double Jeopardy to a small table (hosts may still pick it).
+  const ids = preset.ruleIds.filter((id) => RULE_CARDS[id] && !(id === 'DOUBLE_JEOPARDY' && n < SMALL_TABLE.DOUBLE_JEOPARDY));
+  return shuffle(rng, ids, 'rules').slice(0, count);
 }
 
 export function drawScenario(settings, rng) {

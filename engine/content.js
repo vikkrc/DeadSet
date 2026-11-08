@@ -208,6 +208,14 @@ export const DREAMS = {
     text: 'Tonight you are immune to Death, Psycho, bombs, Witch Curse and linked deaths.' },
 };
 export const DREAM_IDS = Object.keys(DREAMS);
+/** Default draw weights (0 = never … 4 = frequent). Custom games may change them. */
+export const DREAM_WEIGHTS = {
+  SLEEP_PARALYSIS: 3, PREMONITION: 2, WHISPERS: 3, SLEEPWALKING: 3, DREAM_SNATCHER: 3,
+  NIGHT_SHIFT: 3, SHARED_NIGHTMARE: 3, INSOMNIA: 1, GUARDIAN_ANGEL: 2,
+};
+export const DREAM_WEIGHT_MAX = 4;
+/** Insomnia is drawn at most this many times in one match. */
+export const INSOMNIA_CAP = 2;
 
 export const RULE_CARDS = {
   FOG_OF_WAR: { id: 'FOG_OF_WAR', name: 'Fog of War', simple: false,
@@ -248,10 +256,18 @@ export const SIMPLE_RULE_IDS = RULE_IDS.filter((r) => RULE_CARDS[r].simple);
 export const RETIRED_RULES = ['Silent Night', 'Mirrored Fates', 'Role Swap', 'Night Watch', 'Total Eclipse'];
 
 export const SCENARIO = {
+  // New cards are only ever appended: translations look cards up by position.
   WHO: ['Time Travelers', 'Space Explorers', 'Mythical Creatures', 'Ghosts of Historical Figures', 'Mutants',
-    'Secret Society Members', 'Lost Tourists', 'Artificial Intelligences', 'Medieval Villagers', 'Celebrity Lookalikes'],
-  WHERE: ['a Sinking Ship', 'an Abandoned Amusement Park', 'an Underground Bunker', 'a Haunted Mansion', 'a Snow-Covered Tundra'],
-  WHY: ['Find a Hidden Treasure', 'Escape Before Time Runs Out', 'Complete a Ritual', 'Solve a Murder', 'Stop an Impending Disaster'],
+    'Secret Society Members', 'Lost Tourists', 'Artificial Intelligences', 'Medieval Villagers', 'Celebrity Lookalikes',
+    'Retired Circus Performers', 'Lighthouse Keepers', 'Rival Chefs', 'Exiled Royals', 'Night-Shift Nurses',
+    'Deep-Sea Divers', 'Wedding Guests', 'Stranded Astronomers', 'Masked Ball Dancers', 'Silent Monks'],
+  WHERE: ['a Sinking Ship', 'an Abandoned Amusement Park', 'an Underground Bunker', 'a Haunted Mansion', 'a Snow-Covered Tundra',
+    'a Fog-Bound Lighthouse', 'a Derelict Space Station', 'a Night Train Through the Mountains', 'a Flooded Cathedral',
+    'an Overgrown Botanical Garden', 'a Desert Oasis Hotel', 'a Remote Monastery', 'a Moonlit Vineyard',
+    'an Abandoned Film Studio', 'a Clockwork Museum'],
+  WHY: ['Find a Hidden Treasure', 'Escape Before Time Runs Out', 'Complete a Ritual', 'Solve a Murder', 'Stop an Impending Disaster',
+    'Break an Ancient Curse', 'Win a Fortune at Cards', 'Protect a Royal Heir', 'Find the Way Home', 'Expose a Traitor',
+    'Survive Until Sunrise', 'Recover a Stolen Relic', 'Wake the Sleeping Town', 'Decode a Final Message', 'Keep a Terrible Secret'],
 };
 
 export const PRODUCTS = ['a brass key that fits no lock', 'a jar of warm sand', 'a ticket for a train that left yesterday',
@@ -272,7 +288,7 @@ export const PRESETS = {
   doomsday: { id: 'doomsday', name: 'Doomsday', min: 5, max: 13, pool: STANDARD_EXTENDED, dreams: true,
     rulesMin: 1, rulesMax: 3, ruleIds: RULE_IDS, doomsday: true,
     blurb: 'Standard, against the clock. If nobody has won when the final Day closes, Death wins.' },
-  custom: { id: 'custom', name: 'Custom', min: 5, max: 18, pool: FULL_EXTENDED, dreams: true,
+  custom: { id: 'custom', name: 'Custom', min: 5, max: 25, pool: FULL_EXTENDED, dreams: true,
     rulesMin: 0, rulesMax: 3, ruleIds: RULE_IDS, doomsday: false, custom: true,
     blurb: 'Pick the extended pool, Dreams, Rules and clock yourself — or type the exact deck. Warns about unbalanced setups.' },
 };
@@ -281,4 +297,6 @@ export const MIN_PLAYERS = 5;
 
 /** Interface languages. The table sets a default; each player may override it. */
 export const LANGS = ['en', 'hu', 'sk', 'cs', 'de', 'fr', 'es'];
-export const ABS_MAX_PLAYERS = 18;
+export const ABS_MAX_PLAYERS = 25;
+/** Below these counts, random draws skip cards that tend to unbalance small tables. */
+export const SMALL_TABLE = { DOUBLE_JEOPARDY: 7, JESTER: 8 };

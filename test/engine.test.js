@@ -209,7 +209,7 @@ test('T12 Dream Snatcher swaps apply once in seat order', () => {
   t.cmd('Ada', 'dream.swap', { target: t.id('Bo') });
   assert.throws(() => t.cmd('Cy', 'dream.swap', { target: t.id('Ed') }), /Dream Snatcher/);
   assert.equal(t.m.phase, 'NIGHT_DREAM_SWAP', 'the grace period never ends early');
-  assert.ok(t.m.deadline - t.m.openedAt === 5000, 'five-second grace');
+  assert.ok(t.m.deadline - t.m.openedAt === 15000, 'fifteen-second nightfall with Dreams on');
   t.advance();
   // Ada↔Bo first (seat 0): Ada=SNATCHER, Bo=SNATCHER; then Bo↔Di: Bo=ANGEL, Di=SNATCHER.
   assert.equal(N.dreams[t.id('Ada')], 'DREAM_SNATCHER');

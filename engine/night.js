@@ -18,6 +18,9 @@ export function resolveNight(m, rng) {
   const say = (pid, text, kind = 'report', extra = {}) => (reports[pid] ||= []).push({ text, kind, extra });
   const ins = (text) => insomnia.push(text);
   const unreliable = hasRule(m, 'UNRELIABLE_POWER');
+  // Blood Moon: no protection holds and nothing can block the Death kill.
+  const blood = !!N.bloodMoon;
+  if (blood) ins('The Blood Moon rose: no protection held, and nothing could stay Death\'s hand.');
   const roll = () => rng.int(6, 'd6') + 1; // 1..6
 
   // ── R1: freeze valid intents ────────────────────────────────────────────
@@ -53,7 +56,7 @@ export function resolveNight(m, rng) {
       deathWhy = allConfirmed && sets.every((s) => s.length === 0) ? 'pass' : 'disagreement';
     }
   }
-  const blockDeath = (why) => { if (deathCmd && deathCmd.ok) { deathCmd.ok = false; deathCmd.why = why; } };
+  const blockDeath = (why) => { if (!blood && deathCmd && deathCmd.ok) { deathCmd.ok = false; deathCmd.why = why; } };
 
   // ── Unreliable Power: one d6 per action instance, Death rolls once ───────
   if (unreliable) {
@@ -74,10 +77,10 @@ export function resolveNight(m, rng) {
   }
 
   // Protective sets used by several steps.
-  const tempRev = new Set(m.players.filter((p) => p.alive && p.tempRevival).map((p) => p.id));
-  const angel = new Set(N.aliveAtOpen.filter((id) => dreamOf(id) === 'GUARDIAN_ANGEL'));
+  const tempRev = new Set(blood ? [] : m.players.filter((p) => p.alive && p.tempRevival).map((p) => p.id));
+  const angel = new Set(blood ? [] : N.aliveAtOpen.filter((id) => dreamOf(id) === 'GUARDIAN_ANGEL'));
   const blessed = new Set();
-  for (const it of intents) if (it.roleId === 'WITCH' && it.option === 'BLESS' && it.ok) blessed.add(it.target);
+  if (!blood) for (const it of intents) if (it.roleId === 'WITCH' && it.option === 'BLESS' && it.ok) blessed.add(it.target);
 
   // ── Witch Curse (applied before any affected action takes effect) ────────
   // Spells resolve in one simultaneous pass: a curse never cancels another spell.
@@ -143,9 +146,9 @@ export function resolveNight(m, rng) {
   }
 
   // ── R3: protections ──────────────────────────────────────────────────────
-  const shield = new Set(intents.filter((it) => it.roleId === 'GUARDIAN' && it.ok).map((it) => it.target));
-  const oracles = intents.filter((it) => it.roleId === 'ORACLE' && it.ok).map((it) => ({ ...it, used: false }));
-  const bodyguards = intents.filter((it) => it.roleId === 'BODYGUARD' && it.ok);
+  const shield = new Set(blood ? [] : intents.filter((it) => it.roleId === 'GUARDIAN' && it.ok).map((it) => it.target));
+  const oracles = intents.filter((it) => it.roleId === 'ORACLE' && it.ok).map((it) => ({ ...it, used: !!blood }));
+  const bodyguards = blood ? [] : intents.filter((it) => it.roleId === 'BODYGUARD' && it.ok);
   const bodyguardUsed = new Set();
   for (const it of intents.filter((x) => x.roleId === 'GUARDIAN')) {
     ins([it.ok ? '{a} (Guardian) watched over {b}.' : '{a} (Guardian) tried to watch over {b} but failed.', { a: nameOf(m, it.actorId), b: nameOf(m, it.target) }]);
@@ -326,13 +329,13 @@ export function resolveNight(m, rng) {
   }
   // Revived players are immune: drop any recorded death for them (defensive).
   for (const id of tempRev) deaths.delete(id);
-  const expired = m.players.filter((p) => p.alive && p.tempRevival && p.tempRevival.expiresAfterNight === n).map((p) => p.id);
+  const expired = m.players.filter((p) => p.alive && p.tempRevival && p.tempRevival.expiresAfterNight === n && !deaths.has(p.id)).map((p) => p.id);
 
   // ── Atomic commit ────────────────────────────────────────────────────────
   for (const [pid, change] of Object.entries(staged)) Object.assign(byId(m, pid), change);
   for (const [pid, causes] of deaths) {
     const p = byId(m, pid);
-    p.alive = false; p.diedAt = `Night ${n}`; p.causes = causes;
+    p.alive = false; p.diedAt = `Night ${n}`; p.causes = causes; p.tempRevival = null;
   }
   for (const pid of expired) {
     const p = byId(m, pid);
@@ -375,7 +378,11 @@ export function resolveNight(m, rng) {
   else if (!expired.length) pub(m, ['Dawn of Day {n}. Found dead: {dead}.', { n: n + 1, dead: deadList(killedIds) }], 'death', { victims: fallen, ev: 'dawn', day: n + 1, killed: killedIds, expired });
   else pub(m, ['Dawn of Day {n}. Found dead: {dead}. Their borrowed time ran out: {deadExpired}.', { n: n + 1, dead: deadList(killedIds), deadExpired: deadList(expired) }], 'death', { victims: fallen, ev: 'dawn', day: n + 1, killed: killedIds, expired });
   if (revivals.length) pub(m, ['{names} returned from the grave — until the next dawn.', { names: revivals.map((id) => nameOf(m, id)) }], 'revive', { ev: 'revive', ids: revivals });
-  return { deaths: [...deaths.keys()], expired, revivals, statuses: queuedStatuses };
+  // Who reached for whom tonight, for the end-of-game recap.
+  const arrows = intents.filter((it) => it.target).map((it) => ({ from: it.actorId, to: it.target, role: it.roleId, option: it.option, ok: it.ok }));
+  if (deathCmd) for (const t of deathCmd.targets) arrows.push({ from: team, to: t, role: 'DEATH', ok: deathCmd.ok });
+  for (const [holder, partner] of Object.entries(N.nightmare)) arrows.push({ from: holder, to: partner, role: 'SHARED_NIGHTMARE', ok: true, dream: true });
+  return { deaths: [...deaths.keys()], expired, revivals, statuses: queuedStatuses, arrows, lines: insomnia };
 }
 
 function failText(why) {

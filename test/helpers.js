@@ -3,7 +3,7 @@ import {
 } from '../engine/game.js';
 import { seededRng } from '../engine/rng.js';
 
-export const NAMES = 'Ada Bo Cy Di Ed Fay Gus Hal Ivy Jo Kit Lu Mo Ned Oz Pip Quin Rae'.split(' ');
+export const NAMES = 'Ada Bo Cy Di Ed Fay Gus Hal Ivy Jo Kit Lu Mo Ned Oz Pip Quin Rae Sol Tam Uma Vic Wes Xan Yul'.split(' ');
 
 /**
  * Build a started match with exact roles (in seat order), rules and options.

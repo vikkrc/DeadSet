@@ -9,5 +9,6 @@ export function checkVictory(m, { jesterSentencedId = null } = {}) {
   if (D === 0 && O === 0) return { winner: 'DRAW', reason: 'Nobody is left standing. The match is a draw.' };
   if (D === 0) return { winner: 'NON_DEATH', reason: 'No Death-aligned player remains alive.' };
   if (D > O) return { winner: 'DEATH', reason: 'Death now outnumbers everyone else still alive.' };
+  if (m.config?.finalTwoDeath && alive.length === 2 && D === 1) return { winner: 'DEATH', reason: 'Death is among the final two, and the table rule gives Death the win.' };
   return null;
 }

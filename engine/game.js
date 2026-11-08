@@ -2,14 +2,14 @@
 // Pure functions over a plain serialisable match object. The server wraps each
 // call in a single synchronous critical section (Node is single-threaded), so
 // every command or transition is atomic.
-import { ROLES, DREAMS, DREAM_IDS, RULES_VERSION, PRESETS, RULE_CARDS } from './content.js';
+import { ROLES, DREAMS, DREAM_IDS, RULES_VERSION, PRESETS, RULE_CARDS, ABS_MAX_PLAYERS, INSOMNIA_CAP } from './content.js';
 import {
-  defaultSettings, applySettingsPatch, validateSetup, buildDeck, drawRules, drawScenario,
+  defaultSettings, applySettingsPatch, validateSetup, buildDeck, drawRules, drawScenario, dreamWeightsFor,
 } from './setup.js';
 import {
   GameError, byId, living, nameOf, hasRule, deathTeam, pub, priv, isDayPhase, isNightPhase,
 } from './state.js';
-import { shuffle, pick } from './rng.js';
+import { shuffle } from './rng.js';
 import { resolveNight } from './night.js';
 import { checkVictory } from './victory.js';
 import { ballotWeight, tally } from './day.js';
@@ -18,6 +18,10 @@ export { GameError };
 
 const MAX_CHAT = 280;
 export const NIGHT_GRACE_SECONDS = 5;
+/** With Dreams on, nightfall is long enough to read your Dream (and for Snatchers to swap). */
+export const DREAM_SWAP_SECONDS = 15;
+/** After this many deathless nights in a row, a Blood Moon rises. */
+export const BLOOD_MOON_AFTER = 2;
 
 export function newMatch({ id, code, hostId, moderated = false }) {
   return {
@@ -42,7 +46,7 @@ export function addPlayer(m, { id, name }) {
   if (m.players.some((p) => normaliseName(p.name).toLowerCase() === clean.toLowerCase())) {
     throw new GameError('That name is already taken in this room.');
   }
-  if (m.players.length >= 18) throw new GameError('The room is full.');
+  if (m.players.length >= ABS_MAX_PLAYERS) throw new GameError('The room is full.');
   const p = {
     id, name: clean, seat: m.players.length, alive: true, ready: false, connected: false,
     roleId: null, originalRoleId: null, alignment: null, charges: {}, statuses: [],
@@ -129,8 +133,15 @@ export function startMatch(m, rng, now, { forceRoles = null } = {}) {
     dreams: m.settings.dreams,
     doomsday: preset.doomsday || (preset.custom && m.settings.doomsday),
     doomsdayDays: m.settings.doomsdayDays,
+    dreamWeights: dreamWeightsFor(m.settings),
+    bloodMoon: m.settings.bloodMoon !== false,
+    finalTwoDeath: !!m.settings.finalTwoDeath,
   };
-  m.activeRules = drawRules(m.settings, rng);
+  m.history = [];
+  m.calm = 0;
+  m.deadSnap = [];
+  m.dreamCounts = {};
+  m.activeRules = drawRules(m.settings, rng, n);
   m.scenario = drawScenario(m.settings, rng);
   m.publicLog = [];
   m.privateLog = {};
@@ -302,6 +313,11 @@ function resolveDay(m, now, { noVote = false } = {}) {
     pub(m, 'A wager was won, but there was nothing left to cancel.', 'vote', { ev: 'cancelled' });
   }
 
+  (m.history ||= []).push({
+    kind: 'day', n: d.number, nominations: d.nominations.map((x) => ({ by: x.by, target: x.target })),
+    ballots: { ...d.ballots }, ghostBallots: { ...d.ghostBallots }, shots: { ...d.shots },
+    sentenced, cancelled, totals: d.result?.totals ?? {},
+  });
   if (sentenced) {
     const p = byId(m, sentenced);
     p.alive = false; p.diedAt = `Day ${d.number}`; p.causes = ['SENTENCED']; p.tempRevival = null;
@@ -374,14 +390,36 @@ function beginNightPhase(m, now) {
     death: null, conspire: {},
   };
   pub(m, ['Night {n} falls. Keep your screen to yourself.', { n }], 'phase', { ev: 'nightfall', n });
+  if (m.config.bloodMoon && (m.calm ?? 0) >= BLOOD_MOON_AFTER) {
+    m.night.bloodMoon = true;
+    pub(m, 'A Blood Moon rises. Tonight no protection holds, and nothing can stay Death\'s hand.', 'phase', { ev: 'bloodmoon', n });
+  }
   if (m.config.dreams) {
-    for (const id of alive) m.night.initialDreams[id] = pick(rng, DREAM_IDS, 'dream');
+    m.dreamCounts ||= {};
+    for (const id of alive) {
+      const d = drawDream(m, rng);
+      if (!d) continue;
+      m.night.initialDreams[id] = d;
+      m.dreamCounts[d] = (m.dreamCounts[d] || 0) + 1;
+    }
     m.night.initialSnatchers = alive.filter((id) => m.night.initialDreams[id] === 'DREAM_SNATCHER');
     m.night.dreams = { ...m.night.initialDreams };
   }
-  // A fixed grace period: eyes close, Dream Snatchers may pick a swap, then
-  // night actions open on their own. Nobody has to tap anything.
-  enterPhase(m, 'NIGHT_DREAM_SWAP', now, NIGHT_GRACE_SECONDS);
+  // A fixed nightfall: everyone reads their Dream, Dream Snatchers may pick a
+  // swap, then night actions open on their own. The length never varies, so
+  // it reveals nothing about who holds what.
+  enterPhase(m, 'NIGHT_DREAM_SWAP', now, m.config.dreams ? DREAM_SWAP_SECONDS : NIGHT_GRACE_SECONDS);
+}
+
+/** One weighted Dream draw; Insomnia stops appearing once it reached its cap. */
+function drawDream(m, rng) {
+  const W = m.config.dreamWeights || {};
+  const ids = DREAM_IDS.filter((id) => (W[id] ?? 1) > 0 && !(id === 'INSOMNIA' && (m.dreamCounts.INSOMNIA || 0) >= INSOMNIA_CAP));
+  const total = ids.reduce((a, id) => a + (W[id] ?? 1), 0);
+  if (!total) return null;
+  let r = rng.int(total, 'dream');
+  for (const id of ids) { r -= W[id] ?? 1; if (r < 0) return id; }
+  return ids.at(-1);
 }
 
 function applySwaps(m) {
@@ -481,7 +519,13 @@ function closeSwap(m, now) { openActions(m, now); }
 
 function closeActions(m, now) {
   enterPhase(m, 'NIGHT_RESOLVING', now, 0);
-  resolveNight(m, rngRef);
+  const res = resolveNight(m, rngRef);
+  (m.history ||= []).push({ kind: 'night', n: m.night.number, bloodMoon: !!m.night.bloodMoon, arrows: res.arrows, lines: res.lines, died: [...res.deaths, ...res.expired], dreams: { ...m.night.dreams } });
+  // Count deathless nights since anyone last died (day deaths reset it too).
+  const deadNow = m.players.filter((p) => !p.alive).map((p) => p.id);
+  const fresh = deadNow.filter((id) => !(m.deadSnap || []).includes(id));
+  m.calm = fresh.length ? 0 : (m.calm ?? 0) + 1;
+  m.deadSnap = deadNow;
   for (const p of m.players) p.dreamId = null;
   m.night = null;
   if (victoryOrNull(m, now)) return;

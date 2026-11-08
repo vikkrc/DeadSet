@@ -85,7 +85,7 @@ test('T28 offline phone: committed action persists, missing input passes at dead
   rm.command(host.code, host.token, { type: 'host.advance', phaseId: m.phaseId });
   rm.command(host.code, host.token, { type: 'host.advance', phaseId: m.phaseId }); // no nominations → night
   assert.equal(m.phase, 'NIGHT_DREAM_SWAP');
-  now += 6_000;
+  now += 16_000;
   // Drive the deadline directly rather than waiting on real timers.
   return import('../engine/game.js').then(({ onDeadline: od }) => {
     assert.ok(od(m, rm.rng, now));

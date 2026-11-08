@@ -51,7 +51,8 @@ export function publicView(m, now = Date.now()) {
     hostId: m.hostId, moderated: m.moderated,
     preset: m.config?.preset ?? m.settings.preset,
     transport: m.settings.transport,
-    table: { threads: !!m.settings.threads, score: m.settings.score !== false, lang: m.settings.lang || 'en' },
+    table: { threads: !!m.settings.threads, score: m.settings.score !== false, lang: m.settings.lang || 'en', bloodMoon: m.config ? m.config.bloodMoon : m.settings.bloodMoon !== false, finalTwoDeath: m.config ? m.config.finalTwoDeath : !!m.settings.finalTwoDeath },
+    bloodMoon: !!m.night?.bloodMoon,
     doomsday: m.config?.doomsday ? m.config.doomsdayDays : null,
     scenario: m.scenario, activeRules: m.activeRules.map((id) => RULE_CARDS[id]),
     players: m.players.map((p) => ({
@@ -67,6 +68,8 @@ export function publicView(m, now = Date.now()) {
     log: m.publicLog.slice(-250),
     winner: m.winner, endReason: m.endReason, jesterId: m.jesterId ?? null,
   };
+  // The end-of-game recap reveals every action, so it follows the role reveal.
+  if (revealAll && m.history?.length) v.recap = m.history;
   if (m.day && isDayPhase(m.phase)) {
     v.day = {
       nominations: m.day.nominations.map((x) => ({ by: x.by, target: x.target })),
@@ -122,8 +125,12 @@ export function playerView(m, pid, now = Date.now()) {
   }
   // Dream (night only; Snatchers see their card during the swap window).
   const N = m.night;
-  if (N && m.phase === 'NIGHT_DREAM_SWAP' && N.initialSnatchers.includes(p.id)) me.dream = DREAMS.DREAM_SNATCHER;
-  if (N && m.phase === 'NIGHT_ACTIONS' && N.dreams[p.id]) me.dream = DREAMS[N.dreams[p.id]];
+  // Everyone reads their drawn Dream during nightfall; a swap shows at the end.
+  if (N && m.phase === 'NIGHT_DREAM_SWAP' && N.initialDreams[p.id]) me.dream = DREAMS[N.initialDreams[p.id]];
+  if (N && m.phase === 'NIGHT_ACTIONS' && N.dreams[p.id]) {
+    me.dream = DREAMS[N.dreams[p.id]];
+    if (N.initialDreams[p.id] && N.initialDreams[p.id] !== N.dreams[p.id]) me.dreamFrom = DREAMS[N.initialDreams[p.id]];
+  }
   if (N?.sleepwalk[p.id] && m.phase === 'NIGHT_ACTIONS') me.sleepwalkPartner = nameOf(m, N.sleepwalk[p.id]);
 
   const v = { ...base, me, private: (m.privateLog[p.id] || []).slice(-120), action: actionFor(m, p), chats: chatsFor(m, p) };
