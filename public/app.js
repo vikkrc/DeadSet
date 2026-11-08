@@ -4,7 +4,7 @@ import { glyph, dreamGlyph } from './icons.js';
 import { qrSvg } from './qr.js';
 import { renderGuide } from './guide.js';
 import { sound, score, haptic, burstAt, celebrate, ambient } from './fx.js';
-import { boardScreen, activeRuleNotes, moodFor, ruleGlyph } from './board.js';
+import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './board.js';
 import { seatLayout } from './layout.js';
 import { gazetteHtml, frontPageHtml } from './gazette.js';
 import { LANGS, t, th, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, scen, optLabel, list as tlist, loadLang, setContent, browserLang, isLang, getLang, extra as tx } from './i18n.js';
@@ -100,10 +100,10 @@ function syncLang() {
 // and unmuted; phones then stay quiet. Interaction sounds: never at night (or
 // for role-revealing taps), so nobody can be identified by what their phone does.
 const onBoard = () => S.route?.name === 'board';
-function pubSound(name) {
-  if (onBoard()) { if (S.board.audio) sound.play(name); return; }
+function pubSound(name, arg) {
+  if (onBoard()) { if (S.board.audio) sound.play(name, arg); return; }
   if (V()?.boardAudio) return;
-  sound.play(name);
+  sound.play(name, arg);
 }
 const secretPhase = () => { const v = V(); return !!v && isNight(v.phase); };
 function uiSound(name) { if (!secretPhase()) sound.play(name); }
@@ -274,17 +274,22 @@ function detectMoments(v) {
         break;
       }
       case 'scapegoat':
-        if (!fresh.some((x) => x.ev === 'tally')) out.push({ type: 'death', title: 'The Scapegoat pays', names: (l.victims ?? []).map(name), sub: 'No one was sentenced.' });
+        if (!fresh.some((x) => x.ev === 'tally')) out.push({ type: 'death', sound: 'scapegoat', title: 'The Scapegoat pays', names: (l.victims ?? []).map(name), sub: 'No one was sentenced.' });
         break;
-      case 'shot': out.push({ type: 'death', title: 'A shot rings out', names: (l.victims ?? []).map(name), sub: l.victims?.length ? 'Nobody saw who pulled the trigger.' : 'The bullet found no one.' }); break;
+      case 'shot': out.push({ type: 'death', sound: 'shot', title: 'A shot rings out', names: (l.victims ?? []).map(name), sub: l.victims?.length ? 'Nobody saw who pulled the trigger.' : 'The bullet found no one.' }); break;
       case 'final-act': out.push({ type: 'call', kicker: ruleF('EQUAL_EXCHANGE', 'name'), title: 'A final act', sub: 'The condemned may take one more with them.', sound: 'knock' }); break;
       case 'exchange': out.push({ type: 'death', title: 'An equal exchange', names: (l.victims ?? []).map(name), sub: 'The condemned did not go alone.' }); break;
       case 'end': out.push({ type: 'end', winner: l.winner, reason: l.reason, tapOnly: true }); break;
       case 'discussion': notify(t('Day {n} · the floor is open', { n: roman(v.dayNumber) })); break;
-      case 'defense': notify(t('Defence: each nominee speaks in turn')); break;
+      case 'defense': notify(t('Defence: each nominee speaks in turn')); pubSound('spot'); break;
       case 'novote': notify(t('Nobody was nominated. No vote today.')); break;
-      case 'nominate': notify(t(l.first ? '{a} accuses {b}' : '{a} seconds {b}', { a: name(l.by), b: name(l.target) }), 'accuse'); pubSound('knock'); break;
-      case 'immunity': notify(t('{a} claims diplomatic immunity', { a: name(l.who) })); break;
+      case 'nominate': {
+        notify(t(l.first ? '{a} accuses {b}' : '{a} seconds {b}', { a: name(l.by), b: name(l.target) }), 'accuse');
+        const k = v.log.filter((x) => x.ev === 'nominate' && x.target === l.target && x.at === l.at && x.i <= l.i).length;
+        pubSound('accuse', k);
+        break;
+      }
+      case 'immunity': notify(t('{a} claims diplomatic immunity', { a: name(l.who) })); pubSound('immunity'); break;
       case 'exchange-none': notify(t('The condemned went quietly.')); break;
       default: break;
     }
@@ -295,7 +300,8 @@ function detectMoments(v) {
   }
 }
 
-const MOMENT_SOUND = { night0: 'night', day1: 'dawn', nightfall: 'night', dawn: 'dawn', tally: 'knock', death: 'death', revive: 'reveal', bloodmoon: 'bloodmoon' };
+const MOMENT_SOUND = { night0: 'night', day1: 'dawn', nightfall: 'night', dawn: 'dawn', tally: 'knock', death: 'death', revive: 'revive', bloodmoon: 'bloodmoon' };
+const END_THEME = { DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester' };
 const MOMENT_TIME = { night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 5200, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
 const momentTime = (m) => (onBoard() && m.type === 'dawn' ? 9000 : MOMENT_TIME[m.type] + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
 
@@ -313,7 +319,13 @@ function nextMoment() {
     if (m.type === 'nightfall' || m.type === 'night0') haptic(20);
     if (m.type === 'end') {
       const won = didIWin(V(), m.winner);
-      setTimeout(() => { celebrate(m.winner === 'ABORTED' || m.winner === 'DRAW' ? 'neutral' : m.winner); pubSound(won === false ? 'lose' : 'win'); haptic([40, 60, 40, 60, 120]); }, 500);
+      setTimeout(() => {
+        celebrate(m.winner === 'ABORTED' || m.winner === 'DRAW' ? 'neutral' : m.winner);
+        pubSound(END_THEME[m.winner] ?? 'draw');
+        // Your own result follows the table's theme, on your own phone only.
+        if (!onBoard() && won !== null && !V()?.boardAudio) setTimeout(() => sound.play(won ? 'win' : 'lose'), 3200);
+        haptic([40, 60, 40, 60, 120]);
+      }, 500);
     }
     if (!m.tapOnly) S.momentTimer = setTimeout(nextMoment, calm.matches ? Math.min(momentTime(m), 2500) : momentTime(m));
   }
@@ -473,8 +485,7 @@ function render() {
   const ghost = !!v?.me && !v.me.moderator && v.me.alive === false && v.phase !== 'LOBBY' && v.phase !== 'ENDED' && S.route?.name === 'room';
   document.body.classList.toggle('is-dead', ghost);
   document.body.classList.toggle('is-board', onBoard());
-  if (onBoard() && v && S.board.audio && v.table?.score !== false) score.play(moodFor(v));
-  else score.stop();
+  if (onBoard() && v && S.board.audio && v.table?.score !== false) { score.play(moodFor(v)); score.tension(tenseFor(v)); } else score.stop();
   document.body.classList.toggle('has-sheet', !!S.ui.sheet && (S.route?.name === 'room' || S.ui.sheet === 'lang'));
   ambient(night ? 'night' : null);
   morph(app, view());

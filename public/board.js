@@ -31,12 +31,22 @@ export function activeRuleNotes(v) {
 }
 
 export function moodFor(v) {
-  if (v.phase === 'LOBBY') return 'lobby';
-  if (v.phase === 'ENDED') return 'end';
-  if (v.phase === 'NIGHT_0_REVEAL' || v.phase === 'NIGHT_DREAM_SWAP' || v.phase === 'NIGHT_ACTIONS') return 'night';
-  if (v.phase === 'DAY_VOTING' || v.phase === 'DAY_RESOLVING') return 'vote';
-  return 'day';
+  switch (v.phase) {
+    case 'LOBBY': return 'lobby';
+    case 'ENDED': return { DEATH: 'endDeath', NON_DEATH: 'endLiving', JESTER: 'endJester' }[v.winner] ?? 'endDraw';
+    case 'NIGHT_0_REVEAL': return 'ceremony';
+    case 'NIGHT_DREAM_SWAP': case 'NIGHT_ACTIONS': case 'NIGHT_RESOLVING': return v.bloodMoon ? 'bloodmoon' : 'night';
+    case 'DAY_PREP': return 'morning';
+    case 'DAY_DISCUSSION': return 'discussion';
+    case 'DAY_DEFENSE': return 'defense';
+    case 'DAY_VOTING': return 'vote';
+    case 'DAY_RESOLVING': return 'resolving';
+    default: return 'morning';
+  }
 }
+
+/** The last few alive: the score adds a tension layer. */
+export const tenseFor = (v) => !['LOBBY', 'ENDED'].includes(v.phase) && v.players.filter((p) => p.alive).length <= Math.max(3, Math.ceil(v.players.length * 0.3));
 
 const RULE_GLYPH = {
   FOG_OF_WAR: 'veil', CURSED_SILENCE: 'psycho', MAJORITY_RULE: 'magistrate', PARANOIA: 'mentalist', VENGEFUL_GHOSTS: 'death',

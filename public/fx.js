@@ -26,27 +26,35 @@ function audio() {
   return ctx;
 }
 
-function tone(a, { freq, type = 'sine', dur = 1, gain = 0.3, attack = 0.005, at = 0, to = null }) {
+// Each played sound is nudged a few cents up or down, so repeats never sound canned.
+let vary = 1;
+function tone(a, { freq, type = 'sine', dur = 1, gain = 0.3, attack = 0.005, at = 0, to = null, dest = null, detune = 0 }) {
   const t = a.currentTime + at;
   const o = a.createOscillator();
   const g = a.createGain();
   o.type = type;
-  o.frequency.setValueAtTime(freq, t);
-  if (to) o.frequency.exponentialRampToValueAtTime(to, t + dur);
+  o.frequency.setValueAtTime(freq * vary, t);
+  if (detune) o.detune.value = detune;
+  if (to) o.frequency.exponentialRampToValueAtTime(to * vary, t + dur);
   g.gain.setValueAtTime(0.0001, t);
   g.gain.exponentialRampToValueAtTime(gain, t + attack);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  o.connect(g).connect(master);
+  o.connect(g).connect(dest || master);
   o.start(t);
   o.stop(t + dur + 0.05);
 }
 
-function noise(a, { dur = 0.3, gain = 0.3, type = 'lowpass', freq = 800, q = 0.8, at = 0, sweep = null, attack = 0.004 }) {
+const noiseBuf = new Map();
+function noise(a, { dur = 0.3, gain = 0.3, type = 'lowpass', freq = 800, q = 0.8, at = 0, sweep = null, attack = 0.004, dest = null }) {
   const t = a.currentTime + at;
-  const len = Math.ceil(a.sampleRate * dur);
-  const buf = a.createBuffer(1, len, a.sampleRate);
-  const d = buf.getChannelData(0);
-  for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  const len = Math.ceil(a.sampleRate * Math.min(dur, 4));
+  let buf = noiseBuf.get(len);
+  if (!buf) {
+    buf = a.createBuffer(1, len, a.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    noiseBuf.set(len, buf);
+  }
   const src = a.createBufferSource();
   src.buffer = buf;
   const f = a.createBiquadFilter();
@@ -58,13 +66,35 @@ function noise(a, { dur = 0.3, gain = 0.3, type = 'lowpass', freq = 800, q = 0.8
   g.gain.setValueAtTime(0.0001, t);
   g.gain.exponentialRampToValueAtTime(gain, t + attack);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  src.connect(f).connect(g).connect(master);
+  src.connect(f).connect(g).connect(dest || master);
   src.start(t);
 }
 
-const bell = (a, f, at = 0, gain = 0.18, dur = 2.6) => {
-  [[1, 1], [2.76, 0.45], [5.4, 0.22], [8.93, 0.1]].forEach(([m, g]) => tone(a, { freq: f * m, dur: dur / Math.sqrt(m), gain: gain * g, at }));
+const bell = (a, f, at = 0, gain = 0.18, dur = 2.6, dest = null) => {
+  [[1, 1], [2.76, 0.45], [5.4, 0.22], [8.93, 0.1]].forEach(([m, g]) => tone(a, { freq: f * m, dur: dur / Math.sqrt(m), gain: gain * g, at, dest }));
 };
+/** A slightly out-of-tune music box: sweet, but wrong. */
+const box = (a, f, at = 0, gain = 0.06, dest = null) => {
+  const det = (Math.random() - 0.5) * 18;
+  tone(a, { freq: f, dur: 1.8, gain, at, dest, detune: det });
+  tone(a, { freq: f * 2, dur: 0.7, gain: gain * 0.35, at, dest, detune: det });
+  tone(a, { freq: f * 3.01, dur: 0.35, gain: gain * 0.12, at, dest });
+};
+/** A plucked low string (filtered saw with a fast decay). */
+function pluck(a, f, at = 0, gain = 0.12, dest = null, bright = 900) {
+  const t = a.currentTime + at;
+  const o = a.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f;
+  const lp = a.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 3;
+  lp.frequency.setValueAtTime(bright, t); lp.frequency.exponentialRampToValueAtTime(120, t + 0.35);
+  const g = a.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+  o.connect(lp).connect(g).connect(dest || master);
+  o.start(t); o.stop(t + 0.55);
+}
+const heartbeat = (a, at = 0, gain = 0.5, dest = null) => {
+  tone(a, { freq: 62, dur: 0.22, gain, to: 40, at, dest });
+  tone(a, { freq: 58, dur: 0.26, gain: gain * 0.75, to: 38, at: at + 0.24, dest });
+};
+const semi = (f, n) => f * 2 ** (n / 12);
 
 const SOUNDS = {
   tap: (a) => tone(a, { freq: 720, type: 'triangle', dur: 0.05, gain: 0.05 }),
@@ -76,12 +106,20 @@ const SOUNDS = {
   sleep: (a) => noise(a, { dur: 0.9, gain: 0.12, type: 'bandpass', freq: 1800, sweep: 300, q: 1.2, attack: 0.25 }),
   reveal: (a) => [1046, 1318, 1568, 2093].forEach((f, i) => tone(a, { freq: f, dur: 0.9, gain: 0.04, at: i * 0.06 })),
   night: (a) => {
+    const v = Math.floor(Math.random() * 3);
     tone(a, { freq: 55, dur: 3.2, gain: 0.32, attack: 0.9 });
-    tone(a, { freq: 82.4, dur: 3, gain: 0.14, attack: 1.1 });
+    tone(a, { freq: v === 1 ? 77.8 : 82.4, dur: 3, gain: 0.14, attack: 1.1 });
     noise(a, { dur: 3, gain: 0.08, type: 'bandpass', freq: 400, sweep: 160, q: 0.7, attack: 1.2 });
-    bell(a, 196, 0.6, 0.08, 3.5);
+    if (v === 2) [392, 370, 311, 294].forEach((f, i) => box(a, f, 0.8 + i * 0.42, 0.05));
+    else bell(a, v ? 185 : 196, 0.6, 0.08, 3.5);
   },
-  dawn: (a) => { bell(a, 523.25, 0, 0.16); bell(a, 783.99, 0.28, 0.1); noise(a, { dur: 2, gain: 0.04, type: 'highpass', freq: 3000, attack: 0.8 }); },
+  dawn: (a) => {
+    const v = Math.floor(Math.random() * 3);
+    const root = [523.25, 493.88, 587.33][v];
+    bell(a, root, 0, 0.16); bell(a, semi(root, 7), 0.28, 0.1);
+    if (v === 2) bell(a, semi(root, 10), 0.56, 0.07);
+    noise(a, { dur: 2, gain: 0.04, type: 'highpass', freq: 3000, attack: 0.8 });
+  },
   death: (a) => {
     tone(a, { freq: 70, dur: 1.8, gain: 0.6, to: 32, attack: 0.01 });
     noise(a, { dur: 1.2, gain: 0.3, freq: 240, sweep: 60 });
@@ -94,8 +132,53 @@ const SOUNDS = {
   crack: (a) => { noise(a, { dur: 0.09, gain: 0.5, type: 'highpass', freq: 2500 }); noise(a, { dur: 0.25, gain: 0.3, freq: 900, at: 0.03 }); tone(a, { freq: 160, dur: 0.3, gain: 0.25, to: 70, at: 0.02 }); },
   unfold: (a) => noise(a, { dur: 0.7, gain: 0.08, type: 'bandpass', freq: 3200, sweep: 1200, q: 0.6, attack: 0.2 }),
   thud: (a) => { tone(a, { freq: 90, dur: 0.35, gain: 0.35, to: 48 }); noise(a, { dur: 0.12, gain: 0.18, freq: 300 }); },
-  heart: (a) => { tone(a, { freq: 62, dur: 0.22, gain: 0.55, to: 40 }); tone(a, { freq: 58, dur: 0.26, gain: 0.4, to: 38, at: 0.24 }); },
+  heart: (a) => heartbeat(a),
   page: (a) => { noise(a, { dur: 0.35, gain: 0.12, type: 'bandpass', freq: 2200, sweep: 900, q: 0.7, attack: 0.05 }); },
+  // ── Public event stings ──
+  /** An accusation: a knock and a sting that climbs with every voice joining it. */
+  accuse: (a, k = 1) => {
+    SOUNDS.knock(a);
+    const f = semi(196, Math.min(12, (k - 1) * 3));
+    tone(a, { freq: f, type: 'triangle', dur: 0.9, gain: 0.08, at: 0.2, attack: 0.02 });
+    tone(a, { freq: semi(f, 6), type: 'sine', dur: 0.8, gain: 0.05, at: 0.24 });
+    if (k > 2) noise(a, { dur: 0.6, gain: 0.05, type: 'bandpass', freq: 1200, sweep: 3000, q: 4, at: 0.2 });
+  },
+  shot: (a) => {
+    noise(a, { dur: 0.12, gain: 0.7, type: 'highpass', freq: 1200 });
+    tone(a, { freq: 120, dur: 0.5, gain: 0.5, to: 38 });
+    noise(a, { dur: 1.6, gain: 0.08, type: 'lowpass', freq: 900, sweep: 200, at: 0.15, attack: 0.05 });
+    noise(a, { dur: 0.1, gain: 0.12, type: 'highpass', freq: 1500, at: 0.42 });
+  },
+  immunity: (a) => { bell(a, 659.25, 0, 0.09, 2); bell(a, 987.77, 0.12, 0.07, 2.2); },
+  spot: (a) => { tone(a, { freq: 220, dur: 1.4, gain: 0.06, attack: 0.5 }); tone(a, { freq: 330, dur: 1.3, gain: 0.04, attack: 0.6 }); },
+  revive: (a) => {
+    noise(a, { dur: 1.6, gain: 0.07, type: 'bandpass', freq: 300, sweep: 4000, q: 1, attack: 1.4 });
+    [261.63, 311.13, 392, 466.16].forEach((f, i) => tone(a, { freq: f, dur: 1.4, gain: 0.05, at: 0.9 + i * 0.12, attack: 0.3 }));
+  },
+  scapegoat: (a) => { tone(a, { freq: 233, type: 'sawtooth', dur: 0.9, gain: 0.05, to: 110 }); SOUNDS.death(a); },
+  bloodmoon: (a) => {
+    // a long gong, a swell sucked backwards, and a dissonant choir hit
+    [[1, 1], [1.48, 0.6], [2.31, 0.35], [3.17, 0.2]].forEach(([m, g]) => tone(a, { freq: 55 * m, dur: 6 / Math.sqrt(m), gain: 0.28 * g, attack: 0.02 }));
+    noise(a, { dur: 2.2, gain: 0.12, type: 'bandpass', freq: 200, sweep: 1800, q: 0.9, attack: 2 });
+    [110, 116.54, 164.81].forEach((f) => tone(a, { freq: f, type: 'sawtooth', dur: 3, gain: 0.025, attack: 1.2, at: 1.6 }));
+  },
+  // ── Endings: one theme per outcome ──
+  winDeath: (a) => {
+    [0, 1.4, 2.8].forEach((at, i) => bell(a, [130.81, 123.47, 110][i], at, 0.16, 4.5));
+    tone(a, { freq: 41.2, dur: 5, gain: 0.35, attack: 0.8 });
+    [392, 349.23, 311.13, 293.66, 261.63].forEach((f, i) => box(a, f, 0.6 + i * 0.5, 0.05));
+  },
+  winLiving: (a) => {
+    [261.63, 329.63, 392, 523.25, 659.25].forEach((f, i) => bell(a, f, i * 0.2, 0.1, 3.2));
+    noise(a, { dur: 3, gain: 0.03, type: 'highpass', freq: 4000, attack: 1 });
+    tone(a, { freq: 130.81, dur: 4, gain: 0.12, attack: 1.2 });
+  },
+  winJester: (a) => {
+    [523.25, 554.37, 659.25, 622.25, 783.99, 739.99, 1046.5].forEach((f, i) => box(a, f, i * 0.13, 0.07));
+    tone(a, { freq: 300, type: 'triangle', dur: 0.8, gain: 0.05, to: 900, at: 1 });
+    tone(a, { freq: 900, type: 'triangle', dur: 0.6, gain: 0.04, to: 200, at: 1.8 });
+  },
+  draw: (a) => { [[110, 0], [164.81, 0.4], [146.83, 1.2]].forEach(([f, at]) => tone(a, { freq: f, dur: 3.5, gain: 0.1, attack: 0.8, at })); },
 };
 
 export const sound = {
@@ -108,33 +191,51 @@ export const sound = {
     return soundOn;
   },
   unlock() { if (soundOn) audio(); },
-  play(name) {
+  play(name, arg) {
     const a = audio();
     if (!a || !SOUNDS[name]) return;
-    try { SOUNDS[name](a); } catch { /* audio is a nicety */ }
+    vary = 1 + (Math.random() - 0.5) * 0.035;
+    try { SOUNDS[name](a, arg); } catch { /* audio is a nicety */ } finally { vary = 1; }
   },
 };
 
-// ── The score: generated ambient music for the TV board ────────────────────
-// Each mood is a slow detuned pad, a bed of wind and occasional bells. Moods
-// crossfade over a few seconds. Only the TV board ever plays the score.
+// ── The score: generated music for the TV board ────────────────────────────
+// Every mood is built from a few voices over a slow pad and wind:
+//   motif  – short music-box or bell phrases, a random walk on the mood's scale
+//   pluck  – a low plucked ostinato that drives the day
+//   heart  – a heartbeat pulse for votes and verdicts
+//   choir  – formant-filtered voices for the night and the Blood Moon
+//   swell  – rare low surges
+// Each time a mood starts it picks a fresh transposition and phrase seed, so
+// the same phase never sounds identical twice. Only the TV board plays it.
 const MOODS = {
-  lobby: { root: 98, chord: [1, 1.5, 2.25], cutoff: 650, bells: [392, 440, 587, 659], every: [6, 11], wind: 0.012, gain: 0.5 },
-  day: { root: 110, chord: [1, 1.2, 1.5, 2], cutoff: 820, bells: [440, 523, 587, 659, 784], every: [5, 9], wind: 0.01, gain: 0.45 },
-  vote: { root: 73.4, chord: [1, 1.19, 1.5], cutoff: 620, bells: [], every: null, wind: 0.012, gain: 0.5, pulse: true },
-  night: { root: 55, chord: [1, 1.5, 2, 3], cutoff: 380, bells: [392, 466, 523, 622, 698], every: [3, 7], wind: 0.05, gain: 0.6 },
-  end: { root: 65.4, chord: [1, 1.25, 1.5, 2], cutoff: 900, bells: [523, 659, 784, 1046], every: [2, 5], wind: 0.01, gain: 0.45 },
+  lobby: { root: 98, scale: [0, 2, 3, 5, 7, 9, 10], chord: [1, 1.5, 2.25], cutoff: 650, wind: 0.012, gain: 0.5, motif: { voice: 'box', every: [4, 8], len: [3, 5], beat: 0.42, oct: 4 } },
+  ceremony: { root: 73.4, scale: [0, 2, 3, 5, 7, 8, 10], chord: [1, 1.5, 2], cutoff: 520, wind: 0.02, gain: 0.55, choir: 0.018, motif: { voice: 'bell', every: [3, 6], len: [2, 4], beat: 0.7, oct: 3 }, swell: [8, 14] },
+  morning: { root: 110, scale: [0, 2, 3, 7, 9], chord: [1, 1.2, 1.5, 2], cutoff: 820, wind: 0.008, gain: 0.45, motif: { voice: 'bell', every: [3, 6], len: [3, 5], beat: 0.36, oct: 3 } },
+  discussion: { root: 110, scale: [0, 2, 3, 5, 7, 8, 10], chord: [1, 1.2, 1.5], cutoff: 700, wind: 0.008, gain: 0.42, pluck: { bpm: 84, pattern: [1, 0, 0, 1, 0, 1, 0, 0], notes: [0, 0, 7, 3] }, motif: { voice: 'box', every: [6, 11], len: [3, 4], beat: 0.36, oct: 4 } },
+  defense: { root: 98, scale: [0, 1, 3, 5, 7, 8, 10], chord: [1, 1.19, 1.5], cutoff: 600, wind: 0.01, gain: 0.45, pluck: { bpm: 66, pattern: [1, 0, 0, 0, 1, 0, 1, 0], notes: [0, 1, 0, 7] }, choir: 0.008 },
+  vote: { root: 73.4, scale: [0, 1, 3, 5, 7, 8, 10], chord: [1, 1.19, 1.5], cutoff: 620, wind: 0.012, gain: 0.5, heart: 72, motif: { voice: 'box', every: [5, 9], len: [2, 3], beat: 0.5, oct: 4 } },
+  resolving: { root: 69.3, scale: [0, 1, 4, 5, 7, 8, 11], chord: [1, 1.19, 1.41], cutoff: 560, wind: 0.015, gain: 0.5, heart: 96, swell: [5, 9] },
+  night: { root: 55, scale: [0, 2, 3, 5, 7, 8, 10], chord: [1, 1.5, 2, 3], cutoff: 380, wind: 0.05, gain: 0.6, choir: 0.01, shimmer: 0.006, motif: { voice: 'box', every: [5, 10], len: [3, 6], beat: 0.55, oct: 5 } },
+  bloodmoon: { root: 51.9, scale: [0, 1, 4, 5, 6, 8, 10], chord: [1, 1.06, 1.5, 2], cutoff: 420, wind: 0.06, gain: 0.62, choir: 0.03, heart: 56, swell: [4, 8], motif: { voice: 'bell', every: [4, 7], len: [2, 3], beat: 0.8, oct: 3 } },
+  endDeath: { root: 65.4, scale: [0, 2, 3, 5, 7, 8, 10], chord: [1, 1.19, 1.5, 2], cutoff: 700, wind: 0.02, gain: 0.5, choir: 0.02, motif: { voice: 'bell', every: [3.5, 5], len: [1, 2], beat: 1, oct: 2 } },
+  endLiving: { root: 87.3, scale: [0, 2, 4, 5, 7, 9, 11], chord: [1, 1.25, 1.5, 2], cutoff: 950, wind: 0.008, gain: 0.45, motif: { voice: 'bell', every: [2, 4], len: [3, 5], beat: 0.3, oct: 3 } },
+  endJester: { root: 98, scale: [0, 1, 4, 6, 7, 10], chord: [1, 1.26, 1.5], cutoff: 900, wind: 0.008, gain: 0.45, pluck: { bpm: 110, pattern: [1, 0, 1, 0, 1, 1, 0, 1], notes: [0, 6, 4, 1] }, motif: { voice: 'box', every: [1.5, 3], len: [4, 7], beat: 0.18, oct: 4 } },
+  endDraw: { root: 61.7, scale: [0, 5, 7], chord: [1, 1.5], cutoff: 500, wind: 0.03, gain: 0.45, motif: { voice: 'bell', every: [6, 10], len: [1, 2], beat: 1, oct: 2 } },
+  // Overlay mixed on top of any mood when the table is down to its last few.
+  tension: { root: 110, scale: [0, 1], chord: [], cutoff: 3000, wind: 0, gain: 0.5, shimmer: 0.012, heart: 104 },
 };
 let bus = null;
 let layer = null;
-let bellTimer = null;
-let pulseTimer = null;
+let tense = null;
 function scoreBus(a) {
   if (!bus) { bus = a.createGain(); bus.gain.value = 0.9; bus.connect(master); }
   return bus;
 }
 function buildLayer(a, mood) {
   const m = MOODS[mood];
+  const shift = mood === 'tension' ? 0 : [0, 0, -2, 2, 3, -3][Math.floor(Math.random() * 6)];
+  const root = semi(m.root, shift);
   const out = a.createGain();
   out.gain.value = 0.0001;
   out.connect(scoreBus(a));
@@ -149,32 +250,112 @@ function buildLayer(a, mood) {
     for (const det of [-4, 4]) {
       const o = a.createOscillator();
       o.type = i === 0 ? 'sine' : 'triangle';
-      o.frequency.value = m.root * r;
+      o.frequency.value = root * r;
       o.detune.value = det + i * 1.5;
       const g = a.createGain(); g.gain.value = (i === 0 ? 0.16 : 0.07) / m.chord.length * 3;
       o.connect(g).connect(filt);
       nodes.push(o);
     }
   });
-  // wind: looping filtered noise
-  const len = a.sampleRate * 4;
-  const buf = a.createBuffer(1, len, a.sampleRate);
-  const d = buf.getChannelData(0);
-  for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-  const src = a.createBufferSource(); src.buffer = buf; src.loop = true;
-  const bp = a.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 500; bp.Q.value = 0.6;
-  const wlfo = a.createOscillator(); wlfo.frequency.value = 0.07;
-  const wAmt = a.createGain(); wAmt.gain.value = 260;
-  wlfo.connect(wAmt).connect(bp.frequency);
-  const wg = a.createGain(); wg.gain.value = m.wind;
-  src.connect(bp).connect(wg).connect(out);
-  nodes.push(src, wlfo);
+  if (m.wind) {
+    const len = a.sampleRate * 4;
+    const buf = a.createBuffer(1, len, a.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    const src = a.createBufferSource(); src.buffer = buf; src.loop = true;
+    const bp = a.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 500; bp.Q.value = 0.6;
+    const wlfo = a.createOscillator(); wlfo.frequency.value = 0.07;
+    const wAmt = a.createGain(); wAmt.gain.value = 260;
+    wlfo.connect(wAmt).connect(bp.frequency);
+    const wg = a.createGain(); wg.gain.value = m.wind;
+    src.connect(bp).connect(wg).connect(out);
+    nodes.push(src, wlfo);
+  }
+  if (m.choir) {
+    // two "aah" voices: saws through vowel formants, with a slow vibrato
+    const vib = a.createOscillator(); vib.frequency.value = 4.6;
+    const vibAmt = a.createGain(); vibAmt.gain.value = 3;
+    vib.connect(vibAmt);
+    nodes.push(vib);
+    for (const r of [2, 3, 4.76]) {
+      const o = a.createOscillator(); o.type = 'sawtooth'; o.frequency.value = root * r;
+      vibAmt.connect(o.detune);
+      const g = a.createGain(); g.gain.value = m.choir;
+      for (const [f, q] of [[700, 7], [1150, 9]]) {
+        const bp = a.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = f; bp.Q.value = q;
+        o.connect(bp).connect(g);
+      }
+      g.connect(out);
+      nodes.push(o);
+    }
+  }
+  if (m.shimmer) {
+    const trem = a.createOscillator(); trem.frequency.value = 6.5;
+    const tg = a.createGain(); tg.gain.value = 0;
+    const tAmt = a.createGain(); tAmt.gain.value = m.shimmer;
+    trem.connect(tAmt).connect(tg.gain);
+    for (const r of [16, 19.03, 24]) {
+      const o = a.createOscillator(); o.frequency.value = root * r * (mood === 'tension' ? 0.5 : 1);
+      o.connect(tg);
+      nodes.push(o);
+    }
+    tg.connect(out);
+    nodes.push(trem);
+  }
   nodes.forEach((n) => n.start());
   out.gain.exponentialRampToValueAtTime(m.gain, a.currentTime + 3.5);
-  return { out, nodes, mood };
+  const L = { out, nodes, mood, timers: [] };
+  const later = (fn, sec) => { const id = setTimeout(() => { if (layerAlive(L)) fn(); }, sec * 1000); L.timers.push(id); };
+  const span = ([lo, hi]) => lo + Math.random() * (hi - lo);
+  if (m.motif) {
+    let deg = Math.floor(Math.random() * m.scale.length);
+    const phrase = () => {
+      const x = audio(); if (!x) return;
+      const len = Math.round(span(m.motif.len));
+      for (let i = 0; i < len; i++) {
+        deg = Math.max(0, Math.min(m.scale.length * 2 - 1, deg + [-2, -1, -1, 1, 1, 2][Math.floor(Math.random() * 6)]));
+        const n = m.scale[deg % m.scale.length] + 12 * Math.floor(deg / m.scale.length);
+        const f = root * 2 ** m.motif.oct * 2 ** (n / 12) / 4;
+        const at = i * m.motif.beat * (0.85 + Math.random() * 0.3);
+        if (m.motif.voice === 'box') box(x, f, at, 0.045, out); else bell(x, f, at, 0.045, 3.2, out);
+      }
+      later(phrase, span(m.motif.every));
+    };
+    later(phrase, 1.2 + Math.random() * 2);
+  }
+  if (m.pluck) {
+    const step = 60 / m.pluck.bpm / 2;
+    let i = 0;
+    const tick = () => {
+      const x = audio(); if (!x) return;
+      if (m.pluck.pattern[i % m.pluck.pattern.length]) {
+        const n = m.pluck.notes[Math.floor(i / m.pluck.pattern.length) % m.pluck.notes.length];
+        pluck(x, semi(root, n), 0, 0.09, out, 700 + Math.random() * 500);
+      }
+      i++;
+      later(tick, step);
+    };
+    later(tick, 0.5);
+  }
+  if (m.heart) {
+    const beat = () => { const x = audio(); if (x) heartbeat(x, 0, 0.28, out); later(beat, 60 / m.heart * (0.97 + Math.random() * 0.06)); };
+    later(beat, 0.8);
+  }
+  if (m.swell) {
+    const sw = () => {
+      const x = audio(); if (!x) return;
+      tone(x, { freq: root / 2, dur: 4.5, gain: 0.18, attack: 2.2, dest: out });
+      noise(x, { dur: 4, gain: 0.05, type: 'bandpass', freq: 160, sweep: 700, q: 0.8, attack: 2, dest: out });
+      later(sw, span(m.swell));
+    };
+    later(sw, span(m.swell));
+  }
+  return L;
 }
+const layerAlive = (L) => L === layer || L === tense;
 function dropLayer(a, l) {
   if (!l) return;
+  l.timers.forEach(clearTimeout);
   const t = a.currentTime;
   l.out.gain.cancelScheduledValues(t);
   l.out.gain.setValueAtTime(Math.max(0.0001, l.out.gain.value), t);
@@ -188,22 +369,21 @@ export const score = {
     const a = audio();
     if (!a) { this.stop(); return; }
     if (layer?.mood === mood) return;
-    dropLayer(a, layer);
+    const old = layer;
+    layer = null;
+    dropLayer(a, old);
     layer = buildLayer(a, mood);
-    clearTimeout(bellTimer); clearInterval(pulseTimer);
-    const m = MOODS[mood];
-    const ring = () => {
-      if (!layer || layer.mood !== mood) return;
-      if (m.bells.length) bell(a, m.bells[Math.floor(Math.random() * m.bells.length)] / 2, 0, 0.05, 4);
-      bellTimer = setTimeout(ring, (m.every[0] + Math.random() * (m.every[1] - m.every[0])) * 1000);
-    };
-    if (m.every) bellTimer = setTimeout(ring, 1500);
-    if (m.pulse) pulseTimer = setInterval(() => { const x = audio(); if (x) tone(x, { freq: 880, type: 'sine', dur: 0.05, gain: 0.025 }); }, 1000);
+  },
+  /** The last-few-alive overlay: a shimmer and a fast heartbeat on top. */
+  tension(on) {
+    const a = ctx;
+    if (!a || !soundOn) return;
+    if (on && !tense) tense = buildLayer(a, 'tension');
+    else if (!on && tense) { const old = tense; tense = null; dropLayer(a, old); }
   },
   stop() {
-    clearTimeout(bellTimer); clearInterval(pulseTimer);
-    if (ctx && layer) dropLayer(ctx, layer);
-    layer = null;
+    if (ctx && layer) { const old = layer; layer = null; dropLayer(ctx, old); }
+    if (ctx && tense) { const old = tense; tense = null; dropLayer(ctx, old); }
   },
 };
 
