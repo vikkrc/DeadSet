@@ -57,9 +57,9 @@ export default {
     custom: { name: 'Personalizado', blurb: 'Elige tú la reserva extendida, los Sueños, las reglas y el reloj — o escribe el mazo exacto. Avisa de configuraciones desequilibradas.' },
   },
   scenario: {
-    WHO: ['Viajeros en el tiempo', 'Exploradores espaciales', 'Criaturas míticas', 'Fantasmas de personajes históricos', 'Mutantes', 'Miembros de una sociedad secreta', 'Turistas perdidos', 'Inteligencias artificiales', 'Aldeanos medievales', 'Dobles de famosos'],
-    WHERE: ['Un barco que se hunde', 'Un parque de atracciones abandonado', 'Un búnker subterráneo', 'Una mansión encantada', 'Una tundra nevada'],
-    WHY: ['Encontrar un tesoro escondido', 'Escapar antes de que se acabe el tiempo', 'Completar un ritual', 'Resolver un asesinato', 'Detener un desastre inminente'],
+    WHO: ['Viajeros en el tiempo', 'Exploradores espaciales', 'Criaturas míticas', 'Fantasmas de personajes históricos', 'Mutantes', 'Miembros de una sociedad secreta', 'Turistas perdidos', 'Inteligencias artificiales', 'Aldeanos medievales', 'Dobles de famosos', "Artistas de circo retirados", "Fareros", "Chefs rivales", "Nobles exiliados", "Enfermeras del turno de noche", "Buzos de aguas profundas", "Invitados de una boda", "Astrónomos varados", "Bailarines de un baile de máscaras", "Monjes silenciosos"],
+    WHERE: ['Un barco que se hunde', 'Un parque de atracciones abandonado', 'Un búnker subterráneo', 'Una mansión encantada', 'Una tundra nevada', "Un faro entre la niebla", "Una estación espacial abandonada", "Un tren nocturno entre montañas", "Una catedral inundada", "Un jardín botánico invadido por la maleza", "Un hotel en un oasis", "Un monasterio remoto", "Un viñedo a la luz de la luna", "Un estudio de cine abandonado", "Un museo de autómatas"],
+    WHY: ['Encontrar un tesoro escondido', 'Escapar antes de que se acabe el tiempo', 'Completar un ritual', 'Resolver un asesinato', 'Detener un desastre inminente', "Romper una maldición antigua", "Ganar una fortuna a las cartas", "Proteger a un heredero real", "Encontrar el camino a casa", "Desenmascarar a un traidor", "Sobrevivir hasta el amanecer", "Recuperar una reliquia robada", "Despertar al pueblo dormido", "Descifrar un último mensaje", "Guardar un terrible secreto"],
   },
   products: ['una llave de latón que no abre ninguna cerradura', 'un tarro de arena caliente', 'un billete para un tren que salió ayer', 'una sola pluma negra', 'un reloj de bolsillo que va hacia atrás', 'una carta sellada a tu nombre', 'un frasco de perfume gris', 'una baraja a la que le falta la reina', 'una vela que huele a lluvia', 'una foto de una habitación vacía', 'una caja forrada de terciopelo (vacía)', 'una brújula que te señala a ti'],
   whispers: [
@@ -95,7 +95,7 @@ export default {
 <li><b>Defensa.</b> Cada nominado, por orden de nominación, toma la palabra.</li>
 <li><b>Votación secreta.</b> Cada jugador vivo con derecho vota a un nominado o se abstiene, en su propio móvil. Puedes cambiar el voto hasta que el anfitrión lo cierre. Solo se publican los totales.</li>
 <li><b>Condena.</b> El único total más alto es condenado (eliminado). <b>Un empate en cabeza no condena a nadie.</b> Como mucho se condena a una persona por día.</li>
-<li><b>Noche.</b> Las pantallas se oscurecen. Cinco segundos de anochecer (se roban los Sueños y los Ladrones de sueños pueden intercambiar) y luego las acciones nocturnas se abren solas. Quien tenga un poder nocturno lo envía en secreto; la Muerte acuerda su asesinato. Cuando todos duermen — o se acaba el tiempo —, el servidor resuelve todas las acciones a la vez y amanece el día siguiente.</li>
+<li><b>Noche.</b> Las pantallas se oscurecen. Con Sueños, el anochecer dura quince segundos (cinco sin ellos): todos descubren su Sueño y los Ladrones de sueños pueden intercambiar. A quien le roban el Sueño lo ve. Luego las acciones nocturnas se abren solas. Quien tenga un poder nocturno lo envía en secreto; la Muerte acuerda su asesinato. Cuando todos duermen — o se acaba el tiempo —, el servidor resuelve todas las acciones a la vez y amanece el día siguiente.</li>
 </ol>
 <p class="small">Lo que no envíes antes de que cierre una ventana se convierte en pase (o abstención). Un móvil desconectado conserva su asiento y sus secretos.</p>`,
     winH: 'Victoria',
@@ -105,6 +105,8 @@ export default {
 <li>El <b>Bufón</b> (solo Mazo completo) gana solo, al instante, si el pueblo lo condena por votación.</li>
 <li>Si una noche no deja a nadie vivo, la partida es un <b>empate</b>.</li>
 <li>Con el <b>Reloj del Apocalipsis</b>, la Muerte también gana si nadie ha ganado al cerrar el último día.</li>
+<li><b>Luna de sangre</b> (activada por defecto): tras dos noches seguidas sin muertes, la noche siguiente ninguna protección resiste y nada puede bloquear el asesinato de la Muerte. Acaba con los bloqueos, como un Guardián solitario que se protege una y otra vez frente a una Muerte solitaria.</li>
+<li><b>La Muerte gana entre los dos últimos</b> (opcional): si una Muerte está entre los dos últimos vivos, la Muerte gana al instante.</li>
 </ul>
 <p>La victoria se comprueba tras cada resolución completa — nunca a mitad de una noche.</p>`,
     coreH: 'Roles básicos',
@@ -117,7 +119,7 @@ export default {
     fullP: 'Solo en Mazo completo / Caos o Personalizado. Grupos con experiencia.',
     dreamsH: 'Sueños',
     dreamsP: 'Desde la noche 1, cada jugador vivo roba al azar una carta de Sueño cada noche (puede repetirse). Dura solo esa noche. Puedes describir el tuyo — con la verdad o no.',
-    dreamsNote: 'Los intercambios de los Ladrones de sueños ocurren durante los cinco segundos de anochecer, antes de que se abran las acciones, por orden de asiento, una vez cada uno. Cuenta la carta que tengas al final.',
+    dreamsNote: `Algunos Sueños son más raros que otros, y el Insomnio nunca aparece más de dos veces por partida; en una partida Personalizada se puede ajustar la frecuencia de cada uno. Los intercambios de los Ladrones de sueños ocurren durante el anochecer, antes de que se abran las acciones, por orden de asiento, una vez cada uno. Cuenta la carta que tengas al final.`,
     rulesH: 'Cartas de regla',
     rulesP: 'Se roban (o eligen) 1–3 al preparar y siguen vigentes toda la partida. Algunas solo pueden cumplirse por honor cuando jugáis en la misma sala.',
     modesH: 'Modos',

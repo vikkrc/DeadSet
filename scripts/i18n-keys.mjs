@@ -86,7 +86,7 @@ for (const f of ['engine/game.js', 'engine/night.js', 'engine/day.js', 'engine/s
     else if (/^(ready|asleep|ballots recorded|have seen their role|Table|Lobby|End)$/.test(s)) keys.add(s);
   }
 }
-const SKIP = new Set(['DEATH', 'INDEPENDENT', 'Dead Set', 'Payload too large', 'Invalid JSON', 'Method not allowed', 'Could not restore rooms:']);
+const SKIP = new Set(['DEATH', 'INDEPENDENT', 'ABSTAIN', 'Dead Set', 'Payload too large', 'Invalid JSON', 'Method not allowed', 'Could not restore rooms:']);
 const list = [...keys].filter((k) => !SKIP.has(k) && !k.startsWith('deadline')).sort();
 const lang = process.argv[2];
 if (lang) {

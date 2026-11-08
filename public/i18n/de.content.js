@@ -57,9 +57,9 @@ export default {
     custom: { name: 'Eigenes Spiel', blurb: 'Wähle Zusatzpool, Träume, Regeln und Uhr selbst — oder tippe das genaue Deck ein. Warnt vor unausgewogenen Aufstellungen.' },
   },
   scenario: {
-    WHO: ['Zeitreisende', 'Weltraumforscher', 'Fabelwesen', 'Geister historischer Persönlichkeiten', 'Mutanten', 'Mitglieder einer Geheimgesellschaft', 'Verirrte Touristen', 'Künstliche Intelligenzen', 'Mittelalterliche Dorfbewohner', 'Promi-Doppelgänger'],
-    WHERE: ['Ein sinkendes Schiff', 'Ein verlassener Freizeitpark', 'Ein unterirdischer Bunker', 'Ein Spukhaus', 'Eine verschneite Tundra'],
-    WHY: ['Einen verborgenen Schatz finden', 'Entkommen, bevor die Zeit abläuft', 'Ein Ritual vollenden', 'Einen Mord aufklären', 'Eine drohende Katastrophe verhindern'],
+    WHO: ['Zeitreisende', 'Weltraumforscher', 'Fabelwesen', 'Geister historischer Persönlichkeiten', 'Mutanten', 'Mitglieder einer Geheimgesellschaft', 'Verirrte Touristen', 'Künstliche Intelligenzen', 'Mittelalterliche Dorfbewohner', 'Promi-Doppelgänger', "Zirkusartisten im Ruhestand", "Leuchtturmwärter", "Rivalisierende Köche", "Verbannte Adelige", "Nachtschwestern", "Tiefseetaucher", "Hochzeitsgäste", "Gestrandete Astronomen", "Maskenballtänzer", "Schweigende Mönche"],
+    WHERE: ['Ein sinkendes Schiff', 'Ein verlassener Freizeitpark', 'Ein unterirdischer Bunker', 'Ein Spukhaus', 'Eine verschneite Tundra', "Ein Leuchtturm im Nebel", "Eine verlassene Raumstation", "Ein Nachtzug durch die Berge", "Eine überflutete Kathedrale", "Ein verwilderter botanischer Garten", "Ein Oasenhotel in der Wüste", "Ein abgelegenes Kloster", "Ein Weinberg im Mondlicht", "Ein verlassenes Filmstudio", "Ein Uhrwerkmuseum"],
+    WHY: ['Einen verborgenen Schatz finden', 'Entkommen, bevor die Zeit abläuft', 'Ein Ritual vollenden', 'Einen Mord aufklären', 'Eine drohende Katastrophe verhindern', "Einen uralten Fluch brechen", "Beim Kartenspiel ein Vermögen gewinnen", "Einen königlichen Erben schützen", "Den Weg nach Hause finden", "Einen Verräter entlarven", "Bis zum Sonnenaufgang überleben", "Ein gestohlenes Relikt zurückholen", "Die schlafende Stadt wecken", "Eine letzte Botschaft entschlüsseln", "Ein schreckliches Geheimnis bewahren"],
   },
   products: ['einen Messingschlüssel, der in kein Schloss passt', 'ein Glas warmen Sand', 'eine Fahrkarte für einen Zug, der gestern abgefahren ist', 'eine einzelne schwarze Feder', 'eine rückwärts laufende Taschenuhr', 'einen versiegelten Brief an dich', 'ein Fläschchen graues Parfüm', 'ein Kartenspiel ohne Dame', 'eine Kerze, die nach Regen riecht', 'ein Foto eines leeren Zimmers', 'eine samtgefütterte Schachtel (leer)', 'einen Kompass, der auf dich zeigt'],
   whispers: [
@@ -95,7 +95,7 @@ export default {
 <li><b>Verteidigung.</b> Jeder Nominierte bekommt in der Reihenfolge der Nominierung das Wort.</li>
 <li><b>Geheime Abstimmung.</b> Jeder berechtigte lebende Spieler stimmt am eigenen Handy für einen Nominierten oder enthält sich. Du kannst deine Stimme ändern, bis der Gastgeber sie sperrt. Nur Summen werden veröffentlicht.</li>
 <li><b>Urteil.</b> Die einzige höchste Summe wird verurteilt (scheidet aus). <b>Ein Gleichstand an der Spitze verurteilt niemanden.</b> Pro Tag wird höchstens eine Person verurteilt.</li>
-<li><b>Nacht.</b> Die Bildschirme werden dunkel. Fünf Sekunden Einbruch der Nacht (Träume werden gezogen, Traumdiebe dürfen tauschen), dann öffnen sich die Nachtaktionen von selbst. Wer eine Nachtfähigkeit hat, gibt sie heimlich ab; der Tod einigt sich auf seinen Mord. Wenn alle schlafen — oder die Zeit abläuft —, wertet der Server alle Aktionen gleichzeitig aus, und der nächste Tag bricht an.</li>
+<li><b>Nacht.</b> Die Bildschirme werden dunkel. Mit Träumen dauert der Einbruch der Nacht fünfzehn Sekunden (ohne fünf): Alle decken ihren Traum auf, und Traumdiebe dürfen tauschen. Wem der Traum gestohlen wurde, der sieht es. Dann öffnen sich die Nachtaktionen von selbst. Wer eine Nachtfähigkeit hat, gibt sie heimlich ab; der Tod einigt sich auf seinen Mord. Wenn alle schlafen — oder die Zeit abläuft —, wertet der Server alle Aktionen gleichzeitig aus, und der nächste Tag bricht an.</li>
 </ol>
 <p class="small">Was du bis zum Schließen eines Fensters nicht abgibst, wird zum Pass (oder zur Enthaltung). Ein getrenntes Handy behält seinen Platz und seine Geheimnisse.</p>`,
     winH: 'Sieg',
@@ -105,6 +105,8 @@ export default {
 <li>Der <b>Narr</b> (nur Volles Deck) gewinnt allein und sofort, wenn die Stadt ihn per Abstimmung verurteilt.</li>
 <li>Lässt eine Nacht niemanden am Leben, endet das Spiel <b>unentschieden</b>.</li>
 <li>Mit der <b>Weltuntergangsuhr</b> gewinnt der Tod auch, wenn bis zum Ende des letzten Tages niemand gewonnen hat.</li>
+<li><b>Blutmond</b> (standardmäßig an): Nach zwei Nächten in Folge ohne Tote hält in der nächsten Nacht kein Schutz, und nichts kann den Mord des Todes blockieren. So enden Pattsituationen wie ein Wächter, der sich gegen einen einzelnen Tod immer selbst schützt.</li>
+<li><b>Tod gewinnt unter den letzten zwei</b> (optional): Ist ein Tod unter den letzten zwei Lebenden, gewinnt der Tod sofort.</li>
 </ul>
 <p>Der Sieg wird nach jeder vollständigen Auswertung geprüft — nie mitten in einer Nacht.</p>`,
     coreH: 'Grundrollen',
@@ -117,7 +119,7 @@ export default {
     fullP: 'Nur in Volles Deck / Chaos oder Eigenes Spiel. Für erfahrene Gruppen.',
     dreamsH: 'Träume',
     dreamsP: 'Ab Nacht 1 zieht jeder lebende Spieler jede Nacht zufällig eine Traumkarte (Doppelte möglich). Sie gilt nur für diese Nacht. Du darfst deinen beschreiben — wahrheitsgemäß oder nicht.',
-    dreamsNote: 'Tausche der Traumdiebe passieren während der fünf Sekunden Einbruch der Nacht, bevor die Aktionen öffnen, in Sitzreihenfolge, je einmal. Es zählt die Karte, die du am Ende hältst.',
+    dreamsNote: `Manche Träume sind seltener als andere, und Schlaflosigkeit kommt nie öfter als zweimal pro Spiel vor; im eigenen Spiel lässt sich die Häufigkeit jedes Traums einstellen. Tausche der Traumdiebe passieren während des Einbruchs der Nacht, bevor die Aktionen öffnen, in Sitzreihenfolge, je einmal. Es zählt die Karte, die du am Ende hältst.`,
     rulesH: 'Regelkarten',
     rulesP: '1–3 werden beim Aufbau gezogen (oder gewählt) und gelten das ganze Spiel. Manche lassen sich nur auf Ehrenwort durchsetzen, wenn ihr im selben Raum spielt.',
     modesH: 'Modi',

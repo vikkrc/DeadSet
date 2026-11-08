@@ -57,9 +57,9 @@ export default {
     custom: { name: 'Vlastní', blurb: 'Vyber si rozšířený zásobník, Sny, pravidla i hodiny sám — nebo napiš přesný balík. Upozorní na nevyvážené sestavy.' },
   },
   scenario: {
-    WHO: ['Cestovatelé v čase', 'Vesmírní průzkumníci', 'Mýtické bytosti', 'Duchové historických osobností', 'Mutanti', 'Členové tajného spolku', 'Ztracení turisté', 'Umělé inteligence', 'Středověcí vesničané', 'Dvojníci celebrit'],
-    WHERE: ['Potápějící se loď', 'Opuštěný zábavní park', 'Podzemní bunkr', 'Strašidelné sídlo', 'Zasněžená tundra'],
-    WHY: ['Najít ukrytý poklad', 'Uniknout, než vyprší čas', 'Dokončit rituál', 'Vyřešit vraždu', 'Zastavit hrozící katastrofu'],
+    WHO: ['Cestovatelé v čase', 'Vesmírní průzkumníci', 'Mýtické bytosti', 'Duchové historických osobností', 'Mutanti', 'Členové tajného spolku', 'Ztracení turisté', 'Umělé inteligence', 'Středověcí vesničané', 'Dvojníci celebrit', "Cirkusáci v důchodu", "Strážci majáků", "Soupeřící kuchaři", "Vyhnaní šlechtici", "Noční zdravotní sestry", "Hlubinní potápěči", "Svatební hosté", "Uvízlí astronomové", "Tanečníci maškarního plesu", "Mlčenliví mniši"],
+    WHERE: ['Potápějící se loď', 'Opuštěný zábavní park', 'Podzemní bunkr', 'Strašidelné sídlo', 'Zasněžená tundra', "Maják zahalený mlhou", "Opuštěná vesmírná stanice", "Noční vlak přes hory", "Zatopená katedrála", "Zarostlá botanická zahrada", "Hotel v pouštní oáze", "Odlehlý klášter", "Vinice v měsíčním světle", "Opuštěné filmové studio", "Muzeum hodinových strojků"],
+    WHY: ['Najít ukrytý poklad', 'Uniknout, než vyprší čas', 'Dokončit rituál', 'Vyřešit vraždu', 'Zastavit hrozící katastrofu', "Zlomit prastarou kletbu", "Vyhrát jmění v kartách", "Ochránit královského dědice", "Najít cestu domů", "Odhalit zrádce", "Přežít do svítání", "Získat zpět ukradenou relikvii", "Probudit spící město", "Rozluštit poslední zprávu", "Uchovat strašné tajemství"],
   },
   products: ['mosazný klíč, který nepasuje do žádného zámku', 'sklenici teplého písku', 'jízdenku na vlak, který odjel včera', 'jediné černé pírko', 'kapesní hodinky jdoucí pozpátku', 'zapečetěný dopis adresovaný tobě', 'lahvičku šedého parfému', 'balíček karet bez dámy', 'svíčku, která voní deštěm', 'fotografii prázdného pokoje', 'sametem vystlanou krabičku (prázdnou)', 'kompas, který ukazuje na tebe'],
   whispers: [
@@ -95,7 +95,7 @@ export default {
 <li><b>Obhajoba.</b> Každý nominovaný dostane slovo v pořadí nominací.</li>
 <li><b>Tajné hlasování.</b> Každý oprávněný živý hráč hlasuje na svém telefonu pro jednoho nominovaného, nebo se zdrží. Hlas můžeš měnit, dokud ho hostitel nezamkne. Zveřejňují se jen součty.</li>
 <li><b>Odsouzení.</b> Jediný nejvyšší součet je odsouzen (vyřazen). <b>Remíza v čele neodsoudí nikoho.</b> Za den je odsouzen nejvýš jeden člověk.</li>
-<li><b>Noc.</b> Obrazovky ztmavnou. Pět sekund soumraku (táhnou se Sny a Zloději snů mohou měnit), pak se noční akce otevřou samy. Kdo má noční schopnost, tajně ji odešle; Smrt se dohodne na vraždě. Když všichni spí — nebo vyprší čas —, server vyhodnotí všechny akce naráz a rozední se další den.</li>
+<li><b>Noc.</b> Obrazovky ztmavnou. Se Sny trvá soumrak patnáct sekund (bez nich pět): každý otočí svůj Sen a Zloději snů mohou měnit. Komu sen ukradli, uvidí to. Pak se noční akce otevřou samy. Kdo má noční schopnost, tajně ji odešle; Smrt se dohodne na vraždě. Když všichni spí — nebo vyprší čas —, server vyhodnotí všechny akce naráz a rozední se další den.</li>
 </ol>
 <p class="small">Co neodešleš, než se okno zavře, se změní na pas (nebo zdržení). Odpojený telefon si ponechá místo i tajemství.</p>`,
     winH: 'Vítězství',
@@ -105,6 +105,8 @@ export default {
 <li><b>Šašek</b> (jen Celý balík) vyhraje sám a okamžitě, odsoudí-li ho město hlasováním.</li>
 <li>Nezůstane-li po noci nikdo naživu, hra končí <b>remízou</b>.</li>
 <li>S <b>Hodinami soudného dne</b> Smrt vyhraje i tehdy, nevyhrál-li nikdo do konce posledního dne.</li>
+<li><b>Krvavý měsíc</b> (ve výchozím stavu zapnutý): po dvou nocích za sebou bez smrti následující noc nevydrží žádná ochrana a nic nezablokuje vraždu Smrti. Ukončí to patové situace, třeba osamělého Strážce, který se pořád chrání před osamělou Smrtí.</li>
+<li><b>Smrt vyhraje mezi posledními dvěma</b> (volitelné): je-li mezi posledními dvěma živými Smrt, Smrt okamžitě vyhrává.</li>
 </ul>
 <p>Vítězství se kontroluje po každém úplném vyhodnocení — nikdy uprostřed noci.</p>`,
     coreH: 'Základní role',
@@ -117,7 +119,7 @@ export default {
     fullP: 'Jen v režimu Celý balík / Chaos nebo Vlastní. Pro zkušené skupiny.',
     dreamsH: 'Sny',
     dreamsP: 'Od noci 1 si každý živý hráč každou noc náhodně táhne kartu Snu (mohou se opakovat). Platí jen tu noc. Svůj sen můžeš popsat — pravdivě, nebo ne.',
-    dreamsNote: 'Výměny Zlodějů snů proběhnou během pěti sekund soumraku, před otevřením akcí, v pořadí míst, každý jednou. Platí karta, kterou držíš nakonec.',
+    dreamsNote: `Některé Sny jsou vzácnější než jiné a Nespavost se ve hře objeví nejvýš dvakrát; v režimu Vlastní lze četnost každého Snu nastavit. Výměny Zlodějů snů proběhnou během soumraku, před otevřením akcí, v pořadí míst, každý jednou. Platí karta, kterou držíš nakonec.`,
     rulesH: 'Karty pravidel',
     rulesP: '1–3 se při přípravě táhnou (nebo vyberou) a platí celou hru. Některé lze dodržovat jen na čestné slovo, když hrajete v jedné místnosti.',
     modesH: 'Režimy',

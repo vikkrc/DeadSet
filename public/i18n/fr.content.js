@@ -57,9 +57,9 @@ export default {
     custom: { name: 'Personnalisé', blurb: 'Choisis toi-même la réserve étendue, les Rêves, les règles et l’horloge — ou tape le paquet exact. Prévient en cas de configuration déséquilibrée.' },
   },
   scenario: {
-    WHO: ['Voyageurs temporels', 'Explorateurs spatiaux', 'Créatures mythiques', 'Fantômes de personnages historiques', 'Mutants', 'Membres d’une société secrète', 'Touristes égarés', 'Intelligences artificielles', 'Villageois médiévaux', 'Sosies de célébrités'],
-    WHERE: ['Un navire qui sombre', 'Un parc d’attractions abandonné', 'Un bunker souterrain', 'Un manoir hanté', 'Une toundra enneigée'],
-    WHY: ['Trouver un trésor caché', 'S’échapper avant la fin du temps', 'Achever un rituel', 'Résoudre un meurtre', 'Empêcher une catastrophe imminente'],
+    WHO: ['Voyageurs temporels', 'Explorateurs spatiaux', 'Créatures mythiques', 'Fantômes de personnages historiques', 'Mutants', 'Membres d’une société secrète', 'Touristes égarés', 'Intelligences artificielles', 'Villageois médiévaux', 'Sosies de célébrités', "Artistes de cirque à la retraite", "Gardiens de phare", "Chefs rivaux", "Nobles en exil", "Infirmières de nuit", "Plongeurs des abysses", "Invités d’un mariage", "Astronomes échoués", "Danseurs d’un bal masqué", "Moines silencieux"],
+    WHERE: ['Un navire qui sombre', 'Un parc d’attractions abandonné', 'Un bunker souterrain', 'Un manoir hanté', 'Une toundra enneigée', "Un phare dans le brouillard", "Une station spatiale abandonnée", "Un train de nuit dans les montagnes", "Une cathédrale inondée", "Un jardin botanique envahi", "Un hôtel dans une oasis", "Un monastère isolé", "Un vignoble au clair de lune", "Un studio de cinéma abandonné", "Un musée d’automates"],
+    WHY: ['Trouver un trésor caché', 'S’échapper avant la fin du temps', 'Achever un rituel', 'Résoudre un meurtre', 'Empêcher une catastrophe imminente', "Briser une malédiction ancienne", "Gagner une fortune aux cartes", "Protéger un héritier royal", "Retrouver le chemin de la maison", "Démasquer un traître", "Survivre jusqu’à l’aube", "Récupérer une relique volée", "Réveiller la ville endormie", "Déchiffrer un dernier message", "Garder un terrible secret"],
   },
   products: ['une clé en laiton qui n’ouvre aucune serrure', 'un bocal de sable chaud', 'un billet pour un train parti hier', 'une seule plume noire', 'une montre à gousset qui tourne à l’envers', 'une lettre cachetée à ton nom', 'une fiole de parfum gris', 'un jeu de cartes sans la dame', 'une bougie qui sent la pluie', 'la photo d’une pièce vide', 'une boîte doublée de velours (vide)', 'une boussole qui pointe vers toi'],
   whispers: [
@@ -95,7 +95,7 @@ export default {
 <li><b>Défense.</b> Chaque nommé, dans l’ordre des nominations, prend la parole.</li>
 <li><b>Vote secret.</b> Chaque joueur vivant éligible vote pour un nommé ou s’abstient, sur son propre téléphone. Tu peux changer ton vote jusqu’à ce que l’hôte le verrouille. Seuls les totaux sont publiés.</li>
 <li><b>Condamnation.</b> Le seul total le plus élevé est condamné (éliminé). <b>Une égalité en tête ne condamne personne.</b> Au plus une personne est condamnée par jour.</li>
-<li><b>Nuit.</b> Les écrans s’assombrissent. Cinq secondes de tombée de la nuit (les Rêves sont tirés et les Voleurs de rêves peuvent échanger), puis les actions de nuit s’ouvrent d’elles-mêmes. Chacun soumet son pouvoir nocturne en secret ; la Mort s’accorde sur son meurtre. Quand tout le monde dort — ou que le temps est écoulé —, le serveur résout toutes les actions d’un coup et le jour suivant se lève.</li>
+<li><b>Nuit.</b> Les écrans s’assombrissent. Avec les Rêves, la tombée de la nuit dure quinze secondes (cinq sans) : chacun retourne son Rêve et les Voleurs de rêves peuvent échanger. Celui dont le Rêve a été volé le voit. Puis les actions de nuit s’ouvrent d’elles-mêmes. Chacun soumet son pouvoir nocturne en secret ; la Mort s’accorde sur son meurtre. Quand tout le monde dort — ou que le temps est écoulé —, le serveur résout toutes les actions d’un coup et le jour suivant se lève.</li>
 </ol>
 <p class="small">Ce que tu ne soumets pas avant la fermeture d’une fenêtre devient un passage (ou une abstention). Un téléphone déconnecté garde sa place et ses secrets.</p>`,
     winH: 'Victoire',
@@ -105,6 +105,8 @@ export default {
 <li>Le <b>Bouffon</b> (Jeu complet uniquement) gagne seul, immédiatement, si la ville le condamne par vote.</li>
 <li>Si une nuit ne laisse personne en vie, la partie est <b>nulle</b>.</li>
 <li>Avec l’<b>Horloge de l’Apocalypse</b>, la Mort gagne aussi si personne n’a gagné à la fin du dernier jour.</li>
+<li><b>Lune de sang</b> (activée par défaut) : après deux nuits de suite sans mort, la nuit suivante aucune protection ne tient et rien ne peut bloquer le meurtre de la Mort. Elle met fin aux impasses, comme un Gardien seul qui se protège sans cesse face à une Mort seule.</li>
+<li><b>La Mort gagne dans les deux derniers</b> (option) : si une Mort fait partie des deux derniers vivants, la Mort gagne aussitôt.</li>
 </ul>
 <p>La victoire est vérifiée après chaque résolution complète — jamais au milieu d’une nuit.</p>`,
     coreH: 'Rôles de base',
@@ -117,7 +119,7 @@ export default {
     fullP: 'Uniquement en Jeu complet / Chaos ou Personnalisé. Groupes expérimentés.',
     dreamsH: 'Rêves',
     dreamsP: 'Dès la nuit 1, chaque joueur vivant tire au hasard une carte Rêve chaque nuit (doublons possibles). Elle ne vaut que pour cette nuit. Tu peux décrire le tien — sincèrement ou non.',
-    dreamsNote: 'Les échanges des Voleurs de rêves ont lieu pendant les cinq secondes de tombée de la nuit, avant l’ouverture des actions, dans l’ordre des sièges, une fois chacun. C’est la carte que tu tiens à la fin qui compte.',
+    dreamsNote: `Certains Rêves sont plus rares que d’autres, et l’Insomnie n’apparaît jamais plus de deux fois par partie ; une partie Personnalisée peut régler la fréquence de chacun. Les échanges des Voleurs de rêves ont lieu pendant la tombée de la nuit, avant l’ouverture des actions, dans l’ordre des sièges, une fois chacun. C’est la carte que tu tiens à la fin qui compte.`,
     rulesH: 'Cartes de règle',
     rulesP: '1 à 3 sont tirées (ou choisies) à la mise en place et restent en vigueur toute la partie. Certaines ne peuvent être respectées que sur l’honneur quand vous jouez dans la même pièce.',
     modesH: 'Modes',

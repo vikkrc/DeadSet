@@ -23,7 +23,7 @@ export const GUIDE_EN = {
 <li><b>Defence.</b> Each nominee, in nomination order, gets the floor.</li>
 <li><b>Secret ballot.</b> Every eligible living player votes for one nominee or abstains, on their own phone. You can change your vote until the host locks it. Only totals are published.</li>
 <li><b>Sentence.</b> The single highest total is sentenced (eliminated). <b>A tie at the top sentences nobody.</b> At most one person is sentenced per Day.</li>
-<li><b>Night.</b> Screens go dark. Five seconds of nightfall (Dreams are drawn and Dream Snatchers may swap), then night actions open by themselves. Everyone with a night power submits it secretly; Death agrees on its kill. When everyone is asleep — or the timer runs out — the server resolves every action at once and the next Day dawns.</li>
+<li><b>Night.</b> Screens go dark. Nightfall lasts fifteen seconds with Dreams on (five without): everyone turns over their Dream and Dream Snatchers may swap. A player whose Dream was stolen sees it happen. Then night actions open by themselves. Everyone with a night power submits it secretly; Death agrees on its kill. When everyone is asleep — or the timer runs out — the server resolves every action at once and the next Day dawns.</li>
 </ol>
 <p class="small">Anything you fail to submit before a window closes becomes a pass (or an abstention). A disconnected phone keeps its seat and its secrets.</p>`,
   winH: 'Winning',
@@ -33,6 +33,8 @@ export const GUIDE_EN = {
 <li><b>Jester</b> (Full Deck only) wins alone, instantly, if the town sentences them by vote.</li>
 <li>If a night ever leaves nobody alive, the match is a <b>draw</b>.</li>
 <li>With the <b>Doomsday Clock</b>, Death also wins if nobody has won when the final Day closes.</li>
+<li><b>Blood Moon</b> (on by default): after two nights in a row without a death, the next night no protection holds and nothing can block Death's kill. It ends stalemates such as a lone Guardian shielding themself against a lone Death.</li>
+<li><b>Death wins in the final two</b> (optional): if a Death is among the last two alive, Death wins at once.</li>
 </ul>
 <p>Victory is checked after every complete resolution — never halfway through a night.</p>`,
   coreH: 'Core roles',
@@ -45,7 +47,7 @@ export const GUIDE_EN = {
   fullP: 'Only in Full Deck / Chaos or Custom. Experienced groups.',
   dreamsH: 'Dreams',
   dreamsP: 'From Night 1, each living player draws one Dream card at random every night (duplicates allowed). It lasts that night only. You may describe yours — truthfully or not.',
-  dreamsNote: 'Dream Snatcher swaps happen during the five-second nightfall, before actions open, in seat order, once each. Whatever card you end up holding is the one that counts.',
+  dreamsNote: 'Some Dreams are rarer than others, and Insomnia never appears more than twice in a match; Custom games can change how often each one is drawn. Dream Snatcher swaps happen during nightfall, before actions open, in seat order, once each. Whatever card you end up holding is the one that counts.',
   rulesH: 'Rule cards',
   rulesP: '1–3 are drawn (or chosen) at setup and stay in force all match. Some can only be honour-enforced when you play in the same room.',
   modesH: 'Modes',

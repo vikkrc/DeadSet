@@ -57,9 +57,9 @@ export default {
     custom: { name: 'Egyéni', blurb: 'Te választod a kiegészítő készletet, az Álmokat, a szabályokat és az órát — vagy beírod a pontos paklit. Figyelmeztet a kiegyensúlyozatlan beállításokra.' },
   },
   scenario: {
-    WHO: ['Időutazók', 'Űrfelfedezők', 'Mitikus lények', 'Történelmi alakok szellemei', 'Mutánsok', 'Titkos társaság tagjai', 'Eltévedt turisták', 'Mesterséges intelligenciák', 'Középkori falusiak', 'Hírességek hasonmásai'],
-    WHERE: ['Süllyedő hajó', 'Elhagyatott vidámpark', 'Földalatti bunker', 'Kísértetjárta kúria', 'Hóborította tundra'],
-    WHY: ['Egy rejtett kincs megtalálása', 'Menekülés, mielőtt lejár az idő', 'Egy rituálé befejezése', 'Egy gyilkosság felderítése', 'Egy közelgő katasztrófa megállítása'],
+    WHO: ['Időutazók', 'Űrfelfedezők', 'Mitikus lények', 'Történelmi alakok szellemei', 'Mutánsok', 'Titkos társaság tagjai', 'Eltévedt turisták', 'Mesterséges intelligenciák', 'Középkori falusiak', 'Hírességek hasonmásai', "Nyugalmazott cirkuszi artisták", "Világítótorony-őrök", "Rivális szakácsok", "Száműzött nemesek", "Éjszakás ápolók", "Mélytengeri búvárok", "Esküvői vendégek", "Rekedt csillagászok", "Álarcosbál táncosai", "Hallgatag szerzetesek"],
+    WHERE: ['Süllyedő hajó', 'Elhagyatott vidámpark', 'Földalatti bunker', 'Kísértetjárta kúria', 'Hóborította tundra', "Ködbe burkolt világítótorony", "Elhagyatott űrállomás", "Éjszakai vonat a hegyek között", "Elárasztott katedrális", "Elvadult botanikus kert", "Sivatagi oázisszálló", "Félreeső kolostor", "Holdfényes szőlőskert", "Elhagyatott filmstúdió", "Óraműmúzeum"],
+    WHY: ['Egy rejtett kincs megtalálása', 'Menekülés, mielőtt lejár az idő', 'Egy rituálé befejezése', 'Egy gyilkosság felderítése', 'Egy közelgő katasztrófa megállítása', "Egy ősi átok megtörése", "Vagyon nyerése kártyán", "Egy királyi örökös védelme", "A hazavezető út megtalálása", "Egy áruló leleplezése", "Túlélni napkeltéig", "Egy ellopott ereklye visszaszerzése", "Az alvó város felébresztése", "Egy utolsó üzenet megfejtése", "Egy szörnyű titok megőrzése"],
   },
   products: ['egy rézkulcs, amely egyetlen zárba sem illik', 'egy befőttesüveg meleg homok', 'egy jegy egy vonatra, amely tegnap elment', 'egyetlen fekete toll', 'egy visszafelé járó zsebóra', 'egy lepecsételt levél, neked címezve', 'egy fiola szürke parfüm', 'egy pakli kártya, amelyből hiányzik a dáma', 'egy esőillatú gyertya', 'egy fénykép egy üres szobáról', 'egy bársonnyal bélelt doboz (üres)', 'egy iránytű, amely rád mutat'],
   whispers: [
@@ -95,7 +95,7 @@ export default {
 <li><b>Védekezés.</b> Minden jelölt, a jelölés sorrendjében, szót kap.</li>
 <li><b>Titkos szavazás.</b> Minden jogosult élő játékos a saját telefonján szavaz egy jelöltre, vagy tartózkodik. A szavazatodat addig módosíthatod, amíg a házigazda le nem zárja. Csak az összesítés nyilvános.</li>
 <li><b>Ítélet.</b> Az egyetlen legmagasabb összesítésű játékost elítélik (kiesik). <b>Holtverseny az élen: senkit sem ítélnek el.</b> Naponta legfeljebb egy embert ítélnek el.</li>
-<li><b>Éjszaka.</b> A képernyők elsötétülnek. Öt másodperc alkonyat (az Álmokat kihúzzuk, az Álomrablók cserélhetnek), aztán az éjszakai akciók maguktól megnyílnak. Akinek éjszakai képessége van, titokban leadja; a Halál megegyezik a gyilkosságban. Amikor mindenki alszik — vagy lejár az idő —, a szerver egyszerre feldolgoz minden akciót, és felvirrad a következő nap.</li>
+<li><b>Éjszaka.</b> A képernyők elsötétülnek. Álmokkal az alkony tizenöt másodpercig tart (nélkülük ötig): mindenki felfordítja az Álmát, és az Álomrablók cserélhetnek. Akinek az álmát ellopták, látja is. Aztán az éjszakai akciók maguktól megnyílnak. Akinek éjszakai képessége van, titokban leadja; a Halál megegyezik a gyilkosságban. Amikor mindenki alszik — vagy lejár az idő —, a szerver egyszerre feldolgoz minden akciót, és felvirrad a következő nap.</li>
 </ol>
 <p class="small">Amit egy ablak bezárásáig nem adsz le, az passz (vagy tartózkodás) lesz. A kapcsolatot vesztett telefon megtartja a helyét és a titkait.</p>`,
     winH: 'Győzelem',
@@ -105,6 +105,8 @@ export default {
 <li>A <b>Bolond</b> (csak Teljes paklinál) egyedül és azonnal nyer, ha a város szavazással elítéli.</li>
 <li>Ha egy éjszaka után senki sem marad életben, a meccs <b>döntetlen</b>.</li>
 <li>A <b>Világvége-órával</b> a Halál akkor is nyer, ha az utolsó nap végéig senki sem győzött.</li>
+<li><b>Vérhold</b> (alapból bekapcsolva): két egymást követő halál nélküli éjszaka után a következő éjjel semmilyen védelem nem tart, és semmi sem akadályozhatja meg a Halál gyilkosságát. Ez feloldja az olyan patthelyzeteket, mint amikor egy magányos Őrző újra és újra magát védi egy magányos Halállal szemben.</li>
+<li><b>A Halál nyer az utolsó kettő között</b> (választható): ha az utolsó két élő között van Halál, a Halál azonnal nyer.</li>
 </ul>
 <p>A győzelmet minden teljes feldolgozás után ellenőrizzük — soha nem egy éjszaka közepén.</p>`,
     coreH: 'Alapszerepek',
@@ -117,7 +119,7 @@ export default {
     fullP: 'Csak Teljes pakli / Káosz vagy Egyéni módban. Tapasztalt társaságoknak.',
     dreamsH: 'Álmok',
     dreamsP: 'Az 1. éjszakától minden élő játékos minden éjjel véletlenszerűen húz egy Álomkártyát (ismétlődhet). Csak arra az éjszakára szól. Elmondhatod, mit álmodtál — igazat vagy sem.',
-    dreamsNote: 'Az Álomrablók cseréi az öt másodperces alkonyat alatt történnek, mielőtt az akciók megnyílnak, ülésrendben, mindenkinél egyszer. Az a kártya számít, amelyik végül nálad van.',
+    dreamsNote: `Egyes Álmok ritkábbak, mint mások, és az Álmatlanság egy meccsen legfeljebb kétszer fordul elő; Egyéni módban minden Álom gyakorisága állítható. Az Álomrablók cseréi az alkony alatt történnek, mielőtt az akciók megnyílnak, ülésrendben, mindenkinél egyszer. Az a kártya számít, amelyik végül nálad van.`,
     rulesH: 'Szabálykártyák',
     rulesP: 'A beállításkor 1–3 kártyát húzunk (vagy választunk), és ezek az egész meccs alatt érvényesek. Egyesek csak becsületbeli szabályként működnek, ha egy szobában játszotok.',
     modesH: 'Módok',
