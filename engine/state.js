@@ -51,6 +51,7 @@ export function priv(m, pid, msg, kind = 'info', extra = {}) {
 export function stamp(m) {
   if (m.phase === 'LOBBY') return 'Lobby';
   if (m.phase === 'NIGHT_0_REVEAL') return 'Night 0';
+  if (m.M && m.phase.startsWith('M_')) return m.phase === 'M_REVEAL' ? 'Night 0' : m.phase === 'M_LAST_STAND' || m.phase === 'M_RECKONING' ? 'Finale' : `Mission ${m.M.mission + 1}`;
   if (isNightPhase(m.phase) || m.phase === 'NIGHT_RESOLVING') return `Night ${m.nightNumber}`;
   if (m.phase === 'ENDED') return 'End';
   return `Day ${m.dayNumber}`;

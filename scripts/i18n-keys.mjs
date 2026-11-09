@@ -44,7 +44,7 @@ function strings(src) {
 }
 
 // Client: every string literal inside a t( / th( / tm( / tmh( call (balanced parens).
-for (const f of ['public/app.js', 'public/board.js', 'public/gazette.js', 'public/guide.js', 'public/gifts.js']) {
+for (const f of ['public/app.js', 'public/board.js', 'public/gazette.js', 'public/guide.js', 'public/gifts.js', 'public/missions.js']) {
   const src = read(f);
   const re = /\b(?:t|th)\(/g;
   let m;
@@ -69,9 +69,10 @@ const tables = [
   ['public/i18n.js', /const OPT = \{([\s\S]*?)\};/g],
   ['public/board.js', /export function activeRuleNotes[\s\S]*?\n\}/g],
   ['engine/views.js', /const ADVANCE_LABEL = \{([\s\S]*?)\};/g],
+  ['engine/missions.js', /const MISSION_ADVANCE_LABEL = \{([\s\S]*?)\};/g],
 ];
 for (const [f, re] of tables) for (const m of read(f).matchAll(re)) for (const x of (m[1] ?? m[0]).matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/\s/.test(s) || /^[A-Z][a-z]/.test(s)) keys.add(s); }
-for (const m of read('public/app.js').matchAll(/(?:title|sub|kicker): '((?:[^'\\]|\\.)*)'/g)) keys.add(unq(m[1]));
+for (const f of ['public/app.js', 'public/missions.js']) for (const m of read(f).matchAll(/(?:title|sub|kicker): '((?:[^'\\]|\\.)*)'/g)) keys.add(unq(m[1]));
 for (const m of read('public/app.js').matchAll(/toggle\('\w+', '((?:[^'\\]|\\.)*)', '((?:[^'\\]|\\.)*)'\)/g)) { keys.add(unq(m[1])); keys.add(unq(m[2])); }
 // Labels passed through small helpers that call t() themselves.
 for (const m of read('public/app.js').matchAll(/timer\('\w+', '((?:[^'\\]|\\.)*)'\)/g)) keys.add(unq(m[1]));
@@ -86,13 +87,13 @@ for (const m of read('public/gifts.js').matchAll(/const QUIP = \[([\s\S]*?)\];/g
 
 // Engine: message templates (strings shaped like sentences or containing {params}).
 for (const m of read('engine/content.js').matchAll(/verb: '([^']+)'/g)) keys.add(m[1]);
-for (const f of ['engine/game.js', 'engine/night.js', 'engine/day.js', 'engine/setup.js', 'engine/views.js', 'engine/victory.js', 'engine/state.js', 'server/rooms.js', 'server/index.js']) {
+for (const f of ['engine/missions.js', 'engine/game.js', 'engine/night.js', 'engine/day.js', 'engine/setup.js', 'engine/views.js', 'engine/victory.js', 'engine/state.js', 'server/rooms.js', 'server/index.js']) {
   for (const s of strings(read(f))) {
     if (/\{\w+\}/.test(s) || (/^[A-Z]/.test(s) && /\s/.test(s) && !/^[A-Z_]+$/.test(s))) keys.add(s);
     else if (/^(ready|asleep|ballots recorded|have seen their role|Table|Lobby|End)$/.test(s)) keys.add(s);
   }
 }
-const SKIP = new Set(['coin', 'DEATH', 'INDEPENDENT', 'ABSTAIN', 'Dead Set', 'Payload too large', 'Invalid JSON', 'Method not allowed', 'Could not restore rooms:']);
+const SKIP = new Set(['F', 'MASKED_VOTE', 'REGULAR', 'missions', 'stand', 'coin', 'DEATH', 'INDEPENDENT', 'ABSTAIN', 'Dead Set', 'Payload too large', 'Invalid JSON', 'Method not allowed', 'Could not restore rooms:']);
 const list = [...keys].filter((k) => !SKIP.has(k) && !k.startsWith('deadline')).sort();
 const lang = process.argv[2];
 if (lang) {

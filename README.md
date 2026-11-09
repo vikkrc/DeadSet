@@ -4,6 +4,8 @@ A multiplayer social-deduction party game played on everyone's own phone. One au
 
 **→ Rules and modes: [GUIDE.md](GUIDE.md)** (also in the app at `/guide`)
 
+**→ Dead Set: Missions**, the team-and-sabotage mode for 5–10 players: [MISSIONS.md](MISSIONS.md)
+
 ## Run it
 
 Requires Node.js 18+. There are **no dependencies** to install.
@@ -32,6 +34,7 @@ engine/            pure rules engine: plain JSON state in, plain JSON state out
   setup.js         scaling table, deck building, settings validation
   game.js          phase machine and command handling
   night.js         night resolver, in the fixed order R0–R9
+  missions.js      Dead Set: Missions — proposals, team votes, sabotage, mission cards, Candle, Last Stand, Reckoning
   day.js           ballot weights and tally (plurality / Majority Rule / ghosts)
   victory.js       win check (strict majority, Jester, Lovers, Cult, Ripper, draw)
   views.js         per-audience views: public, player, Death team, moderator
@@ -62,6 +65,7 @@ test/              node:test suites
 - There are **synthesized sounds** (no audio files), haptics and canvas particles. They are limited to public events, so nothing leaks a secret.
 - A tiny DOM-morphing renderer (`public/app.js`) keeps elements alive between updates, so transitions animate.
 - Effects and the generated TV score live in `public/fx.js`; the TV board is `public/board.js`; the Gazette is `public/gazette.js`.
+- The Missions screens, moments and TV pieces are `public/missions.js`.
 - Portraits are `public/avatar.js` (vector parts), the Traveling Agent's gift scenes are `public/gifts.js`, and the TV's location backdrops are `public/backdrops.js`.
 - Concept mockups are in `design/`.
 - It respects reduced motion and uses 44px+ touch targets.

@@ -88,9 +88,20 @@ export const GUIDE_EN = {
 <li>Each player picks their own language from the language button on the start screen, the invitation or the room menu. The host sets the table's default language in the lobby.</li>
 <li>MUTE, Fog of War and Cursed Silence are honour rules in person. Remote play enforces them in the chat.</li>
 </ul>`,
+  missionsH: 'Dead Set: Missions',
+  missions: `<p>A second mode for 5–10 players, chosen in the lobby. Nobody dies: Death has slipped into the expedition, and the table must find it.</p>
+<ol>
+<li><b>The mission card.</b> Each mission starts by drawing a card, before any team is chosen. Most are <i>Regular Missions</i>; now and then a card changes the team, the vote or the reveal. It holds for the whole mission.</li>
+<li><b>The proposal.</b> The Mission Leader (the lantern) picks a team of the size shown.</li>
+<li><b>The team vote.</b> Everyone votes Approve or Reject in secret; the votes are revealed all at once, with names. A majority sends the team. Otherwise the next player to the left proposes. The fifth proposal goes ahead whatever the vote.</li>
+<li><b>The mission.</b> Each team member secretly plays a card. The Living can only play Succeed; Death may play Succeed or Sabotage. One Sabotage fails the mission (two on mission 4 at 7+ players). The cards are shuffled and turned one by one.</li>
+<li><b>The night interlude.</b> Everyone picks a secret Hunch. After missions 2, 3 and 4 the Candle holder learns one player's side, and the Candle passes to them. Clues may arrive at dawn.</li>
+</ol>
+<p><b>The end.</b> Three successes: Death unmasks and the Reaper names the Medium. Right, and Death wins; wrong, and the Living win. Three failures: the Last Stand. Everyone names one player. Name one of the Living, and Death wins; catch Death, and the Reaper still gets the Reckoning.</p>`,
+  missionCardsH: 'Mission cards',
 };
 
-export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF, presetF, tx }) {
+export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF, presetF, tx, mcardF }) {
   const G = { ...GUIDE_EN, ...(tx('guide', null) ?? {}) };
   const roles = c?.roles ?? [];
   const bySet = (set) => roles.filter((r) => r.set === set);
@@ -101,7 +112,7 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   return `<div class="guide">
   <header class="phase-head"><span class="kicker">${G.kicker}</span><h1>${G.title}</h1>
     <p class="scenario">${G.intro}</p></header>
-  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}<a class="tag" href="#g11">${G.sidesH}</a></nav>
+  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}<a class="tag" href="#g11">${G.sidesH}</a><a class="tag" href="#g12">${G.missionsH}</a></nav>
   <section id="g0"><h2>${G.basicsH}</h2>${G.basics}</section>
   <section id="g1"><h2>${G.roundH}</h2>${G.round}</section>
   <section id="g2"><h2>${G.winH}</h2>${G.win}</section>
@@ -126,5 +137,7 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   <section id="g9"><h2>${G.orderH}</h2>${G.order}</section>
   <section id="g10"><h2>${G.phonesH}</h2>${G.phones}</section>
   <section id="g11"><h2>${G.sidesH}</h2>${G.sides}${roles.filter((r) => r.set === 'side').map(entry).join('')}</section>
+  <section id="g12"><h2>${G.missionsH}</h2>${G.missions}${roles.filter((r) => r.set === 'missions').map(entry).join('')}
+    <h3>${G.missionCardsH}</h3>${(c?.missionCards ?? []).map((x) => `<div class="entry">${glyph('mission')}<div><h4>${esc(mcardF(x.id, 'name'))}</h4><p>${esc(mcardF(x.id, 'text'))}</p></div></div>`).join('')}</section>
   </div>`;
 }

@@ -3,6 +3,14 @@ export default {
   and: 'et',
   numbers: ['aucun', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix'],
   roles: {
+    MEDIUM: { name: "Médium", when: "Toujours", summary: "Tu vois chaque joueur de la Mort, sauf le Voilé. Guide l'expédition sans te trahir.", detail: "Si les Vivants gagnent trois missions, ou prennent un joueur de la Mort au Dernier Carré, la Mort a un essai pour deviner qui tu es. Si elle te désigne, la Mort gagne." },
+    BELIEVER: { name: "Croyant", when: "Toujours", summary: "Tu vois deux bougies : le Médium et le Charlatan. Tu ne sais pas qui est qui.", detail: "Découvre quelle bougie est le vrai Médium et protège-le, souvent en te faisant passer toi-même pour le Médium. Sans Charlatan en jeu, ta seule bougie est le Médium." },
+    COMPANION: { name: "Compagnon", when: "Toujours", summary: "Tu ne sais rien d'autre que ce que dit ton cœur. Observe les votes et les missions.", detail: "Tu ne peux jouer que Réussite. Lis qui propose qui, qui approuve quelle équipe, et quelles missions échouent." },
+    REAPER: { name: "Faucheur", when: "Toujours", summary: "Tu mènes la Mort. Au Jugement, tu décides qui est le Médium.", detail: "Tu vois le reste de la Mort (sauf l'Égaré). En mission, tu peux jouer Réussite ou Sabotage. Ton équipe peut suggérer des noms au Jugement ; ton choix compte." },
+    CHARLATAN: { name: "Charlatan", when: "Toujours", summary: "Pour le Croyant, tu ressembles exactement au Médium. Profites-en.", detail: "Tu vois le reste de la Mort (sauf l'Égaré). En mission, tu peux jouer Réussite ou Sabotage." },
+    VEILED: { name: "Voilé", when: "Toujours", summary: "Le Médium ne peut pas te voir.", detail: "Tu vois le reste de la Mort (sauf l'Égaré). En mission, tu peux jouer Réussite ou Sabotage." },
+    STRAY: { name: "Égaré", when: "Toujours", summary: "Tu sers la Mort seul : tu ne connais pas les autres, et ils ne te connaissent pas.", detail: "Le Médium te voit quand même. En mission, tu peux jouer Réussite ou Sabotage. Au Jugement, la Mort se démasque et tu rejoins les autres." },
+    SHADE: { name: "Ombre", when: "Toujours", summary: "Tu marches avec la Mort et connais tes coéquipiers.", detail: "Tu vois le reste de la Mort (sauf l'Égaré). En mission, tu peux jouer Réussite ou Sabotage." },
     CULT_LEADER: { name: "Gourou", when: "Chaque nuit", summary: "Chaque nuit, recrute un joueur dans la Secte. La Secte gagne quand elle est plus nombreuse que tous les autres.", detail: "Une recrue garde son rôle et ses pouvoirs mais gagne désormais avec la Secte, et apprend qui en sont les autres membres. Les joueurs du camp de la Mort, l'Éventreur et les joueurs protégés ne peuvent pas être recrutés. Si le Gourou meurt, plus personne ne peut recruter." },
     RIPPER: { name: "L'Éventreur", when: "Chaque nuit", summary: "Tue un joueur chaque nuit, seul. Tu gagnes si tu es le dernier debout, ou seul avec un autre joueur qui n'est pas un tueur.", detail: "Ton meurtre est arrêté par les mêmes protections que celui de la Mort (Gardien, Ange gardien, Bénédiction de la Sorcière, résurrection temporaire). La Mort ne peut pas te tuer la nuit, sauf sous une Lune de sang. Tu apparais comme N'APPARTENANT PAS AU CAMP DE LA MORT." },
     DEATH: { name: 'La Mort', when: 'Chaque nuit', summary: 'Mettez-vous d’accord avec tous vos coéquipiers Mort vivants sur un seul meurtre commun chaque nuit.', detail: 'Tous les joueurs Mort actifs doivent confirmer exactement les mêmes cibles, sinon la faction passe. La capacité de base est d’un meurtre ; Double Péril, Équipe de nuit ou Surcharge peuvent la porter à deux au maximum — jamais un meurtre par joueur Mort.' },
@@ -39,6 +47,23 @@ export default {
     INSOMNIA: { name: 'Insomnie', text: 'À l’aube, tu reçois le compte rendu chronologique complet des actions de la nuit — si tu survis.' },
     GUARDIAN_ANGEL: { name: 'Ange gardien', text: 'Cette nuit, tu es immunisé contre la Mort, le Psychopathe, les bombes, la Malédiction et les morts liées.' },
   },
+  mcards: {
+    REGULAR: { name: "Mission ordinaire", text: "Aucun effet particulier." },
+    LANTERN: { name: "Porte-lanterne", text: "Le Meneur doit faire partie de l'équipe." },
+    FRESH_FACES: { name: "Nouvelles têtes", text: "Au moins la moitié de l'équipe (arrondie au-dessus) ne doit pas avoir participé à la mission précédente." },
+    EXTRA_HAND: { name: "Renfort", text: "L'équipe compte un joueur de plus." },
+    SKELETON_CREW: { name: "Équipage réduit", text: "L'équipe compte un joueur de moins." },
+    MASKED_VOTE: { name: "Vote masqué", text: "Les votes d'équipe ne montrent que les totaux, pas qui a voté quoi." },
+    SHORT_PATIENCE: { name: "Patience courte", text: "La troisième proposition part quel que soit le vote." },
+    WARD: { name: "Protection", text: "Avec l'équipe, le Meneur désigne un membre dont la carte sera forcément Réussite." },
+    STEADFAST: { name: "Inébranlable", text: "Il faut un Sabotage de plus que d'habitude pour échouer." },
+    BRITTLE: { name: "Fragile", text: "Un seul Sabotage la fait échouer, même si cette mission en exige normalement deux." },
+    SMOKE: { name: "Fumée", text: "Seul le résultat est montré, pas le nombre de cartes Sabotage jouées." },
+    GRAND: { name: "Grande mission", text: "Le résultat compte double sur la piste." },
+    TRAIL: { name: "Piste", text: "Si elle réussit, un membre vivant de l'équipe tiré au hasard trouve un indice la nuit." },
+    WITNESS: { name: "Témoin", text: "La nuit, le Meneur de l'équipe voit en secret la carte d'un autre membre." },
+    HAUNTED_ROAD: { name: "Route hantée", text: "Si elle échoue, le Faucheur choisit l'un de ses membres, qui doit sauter la prochaine mission." },
+  },
   rules: {
     OPEN_BALLOT: { name: "Vote à découvert", text: "Chaque vote est public : tout le monde voit qui vote pour qui à mesure que les bulletins arrivent.", enforcement: "Les votes peuvent encore changer jusqu'au verrouillage. Les votes des fantômes sont publics aussi." },
     FOG_OF_WAR: { name: 'Brouillard de guerre', text: 'Pendant la discussion, tu ne peux parler directement qu’aux joueurs assis juste à côté de toi.', enforcement: 'Sur l’honneur en présentiel. À distance, le chat de table est remplacé par des murmures entre voisins.' },
@@ -53,6 +78,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Fantômes vengeurs', text: 'Chaque joueur éliminé peut déposer un bulletin fantôme de poids 1 par jour.', enforcement: 'Les fantômes ne peuvent pas nommer, utiliser de pouvoirs ni influencer la Règle de la majorité.' },
   },
   presets: {
+    missions: { name: "Dead Set : Missions", blurb: "Équipes, votes et sabotage. Personne ne meurt : menez des missions, lisez les votes, et trouvez la Mort avant qu'elle ne trouve le Médium." },
     standard: { name: 'Standard', blurb: 'L’expérience Dead Set telle que prévue. Dix rôles étendus dès 7 joueurs, un Rêve pour tous chaque nuit, 1–3 cartes de règle.' },
     classic: { name: 'Classique / Apprentissage', blurb: 'Pour apprendre. Rôles de base seulement — les sièges étendus sont des Innocents. Rêves désactivés par défaut, au plus une règle simple.' },
     full: { name: 'Jeu complet / Chaos', blurb: 'Les 17 rôles étendus, dont le Bouffon, le Barde et la Sorcière. Beaucoup de hasard, groupes expérimentés uniquement.' },
@@ -77,6 +103,17 @@ export default {
     'La Mort a voté avec la ville. Évidemment.',
   ],
   guide: {
+    missionsH: "Dead Set : Missions",
+    missions: `<p>Un second mode pour 5 à 10 joueurs, à choisir dans le salon. Personne ne meurt : la Mort s'est glissée dans l'expédition, et la table doit la trouver.</p>
+<ol>
+<li><b>La carte de mission.</b> Chaque mission commence par une carte tirée, avant le choix de l'équipe. La plupart sont des <i>Missions ordinaires</i> ; de temps en temps, une carte change l'équipe, le vote ou la révélation. Elle vaut pour toute la mission.</li>
+<li><b>La proposition.</b> Le Meneur de mission (la lanterne) choisit une équipe de la taille indiquée.</li>
+<li><b>Le vote d'équipe.</b> Chacun approuve ou rejette en secret ; les votes sont révélés tous ensemble, avec les noms. Une majorité envoie l'équipe. Sinon, le joueur suivant à gauche propose. La cinquième proposition part quel que soit le vote.</li>
+<li><b>La mission.</b> Chaque membre de l'équipe joue une carte en secret. Les Vivants ne peuvent jouer que Réussite ; la Mort peut jouer Réussite ou Sabotage. Un Sabotage fait échouer la mission (deux pour la mission 4 à partir de 7 joueurs). Les cartes sont mélangées et retournées une à une.</li>
+<li><b>L'interlude nocturne.</b> Chacun choisit un Soupçon secret. Après les missions 2, 3 et 4, le porteur de la Bougie apprend le camp d'un joueur, et la Bougie lui revient. Des indices peuvent arriver à l'aube.</li>
+</ol>
+<p><b>La fin.</b> Trois réussites : la Mort se démasque et le Faucheur désigne le Médium. Juste, la Mort gagne ; faux, les Vivants gagnent. Trois échecs : le Dernier Carré. Chacun désigne un joueur. Si c'est un Vivant, la Mort gagne ; si vous prenez la Mort, le Faucheur a quand même droit au Jugement.</p>`,
+    missionCardsH: "Cartes de mission",
     sidesH: "Autres camps et rebondissements",
     sides: `<p>Optionnels, à activer dans le salon (ou à ajouter avec les compteurs de rôles en partie personnalisée). La ville ne gagne qu'une fois la Mort, la Secte et l'Éventreur tous éliminés.</p>
 <ul>

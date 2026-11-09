@@ -3,6 +3,14 @@ export default {
   and: 'a',
   numbers: ['žiadny', 'jeden', 'dvaja', 'traja', 'štyria', 'piati', 'šiesti', 'siedmi', 'ôsmi', 'deviati', 'desiati'],
   roles: {
+    MEDIUM: { name: "Médium", when: "Vždy", summary: "Vidíš každého hráča Smrti okrem Zahaleného. Riaď výpravu tak, aby si sa neprezradil.", detail: "Ak Živí vyhrajú tri misie alebo v Poslednom odpore chytia hráča Smrti, Smrť má jeden pokus uhádnuť, kto si. Ak označí teba, vyhráva Smrť." },
+    BELIEVER: { name: "Veriaci", when: "Vždy", summary: "Vidíš dve sviečky: Médium a Šarlatána. Nevieš, kto je kto.", detail: "Zisti, ktorá sviečka je skutočné Médium, a chráň ho – často tak, že sa sám správaš ako Médium. Bez Šarlatána v hre je tvojou jedinou sviečkou Médium." },
+    COMPANION: { name: "Spoločník", when: "Vždy", summary: "Nevieš nič okrem toho, čo ti hovorí srdce. Sleduj hlasovania a misie.", detail: "Môžeš hrať iba Úspech. Čítaj, kto koho navrhuje, kto schvaľuje ktorý tím a ktoré misie zlyhávajú." },
+    REAPER: { name: "Žnec", when: "Vždy", summary: "Vedieš Smrť. Na Zúčtovaní rozhodneš, kto je Médium.", detail: "Vidíš zvyšok Smrti (okrem Tuláka). Na misii môžeš hrať Úspech alebo Sabotáž. Tvoj tím môže na Zúčtovaní navrhovať mená; platí tvoja voľba." },
+    CHARLATAN: { name: "Šarlatán", when: "Vždy", summary: "Pre Veriaceho vyzeráš presne ako Médium. Využi to.", detail: "Vidíš zvyšok Smrti (okrem Tuláka). Na misii môžeš hrať Úspech alebo Sabotáž." },
+    VEILED: { name: "Zahalený", when: "Vždy", summary: "Médium ťa nevidí.", detail: "Vidíš zvyšok Smrti (okrem Tuláka). Na misii môžeš hrať Úspech alebo Sabotáž." },
+    STRAY: { name: "Tulák", when: "Vždy", summary: "Slúžiš Smrti sám: nepoznáš ostatných a oni nepoznajú teba.", detail: "Médium ťa aj tak vidí. Na misii môžeš hrať Úspech alebo Sabotáž. Na Zúčtovaní sa Smrť odhalí a pridáš sa k ostatným." },
+    SHADE: { name: "Tieň", when: "Vždy", summary: "Kráčaš so Smrťou a poznáš svojich spoluhráčov.", detail: "Vidíš zvyšok Smrti (okrem Tuláka). Na misii môžeš hrať Úspech alebo Sabotáž." },
     CULT_LEADER: { name: "Vodca sekty", when: "Každú noc", summary: "Každú noc naverbuj jedného hráča do Sekty. Sekta vyhráva, keď prečísli všetkých ostatných.", detail: "Naverbovaný si ponechá rolu aj schopnosti, ale odteraz vyhráva so Sektou a dozvie sa, kto sú ostatní členovia. Hráčov na strane Smrti, Rozparovača a chránených hráčov naverbovať nemožno. Ak Vodca zomrie, nikto iný už verbovať nemôže." },
     RIPPER: { name: "Rozparovač", when: "Každú noc", summary: "Každú noc sám zabi jedného hráča. Vyhráš, ak zostaneš posledný na nohách, alebo sám s jedným hráčom, ktorý nie je vrah.", detail: "Tvoju vraždu zastavia rovnaké ochrany ako vraždu Smrti (Strážca, Anjel strážny, Požehnanie čarodejnice, dočasné oživenie). Smrť ťa v noci nemôže zabiť, s výnimkou Krvavého mesiaca. Javíš sa ako NIE NA STRANE SMRTI." },
     DEATH: { name: 'Smrť', when: 'Každú noc', summary: 'Každú noc sa dohodnite so všetkými živými spoluhráčmi Smrti na jednej spoločnej vražde.', detail: 'Všetci aktívni hráči Smrti musia potvrdiť presne rovnaký výber cieľov, inak frakcia pasuje. Základná kapacita je jedna vražda; Dvojité nebezpečenstvo, Nočná zmena alebo Nápor sily ju môžu zvýšiť najviac na dve — nikdy nie jedna vražda na každého hráča Smrti.' },
@@ -39,6 +47,23 @@ export default {
     INSOMNIA: { name: 'Nespavosť', text: 'Na úsvite dostaneš úplnú chronologickú správu o akciách tejto noci — ak prežiješ.' },
     GUARDIAN_ANGEL: { name: 'Anjel strážny', text: 'Dnes v noci si imúnny voči Smrti, Psychopatovi, bombám, Kliatbe čarodejnice aj prepojeným smrtiam.' },
   },
+  mcards: {
+    REGULAR: { name: "Bežná misia", text: "Žiadny zvláštny účinok." },
+    LANTERN: { name: "Nosič lampáša", text: "Vodca musí byť v tíme." },
+    FRESH_FACES: { name: "Nové tváre", text: "Aspoň polovica tímu (zaokrúhlene nahor) nesmie byť z predchádzajúcej misie." },
+    EXTRA_HAND: { name: "Ruka navyše", text: "Tím je o jedného hráča väčší." },
+    SKELETON_CREW: { name: "Minimálna posádka", text: "Tím je o jedného hráča menší." },
+    MASKED_VOTE: { name: "Skryté hlasovanie", text: "Hlasovania o tíme ukazujú iba súčty, nie kto ako hlasoval." },
+    SHORT_PATIENCE: { name: "Krátka trpezlivosť", text: "Tretí návrh vyráža bez ohľadu na hlasovanie." },
+    WARD: { name: "Ochrana", text: "Spolu s tímom Vodca označí člena, ktorého karta bude nútene Úspech." },
+    STEADFAST: { name: "Neochvejná", text: "Na zlyhanie treba o jednu Sabotáž viac než zvyčajne." },
+    BRITTLE: { name: "Krehká", text: "Zlyhá už s jedinou Sabotážou, hoci táto misia zvyčajne potrebuje dve." },
+    SMOKE: { name: "Dym", text: "Ukáže sa iba výsledok, nie koľko kariet Sabotáže sa zahralo." },
+    GRAND: { name: "Veľká misia", text: "Výsledok sa na stupnici počíta dvakrát." },
+    TRAIL: { name: "Stopa", text: "Ak uspeje, náhodný živý člen tímu v noci nájde stopu." },
+    WITNESS: { name: "Svedok", text: "V noci Vodca tímu tajne uvidí kartu iného člena." },
+    HAUNTED_ROAD: { name: "Strašidelná cesta", text: "Ak zlyhá, Žnec vyberie jedného z jej členov, ktorý musí vynechať ďalšiu misiu." },
+  },
   rules: {
     OPEN_BALLOT: { name: "Verejné hlasovanie", text: "Každý hlas je verejný: všetci vidia, kto hlasuje za koho, hneď ako hlasy prichádzajú.", enforcement: "Hlasy sa dajú meniť až do uzamknutia. Aj hlasy duchov sú verejné." },
     FOG_OF_WAR: { name: 'Hmla vojny', text: 'Počas diskusie môžeš priamo hovoriť len s hráčmi na miestach hneď vedľa teba.', enforcement: 'Naživo na čestné slovo. Na diaľku nahradí stolový chat šepot so susedmi.' },
@@ -53,6 +78,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Pomstychtiví duchovia', text: 'Každý vyradený hráč môže každý deň odovzdať jeden hlas ducha s váhou 1.', enforcement: 'Duchovia nemôžu nominovať, používať schopnosti ani ovplyvniť Pravidlo väčšiny.' },
   },
   presets: {
+    missions: { name: "Dead Set: Misie", blurb: "Tímy, hlasovania a sabotáž. Nikto neumiera: veďte misie, čítajte hlasy a nájdite Smrť skôr, než ona nájde Médium." },
     standard: { name: 'Štandard', blurb: 'Zamýšľaný zážitok z Dead Set. Desať rozšírených rol od 7 hráčov, Sen pre každého každú noc, 1–3 karty pravidiel.' },
     classic: { name: 'Klasika / Učenie', blurb: 'Na učenie. Iba základné roly — rozšírené miesta obsadia Nevinní. Sny predvolene vypnuté, najviac jedno jednoduché pravidlo.' },
     full: { name: 'Celý balík / Chaos', blurb: 'Všetkých 17 rozšírených rol vrátane Šaša, Barda a Čarodejnice. Veľa náhody, len pre skúsené skupiny.' },
@@ -77,6 +103,17 @@ export default {
     'Smrť hlasovala s mestom. Samozrejme.',
   ],
   guide: {
+    missionsH: "Dead Set: Misie",
+    missions: `<p>Druhý režim pre 5–10 hráčov, ktorý sa vyberá v lobby. Nikto neumiera: Smrť sa vkradla do výpravy a stôl ju musí nájsť.</p>
+<ol>
+<li><b>Karta misie.</b> Každá misia začína ťahom karty, ešte pred výberom tímu. Väčšina sú <i>Bežné misie</i>; občas karta zmení tím, hlasovanie alebo odhalenie. Platí pre celú misiu.</li>
+<li><b>Návrh.</b> Vodca misie (lampáš) vyberie tím uvedenej veľkosti.</li>
+<li><b>Hlasovanie o tíme.</b> Všetci tajne schvália alebo zamietnu; hlasy sa odhalia naraz, s menami. Väčšina pošle tím na misiu. Inak navrhuje ďalší hráč vľavo. Piaty návrh vyráža bez ohľadu na hlasovanie.</li>
+<li><b>Misia.</b> Každý člen tímu tajne zahrá kartu. Živí môžu hrať iba Úspech; Smrť môže hrať Úspech alebo Sabotáž. Jedna Sabotáž misiu zmarí (na misii 4 od 7 hráčov dve). Karty sa zamiešajú a otáčajú jedna po druhej.</li>
+<li><b>Nočná prestávka.</b> Každý si vyberie tajné Podozrenie. Po misiách 2, 3 a 4 zistí držiteľ Sviečky stranu jedného hráča a Sviečka prejde k nemu. Za úsvitu môžu prísť stopy.</li>
+</ol>
+<p><b>Koniec.</b> Tri úspechy: Smrť sa odhalí a Žnec označí Médium. Ak trafí, vyhráva Smrť; ak nie, vyhrávajú Živí. Tri zlyhania: Posledný odpor. Každý označí jedného hráča. Ak je to Živý, vyhráva Smrť; ak chytíte Smrť, Žnec aj tak dostane Zúčtovanie.</p>`,
+    missionCardsH: "Karty misií",
     sidesH: "Ďalšie strany a zvraty",
     sides: `<p>Voliteľné, zapínajú sa v lobby (alebo sa pridávajú počítadlami rolí vo vlastných hrách). Mesto vyhrá, až keď zmizne Smrť, Sekta aj Rozparovač.</p>
 <ul>

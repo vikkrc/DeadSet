@@ -133,6 +133,13 @@ const SOUNDS = {
   unfold: (a) => noise(a, { dur: 0.7, gain: 0.08, type: 'bandpass', freq: 3200, sweep: 1200, q: 0.6, attack: 0.2 }),
   thud: (a) => { tone(a, { freq: 90, dur: 0.35, gain: 0.35, to: 48 }); noise(a, { dur: 0.12, gain: 0.18, freq: 300 }); },
   heart: (a) => heartbeat(a),
+  // Missions: card flips and verdicts.
+  flip: (a) => { noise(a, { dur: 0.12, gain: 0.22, type: 'bandpass', freq: 2600, sweep: 900, q: 0.9 }); tone(a, { freq: 300, dur: 0.06, gain: 0.08, at: 0.05 }); },
+  goodCard: (a) => { SOUNDS.flip(a); bell(a, 880, 0.08, 0.07, 1.6); bell(a, 1318.5, 0.16, 0.05, 1.8); },
+  badCard: (a) => { SOUNDS.flip(a); SOUNDS.crack(a); tone(a, { freq: 98, type: 'sawtooth', dur: 0.9, gain: 0.07, to: 49, at: 0.1 }); },
+  missionOk: (a) => [659.25, 830.61, 987.77, 1318.5].forEach((f, i) => bell(a, f, i * 0.12, 0.08, 2.4)),
+  missionFail: (a) => { SOUNDS.stamp(a); [196, 185, 174.6].forEach((f, i) => tone(a, { freq: f, type: 'sawtooth', dur: 1.4, gain: 0.05, at: 0.15 + i * 0.25, to: f * 0.8 })); },
+  approve: (a) => { bell(a, 783.99, 0, 0.07, 1.4); bell(a, 1046.5, 0.1, 0.06, 1.6); },
   page: (a) => { noise(a, { dur: 0.35, gain: 0.12, type: 'bandpass', freq: 2200, sweep: 900, q: 0.7, attack: 0.05 }); },
   // ── Public event stings ──
   /** An accusation: a knock and a sting that climbs with every voice joining it. */

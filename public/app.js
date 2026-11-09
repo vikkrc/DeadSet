@@ -9,7 +9,8 @@ import { seatLayout } from './layout.js';
 import { avatarSvg, randomAvatar, PARTS, COLORS } from './avatar.js';
 import { giftHtml, productIndex } from './gifts.js';
 import { gazetteHtml, frontPageHtml } from './gazette.js';
-import { LANGS, t, th, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, scen, optLabel, list as tlist, loadLang, setContent, browserLang, isLang, getLang, extra as tx } from './i18n.js';
+import { isMissionPhase, missionMain, missionPicks, missionCenter, missionDock, missionActs, missionMoment, missionMomentHtml, MISSION_MOMENT_TIME, revealTime, missionEndHtml, knowledgeHtml, trackHtml, gridHtml, missionMarks } from './missions.js';
+import { LANGS, t, th, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, mcardF, scen, optLabel, list as tlist, loadLang, setContent, browserLang, isLang, getLang, extra as tx } from './i18n.js';
 
 const app = document.getElementById('app');
 const S = {
@@ -29,7 +30,7 @@ const V = () => S.view;
 const player = (id) => V()?.players.find((p) => p.id === id);
 const pname = (id) => esc(player(id)?.name ?? t('Someone'));
 const rawName = (id) => player(id)?.name ?? t('Someone');
-const isNight = (phase) => phase === 'NIGHT_0_REVEAL' || phase === 'NIGHT_DREAM_SWAP' || phase === 'NIGHT_ACTIONS';
+const isNight = (phase) => phase === 'NIGHT_0_REVEAL' || phase === 'NIGHT_DREAM_SWAP' || phase === 'NIGHT_ACTIONS' || phase === 'M_REVEAL' || phase === 'M_NIGHT';
 const sessionKey = (code) => `deadset:${code}`;
 const saveSession = (code, data) => localStorage.setItem(sessionKey(code), JSON.stringify(data));
 const loadSession = (code) => { try { return JSON.parse(localStorage.getItem(sessionKey(code))); } catch { return null; } };
@@ -246,6 +247,15 @@ function detectMoments(v) {
     out.push({ type: 'dreamswap', from: v.me.dreamFrom.id, to: v.me.dream.id, stole: !!v.me.dreamStole, sound: null });
   }
   for (const l of fresh) {
+    if (v.mode === 'missions') {
+      if (l.ev === 'm-start') { const sc = fresh.find((x) => x.ev === 'scenario'); out.push({ type: 'night0', scenario: sc ? entryMsg(sc) : '', sc: v.scenario, rules: [], tapOnly: false }); continue; }
+      if (l.ev === 'm-dawn' && v.me && !v.me.moderator) {
+        const reports = freshPriv.filter((x) => ['candle', 'witness', 'clue'].includes(x.kind));
+        out.push({ type: 'private', reports: reports.map((x) => ({ msg: entryMsg(x), lines: x.lines, kind: x.kind })), tapOnly: true });
+        continue;
+      }
+      if (l.ev?.startsWith('m-')) { const mm = missionMoment(l, v, fresh, { notify, name }); if (mm) out.push(mm); continue; }
+    }
     switch (l.ev) {
       case 'night0': {
         const sc = fresh.find((x) => x.ev === 'scenario');
@@ -313,7 +323,7 @@ function detectMoments(v) {
 const MOMENT_SOUND = { night0: 'night', day1: 'dawn', nightfall: 'night', dawn: 'dawn', tally: 'knock', death: 'death', revive: 'revive', bloodmoon: 'bloodmoon' };
 const END_THEME = { DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester', LOVERS: 'winLovers', CULT: 'winCult', RIPPER: 'winRipper' };
 const MOMENT_TIME = { coin: 5200, gift: 5600, night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 5200, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
-const momentTime = (m) => (!onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : MOMENT_TIME[m.type] + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
+const momentTime = (m) => (m.type === 'mreveal' ? revealTime(m) : MISSION_MOMENT_TIME[m.type] ? MISSION_MOMENT_TIME[m.type] : !onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : MOMENT_TIME[m.type] + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
 
 function nextMoment() {
   clearTimeout(S.momentTimer);
@@ -326,6 +336,16 @@ function nextMoment() {
     if (m.type === 'dawn' && (m.killed.length || m.expired.length)) { setTimeout(() => pubSound('death'), 900); haptic([30, 80, 120]); }
     if (m.type === 'tally') setTimeout(() => { pubSound(m.sentenced || m.goat ? 'gavel' : 'tap'); if (m.sentenced) haptic([40, 50, 90]); }, 1700);
     if (m.type === 'death') haptic([30, 80, 120]);
+    if (m.type === 'mreveal') {
+      const n = m.cards ? m.cards.length : m.count;
+      pubSound('heart');
+      for (let i = 0; i < n; i++) setTimeout(() => { pubSound(m.cards ? (m.cards[i] === 'F' ? 'badCard' : 'goodCard') : 'flip'); if (m.cards?.[i] === 'F') haptic([40, 30, 60]); }, (2.2 + i * 1.15) * 1000 + 350);
+      setTimeout(() => { pubSound(m.failed ? 'missionFail' : 'missionOk'); haptic(m.failed ? [60, 40, 120] : [20, 30, 20]); }, (2.2 + n * 1.15 + 0.4) * 1000);
+    }
+    if (m.type === 'mvotes') setTimeout(() => pubSound(m.approved ? 'approve' : m.goes ? 'knock' : 'unpick'), 1300);
+    if (m.type === 'mcard') setTimeout(() => pubSound('flip'), 700);
+    if (m.type === 'mnamed') setTimeout(() => pubSound(m.death ? 'gavel' : 'death'), 2400);
+    if (m.type === 'mreckon') setTimeout(() => pubSound(m.hit ? 'death' : 'gavel'), 2800);
     if (m.type === 'nightfall' || m.type === 'night0') haptic(20);
     if (m.type === 'end') {
       const won = didIWin(V(), m.winner);
@@ -428,10 +448,11 @@ function momentHtml(m) {
       body = `<span class="kicker">${t('The vote is tied')}</span><h1 class="m-title">${letters(t('A coin decides'))}</h1>
         <div class="coin-stage"><div class="coin lands-${lands}"><div class="coin-face heads"><span>${esc(faces[0])}</span></div><div class="coin-face tails"><span>${esc(faces[1])}</span></div></div><div class="coin-shadow"></div></div>
         ${m.tied.length > 2 ? `<p class="m-sub small">${th('Tied: {names}', { names: m.tied })}</p>` : ''}
-        <div class="verdict-stamp coin-verdict ${m.meSentenced ? 'me' : ''}"><span class="v-name">${esc(m.meSentenced ? t('You') : m.winner)}</span><span class="stamp">${t('Sentenced')}</span></div>`;
+        <div class="verdict-stamp coin-verdict ${m.meSentenced ? 'me' : ''}"><span class="v-name">${esc(m.meSentenced ? t('You') : m.winner)}</span><span class="stamp">${t(V()?.mode === 'missions' ? 'Named' : 'Sentenced')}</span></div>`;
       break;
     }
     case 'gift': body = giftHtml(m.idx, { t, th, esc, product: m.product }); break;
+    case 'mcard': case 'mvotes': case 'mreveal': case 'mnamed': case 'munmask': case 'mreckon': body = missionMomentHtml(m, { letters, avatarSvg, onBoard }); break;
     case 'death':
       body = `<div class="m-art">${glyph(m.art || 'dagger')}</div><h1 class="m-title">${letters(t(m.title))}</h1>${m.names.length ? `<ul class="victims">${names(m.names)}</ul>` : ''}<p class="m-sub">${tmh(m.sub)}</p>`;
       break;
@@ -446,7 +467,7 @@ function momentHtml(m) {
     default: break;
   }
   const auto = !m.tapOnly;
-  return `<div class="moment m-${m.type} ${m.winner === 'DEATH' || m.type === 'death' ? 'grim' : ''} ${m.type === 'end' ? WIN_CLASS[m.winner] ?? '' : ''} ${onBoard() && m.type === 'dawn' ? 'front' : ''}" data-key="moment-${m.id}" data-act="momentNext" role="dialog" aria-live="assertive">
+  return `<div class="moment m-${m.type} ${m.winner === 'DEATH' || m.type === 'death' || m.type === 'munmask' ? 'grim' : ''} ${m.type === 'end' ? WIN_CLASS[m.winner] ?? '' : ''} ${onBoard() && m.type === 'dawn' ? 'front' : ''}" data-key="moment-${m.id}" data-act="momentNext" role="dialog" aria-live="assertive">
     ${m.type === 'end' && WIN_CLASS[m.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<div class="m-body">${body}</div>
     <div class="m-foot">${auto ? `<span class="m-timer" style="--t:${momentTime(m)}ms"><i></i></span>` : ''}<span class="kicker">${t(auto ? 'Tap to skip' : 'Tap to continue')}${S.moments.length ? ` · ${t('{n} more', { n: S.moments.length })}` : ''}</span></div>
   </div>`;
@@ -501,6 +522,7 @@ function morphChildren(a, b) {
 }
 
 function render() {
+  if (!S.route) return; // content can arrive before the first route is set
   syncLang();
   const bottoms = {};
   document.querySelectorAll('[data-scroll]').forEach((el) => { bottoms[el.dataset.scroll] = el.scrollHeight - el.scrollTop - el.clientHeight < 30; });
@@ -588,12 +610,16 @@ function phaseWord(v) {
   if (v.phase === 'LOBBY') return { word: t('Lobby'), num: '', night: false };
   if (v.phase === 'ENDED') return { word: t('The End'), num: '', night: false };
   if (v.phase === 'NIGHT_0_REVEAL') return { word: t('Night'), num: '0', night: true };
+  if (v.phase === 'M_REVEAL') return { word: t('Missions'), num: '', night: true };
+  if (isMissionPhase(v.phase)) return { word: v.phase === 'M_LAST_STAND' || v.phase === 'M_RECKONING' ? t('The End') : t('Mission'), num: v.phase === 'M_LAST_STAND' || v.phase === 'M_RECKONING' ? '' : roman((v.missions?.mission ?? 0) + 1), night: v.phase === 'M_NIGHT' };
   if (isNight(v.phase) || v.phase === 'NIGHT_RESOLVING') return { word: t('Night'), num: roman(v.nightNumber), night: true };
   return { word: t('Day'), num: roman(v.dayNumber), night: false };
 }
 const STEP_EN = {
   LOBBY: 'Gathering', NIGHT_0_REVEAL: 'Role reveal', DAY_PREP: 'Morning', DAY_DISCUSSION: 'Discussion',
   DAY_DEFENSE: 'Defence', DAY_VOTING: 'Secret ballot', DAY_RESOLVING: 'Final act', NIGHT_DREAM_SWAP: 'Nightfall', NIGHT_ACTIONS: 'Night actions', ENDED: 'Match over',
+  M_REVEAL: 'Role reveal', M_PROPOSE: 'The proposal', M_VOTE: 'Team vote', M_MISSION: 'On the mission', M_RESULT: 'The reveal',
+  M_NIGHT: 'Night interlude', M_LAST_STAND: 'The Last Stand', M_RECKONING: 'The Reckoning',
 };
 const STEP = new Proxy(STEP_EN, { get: (o, k) => (o[k] ? t(o[k]) : undefined) });
 // The phase label, aware of the Open Ballot rule (votes are public then).
@@ -777,6 +803,7 @@ function centerFor(v, pick) {
   const hint = pick?.hint ? `<span class="c-hint">${esc(pick.hint)}</span>` : '';
   const clock = '<span class="c-clock clock" data-clock></span>';
   const prog = v.progress;
+  if (isMissionPhase(v.phase)) return missionCenter(v, pick);
   switch (v.phase) {
     case 'LOBBY': {
       const need = Math.max(0, 5 - v.players.length);
@@ -802,6 +829,7 @@ function pickContexts(v) {
   const a = v.action;
   const me = v.me;
   if (!a || !me || me.moderator) return [];
+  if (isMissionPhase(v.phase)) return missionPicks(v, S);
   const out = [];
   switch (v.phase) {
     case 'DAY_PREP':
@@ -949,9 +977,11 @@ function mainFor(v, me) {
   if (me?.moderator) return moderatorMain(v);
   switch (v.phase) {
     case 'LOBBY': return lobbyMain(v, me);
-    case 'NIGHT_0_REVEAL': return revealMain(v, me);
+    case 'NIGHT_0_REVEAL': case 'M_REVEAL': return revealMain(v, me);
     case 'ENDED': return endMain(v, me);
-    default: return isNight(v.phase) ? nightMain(v, me) : dayMain(v, me);
+    default:
+      if (isMissionPhase(v.phase)) return missionMain(v, me, MH);
+      return isNight(v.phase) ? nightMain(v, me) : dayMain(v, me);
   }
 }
 
@@ -1122,6 +1152,7 @@ function lobbyDeck(v, isHost) {
     cards = Object.entries(deck.core).filter(([, n]) => n > 0).map(([id, n]) => card(id, n, id === 'DEATH' ? 'death' : '')).join('')
       + (deck.extended ? `<div class="dcard secret" data-key="ld-ext"><span class="q">?</span><b>${t('{n} extended', { n: deck.extended })}</b></div>` : '');
   }
+  if (preset.missions) return missionLobbyDeck(v, isHost, cards);
   const allExt = (S.content?.roles ?? []).filter((r) => r.set === 'standard' || r.set === 'full').map((r) => r.id);
   const poolIds = preset.custom ? allExt : preset.pool;
   const inPool = new Set(deck?.pool ?? (preset.custom ? s.extendedPool : preset.pool));
@@ -1168,6 +1199,44 @@ function lobbyDeck(v, isHost) {
   </section>`;
 }
 
+/** Lobby deck and switches for Dead Set: Missions. */
+function missionLobbyDeck(v, isHost, cards) {
+  const s = v.settings;
+  const on = { BELIEVER: true, CHARLATAN: true, VEILED: false, STRAY: false, ...(s.mRoles || {}) };
+  const n = v.players.length;
+  const sizes = S.content?.missionSizes?.[n];
+  const roleRow = (id, sub) => isHost
+    ? `<label class="toggle-row"><span><b>${esc(roleF(id, 'name'))}</b><small>${t(sub)}</small></span><input type="checkbox" class="switch" data-act-change="mRole" data-id="${id}" ${on[id] ? 'checked' : ''}></label>`
+    : `<div class="toggle-row"><span><b>${esc(roleF(id, 'name'))}</b><small>${t(sub)}</small></span><span class="tag ${on[id] ? 'solid' : ''}">${t(on[id] ? 'On' : 'Off')}</span></div>`;
+  const toggle = (key, title, sub) => isHost
+    ? `<label class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><input type="checkbox" class="switch" data-set-bool="${key}" ${v.table?.[key] ? 'checked' : ''}></label>`
+    : `<div class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><span class="tag ${v.table?.[key] ? 'solid' : ''}">${t(v.table?.[key] ? 'On' : 'Off')}</span></div>`;
+  const select = (act, value, opts, title, sub) => isHost
+    ? `<label class="toggle-row"><span><b>${t(title)}</b>${sub ? `<small>${t(sub)}</small>` : ''}</span><select class="input lang-select" data-act-change="${act}">${opts.map(([k, l]) => `<option value="${k}" ${value === k ? 'selected' : ''}>${t(l)}</option>`).join('')}</select></label>`
+    : `<div class="toggle-row"><span><b>${t(title)}</b>${sub ? `<small>${t(sub)}</small>` : ''}</span><span class="tag">${t(opts.find(([k]) => k === value)?.[1] ?? '')}</span></div>`;
+  const tableLang = v.table?.lang ?? 'en';
+  return `<section class="lobby-deck" data-key="ldeck">
+    <div class="rule">${t(n === 1 ? 'Tonight\'s deck · {n} player' : 'Tonight\'s deck · {n} players', { n })}</div>
+    <div class="deckrow">${cards || `<p class="small muted">${t('Seat 5 to 10 players to see the deck.')}</p>`}</div>
+    ${sizes ? `<p class="small muted" data-key="msizes">${th('Team sizes for missions 1–5: {sizes}.', { sizes: sizes.join(' · ') })}${n >= 7 ? ` ${t('Mission 4 needs two Sabotage cards to fail.')}` : ''}</p>` : ''}
+    <div class="rule">${t('The table')}</div>
+    ${isHost ? `<label class="toggle-row"><span><b>${t('Table language')}</b><small>${t('The default for everyone. Each player can still pick their own.')}</small></span><select class="input lang-select" data-act-change="tableLang">${LANGS.map((l) => `<option value="${l.code}" ${tableLang === l.code ? 'selected' : ''}>${esc(l.name)}</option>`).join('')}</select></label>`
+      : `<div class="toggle-row"><span><b>${t('Table language')}</b><small>${t('Set by the host. You can pick your own above.')}</small></span><span class="tag">${esc(LANGS.find((l) => l.code === tableLang)?.name ?? tableLang)}</span></div>`}
+    <div class="rule">${t('Roles')}</div>
+    <p class="small muted">${t('Every table has a Medium and a Reaper. Empty seats are Companions and Shades.')}</p>
+    ${roleRow('BELIEVER', 'Sees the Medium and the Charlatan as two candles.')}
+    ${roleRow('CHARLATAN', 'Death: looks like the Medium to the Believer.')}
+    ${roleRow('VEILED', 'Death: hidden from the Medium.')}
+    ${roleRow('STRAY', 'Death: unknown to the rest of Death, and blind to them.')}
+    <div class="rule">${t('Twists')}</div>
+    ${select('missionCards', s.missionCards ?? 1, [[0, 'Off'], [1, 'Rare'], [2, 'Sometimes']], 'Mission cards', 'Most missions are Regular. Sometimes a card changes the team, the vote or the reveal.')}
+    ${toggle('clues', 'Clues', 'Rarely, at dawn, one or two players find a true hint about Death\'s team.')}
+    ${v.table?.clues ? select('clueOdds', v.table.clueOdds, [[1, 'Rare'], [2, 'Uncommon'], [3, 'Common']], 'How often', '') : ''}
+    ${toggle('score', 'Atmospheric score', 'Music and effects play on the TV board')}
+    ${toggle('backdrops', 'Location backdrops', 'The TV board shows a scene for the story\'s WHERE card.')}
+  </section>`;
+}
+
 function setupSummary(v) {
   const s = v.settings;
   const preset = v.presets.find((p) => p.id === s.preset);
@@ -1175,8 +1244,8 @@ function setupSummary(v) {
   return `<div class="stack">
     <div class="preset" aria-pressed="true" style="cursor:default"><b>${esc(presetF(preset.id, 'name'))}</b><small>${esc(presetF(preset.id, 'blurb'))}</small></div>
     <div class="pill-row">
-      <span class="tag">${s.rules.mode === 'random' ? t(s.rules.count === 1 ? '{n} random rule card' : '{n} random rule cards', { n: s.rules.count }) : ruleNames(s.rules.selected) || t('No rule cards')}</span>
-      <span class="tag">${t(s.dreams ? 'Dreams on' : 'No dreams')}</span>
+      ${preset.missions ? `<span class="tag">${t(['No mission cards', 'Mission cards: rare', 'Mission cards: sometimes'][s.missionCards ?? 1])}</span>` : `<span class="tag">${s.rules.mode === 'random' ? t(s.rules.count === 1 ? '{n} random rule card' : '{n} random rule cards', { n: s.rules.count }) : ruleNames(s.rules.selected) || t('No rule cards')}</span>
+      <span class="tag">${t(s.dreams ? 'Dreams on' : 'No dreams')}</span>`}
       <span class="tag">${t(s.transport === 'remote' ? 'Remote · chat' : 'Same room')}</span>
       ${s.scenario.mode === 'manual' ? `<span class="tag">${esc(s.scenario.who)}</span>` : ''}
     </div>
@@ -1205,7 +1274,7 @@ function setupForm(v) {
     ${preset.id === 'classic' ? `<label class="check"><input type="checkbox" data-set-bool="dreams" ${s.dreams ? 'checked' : ''}><span><b>${t('Simplified Dreams')}</b><small>${t('Off by default for teaching games.')}</small></span></label>` : ''}
     ${preset.id === 'doomsday' || (preset.custom && s.doomsday) ? `<label class="field"><span>${t('Doomsday after Day')}</span><select class="input" data-set="doomsdayDays">${[1, 2, 3, 4, 5, 6, 7].map((n) => `<option ${s.doomsdayDays === n ? 'selected' : ''}>${n}</option>`).join('')}</select></label>` : ''}
 
-    <details class="more" data-key="d-rules" open><summary>${t('Rule cards')}</summary><div>
+    <details class="more ${preset.missions ? 'hidden' : ''}" data-key="d-rules" open><summary>${t('Rule cards')}</summary><div>
       ${preset.rulesMax === 0 ? '' : `<div class="seg" role="group"><button data-act="rulesMode" data-mode="random" aria-pressed="${s.rules.mode === 'random'}">${t('Draw at random')}</button><button data-act="rulesMode" data-mode="manual" aria-pressed="${s.rules.mode === 'manual'}">${t('Choose')}</button></div>`}
       ${s.rules.mode === 'random' ? `<div class="stepper"><span>${t('How many')}</span>${range(preset.rulesMin, preset.rulesMax).map((n) => `<button data-act="ruleCount" data-n="${n}" aria-pressed="${s.rules.count === n}">${n}</button>`).join('')}</div><small class="muted small">${t('Drawn secretly when the match starts.')}</small>`
         : `<div class="rule-grid">${rules.map((r) => `<label class="check"><input type="checkbox" data-act-change="rule" data-id="${r.id}" ${s.rules.selected.includes(r.id) ? 'checked' : ''}><span><b>${esc(ruleF(r.id, 'name'))}</b><small>${esc(ruleF(r.id, 'text'))}</small></span></label>`).join('')}</div><small class="muted small">${t('Choose {a}–{b}.', { a: preset.rulesMin, b: preset.rulesMax })}</small>`}
@@ -1218,12 +1287,12 @@ function setupForm(v) {
 
     <details class="more" data-key="d-table"><summary>${t('Table & timers')}</summary><div>
       <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
-      <div class="grid2">${timer('morning', 'Morning')}${timer('discussion', 'Discussion')}${timer('defense', 'Defence (each)')}${timer('voting', 'Voting')}${timer('night', 'Night')}${timer('retaliation', 'Final act')}</div>
-      <p class="small muted">${t(s.dreams ? 'Each night opens with a fifteen-second nightfall: everyone reads their Dream before actions begin.' : 'Each night opens with a five-second nightfall before actions begin.')}</p>
-      <label class="check"><input type="checkbox" data-set-bool="revealOnDeath" ${s.revealOnDeath ? 'checked' : ''}><span><b>${t('Reveal roles on death')}</b><small>${t('Never with the Hidden Roles card.')}</small></span></label>
+      ${preset.missions ? `<div class="grid2">${timer('proposal', 'Proposal')}${timer('teamVote', 'Team vote')}${timer('mission', 'Mission')}${timer('interlude', 'Night interlude')}${timer('lastStand', 'Last Stand')}${timer('reckoning', 'Reckoning')}</div>` : `<div class="grid2">${timer('morning', 'Morning')}${timer('discussion', 'Discussion')}${timer('defense', 'Defence (each)')}${timer('voting', 'Voting')}${timer('night', 'Night')}${timer('retaliation', 'Final act')}</div>
+      <p class="small muted">${t(s.dreams ? 'Each night opens with a fifteen-second nightfall: everyone reads their Dream before actions begin.' : 'Each night opens with a five-second nightfall before actions begin.')}</p>`}
+      ${preset.missions ? '' : `<label class="check"><input type="checkbox" data-set-bool="revealOnDeath" ${s.revealOnDeath ? 'checked' : ''}><span><b>${t('Reveal roles on death')}</b><small>${t('Never with the Hidden Roles card.')}</small></span></label>
       <label class="check"><input type="checkbox" data-set-bool="endReveal" ${s.endReveal ? 'checked' : ''}><span><b>${t('Reveal every role at the end')}</b></span></label>
       <label class="check"><input type="checkbox" data-set-bool="selfNomination" ${s.selfNomination ? 'checked' : ''}><span><b>${t('Allow self-nomination')}</b></span></label>
-      <label class="check"><input type="checkbox" data-set-bool="selfVote" ${s.selfVote ? 'checked' : ''}><span><b>${t('Nominees may vote for themselves')}</b></span></label>
+      <label class="check"><input type="checkbox" data-set-bool="selfVote" ${s.selfVote ? 'checked' : ''}><span><b>${t('Nominees may vote for themselves')}</b></span></label>`}
     </div></details>
   </div>`;
 }
@@ -1308,6 +1377,7 @@ function roleNotes(me) {
 }
 
 function teammates(me) {
+  if (V()?.mode === 'missions') return knowledgeHtml(me);
   const extra = `${me.lover ? `<div class="panel tight love-panel">${glyph('heart')}<div><span class="kicker">${t('Your love')}</span><p>${th('You are in love with <b>{name}</b>. If one of you dies, so does the other. If you two are the last alive, you win together.', { name: me.lover.name })}</p></div></div>` : ''}${me.cultmates ? `<div class="panel tight cult-panel"><span class="kicker">${t('The Cult')}</span><p>${me.cultmates.length ? esc(me.cultmates.map((x) => x.name).join(', ')) : t('No other members yet.')}</p></div>` : ''}`;
   return deathTeam(me) + extra;
 }
@@ -1594,6 +1664,7 @@ function endMain(v, me) {
   return `<section class="verdict ${v.winner === 'DEATH' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<span class="kicker">${t('Verdict')}</span><h1>${letters(title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
       ${won === null ? '' : `<div class="result-stamp ${won ? 'win' : 'loss'}">${won ? t('Victory') : t('Defeat')}</div>`}</section>
     ${revealed ? ring(v, { reveal: true, center: centerFor(v) }) : ''}
+    ${v.mode === 'missions' ? missionEndHtml(v) : ''}
     <section data-key="reveal"><div class="rule">${t('Every secret')}</div>${revealed ? `<ul class="ledger">${v.players.map((p, i) => `<li class="${p.alive ? '' : 'dead'} ${p.id === me?.id ? 'me' : ''}" style="--i:${i}" data-key="rv-${p.id}">
       <span class="seat">${p.role ? glyph(p.role.glyph) : ''}</span>
       <span class="who"><b>${esc(p.name)}</b><small>${p.role ? esc(roleF(p.role.id, 'name')) : '—'}${p.originalRole ? ` ${th('(was {role})', { role: p.originalRole.id })}` : ''} · ${p.alive ? t('alive') : `† ${esc(stamp(p.diedAt))}`}</small></span>
@@ -1606,7 +1677,19 @@ function endMain(v, me) {
 // ── Moderator ──────────────────────────────────────────────────────────────
 function moderatorMain(v) {
   if (v.phase === 'LOBBY') return lobbyMain(v, v.me);
+  if (v.phase === 'ENDED' && v.mode === 'missions') return endMain(v, v.me);
   const sec = Object.fromEntries((v.secrets || []).map((s) => [s.id, s]));
+  if (isMissionPhase(v.phase)) {
+    const ms = v.missionSecrets || {};
+    const line = (p) => [ms.votes && p.id in ms.votes ? t(ms.votes[p.id] ? 'approves' : 'rejects') : '', ms.plays?.[p.id] ? t(ms.plays[p.id] === 'F' ? 'plays Sabotage' : 'plays Succeed') : '',
+      ms.night?.hunch?.[p.id] ? th('hunch: {name}', { name: rawName(ms.night.hunch[p.id]) }) : '', ms.stand?.[p.id] ? th('names {name}', { name: rawName(ms.stand[p.id]) }) : '', ms.reckon?.[p.id] ? th('suggests {name}', { name: rawName(ms.reckon[p.id]) }) : ''].filter(Boolean).join(' · ');
+    return `${head(v)}
+    <div class="banner blood" data-key="modb">${glyph('mentalist')}<div><b>${t('Trusted moderator view')}</b><p>${t('You see everything. Do not show this screen to players.')}</p></div></div>
+    ${trackHtml(v)}
+    ${ring(v, { center: centerFor(v), marks: missionMarks(v), pick: v.missions?.proposal && ['M_VOTE', 'M_MISSION'].includes(v.phase) ? { ids: [], selected: v.missions.proposal.team, act: '' } : null })}
+    <section data-key="modall"><div class="rule">${t('Everyone')}</div><ul class="ledger">${v.players.map((p) => { const s = sec[p.id] || {}; return `<li data-key="mod-${p.id}"><span class="seat">${String(p.seat + 1).padStart(2, '0')}</span><span class="who"><b>${esc(p.name)}</b><small>${s.roleId ? esc(roleF(s.roleId, 'name')) : ''} · ${esc(ALIGN[s.alignment] ?? '')}${line(p) ? ` · ${esc(line(p))}` : ''}</small></span></li>`; }).join('')}</ul></section>
+    <section data-key="modgrid"><div class="rule">${t('The missions')}</div>${gridHtml(v)}</section>`;
+  }
   return `${head(v)}
     <div class="banner blood" data-key="modb">${glyph('mentalist')}<div><b>${t('Trusted moderator view')}</b><p>${t('You see everything. Do not show this screen to players.')}</p></div></div>
     ${ring(v, { center: centerFor(v) })}
@@ -1616,7 +1699,9 @@ function moderatorMain(v) {
 }
 
 /** Translation and markup helpers shared with the board, Gazette and guide. */
-const H = { esc, glyph, dreamGlyph, t, th, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, scen, tlist, tx, getLang };
+const H = { esc, glyph, dreamGlyph, t, th, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, scen, tlist, tx, getLang, mcardF };
+/** Helpers for the Missions screens (public/missions.js). */
+const MH = { S, ring, head: (...a) => head(...a), chips: (...a) => chips(...a), activePick: (...a) => activePick(...a), pickTabs: (...a) => pickTabs(...a), chatBlock: (...a) => chatBlock(...a) };
 
 // ── First-game tips ────────────────────────────────────────────────────────
 const TIPS_KEY = 'deadset:tutorial';
@@ -1805,7 +1890,9 @@ function dock(v) {
       case 'NIGHT_ACTIONS':
         if (a.type === 'night' && !a.done && !S.ui.veiled[v.phaseId]) { const r = commitReady(a); parts.push(btn(`${glyph('moon')} ${esc(r.label)}`, 'commit', a.death ? 'btn-blood' : 'btn-solid', !r.ok)); }
         break;
-      default: break;
+      default:
+        if (isMissionPhase(v.phase)) parts.push(...missionDock(v, { S, btn, holdBtn, rawName }));
+        break;
     }
   }
   if (hostNext) parts.unshift(`<span class="mobile-only host-slot" data-key="hostslot">${hostNext}</span>`);
@@ -1916,7 +2003,7 @@ const ACT = {
     if (S.ui.flipped[k]) { uiSound('reveal'); uiHaptic(12); }
     render();
   },
-  ack(el) { burstAt(el); send('role.ack'); },
+  ack(el) { burstAt(el); send(V().mode === 'missions' ? 'm.ack' : 'role.ack'); },
   unveil() { S.ui.veiled[V().phaseId] = false; render(); },
   veil() { S.ui.veiled[V().phaseId] = true; render(); },
   async immunity() { await send('day.immunity'); },
@@ -2049,7 +2136,9 @@ const ACT = {
   boardMute() { S.board.audio = false; score.stop(); reportBoardAudio(false); render(); },
 };
 
-const QUIET = new Set(['avPart', 'avRandom', 'codeTap', 'boardScore', 'boardMute', 'pickNominate', 'pickVote', 'pickRetaliate', 'pickSwap', 'pickTarget', 'pickOption', 'pickNightmare', 'pickConspire', 'pickDeath', 'shoot', 'sound', 'pickUseOption', 'momentNext']);
+Object.assign(ACT, missionActs({ S, V, send: (...a) => send(...a), render: () => render(), picked, burstAt, sound, haptic }));
+
+const QUIET = new Set(['mPickTeam', 'mPickWard', 'mPickHunch', 'mPickCandle', 'mPickWitness', 'mPickHaunt', 'mPickAccuse', 'mPickReckon', 'mPickCard', 'avPart', 'avRandom', 'codeTap', 'boardScore', 'boardMute', 'pickNominate', 'pickVote', 'pickRetaliate', 'pickSwap', 'pickTarget', 'pickOption', 'pickNightmare', 'pickConspire', 'pickDeath', 'shoot', 'sound', 'pickUseOption', 'momentNext']);
 document.addEventListener('click', (e) => {
   const link = e.target.closest('a[data-link]');
   if (link && link.origin === location.origin && !e.metaKey && !e.ctrlKey) { e.preventDefault(); go(link.pathname); return; }
@@ -2134,6 +2223,8 @@ document.addEventListener('change', (e) => {
   }
   if (el.dataset.actChange === 'tableLang') send('host.settings', { lang: el.value });
   if (el.dataset.actChange === 'clueOdds') send('host.settings', { clueOdds: Number(el.value) });
+  if (el.dataset.actChange === 'missionCards') send('host.settings', { missionCards: Number(el.value) });
+  if (el.dataset.actChange === 'mRole') send('host.settings', { mRoles: { [el.dataset.id]: el.checked } });
   if (el.dataset.actChange === 'tieBreak') send('host.settings', { tieBreak: el.checked ? 'coin' : 'none' });
   if (el.dataset.actChange === 'assign') send('host.assign', { playerId: el.dataset.pid, roleId: el.value || null });
 });

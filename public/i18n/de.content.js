@@ -3,6 +3,14 @@ export default {
   and: 'und',
   numbers: ['kein', 'ein', 'zwei', 'drei', 'vier', 'fünf', 'sechs', 'sieben', 'acht', 'neun', 'zehn'],
   roles: {
+    MEDIUM: { name: "Medium", when: "Immer", summary: "Du siehst jeden Spieler des Todes, außer dem Verschleierten. Lenke die Expedition, ohne dich zu verraten.", detail: "Gewinnen die Lebenden drei Missionen oder fangen sie im letzten Gefecht einen Spieler des Todes, darf der Tod einmal raten, wer du bist. Nennt er dich, gewinnt der Tod." },
+    BELIEVER: { name: "Gläubiger", when: "Immer", summary: "Du siehst zwei Kerzen: das Medium und den Scharlatan. Du weißt nicht, wer wer ist.", detail: "Finde heraus, welche Kerze das echte Medium ist, und schütze es – oft, indem du dich selbst wie das Medium verhältst. Ohne Scharlatan im Spiel ist deine einzige Kerze das Medium." },
+    COMPANION: { name: "Gefährte", when: "Immer", summary: "Du weißt nichts außer deinem eigenen Herzen. Beobachte die Abstimmungen und die Missionen.", detail: "Du kannst nur Erfolg spielen. Lies, wer wen vorschlägt, wer welchem Team zustimmt und welche Missionen scheitern." },
+    REAPER: { name: "Schnitter", when: "Immer", summary: "Du führst den Tod an. In der Abrechnung entscheidest du, wer das Medium ist.", detail: "Du siehst den Rest des Todes (außer dem Streuner). Auf einer Mission darfst du Erfolg oder Sabotage spielen. Dein Team kann in der Abrechnung Namen vorschlagen; deine Wahl zählt." },
+    CHARLATAN: { name: "Scharlatan", when: "Immer", summary: "Für den Gläubigen siehst du genau wie das Medium aus. Nutze es.", detail: "Du siehst den Rest des Todes (außer dem Streuner). Auf einer Mission darfst du Erfolg oder Sabotage spielen." },
+    VEILED: { name: "Verschleierter", when: "Immer", summary: "Das Medium kann dich nicht sehen.", detail: "Du siehst den Rest des Todes (außer dem Streuner). Auf einer Mission darfst du Erfolg oder Sabotage spielen." },
+    STRAY: { name: "Streuner", when: "Immer", summary: "Du dienst dem Tod allein: Du kennst die anderen nicht, und sie kennen dich nicht.", detail: "Das Medium sieht dich trotzdem. Auf einer Mission darfst du Erfolg oder Sabotage spielen. In der Abrechnung enttarnt sich der Tod, und du schließt dich den anderen an." },
+    SHADE: { name: "Schatten", when: "Immer", summary: "Du gehst mit dem Tod und kennst deine Mitspieler.", detail: "Du siehst den Rest des Todes (außer dem Streuner). Auf einer Mission darfst du Erfolg oder Sabotage spielen." },
     CULT_LEADER: { name: "Sektenführer", when: "Jede Nacht", summary: "Wirb jede Nacht einen Spieler für die Sekte an. Die Sekte gewinnt, sobald sie in der Überzahl ist.", detail: "Ein Angeworbener behält Rolle und Fähigkeiten, gewinnt aber jetzt mit der Sekte und erfährt, wer die anderen Mitglieder sind. Tod-gesinnte Spieler, der Ripper und geschützte Spieler können nicht angeworben werden. Stirbt der Führer, kann niemand mehr anwerben." },
     RIPPER: { name: "Der Ripper", when: "Jede Nacht", summary: "Töte jede Nacht allein einen Spieler. Du gewinnst als Letzter, der noch steht, oder allein mit einem anderen, der kein Mörder ist.", detail: "Dein Mord wird von denselben Schutzwirkungen gestoppt wie der des Todes (Wächter, Schutzengel, Hexensegen, vorübergehende Wiederbelebung). Der Tod kann dich nachts nicht töten, außer bei Blutmond. Du giltst als NICHT TOD-GESINNT." },
     DEATH: { name: 'Tod', when: 'Jede Nacht', summary: 'Einigt euch mit allen lebenden Tod-Mitspielern jede Nacht auf einen gemeinsamen Mord.', detail: 'Alle aktiven Tod-Spieler müssen genau dieselbe Zielmenge bestätigen, sonst passt die Fraktion. Grundsätzlich gibt es einen Mord; Doppelte Gefahr, Nachtschicht oder Kraftschub können ihn auf höchstens zwei erhöhen — nie einen Mord pro Tod-Spieler.' },
@@ -39,6 +47,23 @@ export default {
     INSOMNIA: { name: 'Schlaflosigkeit', text: 'Bei Tagesanbruch erhältst du einen vollständigen, chronologischen Bericht aller Aktionen dieser Nacht — falls du überlebst.' },
     GUARDIAN_ANGEL: { name: 'Schutzengel', text: 'Heute Nacht bist du immun gegen Tod, Psycho, Bomben, Hexenfluch und verbundene Tode.' },
   },
+  mcards: {
+    REGULAR: { name: "Normale Mission", text: "Keine besondere Wirkung." },
+    LANTERN: { name: "Laternenträger", text: "Der Anführer muss im Team sein." },
+    FRESH_FACES: { name: "Neue Gesichter", text: "Mindestens die Hälfte des Teams (aufgerundet) darf nicht auf der vorigen Mission gewesen sein." },
+    EXTRA_HAND: { name: "Zusätzliche Hand", text: "Das Team ist um einen Spieler größer." },
+    SKELETON_CREW: { name: "Rumpfmannschaft", text: "Das Team ist um einen Spieler kleiner." },
+    MASKED_VOTE: { name: "Verdeckte Abstimmung", text: "Teamabstimmungen zeigen nur die Summen, nicht wer wie gestimmt hat." },
+    SHORT_PATIENCE: { name: "Kurze Geduld", text: "Der dritte Vorschlag zieht los, egal wie abgestimmt wird." },
+    WARD: { name: "Schutz", text: "Mit dem Team nennt der Anführer ein Mitglied, dessen Karte Erfolg sein muss." },
+    STEADFAST: { name: "Standhaft", text: "Zum Scheitern braucht es eine Sabotage mehr als sonst." },
+    BRITTLE: { name: "Brüchig", text: "Eine einzige Sabotage lässt sie scheitern, obwohl diese Mission sonst zwei braucht." },
+    SMOKE: { name: "Rauch", text: "Nur das Ergebnis wird gezeigt, nicht wie viele Sabotagekarten gespielt wurden." },
+    GRAND: { name: "Große Mission", text: "Das Ergebnis zählt doppelt auf der Leiste." },
+    TRAIL: { name: "Fährte", text: "Gelingt sie, findet ein zufälliges lebendes Teammitglied nachts einen Hinweis." },
+    WITNESS: { name: "Zeuge", text: "Nachts sieht der Anführer des Teams heimlich die Karte eines anderen Mitglieds." },
+    HAUNTED_ROAD: { name: "Spukweg", text: "Scheitert sie, wählt der Schnitter eines ihrer Mitglieder, das die nächste Mission aussetzen muss." },
+  },
   rules: {
     OPEN_BALLOT: { name: "Offene Abstimmung", text: "Jede Stimme ist öffentlich: Alle sehen, wer für wen stimmt, während die Stimmen eingehen.", enforcement: "Stimmen können bis zur Sperrung noch geändert werden. Auch Geisterstimmen sind öffentlich." },
     FOG_OF_WAR: { name: 'Nebel des Krieges', text: 'Während der Diskussion darfst du nur direkt mit den Spielern auf den Plätzen neben dir sprechen.', enforcement: 'Am Tisch Ehrensache. Online ersetzt Nachbarflüstern den Tischchat.' },
@@ -53,6 +78,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Rachsüchtige Geister', text: 'Jeder ausgeschiedene Spieler darf pro Tag eine Geisterstimme mit Gewicht 1 abgeben.', enforcement: 'Geister können nicht nominieren, keine Fähigkeiten nutzen und die Mehrheitsregel nicht beeinflussen.' },
   },
   presets: {
+    missions: { name: "Dead Set: Missionen", blurb: "Teams, Abstimmungen und Sabotage. Niemand stirbt: Führt Missionen an, lest die Stimmen und findet den Tod, bevor er das Medium findet." },
     standard: { name: 'Standard', blurb: 'Das eigentliche Dead-Set-Erlebnis. Zehn Zusatzrollen ab 7 Spielern, jede Nacht ein Traum für alle, 1–3 Regelkarten.' },
     classic: { name: 'Klassisch / Lernen', blurb: 'Zum Beibringen. Nur Grundrollen — Zusatzplätze werden mit Unschuldigen gefüllt. Träume standardmäßig aus, höchstens eine einfache Regel.' },
     full: { name: 'Volles Deck / Chaos', blurb: 'Alle 17 Zusatzrollen inklusive Narr, Barde und Hexe. Viel Zufall, nur für erfahrene Gruppen.' },
@@ -77,6 +103,17 @@ export default {
     'Der Tod stimmte mit der Stadt. Natürlich.',
   ],
   guide: {
+    missionsH: "Dead Set: Missionen",
+    missions: `<p>Ein zweiter Modus für 5–10 Spieler, in der Lobby wählbar. Niemand stirbt: Der Tod hat sich in die Expedition geschlichen, und der Tisch muss ihn finden.</p>
+<ol>
+<li><b>Die Missionskarte.</b> Jede Mission beginnt mit einer gezogenen Karte, bevor ein Team gewählt wird. Die meisten sind <i>Normale Missionen</i>; ab und zu ändert eine Karte das Team, die Abstimmung oder die Aufdeckung. Sie gilt für die ganze Mission.</li>
+<li><b>Der Vorschlag.</b> Der Missionsanführer (die Laterne) wählt ein Team in der angezeigten Größe.</li>
+<li><b>Die Teamabstimmung.</b> Alle stimmen geheim zu oder lehnen ab; die Stimmen werden alle auf einmal mit Namen aufgedeckt. Eine Mehrheit schickt das Team los. Sonst schlägt der nächste Spieler zur Linken vor. Der fünfte Vorschlag zieht los, egal wie abgestimmt wird.</li>
+<li><b>Die Mission.</b> Jedes Teammitglied spielt geheim eine Karte. Die Lebenden können nur Erfolg spielen; der Tod darf Erfolg oder Sabotage spielen. Eine Sabotage lässt die Mission scheitern (zwei auf Mission 4 ab 7 Spielern). Die Karten werden gemischt und einzeln aufgedeckt.</li>
+<li><b>Die nächtliche Pause.</b> Alle wählen einen geheimen Verdacht. Nach Mission 2, 3 und 4 erfährt der Halter der Kerze die Seite eines Spielers, und die Kerze geht an ihn über. Im Morgengrauen können Hinweise kommen.</li>
+</ol>
+<p><b>Das Ende.</b> Drei Erfolge: Der Tod enttarnt sich, und der Schnitter nennt das Medium. Richtig – der Tod gewinnt; falsch – die Lebenden gewinnen. Drei Fehlschläge: das letzte Gefecht. Alle nennen einen Spieler. Ist es einer der Lebenden, gewinnt der Tod; fangt ihr den Tod, bekommt der Schnitter trotzdem die Abrechnung.</p>`,
+    missionCardsH: "Missionskarten",
     sidesH: "Weitere Seiten und Wendungen",
     sides: `<p>Optional, in der Lobby einschaltbar (oder in eigenen Spielen über die Rollenzähler). Die Stadt gewinnt erst, wenn Tod, Sekte und Ripper alle verschwunden sind.</p>
 <ul>

@@ -3,6 +3,14 @@ export default {
   and: 'y',
   numbers: ['ningún', 'un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'],
   roles: {
+    MEDIUM: { name: "Médium", when: "Siempre", summary: "Ves a todos los jugadores de la Muerte, salvo al Velado. Guía a la expedición sin delatarte.", detail: "Si los Vivos ganan tres misiones, o atrapan a un jugador de la Muerte en la Última Resistencia, la Muerte tiene un intento para adivinar quién eres. Si te nombra, gana la Muerte." },
+    BELIEVER: { name: "Creyente", when: "Siempre", summary: "Ves dos velas: el Médium y el Charlatán. No sabes cuál es cuál.", detail: "Averigua qué vela es el verdadero Médium y protégelo, a menudo haciéndote pasar tú por el Médium. Sin Charlatán en juego, tu única vela es el Médium." },
+    COMPANION: { name: "Compañero", when: "Siempre", summary: "No sabes nada salvo lo que dice tu corazón. Observa los votos y las misiones.", detail: "Solo puedes jugar Éxito. Lee quién propone a quién, quién aprueba qué equipo y qué misiones fracasan." },
+    REAPER: { name: "Segador", when: "Siempre", summary: "Diriges a la Muerte. En el Ajuste de cuentas, decides quién es el Médium.", detail: "Ves al resto de la Muerte (salvo al Errante). En una misión puedes jugar Éxito o Sabotaje. Tu equipo puede sugerir nombres en el Ajuste de cuentas; tu elección es la que cuenta." },
+    CHARLATAN: { name: "Charlatán", when: "Siempre", summary: "Para el Creyente pareces exactamente el Médium. Aprovéchalo.", detail: "Ves al resto de la Muerte (salvo al Errante). En una misión puedes jugar Éxito o Sabotaje." },
+    VEILED: { name: "Velado", when: "Siempre", summary: "El Médium no puede verte.", detail: "Ves al resto de la Muerte (salvo al Errante). En una misión puedes jugar Éxito o Sabotaje." },
+    STRAY: { name: "Errante", when: "Siempre", summary: "Sirves a la Muerte en solitario: no conoces a los demás, y ellos no te conocen.", detail: "El Médium sí te ve. En una misión puedes jugar Éxito o Sabotaje. En el Ajuste de cuentas, la Muerte se desenmascara y te unes a los demás." },
+    SHADE: { name: "Sombra", when: "Siempre", summary: "Caminas con la Muerte y conoces a tus compañeros.", detail: "Ves al resto de la Muerte (salvo al Errante). En una misión puedes jugar Éxito o Sabotaje." },
     CULT_LEADER: { name: "Líder de la Secta", when: "Cada noche", summary: "Cada noche, recluta a un jugador para la Secta. La Secta gana cuando supera en número a todos los demás.", detail: "Un recluta conserva su rol y sus poderes, pero ahora gana con la Secta y descubre quiénes son los demás miembros. Los jugadores del bando de la Muerte, el Destripador y los jugadores protegidos no pueden ser reclutados. Si el Líder muere, nadie más puede reclutar." },
     RIPPER: { name: "El Destripador", when: "Cada noche", summary: "Mata a un jugador cada noche, en solitario. Ganas si eres el último en pie, o si quedas solo con otro jugador que no es un asesino.", detail: "Tu asesinato lo detienen las mismas protecciones que el de la Muerte (Guardián, Ángel de la guarda, Bendición de la Bruja, resurrección temporal). La Muerte no puede matarte de noche, salvo bajo una Luna de sangre. Apareces como NO ALINEADO CON LA MUERTE." },
     DEATH: { name: 'La Muerte', when: 'Cada noche', summary: 'Poneos de acuerdo con todos los compañeros Muerte vivos en un único asesinato compartido cada noche.', detail: 'Todos los jugadores Muerte activos deben confirmar exactamente los mismos objetivos o la facción pasa. La capacidad base es un asesinato; Doble Peligro, Turno de Noche o Sobrecarga pueden subirla hasta un máximo de dos — nunca un asesinato por cada jugador Muerte.' },
@@ -39,6 +47,23 @@ export default {
     INSOMNIA: { name: 'Insomnio', text: 'Al amanecer recibes un informe cronológico completo de las acciones de la noche — si sobrevives.' },
     GUARDIAN_ANGEL: { name: 'Ángel de la guarda', text: 'Esta noche eres inmune a la Muerte, al Psicópata, a las bombas, a la Maldición y a las muertes ligadas.' },
   },
+  mcards: {
+    REGULAR: { name: "Misión normal", text: "Sin efecto especial." },
+    LANTERN: { name: "Portador del farol", text: "El Líder debe estar en el equipo." },
+    FRESH_FACES: { name: "Caras nuevas", text: "Al menos la mitad del equipo (redondeando hacia arriba) no debe haber ido a la misión anterior." },
+    EXTRA_HAND: { name: "Una mano más", text: "El equipo tiene un jugador más." },
+    SKELETON_CREW: { name: "Tripulación mínima", text: "El equipo tiene un jugador menos." },
+    MASKED_VOTE: { name: "Voto oculto", text: "Las votaciones del equipo solo muestran los totales, no quién votó qué." },
+    SHORT_PATIENCE: { name: "Poca paciencia", text: "La tercera propuesta parte sea cual sea la votación." },
+    WARD: { name: "Protección", text: "Con el equipo, el Líder nombra a un miembro cuya carta será Éxito por fuerza." },
+    STEADFAST: { name: "Firmeza", text: "Hace falta un Sabotaje más de lo habitual para fracasar." },
+    BRITTLE: { name: "Frágil", text: "Un solo Sabotaje la hace fracasar, aunque esta misión normalmente necesite dos." },
+    SMOKE: { name: "Humo", text: "Solo se muestra el resultado, no cuántas cartas de Sabotaje se jugaron." },
+    GRAND: { name: "Gran misión", text: "El resultado cuenta doble en el marcador." },
+    TRAIL: { name: "Rastro", text: "Si tiene éxito, un miembro vivo del equipo al azar encuentra una pista por la noche." },
+    WITNESS: { name: "Testigo", text: "Por la noche, el Líder del equipo ve en secreto la carta de otro miembro." },
+    HAUNTED_ROAD: { name: "Camino embrujado", text: "Si fracasa, el Segador elige a uno de sus miembros, que no podrá ir a la próxima misión." },
+  },
   rules: {
     OPEN_BALLOT: { name: "Voto a la vista", text: "Cada voto es público: todos ven quién vota a quién a medida que llegan las papeletas.", enforcement: "Los votos se pueden cambiar hasta que se cierre la votación. Los votos de los fantasmas también son públicos." },
     FOG_OF_WAR: { name: 'Niebla de guerra', text: 'Durante la discusión solo puedes hablar directamente con los jugadores sentados a tu lado.', enforcement: 'En persona, por honor. A distancia, el chat de mesa se sustituye por susurros entre vecinos.' },
@@ -53,6 +78,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Fantasmas vengativos', text: 'Cada jugador eliminado puede emitir una papeleta fantasma de peso 1 por día.', enforcement: 'Los fantasmas no pueden nominar, usar poderes ni influir en la Regla de mayoría.' },
   },
   presets: {
+    missions: { name: "Dead Set: Misiones", blurb: "Equipos, votos y sabotaje. Nadie muere: dirigid misiones, leed los votos y encontrad a la Muerte antes de que ella encuentre al Médium." },
     standard: { name: 'Estándar', blurb: 'La experiencia Dead Set tal como se pensó. Diez roles extendidos desde 7 jugadores, un Sueño para todos cada noche, 1–3 cartas de regla.' },
     classic: { name: 'Clásico / Aprender', blurb: 'Para enseñar. Solo roles básicos — los asientos extendidos son Inocentes. Sueños desactivados por defecto, como mucho una regla sencilla.' },
     full: { name: 'Mazo completo / Caos', blurb: 'Los 17 roles extendidos, incluidos Bufón, Bardo y Bruja. Mucho azar, solo para grupos con experiencia.' },
@@ -77,6 +103,17 @@ export default {
     'La Muerte votó con el pueblo. Cómo no.',
   ],
   guide: {
+    missionsH: "Dead Set: Misiones",
+    missions: `<p>Un segundo modo para 5–10 jugadores, que se elige en la sala. Nadie muere: la Muerte se ha colado en la expedición, y la mesa debe encontrarla.</p>
+<ol>
+<li><b>La carta de misión.</b> Cada misión empieza robando una carta, antes de elegir el equipo. La mayoría son <i>Misiones normales</i>; de vez en cuando una carta cambia el equipo, la votación o la revelación. Vale para toda la misión.</li>
+<li><b>La propuesta.</b> El Líder de la misión (el farol) elige un equipo del tamaño indicado.</li>
+<li><b>La votación del equipo.</b> Todos aprueban o rechazan en secreto; los votos se revelan todos a la vez, con nombres. Una mayoría envía al equipo. Si no, propone el siguiente jugador a la izquierda. La quinta propuesta parte sea cual sea la votación.</li>
+<li><b>La misión.</b> Cada miembro del equipo juega una carta en secreto. Los Vivos solo pueden jugar Éxito; la Muerte puede jugar Éxito o Sabotaje. Un Sabotaje hace fracasar la misión (dos en la misión 4 con 7 o más jugadores). Las cartas se barajan y se revelan una a una.</li>
+<li><b>El interludio nocturno.</b> Todos eligen una Sospecha secreta. Tras las misiones 2, 3 y 4, quien tiene la Vela conoce el bando de un jugador, y la Vela pasa a sus manos. Al amanecer pueden llegar pistas.</li>
+</ol>
+<p><b>El final.</b> Tres éxitos: la Muerte se desenmascara y el Segador nombra al Médium. Si acierta, gana la Muerte; si falla, ganan los Vivos. Tres fracasos: la Última Resistencia. Todos nombran a un jugador. Si es uno de los Vivos, gana la Muerte; si atrapáis a la Muerte, el Segador aún tiene el Ajuste de cuentas.</p>`,
+    missionCardsH: "Cartas de misión",
     sidesH: "Otros bandos y giros",
     sides: `<p>Opcionales, se activan en la sala (o se añaden con los contadores de roles en partidas personalizadas). El pueblo solo gana cuando la Muerte, la Secta y el Destripador han desaparecido.</p>
 <ul>

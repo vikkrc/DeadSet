@@ -78,7 +78,7 @@ export function list(arr) {
 
 /** "Day 3" / "Night 2" / "Lobby" / "End" stamps. */
 export function stamp(at) {
-  const m = String(at ?? '').match(/^(Day|Night) (\d+)$/);
+  const m = String(at ?? '').match(/^(Day|Night|Mission) (\d+)$/);
   if (m) return t(`${m[1]} {n}`, { n: m[2] });
   return t(String(at ?? ''));
 }

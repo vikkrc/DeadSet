@@ -4,6 +4,8 @@
 // Helpers (t, tm, scen, ruleF, tlist, tx, getLang) come from the caller.
 const ROMAN = ['0', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX'];
 const roman = (n) => ROMAN[n] ?? String(n);
+import { mcardF } from './i18n.js';
+
 const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
 
 /** Scenario phrases, robust to custom (host-written) strings. */
@@ -32,7 +34,7 @@ export function editions(v, h) {
   for (const [at, list] of groups) {
     const [kind, numStr] = at.split(' ');
     const num = Number(numStr);
-    const ed = { key: at, kind: kind === 'Night' ? (num === 0 ? 'start' : 'night') : kind === 'Day' ? 'day' : 'end', num, title: '', tone: '', chips: [] };
+    const ed = { key: at, kind: kind === 'Night' ? (num === 0 ? 'start' : 'night') : kind === 'Day' ? 'day' : kind === 'Mission' ? 'mission' : kind === 'Finale' ? 'finale' : 'end', num, title: '', tone: '', chips: [] };
     const has = (ev) => list.find((x) => x.ev === ev);
     const accused = [];
     for (const l of list) {
@@ -69,6 +71,17 @@ export function editions(v, h) {
         }
         case 'revive': ed.chips.push({ icon: 'necro', text: t('{names} returned', { names: (l.ids ?? []).map(name) }) }); break;
         case 'rules': break;
+        // Missions
+        case 'm-card': if (l.card !== 'REGULAR') ed.chips.push({ icon: 'mission', cls: 'rulechip', text: mcardF(l.card, 'name') }); break;
+        case 'm-propose': ed.chips.push({ icon: 'lantern', text: t('{a} proposes {names}', { a: name(l.leader), names: l.team.map(name) }) }); break;
+        case 'm-votes': ed.chips.push({ icon: l.approved ? 'approve' : 'reject', cls: l.goes ? '' : 'kill', text: t(l.approved ? 'Approved {a}–{r}' : l.goes ? 'Goes ahead {a}–{r}' : 'Rejected {a}–{r}', { a: l.approve, r: l.reject }) }); break;
+        case 'm-result': ed.chips.push({ icon: l.failed ? 'sabotage' : 'succeed', cls: l.failed ? 'kill' : '', text: l.fails == null ? t(l.failed ? 'Failed' : 'Succeeded') : t(l.failed ? 'Failed · {f} Sabotage' : 'Succeeded · {f} Sabotage', { f: l.fails }) }); break;
+        case 'm-candle': if (l.target) ed.chips.push({ icon: 'candle', text: t('{a} held the Candle to {b}', { a: name(l.by), b: name(l.target) }) }); break;
+        case 'm-witness': ed.chips.push({ icon: 'mentalist', text: t('{a} watched {b}\'s card', { a: name(l.by), b: name(l.target) }) }); break;
+        case 'm-haunt': ed.chips.push({ icon: 'veiled', cls: 'kill', text: t('{name} is haunted', { name: name(l.target) }) }); break;
+        case 'm-named': ed.chips.push({ icon: 'death', cls: l.death ? '' : 'kill', text: t(l.death ? 'The table named {name}: Death' : 'The table named {name}: Living', { name: name(l.target) }) }); break;
+        case 'm-unmask': ed.chips.push({ icon: 'death', cls: 'kill', text: t('Death unmasks: {names}', { names: l.ids.map(name) }) }); break;
+        case 'm-reckon': ed.chips.push({ icon: 'medium', cls: l.hit ? 'kill' : '', text: t(l.hit ? 'The Reaper found the Medium: {name}' : 'The Reaper named {name}, not the Medium', { name: name(l.target) }) }); break;
         case 'end': ed.chips.push({ icon: { DEATH: 'death', JESTER: 'jester', LOVERS: 'heart', CULT: 'cult', RIPPER: 'ripper' }[l.winner] ?? 'innocent', cls: ['DEATH', 'RIPPER'].includes(l.winner) ? 'kill' : '', text: tm(l.reason) }); break;
         default: break;
       }
@@ -81,6 +94,13 @@ export function editions(v, h) {
       const killed = (dawn?.killed ?? []).map(name);
       if (!dawn) ed.title = t('The town sleeps');
       else if (killed.length) { ed.title = t('{names} found dead', { names: killed }); ed.tone = 'dead'; } else ed.title = t('A quiet night');
+    } else if (ed.kind === 'mission') {
+      const r = has('m-result');
+      ed.title = r ? t(r.failed ? 'Mission {n} fails' : 'Mission {n} succeeds', { n: num }) : t('Mission {n} sets out', { n: num });
+      if (r?.failed) ed.tone = 'dead';
+    } else if (ed.kind === 'finale') {
+      ed.title = has('m-stand') ? t('The Last Stand') : t('The Reckoning');
+      ed.tone = 'dead';
     } else if (ed.kind === 'day') {
       const s = has('sentence'); const g = has('scapegoat'); const shot = has('shot'); const ex = has('exchange');
       if (s) { ed.title = t('The town sentences {name}', { name: name(s.victims[0]) }); ed.tone = 'dead'; } else if (g) { ed.title = t('The Scapegoat pays'); ed.tone = 'dead'; } else if (has('cancelled')) ed.title = t('Fate intervenes');
@@ -104,8 +124,8 @@ export function gazetteHtml(v, h, { masthead = true, limit = 40 } = {}) {
   const w = scenarioWords(v.scenario, h);
   const alive = v.players.filter((p) => p.alive).length;
   const eds = editions(v, h).slice(0, limit);
-  const edLabel = v.phase === 'ENDED' ? t('Final edition') : v.dayNumber ? t('Day {n} edition', { n: roman(v.dayNumber) }) : t('First edition');
-  const when = (e) => (e.kind === 'start' ? t('Night {n}', { n: 0 }) : e.kind === 'end' ? t('Verdict') : e.kind === 'night' ? t('Night') : t('Day'));
+  const edLabel = v.phase === 'ENDED' ? t('Final edition') : v.missions ? t('Mission {n} edition', { n: roman(v.missions.mission + 1) }) : v.dayNumber ? t('Day {n} edition', { n: roman(v.dayNumber) }) : t('First edition');
+  const when = (e) => (e.kind === 'start' ? t('Night {n}', { n: 0 }) : e.kind === 'end' ? t('Verdict') : e.kind === 'night' ? t('Night') : e.kind === 'mission' ? t('Mission') : e.kind === 'finale' ? t('Finale') : t('Day'));
   const chip = (c) => {
     if (c.acc) return `<span class="ev"><span class="mini">${esc(c.acc[0][0])}</span><span class="arrow">⟶</span><span class="mini">${esc(c.acc[1][0])}</span>${esc(c.text)}</span>`;
     return `<span class="ev ${c.cls ?? ''}">${c.icon ? glyph(c.icon) : ''}${esc(c.text)}</span>`;
@@ -113,7 +133,7 @@ export function gazetteHtml(v, h, { masthead = true, limit = 40 } = {}) {
   return `<div class="gazette">
     ${masthead ? `<div class="mast"><h3>${th('The Dead Set <i>Gazette</i>')}</h3><div><span>${esc(v.scenario ? w.place : t('Unknown parts'))}</span><span>${esc(edLabel)}</span><span>${th('{a} of {b} alive', { a: alive, b: v.players.length })}</span></div></div>` : ''}
     ${eds.length ? eds.map((e, i) => `<article class="edition ${i === 0 && v.phase !== 'ENDED' ? 'today' : ''}" data-key="ed-${esc(e.key)}">
-      <div class="when">${glyph(e.kind === 'night' || e.kind === 'start' ? 'moon' : e.kind === 'end' ? 'scroll' : 'sun')}<b>${e.kind === 'end' ? '·' : roman(e.num)}</b><span>${esc(when(e))}</span></div>
+      <div class="when">${glyph(e.kind === 'night' || e.kind === 'start' ? 'moon' : e.kind === 'end' ? 'scroll' : e.kind === 'mission' ? 'mission' : e.kind === 'finale' ? 'death' : 'sun')}<b>${e.kind === 'end' || e.kind === 'finale' ? '·' : roman(e.num)}</b><span>${esc(when(e))}</span></div>
       <div><h4 class="${e.tone}">${esc(e.title)}</h4><div class="events">${e.chips.map(chip).join('')}</div></div>
     </article>`).join('') : `<p class="small muted">${t('The presses are quiet. Nothing has happened yet.')}</p>`}
   </div>`;

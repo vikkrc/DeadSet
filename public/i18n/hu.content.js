@@ -3,6 +3,14 @@ export default {
   and: 'és',
   numbers: ['nulla', 'egy', 'két', 'három', 'négy', 'öt', 'hat', 'hét', 'nyolc', 'kilenc', 'tíz'],
   roles: {
+    MEDIUM: { name: "Médium", when: "Mindig", summary: "Látod a Halál minden játékosát, kivéve a Fátylast. Irányítsd az expedíciót úgy, hogy ne áruld el magad.", detail: "Ha az Élők megnyernek három küldetést, vagy az Utolsó Állásban elkapnak egy Halál-játékost, a Halál egyszer tippelhet, ki vagy. Ha téged nevez meg, a Halál győz." },
+    BELIEVER: { name: "Hívő", when: "Mindig", summary: "Két gyertyát látsz: a Médiumot és a Sarlatánt. Nem tudod, melyik melyik.", detail: "Derítsd ki, melyik gyertya az igazi Médium, és védd meg, gyakran úgy, hogy te magad viselkedsz Médiumként. Ha nincs Sarlatán a játékban, az egyetlen gyertyád a Médium." },
+    COMPANION: { name: "Társ", when: "Mindig", summary: "Semmit sem tudsz, csak amit a szíved súg. Figyeld a szavazásokat és a küldetéseket.", detail: "Csak Sikert játszhatsz ki. Olvasd ki, ki kit javasol, ki melyik csapatot fogadja el, és mely küldetések buknak el." },
+    REAPER: { name: "Kaszás", when: "Mindig", summary: "Te vezeted a Halált. Az Elszámolásban te döntöd el, ki a Médium.", detail: "Látod a Halál többi tagját (a Kóborló kivételével). Küldetésen Sikert vagy Szabotázst játszhatsz. A csapatod javasolhat neveket az Elszámolásban; a te döntésed számít." },
+    CHARLATAN: { name: "Sarlatán", when: "Mindig", summary: "A Hívő számára pontosan úgy nézel ki, mint a Médium. Használd ki.", detail: "Látod a Halál többi tagját (a Kóborló kivételével). Küldetésen Sikert vagy Szabotázst játszhatsz." },
+    VEILED: { name: "Fátylas", when: "Mindig", summary: "A Médium nem lát téged.", detail: "Látod a Halál többi tagját (a Kóborló kivételével). Küldetésen Sikert vagy Szabotázst játszhatsz." },
+    STRAY: { name: "Kóborló", when: "Mindig", summary: "Egyedül szolgálod a Halált: nem ismered a többieket, és ők sem ismernek téged.", detail: "A Médium azért lát téged. Küldetésen Sikert vagy Szabotázst játszhatsz. Az Elszámoláskor a Halál leleplezi magát, és csatlakozol a többiekhez." },
+    SHADE: { name: "Árny", when: "Mindig", summary: "A Halállal jársz, és ismered a társaidat.", detail: "Látod a Halál többi tagját (a Kóborló kivételével). Küldetésen Sikert vagy Szabotázst játszhatsz." },
     CULT_LEADER: { name: "Szektavezér", when: "Minden éjszaka", summary: "Minden éjjel szervezz be egy játékost a Szektába. A Szekta akkor győz, ha többen vannak, mint mindenki más.", detail: "A beszervezett megtartja szerepét és képességeit, de mostantól a Szektával győz, és megtudja, kik a többi tagok. Halál-oldali játékosok, a Hasfelmetsző és a védett játékosok nem szervezhetők be. Ha a Vezér meghal, senki más nem szervezhet be." },
     RIPPER: { name: "A Hasfelmetsző", when: "Minden éjszaka", summary: "Ölj meg minden éjjel egy játékost, egyedül. Akkor győzöl, ha utolsóként maradsz állva, vagy egyedül maradsz egy olyan játékossal, aki nem gyilkos.", detail: "A gyilkosságodat ugyanazok a védelmek állítják meg, mint a Halálét (Őrző, Őrangyal, Boszorkányáldás, ideiglenes feltámasztás). A Halál éjjel nem ölhet meg, kivéve Vérholdkor. NEM HALÁL-OLDALINAK látszol." },
     DEATH: { name: 'Halál', when: 'Minden éjszaka', summary: 'Minden éjjel egyetlen közös gyilkosságban kell megegyeznetek az élő Halál-társaitokkal.', detail: 'Minden aktív Halál-játékosnak pontosan ugyanazt a célpontot kell megerősítenie, különben a frakció passzol. Alapból egy gyilkosság jár; a Kettős veszély, az Éjszakai műszak vagy az Erőhullám legfeljebb kettőre emelheti — soha nem jár egy-egy minden Halálnak.' },
@@ -39,6 +47,23 @@ export default {
     INSOMNIA: { name: 'Álmatlanság', text: 'Hajnalban teljes, időrendi jelentést kapsz az éjszaka eseményeiről — ha túléled.' },
     GUARDIAN_ANGEL: { name: 'Őrangyal', text: 'Ma éjjel nem árthat neked a Halál, a Pszichopata, bomba, a Boszorkány átka és az összekötött halál sem.' },
   },
+  mcards: {
+    REGULAR: { name: "Szokásos küldetés", text: "Nincs különleges hatása." },
+    LANTERN: { name: "Lámpáshordozó", text: "A Vezetőnek a csapatban kell lennie." },
+    FRESH_FACES: { name: "Új arcok", text: "A csapat legalább fele (felfelé kerekítve) nem lehetett az előző küldetésen." },
+    EXTRA_HAND: { name: "Plusz kéz", text: "A csapat eggyel nagyobb." },
+    SKELETON_CREW: { name: "Csontváz-legénység", text: "A csapat eggyel kisebb." },
+    MASKED_VOTE: { name: "Rejtett szavazás", text: "A csapatszavazásnál csak az összesítés látszik, az nem, hogy ki hogyan szavazott." },
+    SHORT_PATIENCE: { name: "Fogyó türelem", text: "A harmadik javaslat a szavazástól függetlenül indul." },
+    WARD: { name: "Oltalom", text: "A csapattal együtt a Vezető megnevez egy tagot, akinek a kártyája kötelezően Siker." },
+    STEADFAST: { name: "Rendíthetetlen", text: "A kudarchoz eggyel több Szabotázs kell a szokásosnál." },
+    BRITTLE: { name: "Törékeny", text: "Egyetlen Szabotázs is elbuktatja, pedig ez a küldetés általában kettőt kíván." },
+    SMOKE: { name: "Füst", text: "Csak az eredmény látszik, az nem, hány Szabotázs-kártyát játszottak ki." },
+    GRAND: { name: "Nagy küldetés", text: "Az eredmény duplán számít a sávon." },
+    TRAIL: { name: "Nyomvonal", text: "Ha sikerül, a csapat egy véletlenszerű élő tagja éjjel nyomot talál." },
+    WITNESS: { name: "Tanú", text: "Éjjel a csapat Vezetője titokban megnézi egy másik tag kártyáját." },
+    HAUNTED_ROAD: { name: "Kísértetjárta út", text: "Ha elbukik, a Kaszás kiválasztja egy tagját, akinek ki kell hagynia a következő küldetést." },
+  },
   rules: {
     OPEN_BALLOT: { name: "Nyílt szavazás", text: "Minden szavazat nyilvános: mindenki látja, ki kire szavaz, ahogy a voksok beérkeznek.", enforcement: "A szavazatok a lezárásig még módosíthatók. A szellemek szavazatai is nyilvánosak." },
     FOG_OF_WAR: { name: 'A háború köde', text: 'A vita alatt csak a közvetlenül melletted ülő játékosokkal beszélhetsz.', enforcement: 'Személyesen becsületbeli szabály. Távoli játékban az asztali csevegést szomszédsuttogás váltja fel.' },
@@ -53,6 +78,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Bosszúálló szellemek', text: 'Minden kiesett játékos naponta egy 1 súlyú szellemszavazatot adhat le.', enforcement: 'A szellemek nem jelölhetnek, nem használhatnak képességet, és nem befolyásolják a Többségi szabályt.' },
   },
   presets: {
+    missions: { name: "Dead Set: Küldetések", blurb: "Csapatok, szavazások és szabotázs. Senki sem hal meg: vezessetek küldetéseket, olvassátok a szavazatokat, és találjátok meg a Halált, mielőtt ő a Médiumot." },
     standard: { name: 'Alap', blurb: 'Az igazi Dead Set-élmény. Tíz kiegészítő szerep 7 játékostól, mindenkinek Álom minden éjjel, 1–3 szabálykártya.' },
     classic: { name: 'Klasszikus / Tanuló', blurb: 'Tanításhoz. Csak alapszerepek — a kiegészítő helyekre Ártatlanok kerülnek. Álmok alapból kikapcsolva, legfeljebb egy egyszerű szabály.' },
     full: { name: 'Teljes pakli / Káosz', blurb: 'Mind a 17 kiegészítő szerep, köztük a Bolond, a Bárd és a Boszorkány. Nagy véletlenszerűség, csak tapasztalt társaságoknak.' },
@@ -77,6 +103,17 @@ export default {
     'A Halál a várossal szavazott. Hát persze.',
   ],
   guide: {
+    missionsH: "Dead Set: Küldetések",
+    missions: `<p>Egy második mód 5–10 játékosnak, a váróban választható. Senki sem hal meg: a Halál beférkőzött az expedícióba, és az asztalnak meg kell találnia.</p>
+<ol>
+<li><b>A küldetéskártya.</b> Minden küldetés egy kártya húzásával kezdődik, még a csapat kiválasztása előtt. A legtöbb <i>Szokásos küldetés</i>; néha egy kártya megváltoztatja a csapatot, a szavazást vagy a felfedést. Az egész küldetésre érvényes.</li>
+<li><b>A javaslat.</b> A Küldetésvezető (a lámpás) a megadott méretű csapatot választ.</li>
+<li><b>A csapatszavazás.</b> Mindenki titokban elfogad vagy elutasít; a szavazatok egyszerre, nevekkel derülnek ki. Többség esetén a csapat elindul. Különben a balra következő játékos javasol. Az ötödik javaslat a szavazástól függetlenül indul.</li>
+<li><b>A küldetés.</b> Minden csapattag titokban kijátszik egy kártyát. Az Élők csak Sikert játszhatnak; a Halál Sikert vagy Szabotázst. Egy Szabotázs elbuktatja a küldetést (7 játékostól a 4. küldetésnél kettő). A kártyákat megkeverik, és egyenként fordítják fel.</li>
+<li><b>Az éjszakai szünet.</b> Mindenki választ egy titkos Gyanút. A 2., 3. és 4. küldetés után a Gyertya birtokosa megtudja egy játékos oldalát, és a Gyertya hozzá kerül. Hajnalban nyomok érkezhetnek.</li>
+</ol>
+<p><b>A vég.</b> Három siker: a Halál leleplezi magát, és a Kaszás megnevezi a Médiumot. Ha eltalálja, a Halál győz; ha nem, az Élők. Három kudarc: az Utolsó Állás. Mindenki megnevez egy játékost. Ha az egy Élő, a Halál győz; ha elkapjátok a Halált, a Kaszás akkor is megkapja az Elszámolást.</p>`,
+    missionCardsH: "Küldetéskártyák",
     sidesH: "Más oldalak és fordulatok",
     sides: `<p>Választhatók, a váróban kapcsolhatók be (vagy egyéni játékban a szerepszámlálókkal adhatók hozzá). A város csak akkor győz, ha a Halál, a Szekta és a Hasfelmetsző is eltűnt.</p>
 <ul>

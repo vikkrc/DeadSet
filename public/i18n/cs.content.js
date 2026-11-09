@@ -3,6 +3,14 @@ export default {
   and: 'a',
   numbers: ['žádný', 'jeden', 'dva', 'tři', 'čtyři', 'pět', 'šest', 'sedm', 'osm', 'devět', 'deset'],
   roles: {
+    MEDIUM: { name: "Médium", when: "Vždy", summary: "Vidíš každého hráče Smrti kromě Zahaleného. Řiď výpravu tak, aby ses neprozradil.", detail: "Pokud Živí vyhrají tři mise nebo v Posledním vzdoru chytí hráče Smrti, má Smrt jeden pokus uhodnout, kdo jsi. Pokud označí tebe, vyhrává Smrt." },
+    BELIEVER: { name: "Věřící", when: "Vždy", summary: "Vidíš dvě svíčky: Médium a Šarlatána. Nevíš, kdo je kdo.", detail: "Zjisti, která svíčka je skutečné Médium, a chraň ho – často tak, že se sám chováš jako Médium. Bez Šarlatána ve hře je tvou jedinou svíčkou Médium." },
+    COMPANION: { name: "Společník", when: "Vždy", summary: "Nevíš nic kromě toho, co ti říká srdce. Sleduj hlasování a mise.", detail: "Můžeš hrát jen Úspěch. Čti, kdo koho navrhuje, kdo schvaluje který tým a které mise selhávají." },
+    REAPER: { name: "Ženec", when: "Vždy", summary: "Vedeš Smrt. Při Zúčtování rozhodneš, kdo je Médium.", detail: "Vidíš zbytek Smrti (kromě Tuláka). Na misi můžeš hrát Úspěch nebo Sabotáž. Tvůj tým může při Zúčtování navrhovat jména; platí tvá volba." },
+    CHARLATAN: { name: "Šarlatán", when: "Vždy", summary: "Pro Věřícího vypadáš přesně jako Médium. Využij toho.", detail: "Vidíš zbytek Smrti (kromě Tuláka). Na misi můžeš hrát Úspěch nebo Sabotáž." },
+    VEILED: { name: "Zahalený", when: "Vždy", summary: "Médium tě nevidí.", detail: "Vidíš zbytek Smrti (kromě Tuláka). Na misi můžeš hrát Úspěch nebo Sabotáž." },
+    STRAY: { name: "Tulák", when: "Vždy", summary: "Sloužíš Smrti sám: neznáš ostatní a oni neznají tebe.", detail: "Médium tě přesto vidí. Na misi můžeš hrát Úspěch nebo Sabotáž. Při Zúčtování se Smrt odhalí a přidáš se k ostatním." },
+    SHADE: { name: "Stín", when: "Vždy", summary: "Kráčíš se Smrtí a znáš své spoluhráče.", detail: "Vidíš zbytek Smrti (kromě Tuláka). Na misi můžeš hrát Úspěch nebo Sabotáž." },
     CULT_LEADER: { name: "Vůdce sekty", when: "Každou noc", summary: "Každou noc naverbuj jednoho hráče do Sekty. Sekta vyhrává, když přečíslí všechny ostatní.", detail: "Naverbovaný si ponechá roli i schopnosti, ale nyní vyhrává se Sektou a dozví se, kdo jsou ostatní členové. Hráče na straně Smrti, Rozparovače a chráněné hráče naverbovat nelze. Pokud Vůdce zemře, nikdo jiný už verbovat nemůže." },
     RIPPER: { name: "Rozparovač", when: "Každou noc", summary: "Každou noc sám zabij jednoho hráče. Vyhraješ, pokud zůstaneš poslední na nohou, nebo sám s jedním hráčem, který není vrah.", detail: "Tvou vraždu zastaví stejné ochrany jako vraždu Smrti (Strážce, Anděl strážný, Požehnání čarodějnice, dočasné oživení). Smrt tě v noci nemůže zabít, s výjimkou Krvavého měsíce. Jevíš se jako NE NA STRANĚ SMRTI." },
     DEATH: { name: 'Smrt', when: 'Každou noc', summary: 'Každou noc se dohodněte se všemi živými spoluhráči Smrti na jedné společné vraždě.', detail: 'Všichni aktivní hráči Smrti musí potvrdit přesně stejný výběr cílů, jinak frakce pasuje. Základní kapacita je jedna vražda; Dvojí nebezpečí, Noční směna nebo Nápor síly ji mohou zvýšit nejvýš na dvě — nikdy ne jedna vražda na každého hráče Smrti.' },
@@ -39,6 +47,23 @@ export default {
     INSOMNIA: { name: 'Nespavost', text: 'Za úsvitu dostaneš úplnou chronologickou zprávu o akcích této noci — pokud přežiješ.' },
     GUARDIAN_ANGEL: { name: 'Anděl strážný', text: 'Dnes v noci jsi imunní vůči Smrti, Psychopatovi, bombám, Kletbě čarodějnice i propojeným smrtím.' },
   },
+  mcards: {
+    REGULAR: { name: "Běžná mise", text: "Žádný zvláštní účinek." },
+    LANTERN: { name: "Nosič lucerny", text: "Vůdce musí být v týmu." },
+    FRESH_FACES: { name: "Nové tváře", text: "Aspoň polovina týmu (zaokrouhleno nahoru) nesmí být z předchozí mise." },
+    EXTRA_HAND: { name: "Ruka navíc", text: "Tým je o jednoho hráče větší." },
+    SKELETON_CREW: { name: "Minimální posádka", text: "Tým je o jednoho hráče menší." },
+    MASKED_VOTE: { name: "Skryté hlasování", text: "Hlasování o týmu ukazuje jen součty, ne kdo jak hlasoval." },
+    SHORT_PATIENCE: { name: "Krátká trpělivost", text: "Třetí návrh vyráží bez ohledu na hlasování." },
+    WARD: { name: "Ochrana", text: "Spolu s týmem Vůdce označí člena, jehož karta bude nuceně Úspěch." },
+    STEADFAST: { name: "Neochvějná", text: "K selhání je potřeba o jednu Sabotáž víc než obvykle." },
+    BRITTLE: { name: "Křehká", text: "Selže už s jedinou Sabotáží, ačkoli tato mise obvykle potřebuje dvě." },
+    SMOKE: { name: "Kouř", text: "Ukáže se jen výsledek, ne kolik karet Sabotáže bylo zahráno." },
+    GRAND: { name: "Velká mise", text: "Výsledek se na stupnici počítá dvakrát." },
+    TRAIL: { name: "Stopa", text: "Pokud uspěje, náhodný živý člen týmu v noci najde stopu." },
+    WITNESS: { name: "Svědek", text: "V noci Vůdce týmu tajně uvidí kartu jiného člena." },
+    HAUNTED_ROAD: { name: "Strašidelná cesta", text: "Pokud selže, Ženec vybere jednoho z jejích členů, který musí vynechat další misi." },
+  },
   rules: {
     OPEN_BALLOT: { name: "Veřejné hlasování", text: "Každý hlas je veřejný: všichni vidí, kdo hlasuje pro koho, jakmile hlasy přicházejí.", enforcement: "Hlasy lze měnit až do uzamčení. I hlasy duchů jsou veřejné." },
     FOG_OF_WAR: { name: 'Mlha války', text: 'Během diskuse smíš přímo mluvit jen s hráči na místech hned vedle tebe.', enforcement: 'Naživo na čestné slovo. Na dálku nahradí stolní chat šepot se sousedy.' },
@@ -53,6 +78,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Mstiví duchové', text: 'Každý vyřazený hráč může každý den odevzdat jeden hlas ducha s váhou 1.', enforcement: 'Duchové nemohou nominovat, používat schopnosti ani ovlivnit Pravidlo většiny.' },
   },
   presets: {
+    missions: { name: "Dead Set: Mise", blurb: "Týmy, hlasování a sabotáž. Nikdo neumírá: veďte mise, čtěte hlasy a najděte Smrt dřív, než ona najde Médium." },
     standard: { name: 'Standard', blurb: 'Zamýšlený zážitek z Dead Set. Deset rozšířených rolí od 7 hráčů, Sen pro každého každou noc, 1–3 karty pravidel.' },
     classic: { name: 'Klasika / Učení', blurb: 'Na učení. Jen základní role — rozšířená místa obsadí Nevinní. Sny ve výchozím stavu vypnuté, nejvýš jedno jednoduché pravidlo.' },
     full: { name: 'Celý balík / Chaos', blurb: 'Všech 17 rozšířených rolí včetně Šaška, Barda a Čarodějnice. Hodně náhody, jen pro zkušené skupiny.' },
@@ -77,6 +103,17 @@ export default {
     'Smrt hlasovala s městem. Samozřejmě.',
   ],
   guide: {
+    missionsH: "Dead Set: Mise",
+    missions: `<p>Druhý režim pro 5–10 hráčů, který se vybírá v lobby. Nikdo neumírá: Smrt se vloudila do výpravy a stůl ji musí najít.</p>
+<ol>
+<li><b>Karta mise.</b> Každá mise začíná tahem karty, ještě před výběrem týmu. Většina jsou <i>Běžné mise</i>; občas karta změní tým, hlasování nebo odhalení. Platí pro celou misi.</li>
+<li><b>Návrh.</b> Vůdce mise (lucerna) vybere tým uvedené velikosti.</li>
+<li><b>Hlasování o týmu.</b> Všichni tajně schválí nebo zamítnou; hlasy se odhalí najednou, se jmény. Většina pošle tým na misi. Jinak navrhuje další hráč vlevo. Pátý návrh vyráží bez ohledu na hlasování.</li>
+<li><b>Mise.</b> Každý člen týmu tajně zahraje kartu. Živí mohou hrát jen Úspěch; Smrt může hrát Úspěch nebo Sabotáž. Jedna Sabotáž misi zmaří (na misi 4 od 7 hráčů dvě). Karty se zamíchají a otáčejí jedna po druhé.</li>
+<li><b>Noční přestávka.</b> Každý si vybere tajné Podezření. Po misích 2, 3 a 4 zjistí držitel Svíčky stranu jednoho hráče a Svíčka přejde k němu. Za úsvitu mohou přijít stopy.</li>
+</ol>
+<p><b>Konec.</b> Tři úspěchy: Smrt se odhalí a Ženec označí Médium. Pokud trefí, vyhrává Smrt; pokud ne, vyhrávají Živí. Tři selhání: Poslední vzdor. Každý označí jednoho hráče. Pokud je to Živý, vyhrává Smrt; pokud chytíte Smrt, Ženec stejně dostane Zúčtování.</p>`,
+    missionCardsH: "Karty misí",
     sidesH: "Další strany a zvraty",
     sides: `<p>Volitelné, zapínají se v lobby (nebo se přidávají počítadly rolí ve vlastních hrách). Město vyhraje, až zmizí Smrt, Sekta i Rozparovač.</p>
 <ul>

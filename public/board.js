@@ -3,6 +3,7 @@
 import { gazetteHtml } from './gazette.js';
 import { seatLayout } from './layout.js';
 import { backdropHtml } from './backdrops.js';
+import { missionBoardStage, missionBoardRing, gridHtml } from './missions.js';
 
 /** Which Rule cards shape the current phase, with a one-line note. */
 export function activeRuleNotes(v) {
@@ -37,6 +38,12 @@ export function moodFor(v) {
     case 'ENDED': return { DEATH: 'endDeath', NON_DEATH: 'endLiving', JESTER: 'endJester', LOVERS: 'endLovers', CULT: 'endCult', RIPPER: 'endRipper' }[v.winner] ?? 'endDraw';
     case 'NIGHT_0_REVEAL': return 'ceremony';
     case 'NIGHT_DREAM_SWAP': case 'NIGHT_ACTIONS': case 'NIGHT_RESOLVING': return v.bloodMoon ? 'bloodmoon' : 'night';
+    case 'M_REVEAL': return 'ceremony';
+    case 'M_PROPOSE': return 'discussion';
+    case 'M_VOTE': case 'M_MISSION': return 'vote';
+    case 'M_RESULT': return 'resolving';
+    case 'M_NIGHT': return 'night';
+    case 'M_LAST_STAND': case 'M_RECKONING': return 'bloodmoon';
     case 'DAY_PREP': return 'morning';
     case 'DAY_DISCUSSION': return 'discussion';
     case 'DAY_DEFENSE': return 'defense';
@@ -58,7 +65,7 @@ export const ruleGlyph = (id) => RULE_GLYPH[id] ?? 'scroll';
 export function boardScreen(v, h) {
   const { esc, glyph, ring, centerFor, codeTiles, qrSvg, stepOf, phaseWord, audio, wordmark, t, th, tmh, roleF, ruleF, presetF, scen, tlist } = h;
   const pw = phaseWord(v);
-  const night = ['NIGHT_0_REVEAL', 'NIGHT_DREAM_SWAP', 'NIGHT_ACTIONS'].includes(v.phase);
+  const night = ['NIGHT_0_REVEAL', 'NIGHT_DREAM_SWAP', 'NIGHT_ACTIONS', 'M_REVEAL', 'M_NIGHT'].includes(v.phase);
   const place = v.scenario ? scen('WHERE', v.scenario.where).replace(/^(a|an|the)\s+/i, '') : '';
   const soundCtl = !v.table?.score ? `<span class="b-sound off">${t('Score off')}</span>`
     : !audio ? `<button class="b-sound start" data-act="boardScore">${glyph('bell')} ${t('Start the score')}</button>`
@@ -159,16 +166,17 @@ export function boardScreen(v, h) {
   const centerExtra = !night && v.phase !== 'ENDED' && v.phase !== 'DAY_VOTING' ? '<div class="b-candle" aria-hidden="true"><i></i><b></b></div>' : '';
   const live = activeRuleNotes(v);
   const plaques = (v.activeRules || []).map((r) => `<span class="plaque ${live[r.id] ? 'on' : ''}" data-key="pl-${r.id}">${glyph(ruleGlyph(r.id))}<span>${esc(ruleF(r.id, 'name'))}${live[r.id] ? `<em>${tmh(live[r.id])}</em>` : ''}</span></span>`).join('');
-  const table = ring(v, { center: centerExtra + centerFor(v), reveal: v.phase === 'ENDED', crack: true, extra });
+  const mr = v.mode === 'missions' ? missionBoardRing(v) : null;
+  const table = ring(v, { center: (mr ? '' : centerExtra) + centerFor(v), reveal: v.phase === 'ENDED', crack: true, extra, marks: mr?.marks ?? {}, pick: mr?.team.length ? { ids: [], selected: mr.team, act: '' } : null });
   const where = (h.content?.scenario?.WHERE ?? []).indexOf(v.scenario?.where);
   const backdrop = v.table?.backdrops !== false && where >= 0 ? backdropHtml(where, night) : '';
   return `<main class="board2 ${night ? 'is-night' : 'is-day'} ${backdrop ? 'has-backdrop' : ''}" data-key="board-game">
     ${backdrop}
     ${header}
     <div class="b-cols">
-      <section class="b-stage">${table}<div class="plaques">${plaques}</div>
+      <section class="b-stage">${mr ? missionBoardStage(v, h) : ''}${table}<div class="plaques">${plaques}</div>
       </section>
-      <aside class="b-side" data-scroll="b-gz">${gazetteHtml(v, h)}</aside>
+      <aside class="b-side" data-scroll="b-gz">${mr ? `<div class="b-grid"><span class="kicker">${t('The missions')}</span>${gridHtml(v)}</div>` : ''}${gazetteHtml(v, h)}</aside>
     </div>
     <div class="b-pressure" aria-hidden="true">${Array.from({ length: 22 }, (_, i) => `<i style="--i:${i}"></i>`).join('')}</div>
   </main>`;

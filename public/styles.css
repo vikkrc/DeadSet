@@ -1402,3 +1402,187 @@ body.is-dead::after { content: ''; position: fixed; inset: 0; pointer-events: no
 @keyframes sweep { 50% { transform: rotate(18deg); } }
 .bd-pendulum { animation: swing 2s ease-in-out infinite alternate; }
 @media (prefers-reduced-motion: reduce) { .backdrop *, .coin, .gift-box, .gift-lid, .gift-item, .gift-item * { animation-duration: 0.01s !important; animation-iteration-count: 1 !important; } }
+
+/* ── Dead Set: Missions ─────────────────────────────────────────────────── */
+:root { --gold: #e9c27a; --gold-deep: #b8873a; }
+.more.hidden { display: none; }
+.btn-gold { background: linear-gradient(180deg, #f3d79c, var(--gold)); border-color: var(--gold); color: #2a1d08; }
+.btn.is-on { box-shadow: 0 0 0 3px rgba(236, 229, 213, 0.35), 0 0 24px rgba(233, 194, 122, 0.35); }
+.gold { color: var(--gold); }
+.stamp.gold { color: var(--gold); border-color: var(--gold); }
+
+/* Track: five discs between the two scores, then the proposal pips. */
+.mtrack { display: grid; gap: 8px; justify-items: center; margin: 2px 0 6px; }
+.mscore { display: flex; align-items: center; gap: 10px; }
+.mscore > span { display: flex; align-items: center; gap: 4px; font: 400 26px/1 var(--serif); }
+.mscore > span .glyph { font-size: 18px; }
+.mscore .ok { color: var(--gold); } .mscore .fail { color: var(--blood-ink); }
+.discs { display: flex; gap: 8px; list-style: none; margin: 0; padding: 0; }
+.md { position: relative; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--line-2); display: grid; place-items: center; font: 400 19px/1 var(--serif); color: var(--bone-2); background: color-mix(in srgb, var(--soot-2) 80%, transparent); transition: all 0.6s var(--ease); }
+.md.two { border-style: double; border-width: 3px; }
+.md.now { border-color: var(--bone); color: var(--bone); box-shadow: 0 0 0 4px rgba(236, 229, 213, 0.08), 0 0 22px rgba(236, 229, 213, 0.18); animation: mdPulse 2.4s ease-in-out infinite; }
+.md.ok { background: radial-gradient(circle at 40% 35%, #f6dfa6, var(--gold-deep)); border-color: var(--gold); color: #2a1d08; animation: pop 0.6s var(--spring) both; }
+.md.fail { background: radial-gradient(circle at 40% 35%, #e2585e, #6d1218); border-color: var(--blood-ink); color: #fff3f0; animation: pop 0.6s var(--spring) both; }
+.md .glyph { font-size: 20px; }
+.md-two, .md-x2 { position: absolute; top: -6px; right: -8px; font: 700 9px/1 var(--sans); padding: 3px 4px; border-radius: 8px; background: var(--blood); color: #fff3f0; }
+.md-x2 { background: var(--gold); color: #2a1d08; }
+@keyframes mdPulse { 50% { box-shadow: 0 0 0 7px rgba(236, 229, 213, 0.04), 0 0 30px rgba(236, 229, 213, 0.28); } }
+.pips { display: flex; align-items: center; gap: 6px; }
+.pips i { width: 9px; height: 9px; border-radius: 50%; border: 1px solid var(--line-2); }
+.pips i.used { background: var(--blood-ink); border-color: var(--blood-ink); }
+.pips i.now { background: var(--bone); border-color: var(--bone); }
+.pips i.hammer { width: 12px; height: 12px; border-color: var(--blood-ink); }
+.pips i.hammer.now { background: var(--blood-ink); box-shadow: 0 0 12px var(--blood-ink); animation: mdPulse 1.2s infinite; }
+.pips .kicker { margin-left: 6px; }
+.mtrack.big .md { width: 64px; height: 64px; font-size: 30px; }
+.mtrack.big .md .glyph { font-size: 32px; }
+.mtrack.big .mscore > span { font-size: 40px; }
+
+/* The mission card in force. */
+.mc-banner { display: flex; gap: 12px; align-items: center; padding: 10px 14px; border: 1px solid var(--line); border-radius: 6px; background: color-mix(in srgb, var(--soot-2) 70%, transparent); }
+.mc-banner > .glyph { font-size: 30px; color: var(--bone-2); flex: none; }
+.mc-banner div { display: grid; gap: 2px; }
+.mc-banner b { font: 400 20px/1.1 var(--serif); }
+.mc-banner small { color: var(--bone-2); }
+.mc-banner.special { border-color: rgba(233, 194, 122, 0.55); background: linear-gradient(rgba(233, 194, 122, 0.08), rgba(233, 194, 122, 0.02)), var(--soot-2); }
+.mc-banner.special > .glyph { color: var(--gold); }
+.mcard { width: 210px; min-height: 290px; padding: 18px 16px; border-radius: 12px; border: 1px solid var(--line-2); background: linear-gradient(160deg, var(--soot-3), var(--soot)); display: grid; justify-items: center; align-content: center; gap: 10px; text-align: center; }
+.mcard.special { border-color: var(--gold); box-shadow: inset 0 0 0 4px rgba(233, 194, 122, 0.12), 0 0 40px rgba(233, 194, 122, 0.2); }
+.mc-art .glyph { font-size: 64px; color: var(--bone); stroke-width: 1; }
+.mcard.special .mc-art .glyph { color: var(--gold); }
+.mc-name { font: 400 28px/1 var(--serif); }
+.mc-text { color: var(--bone-2); font-size: 13px; line-height: 1.4; }
+.mc-foot { font: 600 10px/1.3 var(--sans); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash); }
+.mc-flip { perspective: 900px; margin: 6px auto; }
+.mc-in { position: relative; width: 210px; height: 290px; transform-style: preserve-3d; animation: mcTurn 1s 0.7s var(--spring) both; }
+.mc-back, .mc-front { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; }
+.mc-back { display: grid; place-items: center; border: 1px solid var(--line-2); background: repeating-linear-gradient(45deg, var(--soot-2) 0 8px, var(--soot-3) 8px 16px); font: 400 40px var(--serif); color: var(--ash); }
+.mc-front { transform: rotateY(180deg); }
+.mc-flip.special .mc-in { animation: mcTurn 1s 0.7s var(--spring) both, mcGlow 2s 1.7s ease-in-out infinite; }
+@keyframes mcTurn { from { transform: rotateY(0) translateY(40px) scale(0.85); } to { transform: rotateY(180deg); } }
+@keyframes mcGlow { 50% { filter: drop-shadow(0 0 22px rgba(233, 194, 122, 0.55)); } }
+
+/* Ring badges. */
+.b-mark:has(.mk) { background: var(--soot); border-color: var(--line-2); display: flex; gap: 2px; padding: 0 3px; }
+.mk .glyph { font-size: 12px; }
+.mk.lantern { color: var(--gold); } .mk.candle { color: #f2d49b; } .mk.haunt { color: var(--blood-ink); } .mk.ward { color: #9fc4ff; } .mk.unmask { color: var(--blood-ink); }
+.c-emblem.lantern .glyph, .c-emblem.gold .glyph { color: var(--gold); }
+.c-emblem.blood .glyph { color: var(--blood-ink); }
+.c-big small { font-size: 0.5em; color: var(--ash); }
+
+/* Voting and playing. */
+.stamped-line { display: inline-flex; gap: 6px; align-items: center; font-weight: 600; }
+.stamped-line.blood { color: var(--blood-ink); }
+.big-result { font: 400 26px/1.2 var(--serif); }
+.big-result.blood { color: var(--blood-ink); }
+.mplay { display: grid; justify-items: center; gap: 14px; padding: 8px 0 4px; }
+.mplay.done { color: var(--bone-2); text-align: center; }
+.mplay.done .glyph { font-size: 34px; color: var(--gold); }
+.mplay-cards { display: flex; gap: 16px; justify-content: center; }
+.mplay-card { width: 140px; height: 196px; border-radius: 12px; border: 1px solid var(--line-2); background: linear-gradient(160deg, var(--soot-3), var(--soot)); color: var(--bone); cursor: pointer; transition: transform 0.35s var(--spring), box-shadow 0.35s, border-color 0.35s; padding: 0; }
+.mpc-in { display: grid; justify-items: center; align-content: center; gap: 10px; height: 100%; padding: 12px; }
+.mpc-art .glyph { font-size: 54px; stroke-width: 1; }
+.mplay-card b { font: 400 24px/1 var(--serif); }
+.mplay-card small { color: var(--ash); font-size: 11px; }
+.mplay-card.good .mpc-art .glyph { color: var(--gold); }
+.mplay-card.bad .mpc-art .glyph { color: var(--blood-ink); }
+.mplay-card.sel { transform: translateY(-10px) scale(1.04); }
+.mplay-card.good.sel { border-color: var(--gold); box-shadow: 0 0 34px rgba(233, 194, 122, 0.45); }
+.mplay-card.bad.sel { border-color: var(--blood-ink); box-shadow: 0 0 34px rgba(226, 88, 94, 0.5); }
+.mplay-card:disabled { opacity: 0.4; cursor: not-allowed; }
+.sugg { list-style: none; padding: 0; margin: 6px 0 0; display: grid; gap: 3px; }
+
+/* Deduction grid. */
+.mgrid-wrap { overflow-x: auto; }
+.mgrid { border-collapse: collapse; width: 100%; font-size: 13px; }
+.mgrid th, .mgrid td { padding: 6px 6px; border-bottom: 1px solid var(--line); text-align: center; }
+.mgrid tr > th:first-child { text-align: left; font-weight: 500; color: var(--bone); white-space: nowrap; }
+.mgrid thead th, .mgrid tr:first-child th { font: 400 18px var(--serif); }
+.mgrid th.ok { color: var(--gold); } .mgrid th.fail { color: var(--blood-ink); }
+.g-card .glyph { font-size: 12px; margin-left: 2px; color: var(--gold); }
+.mgrid td { position: relative; height: 28px; }
+.mgrid td.went { background: rgba(236, 229, 213, 0.05); }
+.mgrid td.went.f { background: rgba(179, 36, 45, 0.14); }
+.g-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--bone); }
+.g-lead { position: absolute; left: 3px; top: 3px; color: var(--gold); } .g-lead .glyph { font-size: 11px; }
+.g-v { position: absolute; right: 4px; bottom: 4px; width: 6px; height: 6px; border-radius: 50%; }
+.g-v.y { background: var(--gold); } .g-v.n { background: var(--blood-ink); }
+.g-res td { font-weight: 700; } .g-res td.fail { color: var(--blood-ink); } .g-res td.ok { color: var(--gold); }
+.g-res td .glyph { font-size: 12px; margin-left: 2px; }
+
+/* Moment: the team vote flips every portrait at once. */
+.vflip { list-style: none; padding: 0; margin: 10px auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 10px; max-width: 520px; }
+.vflip li { display: grid; justify-items: center; gap: 4px; perspective: 600px; }
+.vflip small { font-size: 11px; color: var(--bone-2); max-width: 64px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vf-in { position: relative; width: 52px; height: 52px; transform-style: preserve-3d; animation: vfTurn 0.7s calc(var(--d) + 0.6s) var(--spring) both; }
+.vf-face { position: absolute; inset: 0; border-radius: 50%; display: grid; place-items: center; backface-visibility: hidden; border: 1.5px solid var(--line-2); background: var(--soot-2); overflow: hidden; }
+.vf-face .vf-av { width: 100%; height: 100%; }
+.vf-face.front { transform: rotateY(180deg); }
+.vf-face.front.y { background: radial-gradient(circle at 40% 35%, #f6dfa6, var(--gold-deep)); border-color: var(--gold); color: #2a1d08; }
+.vf-face.front.n { background: radial-gradient(circle at 40% 35%, #e2585e, #6d1218); border-color: var(--blood-ink); color: #fff3f0; }
+.vf-face .glyph { font-size: 28px; }
+@keyframes vfTurn { from { transform: rotateY(0); } to { transform: rotateY(180deg); } }
+.vcount { display: flex; gap: 24px; justify-content: center; font: 400 30px/1 var(--serif); animation: fadeUp 0.5s 1.4s both; }
+.vcount span { display: flex; gap: 6px; align-items: center; } .vcount .glyph { font-size: 22px; }
+.m-mvotes .verdict-stamp { animation: fadeUp 0.4s 1.6s both; }
+
+/* Moment: the cards are turned. Dealt face-down, shuffled, then turned one by one. */
+.reveal-table { position: relative; display: flex; justify-content: center; gap: 10px; margin: 18px auto 8px; min-height: 120px; perspective: 1000px; }
+.rc-front > .glyph { font-size: min(48px, calc(var(--w) * 0.42)); }
+.rc-front b { font-size: min(19px, calc(var(--w) * 0.18)); }
+.rc { --w: min(112px, calc((100vw - 48px) / var(--n) - 10px)); width: var(--w); height: calc(var(--w) * 1.43); animation: rcDeal 1.8s calc(0.2s + var(--i) * 0.1s) var(--ease) both; }
+.rc-in { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; animation: rcTurn 0.75s var(--d) var(--spring) both; }
+.rc-back, .rc-front { position: absolute; inset: 0; border-radius: 10px; backface-visibility: hidden; display: grid; place-items: center; align-content: center; gap: 8px; }
+.rc-back { border: 1px solid var(--line-2); background: repeating-linear-gradient(45deg, var(--soot-2) 0 7px, var(--soot-3) 7px 14px); font: 400 30px var(--serif); color: var(--ash); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5); }
+.rc-front { transform: rotateY(180deg); border: 1px solid var(--line-2); background: linear-gradient(160deg, var(--soot-3), var(--soot)); overflow: hidden; }
+.rc-front b { font: 400 19px/1 var(--serif); }
+.rc-front > .glyph { font-size: 48px; stroke-width: 1; }
+.rc.good .rc-front { border-color: var(--gold); color: var(--gold); animation: rcGood 1.4s calc(var(--d) + 0.5s) ease-out both; }
+.rc.bad .rc-front { border-color: var(--blood-ink); color: var(--blood-ink); background: radial-gradient(circle at 50% 40%, #4a0c10, var(--soot)); animation: rcBad 0.6s calc(var(--d) + 0.45s) ease-out both; }
+.rc.bad { animation: rcDeal 1.8s calc(0.2s + var(--i) * 0.1s) var(--ease) both, rcShake 0.45s calc(var(--d) + 0.5s) both; }
+.rc-crack { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: #ff8a8f; stroke-width: 2.4; stroke-dasharray: 220; stroke-dashoffset: 220; animation: rcCrack 0.5s calc(var(--d) + 0.5s) ease-out forwards; }
+.rc.smoke .rc-front { color: var(--ash); }
+.rc.smoke .rc-in { animation: none; }
+.rc.smoke .rc-back { animation: smokeOut 1.8s calc(1.6s + var(--i) * 0.2s) ease-in-out both; }
+@keyframes rcDeal { 0% { opacity: 0; transform: translateY(-120px) rotate(calc((var(--i) - 1) * 8deg)) scale(0.8); } 30% { opacity: 1; transform: none; } 55% { transform: translateX(calc((var(--n) / 2 - var(--i) - 0.5) * 60px)) rotate(-4deg); } 80% { transform: translateX(calc((var(--i) - var(--n) / 2 + 0.5) * 30px)) rotate(3deg); } 100% { opacity: 1; transform: none; } }
+@keyframes rcTurn { from { transform: rotateY(0); } 60% { transform: rotateY(200deg) scale(1.08); } to { transform: rotateY(180deg); } }
+@keyframes rcGood { 0% { box-shadow: 0 0 0 rgba(233, 194, 122, 0); } 30% { box-shadow: 0 0 46px rgba(233, 194, 122, 0.75); } 100% { box-shadow: 0 0 18px rgba(233, 194, 122, 0.3); } }
+@keyframes rcBad { 0% { box-shadow: 0 0 0 rgba(226, 88, 94, 0); } 40% { box-shadow: 0 0 60px rgba(226, 88, 94, 0.9); } 100% { box-shadow: 0 0 26px rgba(226, 88, 94, 0.5); } }
+@keyframes rcShake { 0%, 100% { translate: 0 0; rotate: 0deg; } 20% { translate: -7px 0; rotate: -3deg; } 50% { translate: 7px 0; rotate: 2deg; } 80% { translate: -3px 0; rotate: 0deg; } }
+@keyframes rcCrack { to { stroke-dashoffset: 0; } }
+@keyframes smokeOut { 50% { filter: blur(3px); opacity: 0.6; } 100% { filter: blur(1px); opacity: 0.85; } }
+.reveal-stamp { display: grid; justify-items: center; gap: 6px; opacity: 0; animation: stampIn 0.5s var(--d) var(--spring) forwards; }
+.reveal-stamp .stamp { font-size: 22px; padding: 10px 22px; }
+.reveal-stamp small { color: var(--bone-2); }
+@keyframes stampIn { from { opacity: 0; transform: scale(2.4) rotate(-12deg); } to { opacity: 1; transform: rotate(-6deg); } }
+.reveal-wash { position: fixed; inset: 0; pointer-events: none; opacity: 0; animation: washIn 1.6s var(--d) ease-out forwards; }
+.reveal-wash.fail { background: radial-gradient(circle at 50% 45%, rgba(179, 36, 45, 0.42), rgba(60, 8, 12, 0.35) 70%); }
+.reveal-wash.ok { background: radial-gradient(circle at 50% 45%, rgba(233, 194, 122, 0.24), transparent 65%); }
+@keyframes washIn { 25% { opacity: 1; } 100% { opacity: 0.7; } }
+
+/* Moments: naming, unmasking, the Reckoning. */
+.named { margin: 18px 0 8px; }
+.named-name { font: 400 clamp(44px, 12vw, 84px)/1 var(--serif); animation: namedIn 1.2s 0.6s var(--ease) both; display: inline-block; }
+@keyframes namedIn { from { opacity: 0; letter-spacing: 0.3em; filter: blur(8px); } to { opacity: 1; letter-spacing: 0; filter: none; } }
+.m-mnamed .verdict-stamp, .m-mreckon .verdict-stamp { opacity: 0; animation: stampIn 0.5s var(--d, 2.4s) var(--spring) forwards; }
+.late { animation: fadeUp 0.6s 3.1s both; }
+
+/* TV board. */
+.b-mission { display: grid; gap: 12px; justify-items: center; margin-bottom: 8px; }
+.b-mission .mc-banner { max-width: 640px; }
+.b-now { font: 400 22px/1.3 var(--serif); text-align: center; color: var(--bone-2); max-width: 760px; }
+.b-now b { font: 600 13px var(--sans); letter-spacing: 0.1em; text-transform: uppercase; color: var(--bone); margin-left: 8px; }
+.b-grid { display: grid; gap: 8px; margin-bottom: 18px; padding: 14px; border: 1px solid var(--line); border-radius: 6px; background: color-mix(in srgb, var(--soot-2) 80%, transparent); }
+@media (prefers-reduced-motion: reduce) { .rc, .rc-in, .vf-in, .mc-in, .md.now, .named-name { animation-duration: 0.01s !important; animation-delay: 0s !important; } }
+.victims.unmasked .victim span::after { display: none; }
+.victims.unmasked .victim { color: var(--blood-ink); text-shadow: 0 0 18px rgba(226, 88, 94, 0.55); animation: unmaskIn 0.8s var(--d) var(--ease) both; }
+@keyframes unmaskIn { from { opacity: 0; filter: blur(10px); transform: scale(1.3); } to { opacity: 1; filter: none; transform: none; } }
+body.is-board .rc { --w: 172px; }
+body.is-board .reveal-table { gap: 22px; }
+body.is-board .vf-in { width: 84px; height: 84px; }
+body.is-board .vf-face .glyph { font-size: 42px; }
+body.is-board .vflip { max-width: 900px; gap: 18px 16px; }
+body.is-board .vflip small { font-size: 15px; max-width: 100px; }
+body.is-board .mc-in { width: 280px; height: 386px; }
+body.is-board .mc-in .mcard { width: 280px; min-height: 386px; }
+body.is-board .reveal-stamp .stamp { font-size: 34px; }

@@ -257,6 +257,15 @@ Charges are spent when a valid action is **submitted**, even if it's then blocke
 
 **The invitation:** opening a join link or scanning the QR code shows a sealed letter. Press and hold the wax seal to break it, sign your name, and take your seat. *Already seated? Recover your seat* is on both sides of the letter.
 
+## 9c-bis. Dead Set: Missions
+
+A second mode for 5–10 players, picked in the lobby like any other (*Dead Set: Missions*). Nobody is eliminated. Every round:
+1. A mission card is drawn (usually a Regular Mission).
+2. The Mission Leader picks a team, and everyone votes on it, with the votes revealed at once.
+3. If the team goes, its members secretly play Succeed or Sabotage. The shuffled cards are turned over one by one.
+
+Three successes lead to the **Reckoning**, where Death names the Medium. Three failures lead to the **Last Stand**, where the table names a Death player. The full rules, the mission cards and every timer are in **[MISSIONS.md](MISSIONS.md)**. Practice bots play Missions too.
+
 ## 9d. Practice bots (secret test mode)
 
 To try a table alone: create a game, then **tap the room-code tiles five times quickly** in the lobby (host only). A hidden *Practice bots* panel opens with **+1**, **+4**, **Fill to 10** and **Remove bots**. Bots take seats with random portraits, ready up, and then play by themselves using only what a real player in their seat would see: they nominate, vote, use their night powers, agree on Death's kill and retaliate. They never chat. Tap the code five times again to hide the panel.
