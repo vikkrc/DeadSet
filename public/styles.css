@@ -1458,7 +1458,13 @@ body.is-dead::after { content: ''; position: fixed; inset: 0; pointer-events: no
 .mc-back, .mc-front { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; }
 .mc-back { display: grid; place-items: center; border: 1px solid var(--line-2); background: repeating-linear-gradient(45deg, var(--soot-2) 0 8px, var(--soot-3) 8px 16px); font: 400 40px var(--serif); color: var(--ash); }
 .mc-front { transform: rotateY(180deg); }
-.mc-flip.special .mc-in { animation: mcTurn 1s 0.7s var(--spring) both, mcGlow 2s 1.7s ease-in-out infinite; }
+.mc-flip.special { animation: mcGlow 2s 1.7s ease-in-out infinite; }
+/* A filter on the turning card itself would flatten its 3D space and show the
+   mirrored back, so the glow lives on the flat wrapper; the back is also hidden
+   once the card has turned, as a safety net for browsers that flatten anyway. */
+.mc-back { animation: backOff 0s 1.45s forwards; }
+.mrc:not(.smoke) .mrc-back { animation: backOff 0s calc(var(--d) + 0.45s) forwards; }
+@keyframes backOff { to { visibility: hidden; } }
 @keyframes mcTurn { from { transform: rotateY(0) translateY(40px) scale(0.85); } to { transform: rotateY(180deg); } }
 @keyframes mcGlow { 50% { filter: drop-shadow(0 0 22px rgba(233, 194, 122, 0.55)); } }
 
