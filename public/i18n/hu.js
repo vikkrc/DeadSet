@@ -1268,5 +1268,9 @@ export default {
     "Classic Dead Set": "Klasszikus Dead Set",
     "Hidden roles, night kills, Dreams and Rule cards. 5–25 players.": "Rejtett szerepek, éjszakai gyilkosságok, Álmok és Szabálykártyák. 5–25 játékos.",
     "Teams, votes and sabotage. Nobody dies. 5–10 players.": "Csapatok, szavazások és szabotázs. Senki sem hal meg. 5–10 játékos.",
+    "Only you saw this. The Candle now passes to them.": "Csak te láttad. A Gyertya most hozzá kerül.",
+    "The Candle will show you {name} at dawn.": "Hajnalban a Gyertya megmutatja neked: {name}.",
+    "The mission card is drawn…": "Kihúzzák a küldetéskártyát…",
+    "{who} in {where} must {why}: {n}. {step}": "{who} · {where} · A cél: {why} – {n}. {step}",
   },
 };

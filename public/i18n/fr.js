@@ -1268,5 +1268,9 @@ export default {
     "Classic Dead Set": "Dead Set classique",
     "Hidden roles, night kills, Dreams and Rule cards. 5–25 players.": "Rôles cachés, meurtres nocturnes, Rêves et cartes de règle. 5 à 25 joueurs.",
     "Teams, votes and sabotage. Nobody dies. 5–10 players.": "Équipes, votes et sabotage. Personne ne meurt. 5 à 10 joueurs.",
+    "Only you saw this. The Candle now passes to them.": "Toi seul l'as vu. La Bougie passe maintenant à cette personne.",
+    "The Candle will show you {name} at dawn.": "À l'aube, la Bougie te montrera {name}.",
+    "The mission card is drawn…": "La carte de mission est tirée…",
+    "{who} in {where} must {why}: {n}. {step}": "{who} · {where} · But : {why} – {n}. {step}",
   },
 };

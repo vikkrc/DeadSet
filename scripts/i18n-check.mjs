@@ -1,6 +1,6 @@
 // Checks every translation file: placeholders and HTML tags must match the
 // English key, and content tables must have the same shape as engine/content.js.
-import { ROLES, DREAMS, RULE_CARDS, PRESETS, SCENARIO, PRODUCTS, LANGS, MISSION_CARDS } from '../engine/content.js';
+import { ROLES, DREAMS, RULE_CARDS, PRESETS, SCENARIO, PRODUCTS, LANGS, MISSION_CARDS, MISSION_STORY } from '../engine/content.js';
 
 let bad = 0;
 const ph = (s) => [...String(s).matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort().join(',');
@@ -20,6 +20,8 @@ for (const code of LANGS.filter((c) => c !== 'en')) {
   for (const id of Object.keys(PRESETS)) for (const f of ['name', 'blurb']) if (!d.presets?.[id]?.[f]) err(`preset ${id}.${f} missing`);
   for (const k of ['WHO', 'WHERE', 'WHY']) if (d.scenario?.[k]?.length !== SCENARIO[k].length) err(`scenario ${k} length`);
   if (d.products?.length !== PRODUCTS.length) err('products length');
+  for (const k of ['steps', 'scenes']) MISSION_STORY[k].forEach((row, i) => { if (d.missionStory?.[k]?.[i]?.length !== row.length) err(`missionStory.${k}[${i}] shape`); });
+  for (const k of ['genericSteps', 'genericScenes']) if (d.missionStory?.[k]?.length !== MISSION_STORY[k].length) err(`missionStory.${k} length`);
   if (d.whispers?.length !== 9) err('whispers length');
   if (!d.and) err('and missing');
 }

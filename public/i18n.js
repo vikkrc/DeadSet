@@ -47,6 +47,7 @@ export function setContent(c) {
     scenario: c.scenario,
     products: c.products ?? [],
     mcards: Object.fromEntries((c.missionCards ?? []).map((x) => [x.id, x])),
+    missionStory: c.missionStory ?? null,
   };
 }
 
@@ -62,6 +63,17 @@ export const presetF = (id, f) => D?.presets?.[id]?.[f] ?? EN.presets[id]?.[f] ?
 export function scen(kind, english) {
   const i = (EN.scenario[kind] || []).indexOf(english);
   return i >= 0 ? (D?.scenario?.[kind]?.[i] ?? english) : english;
+}
+/** Missions story lines for mission k (0–4), from the WHY / WHERE cards in play. Null for host-written cards. */
+export function missionStoryLine(sc, k) {
+  const S = EN.missionStory;
+  if (!S || !sc) return null;
+  const w = (EN.scenario.WHY || []).indexOf(sc.why);
+  const p = (EN.scenario.WHERE || []).indexOf(sc.where);
+  const T = D?.missionStory;
+  const step = w >= 0 ? (T?.steps?.[w]?.[k] ?? S.steps[w]?.[k]) : (T?.genericSteps?.[k] ?? S.genericSteps[k]);
+  const scene = p >= 0 ? (T?.scenes?.[p]?.[k] ?? S.scenes[p]?.[k]) : (T?.genericScenes?.[k] ?? S.genericScenes[k]);
+  return { step, scene, preset: w >= 0 && p >= 0 };
 }
 export function product(english) {
   const i = EN.products.indexOf(english);

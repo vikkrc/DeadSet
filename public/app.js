@@ -250,11 +250,13 @@ function detectMoments(v) {
     if (v.mode === 'missions') {
       if (l.ev === 'm-start') { const sc = fresh.find((x) => x.ev === 'scenario'); out.push({ type: 'night0', scenario: sc ? entryMsg(sc) : '', sc: v.scenario, rules: [], tapOnly: false }); continue; }
       if (l.ev === 'm-dawn' && v.me && !v.me.moderator) {
-        const reports = freshPriv.filter((x) => ['candle', 'witness', 'clue'].includes(x.kind));
+        // The Candle gets its own reveal; everything else goes on the private card.
+        for (const c of freshPriv.filter((x) => x.kind === 'candle' && x.target)) out.push({ type: 'mcandle', name: name(c.target), death: !!c.death, sound: 'candleLight', tapOnly: true });
+        const reports = freshPriv.filter((x) => ['witness', 'clue'].includes(x.kind) || (x.kind === 'candle' && !x.target));
         out.push({ type: 'private', reports: reports.map((x) => ({ msg: entryMsg(x), lines: x.lines, kind: x.kind })), tapOnly: true });
         continue;
       }
-      if (l.ev?.startsWith('m-')) { const mm = missionMoment(l, v, fresh, { notify, name }); if (mm) out.push(mm); continue; }
+      if (l.ev?.startsWith('m-')) { const mm = missionMoment(l, v, fresh, { notify, name, content: S.content }); if (mm) out.push(...[].concat(mm)); continue; }
     }
     switch (l.ev) {
       case 'night0': {
@@ -452,7 +454,7 @@ function momentHtml(m) {
       break;
     }
     case 'gift': body = giftHtml(m.idx, { t, th, esc, product: m.product }); break;
-    case 'mcard': case 'mvotes': case 'mreveal': case 'mnamed': case 'munmask': case 'mreckon': body = missionMomentHtml(m, { letters, avatarSvg, onBoard }); break;
+    case 'mintro': case 'mcandle': case 'mcard': case 'mvotes': case 'mreveal': case 'mnamed': case 'munmask': case 'mreckon': body = missionMomentHtml(m, { letters, avatarSvg, onBoard }); break;
     case 'death':
       body = `<div class="m-art">${glyph(m.art || 'dagger')}</div><h1 class="m-title">${letters(t(m.title))}</h1>${m.names.length ? `<ul class="victims">${names(m.names)}</ul>` : ''}<p class="m-sub">${tmh(m.sub)}</p>`;
       break;

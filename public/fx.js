@@ -139,6 +139,26 @@ const SOUNDS = {
   badCard: (a) => { SOUNDS.flip(a); SOUNDS.crack(a); tone(a, { freq: 98, type: 'sawtooth', dur: 0.9, gain: 0.07, to: 49, at: 0.1 }); },
   missionOk: (a) => [659.25, 830.61, 987.77, 1318.5].forEach((f, i) => bell(a, f, i * 0.12, 0.08, 2.4)),
   missionFail: (a) => { SOUNDS.stamp(a); [196, 185, 174.6].forEach((f, i) => tone(a, { freq: f, type: 'sawtooth', dur: 1.4, gain: 0.05, at: 0.15 + i * 0.25, to: f * 0.8 })); },
+  // Missions stings.
+  missionIntro: (a) => {
+    // a distant horn call over a bell: the next chapter begins
+    [[146.83, 0], [220, 0.35], [196, 0.9]].forEach(([f, at]) => tone(a, { freq: f, type: 'sawtooth', dur: 1.3, gain: 0.035, attack: 0.25, at }));
+    bell(a, 587.33, 0.1, 0.07, 3); bell(a, 880, 1.0, 0.05, 3.5);
+    noise(a, { dur: 1.6, gain: 0.05, type: 'bandpass', freq: 400, sweep: 1400, q: 0.7, attack: 0.6 });
+  },
+  candleLight: (a) => {
+    // a match strike, then a warm chord
+    noise(a, { dur: 0.18, gain: 0.3, type: 'highpass', freq: 2500, sweep: 4000 });
+    noise(a, { dur: 0.6, gain: 0.08, type: 'bandpass', freq: 900, q: 0.8, at: 0.12, attack: 0.1 });
+    [523.25, 659.25, 783.99].forEach((f, i) => bell(a, f, 0.35 + i * 0.09, 0.05, 2.6));
+  },
+  unmask: (a) => {
+    // a choir stab and a falling drone: Death shows its face
+    [261.63, 311.13, 369.99].forEach((f) => tone(a, { freq: f, type: 'sawtooth', dur: 1.8, gain: 0.03, attack: 0.05, to: f * 0.94 }));
+    tone(a, { freq: 65.4, type: 'sawtooth', dur: 2.4, gain: 0.08, to: 49 });
+    noise(a, { dur: 1.2, gain: 0.07, type: 'bandpass', freq: 700, sweep: 200, q: 1 });
+  },
+  standDrum: (a) => [0, 0.32, 0.64, 1.1].forEach((at, i) => { tone(a, { freq: 110, to: 58, dur: 0.5, gain: i === 3 ? 0.4 : 0.28, at }); noise(a, { dur: 0.08, gain: 0.12, freq: 240, at }); }),
   approve: (a) => { bell(a, 783.99, 0, 0.07, 1.4); bell(a, 1046.5, 0.1, 0.06, 1.6); },
   page: (a) => { noise(a, { dur: 0.35, gain: 0.12, type: 'bandpass', freq: 2200, sweep: 900, q: 0.7, attack: 0.05 }); },
   // ── Public event stings ──
@@ -266,6 +286,23 @@ const MOODS = {
   endCult: { root: 55, scale: [0, 2, 3, 5, 7, 8, 10], chord: [1, 1.19, 1.5, 2], cutoff: 520, wind: 0.03, gain: 0.55, choir: 0.03, swell: [6, 10], motif: { voice: 'bell', every: [5, 8], len: [1, 2], beat: 1.2, oct: 2 } },
   endRipper: { root: 51.9, scale: [0, 1, 5, 6, 7, 11], chord: [1, 1.06, 1.41], cutoff: 450, wind: 0.04, gain: 0.5, heart: 50, motif: { voice: 'box', every: [6, 10], len: [2, 3], beat: 1, oct: 4 } },
   endDraw: { root: 61.7, scale: [0, 5, 7], chord: [1, 1.5], cutoff: 500, wind: 0.03, gain: 0.45, motif: { voice: 'bell', every: [8, 13], len: [1, 2], beat: 1.4, oct: 2 } },
+  // Dead Set: Missions. Each phase has its own soundscape.
+  //   mGather – the expedition assembles: a lantern-lit drone and a music box
+  //   mCamp   – proposals: a travelling ostinato over a soft marching drum
+  //   mVote   – the team vote: a clock ticking against a slow heart
+  //   mMission– cards in secret: a dark drone, a slow drum, held breath
+  //   mResult – near-silence, so the card reveal carries the room
+  //   mCandle – the night interlude: candle crackle and a gentle box
+  //   mStand  – the Last Stand: war drums and voices
+  //   mReckon – the Reckoning: tolling bells, a choir and a slow heart
+  mGather: { root: 61.7, scale: [0, 2, 3, 7, 8], chord: [1, 1.5, 2], cutoff: 480, wind: 0.025, gain: 0.5, shimmer: 0.004, crackle: 0.6, motif: { voice: 'box', every: [7, 11], len: [3, 4], beat: 1, oct: 4 } },
+  mCamp: { root: 98, scale: [0, 2, 3, 5, 7, 9, 10], chord: [1, 1.5, 2], cutoff: 760, wind: 0.008, gain: 0.44, pluck: { bpm: 84, pattern: [1, 0, 1, 0, 1, 0, 0, 1], notes: [0, 7, 5, 3] }, drum: { bpm: 84, pattern: [1, 0, 0, 0, 0, 0, 1, 0], pitch: 70, gain: 0.16 }, motif: { voice: 'bell', every: [9, 14], len: [3, 4], beat: 0.7, oct: 3 } },
+  mVote: { root: 82.4, scale: [0, 1, 3, 5, 7, 8, 10], chord: [1, 1.19, 1.5], cutoff: 560, wind: 0.01, gain: 0.46, tick: 100, heart: 58, motif: { voice: 'box', every: [8, 13], len: [2, 3], beat: 0.65, oct: 4 } },
+  mMission: { root: 49, scale: [0, 1, 3, 6, 7], chord: [1, 1.06, 1.5], cutoff: 300, wind: 0.04, gain: 0.55, heart: 52, drum: { bpm: 52, pattern: [1, 0, 0, 0, 0, 0, 0, 0], pitch: 52, gain: 0.2 }, swell: [7, 12] },
+  mResult: { root: 55, scale: [0, 7], chord: [1, 1.5], cutoff: 260, wind: 0.015, gain: 0.3 },
+  mCandle: { root: 65.4, scale: [0, 2, 4, 7, 9], chord: [1, 1.25, 1.5, 2], cutoff: 520, wind: 0.02, gain: 0.5, crackle: 1.4, shimmer: 0.005, motif: { voice: 'box', every: [8, 13], len: [3, 5], beat: 0.95, oct: 5 } },
+  mStand: { root: 55, scale: [0, 1, 3, 5, 7, 8, 10], chord: [1, 1.19, 1.5, 2], cutoff: 560, wind: 0.03, gain: 0.58, choir: 0.018, drum: { bpm: 96, pattern: [1, 0, 1, 0, 1, 1, 0, 1], pitch: 62, gain: 0.24 }, swell: [6, 10] },
+  mReckon: { root: 51.9, scale: [0, 1, 4, 5, 7, 8], chord: [1, 1.06, 1.5, 2], cutoff: 420, wind: 0.05, gain: 0.6, choir: 0.035, heart: 48, swell: [5, 9], motif: { voice: 'bell', every: [4, 6], len: [1, 1], beat: 1, oct: 2 } },
   // Overlay mixed on top of any mood when the table is down to its last few.
   tension: { root: 110, scale: [0, 1], chord: [], cutoff: 3000, wind: 0, gain: 0.5, shimmer: 0.012, heart: 104 },
 };
@@ -382,6 +419,33 @@ function buildLayer(a, mood) {
       later(tick, step);
     };
     later(tick, 0.5);
+  }
+  if (m.drum) {
+    // a low tom: a pitched thump with a short skin noise
+    const step = 60 / m.drum.bpm / 2;
+    let i = 0;
+    const hit = () => {
+      const x = audio(); if (!x) return;
+      if (m.drum.pattern[i % m.drum.pattern.length]) {
+        const accent = i % m.drum.pattern.length === 0 ? 1 : 0.7;
+        tone(x, { freq: m.drum.pitch * 1.7, to: m.drum.pitch, dur: 0.42, gain: m.drum.gain * accent, dest: out });
+        noise(x, { dur: 0.07, gain: m.drum.gain * 0.35 * accent, freq: 260, q: 1.2, dest: out });
+      }
+      i++;
+      later(hit, step);
+    };
+    later(hit, 0.6);
+  }
+  if (m.tick) {
+    // a clock: tick and a slightly lower tock
+    let i = 0;
+    const tk = () => { const x = audio(); if (!x) return; tone(x, { freq: i++ % 2 ? 1500 : 1900, type: 'square', dur: 0.022, gain: 0.018, dest: out }); later(tk, 60 / m.tick); };
+    later(tk, 0.4);
+  }
+  if (m.crackle) {
+    // candle and fire: soft random pops
+    const pop = () => { const x = audio(); if (!x) return; noise(x, { dur: 0.015 + Math.random() * 0.03, gain: 0.03 + Math.random() * 0.04, type: 'highpass', freq: 1800 + Math.random() * 2500, dest: out }); later(pop, (0.08 + Math.random() * 0.9) / m.crackle); };
+    later(pop, 1);
   }
   if (m.heart) {
     const beat = () => { const x = audio(); if (x) heartbeat(x, 0, 0.28, out); later(beat, 60 / m.heart * (0.97 + Math.random() * 0.06)); };

@@ -398,3 +398,17 @@ test('bots play whole Missions games at 5, 7 and 10 players', async () => {
     assert.ok(m.M.results.length >= 3);
   }
 });
+
+test('a Candle pick counts even if the night is forced to dawn before the holder sleeps', () => {
+  const t = setup(FIVE); // the Candle starts with Ed (p4)
+  t.ackAll();
+  t.mission(['Ada', 'Bo']); t.night();
+  t.mission(['Ada', 'Bo', 'Cy']);
+  assert.equal(t.m.M.night.needs.candle, 'p4');
+  t.cmd('Ed', 'm.night', { candle: t.id('Di') }); // tapped a seat, never pressed "sleep"
+  t.advance(); // the host brings the dawn
+  const seen = t.m.privateLog.p4.find((x) => x.kind === 'candle');
+  assert.equal(seen.target, 'p3');
+  assert.equal(seen.death, true);
+  assert.equal(t.m.M.candle.holder, 'p3');
+});

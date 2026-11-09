@@ -49,6 +49,14 @@ Every table has a **Medium** and a **Reaper**. The others are lobby switches. Un
 
 ## 4. A round
 
+### 4.0 The story
+With the preset story cards, every mission opens with a short chapter card before anything else. It has three parts:
+- **The step:** what this mission is for, taken from the WHY card. Each WHY has five steps that build to a climax, e.g. *Find a Hidden Treasure: 1. Find the torn map … 4. Open the vault … 5. Carry the gold out*.
+- **The line:** the who, where and why in one sentence, e.g. "The Space Explorers in a Haunted Mansion must Find a Hidden Treasure: 4. Open the vault."
+- **The scene:** what the place throws at you on this mission, taken from the WHERE card. Each WHERE has five, e.g. a Haunted Mansion's *"Dinner is laid for exactly one more guest than you are."*
+
+The chapter card plays over that location's TV backdrop, and only then is the mission card turned. Host-written cards get generic chapters instead ("The point of no return"). The step also stays on the mission banner while the mission lasts.
+
 ### 4.1 The mission card
 At the start of each mission, **before any team is put together**, a mission card is drawn and shown to everyone. It stays in force for the whole mission, through every proposal, so it shapes how people propose and vote.
 
@@ -84,7 +92,7 @@ The cards are **shuffled** on the server and turned over one by one on every pho
 
 ### 4.6 The night interlude (after missions 1–4, unless the game is over)
 A short night, with the night score. Every player gets the same night screen and **must pick one seat as their Hunch** (who they suspect most). Hunches are private and only shown at the end, but because *everyone* taps, nobody can tell who is doing something more. Alongside their Hunch:
-- **The Candle** (after missions 2, 3 and 4): the holder picks a player who has **never held** the Candle and privately learns their side (*Living* or *Death*). The Candle passes to that player. *Who* checked *whom* is public; the answer is not.
+- **The Candle** (after missions 2, 3 and 4): the holder picks a player who has **never held** the Candle and privately learns their side (*Living* or *Death*). The Candle passes to that player. *Who* checked *whom* is public; the answer is not. The pick counts as soon as it is tapped, even if the night ends before the holder goes to sleep. At dawn the holder gets a private *By Candlelight* reveal.
 - **Witness** / **Haunted Road** cards act here (§7).
 
 At dawn, **Clues** may arrive (§5). Leadership passes to the next player to the left, and the next mission's card is drawn.
@@ -156,6 +164,22 @@ So every Living victory has to survive the Reckoning. The Medium can steer the L
 - **The mission grid** (phones' record and TV): who was on each mission, who led, how everyone voted, the card and the result. It's the deduction aid players otherwise keep on paper.
 - **Big moments:** the mission card turning over; the vote flip (every portrait flips to a gold or red token at once); the **card reveal** (cards slide in face-down, shuffle, and turn one at a time with a heartbeat; a Sabotage card cracks and bleeds red, a Succeed card flares gold; then a SUCCEEDED / FAILED stamp); the Last Stand verdict; the Reckoning (Death unmasks, then the Reaper's choice is turned over).
 - Private moments only ever appear on the owner's phone: their role and knowledge, the Candle result, a Witness card, clues.
+
+## 9b. Sound
+The TV board's score has its own Missions soundscapes, one per phase:
+
+| Phase | Soundscape |
+|---|---|
+| Role reveal | A lantern-lit drone with a music box |
+| Proposal | A travelling ostinato over a soft marching drum |
+| Team vote | A ticking clock against a slow heart |
+| Mission | A dark drone, a slow drum and held breath |
+| Reveal | Near-silence, so the cards carry the room |
+| Night interlude | Candle crackle and a gentle music box |
+| Last Stand | War drums and voices |
+| Reckoning | Tolling bells, a choir and a slow heart |
+
+Moments have their own stings: a horn call for each chapter, card flips (a gold chime or a crack), the vote reveal, a match strike for the Candle, war drums for the Last Stand, and a choir stab when Death unmasks.
 
 ## 10. Practice bots
 Bots work in Missions too:

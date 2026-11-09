@@ -2,7 +2,8 @@
 // Pure renderers over the filtered view; the shell (app.js) passes its helpers
 // in `h` and merges `missionActs` into its action table.
 import { glyph } from './icons.js';
-import { t, th, tmh, roleF, mcardF } from './i18n.js';
+import { t, th, tmh, roleF, mcardF, missionStoryLine, scen } from './i18n.js';
+import { backdropHtml } from './backdrops.js';
 
 export const isMissionPhase = (ph) => typeof ph === 'string' && ph.startsWith('M_');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -52,8 +53,10 @@ function cardBanner(v) {
   const M = v.missions;
   if (!M?.card || v.phase === 'ENDED') return '';
   const s = M.sizes[M.mission];
+  const story = missionStoryLine(v.scenario, M.mission);
   return `<div class="mc-banner ${M.card.id !== 'REGULAR' ? 'special' : ''}" data-key="mcb-${M.mission}">${cardGlyph(M.card.id)}<div>
     <span class="kicker">${t('Mission {n} of 5', { n: M.mission + 1 })} · ${th(s.fails > 1 ? 'team of {n}, two Sabotage to fail' : 'team of {n}', { n: s.size })}</span>
+    ${story ? `<span class="mcb-step">${esc(story.step)}</span>` : ''}
     <b>${esc(mcardF(M.card.id, 'name'))}</b>${M.card.id !== 'REGULAR' ? `<small>${esc(mcardF(M.card.id, 'text'))}</small>` : ''}</div></div>`;
 }
 
@@ -220,7 +223,7 @@ function nightStage(v, me, a, h, ctx, pick, table) {
     return `${head(v)}<section class="curtain" data-key="mncurtain"><span class="c-emblem">${glyph('moon')}</span><p>${t('Night falls on the expedition. Make sure nobody can see your screen.')}</p><button class="btn btn-solid" data-act="unveil">${t('Open your eyes')}</button></section>${chips(v)}`;
   }
   const jobs = [];
-  if (a.candle) jobs.push(`<div class="panel tight" data-key="job-candle">${glyph('candle')} <b>${t('You hold the Candle.')}</b> ${t('Choose someone who has never held it: you learn their side, and the Candle passes to them.')}</div>`);
+  if (a.candle) { const c = S.sel.candle ?? a.candle.choice; jobs.push(`<div class="panel tight ${c ? 'lit' : ''}" data-key="job-candle">${glyph('candle')} <b>${t('You hold the Candle.')}</b> ${c ? th('The Candle will show you {name} at dawn.', { name: name(v, c) }) : t('Choose someone who has never held it: you learn their side, and the Candle passes to them.')}</div>`); }
   if (a.witness) jobs.push(`<div class="panel tight" data-key="job-wit">${glyph('mentalist')} <b>${esc(mcardF('WITNESS', 'name'))}.</b> ${t('Choose one member of your team: you see the card they played.')}</div>`);
   if (a.haunt) jobs.push(`<div class="panel tight seal" data-key="job-haunt">${glyph('veiled')} <b>${esc(mcardF('HAUNTED_ROAD', 'name'))}.</b> ${t('Choose one member of the failed team: they cannot go on the next mission.')}</div>`);
   return `${head(v, `<button class="btn btn-sm btn-ghost cover" data-act="veil" data-key="cover">${glyph('veil')} ${t('Cover')}</button>`)}
@@ -280,6 +283,7 @@ export function missionDock(v, h) {
 // ── Actions (merged into app.js's ACT) ─────────────────────────────────────
 export function missionActs(h) {
   const { S, V, send, render, picked, burstAt, sound, haptic } = h;
+  const night = (payload) => send('m.night', payload, { quiet: true });
   const one = (key, el, kill = false, secret = false) => { picked(el, kill, secret); S.sel[key] = S.sel[key] === el.dataset.id ? null : el.dataset.id; render(); };
   return {
     mPickTeam(el) {
@@ -313,10 +317,12 @@ export function missionActs(h) {
       const ok = await send('m.play', { card });
       if (ok) { S.sel.mcard = null; (S.ui.mcover ||= {})[V().phaseId] = true; haptic([20, 40, 20]); render(); }
     },
-    mPickHunch(el) { one('hunch', el, false, true); },
-    mPickCandle(el) { one('candle', el, false, true); },
-    mPickWitness(el) { one('witness', el, false, true); },
-    mPickHaunt(el) { one('haunt', el, true, true); },
+    // Night picks are saved on the server as soon as they're tapped, so a dawn
+    // forced by the host or the timer still uses them.
+    mPickHunch(el) { one('hunch', el, false, true); night({ hunch: S.sel.hunch }); },
+    mPickCandle(el) { one('candle', el, false, true); if (S.sel.candle) night({ candle: S.sel.candle }); },
+    mPickWitness(el) { one('witness', el, false, true); if (S.sel.witness) night({ witness: S.sel.witness }); },
+    mPickHaunt(el) { one('haunt', el, true, true); if (S.sel.haunt) night({ haunt: S.sel.haunt }); },
     async mSleep() {
       const a = V().action;
       const payload = { hunch: S.sel.hunch ?? a.hunch, done: true };
@@ -336,17 +342,30 @@ export function missionActs(h) {
 
 // ── Moments ────────────────────────────────────────────────────────────────
 /** Map one public log entry to a moment (or a toast via `notify`). */
-export function missionMoment(l, v, fresh, { notify, name: nm }) {
+export function missionMoment(l, v, fresh, { notify, name: nm, ...h }) {
   switch (l.ev) {
-    case 'm-card': return { type: 'mcard', card: l.card, mission: l.mission, size: l.size, fails: l.fails, sound: 'unfold' };
+    case 'm-card': {
+      // The story comes first: what this mission is, here, for these people. Then the card turns.
+      const sc = v.scenario;
+      const st = missionStoryLine(sc, l.mission);
+      const card = { type: 'mcard', card: l.card, mission: l.mission, size: l.size, fails: l.fails, sound: 'unfold' };
+      if (!st) return card;
+      const whereIdx = (h.content?.scenario?.WHERE ?? []).indexOf(sc?.where);
+      return [{
+        type: 'mintro', mission: l.mission, step: st.step, scene: st.scene, whereIdx,
+        place: sc ? scen('WHERE', sc.where) : '',
+        lead: sc ? t('{who} in {where} must {why}: {n}. {step}', { who: scen('WHO', sc.who), where: scen('WHERE', sc.where), why: scen('WHY', sc.why), n: l.mission + 1, step: st.step }) : '',
+        sound: 'missionIntro',
+      }, card];
+    }
     case 'm-votes': return {
       type: 'mvotes', approve: l.approve, reject: l.reject, approved: l.approved, goes: l.goes, forced: l.forced,
       votes: l.votes ? Object.entries(l.votes).map(([id, y]) => ({ id, name: nm(id), y, av: v.players.find((p) => p.id === id)?.avatar })) : null, sound: 'knock',
     };
     case 'm-result': return { type: 'mreveal', mission: l.mission, cards: l.cards, count: l.count, fails: l.fails, need: l.need, failed: l.failed, weight: l.weight, sound: null, tapOnly: false };
-    case 'm-stand': return { type: 'call', kicker: 'Three missions failed', title: 'The Last Stand', sub: 'Name one player you believe is Death.', sound: 'bloodmoon' };
+    case 'm-stand': return { type: 'call', kicker: 'Three missions failed', title: 'The Last Stand', sub: 'Name one player you believe is Death.', sound: 'standDrum' };
     case 'm-named': return { type: 'mnamed', target: nm(l.target), death: l.death, sound: 'knock' };
-    case 'm-unmask': return { type: 'munmask', ids: l.ids, names: l.ids.map(nm), from: l.from, sound: 'death' };
+    case 'm-unmask': return { type: 'munmask', ids: l.ids, names: l.ids.map(nm), from: l.from, sound: 'unmask' };
     case 'm-reckon': return { type: 'mreckon', target: nm(l.target), hit: l.hit, medium: nm(l.medium), sound: 'heart' };
     case 'm-haunt': return { type: 'call', kicker: mcardF('HAUNTED_ROAD', 'name'), title: 'Haunted', sub: ['{b} cannot go on the next mission.', { b: nm(l.target) }], sound: 'death' };
     case 'm-night': return { type: 'nightfall', n: l.n };
@@ -357,12 +376,26 @@ export function missionMoment(l, v, fresh, { notify, name: nm }) {
   }
 }
 
-export const MISSION_MOMENT_TIME = { mcard: 4200, mvotes: 5400, mnamed: 5200, munmask: 5200, mreckon: 6200 };
+export const MISSION_MOMENT_TIME = { mintro: 9000, mcandle: 5200, mcard: 4200, mvotes: 5400, mnamed: 5200, munmask: 5200, mreckon: 6200 };
 export const revealTime = (m) => 2600 + (m.cards ? m.cards.length : m.count) * 1150 + 2600;
 
 export function missionMomentHtml(m, h) {
   const { letters, avatarSvg, onBoard } = h;
   switch (m.type) {
+    case 'mintro':
+      return `${m.whereIdx >= 0 ? backdropHtml(m.whereIdx, m.mission % 2 === 1) : ''}<div class="mi-body">
+        <span class="kicker mi-kick">${esc(t('Mission {n} of 5', { n: m.mission + 1 }))}${m.place ? ` · ${esc(m.place)}` : ''}</span>
+        <div class="mi-num" aria-hidden="true">${ROMAN[m.mission + 1]}</div>
+        <h1 class="m-title mi-title">${letters(m.step)}</h1>
+        <div class="mi-rule" aria-hidden="true"><i></i>${glyph('lantern')}<i></i></div>
+        <p class="mi-lead">${esc(m.lead)}</p>
+        <p class="mi-scene">${esc(m.scene)}</p>
+        <p class="m-sub small mi-next">${esc(t('The mission card is drawn…'))}</p></div>`;
+    case 'mcandle':
+      return `<div class="candle-art" aria-hidden="true"><span class="cl-flame"></span><span class="cl-glow"></span>${glyph('candle')}</div>
+        <span class="kicker">${esc(t('By Candlelight'))}</span><h1 class="m-title">${letters(m.name)}</h1>
+        <div class="verdict-stamp" style="--d:2s"><span class="stamp late-stamp ${m.death ? '' : 'gold'}">${esc(t(m.death ? 'Death' : 'Living'))}</span></div>
+        <p class="m-sub small late">${esc(t('Only you saw this. The Candle now passes to them.'))}</p>`;
     case 'mcard':
       return `<span class="kicker">${t('Mission {n} of 5', { n: m.mission + 1 })}</span><h1 class="m-title">${letters(t(m.card === 'REGULAR' ? 'A mission' : 'A mission card'))}</h1>
         <div class="mc-flip ${m.card !== 'REGULAR' ? 'special' : ''}"><div class="mc-in"><div class="mc-back"><b>DS</b></div><div class="mc-front">${cardFace(m.card, { size: m.size, fails: m.fails })}</div></div></div>

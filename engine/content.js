@@ -396,3 +396,44 @@ export const SPECIAL_MISSION_CARDS = Object.keys(MISSION_CARDS).filter((k) => k 
 PRESETS.missions = { id: 'missions', name: 'Dead Set: Missions', min: MISSION_MIN, max: MISSION_MAX, pool: [], dreams: false,
   rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, missions: true,
   blurb: 'Teams, votes and sabotage. Nobody dies: lead missions, read the votes, and find Death before it finds the Medium.' };
+
+/** Missions: the story drives the five missions. Index-aligned with SCENARIO.WHY / SCENARIO.WHERE.
+ *  steps[w][k] = what mission k+1 is for; scenes[p][k] = what the place throws at you on mission k+1. */
+export const MISSION_STORY = {
+  steps: [
+    ['Find the torn map', 'Follow the false trail', 'Dig past the decoys', 'Open the vault', 'Carry the gold out'],
+    ['Find the clock', 'Steal the keys', 'Break the first lock', 'Outrun the alarms', 'Reach the last door'],
+    ['Gather the candles', 'Draw the circle', 'Speak the forbidden words', 'Feed the altar', 'Close the circle'],
+    ['Examine the body', 'Question the butler', 'Find the weapon', 'Break the alibi', 'Name the killer'],
+    ['Read the warning signs', 'Find the source', 'Cut the right wire', 'Hold the line', 'Pull the final lever'],
+    ['Find the cursed object', 'Learn its true name', 'Annoy the spirit', 'Bind it in salt', 'Shatter the curse'],
+    ['Buy into the game', 'Count the cards', 'Spot the cheat', 'Raise everything', 'Win the final hand'],
+    ['Find the heir', 'Hide the heir', 'Survive the dinner', 'Fool the assassins', 'Crown the heir'],
+    ['Read the stars', 'Cross the dark', 'Bribe the ferryman', 'Climb the last hill', 'Open the front door'],
+    ['Intercept a letter', 'Follow the footsteps', 'Set a trap', 'Spring the trap', 'Unmask the traitor'],
+    ['Barricade the doors', 'Ration the candles', 'Ignore the knocking', 'Hold out past midnight', 'Greet the dawn'],
+    ['Pick up the scent', 'Find the fence', 'Crack the safe', 'Swap in the fake', 'Return the relic'],
+    ['Ring the old bell', 'Find who sang the lullaby', 'Brew the bitter coffee', 'Wake the mayor', 'Break the spell'],
+    ['Find the first page', 'Decipher the symbols', 'Find the missing key', 'Read between the lines', 'Read the last word'],
+    ['Burn the diary', 'Silence the parrot', 'Bribe the witness', 'Lose the detective', 'Take it to the grave'],
+  ],
+  scenes: [
+    ['The ballroom is tilting, but the band refuses to stop playing.', 'Seawater is ankle-deep in the captain\'s cabin, and rising.', 'The lifeboats have been counted twice. There are not enough.', 'In the flooded engine room, something is still ticking.', 'The deck is nearly vertical now. Hold on to something. Anything.'],
+    ['The carousel starts by itself the moment you arrive.', 'The hall of mirrors shows one more of you than there should be.', 'The ghost train has a queue. Nobody in it is breathing.', 'The Ferris wheel stops with you at the very top.', 'Every clown statue has turned to face you.'],
+    ['The door seals behind you with a hiss. The lights flicker.', 'The radio crackles with a voice that knows your names.', 'The rations say "Do not open". Someone opened them.', 'Level minus four is not on any map.', 'Twenty minutes of air left. Probably.'],
+    ['The portraits follow you with their eyes, and also with their feet.', 'Dinner is laid for exactly one more guest than you are.', 'The secret door is behind the book you just touched.', 'The attic stairs creak in the shape of words.', 'The house has stopped pretending to be empty.'],
+    ['The snow eats your footprints as fast as you make them.', 'The sled dogs refuse to go one step further.', 'Something large has followed your tracks all day.', 'The ice over the lake has started to sing.', 'The blizzard closes in. You can no longer see your own hands.'],
+    ['The lamp turns, but nobody has climbed the stairs in years.', 'The foghorn answers questions nobody asked.', 'The keeper\'s log ends mid-sentence.', 'The rocks below are full of ships that trusted this light.', 'At the top, the lamp goes out. Something breathes in the dark.'],
+    ['Gravity works in most rooms. Most.', 'The station AI says good morning. It is not morning.', 'Hydroponics is full of plants that nobody planted.', 'The airlock log says someone left. Nobody is missing.', 'The orbit is decaying. Everybody, hold your breath.'],
+    ['The conductor punches your ticket and whispers: wrong train.', 'The dining car is laid for a feast, but the chef is gone.', 'A tunnel. When the lights return, one passenger is different.', 'The train crosses a bridge that was not there yesterday.', 'The brakes have stopped working. The mountain has not.'],
+    ['You row down the nave while the organ plays underwater.', 'The candles burn beneath the surface. That should not be possible.', 'The saints in the stained glass are all pointing at you.', 'The crypt has flooded, and the coffins are floating.', 'The bell rings under the water, slow and very close.'],
+    ['The roses lean towards you as you pass. Politely, for now.', 'The greenhouse is humid, and something in it is humming.', 'A carnivorous plant has eaten the map. And the gardener.', 'The hedge maze rearranges itself whenever you blink.', 'The great tree at the centre opens one sleepy eye.'],
+    ['Reception has your booking. You never made one.', 'The pool is full of sand, and the lifeguard is still on duty.', 'Room 313 hums at night. There is no room 312.', 'A sandstorm turns every window the colour of rust.', 'The well at the heart of the oasis has started to whisper.'],
+    ['The monks took a vow of silence, and are breaking it loudly.', 'The bells ring thirteen times.', 'The scriptorium holds a book that writes itself.', 'The cliff path is slippery, and the goats are judging you.', 'In the crypt, the abbot is waiting. He died in 1611.'],
+    ['The harvest moon hangs so low you could bite it.', 'The cellar barrels are ageing something that is not wine.', 'The scarecrow was facing the other way a minute ago.', 'The tasting room smells of plums, smoke and bad decisions.', 'The grapes turned black overnight. They are listening.'],
+    ['Stage 9 is lit and rolling. Nobody is behind the camera.', 'The props department is missing exactly one real knife.', 'On the backlot, a cardboard town casts real shadows.', 'The director\'s chair has your name on it, spelled wrong.', 'The final reel is in the projector. Roll it and see how it ends.'],
+    ['Every clock in the hall shows a different time, and all of them are late.', 'The chess-playing automaton demands a rematch.', 'A mechanical bird sings the alarm, and the alarm sings back.', 'The great orrery has started spinning on its own.', 'Midnight strikes, and every exhibit turns its head.'],
+  ],
+  genericSteps: ['The first step', 'Deeper in', 'The point of no return', 'The hardest part', 'The end of the road'],
+  genericScenes: ['The expedition sets out. Nobody looks back.', 'The path narrows, and so does trust.', 'Halfway there. Someone is counting the steps.', 'The air grows colder with every choice.', 'The last stretch. Whatever waits here has waited for you.'],
+};

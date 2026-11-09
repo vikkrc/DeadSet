@@ -1268,5 +1268,9 @@ export default {
     "Classic Dead Set": "Klasický Dead Set",
     "Hidden roles, night kills, Dreams and Rule cards. 5–25 players.": "Skryté role, noční vraždy, Sny a Karty pravidel. 5–25 hráčů.",
     "Teams, votes and sabotage. Nobody dies. 5–10 players.": "Týmy, hlasování a sabotáž. Nikdo neumírá. 5–10 hráčů.",
+    "Only you saw this. The Candle now passes to them.": "Viděl jsi to jen ty. Svíčka teď přechází k němu.",
+    "The Candle will show you {name} at dawn.": "Za úsvitu ti Svíčka ukáže hráče {name}.",
+    "The mission card is drawn…": "Táhne se karta mise…",
+    "{who} in {where} must {why}: {n}. {step}": "{who} · {where} · Cíl: {why} – {n}. {step}",
   },
 };
