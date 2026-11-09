@@ -6,6 +6,7 @@ import {
   byId, nameOf, hasRule, deathTeam, upcomingNight, isDayPhase,
 } from './state.js';
 import { setupReport, nominees, chatChannels, ballotWeight } from './game.js';
+import { missionPublic, missionAction, missionMe, missionSecrets, isMissionPhase, MISSION_ADVANCE_LABEL } from './missions.js';
 
 const roleCard = (id) => {
   const r = ROLES[id];
@@ -17,6 +18,11 @@ function progress(m) {
   const N = m.night;
   switch (m.phase) {
     case 'LOBBY': return { label: 'ready', done: m.players.filter((p) => p.ready).length, total: m.players.length };
+    case 'M_REVEAL': return { label: 'have seen their role', done: m.players.filter((p) => p.acknowledged).length, total: m.players.length };
+    case 'M_VOTE': return { label: 'votes in', done: Object.keys(m.M.votes).length, total: m.players.length };
+    case 'M_MISSION': return { label: 'cards played', done: Object.keys(m.M.plays).length, total: m.M.proposal.team.length };
+    case 'M_NIGHT': return { label: 'asleep', done: Object.keys(m.M.night.done).length, total: m.players.length };
+    case 'M_LAST_STAND': return { label: 'votes in', done: Object.keys(m.M.stand.votes).length, total: m.players.length };
     case 'NIGHT_0_REVEAL': return { label: 'have seen their role', done: m.players.filter((p) => p.acknowledged).length, total: m.players.length };
     case 'NIGHT_ACTIONS': return { label: 'asleep', done: N.aliveAtOpen.filter((id) => N.done[id]).length, total: N.aliveAtOpen.length };
     case 'DAY_VOTING': {
@@ -38,6 +44,7 @@ const ADVANCE_LABEL = {
   DAY_RESOLVING: 'Skip final act',
   NIGHT_DREAM_SWAP: 'Open night actions now',
   NIGHT_ACTIONS: 'Bring the dawn',
+  ...MISSION_ADVANCE_LABEL,
 };
 
 export function publicView(m, now = Date.now()) {
@@ -68,7 +75,9 @@ export function publicView(m, now = Date.now()) {
     progress: progress(m),
     log: m.publicLog.slice(-250),
     winner: m.winner, endReason: m.endReason, jesterId: m.jesterId ?? null,
+    mode: (m.config?.missions || (m.phase === 'LOBBY' && PRESETS[m.settings.preset]?.missions)) ? 'missions' : 'classic',
   };
+  if (m.M && m.phase !== 'LOBBY') v.missions = missionPublic(m);
   // The end-of-game recap reveals every action, so it follows the role reveal.
   if (revealAll && m.history?.length) v.recap = m.history;
   if (m.day && isDayPhase(m.phase)) {
@@ -120,6 +129,7 @@ export function playerView(m, pid, now = Date.now()) {
     acknowledged: p.acknowledged,
     ready: p.ready,
   };
+  if (m.M && started) Object.assign(me, missionMe(m, p));
   if (started && p.lover) me.lover = { id: p.lover, name: nameOf(m, p.lover), alive: !!byId(m, p.lover)?.alive };
   if (started && p.alignment === 'CULT') me.cultmates = m.players.filter((x) => x.alignment === 'CULT' && x.id !== p.id).map((x) => ({ id: x.id, name: x.name, alive: x.alive }));
   // Death teammates: only for currently active (or about-to-be-active) members.
@@ -147,6 +157,7 @@ export function playerView(m, pid, now = Date.now()) {
 }
 
 function actionFor(m, p) {
+  if (isMissionPhase(m.phase)) return missionAction(m, p);
   const N = m.night;
   const d = m.day;
   switch (m.phase) {
@@ -249,6 +260,7 @@ export function moderatorView(m, now = Date.now()) {
     action: N?.actions[p.id]?.uses ?? null, done: N ? !!N.done[p.id] : null,
     ballot: m.day?.ballots[p.id] ?? null,
   }));
+  if (m.M && m.phase !== 'LOBBY') v.missionSecrets = missionSecrets(m);
   if (N?.death) v.deathTeam = { members: N.death.members, capacity: N.death.capacity, proposals: N.death.proposals, confirmed: N.death.confirmed };
   v.private = [];
   v.action = { type: 'moderator' };

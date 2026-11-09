@@ -46,6 +46,7 @@ export function setContent(c) {
     presets: Object.fromEntries(c.presets.map((p) => [p.id, p])),
     scenario: c.scenario,
     products: c.products ?? [],
+    mcards: Object.fromEntries((c.missionCards ?? []).map((x) => [x.id, x])),
   };
 }
 
@@ -55,6 +56,7 @@ const escH = (s) => String(s ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;',
 export const roleF = (id, f) => D?.roles?.[id]?.[f] ?? EN.roles[id]?.[f] ?? (f === 'name' ? id : '');
 export const dreamF = (id, f) => D?.dreams?.[id]?.[f] ?? EN.dreams[id]?.[f] ?? (f === 'name' ? id : '');
 export const ruleF = (id, f) => D?.rules?.[id]?.[f] ?? EN.rules[id]?.[f] ?? (f === 'name' ? id : '');
+export const mcardF = (id, f) => D?.mcards?.[id]?.[f] ?? EN.mcards?.[id]?.[f] ?? (f === 'name' ? id : '');
 export const presetF = (id, f) => D?.presets?.[id]?.[f] ?? EN.presets[id]?.[f] ?? id;
 /** Scenario card: translate the built-in cards, keep custom (host-written) text. */
 export function scen(kind, english) {
@@ -88,6 +90,7 @@ function val(k, v) {
   if (v == null) return '';
   if (isMsg(v)) return tm(v);
   if (k.startsWith('role')) return roleF(v, 'name');
+  if (k.startsWith('mcard')) return mcardF(v, 'name');
   if (k === 'dreamText') return dreamF(v, 'text');
   if (k.startsWith('dream')) return dreamF(v, 'name');
   if (k === 'rules') return list(v.map((r) => ruleF(r, 'name')));

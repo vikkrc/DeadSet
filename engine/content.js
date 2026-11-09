@@ -325,3 +325,74 @@ export const SMALL_TABLE = { DOUBLE_JEOPARDY: 7, JESTER: 8, CULT_LEADER: 8, RIPP
 export const AVATAR_PARTS = { c: 10, e: 8, m: 8, h: 10 };
 /** Chance per night that clues reach someone (index = odds setting). */
 export const CLUE_ODDS = [0, 15, 30, 50];
+
+// ── Dead Set: Missions (see MISSIONS.md) ───────────────────────────────────
+// Roles used only in the Missions mode (set 'missions'); they never enter the
+// base game's decks.
+Object.assign(ROLES, {
+  MEDIUM: { id: 'MEDIUM', name: 'Medium', set: 'missions', alignment: 'NON_DEATH', glyph: 'medium', when: 'Always',
+    summary: 'You see every Death player, except the Veiled. Guide the expedition without giving yourself away.',
+    detail: 'If the Living win three missions, or catch a Death player in the Last Stand, Death gets one guess at who you are. If they name you, Death wins.' },
+  BELIEVER: { id: 'BELIEVER', name: 'Believer', set: 'missions', alignment: 'NON_DEATH', glyph: 'believer', when: 'Always',
+    summary: 'You see two candles: the Medium and the Charlatan. You do not know which is which.',
+    detail: 'Work out which candle is the true Medium and protect them, often by acting like the Medium yourself. Without a Charlatan in play, your only candle is the Medium.' },
+  COMPANION: { id: 'COMPANION', name: 'Companion', set: 'missions', alignment: 'NON_DEATH', glyph: 'innocent', when: 'Always',
+    summary: 'You know nothing but your own heart. Watch the votes and the missions.',
+    detail: 'You can only play Succeed. Read who proposes whom, who approves which team, and which missions fail.' },
+  REAPER: { id: 'REAPER', name: 'Reaper', set: 'missions', alignment: 'DEATH', glyph: 'death', when: 'Always',
+    summary: 'You lead Death. In the Reckoning, you make the final call on who the Medium is.',
+    detail: 'You see the rest of Death (except the Stray). On a mission you may play Succeed or Sabotage. Your teammates can suggest names in the Reckoning; your choice counts.' },
+  CHARLATAN: { id: 'CHARLATAN', name: 'Charlatan', set: 'missions', alignment: 'DEATH', glyph: 'charlatan', when: 'Always',
+    summary: 'To the Believer you look exactly like the Medium. Use it.',
+    detail: 'You see the rest of Death (except the Stray). On a mission you may play Succeed or Sabotage.' },
+  VEILED: { id: 'VEILED', name: 'Veiled', set: 'missions', alignment: 'DEATH', glyph: 'veiled', when: 'Always',
+    summary: 'The Medium cannot see you.',
+    detail: 'You see the rest of Death (except the Stray). On a mission you may play Succeed or Sabotage.' },
+  STRAY: { id: 'STRAY', name: 'Stray', set: 'missions', alignment: 'DEATH', glyph: 'stray', when: 'Always',
+    summary: 'You serve Death alone: you do not know the others, and they do not know you.',
+    detail: 'The Medium still sees you. On a mission you may play Succeed or Sabotage. In the Reckoning, Death unmasks and you join the others.' },
+  SHADE: { id: 'SHADE', name: 'Shade', set: 'missions', alignment: 'DEATH', glyph: 'death', when: 'Always',
+    summary: 'You walk with Death and know your teammates.',
+    detail: 'You see the rest of Death (except the Stray). On a mission you may play Succeed or Sabotage.' },
+});
+
+/** Optional Missions roles (lobby switches) and their side. */
+export const MISSION_OPTIONAL = { BELIEVER: 'NON_DEATH', CHARLATAN: 'DEATH', VEILED: 'DEATH', STRAY: 'DEATH' };
+export const MISSION_MIN = 5;
+export const MISSION_MAX = 10;
+/** Death seats per table size. */
+export const MISSION_DEATH = { 5: 2, 6: 2, 7: 3, 8: 3, 9: 3, 10: 4 };
+/** Team sizes for missions 1–5 per table size. */
+export const MISSION_SIZES = {
+  5: [2, 3, 2, 3, 3], 6: [2, 3, 4, 3, 4], 7: [2, 3, 3, 4, 4],
+  8: [3, 4, 4, 5, 5], 9: [3, 4, 4, 5, 5], 10: [3, 4, 4, 5, 5],
+};
+/** Sabotage cards needed to fail mission k (index 0–4): two on mission 4 from 7 players. */
+export const missionFailsNeeded = (n, k) => (n >= 7 && k === 3 ? 2 : 1);
+/** Chance a mission draws a special card (index = setting: off, rare, sometimes). */
+export const MISSION_CARD_ODDS = [0, 25, 40];
+/** Proposals per mission; the last one goes ahead whatever the vote. */
+export const MISSION_PROPOSALS = 5;
+
+export const MISSION_CARDS = {
+  REGULAR: { id: 'REGULAR', name: 'Regular Mission', glyph: 'mission', text: 'No special effect.' },
+  LANTERN: { id: 'LANTERN', name: 'Lantern Bearer', glyph: 'lantern', text: 'The Leader must be on the team.' },
+  FRESH_FACES: { id: 'FRESH_FACES', name: 'Fresh Faces', glyph: 'fresh', text: 'At least half the team (rounded up) must not have been on the previous mission.' },
+  EXTRA_HAND: { id: 'EXTRA_HAND', name: 'Extra Hand', glyph: 'plus', text: 'The team is one player larger.' },
+  SKELETON_CREW: { id: 'SKELETON_CREW', name: 'Skeleton Crew', glyph: 'minus', text: 'The team is one player smaller.' },
+  MASKED_VOTE: { id: 'MASKED_VOTE', name: 'Masked Vote', glyph: 'mask', text: 'Team votes show only the totals, not who voted how.' },
+  SHORT_PATIENCE: { id: 'SHORT_PATIENCE', name: 'Short Patience', glyph: 'hourglass', text: 'The third proposal goes ahead whatever the vote.' },
+  WARD: { id: 'WARD', name: 'Ward', glyph: 'guardian', text: 'With the team, the Leader names one member whose card is forced to Succeed.' },
+  STEADFAST: { id: 'STEADFAST', name: 'Steadfast', glyph: 'shield', text: 'One more Sabotage than usual is needed to fail.' },
+  BRITTLE: { id: 'BRITTLE', name: 'Brittle', glyph: 'crack', text: 'A single Sabotage fails it, even though this mission normally needs two.' },
+  SMOKE: { id: 'SMOKE', name: 'Smoke', glyph: 'smoke', text: 'Only the result is shown, not how many Sabotage cards were played.' },
+  GRAND: { id: 'GRAND', name: 'Grand Mission', glyph: 'crown', text: 'The result counts twice on the track.' },
+  TRAIL: { id: 'TRAIL', name: 'Trail', glyph: 'clue', text: 'If it succeeds, one random Living team member finds a clue at night.' },
+  WITNESS: { id: 'WITNESS', name: 'Witness', glyph: 'mentalist', text: 'At night, the Leader of the team privately sees one other member\'s card.' },
+  HAUNTED_ROAD: { id: 'HAUNTED_ROAD', name: 'Haunted Road', glyph: 'veiled', text: 'If it fails, the Reaper picks one of its members to sit out the next mission.' },
+};
+export const SPECIAL_MISSION_CARDS = Object.keys(MISSION_CARDS).filter((k) => k !== 'REGULAR');
+
+PRESETS.missions = { id: 'missions', name: 'Dead Set: Missions', min: MISSION_MIN, max: MISSION_MAX, pool: [], dreams: false,
+  rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, missions: true,
+  blurb: 'Teams, votes and sabotage. Nobody dies: lead missions, read the votes, and find Death before it finds the Medium.' };

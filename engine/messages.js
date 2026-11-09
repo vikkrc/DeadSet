@@ -10,9 +10,10 @@
 //   opt*       → MUTE / NO_VOTE / BLESS / CURSE / DEATH / NON_DEATH option ids
 //   dead*      → array of [name, roleId|null] (role shown when revealed)
 //   names*     → array of names, joined as a list
+//   mcard*     → a Missions mission-card id, rendered as the card's name
 //   who/where/why → scenario cards
 //   anything else → printed as-is; nested messages are rendered recursively
-import { ROLES, DREAMS, RULE_CARDS } from './content.js';
+import { ROLES, DREAMS, RULE_CARDS, MISSION_CARDS } from './content.js';
 
 const OPT = { MUTE: 'Mute', NO_VOTE: 'No Vote', BLESS: 'Bless', CURSE: 'Curse', DEATH: 'Death', NON_DEATH: 'Non-Death' };
 
@@ -27,6 +28,7 @@ function val(k, v) {
   if (v == null) return '';
   if (isMsg(v)) return fmt(v);
   if (k.startsWith('role')) return ROLES[v]?.name ?? String(v);
+  if (k.startsWith('mcard')) return MISSION_CARDS[v]?.name ?? String(v);
   if (k === 'dreamText') return DREAMS[v]?.text ?? String(v);
   if (k.startsWith('dream')) return DREAMS[v]?.name ?? String(v);
   if (k === 'rules') return listEn(v.map((r) => RULE_CARDS[r]?.name ?? r));

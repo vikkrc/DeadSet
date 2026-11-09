@@ -3,6 +3,7 @@
 // choices. They never chat. The host adds them from a hidden lobby panel.
 import { playerView } from '../engine/views.js';
 import { AVATAR_PARTS } from '../engine/content.js';
+import { randomTeam } from '../engine/missions.js';
 
 export const BOT_NAMES = ['Ash', 'Bram', 'Cass', 'Dorian', 'Edda', 'Finch', 'Greer', 'Hollis', 'Isolde', 'Jem', 'Kestrel', 'Lark',
   'Mabel', 'Nell', 'Orrin', 'Perpetua', 'Quill', 'Rook', 'Silas', 'Tamsin', 'Ursa', 'Vesper', 'Wren', 'Yarrow', 'Zeke'];
@@ -40,8 +41,82 @@ export function botDecide(m, botId, rng) {
       if (a.type === 'swap' && a.snatcher && a.choice == null && a.targets?.length && chance(rng, 0.5)) return { cmd: { type: 'dream.swap', payload: { target: pick(rng, a.targets) } } };
       return null;
     case 'NIGHT_ACTIONS': return nightMove(m, v, rng);
+    default: return m.M ? missionMove(m, v, rng) : null;
+  }
+}
+
+// ── Missions ───────────────────────────────────────────────────────────────
+// Living bots trust nobody they know is Death; Death bots sabotage most of the
+// time (less often when another known Death is on the team, so they don't
+// double up).
+function missionMove(m, v, rng) {
+  const a = v.action || {};
+  const me = v.me;
+  const M = v.missions;
+  const known = new Set([...(me.seesDeath || []), ...(me.teammates || [])].map((x) => x.id));
+  const others = v.players.filter((p) => p.id !== me.id).map((p) => p.id);
+  const cmd = (type, payload = {}) => ({ cmd: { type, payload } });
+  switch (a.type) {
+    case 'mack': return a.done ? null : cmd('m.ack');
+    case 'mpropose': {
+      const { team, ward } = botTeam(m, me, known, rng);
+      return cmd('m.propose', { team, ward });
+    }
+    case 'mvote': {
+      if (a.choice !== null) return null;
+      const team = M.proposal?.team || [];
+      const deathOn = team.filter((id) => known.has(id)).length;
+      let approve;
+      if (me.alignment === 'DEATH') approve = deathOn > 0 || chance(rng, 0.3);
+      else approve = deathOn === 0 && (team.includes(me.id) || chance(rng, 0.6));
+      if (M.forced) approve = approve || chance(rng, 0.5);
+      return cmd('m.vote', { approve });
+    }
+    case 'mplay': {
+      if (a.played) return null;
+      if (!a.canFail) return cmd('m.play', { card: 'S' });
+      const mates = (M.proposal?.team || []).filter((id) => id !== me.id && known.has(id)).length;
+      return cmd('m.play', { card: chance(rng, mates ? 0.45 : 0.8) ? 'F' : 'S' });
+    }
+    case 'mnight': {
+      if (a.done) return null;
+      const payload = { done: true };
+      const suspects = others.filter((id) => me.alignment === 'DEATH' ? !known.has(id) : (known.size ? known.has(id) : true));
+      payload.hunch = a.hunch ?? pick(rng, suspects.length ? suspects : others);
+      if (a.candle) payload.candle = pick(rng, a.candle.targets.filter((id) => id !== me.id));
+      if (a.witness) payload.witness = pick(rng, a.witness.targets);
+      if (a.haunt) payload.haunt = pick(rng, a.haunt.targets);
+      return cmd('m.night', payload);
+    }
+    case 'mstand': {
+      if (a.choice) return null;
+      const pool = me.alignment === 'DEATH' ? a.targets.filter((id) => !known.has(id)) : a.targets.filter((id) => known.has(id));
+      return cmd('m.accuse', { target: pick(rng, pool.length ? pool : a.targets) });
+    }
+    case 'mreckon': {
+      if (a.reaper) {
+        const theirs = Object.entries(a.suggestions).filter(([id]) => id !== me.id).map(([, t]) => t);
+        if (!theirs.length && chance(rng, 0.5)) return { wait: true };
+        return cmd('m.reckon', { target: theirs.length ? pick(rng, theirs) : pick(rng, a.targets) });
+      }
+      return a.mine ? null : cmd('m.suggest', { target: pick(rng, a.targets) });
+    }
     default: return null;
   }
+}
+
+/** A legal team, preferring players the bot trusts (and itself). */
+function botTeam(m, me, known, rng) {
+  const M = m.M;
+  for (let i = 0; i < 40; i++) {
+    try {
+      const { team, ward } = randomTeam(m, rng, chance(rng, 0.8));
+      const bad = team.filter((id) => known.has(id)).length;
+      if (me.alignment === 'DEATH' ? bad === 0 && i < 20 : bad > 0 && i < 30) continue;
+      return { team, ward: ward && M.card === 'WARD' ? (me.alignment === 'DEATH' ? team.find((id) => !known.has(id)) ?? ward : ward) : ward };
+    } catch { break; }
+  }
+  return randomTeam(m, rng, false);
 }
 
 function nightMove(m, v, rng) {

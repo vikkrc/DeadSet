@@ -2,6 +2,7 @@
 import {
   ROLES, PRESETS, RULE_CARDS, RULE_IDS, COPY_SENSITIVE, SCENARIO, MIN_PLAYERS, ABS_MAX_PLAYERS, LANGS,
   DREAM_WEIGHTS, DREAM_WEIGHT_MAX, SMALL_TABLE, STANDARD_EXTENDED, FULL_EXTENDED,
+  MISSION_OPTIONAL, MISSION_DEATH, MISSION_MIN, MISSION_MAX,
 } from './content.js';
 import { shuffle, pick, seededRng } from './rng.js';
 
@@ -34,7 +35,8 @@ export function defaultSettings() {
     doomsdayDays: 3,
     rules: { mode: 'random', count: 1, selected: [] },
     scenario: { mode: 'random', who: '', where: '', why: '' },
-    timers: { morning: 0, discussion: 0, defense: 0, voting: 90, swap: 30, night: 120, retaliation: 45 },
+    timers: { morning: 0, discussion: 0, defense: 0, voting: 90, swap: 30, night: 120, retaliation: 45,
+      proposal: 0, teamVote: 60, mission: 45, interlude: 45, lastStand: 240, reckoning: 180 },
     transport: 'in-person',
     revealOnDeath: false,
     endReveal: true,
@@ -56,6 +58,9 @@ export function defaultSettings() {
     ripper: false,
     tieBreak: 'none',
     backdrops: true,
+    // Missions mode
+    mRoles: { BELIEVER: true, CHARLATAN: true, VEILED: false, STRAY: false },
+    missionCards: 1,
   };
 }
 
@@ -84,7 +89,7 @@ export function applySettingsPatch(settings, patch = {}) {
     const out = {};
     for (const [id, c] of Object.entries(patch.customRoles)) {
       const k = clampInt(c, 0, ABS_MAX_PLAYERS, 0);
-      if (ROLES[id] && k > 0) out[id] = k;
+      if (ROLES[id] && ROLES[id].set !== 'missions' && k > 0) out[id] = k;
     }
     s.customRoles = out;
   }
@@ -117,6 +122,7 @@ export function applySettingsPatch(settings, patch = {}) {
     }
   }
   if (patch.timers) {
+    s.timers = { ...defaultSettings().timers, ...s.timers };
     for (const k of Object.keys(s.timers)) {
       if (patch.timers[k] !== undefined) s.timers[k] = clampInt(patch.timers[k], 0, 1800, s.timers[k]);
     }
@@ -127,6 +133,11 @@ export function applySettingsPatch(settings, patch = {}) {
     s.dreamWeights = { ...DREAM_WEIGHTS };
     s.customRoles = {};
   }
+  if (patch.mRoles && typeof patch.mRoles === 'object') {
+    s.mRoles = { ...defaultSettings().mRoles, ...s.mRoles };
+    for (const k of Object.keys(MISSION_OPTIONAL)) if (typeof patch.mRoles[k] === 'boolean') s.mRoles[k] = patch.mRoles[k];
+  }
+  if (patch.missionCards !== undefined) s.missionCards = clampInt(patch.missionCards, 0, 2, 1);
   if (patch.clueOdds !== undefined) s.clueOdds = clampInt(patch.clueOdds, 1, 3, 1);
   if (['none', 'coin'].includes(patch.tieBreak)) s.tieBreak = patch.tieBreak;
   for (const k of ['revealOnDeath', 'endReveal', 'selfNomination', 'selfVote', 'threads', 'score', 'bloodMoon', 'finalTwoDeath', 'clues', 'lovers', 'cult', 'ripper', 'backdrops']) {
@@ -146,7 +157,7 @@ export function parseCustomDeck(text) {
   const out = [];
   const errors = [];
   const byName = {};
-  for (const r of Object.values(ROLES)) {
+  for (const r of Object.values(ROLES).filter((x) => x.set !== 'missions')) {
     byName[r.name.toLowerCase()] = r.id;
     byName[r.id.toLowerCase()] = r.id;
     if (r.alias) byName[r.alias.toLowerCase()] = r.id;
@@ -219,6 +230,7 @@ export function suggestSetups(n, seed = 0) {
  * warnings (shown, not blocking) plus a public description of the deck.
  */
 export function validateSetup(n, settings) {
+  if (PRESETS[settings.preset]?.missions) return validateMissions(n, settings);
   const errors = [];
   const warnings = [];
   const preset = PRESETS[settings.preset];
@@ -372,3 +384,41 @@ export function drawScenario(settings, rng) {
 }
 
 export { RULE_IDS };
+
+// ── Missions mode ──────────────────────────────────────────────────────────
+/** Which optional Missions roles are switched on. */
+export function missionRolesOn(settings) {
+  const on = { ...{ BELIEVER: true, CHARLATAN: true, VEILED: false, STRAY: false }, ...(settings.mRoles || {}) };
+  return Object.keys(MISSION_OPTIONAL).filter((k) => on[k]);
+}
+
+/** The Missions deck for n players: Medium + Reaper + switched-on roles, filled with Companions and Shades. */
+export function missionDeck(n, settings) {
+  const death = MISSION_DEATH[n];
+  const on = missionRolesOn(settings);
+  const deathRoles = ['REAPER', ...on.filter((r) => MISSION_OPTIONAL[r] === 'DEATH')];
+  const livingRoles = ['MEDIUM', ...on.filter((r) => MISSION_OPTIONAL[r] === 'NON_DEATH')];
+  while (deathRoles.length < death) deathRoles.push('SHADE');
+  while (livingRoles.length < n - death) livingRoles.push('COMPANION');
+  return [...livingRoles, ...deathRoles];
+}
+
+function validateMissions(n, settings) {
+  const errors = [];
+  const warnings = [];
+  if (n < MISSION_MIN) errors.push(['At least {min} players are needed (currently {n}).', { min: MISSION_MIN, n }]);
+  if (n > MISSION_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'Missions', n: MISSION_MAX }]);
+  if (settings.scenario.mode === 'manual' && !(settings.scenario.who && settings.scenario.where && settings.scenario.why)) {
+    errors.push('Fill in WHO, WHERE and WHY, or switch the scenario to random.');
+  }
+  const on = missionRolesOn(settings);
+  const deathOpt = on.filter((r) => MISSION_OPTIONAL[r] === 'DEATH');
+  let publicDeck = null;
+  if (n >= MISSION_MIN && n <= MISSION_MAX) {
+    const death = MISSION_DEATH[n];
+    if (deathOpt.length + 1 > death) errors.push(['Too many Death roles: {n} players have only {d} Death seats, and the Reaper takes one.', { n, d: death }]);
+    else publicDeck = { exact: countBy(missionDeck(n, settings)) };
+  }
+  if (on.includes('CHARLATAN') && !on.includes('BELIEVER')) warnings.push('The Charlatan only matters when a Believer is in play.');
+  return { ok: errors.length === 0, errors, warnings, publicDeck, suggestions: [] };
+}

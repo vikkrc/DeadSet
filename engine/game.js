@@ -13,6 +13,7 @@ import { shuffle } from './rng.js';
 import { resolveNight } from './night.js';
 import { checkVictory } from './victory.js';
 import { ballotWeight, tally } from './day.js';
+import { startMissions, missionCommand, missionAdvance, isMissionPhase } from './missions.js';
 
 export { GameError };
 
@@ -34,7 +35,7 @@ export function newMatch({ id, code, hostId, moderated = false }) {
     scenario: null, activeRules: [], config: null,
     publicLog: [], privateLog: {}, chats: {},
     day: null, night: null, pendingStatuses: [], gamblerBets: [],
-    winner: null, endReason: null, manualRoles: {}, hostTransferVotes: [],
+    winner: null, endReason: null, manualRoles: {}, hostTransferVotes: [], M: null,
   };
 }
 
@@ -104,6 +105,9 @@ export function setupReport(m) {
   if (m.moderated && Object.keys(m.manualRoles).length) {
     const roles = m.players.map((p) => m.manualRoles[p.id]).filter(Boolean);
     if (roles.length !== m.players.length) report.errors.push('Manual assignment: every player needs a role (or clear them all).');
+    const missions = !!PRESETS[m.settings.preset]?.missions;
+    if (roles.some((r) => (ROLES[r].set === 'missions') !== missions)) report.errors.push(missions ? 'Manual assignment: use Missions roles only.' : 'Manual assignment: Missions roles cannot be used in this mode.');
+    if (missions && roles.length === m.players.length && !(roles.includes('MEDIUM') && roles.includes('REAPER'))) report.errors.push('Manual assignment needs a Medium and a Reaper.');
     const d = roles.filter((r) => ROLES[r].alignment === 'DEATH').length;
     if (roles.length === m.players.length && d < 1) report.errors.push('Manual assignment needs at least one Death.');
     if (roles.length === m.players.length && d > roles.length - d) report.errors.push('Manual assignment gives Death a starting majority.');
@@ -119,6 +123,8 @@ export function startMatch(m, rng, now, { forceRoles = null } = {}) {
   if (!report.ok) throw new GameError(report.errors[0]);
   if (!forceRoles && report.notReady) throw new GameError('Everyone must tap Ready first.');
   const n = m.players.length;
+  if (PRESETS[m.settings.preset]?.missions) { startMissions(m, rng, now, { forceRoles }); return; }
+  m.M = null;
   let assignment;
   if (forceRoles) {
     assignment = m.players.map((p, i) => forceRoles[i]);
@@ -586,6 +592,7 @@ function closeActions(m, now) {
 // ── Public entry points ────────────────────────────────────────────────────
 export function hostAdvance(m, rng, now, { skipAll = false } = {}) {
   rngRef = rng;
+  if (isMissionPhase(m.phase)) { missionAdvance(m, rng, now); return; }
   switch (m.phase) {
     case 'NIGHT_0_REVEAL': pub(m, 'Night 0 ends.', 'phase'); beginDay(m, now); break;
     case 'DAY_PREP': closeMorning(m, now); break;
@@ -639,6 +646,11 @@ export function playerCommand(m, actorId, cmd, rng, now) {
   const { type, payload = {} } = cmd;
   if (type !== 'chat.send' && type !== 'lobby.ready' && cmd.phaseId && cmd.phaseId !== m.phaseId) {
     throw new GameError('That window has closed.', 'STALE');
+  }
+  if (type.startsWith('m.')) {
+    if (!m.M || !isMissionPhase(m.phase)) throw new GameError('That window has closed.', 'STALE');
+    missionCommand(m, p, type, payload, rng, now);
+    return;
   }
   switch (type) {
     case 'lobby.ready':
@@ -846,7 +858,7 @@ export function chatChannels(m, p) {
   if (!p || m.phase === 'LOBBY' || m.phase === 'ENDED') return out;
   const remote = m.settings.transport === 'remote';
   const muted = p.statuses.some((s) => s.type === 'MUTE');
-  const inDay = isDayPhase(m.phase);
+  const inDay = isDayPhase(m.phase) || (isMissionPhase(m.phase) && !['M_REVEAL', 'M_NIGHT'].includes(m.phase));
   if (remote && inDay) {
     if (hasRule(m, 'FOG_OF_WAR')) {
       const seats = [...m.players].sort((a, b) => a.seat - b.seat);
