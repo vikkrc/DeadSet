@@ -95,7 +95,7 @@ export function publicView(m, now = Date.now()) {
   if (m.phase === 'LOBBY') {
     v.settings = m.settings;
     v.setup = setupReport(m);
-    v.presets = Object.values(PRESETS).map((p) => ({ id: p.id, name: p.name, blurb: p.blurb, min: p.min, max: p.max, rulesMin: p.rulesMin, rulesMax: p.rulesMax, ruleIds: p.ruleIds, recommended: !!p.recommended, custom: !!p.custom, pool: p.pool }));
+    v.presets = Object.values(PRESETS).map((p) => ({ id: p.id, name: p.name, blurb: p.blurb, min: p.min, max: p.max, rulesMin: p.rulesMin, rulesMax: p.rulesMax, ruleIds: p.ruleIds, recommended: !!p.recommended, custom: !!p.custom, missions: !!p.missions, pool: p.pool }));
   }
   return v;
 }

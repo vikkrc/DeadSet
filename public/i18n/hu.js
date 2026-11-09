@@ -1264,5 +1264,9 @@ export default {
     "Pick your hunch": "Válaszd ki a Gyanúdat",
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
+    "Game mode": "Játékmód",
+    "Classic Dead Set": "Klasszikus Dead Set",
+    "Hidden roles, night kills, Dreams and Rule cards. 5–25 players.": "Rejtett szerepek, éjszakai gyilkosságok, Álmok és Szabálykártyák. 5–25 játékos.",
+    "Teams, votes and sabotage. Nobody dies. 5–10 players.": "Csapatok, szavazások és szabotázs. Senki sem hal meg. 5–10 játékos.",
   },
 };

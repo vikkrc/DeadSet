@@ -1264,5 +1264,9 @@ export default {
     "Pick your hunch": "Choisis ton Soupçon",
     "Three missions failed": "Trois missions ont échoué",
     "Use the Candle": "Utilise la Bougie",
+    "Game mode": "Mode de jeu",
+    "Classic Dead Set": "Dead Set classique",
+    "Hidden roles, night kills, Dreams and Rule cards. 5–25 players.": "Rôles cachés, meurtres nocturnes, Rêves et cartes de règle. 5 à 25 joueurs.",
+    "Teams, votes and sabotage. Nobody dies. 5–10 players.": "Équipes, votes et sabotage. Personne ne meurt. 5 à 10 joueurs.",
   },
 };

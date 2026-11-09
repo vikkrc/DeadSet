@@ -1264,5 +1264,9 @@ export default {
     "Pick your hunch": "Elige tu Sospecha",
     "Three missions failed": "Tres misiones fracasaron",
     "Use the Candle": "Usa la Vela",
+    "Game mode": "Modo de juego",
+    "Classic Dead Set": "Dead Set clásico",
+    "Hidden roles, night kills, Dreams and Rule cards. 5–25 players.": "Roles ocultos, muertes nocturnas, Sueños y cartas de regla. 5–25 jugadores.",
+    "Teams, votes and sabotage. Nobody dies. 5–10 players.": "Equipos, votos y sabotaje. Nadie muere. 5–10 jugadores.",
   },
 };

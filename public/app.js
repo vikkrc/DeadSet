@@ -1087,6 +1087,7 @@ function lobbyMain(v, me) {
     ${isHost ? `<p class="small muted center-text" data-key="seathint">${t('Tap a seat to move or remove a player.')}</p>` : ''}
     ${me && !me.moderator ? portraitRow(v.players.find((p) => p.id === me.id)?.avatar) : ''}
     ${isHost && S.ui.botsPanel ? botsPanel(v) : ''}
+    ${modeChooser(v, isHost)}
     ${lobbyDeck(v, isHost)}
     <section data-key="setup">
       <div class="rule">${t('Setup')}</div>
@@ -1237,6 +1238,25 @@ function missionLobbyDeck(v, isHost, cards) {
   </section>`;
 }
 
+/** The top-line choice: classic Dead Set or Dead Set: Missions. Everything below follows it. */
+function modeChooser(v, isHost) {
+  const missions = !!v.presets.find((p) => p.id === v.settings.preset)?.missions;
+  const card = (mode, glyphName, title, sub) => {
+    const on = (mode === 'missions') === missions;
+    const inner = `${glyph(glyphName)}<span><b>${esc(title)}</b><small>${esc(sub)}</small></span>`;
+    return isHost
+      ? `<button class="mode-card ${on ? 'on' : ''}" data-act="gameMode" data-mode="${mode}" aria-pressed="${on}" data-key="mode-${mode}">${inner}</button>`
+      : `<div class="mode-card ${on ? 'on' : 'off'}" data-key="mode-${mode}">${inner}</div>`;
+  };
+  return `<section class="mode-pick" data-key="modepick">
+    <div class="rule">${t('Game mode')}</div>
+    <div class="mode-cards">
+      ${card('classic', 'death', t('Classic Dead Set'), t('Hidden roles, night kills, Dreams and Rule cards. 5–25 players.'))}
+      ${card('missions', 'mission', presetF('missions', 'name'), t('Teams, votes and sabotage. Nobody dies. 5–10 players.'))}
+    </div>
+  </section>`;
+}
+
 function setupSummary(v) {
   const s = v.settings;
   const preset = v.presets.find((p) => p.id === s.preset);
@@ -1263,7 +1283,7 @@ function setupForm(v) {
       ${OPTS.map((n) => `<option value="${n}" ${tm8[key] === n ? 'selected' : ''}>${n === 0 ? t('Untimed') : n < 60 ? t('{n} s', { n }) : t('{n} min', { n: n / 60 })}</option>`).join('')}
       ${OPTS.includes(tm8[key]) ? '' : `<option selected value="${tm8[key]}">${t('{n} s', { n: tm8[key] })}</option>`}</select></label>`;
   return `<div class="stack" style="gap:18px">
-    <div class="carousel" data-key="presets">${v.presets.map((p) => `<button class="preset" data-act="preset" data-id="${p.id}" aria-pressed="${s.preset === p.id}" data-key="pr-${p.id}"><b>${esc(presetF(p.id, 'name'))}</b>${p.recommended ? `<span class="tag solid">${t('Best first game')}</span>` : ''}<small>${esc(presetF(p.id, 'blurb'))}</small><span class="kicker">${t('{a}–{b} players', { a: p.min, b: p.max })}</span></button>`).join('')}</div>
+    ${preset.missions ? '' : `<div class="carousel" data-key="presets">${v.presets.filter((p) => !p.missions).map((p) => `<button class="preset" data-act="preset" data-id="${p.id}" aria-pressed="${s.preset === p.id}" data-key="pr-${p.id}"><b>${esc(presetF(p.id, 'name'))}</b>${p.recommended ? `<span class="tag solid">${t('Best first game')}</span>` : ''}<small>${esc(presetF(p.id, 'blurb'))}</small><span class="kicker">${t('{a}–{b} players', { a: p.min, b: p.max })}</span></button>`).join('')}</div>`}
 
     ${preset.custom ? `<details class="more" data-key="d-custom" open><summary>${t('Custom deck')}</summary><div>
       <label class="check"><input type="checkbox" data-set-bool="dreams" ${s.dreams ? 'checked' : ''}><span><b>${t('Dreams')}</b><small>${t('Everyone draws a Dream card each night.')}</small></span></label>
@@ -1984,6 +2004,15 @@ const ACT = {
   ready(el) { if (!V().me.ready) burstAt(el); send('lobby.ready', { ready: !V().me.ready }); },
   async start() { await send('host.start'); },
   preset(el) { send('host.settings', { preset: el.dataset.id }); },
+  gameMode(el) {
+    const cur = V().settings.preset;
+    const missions = el.dataset.mode === 'missions';
+    if (missions === !!V().presets.find((p) => p.id === cur)?.missions) return;
+    if (!missions) return send('host.settings', { preset: S.lastBasePreset || 'standard' });
+    S.lastBasePreset = cur;
+    burstAt(el);
+    send('host.settings', { preset: 'missions' });
+  },
   rulesMode(el) { send('host.settings', { rules: { mode: el.dataset.mode } }); },
   ruleCount(el) { send('host.settings', { rules: { count: Number(el.dataset.n) } }); },
   scenMode(el) { send('host.settings', { scenario: { mode: el.dataset.mode } }); },

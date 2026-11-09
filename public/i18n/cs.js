@@ -1264,5 +1264,9 @@ export default {
     "Pick your hunch": "Vyber si Podezření",
     "Three missions failed": "Tři mise selhaly",
     "Use the Candle": "Použij Svíčku",
+    "Game mode": "Herní režim",
+    "Classic Dead Set": "Klasický Dead Set",
+    "Hidden roles, night kills, Dreams and Rule cards. 5–25 players.": "Skryté role, noční vraždy, Sny a Karty pravidel. 5–25 hráčů.",
+    "Teams, votes and sabotage. Nobody dies. 5–10 players.": "Týmy, hlasování a sabotáž. Nikdo neumírá. 5–10 hráčů.",
   },
 };

@@ -1586,3 +1586,18 @@ body.is-board .vflip small { font-size: 15px; max-width: 100px; }
 body.is-board .mc-in { width: 280px; height: 386px; }
 body.is-board .mc-in .mcard { width: 280px; min-height: 386px; }
 body.is-board .reveal-stamp .stamp { font-size: 34px; }
+
+/* Lobby: the top-line game-mode choice. */
+.mode-pick { display: grid; gap: 10px; }
+.mode-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mode-card { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; text-align: left; padding: 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--soot-2); color: var(--bone); font: inherit; cursor: pointer; transition: border-color 0.25s, transform 0.3s var(--spring), background 0.25s, box-shadow 0.25s; }
+.mode-card > .glyph { font-size: 30px; color: var(--bone-2); margin-top: 2px; }
+.mode-card span { display: grid; gap: 4px; }
+.mode-card b { font: 400 21px/1.05 var(--serif); }
+.mode-card small { color: var(--ash); font-size: 12.5px; line-height: 1.4; }
+.mode-card.on { border-color: var(--bone); background: linear-gradient(160deg, color-mix(in srgb, var(--bone) 10%, var(--soot-2)), var(--soot-2)); box-shadow: 0 0 0 3px rgba(236, 229, 213, 0.08); transform: translateY(-2px); }
+.mode-card.on > .glyph { color: var(--bone); }
+.mode-card[data-mode='missions'].on { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(233, 194, 122, 0.12), 0 0 26px rgba(233, 194, 122, 0.15); }
+.mode-card[data-mode='missions'].on > .glyph { color: var(--gold); }
+div.mode-card.off { opacity: 0.45; }
+@media (max-width: 380px) { .mode-cards { grid-template-columns: 1fr; } }
