@@ -414,7 +414,7 @@ export function missionMomentHtml(m, h) {
       const n = m.cards ? m.cards.length : m.count;
       const cards = Array.from({ length: n }, (_, i) => {
         const c = m.cards?.[i];
-        return `<div class="rc ${m.cards ? (c === 'F' ? 'bad' : 'good') : 'smoke'}" style="--i:${i};--n:${n};--d:${2.2 + i * 1.15}s"><div class="rc-in"><div class="rc-back"><b>DS</b></div><div class="rc-front">${m.cards ? `${glyph(c === 'F' ? 'sabotage' : 'succeed')}<b>${t(c === 'F' ? 'Sabotage' : 'Succeed')}</b>${c === 'F' ? '<svg class="rc-crack" viewBox="0 0 100 140" aria-hidden="true"><path d="M50 0L44 34 58 50 40 78 56 98 48 140"/><path d="M58 50L84 58M40 78L14 72"/></svg>' : ''}` : glyph('smoke')}</div></div></div>`;
+        return `<div class="mrc ${m.cards ? (c === 'F' ? 'bad' : 'good') : 'smoke'}" style="--i:${i};--n:${n};--d:${2.2 + i * 1.15}s"><div class="mrc-in"><div class="mrc-back"><b>DS</b></div><div class="mrc-front">${m.cards ? `${glyph(c === 'F' ? 'sabotage' : 'succeed')}<b>${t(c === 'F' ? 'Sabotage' : 'Succeed')}</b>${c === 'F' ? '<svg class="mrc-crack" viewBox="0 0 100 140" aria-hidden="true"><path d="M50 0L44 34 58 50 40 78 56 98 48 140"/><path d="M58 50L84 58M40 78L14 72"/></svg>' : ''}` : glyph('smoke')}</div></div></div>`;
       }).join('');
       const end = 2.2 + n * 1.15 + 0.4;
       return `<div class="reveal-wash ${m.failed ? 'fail' : 'ok'}" style="--d:${end}s" aria-hidden="true"></div><span class="kicker">${t('Mission {n}', { n: m.mission + 1 })}${m.weight > 1 ? ` · ${t('counts twice')}` : ''}</span><h1 class="m-title">${letters(t('The cards are turned'))}</h1>
