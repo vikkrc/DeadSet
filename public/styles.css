@@ -1649,3 +1649,32 @@ body.is-board .mi-scene { font-size: 30px; }
 
 .reveal-wash { z-index: 0; }
 .m-mreveal .m-body > :not(.reveal-wash) { position: relative; z-index: 1; }
+
+/* Missions: the first-leader lottery. */
+.lot-wheel { position: relative; width: min(300px, 78vw); aspect-ratio: 1; margin: 10px auto 4px; }
+.lot-wheel ul { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; }
+.lot-seat { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 2px; animation: fadeIn 0.5s both; }
+.lot-disc { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; border: 1.5px solid var(--line-2); background: var(--soot-2); transition: all 0.4s; }
+.lot-disc .lot-av { width: 100%; height: 100%; }
+.lot-seat small { font-size: 10.5px; color: var(--bone-2); max-width: 70px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lot-seat.win .lot-disc { animation: lotWin 0.8s 6.1s var(--spring) both; }
+.lot-seat.win small { animation: lotName 0.6s 6.1s both; }
+@keyframes lotWin { to { transform: scale(1.35); border-color: var(--gold); box-shadow: 0 0 0 4px rgba(233, 194, 122, 0.25), 0 0 34px rgba(233, 194, 122, 0.6); } }
+@keyframes lotName { to { color: var(--gold); font-weight: 700; } }
+.lot-hand { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform: rotate(0deg); animation: lotSpin 5.6s 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) forwards; }
+.lot-hand i { position: absolute; left: -1px; bottom: 0; width: 2px; height: calc(min(300px, 78vw) * 0.2); background: linear-gradient(to top, transparent, var(--gold)); }
+.lot-hand .glyph { position: absolute; left: -15px; top: calc(min(300px, 78vw) * -0.2 - 32px); font-size: 30px; color: var(--gold); filter: drop-shadow(0 0 10px rgba(233, 194, 122, 0.8)); }
+@keyframes lotSpin { to { transform: rotate(var(--turn)); } }
+.lot-result { display: grid; justify-items: center; gap: 4px; opacity: 0; animation: fadeUp 0.6s 6.3s forwards; }
+.lot-result b { font: 400 clamp(34px, 9vw, 52px)/1 var(--serif); color: var(--gold); text-shadow: 0 0 22px rgba(233, 194, 122, 0.4); }
+body.is-board .lot-wheel { width: 460px; }
+body.is-board .lot-hand i { height: 92px; } body.is-board .lot-hand .glyph { top: -124px; }
+body.is-board .lot-disc { width: 70px; height: 70px; } body.is-board .lot-seat small { font-size: 15px; max-width: 110px; }
+.lantern-art .glyph { color: var(--gold); }
+
+/* What your phone privately knows, marked on the table (Missions). */
+.tok.known-death .tok-disc, .tok.mate .tok-disc { border-color: var(--blood-ink); box-shadow: 0 0 0 2px rgba(226, 88, 94, 0.55), 0 0 18px rgba(226, 88, 94, 0.45); }
+.tok.known-death .tok-disc::after, .tok.mate .tok-disc::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: rgba(179, 36, 45, 0.38); mix-blend-mode: multiply; pointer-events: none; }
+.tok.known-death .tok-name, .tok.mate .tok-name { color: var(--blood-ink); }
+.tok.known-living .tok-disc { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(233, 194, 122, 0.45); }
+.tok.known-candle .tok-disc { box-shadow: 0 0 0 2px rgba(242, 212, 155, 0.5), 0 0 16px rgba(242, 212, 155, 0.35); }

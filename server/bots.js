@@ -86,6 +86,10 @@ function missionMove(m, v, rng) {
       if (a.candle) payload.candle = pick(rng, a.candle.targets.filter((id) => id !== me.id));
       if (a.witness) payload.witness = pick(rng, a.witness.targets);
       if (a.haunt) payload.haunt = pick(rng, a.haunt.targets);
+      if (a.lantern) {
+        const trusted = a.lantern.targets.filter((id) => (me.alignment === 'DEATH') === known.has(id));
+        payload.lantern = pick(rng, trusted.length ? trusted : a.lantern.targets);
+      }
       return cmd('m.night', payload);
     }
     case 'mstand': {

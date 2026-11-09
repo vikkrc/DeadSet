@@ -122,6 +122,7 @@ export function missionPicks(v, S) {
     }
     case 'mnight':
       if (a.done) break;
+      if (a.lantern) out.push({ key: 'lantern', label: t('Lantern'), act: 'mPickLantern', ids: a.lantern.targets, selected: [S.sel.lantern ?? a.lantern.choice], hint: t('Who leads next?') });
       if (a.candle) out.push({ key: 'candle', label: t('Candle'), act: 'mPickCandle', ids: a.candle.targets.filter((id) => id !== me.id), selected: [S.sel.candle ?? a.candle.choice], hint: t('Learn one side') });
       if (a.witness) out.push({ key: 'witness', label: t('Witness'), act: 'mPickWitness', ids: a.witness.targets, selected: [S.sel.witness ?? a.witness.choice], hint: t('See one card') });
       if (a.haunt) out.push({ key: 'haunt', label: t('Haunt'), act: 'mPickHaunt', ids: a.haunt.targets, selected: [S.sel.haunt ?? a.haunt.choice], tone: 'kill', hint: t('Keep one off the next mission') });
@@ -144,6 +145,7 @@ export function missionCenter(v, pick) {
   const hint = pick?.hint ? `<span class="c-hint">${esc(pick.hint)}</span>` : '';
   const clock = '<span class="c-clock clock" data-clock></span>';
   switch (v.phase) {
+    case 'M_LOTTERY': return `<span class="c-emblem lantern">${glyph('lantern')}</span><span class="c-sub">${t('Drawing the first leader')}</span>`;
     case 'M_REVEAL': return `<span class="c-emblem">${glyph('mission')}</span><span class="c-sub">${t('{n}/{total} have seen their role', { n: prog.done, total: prog.total })}</span>`;
     case 'M_PROPOSE': return `<span class="c-emblem lantern">${glyph('lantern')}</span><span class="c-name">${esc(name(v, M.leader))}</span><span class="c-sub">${t('leads')}</span>${hint}${clock}`;
     case 'M_VOTE': return `<span class="c-big">${prog.done}<small>/${prog.total}</small></span><span class="c-sub">${t('votes in')}</span>${hint}${clock}`;
@@ -167,6 +169,9 @@ export function missionMain(v, me, h) {
   const table = ring(v, { pick: ringPick, center: missionCenter(v, pick), marks: missionMarks(v) });
   let stage = '';
   switch (v.phase) {
+    case 'M_LOTTERY':
+      stage = `<p class="center-text muted" data-key="lottery">${t('The lantern is passed around the table to choose the first Mission Leader…')}</p>`;
+      break;
     case 'M_PROPOSE':
       stage = a.type === 'mpropose'
         ? `<p class="center-text" data-key="lead-you"><b>${t('You carry the lantern.')}</b> ${th('Choose a team of {n}.', { n: a.size })}${a.lantern ? ` ${t('You must go yourself.')}` : ''}${a.fresh ? ` ${th('At least {n} must not have been on the last mission.', { n: a.fresh.need })}` : ''}${a.haunted ? ` ${th('{b} is haunted and cannot go.', { b: name(v, a.haunted) })}` : ''}</p>`
@@ -223,6 +228,7 @@ function nightStage(v, me, a, h, ctx, pick, table) {
     return `${head(v)}<section class="curtain" data-key="mncurtain"><span class="c-emblem">${glyph('moon')}</span><p>${t('Night falls on the expedition. Make sure nobody can see your screen.')}</p><button class="btn btn-solid" data-act="unveil">${t('Open your eyes')}</button></section>${chips(v)}`;
   }
   const jobs = [];
+  if (a.lantern) { const l = S.sel.lantern ?? a.lantern.choice; jobs.push(`<div class="panel tight ${l ? 'lit' : ''}" data-key="job-lantern">${glyph('lantern')} <b>${t('You led the last mission.')}</b> ${l ? th('{name} will carry the lantern next.', { name: name(v, l) }) : t('Hand the lantern to someone who has not led a mission yet.')}</div>`); }
   if (a.candle) { const c = S.sel.candle ?? a.candle.choice; jobs.push(`<div class="panel tight ${c ? 'lit' : ''}" data-key="job-candle">${glyph('candle')} <b>${t('You hold the Candle.')}</b> ${c ? th('The Candle will show you {name} at dawn.', { name: name(v, c) }) : t('Choose someone who has never held it: you learn their side, and the Candle passes to them.')}</div>`); }
   if (a.witness) jobs.push(`<div class="panel tight" data-key="job-wit">${glyph('mentalist')} <b>${esc(mcardF('WITNESS', 'name'))}.</b> ${t('Choose one member of your team: you see the card they played.')}</div>`);
   if (a.haunt) jobs.push(`<div class="panel tight seal" data-key="job-haunt">${glyph('veiled')} <b>${esc(mcardF('HAUNTED_ROAD', 'name'))}.</b> ${t('Choose one member of the failed team: they cannot go on the next mission.')}</div>`);
@@ -259,7 +265,7 @@ export function missionDock(v, h) {
       break;
     case 'mnight':
       if (!a.done && S.ui.veiled[v.phaseId] === false) {
-        const need = (a.candle && !(S.sel.candle ?? a.candle.choice)) ? t('Use the Candle') : (a.witness && !(S.sel.witness ?? a.witness.choice)) ? t('Choose a card to see') : (a.haunt && !(S.sel.haunt ?? a.haunt.choice)) ? t('Choose who is haunted') : !(S.sel.hunch ?? a.hunch) ? t('Pick your hunch') : null;
+        const need = (a.lantern && !(S.sel.lantern ?? a.lantern.choice)) ? t('Choose the next leader') : (a.candle && !(S.sel.candle ?? a.candle.choice)) ? t('Use the Candle') : (a.witness && !(S.sel.witness ?? a.witness.choice)) ? t('Choose a card to see') : (a.haunt && !(S.sel.haunt ?? a.haunt.choice)) ? t('Choose who is haunted') : !(S.sel.hunch ?? a.hunch) ? t('Pick your hunch') : null;
         parts.push(btn(`${glyph('moon')} ${need ?? t('Go to sleep')}`, 'mSleep', 'btn-solid', !!need));
       }
       break;
@@ -320,17 +326,19 @@ export function missionActs(h) {
     // Night picks are saved on the server as soon as they're tapped, so a dawn
     // forced by the host or the timer still uses them.
     mPickHunch(el) { one('hunch', el, false, true); night({ hunch: S.sel.hunch }); },
+    mPickLantern(el) { one('lantern', el, false, true); if (S.sel.lantern) night({ lantern: S.sel.lantern }); },
     mPickCandle(el) { one('candle', el, false, true); if (S.sel.candle) night({ candle: S.sel.candle }); },
     mPickWitness(el) { one('witness', el, false, true); if (S.sel.witness) night({ witness: S.sel.witness }); },
     mPickHaunt(el) { one('haunt', el, true, true); if (S.sel.haunt) night({ haunt: S.sel.haunt }); },
     async mSleep() {
       const a = V().action;
       const payload = { hunch: S.sel.hunch ?? a.hunch, done: true };
+      if (a.lantern) payload.lantern = S.sel.lantern ?? a.lantern.choice;
       if (a.candle) payload.candle = S.sel.candle ?? a.candle.choice;
       if (a.witness) payload.witness = S.sel.witness ?? a.witness.choice;
       if (a.haunt) payload.haunt = S.sel.haunt ?? a.haunt.choice;
       const ok = await send('m.night', payload);
-      if (ok) { S.sel.hunch = S.sel.candle = S.sel.witness = S.sel.haunt = null; }
+      if (ok) { S.sel.hunch = S.sel.candle = S.sel.witness = S.sel.haunt = S.sel.lantern = null; }
     },
     mPickAccuse(el) { picked(el, true); S.sel.accuse = el.dataset.id; render(); },
     async mAccuse(el) { const ok = await send('m.accuse', { target: S.sel.accuse }); if (ok) { sound.play('stamp'); burstAt(el, { colors: ['#e2585e', '#ece5d5'] }); S.sel.accuse = null; } },
@@ -370,18 +378,38 @@ export function missionMoment(l, v, fresh, { notify, name: nm, ...h }) {
     case 'm-haunt': return { type: 'call', kicker: mcardF('HAUNTED_ROAD', 'name'), title: 'Haunted', sub: ['{b} cannot go on the next mission.', { b: nm(l.target) }], sound: 'death' };
     case 'm-night': return { type: 'nightfall', n: l.n };
     case 'm-candle': if (l.target) notify(t('{a} held the Candle to {b}', { a: nm(l.by), b: nm(l.target) })); return null;
+    case 'm-lottery': {
+      const order = l.order.map((id) => ({ id, name: nm(id), av: v.players.find((p) => p.id === id)?.avatar ?? null }));
+      return { type: 'mlottery', order, leader: l.leader, leaderName: nm(l.leader), idx: l.order.indexOf(l.leader), spins: l.spins ?? 2, sound: null };
+    }
+    case 'm-lantern': return { type: 'mlantern', by: nm(l.by), to: nm(l.to), chosen: l.chosen, sound: 'approve' };
     case 'm-propose': notify(th('{a} proposes {names}', { a: nm(l.leader), names: l.team.map(nm) })); return null;
     case 'm-skip': notify(t('{a} passed without proposing', { a: nm(l.leader) })); return null;
     default: return null;
   }
 }
 
-export const MISSION_MOMENT_TIME = { mintro: 9000, mcandle: 5200, mcard: 4200, mvotes: 5400, mnamed: 5200, munmask: 5200, mreckon: 6200 };
+export const MISSION_MOMENT_TIME = { mlottery: 8600, mlantern: 3600, mintro: 9000, mcandle: 5200, mcard: 4200, mvotes: 5400, mnamed: 5200, munmask: 5200, mreckon: 6200 };
 export const revealTime = (m) => 2600 + (m.cards ? m.cards.length : m.count) * 1150 + 2600;
 
 export function missionMomentHtml(m, h) {
   const { letters, avatarSvg, onBoard } = h;
   switch (m.type) {
+    case 'mlottery': {
+      const n = m.order.length;
+      const seats = m.order.map((x, i) => {
+        const a = (i / n) * 2 * Math.PI - Math.PI / 2;
+        return `<li class="lot-seat ${x.id === m.leader ? 'win' : ''}" style="left:${(50 + 42 * Math.cos(a)).toFixed(2)}%;top:${(50 + 42 * Math.sin(a)).toFixed(2)}%">
+          <span class="lot-disc">${x.av ? avatarSvg(x.av, 'lot-av') : `<b>${esc(x.name[0])}</b>`}</span><small>${esc(x.name)}</small></li>`;
+      }).join('');
+      const turn = m.spins * 360 + (m.idx / n) * 360;
+      return `<span class="kicker">${esc(t('Before the first mission'))}</span><h1 class="m-title">${letters(t('Who carries the lantern?'))}</h1>
+        <div class="lot-wheel" style="--turn:${turn}deg"><ul>${seats}</ul><div class="lot-hand" aria-hidden="true"><i></i>${glyph('lantern')}</div></div>
+        <div class="lot-result"><span class="kicker">${esc(t('The first Mission Leader'))}</span><b>${esc(m.leaderName)}</b></div>`;
+    }
+    case 'mlantern':
+      return `<div class="m-art lantern-art">${glyph('lantern')}</div><span class="kicker">${esc(t(m.chosen ? 'The lantern is handed on' : 'The lantern passes on'))}</span>
+        <h1 class="m-title">${letters(m.to)}</h1><p class="m-sub">${esc(t(m.chosen ? '{a} chose them to lead the next mission.' : '{a} chose no one in time.', { a: m.by }))}</p>`;
     case 'mintro':
       return `${m.whereIdx >= 0 ? backdropHtml(m.whereIdx, m.mission % 2 === 1) : ''}<div class="mi-body">
         <span class="kicker mi-kick">${esc(t('Mission {n} of 5', { n: m.mission + 1 }))}${m.place ? ` · ${esc(m.place)}` : ''}</span>

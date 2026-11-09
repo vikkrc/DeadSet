@@ -76,6 +76,8 @@ export function editions(v, h) {
         case 'm-propose': ed.chips.push({ icon: 'lantern', text: t('{a} proposes {names}', { a: name(l.leader), names: l.team.map(name) }) }); break;
         case 'm-votes': ed.chips.push({ icon: l.approved ? 'approve' : 'reject', cls: l.goes ? '' : 'kill', text: t(l.approved ? 'Approved {a}–{r}' : l.goes ? 'Goes ahead {a}–{r}' : 'Rejected {a}–{r}', { a: l.approve, r: l.reject }) }); break;
         case 'm-result': ed.chips.push({ icon: l.failed ? 'sabotage' : 'succeed', cls: l.failed ? 'kill' : '', text: l.fails == null ? t(l.failed ? 'Failed' : 'Succeeded') : t(l.failed ? 'Failed · {f} Sabotage' : 'Succeeded · {f} Sabotage', { f: l.fails }) }); break;
+        case 'm-lantern': ed.chips.push({ icon: 'lantern', text: t('{a} hands the lantern to {b}.', { a: name(l.by), b: name(l.to) }) }); break;
+        case 'm-lottery': ed.chips.push({ icon: 'lantern', text: t('The first Mission Leader') + ': ' + name(l.leader) }); break;
         case 'm-candle': if (l.target) ed.chips.push({ icon: 'candle', text: t('{a} held the Candle to {b}', { a: name(l.by), b: name(l.target) }) }); break;
         case 'm-witness': ed.chips.push({ icon: 'mentalist', text: t('{a} watched {b}\'s card', { a: name(l.by), b: name(l.target) }) }); break;
         case 'm-haunt': ed.chips.push({ icon: 'veiled', cls: 'kill', text: t('{name} is haunted', { name: name(l.target) }) }); break;

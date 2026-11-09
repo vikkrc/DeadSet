@@ -344,6 +344,19 @@ function nextMoment() {
       for (let i = 0; i < n; i++) setTimeout(() => { pubSound(m.cards ? (m.cards[i] === 'F' ? 'badCard' : 'goodCard') : 'flip'); if (m.cards?.[i] === 'F') haptic([40, 30, 60]); }, (2.2 + i * 1.15) * 1000 + 350);
       setTimeout(() => { pubSound(m.failed ? 'missionFail' : 'missionOk'); haptic(m.failed ? [60, 40, 120] : [20, 30, 20]); }, (2.2 + n * 1.15 + 0.4) * 1000);
     }
+    if (m.type === 'mlottery') {
+      // A tick for every seat the lantern passes, slowing down as it settles.
+      const n = m.order.length; const steps = m.spins * n + m.idx; const dur = 5600;
+      const ease = (x) => 1 - (1 - x) ** 3;
+      let prev = 0;
+      for (let k = 1; k <= steps; k++) {
+        // invert the ease: when has the hand passed k of `steps` seats?
+        let lo = 0, hi = 1; for (let it = 0; it < 18; it++) { const mid = (lo + hi) / 2; if (ease(mid) * steps < k) lo = mid; else hi = mid; }
+        const at = 400 + hi * dur; if (at - prev < 45) continue; prev = at;
+        setTimeout(() => pubSound('tick'), at);
+      }
+      setTimeout(() => { pubSound('approve'); haptic([30, 40, 30]); }, 400 + dur + 150);
+    }
     if (m.type === 'mvotes') setTimeout(() => pubSound(m.approved ? 'approve' : m.goes ? 'knock' : 'unpick'), 1300);
     if (m.type === 'mcard') setTimeout(() => pubSound('flip'), 700);
     if (m.type === 'mnamed') setTimeout(() => pubSound(m.death ? 'gavel' : 'death'), 2400);
@@ -454,7 +467,7 @@ function momentHtml(m) {
       break;
     }
     case 'gift': body = giftHtml(m.idx, { t, th, esc, product: m.product }); break;
-    case 'mintro': case 'mcandle': case 'mcard': case 'mvotes': case 'mreveal': case 'mnamed': case 'munmask': case 'mreckon': body = missionMomentHtml(m, { letters, avatarSvg, onBoard }); break;
+    case 'mlottery': case 'mlantern': case 'mintro': case 'mcandle': case 'mcard': case 'mvotes': case 'mreveal': case 'mnamed': case 'munmask': case 'mreckon': body = missionMomentHtml(m, { letters, avatarSvg, onBoard }); break;
     case 'death':
       body = `<div class="m-art">${glyph(m.art || 'dagger')}</div><h1 class="m-title">${letters(t(m.title))}</h1>${m.names.length ? `<ul class="victims">${names(m.names)}</ul>` : ''}<p class="m-sub">${tmh(m.sub)}</p>`;
       break;
@@ -620,7 +633,7 @@ function phaseWord(v) {
 const STEP_EN = {
   LOBBY: 'Gathering', NIGHT_0_REVEAL: 'Role reveal', DAY_PREP: 'Morning', DAY_DISCUSSION: 'Discussion',
   DAY_DEFENSE: 'Defence', DAY_VOTING: 'Secret ballot', DAY_RESOLVING: 'Final act', NIGHT_DREAM_SWAP: 'Nightfall', NIGHT_ACTIONS: 'Night actions', ENDED: 'Match over',
-  M_REVEAL: 'Role reveal', M_PROPOSE: 'The proposal', M_VOTE: 'Team vote', M_MISSION: 'On the mission', M_RESULT: 'The reveal',
+  M_REVEAL: 'Role reveal', M_LOTTERY: 'The first leader', M_PROPOSE: 'The proposal', M_VOTE: 'Team vote', M_MISSION: 'On the mission', M_RESULT: 'The reveal',
   M_NIGHT: 'Night interlude', M_LAST_STAND: 'The Last Stand', M_RECKONING: 'The Reckoning',
 };
 const STEP = new Proxy(STEP_EN, { get: (o, k) => (o[k] ? t(o[k]) : undefined) });
@@ -777,6 +790,10 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
       ni >= 0 ? 'accused' : '', d?.speaking === p.id ? 'speaking' : '', p.immune ? 'immune' : '',
       lobby ? (p.ready ? 'ready' : 'unready') : '', reveal && p.alignment === 'DEATH' ? 'death' : '',
       me?.teammates?.some((t) => t.id === p.id) ? 'mate' : '', pos[i].inner ? 'inner' : '',
+      // What this phone privately knows (Missions): Death seen by the Medium or by Candlelight, the Believer's candles.
+      me?.seesDeath?.some((x) => x.id === p.id) || me?.candleSeen?.some((x) => x.id === p.id && x.death) ? 'known-death' : '',
+      me?.candleSeen?.some((x) => x.id === p.id && !x.death) ? 'known-living' : '',
+      me?.candles?.some((x) => x.id === p.id) ? 'known-candle' : '',
     ].filter(Boolean).join(' ');
     const badges = [];
     if (ni >= 0) badges.push(`<b class="bdg b-nom" data-key="nom">${roman(ni + 1)}</b>`);
@@ -1232,6 +1249,7 @@ function missionLobbyDeck(v, isHost, cards) {
     ${roleRow('VEILED', 'Death: hidden from the Medium.')}
     ${roleRow('STRAY', 'Death: unknown to the rest of Death, and blind to them.')}
     <div class="rule">${t('Twists')}</div>
+    ${select('leaderMode', s.leaderMode ?? 'next', [['next', 'Next in line'], ['choose', 'Chosen by the last leader']], 'Next Mission Leader', 'After a mission, the lantern goes to the next player in line, or the last leader hands it to someone who has not led a mission yet.')}
     ${select('missionCards', s.missionCards ?? 1, [[0, 'Off'], [1, 'Rare'], [2, 'Sometimes']], 'Mission cards', 'Most missions are Regular. Sometimes a card changes the team, the vote or the reveal.')}
     ${toggle('clues', 'Clues', 'Rarely, at dawn, one or two players find a true hint about Death\'s team.')}
     ${v.table?.clues ? select('clueOdds', v.table.clueOdds, [[1, 'Rare'], [2, 'Uncommon'], [3, 'Common']], 'How often', '') : ''}
@@ -2169,7 +2187,7 @@ const ACT = {
 
 Object.assign(ACT, missionActs({ S, V, send: (...a) => send(...a), render: () => render(), picked, burstAt, sound, haptic }));
 
-const QUIET = new Set(['mPickTeam', 'mPickWard', 'mPickHunch', 'mPickCandle', 'mPickWitness', 'mPickHaunt', 'mPickAccuse', 'mPickReckon', 'mPickCard', 'avPart', 'avRandom', 'codeTap', 'boardScore', 'boardMute', 'pickNominate', 'pickVote', 'pickRetaliate', 'pickSwap', 'pickTarget', 'pickOption', 'pickNightmare', 'pickConspire', 'pickDeath', 'shoot', 'sound', 'pickUseOption', 'momentNext']);
+const QUIET = new Set(['mPickLantern', 'mPickTeam', 'mPickWard', 'mPickHunch', 'mPickCandle', 'mPickWitness', 'mPickHaunt', 'mPickAccuse', 'mPickReckon', 'mPickCard', 'avPart', 'avRandom', 'codeTap', 'boardScore', 'boardMute', 'pickNominate', 'pickVote', 'pickRetaliate', 'pickSwap', 'pickTarget', 'pickOption', 'pickNightmare', 'pickConspire', 'pickDeath', 'shoot', 'sound', 'pickUseOption', 'momentNext']);
 document.addEventListener('click', (e) => {
   const link = e.target.closest('a[data-link]');
   if (link && link.origin === location.origin && !e.metaKey && !e.ctrlKey) { e.preventDefault(); go(link.pathname); return; }
@@ -2254,6 +2272,7 @@ document.addEventListener('change', (e) => {
   }
   if (el.dataset.actChange === 'tableLang') send('host.settings', { lang: el.value });
   if (el.dataset.actChange === 'clueOdds') send('host.settings', { clueOdds: Number(el.value) });
+  if (el.dataset.actChange === 'leaderMode') send('host.settings', { leaderMode: el.value });
   if (el.dataset.actChange === 'missionCards') send('host.settings', { missionCards: Number(el.value) });
   if (el.dataset.actChange === 'mRole') send('host.settings', { mRoles: { [el.dataset.id]: el.checked } });
   if (el.dataset.actChange === 'tieBreak') send('host.settings', { tieBreak: el.checked ? 'coin' : 'none' });

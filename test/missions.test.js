@@ -23,7 +23,7 @@ function setup(roles, { settings = {}, script = {}, seed = 3, leader = 0 } = {})
   const cmd = (name, type, payload = {}) => playerCommand(m, id(name), { type, payload, phaseId: m.phaseId }, rng, (now += 10));
   const advance = () => hostAdvance(m, rng, (now += 10));
   const t = { m, rng, id, cmd, advance };
-  t.ackAll = () => m.players.forEach((p) => cmd(p.name, 'm.ack'));
+  t.ackAll = () => { m.players.forEach((p) => cmd(p.name, 'm.ack')); if (m.phase === 'M_LOTTERY') advance(); };
   t.propose = (names, ward) => cmd(m.players.find((p) => p.id === m.M.leader).name, 'm.propose', { team: names.map(id), ward: ward ? id(ward) : undefined });
   t.voteAll = (approve, except = {}) => m.players.forEach((p) => cmd(p.name, 'm.vote', { approve: p.name in except ? except[p.name] : approve }));
   t.play = (cards) => Object.entries(cards).forEach(([n, c]) => cmd(n, 'm.play', { card: c }));
@@ -254,6 +254,7 @@ test('mission cards: most missions are Regular; each special appears once and on
     m.players.forEach((p) => { p.ready = true; });
     startMatch(m, rng, 1);
     m.players.forEach((p) => playerCommand(m, p.id, { type: 'm.ack' }, rng, 2));
+    hostAdvance(m, rng, 3); // end the first-leader lottery
     if (m.M.card !== 'REGULAR') special++;
   }
   assert.ok(special > 25 && special < 80, `special cards: ${special}/200`);
@@ -381,9 +382,9 @@ async function botGame(n, settings = {}) {
   rm.command(host.code, host.token, { type: 'host.settings', payload: { preset: 'missions', missionCards: 2, clueOdds: 3, ...settings } });
   rm.command(host.code, host.token, { type: 'host.bots', payload: { count: n } });
   rm.command(host.code, host.token, { type: 'host.start' });
-  for (let i = 0; i < 1500 && m.phase !== 'ENDED'; i++) {
+  for (let i = 0; i < 4000 && m.phase !== 'ENDED'; i++) {
     await new Promise((r) => setTimeout(r, 10));
-    if (m.phase === 'M_RESULT') rm.command(host.code, host.token, { type: 'host.advance', payload: {}, phaseId: m.phaseId });
+    if (m.phase === 'M_RESULT' || m.phase === 'M_LOTTERY') rm.command(host.code, host.token, { type: 'host.advance', payload: {}, phaseId: m.phaseId });
   }
   for (const r of rm.rooms.values()) for (const tm of r.botTimers?.values() ?? []) clearTimeout(tm);
   clearInterval(rm.sweeper);
@@ -411,4 +412,42 @@ test('a Candle pick counts even if the night is forced to dawn before the holder
   assert.equal(seen.target, 'p3');
   assert.equal(seen.death, true);
   assert.equal(t.m.M.candle.holder, 'p3');
+});
+
+test('the first leader is drawn in a lottery before the first mission (and its timer) opens', () => {
+  const t = setup(FIVE, { leader: 2, settings: { timers: { proposal: 60 } } });
+  t.m.players.forEach((p) => t.cmd(p.name, 'm.ack'));
+  assert.equal(t.m.phase, 'M_LOTTERY');
+  const ev = t.m.publicLog.find((l) => l.ev === 'm-lottery');
+  assert.equal(ev.leader, 'p2');
+  assert.ok(t.m.deadline > 0);
+  assert.equal(publicView(t.m).missions.leader, 'p2');
+  t.advance(); // the draw ends (deadline or host)
+  assert.equal(t.m.phase, 'M_PROPOSE');
+  assert.equal(t.m.M.leader, 'p2');
+  assert.ok(t.m.deadline); // the proposal timer only starts now
+});
+
+test('leader choice: the last mission leader hands the lantern to someone who has not led a mission', () => {
+  const t = setup(FIVE, { settings: { leaderMode: 'choose' } });
+  t.ackAll();
+  // Mission 1: Ada's proposal is rejected, Bo's goes (Bo led the mission that went).
+  t.propose(['Ada', 'Bo']); t.voteAll(false);
+  assert.equal(t.m.M.leader, 'p1');
+  t.propose(['Ada', 'Bo']); t.voteAll(true);
+  t.play({ Ada: 'S', Bo: 'S' }); t.advance();
+  assert.equal(t.m.M.night.needs.lantern, 'p1');
+  const a = playerView(t.m, 'p1').action;
+  assert.deepEqual(a.lantern.targets.sort(), ['p0', 'p2', 'p3', 'p4']); // Ada led only a rejected proposal: still eligible
+  assert.throws(() => t.cmd('Bo', 'm.night', { lantern: 'p1' }), /not led/);
+  t.night({ Bo: { lantern: t.id('Di') } });
+  assert.equal(t.m.M.leader, 'p3');
+  assert.ok(t.m.publicLog.some((l) => l.ev === 'm-lantern' && l.to === 'p3' && l.chosen));
+  // Mission 2 goes under Di; Di may not pick Bo (led mission 1) or themself.
+  t.mission(['Ada', 'Bo', 'Cy']);
+  assert.ok(!playerView(t.m, 'p3').action.lantern.targets.includes('p1'));
+  // If Di picks no one in time, the next eligible player in line leads.
+  t.m.players.forEach((p) => { if (p.id !== 'p3') t.cmd(p.name, 'm.night', { hunch: t.id(p.name === 'Ada' ? 'Bo' : 'Ada'), done: true, ...(t.m.M.night.needs.candle === p.id ? { candle: t.m.players.find((x) => !t.m.M.candle.past.includes(x.id)).id } : {}) }); });
+  t.advance();
+  assert.equal(t.m.M.leader, 'p4'); // after Di comes Ed, who has not led
 });

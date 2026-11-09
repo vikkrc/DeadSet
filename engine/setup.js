@@ -61,6 +61,7 @@ export function defaultSettings() {
     // Missions mode
     mRoles: { BELIEVER: true, CHARLATAN: true, VEILED: false, STRAY: false },
     missionCards: 1,
+    leaderMode: 'next',
   };
 }
 
@@ -137,6 +138,7 @@ export function applySettingsPatch(settings, patch = {}) {
     s.mRoles = { ...defaultSettings().mRoles, ...s.mRoles };
     for (const k of Object.keys(MISSION_OPTIONAL)) if (typeof patch.mRoles[k] === 'boolean') s.mRoles[k] = patch.mRoles[k];
   }
+  if (['next', 'choose'].includes(patch.leaderMode)) s.leaderMode = patch.leaderMode;
   if (patch.missionCards !== undefined) s.missionCards = clampInt(patch.missionCards, 0, 2, 1);
   if (patch.clueOdds !== undefined) s.clueOdds = clampInt(patch.clueOdds, 1, 3, 1);
   if (['none', 'coin'].includes(patch.tieBreak)) s.tieBreak = patch.tieBreak;

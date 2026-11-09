@@ -11,11 +11,13 @@ import { missionDeck, drawScenario } from './setup.js';
 import { GameError, byId, nameOf, pub, priv } from './state.js';
 import { shuffle, pick } from './rng.js';
 
-export const M_PHASES = ['M_REVEAL', 'M_PROPOSE', 'M_VOTE', 'M_MISSION', 'M_RESULT', 'M_NIGHT', 'M_LAST_STAND', 'M_RECKONING'];
+export const M_PHASES = ['M_REVEAL', 'M_LOTTERY', 'M_PROPOSE', 'M_VOTE', 'M_MISSION', 'M_RESULT', 'M_NIGHT', 'M_LAST_STAND', 'M_RECKONING'];
 export const isMissionPhase = (phase) => M_PHASES.includes(phase);
 /** Seconds the result stays up so every screen can play the card reveal. */
 export const RESULT_SECONDS = (cards) => 7 + Math.ceil(cards * 1.4);
 const CANDLE_AFTER = [1, 2, 3]; // after missions 2, 3 and 4 (0-based indices)
+/** The first-leader lottery runs this long before the first mission opens. */
+export const LOTTERY_SECONDS = 9;
 
 const T = (m, key) => m.settings.timers?.[key] || 0;
 const bump = (m) => { m.stateVersion++; };
@@ -49,7 +51,7 @@ export function startMissions(m, rng, now, { forceRoles = null } = {}) {
       teamJoinNight: null, tempRevival: null, revivedOnce: false, acknowledged: false, lover: null, diedAt: null, causes: null,
     });
   });
-  m.config = { preset: 'missions', missions: true, clues: m.settings.clues !== false, clueOdds: m.settings.clueOdds ?? 1, missionCards: m.settings.missionCards ?? 1 };
+  m.config = { preset: 'missions', missions: true, clues: m.settings.clues !== false, clueOdds: m.settings.clueOdds ?? 1, missionCards: m.settings.missionCards ?? 1, leaderMode: m.settings.leaderMode === 'choose' ? 'choose' : 'next' };
   m.activeRules = [];
   m.scenario = drawScenario(m.settings, rng);
   m.history = [];
@@ -225,7 +227,7 @@ export function missionCommand(m, p, type, payload, rng, now) {
     case 'm.ack':
       need('M_REVEAL');
       p.acknowledged = true;
-      if (m.players.every((x) => x.acknowledged)) startFirstMission(m, rng, now);
+      if (m.players.every((x) => x.acknowledged)) openLottery(m, rng, now);
       return;
 
     case 'm.propose': {
@@ -272,7 +274,12 @@ export function missionCommand(m, p, type, payload, rng, now) {
         if (!N.team.includes(payload.haunt) || payload.haunt === p.id) throw new GameError('Pick another member of the team.');
         N.haunt = payload.haunt;
       }
+      if (payload.lantern !== undefined && N.needs.lantern === p.id) {
+        if (!lanternTargets(m).includes(payload.lantern)) throw new GameError('The lantern can only go to someone who has not led a mission yet.');
+        N.lantern = payload.lantern;
+      }
       if (payload.done) {
+        if (N.needs.lantern === p.id && !N.lantern && lanternTargets(m).length) throw new GameError('Choose the next leader first.');
         if (N.needs.candle === p.id && !N.candle) throw new GameError('Use the Candle first.');
         if (N.needs.witness === p.id && !N.witness) throw new GameError('Choose whose card to see first.');
         if (N.needs.haunt === p.id && !N.haunt) throw new GameError('Choose who is haunted first.');
@@ -306,6 +313,14 @@ export function missionCommand(m, p, type, payload, rng, now) {
 
     default: throw new GameError('Unknown command.');
   }
+}
+
+/** Before the first mission: a dramatic draw for who carries the lantern first. */
+function openLottery(m, rng, now) {
+  const order = seatOrder(m);
+  // The draw is already made; the spin shown on every screen just lands on it.
+  pub(m, ['The lantern is passed around the table… it stops at {a}.', { a: nameOf(m, m.M.leader) }], 'phase', { ev: 'm-lottery', leader: m.M.leader, order, spins: 2 + rng.int(2, 'mrandom') });
+  enter(m, 'M_LOTTERY', now, LOTTERY_SECONDS);
 }
 
 function startFirstMission(m, rng, now) {
@@ -381,8 +396,9 @@ function openNight(m, now) {
   const r = M.results[M.results.length - 1];
   m.nightNumber++;
   M.night = {
-    mission: r.mission, team: r.team, done: {}, hunch: {}, candle: null, witness: null, haunt: null,
+    mission: r.mission, team: r.team, done: {}, hunch: {}, candle: null, witness: null, haunt: null, lantern: null,
     needs: {
+      lantern: m.config.leaderMode === 'choose' ? r.leader : null,
       candle: CANDLE_AFTER.includes(r.mission) ? M.candle.holder : null,
       witness: r.card === 'WITNESS' ? r.leader : null,
       haunt: r.card === 'HAUNTED_ROAD' && r.failed ? reaperId(m) : null,
@@ -437,11 +453,33 @@ function closeNight(m, rng, now) {
     const clue = missionClue(m, id, rng);
     if (clue) { priv(m, id, clue, 'clue'); M.clueCount[id] = (M.clueCount[id] || 0) + 1; }
   }
+  // Who leads next: the last leader's choice, or simply the next in line.
+  const chooser = N.needs.lantern;
   M.night = null;
   pub(m, 'Dawn. The expedition moves on.', 'phase', { ev: 'm-dawn' });
   M.mission++;
-  nextLeader(m);
+  if (chooser) {
+    const pool = lanternTargets(m, chooser);
+    let next = N.lantern && pool.includes(N.lantern) ? N.lantern : null;
+    if (!next) {
+      // Not chosen in time: the lantern goes to the next eligible player in line.
+      const order = seatOrder(m);
+      const i = order.indexOf(chooser);
+      next = [...order.slice(i + 1), ...order.slice(0, i)].find((id) => pool.includes(id)) ?? null;
+    }
+    if (next) {
+      M.leader = next;
+      pub(m, [N.lantern ? '{a} hands the lantern to {b}.' : '{a} chose no one in time. The lantern passes to {b}.', { a: nameOf(m, chooser), b: nameOf(m, next) }], 'mission', { ev: 'm-lantern', by: chooser, to: next, chosen: !!N.lantern });
+    } else nextLeader(m);
+  } else nextLeader(m);
   beginMission(m, rng, now);
+}
+
+/** Who may be handed the lantern: anyone who has not led a mission that went ahead. */
+export function lanternTargets(m, chooser = m.M.night?.needs.lantern) {
+  const led = new Set(m.M.results.map((r) => r.leader));
+  const pool = m.players.map((p) => p.id).filter((id) => id !== chooser && !led.has(id));
+  return pool;
 }
 
 /** One true clue for `forId`, or null. */
@@ -545,7 +583,8 @@ function endMissions(m, result, now) {
 export function missionAdvance(m, rng, now) {
   const M = m.M;
   switch (m.phase) {
-    case 'M_REVEAL': pub(m, 'The host starts the first mission.', 'phase'); startFirstMission(m, rng, now); break;
+    case 'M_REVEAL': pub(m, 'The host starts the first mission.', 'phase'); openLottery(m, rng, now); break;
+    case 'M_LOTTERY': startFirstMission(m, rng, now); break;
     case 'M_PROPOSE':
       if (isForced(m)) {
         const { team, ward } = randomTeam(m, rng, true);
@@ -570,7 +609,7 @@ export function missionAdvance(m, rng, now) {
 }
 
 export const MISSION_ADVANCE_LABEL = {
-  M_REVEAL: 'Start the first mission', M_PROPOSE: 'Pass leadership on', M_VOTE: 'Lock the vote', M_MISSION: 'Close the mission',
+  M_REVEAL: 'Start the first mission', M_LOTTERY: 'Skip the draw', M_PROPOSE: 'Pass leadership on', M_VOTE: 'Lock the vote', M_MISSION: 'Close the mission',
   M_RESULT: 'Continue', M_NIGHT: 'Bring the dawn', M_LAST_STAND: 'Lock the Last Stand', M_RECKONING: 'Force the Reckoning',
 };
 
@@ -594,7 +633,7 @@ export function missionPublic(m) {
     score: M.score,
     candle: { holder: M.candle.holder, past: M.candle.past, checks: M.candleChecks.map((c) => ({ by: c.by, target: c.target, mission: c.mission })) },
     haunted: M.haunted && M.haunted.mission === M.mission ? M.haunted.id : null,
-    night: M.night ? { done: Object.keys(M.night.done), candle: !!M.night.needs.candle, witness: !!M.night.needs.witness, haunt: !!M.night.needs.haunt } : null,
+    night: M.night ? { done: Object.keys(M.night.done), lantern: M.night.needs.lantern, candle: !!M.night.needs.candle, witness: !!M.night.needs.witness, haunt: !!M.night.needs.haunt } : null,
     stand: M.stand ? { voted: Object.keys(M.stand.votes), named: M.stand.named, tally: M.stand.tally ?? null } : null,
     reckon: M.reckon ? { from: M.reckon.from, target: M.reckon.target } : null,
     unmasked: M.unmasked,
@@ -608,6 +647,7 @@ export function missionAction(m, p) {
   const M = m.M;
   switch (m.phase) {
     case 'M_REVEAL': return { type: 'mack', done: p.acknowledged };
+    case 'M_LOTTERY': return { type: 'mlottery' };
     case 'M_PROPOSE':
       if (p.id !== M.leader) return { type: 'mwait', leader: M.leader };
       return { type: 'mpropose', size: teamSize(m), ward: M.card === 'WARD', haunted: hauntedNow(m), lantern: M.card === 'LANTERN',
@@ -622,6 +662,7 @@ export function missionAction(m, p) {
       if (N.needs.candle === p.id) a.candle = { targets: m.players.filter((x) => !M.candle.past.includes(x.id)).map((x) => x.id), choice: N.candle };
       if (N.needs.witness === p.id) a.witness = { targets: N.team.filter((id) => id !== p.id), choice: N.witness };
       if (N.needs.haunt === p.id) a.haunt = { targets: N.team.filter((id) => id !== p.id), choice: N.haunt };
+      if (N.needs.lantern === p.id) { const targets = lanternTargets(m); if (targets.length) a.lantern = { targets, choice: N.lantern }; }
       return a;
     }
     case 'M_LAST_STAND': return { type: 'mstand', choice: M.stand.votes[p.id] ?? null, targets: m.players.filter((x) => x.id !== p.id).map((x) => x.id) };
@@ -650,7 +691,7 @@ export function missionSecrets(m) {
   return {
     plays: m.phase === 'M_MISSION' ? M.plays : null,
     votes: m.phase === 'M_VOTE' ? M.votes : null,
-    night: M.night ? { hunch: M.night.hunch, candle: M.night.candle, witness: M.night.witness, haunt: M.night.haunt } : null,
+    night: M.night ? { hunch: M.night.hunch, lantern: M.night.lantern, candle: M.night.candle, witness: M.night.witness, haunt: M.night.haunt } : null,
     stand: M.stand?.votes ?? null,
     reckon: M.reckon?.suggestions ?? null,
     results: M.results.map((r) => r.plays),

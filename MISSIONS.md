@@ -43,7 +43,7 @@ Every table has a **Medium** and a **Reaper**. The others are lobby switches. Un
 ## 3. Setup
 
 1. Seats are dealt in secret. Each phone shows your role card and what you know. Everyone taps **Understood**.
-2. A random player becomes the first **Mission Leader** (the lantern on the ring).
+2. **The lottery:** a lantern hand spins around the table on every screen and lands on the first **Mission Leader**. The first mission, and its proposal timer, only start after the draw.
 3. The player to the **right** of the first Leader holds the **Candle**.
 4. The story (WHO / WHERE / WHY) is dealt as in the base game. The WHY is what the five missions are for.
 
@@ -90,8 +90,12 @@ Both cards look the same on every phone until tapped, so a glance at a neighbour
 ### 4.5 The reveal
 The cards are **shuffled** on the server and turned over one by one on every phone and the TV. The mission **fails** if the number of Sabotage cards reaches the requirement (1, or 2 on a bold mission). The result is added to the track, and the Gazette records the card, the team, every vote and the result.
 
+### 4.5b Who leads the next mission (lobby setting)
+- **Next in line** (default): leadership passes to the next player to the left.
+- **Chosen by the last leader:** at the night interlude, the leader whose team went hands the lantern to anyone who has **not yet led a mission that went ahead**. Leading a rejected proposal doesn't count. If they choose no one in time, it goes to the next eligible player in line. Rejected proposals within a mission still pass to the next player to the left.
+
 ### 4.6 The night interlude (after missions 1–4, unless the game is over)
-A short night, with the night score. Every player gets the same night screen and **must pick one seat as their Hunch** (who they suspect most). Hunches are private and only shown at the end, but because *everyone* taps, nobody can tell who is doing something more. Alongside their Hunch:
+A short night, with the night score. Every player gets the same night screen and **must pick one seat as their Hunch**. Anything you pick counts as soon as you tap it (who they suspect most). Hunches are private and only shown at the end, but because *everyone* taps, nobody can tell who is doing something more. Alongside their Hunch:
 - **The Candle** (after missions 2, 3 and 4): the holder picks a player who has **never held** the Candle and privately learns their side (*Living* or *Death*). The Candle passes to that player. *Who* checked *whom* is public; the answer is not. The pick counts as soon as it is tapped, even if the night ends before the holder goes to sleep. At dawn the holder gets a private *By Candlelight* reveal.
 - **Witness** / **Haunted Road** cards act here (§7).
 
