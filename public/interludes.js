@@ -52,7 +52,6 @@ export function scenesFor(l, batch = [], ctx = {}) {
   switch (l.ev) {
     case 'night0': return [['night0', { rules: ctx.rules ?? 0 }]];
     case 'm-start': return [['night0', { rules: 0 }]];
-    case 'x-start': return [['xball']];
     case 'day1': return [['day1']];
     case 'nightfall': case 'm-night': return [['nightfall']];
     case 'bloodmoon': return [['bloodmoon']];

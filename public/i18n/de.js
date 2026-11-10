@@ -1509,5 +1509,10 @@ export default {
     "{done}/{total} ready to vote": "{done}/{total} bereit zur Abstimmung",
     "{l} Living and one Demon.": "{l} Lebende und ein Dämon.",
     "{l} Living and two Demons.": "{l} Lebende und zwei Dämonen.",
+    "Hold to go back to the start": "Halten, um zum Start zurückzukehren",
+    "Play again, same table": "Nochmal, gleicher Tisch",
+    "Tap the ball to cloud it again.": "Tippe auf die Kugel, damit sie sich wieder trübt.",
+    "Tap the ball to look inside.": "Tippe auf die Kugel, um hineinzusehen.",
+    "Waiting for the host to start the next round.": "Warten, bis der Gastgeber die nächste Runde startet.",
   },
 };

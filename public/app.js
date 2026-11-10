@@ -349,7 +349,8 @@ function detectMoments(v) {
     }
   }
   if (out.length) {
-    S.moments.push(...out.map((m) => ({ ...m, id: uid() })));
+    // The TV has no one to tap it: every scene there plays out on its own.
+    S.moments.push(...out.map((m) => ({ ...m, id: uid(), ...(onBoard() ? { tapOnly: false } : {}) })));
     if (!S.moment) nextMoment();
     else if (!S.moment.at && out.some((m) => m.at)) { S.moments.unshift(S.moment); S.moment = null; nextMoment(); } // a shared scene pre-empts a personal one
   }
@@ -358,8 +359,8 @@ const sceneData = (m) => ({ rules: m.rules?.length ?? 0, dead: (m.killed?.length
 
 const MOMENT_SOUND = { night0: 'night', day1: 'dawn', nightfall: 'night', dawn: 'dawn', tally: 'knock', death: 'death', revive: 'revive', bloodmoon: 'bloodmoon' };
 const END_THEME = { DEMON: 'winDeath', DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester', LOVERS: 'winLovers', CULT: 'winCult', RIPPER: 'winRipper' };
-const MOMENT_TIME = { coin: 5200, gift: 5600, night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 5200, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
-const momentTime = (m) => (m.type === 'mreveal' ? revealTime(m) : X_MOMENT_TIME[m.type] ? X_MOMENT_TIME[m.type] : MISSION_MOMENT_TIME[m.type] ? MISSION_MOMENT_TIME[m.type] : !onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : MOMENT_TIME[m.type] + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
+const MOMENT_TIME = { end: 9000, private: 6000, gift: 5600, mside: 5200, coin: 5200, night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 5200, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
+const momentTime = (m) => (m.type === 'mreveal' ? revealTime(m) : X_MOMENT_TIME[m.type] ? X_MOMENT_TIME[m.type] : MISSION_MOMENT_TIME[m.type] ? MISSION_MOMENT_TIME[m.type] : !onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : (MOMENT_TIME[m.type] ?? 6000) + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
 
 function nextMoment() {
   clearTimeout(S.momentTimer);
@@ -526,7 +527,7 @@ function momentHtml(m) {
   const left = m.at ? Math.max(0, m.at + m.dur - (Date.now() + clockSkew)) : momentTime(m);
   return `<div class="moment ${m.at ? 'shared' : ''} m-${m.type} ${m.winner === 'DEATH' || m.winner === 'DEMON' || m.type === 'death' || m.type === 'munmask' ? 'grim' : ''} ${m.type === 'end' ? WIN_CLASS[m.winner] ?? '' : ''} ${onBoard() && m.type === 'dawn' ? 'front' : ''}" data-key="moment-${m.id}" data-act="momentNext" role="dialog" aria-live="assertive">
     ${m.type === 'end' && WIN_CLASS[m.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<div class="m-body">${body}</div>
-    <div class="m-foot">${auto ? `<span class="m-timer" style="--t:${left}ms"><i></i></span>` : ''}<span class="kicker">${t(m.at ? 'Everyone sees this together' : auto ? 'Tap to skip' : 'Tap to continue')}${S.moments.length ? ` · ${t('{n} more', { n: S.moments.length })}` : ''}</span></div>
+    <div class="m-foot">${auto ? `<span class="m-timer" style="--t:${left}ms"><i></i></span>` : ''}${onBoard() ? '' : `<span class="kicker">${t(m.at ? 'Everyone sees this together' : auto ? 'Tap to skip' : 'Tap to continue')}${S.moments.length ? ` · ${t('{n} more', { n: S.moments.length })}` : ''}</span>`}</div>
   </div>`;
 }
 
@@ -1061,7 +1062,8 @@ function sheet(v) {
   if (s === 'record') {
     title = th('Room {code}', { code: v.code });
     body = `${hostBox()}${langRow(v)}${v.me?.moderator ? '' : tutorialToggle()}<div>${recordBlock(v)}</div>
-      <div class="row"><a class="btn btn-sm btn-ghost" href="/guide" data-link>${t('How to play')}</a><button class="btn btn-sm btn-ghost" data-act="leave">${glyph('out')} ${t('Leave this device')}</button></div>`;
+      <div class="row"><a class="btn btn-sm btn-ghost" href="/guide" data-link>${t('How to play')}</a><button class="btn btn-sm btn-ghost" data-act="leave">${glyph('out')} ${t('Leave this device')}</button></div>
+      ${holdBtn('backHome', t('Hold to go back to the start'), 'btn-ghost btn-sm', { key: 'backhome' })}`;
   } else if (s === 'avatar') {
     title = t('Your portrait');
     body = avatarEditor();
@@ -1768,6 +1770,7 @@ function endMain(v, me) {
   const revealed = v.players.some((p) => p.role);
   return `<section class="verdict ${v.winner === 'DEATH' || v.winner === 'DEMON' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<span class="kicker">${t('Verdict')}</span><h1>${letters(title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
       ${won === null ? '' : `<div class="result-stamp ${won ? 'win' : 'loss'}">${won ? t('Victory') : t('Defeat')}</div>`}</section>
+    <div class="end-next" data-key="endnext">${v.host?.rematch ? `<button class="btn btn-solid btn-wide" data-act="rematch">${glyph('scroll')} ${t('Play again, same table')}</button>` : `<p class="small muted center-text">${t('Waiting for the host to start the next round.')}</p>`}</div>
     ${revealed ? ring(v, { reveal: true, center: centerFor(v), marks: v.mode === 'missions' ? missionMarks(v) : {}, extra: v.mode === 'missions' ? hunchArrowsSvg(v) : '' }) : ''}
     ${revealed && v.missions?.hunches?.length ? hunchLegend() : ''}
     ${v.mode === 'missions' ? missionEndHtml(v) : ''}
@@ -1778,7 +1781,7 @@ function endMain(v, me) {
       <span class="tags">${p.lover ? `<span class="tag love" title="${esc(t('Lovers'))}">${glyph('heart')}</span>` : ''}<span class="tag ${p.alignment === 'DEATH' ? 'blood' : ''}">${esc(ALIGN[p.alignment] ?? '')}</span></span></li>`).join('')}</ul>` : `<p class="muted">${t('The host chose not to reveal roles.')}</p>`}</section>
     ${me && !me.moderator ? `<details class="more" data-key="endnotes"><summary>${t('My notes')}</summary><div>${feed([...(v.private || [])].reverse(), 'feed-private')}</div></details>` : ''}
     <details class="more" data-key="endrec"><summary>${t('Public record')}</summary><div>${recordBlock(v)}</div></details>
-    <div class="row center" data-key="endbtns">${v.recap ? `<button class="btn btn-solid" data-act="recap">${glyph('scroll')} ${t('View recap')}</button>` : ''}<a class="btn" href="/" data-link>${t('Back to start')}</a></div>`;
+    <div class="row center" data-key="endbtns">${v.recap ? `<button class="btn" data-act="recap">${glyph('scroll')} ${t('View recap')}</button>` : ''}</div>`;
 }
 
 // ── Moderator ──────────────────────────────────────────────────────────────
@@ -1808,7 +1811,7 @@ function moderatorMain(v) {
 /** Translation and markup helpers shared with the board, Gazette and guide. */
 const H = { esc, glyph, dreamGlyph, t, th, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, scen, tlist, tx, getLang, mcardF };
 /** Helpers for the Missions screens (public/missions.js). */
-const MH = { S, ring, head: (...a) => head(...a), chips: (...a) => chips(...a), activePick: (...a) => activePick(...a), pickTabs: (...a) => pickTabs(...a), chatBlock: (...a) => chatBlock(...a) };
+const MH = { S, ring, head: (...a) => head(...a), chips: (...a) => chips(...a), activePick: (...a) => activePick(...a), pickTabs: (...a) => pickTabs(...a), chatBlock: (...a) => chatBlock(...a), render: () => render(), sound };
 
 // ── First-game tips ────────────────────────────────────────────────────────
 const TIPS_KEY = 'deadset:tutorial';
@@ -2081,6 +2084,7 @@ const ACT = {
     clearSession(S.code); disconnect(); S.token = null; go('/');
   },
   back() { if (history.length > 1) history.back(); else go('/'); },
+  backHome() { S.ui.sheet = null; go('/'); },
   sheet(el) { const id = el.dataset.id; S.ui.sheet = id && S.ui.sheet !== id ? id : null; if (S.ui.sheet) uiSound('whoosh'); render(); },
   seatSheet(el) { S.ui.sheet = `seat:${el.dataset.id}`; render(); },
   sound() { sound.toggle(); render(); },

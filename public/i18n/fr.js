@@ -1509,5 +1509,10 @@ export default {
     "{done}/{total} ready to vote": "{done}/{total} prêts à voter",
     "{l} Living and one Demon.": "{l} Vivants et un Démon.",
     "{l} Living and two Demons.": "{l} Vivants et deux Démons.",
+    "Hold to go back to the start": "Maintenir pour revenir au début",
+    "Play again, same table": "Rejouer, même table",
+    "Tap the ball to cloud it again.": "Touche la boule pour la voiler à nouveau.",
+    "Tap the ball to look inside.": "Touche la boule pour regarder dedans.",
+    "Waiting for the host to start the next round.": "En attente de l'hôte pour la manche suivante.",
   },
 };

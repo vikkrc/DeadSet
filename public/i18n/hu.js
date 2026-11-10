@@ -1509,5 +1509,10 @@ export default {
     "{done}/{total} ready to vote": "{done}/{total} kész a szavazásra",
     "{l} Living and one Demon.": "{l} Élő és egy Démon.",
     "{l} Living and two Demons.": "{l} Élő és két Démon.",
+    "Hold to go back to the start": "Tartsd a kezdőképernyőhöz",
+    "Play again, same table": "Új kör, ugyanez az asztal",
+    "Tap the ball to cloud it again.": "Koppints a gömbre, hogy újra elködösödjön.",
+    "Tap the ball to look inside.": "Koppints a gömbre, hogy belenézz.",
+    "Waiting for the host to start the next round.": "Várjuk, hogy a házigazda elindítsa a következő kört.",
   },
 };

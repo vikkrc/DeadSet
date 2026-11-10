@@ -11,13 +11,13 @@ A word game of bluff for **3–12 players**, chosen in the lobby next to Classic
 
 ## 2. A round
 
-1. **The crystal ball** (a shared scene on every screen). Phones show their own ball: the password for the Living, "You are the Demon" for the Demon. The category is always shown, to everyone. The TV shows the category only. Players then tap the ball to look again and confirm **I have seen it**.
+1. **The crystal ball.** One reveal, on each phone: the ball clouds for a breath, then clears by itself. The Living see their password write itself letter by letter inside a slowly turning ring of runes; the Demon sees a sigil draw itself and *You are the Demon* flicker in like embers. Both balls glow in the same colour, so a phone's light gives nobody away. The category always shows, to everyone. Tapping the ball clouds it again (and back), smoothly both ways, without anything on screen moving. After a few seconds **I have seen it** fades in. The TV shows the category only. During the turns a smaller ball stays on each phone: tap it to look again.
 2. **The lots.** The same lottery wheel as Missions picks who speaks first. The timers only start after it.
 3. **One word each.** In seat order from the first speaker, each player says one word linked to the password, then **holds the button** on their phone to confirm. The TV and phones show whose turn it is. A speaker who runs out of time is skipped. Optionally the word is typed too and shown on the TV.
 4. **Talk it over.** Open discussion; everyone taps **Ready to vote** (or the timer runs out).
 5. **Name the Demon.** Everyone votes for one other player. The most votes is named. A tie lets the Demon escape (or, with the coin option, a coin decides). Naming a Living player, or nobody, means **the Demon wins**.
 6. **One last guess.** A caught Demon gets one guess at the password: tap a word in the 4×4 grid, or type it when the grid is off (accents and case never matter; one typo is forgiven in words of five letters or more). Right, and the Demon still wins; wrong, and the Living win.
-7. **The end.** The password, the Demon(s), the grid, what was said and who named whom are revealed. After 40 seconds (or when the host taps Rematch), the table returns to **the same lobby with the same settings**, everyone already ready, and the **scores carry on**: Living +1 for a win, Demons +2.
+7. **The end.** The password, the Demon(s), the grid, what was said and who named whom are revealed. After 40 seconds (or when the host taps **Play again, same table**, shown right on the end screen), the table returns to **the same lobby with the same settings**, everyone already ready, and the **scores carry on**: Living +1 for a win, Demons +2.
 
 ## 3. Setup (lobby)
 
@@ -43,7 +43,7 @@ Ten categories × 20 words, index-aligned in all seven languages (`engine/words.
 
 ## 5. Interludes and sound
 
-Shared scenes (the crystal ball, the lottery, the call to vote, the vote reveal, the last guess) play in sync on every screen and lock inputs while they run (see Beta 0). The ball is a WebGL mist shader with a CSS fallback, and calm under reduced motion.
+Shared scenes (the lottery, the call to vote, the vote reveal, the last guess) play in sync on every screen and lock inputs while they run (see Beta 0). The ball is a WebGL mist shader with a CSS fallback, and calm under reduced motion.
 
 ## 6. Practice bots
 

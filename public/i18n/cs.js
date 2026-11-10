@@ -1509,5 +1509,10 @@ export default {
     "{done}/{total} ready to vote": "{done}/{total} připraveno hlasovat",
     "{l} Living and one Demon.": "Živí: {l} a jeden Démon.",
     "{l} Living and two Demons.": "Živí: {l} a dva Démoni.",
+    "Hold to go back to the start": "Podrž a vrať se na začátek",
+    "Play again, same table": "Hrát znovu, stejný stůl",
+    "Tap the ball to cloud it again.": "Ťukni na kouli a znovu se zahalí.",
+    "Tap the ball to look inside.": "Ťukni na kouli a podívej se dovnitř.",
+    "Waiting for the host to start the next round.": "Čeká se, až hostitel spustí další kolo.",
   },
 };

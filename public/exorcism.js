@@ -112,17 +112,47 @@ export function ballHtml({ key, kicker = '', title = '', sub = '', tint = '#8fc7
 const LIVING_TINT = '#8fc7d6';
 const DEMON_TINT = '#c2344a';
 
-/** My own ball: category always; the password for the Living; the Demon's hint if any. */
-export function myBall(v, { key = 'myball', clear = true, big = false } = {}) {
+/**
+ * My own ball, the same colour for everyone (a red glow would give the Demon
+ * away across the table). Everything inside is always in the DOM and only its
+ * state changes, so the ball never moves; opening and closing both animate.
+ * The Living see their password materialise letter by letter; the Demon sees
+ * a sigil draw itself and their fate flicker in like embers.
+ */
+export function myBall(v, { key = 'myball', open = true, big = false, small = false, act = '' } = {}) {
   const x = v.me?.x;
-  const X = v.exorcism;
-  if (!x || !X) return '';
+  if (!x || !v.exorcism) return '';
   const k = `${esc(t('Category'))} · ${esc(catName(x.category))}`;
+  const letters = (str, demon) => {
+    // Letters are animated one by one, grouped per word so lines only break between words.
+    const n = [...str].length;
+    let i = 0;
+    return str.split(' ').map((w) => `<span class="xw">${[...w].map((ch) => {
+      const k2 = demon ? ((i * 7) % n) : i; // embers flicker in out of order; the password writes itself
+      i++;
+      return `<span class="xl" style="--k:${k2};--n:${n}">${esc(ch)}</span>`;
+    }).join('')}</span>`).join(' ');
+  };
+  let word; let sub; let extra = '';
   if (x.demon) {
-    const hint = x.hint ? (x.hint.kind === 'length' ? th('A whisper: {n} letters', { n: x.hint.n }) : th('A whisper: it begins with {x}', { x: x.hint.x })) : esc(t('You do not know the password.'));
-    return ballHtml({ key, kicker: k, title: esc(t('You are the Demon')), sub: hint, tint: DEMON_TINT, clear, big, cls: 'demon' });
+    word = letters(t('You are the Demon'), true);
+    sub = x.hint ? (x.hint.kind === 'length' ? th('A whisper: {n} letters', { n: x.hint.n }) : th('A whisper: it begins with {x}', { x: x.hint.x })) : esc(t('You do not know the password.'));
+    if (x.demonMates?.length) sub += `<br>${th('The other Demon: {names}', { names: x.demonMates.map((m) => m.name) })}`;
+    extra = '<svg class="xb-sigil" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44"/><path d="M50 8 L74 86 L10 36 L90 36 L26 86 Z"/></svg>';
+  } else {
+    word = letters(wordAt(x.category, x.word), false);
+    sub = esc(t('The password'));
+    extra = '<svg class="xb-runes" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="45"/><circle cx="50" cy="50" r="40"/></svg>';
   }
-  return ballHtml({ key, kicker: k, title: esc(wordAt(x.category, x.word)), sub: esc(t('The password')), tint: LIVING_TINT, clear, big });
+  const tag = act ? 'button' : 'div';
+  return `<${tag} class="xball-btn" ${act ? `data-act="${act}"` : ''} data-key="${key}-btn" aria-label="${esc(t(open ? 'Hide the ball' : 'Look into the ball'))}">
+  <div class="xball personal ${x.demon ? 'is-demon' : 'is-living'} ${big ? 'big' : ''} ${small ? 'small' : ''} ${open ? 'clear open' : 'closed'}" data-key="${key}" style="--tint:${LIVING_TINT}">
+    <div class="xb-glow" aria-hidden="true"></div>
+    <div class="xb-orb"><canvas class="xball-gl" data-key="${key}-gl" data-clear="${open ? 1 : 0}" data-tint="${LIVING_TINT}" aria-hidden="true"></canvas><div class="xb-css" aria-hidden="true"><i></i><i></i><i></i></div>
+      ${extra}
+      <div class="xb-in"><span class="xb-k">${k}</span><b class="xb-word">${word}</b><span class="xb-sub">${sub}</span><span class="xb-tap">${esc(t('Tap to look inside'))}</span></div></div>
+    <div class="xb-stand" aria-hidden="true"></div>
+  </div></${tag}>`;
 }
 
 // ── Grid ───────────────────────────────────────────────────────────────────
@@ -211,22 +241,26 @@ export function exorcismMain(v, me, h) {
   const X = v.exorcism;
   const a = v.action || {};
   const { ctx, pick } = activePick(v);
-  const peekKey = `xpeek-${v.phaseId}`;
-  const peek = !!S.ui[peekKey];
+  const peek = !!S.ui.xpeek?.[v.phaseId];
   const gridBtn = X?.grid ? `<button class="chip" data-act="xGrid" data-key="xgridbtn">${glyph('menu')}<span>${t('Word grid')}</span></button>` : '';
-  const peekBtn = `<button class="chip" data-act="xPeek" data-key="xpeekbtn">${glyph('veiled')}<span>${t(peek ? 'Hide the ball' : 'Look into the ball')}</span></button>`;
-  const tools = `<nav class="chips" data-key="xtools">${peekBtn}${gridBtn}</nav>`;
-  const ballSmall = peek ? `<div class="rise-in" data-key="xpeek">${myBall(v, { key: 'peekball' })}</div>` : '';
+  const tools = gridBtn ? `<nav class="chips" data-key="xtools">${gridBtn}</nav>` : '';
+  // A small ball, always in place: tap it to look again, tap again to cloud it.
+  const ballSmall = me?.x ? myBall(v, { key: 'peekball', open: peek, small: true, act: 'xPeek' }) : '';
   const grid = S.ui.xgrid && X?.grid ? `<div class="x-gridwrap" data-key="xgridwrap"><span class="kicker">${esc(catName(X.category))}</span>${wordGrid(v)}</div>` : '';
   let stage = '';
   switch (v.phase) {
     case 'X_REVEAL': {
-      const key = `xr-${v.phaseId}`;
-      const open = !!S.ui.flipped[key];
+      // The one reveal: the ball clouds for a breath, then clears by itself.
+      // Tapping it clouds it again (and back); the confirm fades in after a few seconds.
+      const open = S.ui.xopen?.[v.phaseId];
+      if (open === undefined) {
+        (S.ui.xopen ||= {})[v.phaseId] = false;
+        setTimeout(() => { if (S.ui.xopen[v.phaseId] === false && !S.ui.xtouched?.[v.phaseId]) { S.ui.xopen[v.phaseId] = true; h.sound?.play('reveal'); h.render?.(); } }, 1500);
+      }
       return `${head(v)}
-        <p class="muted center-text" data-key="xrhint">${me.acknowledged ? th('Waiting for the others · {done}/{total}', v.progress) : t(open ? 'Remember it. Tap the ball to cloud it again.' : 'Shield your screen, then tap the ball.')}</p>
-        <button class="xball-btn" data-act="xFlip" data-id="${key}" data-key="xrbtn" aria-label="${esc(t('Look into the ball'))}">${open ? myBall(v, { key: 'revealball', big: true }) : ballHtml({ key: 'revealball', kicker: `${esc(t('Category'))} · ${esc(catName(X.category))}`, title: '', sub: esc(t('Tap to look inside')), clear: false, big: true })}</button>
-        ${open && me.x?.demonMates?.length ? `<p class="center-text blood" data-key="xmates">${th('The other Demon: {names}', { names: me.x.demonMates.map((m) => m.name) })}</p>` : ''}
+        <p class="muted center-text x-hint" data-key="xrhint">${me.acknowledged ? th('Waiting for the others · {done}/{total}', v.progress) : t('Shield your screen. Remember what you see.')}</p>
+        ${myBall(v, { key: 'revealball', open: !!open, big: true, act: 'xFlip' })}
+        <p class="small muted center-text x-hint" data-key="xrhint2">${t(open ? 'Tap the ball to cloud it again.' : 'Tap the ball to look inside.')}</p>
         ${chips(v)}`;
     }
     case 'X_LOTTERY':
@@ -273,7 +307,7 @@ export function exorcismDock(v, h) {
   const a = v.action || {};
   const parts = [];
   switch (a.type) {
-    case 'xack': if (!a.done) parts.push(btn(t('I have seen it'), 'xAck', 'btn-solid', !S.ui.flipped[`xr-${v.phaseId}`])); break;
+    case 'xack': if (!a.done) parts.push(btn(t('I have seen it'), 'xAck', 'btn-solid x-late')); break;
     case 'xspeak': parts.push(holdBtn('xDone', t('Hold when you have said it'), 'btn-solid')); break;
     case 'xready': parts.push(btn(a.ready ? `${glyph('check')} ${t('Ready to vote')}` : t('Ready to vote'), 'xReady', a.ready ? 'btn-ghost is-on' : 'btn-solid')); break;
     case 'xvote': {
@@ -295,9 +329,9 @@ export function exorcismDock(v, h) {
 export function exorcismActs(h) {
   const { S, V, send, render, picked, burstAt, sound, haptic } = h;
   return {
-    xFlip(el) { const k = el.dataset.id; S.ui.flipped[k] = !S.ui.flipped[k]; haptic(10); sound.play(S.ui.flipped[k] ? 'reveal' : 'tap'); render(); },
+    xFlip() { const id = V().phaseId; (S.ui.xopen ||= {})[id] = !S.ui.xopen[id]; (S.ui.xtouched ||= {})[id] = true; haptic(10); sound.play(S.ui.xopen[id] ? 'reveal' : 'tap'); render(); },
     async xAck(el) { const ok = await send('x.ack', {}); if (ok) burstAt(el); },
-    xPeek() { const k = `xpeek-${V().phaseId}`; S.ui[k] = !S.ui[k]; render(); },
+    xPeek() { const id = V().phaseId; (S.ui.xpeek ||= {})[id] = !S.ui.xpeek[id]; haptic(8); render(); },
     xGrid() { S.ui.xgrid = !S.ui.xgrid; render(); },
     async xDone(el) {
       const ok = await send('x.done', { word: S.drafts?.xword ?? '' });
@@ -318,7 +352,7 @@ export function exorcismActs(h) {
 // ── Moments ────────────────────────────────────────────────────────────────
 export function exorcismMoment(l, v, fresh, { notify, name: nm }) {
   switch (l.ev) {
-    case 'x-start': return { type: 'xball', category: l.category, sound: 'reveal' };
+    case 'x-start': return null; // the reveal happens on each phone's own screen
     case 'x-lottery': {
       const order = l.order.map((id) => ({ id, name: nm(id), av: v.players.find((p) => p.id === id)?.avatar ?? null }));
       return { type: 'mlottery', order, leader: l.leader, leaderName: nm(l.leader), idx: l.order.indexOf(l.leader), spins: l.spins ?? 2, sound: null,

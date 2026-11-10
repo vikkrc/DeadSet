@@ -1738,12 +1738,51 @@ body.is-board .lot-disc { width: 70px; height: 70px; } body.is-board .lot-seat s
 .xb-k { font: 600 10px/1.3 var(--sans, sans-serif); letter-spacing: 0.16em; text-transform: uppercase; color: color-mix(in srgb, var(--tint) 70%, #fff); opacity: 0.9; }
 .xb-word { font-family: var(--serif, serif); font-size: clamp(22px, calc(var(--size) / 7.5), 48px); line-height: 1.05; color: #fff; text-shadow: 0 0 18px var(--tint), 0 0 4px rgba(0, 0, 0, 0.8); overflow-wrap: anywhere; }
 .xb-sub { font-size: 12px; color: rgba(255, 255, 255, 0.78); text-shadow: 0 1px 4px #000; }
-.xball:not(.clear) .xb-word { opacity: 0; }
-.xball.clear .xb-word { animation: xbAppear 2.4s var(--ease) both; animation-delay: 0.6s; }
-@keyframes xbAppear { from { opacity: 0; filter: blur(10px); transform: scale(0.92); } to { opacity: 1; filter: none; transform: none; } }
+.xball:not(.clear):not(.personal) .xb-word { opacity: 0; }
+.xball.clear:not(.personal) .xb-word { animation: xbAppear 2.4s var(--ease) both; animation-delay: 0.6s; }
+@keyframes xbAppear { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: none; } }
+/* Text glow needs room: the word box is padded so the glow is never clipped by its own box. */
+.xb-word { padding: 0.35em 0.4em; margin: -0.35em -0.4em; }
+
+/* The personal ball: every part stays in place; only states change, both ways animated. */
+.xball.personal .xb-in > * { transition: opacity 0.9s var(--ease), transform 0.9s var(--ease); }
+.xball.personal .xb-k { opacity: 0.85; }
+.xball.personal .xb-tap { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); text-shadow: 0 1px 6px #000; }
+.xball.personal.open .xb-tap { opacity: 0; transition-delay: 0s; }
+.xball.personal.closed .xb-tap { opacity: 1; transition-delay: 0.6s; }
+.xball.personal .xb-sub { opacity: 0; }
+.xball.personal.open .xb-sub { opacity: 1; transition-delay: 2.2s; }
+.xball.personal.closed .xb-sub { transition-duration: 0.4s; }
+.xball.personal .xb-word { display: block; min-height: 1.1em; }
+.xl { display: inline-block; opacity: 0; white-space: pre; transform: translateY(0.35em) scale(1.35); color: #fff;
+  text-shadow: 0 0 0 transparent; transition: opacity 0.7s var(--ease), transform 0.9s var(--ease), text-shadow 1.2s var(--ease);
+  transition-delay: calc((var(--n) - var(--k)) * 0.03s); }
+.xball.personal.open .xl { opacity: 1; transform: none; text-shadow: 0 0 14px var(--tint), 0 0 34px color-mix(in srgb, var(--tint) 60%, transparent), 0 0 3px rgba(0, 0, 0, 0.9);
+  transition-delay: calc(0.9s + var(--k) * 0.09s); }
+.xball.personal.is-living.open .xb-word { animation: xbBreath 3.6s ease-in-out 2.4s infinite; }
+@keyframes xbBreath { 50% { transform: scale(1.04); } }
+/* Living: a ring of runes turns slowly while the word writes itself. */
+.xb-runes, .xb-sigil { position: absolute; inset: 6%; width: 88%; height: 88%; fill: none; stroke: rgba(255, 255, 255, 0.55); stroke-width: 0.6; pointer-events: none;
+  opacity: 0; transition: opacity 1.2s var(--ease); }
+.xb-runes circle:first-child { stroke-dasharray: 1 4.2; }
+.xb-runes circle:last-child { stroke-dasharray: 9 3 1 3; stroke-width: 0.4; }
+.xball.personal.open .xb-runes { opacity: 1; transition-delay: 0.6s; animation: xbTurn 40s linear infinite; }
+@keyframes xbTurn { to { transform: rotate(360deg); } }
+/* Demon: no word to show; a sigil draws itself and the verdict flickers in like embers. */
+.xb-sigil path, .xb-sigil circle { stroke-dasharray: 320; stroke-dashoffset: 320; transition: stroke-dashoffset 2.2s var(--ease); }
+.xball.personal.open .xb-sigil { opacity: 0.38; transition-delay: 0.5s; }
+.xball.personal.open .xb-sigil path, .xball.personal.open .xb-sigil circle { stroke-dashoffset: 0; transition-delay: 0.6s; }
+.xball.personal.is-demon .xl { transform: translateY(0) scale(0.6); }
+.xball.personal.is-demon.open .xl { transform: none; animation: xbEmber 2.6s ease-in-out infinite; animation-delay: calc(1.4s + var(--k) * 0.11s); }
+@keyframes xbEmber { 0%, 100% { opacity: 1; } 47% { opacity: 1; } 50% { opacity: 0.45; } 53% { opacity: 1; } }
+.xball.personal.is-demon .xb-word { font-size: clamp(18px, calc(var(--size) / 10), 34px); }
+.x-hint { min-height: 2.8em; margin: 4px 0; }
+/* The confirm only appears once the reveal has had time to land. */
+.x-late { animation: xLate 0.6s var(--ease) 4.5s both; }
+@keyframes xLate { from { opacity: 0; visibility: hidden; transform: translateY(8px); } to { opacity: 1; visibility: visible; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .xl, .xb-sigil path, .xb-sigil circle, .xball.personal .xb-in > * { transition-duration: 0.01s !important; transition-delay: 0s !important; } .x-late { animation-delay: 1s; } .xball.personal .xb-word, .xb-runes, .xball.personal.is-demon.open .xl { animation: none !important; } }
 .xb-stand { width: calc(var(--size) * 0.5); height: calc(var(--size) * 0.11); margin-top: -6px; border-radius: 0 0 40% 40% / 0 0 100% 100%; background: linear-gradient(#3a2c1c, #1b140c); box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6); }
 .xball-btn { display: block; margin: 0 auto; background: none; border: 0; padding: 0; cursor: pointer; color: inherit; }
-.xball.demon .xb-word { font-size: clamp(18px, calc(var(--size) / 10), 34px); }
 @media (prefers-reduced-motion: reduce) { .xb-glow, .xb-css i, .xball.clear .xb-word { animation: none !important; } }
 
 .x-turn { text-align: center; margin: 14px auto; max-width: 30rem; }
@@ -1780,3 +1819,7 @@ button.chipbtn { cursor: pointer; }
 .xboard .x-order li { font-size: clamp(13px, 1.2vw, 20px); }
 .xboard .b-now { text-align: center; }
 @media (max-width: 900px) { .xboard .x-cols { grid-template-columns: 1fr; } }
+.xw { white-space: nowrap; }
+.end-next { margin: 14px auto 6px; max-width: 26rem; }
+.xball.small { --size: min(46vw, 180px); margin: 8px auto 4px; }
+.xball.small .xb-k { font-size: 9px; } .xball.small .xb-sub { font-size: 10px; }
