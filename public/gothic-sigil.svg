@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 100" fill="none" role="img" aria-labelledby="title"><title id="title">Dead Set — the cut arch</title>
+<path d="M9 94V35Q40-5 71 35V94H9Z" stroke="#E9E3D7" stroke-width="2.2"/>
+<path d="M17 94V39Q40 9 63 39V94" stroke="#E9E3D7" stroke-width="1"/>
+<path d="M24 94V43Q40 22 56 43V94" stroke="#E9E3D7" stroke-width=".8" opacity=".55"/>
+<path d="M40 29 46 43 44 76 40 87 36 76 34 43 40 29Z" fill="#E9E3D7"/>
+<path d="M29 49H51M32 53H48" stroke="#121313" stroke-width="2"/>
+<path d="m17 18 7-7m32 0 7 7" stroke="#E9E3D7" stroke-width="1"/>
+<path d="M10 78 70 25" stroke="#F04A39" stroke-width="4.2" stroke-linecap="square"/>
+<circle cx="10" cy="78" r="2.5" fill="#F04A39"/>
+</svg>
