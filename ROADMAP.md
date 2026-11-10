@@ -14,6 +14,23 @@ All modes share the Dead Set family's tools:
 
 ---
 
+## Beta 0 (step zero): every mode's setup shows only its own options
+
+Before anything new, the lobby must be clean. Each game mode's setup only allows the roles, rules and other settings meant for that mode. With more modes coming, this has to be solid now.
+
+**Leaks found (2026-11-10):**
+- **Classic → Custom → "Choose every role":** the "Death" group of role counters lists every Death-aligned role, including the Missions roles (Reaper, Charlatan, Veiled, Stray, Shade). The server already refuses them, so their counters silently do nothing.
+- **Trusted moderator → "Assign role":** the dropdown lists every role from every mode. The server rejects wrong picks, but they shouldn't be offered.
+
+**The fix, as a rule for all current and future modes:**
+- Every role, rule card and setting belongs to a mode. Each mode declares what it uses: role sets, rule cards, Dreams, sides, twists, timers and story options.
+- Every setup screen is built only from that declaration: the role counters, the moderator's role picker, the deck preview, the rule cards, the switches and the timers. The same goes for non-host players' read-only setup summary and the TV lobby.
+- The server enforces the same declaration. Settings for another mode are ignored or reset when switching modes, never silently carried into a game.
+- Switching modes keeps each mode's own last settings, so going Classic → Missions → Classic loses nothing.
+- **Checks:** for each mode, automated tests that nothing from another mode appears in the lobby view or is accepted by the server. Also a browser pass of every lobby screen (host, guest, moderator, TV).
+
+---
+
 ## Beta 1: Missions, part 2
 
 - **Side Missions** (lobby switch). Every player is dealt one secret personal objective at random when the game starts, from a large pool. Examples:
@@ -52,7 +69,25 @@ Other Missions ideas kept for later:
 
 ---
 
-## Beta 2: Dead Set: Carnival (inspired by Mascarade)
+## Beta 2: Dead Set: Exorcism (based on Chameleon), the first new mode
+
+**The pitch:** the Living know the secret word of the exorcism: the password that would banish the Death among them.
+
+- **Setup:** a category and a secret password are drawn. Every Living phone shows the password. **Death's** phone does not, and Death must bluff.
+- **Each round:** each player says one word linked to the password, trying to prove they know it without giving it away to Death.
+- **The hunt:** the table then votes on who Death is. If the vote misses, Death wins.
+- **Death's last chance:** if Death is caught, it may guess the password. A correct guess still wins for Death.
+- **Word grid (setup switch):** an optional 4×4 grid of words in the topic, shown on the TV and openable on every phone. The password is one of them. That makes it fairer for Death and more tense for the Living.
+- **Categories:** several, each switchable in setup, with many words each.
+- **Language:** the lobby language is **forced on all players** in this mode, because everyone must see the same words.
+- **Between rounds:** the end of a round brings everyone back to the same lobby with the same settings, so they can jump straight into a new round.
+- **Players and length:** 3–12, about 5–10 minutes per round.
+
+**To design:** the turn order and timing, tie votes, and scoring across rounds if any. Word lists also need translating into every language, per category.
+
+---
+
+## Beta 3: Dead Set: Carnival (inspired by Mascarade)
 
 **The pitch:** at a masked ball where Death is a guest, nobody is sure which mask they're wearing.
 
@@ -70,7 +105,7 @@ Other Missions ideas kept for later:
 
 ---
 
-## Beta 3: Dead Set: Lifeboat (survival with a traitor)
+## Beta 4: Dead Set: Lifeboat (survival with a traitor)
 
 **The pitch:** the ship is gone. Twelve days to land, too few rations, and someone aboard wants nobody to make it.
 
@@ -91,7 +126,7 @@ Other Missions ideas kept for later:
 
 ---
 
-## Beta 4: Dead Set: Séance (a hidden-traitor co-op, a cousin of Mysterium)
+## Beta 5: Dead Set: Séance (a hidden-traitor co-op, a cousin of Mysterium)
 
 **The pitch:** someone was murdered. Their ghost wants to help you, but the ghost can't speak, and a second spirit is lying.
 
@@ -109,7 +144,7 @@ Other Missions ideas kept for later:
 
 ---
 
-## Beta 5: Dead Set: Doppelgänger (a cousin of Spyfall)
+## Beta 6: Dead Set: Doppelgänger (a cousin of Spyfall)
 
 **The pitch:** everyone at the table knows where you are, except the thing wearing a friend's face.
 
@@ -124,25 +159,7 @@ Other Missions ideas kept for later:
   - roles with tiny secret instructions ("mention the weather");
   - a Witness who knows who the Doppelgänger is but must stay hidden.
 
-It benefits directly from Beta 4's bigger WHERE pool.
-
----
-
-## Beta 6: Dead Set: Exorcism (based on Chameleon)
-
-**The pitch:** the Living know the secret word of the exorcism: the password that would banish the Death among them.
-
-- **Setup:** a category and a secret password are drawn. Every Living phone shows the password. **Death's** phone does not, and Death must bluff.
-- **Each round:** each player says one word linked to the password, trying to prove they know it without giving it away to Death.
-- **The hunt:** the table then votes on who Death is. If the vote misses, Death wins.
-- **Death's last chance:** if Death is caught, it may guess the password. A correct guess still wins for Death.
-- **Word grid (setup switch):** an optional 4×4 grid of words in the topic, shown on the TV and openable on every phone. The password is one of them. That makes it fairer for Death and more tense for the Living.
-- **Categories:** several, each switchable in setup, with many words each.
-- **Language:** the lobby language is **forced on all players** in this mode, because everyone must see the same words.
-- **Between rounds:** the end of a round brings everyone back to the same lobby with the same settings, so they can jump straight into a new round.
-- **Players and length:** 3–12, about 5–10 minutes per round.
-
-**To design:** the turn order and timing, tie votes, and scoring across rounds if any. Word lists also need translating into every language, per category.
+It benefits directly from Beta 5's bigger WHERE pool (Séance), and reuses the round-and-lobby machinery built for Exorcism (Beta 2).
 
 ---
 
