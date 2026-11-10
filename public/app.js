@@ -7,7 +7,7 @@ import { sound, score, haptic, burstAt, celebrate, ambient } from './fx.js';
 import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './board.js';
 import { seatLayout } from './layout.js';
 import { sceneMs, scenesFor } from './interludes.js';
-import { isExorcismPhase, exorcismMain, exorcismPicks, exorcismDock, exorcismActs, exorcismMoment, exorcismMomentHtml, X_MOMENT_TIME, exorcismEndHtml, exorcismLobbyDeck, setExorcismContent, mountBalls } from './exorcism.js';
+import { lobbyOrb, isExorcismPhase, exorcismMain, exorcismPicks, exorcismDock, exorcismActs, exorcismMoment, exorcismMomentHtml, X_MOMENT_TIME, exorcismEndHtml, exorcismLobbyDeck, setExorcismContent, mountBalls } from './exorcism.js';
 import { avatarSvg, randomAvatar, PARTS, COLORS } from './avatar.js';
 import { giftHtml, productIndex } from './gifts.js';
 import { gazetteHtml, frontPageHtml } from './gazette.js';
@@ -812,7 +812,7 @@ function langChip() {
  * Seats drawn around a table in seating order. When `pick` is set, the
  * selectable seats become buttons: tapping a seat is how you target anyone.
  */
-function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = {}, lobby = false, crack = false, extra = '' } = {}) {
+function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = {}, lobby = false, crack = false, extra = '', orb = '' } = {}) {
   const players = [...v.players].sort((a, b) => a.seat - b.seat);
   const n = Math.max(players.length, slots);
   const { pos, tok, dense } = seatLayout(n);
@@ -855,9 +855,10 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     seats.push(`<button type="button" class="${cls}" data-key="tok-${p.id}" style="left:${x}%;top:${y}%" ${selectable ? `data-act="${pick.act}" data-id="${p.id}"` : 'tabindex="-1"'} aria-pressed="${isSel}" aria-label="${label}">
       <span class="tok-disc">${sigil(p.id)}${crack && !p.alive ? CRACK : ''}${inner}${badges.join('')}</span><span class="tok-name">${esc(p.name)}</span></button>`);
   }
-  return `<div class="ring-wrap" data-key="ring-wrap"><div class="ring ${dense ? 'dense' : ''} ${pick ? 'picking' : ''} ${pick?.tone === 'kill' ? 'kill' : ''}" style="--tok:${tok}px" data-key="ring">
+  return `<div class="ring-wrap" data-key="ring-wrap"><div class="ring ${dense ? 'dense' : ''} ${pick ? 'picking' : ''} ${pick?.tone === 'kill' ? 'kill' : ''} ${orb ? 'orb' : ''}" style="--tok:${tok}px" data-key="ring">
     <svg class="ring-fuse off" viewBox="0 0 100 100" data-ringfuse aria-hidden="true"><circle class="track" cx="50" cy="50" r="49"/><circle class="burn" cx="50" cy="50" r="49" pathLength="100"/></svg>
     <div class="ring-table" aria-hidden="true"></div>
+    ${orb ? `<div class="ring-orb" data-key="ring-orb">${orb}</div>` : ''}
     ${extra}
     ${seats.join('')}
     <div class="ring-center" data-key="center">${center}</div>
@@ -1151,7 +1152,7 @@ function lobbyMain(v, me) {
         <a class="btn btn-sm btn-ghost" href="/board/${esc(v.code)}" target="_blank" rel="noopener">${t('TV board ↗')}</a>
       </div>
     </section>
-    ${ring(v, { pick, slots: Math.max(5, v.players.length), lobby: true, center: centerFor(v) })}
+    ${ring(v, { pick, slots: Math.max(5, v.players.length), lobby: true, center: centerFor(v), orb: v.mode === 'exorcism' ? lobbyOrb() : '' })}
     ${isHost ? `<p class="small muted center-text" data-key="seathint">${t('Tap a seat to move or remove a player.')}</p>` : ''}
     ${me && !me.moderator ? portraitRow(v.players.find((p) => p.id === me.id)?.avatar) : ''}
     ${isHost && S.ui.botsPanel ? botsPanel(v) : ''}

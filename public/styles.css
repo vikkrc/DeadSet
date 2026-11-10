@@ -1823,3 +1823,32 @@ button.chipbtn { cursor: pointer; }
 .end-next { margin: 14px auto 6px; max-width: 26rem; }
 .xball.small { --size: min(46vw, 180px); margin: 8px auto 4px; }
 .xball.small .xb-k { font-size: 9px; } .xball.small .xb-sub { font-size: 10px; }
+
+/* ── Exorcism: the ball at the heart of the table, and what was said around it ── */
+.ring.orb .ring-table { opacity: 0; }
+.ring-orb { position: absolute; inset: 21%; z-index: 0; display: grid; place-items: center; }
+.ring.dense .ring-orb { inset: 25%; }
+.ring-orb .xball-btn { width: 100%; pointer-events: auto; }
+.ring-orb .xball, .xball.in-ring { --size: 100%; width: 100%; margin: 0; }
+.ring-orb .xb-stand { display: none; }
+.ring.orb .ring-center { z-index: 2; }
+.ring.orb .ring-center .c-big, .ring.orb .ring-center .c-sub { text-shadow: 0 0 10px #000, 0 1px 3px #000; }
+.ring.orb .tok { z-index: 3; }
+.xball.in-ring .xb-k { font-size: 9px; } .xball.in-ring .xb-word { font-size: clamp(16px, 5vw, 30px); } .xball.in-ring .xb-sub, .xball.in-ring .xb-tap { font-size: 9px; }
+.board2 .xball.in-ring .xb-word { font-size: clamp(20px, 2.4vw, 40px); } .board2 .xball.in-ring .xb-k { font-size: 12px; }
+/* The vote: the glow beats faster; the mist itself speeds up in the shader. */
+.xball.vote .xb-glow { animation-duration: 1.4s; }
+.xball.talk .xb-glow { animation-duration: 5s; }
+/* Words or faces floating on the edge of the ball. */
+.xb-orbit { position: absolute; left: 0; right: 0; top: 0; aspect-ratio: 1; width: var(--size); margin: 0 auto; z-index: 3; pointer-events: none; }
+.xb-orbit .xo { position: absolute; transform: translate(-50%, -50%); animation: xoFloat 4.6s ease-in-out infinite; animation-delay: calc(var(--d) * -1); }
+@keyframes xoFloat { 0%, 100% { margin-top: 0; } 50% { margin-top: -7px; } }
+.xo-word { display: inline-block; padding: 3px 9px; border-radius: 999px; background: rgba(16, 12, 6, 0.82); border: 1px solid color-mix(in srgb, var(--tint) 60%, transparent);
+  color: #fff4d8; font: 500 12px/1.2 var(--sans, sans-serif); white-space: nowrap; box-shadow: 0 0 12px color-mix(in srgb, var(--tint) 40%, transparent); animation: fadeIn 0.8s var(--ease) both; }
+.board2 .xo-word { font-size: clamp(14px, 1.3vw, 22px); padding: 5px 14px; }
+.xo-face { display: grid; justify-items: center; gap: 2px; animation: fadeIn 0.8s var(--ease) both; }
+.xo-face .xo-av, .xo-face > b { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: #1b1610; border: 1px solid color-mix(in srgb, var(--tint) 70%, transparent); box-shadow: 0 0 10px color-mix(in srgb, var(--tint) 45%, transparent); }
+.board2 .xo-face .xo-av, .board2 .xo-face > b { width: 3.4vw; height: 3.4vw; }
+.xo-face small { font-size: 10px; color: #fff4d8; text-shadow: 0 1px 3px #000; }
+@media (prefers-reduced-motion: reduce) { .xb-orbit .xo { animation: none; } }
+.xo-face.quiet { opacity: 0.45; }

@@ -3,6 +3,7 @@
 // in `h` and merges `exorcismActs` into its action table.
 import { glyph } from './icons.js';
 import { t, th, getLang, setNamer } from './i18n.js';
+import { avatarSvg } from './avatar.js';
 
 export const isExorcismPhase = (ph) => typeof ph === 'string' && ph.startsWith('X_');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -81,9 +82,14 @@ function frame(now) {
     const target = cv.dataset.clear === '1' ? 1 : 0;
     b.clear += (target - b.clear) * 0.04;
     gl.uniform2f(b.u.r, w, hgt);
-    gl.uniform1f(b.u.t, calm ? 4 : (now - b.t0) / 1000);
+    // Time runs at the ball's speed (the vote speeds it up); the tint glides to its target.
+    const dt = Math.min(0.1, (now - (b.last ?? now)) / 1000); b.last = now;
+    b.time = (b.time ?? 0) + dt * (Number(cv.dataset.speed) || 1);
+    const want = hex(cv.dataset.tint || '#8fc7d6');
+    b.tint = b.tint ? b.tint.map((c, i) => c + (want[i] - c) * 0.03) : want;
+    gl.uniform1f(b.u.t, calm ? 4 : b.time);
     gl.uniform1f(b.u.clear, b.clear);
-    gl.uniform3fv(b.u.tint, hex(cv.dataset.tint || '#8fc7d6'));
+    gl.uniform3fv(b.u.tint, b.tint);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
   if (balls.size && !calm) rafId = requestAnimationFrame(frame);
@@ -101,15 +107,40 @@ export function mountBalls(root = document) {
 }
 
 /** A crystal ball. `clear`: the mist parts and the inside shows. */
-export function ballHtml({ key, kicker = '', title = '', sub = '', tint = '#8fc7d6', clear = true, big = false, cls = '' }) {
-  return `<div class="xball ${big ? 'big' : ''} ${clear ? 'clear' : ''} ${cls}" data-key="${key}" style="--tint:${tint}">
+export function ballHtml({ key, kicker = '', title = '', sub = '', tint = '#8fc7d6', clear = true, big = false, cls = '', speed = 1, orbit = '' }) {
+  return `<div class="xball ${big ? 'big' : ''} ${clear ? 'clear' : ''} ${cls}" data-key="${key}" style="--tint:${tint};--spin:${(1 / speed).toFixed(2)}">${orbit}
     <div class="xb-glow" aria-hidden="true"></div>
-    <div class="xb-orb"><canvas class="xball-gl" data-key="${key}-gl" data-clear="${clear ? 1 : 0}" data-tint="${tint}" aria-hidden="true"></canvas><div class="xb-css" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="xb-orb"><canvas class="xball-gl" data-key="${key}-gl" data-clear="${clear ? 1 : 0}" data-tint="${tint}" data-speed="${speed}" aria-hidden="true"></canvas><div class="xb-css" aria-hidden="true"><i></i><i></i><i></i></div>
       <div class="xb-in">${kicker ? `<span class="xb-k">${kicker}</span>` : ''}${title ? `<b class="xb-word">${title}</b>` : ''}${sub ? `<span class="xb-sub">${sub}</span>` : ''}</div></div>
     <div class="xb-stand" aria-hidden="true"></div>
   </div>`;
 }
 const LIVING_TINT = '#8fc7d6';
+const TALK_TINT = '#e9c27a';
+const VOTE_TINT = '#d23a4c';
+
+/**
+ * What has been said, floating on the ball's edge: the typed words, or (when
+ * words are only spoken) the portraits of those who have spoken.
+ */
+export function orbitHtml(v) {
+  const X = v.exorcism;
+  if (!X?.clues?.length) return '';
+  const items = X.typed
+    ? X.clues.filter((c) => c.word).map((c) => ({ key: `${c.pid}-${c.round}`, html: `<span class="xo-word">${esc(c.word)}</span>` }))
+    : [...new Set(X.clues.map((c) => c.pid))].map((id) => {
+      const p = v.players.find((x) => x.id === id);
+      // a speaker whose time ran out may still have spoken aloud: shown, but dimmed
+      const quiet = X.clues.filter((c) => c.pid === id).every((c) => c.timeout);
+      return { key: id, html: `<span class="xo-face ${quiet ? 'quiet' : ''}">${p?.avatar ? avatarSvg(p.avatar, 'xo-av') : `<b>${esc((p?.name ?? '?')[0])}</b>`}<small>${esc(p?.name ?? '')}</small></span>` };
+    });
+  if (!items.length) return '';
+  const n = items.length;
+  return `<div class="xb-orbit" aria-hidden="true">${items.map((it, i) => {
+    const a = (-90 + (i * 360) / n) * (Math.PI / 180);
+    return `<span class="xo" data-key="xo-${it.key}" style="left:${(50 + 50 * Math.cos(a)).toFixed(2)}%;top:${(50 + 50 * Math.sin(a)).toFixed(2)}%;--d:${(i * 0.37) % 2.4}s">${it.html}</span>`;
+  }).join('')}</div>`;
+}
 const DEMON_TINT = '#c2344a';
 
 /**
@@ -119,7 +150,7 @@ const DEMON_TINT = '#c2344a';
  * The Living see their password materialise letter by letter; the Demon sees
  * a sigil draw itself and their fate flicker in like embers.
  */
-export function myBall(v, { key = 'myball', open = true, big = false, small = false, act = '' } = {}) {
+export function myBall(v, { key = 'myball', open = true, big = false, small = false, act = '', tint = LIVING_TINT, speed = 1, orbit = '', cls = '' } = {}) {
   const x = v.me?.x;
   if (!x || !v.exorcism) return '';
   const k = `${esc(t('Category'))} · ${esc(catName(x.category))}`;
@@ -146,9 +177,9 @@ export function myBall(v, { key = 'myball', open = true, big = false, small = fa
   }
   const tag = act ? 'button' : 'div';
   return `<${tag} class="xball-btn" ${act ? `data-act="${act}"` : ''} data-key="${key}-btn" aria-label="${esc(t(open ? 'Hide the ball' : 'Look into the ball'))}">
-  <div class="xball personal ${x.demon ? 'is-demon' : 'is-living'} ${big ? 'big' : ''} ${small ? 'small' : ''} ${open ? 'clear open' : 'closed'}" data-key="${key}" style="--tint:${LIVING_TINT}">
+  <div class="xball personal ${x.demon ? 'is-demon' : 'is-living'} ${big ? 'big' : ''} ${small ? 'small' : ''} ${open ? 'clear open' : 'closed'} ${cls}" data-key="${key}" style="--tint:${tint};--spin:${(1 / speed).toFixed(2)}">${orbit}
     <div class="xb-glow" aria-hidden="true"></div>
-    <div class="xb-orb"><canvas class="xball-gl" data-key="${key}-gl" data-clear="${open ? 1 : 0}" data-tint="${LIVING_TINT}" aria-hidden="true"></canvas><div class="xb-css" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="xb-orb"><canvas class="xball-gl" data-key="${key}-gl" data-clear="${open ? 1 : 0}" data-tint="${tint}" data-speed="${speed}" aria-hidden="true"></canvas><div class="xb-css" aria-hidden="true"><i></i><i></i><i></i></div>
       ${extra}
       <div class="xb-in"><span class="xb-k">${k}</span><b class="xb-word">${word}</b><span class="xb-sub">${sub}</span><span class="xb-tap">${esc(t('Tap to look inside'))}</span></div></div>
     <div class="xb-stand" aria-hidden="true"></div>
@@ -277,10 +308,12 @@ export function exorcismMain(v, me, h) {
       stage += orderStrip(v);
       break;
     case 'X_DISCUSS':
-      stage = `<div class="banner" data-key="xdisc">${glyph('whispers')}<div><b>${t('Talk it over')}</b><p>${t('Who does not know the password? When you are ready, tap Ready to vote.')}</p></div></div>${orderStrip(v)}`;
+      // The ball turns gold while the table talks; what was said floats on its edge.
+      stage = `<p class="center-text x-hint" data-key="xdisc"><b>${t('Talk it over')}</b><br><span class="small muted">${t('Who does not know the password? When you are ready, tap Ready to vote.')}</span></p>
+        ${myBall(v, { key: 'peekball', open: peek, act: 'xPeek', tint: TALK_TINT, orbit: orbitHtml(v), cls: 'talk' })}`;
       break;
     case 'X_VOTE':
-      stage = `<div class="banner blood" data-key="xvote">${glyph('magistrate')}<div><b>${t('Name the Demon')}</b><p>${t(X.demonCount > 1 ? 'One vote each. Catch one of the two Demons, or they win.' : 'One vote each. Miss the Demon, and the Demon wins.')}</p></div></div>`;
+      stage = `<p class="center-text small muted" data-key="xvote">${t(X.demonCount > 1 ? 'One vote each. Catch one of the two Demons, or they win.' : 'One vote each. Miss the Demon, and the Demon wins.')}</p>`;
       break;
     case 'X_GUESS':
       if (a.type === 'xguess') {
@@ -292,8 +325,10 @@ export function exorcismMain(v, me, h) {
       break;
     default: break;
   }
-  const table = ['X_VOTE'].includes(v.phase) ? ring(v, { pick, center: '' }) : '';
-  return `${head(v)}${tools}${ballSmall}${grid}${pickTabs(ctx, pick)}${table}${stage}${h.chatBlock(v)}${chips(v)}`;
+  // The vote: the ball takes the middle of the table, red and restless.
+  const table = v.phase === 'X_VOTE' ? ring(v, { pick, center: '', orb: myBall(v, { key: 'peekball', open: peek, act: 'xPeek', tint: VOTE_TINT, speed: 2.4, cls: 'in-ring vote' }) }) : '';
+  const small = ['X_CLUES', 'X_LOTTERY', 'X_GUESS'].includes(v.phase) ? ballSmall : '';
+  return `${head(v)}${tools}${small}${grid}${pickTabs(ctx, pick)}${table}${stage}${h.chatBlock(v)}${chips(v)}`;
 }
 
 export function exorcismPicks(v, S) {
@@ -418,8 +453,11 @@ export function exorcismEndHtml(v) {
 }
 
 // ── TV board ───────────────────────────────────────────────────────────────
+/** The lobby (phone and TV): the ball takes the middle of the table. */
+export const lobbyOrb = () => ballHtml({ key: 'lobbyball', cls: 'in-ring', clear: false });
+
 export function exorcismBoard(v, h) {
-  const { header } = h;
+  const { header, ring } = h;
   const X = v.exorcism;
   if (!X) return '';
   let now = '';
@@ -436,7 +474,19 @@ export function exorcismBoard(v, h) {
   const ended = v.phase === 'ENDED';
   const ball = ended
     ? ballHtml({ key: 'tvball', kicker: `${esc(t('The password'))} · ${esc(catName(X.category))}`, title: esc(wordAt(X.category, X.word)), sub: X.demons?.length ? th(X.demons.length > 1 ? 'The Demons: {names}' : 'The Demon: {names}', { names: X.demons.map((id) => name(v, id)) }) : '', tint: v.winner === 'DEMON' ? DEMON_TINT : LIVING_TINT, big: true })
-    : ballHtml({ key: 'tvball', kicker: esc(t('The category')), title: esc(catName(X.category)), sub: X.hint !== 'none' ? esc(t('The Demon hears a whisper.')) : '', big: true });
+    : v.phase === 'X_DISCUSS'
+      ? ballHtml({ key: 'tvball', kicker: esc(t('The category')), title: esc(catName(X.category)), big: true, tint: TALK_TINT, orbit: orbitHtml(v), cls: 'talk' })
+      : ballHtml({ key: 'tvball', kicker: esc(t('The category')), title: esc(catName(X.category)), sub: X.hint !== 'none' ? esc(t('The Demon hears a whisper.')) : '', big: true });
+  // The vote on the TV: everyone around a red, restless ball; a tick for each vote in.
+  if (v.phase === 'X_VOTE' && ring) {
+    const marks = Object.fromEntries((X.voted ?? []).map((id) => [id, glyph('check')]));
+    const orb = ballHtml({ key: 'tvball', kicker: esc(t('The category')), title: esc(catName(X.category)), tint: VOTE_TINT, speed: 2.4, cls: 'in-ring vote' });
+    return `<main class="board2 xboard" data-key="board-x">${header}
+    <div class="x-cols">
+      <section class="x-left">${ring(v, { center: '', orb, marks })}${now}</section>
+      <aside class="x-right">${X.grid ? `<div class="b-grid"><span class="kicker">${t('The grid')}</span>${wordGrid(v)}</div>` : ''}${scoreboard(v)}</aside>
+    </div></main>`;
+  }
   return `<main class="board2 xboard ${ended ? 'is-ended' : ''}" data-key="board-x">${header}
     <div class="x-cols">
       <section class="x-left">${ball}${now}${orderStrip(v)}</section>
