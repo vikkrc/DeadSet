@@ -1,0 +1,440 @@
+/*
+ * DEAD SET / GOTHIC PRESS
+ * An occult crime-print identity. Not a medieval UI kit.
+ * Reference language: blackletter mastheads, woodcut borders, two-colour printing,
+ * torn theatre notices, cold typographic evidence.
+ *
+ * Keep Instrument Serif / Instrument Sans / JetBrains Mono for the interface.
+ * Grenze Gotisch is reserved for the hero masthead and rare chapter titles.
+ * Everything decorative is vector, CSS gradient, noise, or an SVG line engraving.
+ */
+:root {
+  --soot: #111110;
+  --soot-2: #1b1b1a;
+  --soot-3: #272624;
+  --bone: #ece7df;
+  --bone-2: #c8c0b7;
+  --ash: #9b9288;
+  --ash-2: #716d67;
+  --line: rgba(236,231,223,.16);
+  --line-2: rgba(236,231,223,.36);
+  --blood: #d8362b;
+  --blood-ink: #f05243;
+  --blood-wash: rgba(216,54,43,.13);
+  --gold: #cbb6a0;
+  --gold-deep: #a79a87;
+  --glow: rgba(204,46,36,.07);
+  --serif: 'Instrument Serif', Georgia, serif;
+  --sans: 'Instrument Sans', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --gothic: 'Grenze Gotisch', 'Instrument Serif', Georgia, serif;
+  --ease: cubic-bezier(.22,.68,.16,1);
+  --spring: cubic-bezier(.22,.68,.16,1);
+}
+body[data-time='night'] {
+  --soot:#0c1115; --soot-2:#171d20; --soot-3:#242c30;
+  --bone:#e2e5e6; --bone-2:#b5bbc0; --ash:#909ba0; --ash-2:#647278;
+  --line:rgba(226,229,230,.15); --line-2:rgba(226,229,230,.34);
+  --glow:rgba(70,94,123,.1);
+}
+body {
+  background: var(--soot);
+  font-family: var(--sans);
+  font-size:15px;
+  color:var(--bone);
+}
+body::before {
+  background:
+    radial-gradient(ellipse 75% 90% at -8% 40%,var(--glow),transparent 75%),
+    radial-gradient(ellipse 95% 55% at 108% 120%,rgba(216,54,43,.06),transparent 73%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:.63;
+}
+::selection {background:var(--blood);color:white}
+:focus-visible {outline:2px solid var(--blood-ink);outline-offset:3px}
+
+/* Brand. The slash through an empty chair is the murder mark, not an occult eye. */
+.wordmark {
+  font:400 29px/.96 var(--serif);
+  letter-spacing:-.06em;
+  gap:0;
+  text-decoration:none;
+  align-items:center;
+}
+.wordmark i {font-style:italic;color:var(--blood-ink)}
+.wordmark .seal {display:none}
+.brand-icon {display:block;height:29px;width:23px;object-fit:contain;margin-left:11px;opacity:.96}
+.h-top .wordmark {font-size:32px}
+.b-head .wordmark {font-size:34px}
+.kicker, .rule, .field>span {font-weight:600;font-size:10px;letter-spacing:.18em}
+.rule:after {background:var(--line-2)}
+.rule {gap:12px}
+h1,h2,h3 {letter-spacing:-.022em}
+em {font-size:1.06em}
+.mono {font-family:var(--mono)}
+
+/* Typesetting and interaction remain modern and legible. */
+.btn {
+  min-height:49px;
+  border-radius:0;
+  padding:0 18px;
+  font:600 11.5px/1.2 var(--sans);
+  letter-spacing:.12em;
+  box-shadow:none;
+  transition:transform .12s var(--ease),background .2s,border-color .2s,color .2s;
+}
+.btn::before,.btn::after {display:none!important}
+.btn:active {transform:translateY(2px)}
+.btn-solid {background:var(--bone);border-color:var(--bone);color:#161514}
+.btn-blood {background:var(--blood);border-color:var(--blood);color:#fff}
+.btn:hover {border-color:var(--bone)}
+.btn-solid:hover {background:#fff}
+.btn-blood:hover {background:#ed4437;border-color:#ed4437}
+.btn.glow {animation:none}
+.btn-ghost {color:var(--bone-2)}
+.btn-sm {min-height:38px}
+.btn-tall {min-height:56px}
+.chip {border-radius:0;background:var(--soot-2);letter-spacing:.12em;border-color:var(--line-2)}
+.chip b,.tag {border-radius:0}
+.seg {border-radius:0;border-color:var(--line-2)}
+.seg button {letter-spacing:.1em;font-size:11px}
+.seg button[aria-pressed=true] {background:var(--bone);color:var(--soot)}
+.input,select.input,textarea.input {border-radius:0}
+.check input {border-radius:0}
+
+/* Homepage is an invitation to a dangerous game, typeset like a forbidden edition. */
+.home2 {max-width:1520px;min-height:100dvh;padding-bottom:0}
+.h-top {
+  padding:20px clamp(18px,3.6vw,55px);
+  border-bottom:1px solid var(--line-2);
+}
+.h-top .chip {background:transparent}
+.h-grid {gap:0;align-items:stretch}
+.h-table {
+  position:relative;
+  overflow:hidden;
+  min-height:390px;
+  padding:16px;
+  background:radial-gradient(ellipse 46% 60% at 50% 45%,rgba(104,33,29,.19),transparent 90%);
+}
+.h-table::before {
+  content:'';
+  position:absolute;inset:14px;
+  border:1px solid var(--line);
+  pointer-events:none;
+  background:
+    linear-gradient(var(--bone-2),var(--bone-2)) top left/20px 1px no-repeat,
+    linear-gradient(var(--bone-2),var(--bone-2)) top left/1px 20px no-repeat,
+    linear-gradient(var(--bone-2),var(--bone-2)) bottom right/20px 1px no-repeat,
+    linear-gradient(var(--bone-2),var(--bone-2)) bottom right/1px 20px no-repeat;
+  opacity:.5;
+}
+.h-ring {width:min(88vw,395px);aspect-ratio:1}
+.h-tabletop {
+  inset:21%;
+  border:1px solid var(--line-2);
+  background:radial-gradient(ellipse at 50% 40%,#28201d,#100f0e 75%);
+  box-shadow:inset 0 0 0 1px rgba(236,231,223,.1),0 0 0 14px rgba(236,231,223,.015);
+}
+.h-tabletop::before {
+  content:'';position:absolute;inset:-24%;border-radius:50%;
+  border:1px solid var(--line);pointer-events:none;
+}
+.h-tabletop::after {
+  content:'';position:absolute;inset:-37%;border-radius:50%;
+  border:1px dashed var(--line);pointer-events:none;opacity:.45;
+}
+.h-title {inset:16%;align-content:center}
+.h-title h1 {
+  font:600 clamp(70px,20vw,103px)/.69 var(--gothic);
+  letter-spacing:-.05em;
+  text-transform:none;
+  text-shadow:0 1px 0 #101010;
+}
+.h-title h1 i {color:var(--blood-ink);font-style:normal}
+.h-title h1 .l {animation:none}
+.h-title p {font:italic 17px/1.2 var(--serif);margin-top:15px;animation:none}
+.chair {
+  animation:none;
+  border:1px solid var(--line-2);
+  background:var(--soot);
+}
+.chair .sigil {animation:none;opacity:.8}
+.chair i {animation:none}
+.chair::after {animation:none;border-color:var(--blood-ink);box-shadow:none}
+.chair:nth-of-type(4)::after {opacity:.9;border-width:2px}
+.whisper {font-size:17px;animation:none;color:var(--bone-2);min-height:auto;padding:0 20px}
+.h-panel {
+  position:relative;
+  background:linear-gradient(145deg,rgba(236,231,223,.035),transparent 54%),var(--soot-2);
+  border-top:4px solid var(--blood);
+  padding:30px clamp(22px,3.2vw,55px);
+  gap:21px;
+  max-width:none;
+  animation:none;
+  align-content:center;
+}
+.h-panel::before {
+  content:'';position:absolute;inset:13px;pointer-events:none;
+  border:1px solid var(--line);
+  opacity:.55;
+}
+.h-tag {
+  font:italic 400 clamp(29px,3.6vw,49px)/.98 var(--serif);
+  letter-spacing:-.024em;
+  text-align:left;
+  max-width:15ch;
+  color:var(--bone);
+}
+.h-panel .seg {border:1px solid var(--line-2)}
+.h-panel .seg button {min-height:52px}
+.h-panel .field span {color:var(--ash)}
+.h-panel .check {border-bottom:1px solid var(--line)}
+.h-panel .code-in span {border-radius:0;background:var(--soot);box-shadow:none}
+.h-panel .foot {text-align:left;color:var(--ash)}
+.h-panel .btn-solid {background:var(--blood);color:#fff;border-color:var(--blood)}
+.h-panel .btn-solid:hover {background:#f05243;border-color:#f05243}
+.h-panel .btn-solid::first-letter {font-weight:700}
+.h-top .row {gap:6px}
+.h-top .chip {border-width:0 0 1px;border-bottom-color:var(--line-2)}
+@media (min-width:900px) {
+  .home2 {display:flex;flex-direction:column}
+  .h-grid {
+    flex:1;grid-template-columns:minmax(0,1.13fr) minmax(410px,.87fr);
+    min-height:calc(100dvh - 81px);
+    padding:0;gap:0;
+  }
+  .h-table {border-right:1px solid var(--line-2)}
+  .h-ring {width:min(53vw,670px)}
+  .h-title h1 {font-size:clamp(122px,10.8vw,183px)}
+  .h-title p {font-size:24px}
+  .whisper {font-size:20px}
+  .h-panel {border-top:0;border-left:4px solid var(--blood);padding:5vw;max-width:none}
+}
+
+/* Letter and invitation are designed like a pamphlet, not faux 3D objects. */
+.invite2 {background:var(--soot)}
+.envelope {border-radius:0;box-shadow:12px 12px 0 rgba(0,0,0,.4)}
+.wax {animation:none}
+.letter {
+  border-radius:0;
+  background:#e7dfd1;
+  box-shadow:10px 12px 0 rgba(0,0,0,.4);
+}
+.letter::before {border-color:#797064}
+.letter h2 i {color:#9a261f}
+
+/* Mode selection is a set of three distinct editions. */
+.main {max-width:700px;gap:24px}
+.mode-pick {gap:13px}
+.mode-cards {display:grid;grid-template-columns:1fr;gap:8px}
+.mode-card {
+  position:relative;
+  border-radius:0;
+  border:1px solid var(--line-2);
+  border-left:3px solid var(--line-2);
+  background:var(--soot-2);
+  min-height:102px;
+  grid-template-columns:50px 1fr;
+  gap:14px;
+  padding:20px 23px 18px 18px;
+  box-shadow:none;
+  transform:none;
+}
+.mode-card::after {
+  content:'I';
+  position:absolute;right:16px;top:14px;
+  color:var(--ash-2);
+  font:italic 400 21px var(--serif);
+}
+.mode-card[data-mode=missions]::after {content:'II'}
+.mode-card[data-mode=exorcism]::after {content:'III'}
+.mode-card .glyph {font-size:34px;color:var(--bone-2)}
+.mode-card b {font:400 29px/.97 var(--serif);letter-spacing:-.02em}
+.mode-card small {font:400 13px/1.5 var(--sans);color:var(--ash)}
+.mode-card.on,.mode-card[data-mode=missions].on {
+  background:linear-gradient(125deg,rgba(216,54,43,.08),transparent 66%),var(--soot-2);
+  border-color:var(--bone-2);
+  border-left:4px solid var(--blood);
+  box-shadow:none;
+  transform:none;
+}
+.mode-card.on .glyph {color:var(--blood-ink)}
+.mode-card[data-mode=missions].on .glyph {color:var(--bone)}
+.mode-card.on::after {color:var(--blood-ink)}
+.preset {border-radius:0;transform:none!important;background:var(--soot-2)}
+.preset[aria-pressed=true] {border-left:3px solid var(--blood);box-shadow:none}
+.dcard,.deck-card {
+  border-radius:0;
+  border:1px solid var(--line-2);
+  background:var(--soot-2);
+  animation:none;
+}
+.dcard.death,.deck-card.death {border-bottom:3px solid var(--blood)}
+.pool-grid>* {border-radius:0;background:var(--soot-2)}
+.panel {border-radius:0;background:var(--soot-2)}
+.banner {border-radius:0}
+.banner.blood {border-left:3px solid var(--blood-ink)}
+.tag {letter-spacing:.1em}
+.rule-ribbon .rr {border-radius:0}
+
+/* Original role mechanics remain. Card art is a repeatable SVG plate. */
+.card-stage {animation:none}
+.flipcard {width:min(72vw,290px);aspect-ratio:5/7}
+.face {border-radius:0;box-shadow:10px 12px 0 rgba(0,0,0,.42)}
+.face.back {
+  background:#151514 url('/gothic-cardback.svg') center/100% 100% no-repeat;
+  border:1px solid var(--bone-2);
+}
+.face.back .mono-gram {font:600 47px/1 var(--gothic);background:rgba(18,18,18,.96);border:1px solid var(--bone-2);border-radius:0}
+.face.back .hint {bottom:16px;color:var(--bone)}
+.face.front {
+  background:#e9e2d5 url('/gothic-frame.svg') center/100% 100% no-repeat;
+  border:1px solid #b6a897;
+  outline:none;
+  color:#1c1a18;
+  padding:28px 21px;
+}
+.face.front .corner {color:#554a43;top:22px}
+.face.front .nm {font:400 38px/.91 var(--serif);letter-spacing:-.025em;color:#211c1b}
+.face.front .sum {font:400 13.5px/1.35 var(--sans);color:#463e39}
+.face.front .art .glyph {font-size:78px;color:#282320}
+.face.front .small.muted {color:#7c625b}
+.face.front.death {
+  background:#231716 url('/gothic-frame.svg') center/100% 100% no-repeat;
+  border-color:var(--blood);
+  color:var(--bone);
+}
+.face.front.death .nm {color:var(--bone)}
+.face.front.death .sum,.face.front.death .corner {color:#dbc3bc}
+.face.front.death .art .glyph {color:var(--blood-ink)}
+.flipcard.flipped .shine {animation:none}
+.role-mini {border-radius:0;background:var(--soot-2)}
+.role-mini b {font-size:21px}
+.dream {border-radius:0;background:var(--soot-2)}
+.death-room {border-radius:0}
+.option {border-radius:0}
+.option[aria-pressed=true] {transform:none;border-left:3px solid var(--blood)}
+
+/* The player circle is an etched accusation diagram, not a futuristic HUD. */
+.ring-table {
+  border:1px solid var(--line-2);
+  background:radial-gradient(circle,#211d1b,#131312 74%);
+  box-shadow:inset 0 0 0 1px var(--line),0 0 0 10px rgba(236,231,223,.015);
+}
+.tok-disc {background:var(--soot-2);border:1px solid var(--bone-2);box-shadow:none}
+.sigil {animation:none;stroke:var(--ash)}
+.tok-ini {font-style:italic}
+.tok-name {font-weight:500}
+.tok.dead .tok-disc {border-color:var(--blood-ink);opacity:.68}
+.code-tiles .tile {border-radius:0;box-shadow:none;animation:none;background:var(--soot-2)}
+.topbar {box-shadow:none;background:var(--soot);border-color:var(--line-2)}
+.tb-emblem .glyph {animation:none}
+.side {background:var(--soot);border-color:var(--line-2)}
+.side .count {border-color:var(--line-2)}
+.side .count div {background:var(--soot-2)}
+.dock {animation:none;background:linear-gradient(transparent,var(--soot) 36%)}
+.dock .btn {box-shadow:none;min-height:54px}
+.sheet {
+  border-radius:0;
+  border:1px solid var(--line-2);
+  border-top:3px solid var(--blood);
+  box-shadow:0 20px 70px rgba(0,0,0,.7);
+}
+.sheet-grip {display:none}
+
+/* Public board: the Gazette is a two-colour editorial front page. */
+.board2 {background:var(--soot)}
+.b-head {border-bottom:1px solid var(--line-2)}
+.b-phase {font-family:var(--serif);font-size:49px}
+.b-sound {border-radius:0}
+.b-sound.start {animation:none}
+.board2 .ring-table,.board2.is-night .ring-table {
+  background:radial-gradient(circle,#221c1a,#0e0d0d 80%);
+  box-shadow:inset 0 0 0 1px var(--line-2);
+}
+.board2 .tok.dead .tok-disc {filter:grayscale(.6)}
+.sky-orb.sun,.sky-orb.moon {box-shadow:none}
+.b-spot,.b-spot.hot {animation:none}
+.b-threads path {filter:none}
+.b-fog {opacity:.25}
+.plaque {border-radius:0;box-shadow:none!important}
+.plaque.on {border-bottom:3px solid var(--blood);color:var(--bone)}
+.b-side {
+  --soot:#e8e0d2;
+  --soot-2:#e8e0d2;
+  --bone:#221d1a;
+  --bone-2:#564c46;
+  --ash:#75675f;
+  --ash-2:#85776e;
+  --line:rgba(34,29,26,.18);
+  --line-2:rgba(34,29,26,.37);
+  --blood-ink:#ba3027;
+  background:#e8e0d2;
+  color:var(--bone);
+  border:1px solid #9c8d7d;
+  border-radius:0;
+  padding:22px;
+  box-shadow:inset 0 0 0 5px #e8e0d2,inset 0 0 0 6px rgba(34,29,26,.36);
+}
+.b-side .gazette .mast {border-bottom:3px double #302823}
+.b-side .gazette .mast h3 {font-size:36px}
+.b-side .edition h4 {font-size:24px}
+.b-side .ev {border-radius:0}
+.paper {
+  background:#e8e0d2;
+  box-shadow:11px 14px 0 rgba(0,0,0,.45);
+}
+.paper .stampx {border-width:3px;border-radius:0}
+
+/* Missions and Exorcism use the same print system, with distinct gameplay objects. */
+.md {box-shadow:none;border-radius:0}
+.md.now {box-shadow:none;border:2px solid var(--bone);animation:none}
+.md.ok {background:var(--bone);color:#1c1a18;border-color:var(--bone)}
+.md.fail {background:var(--blood);color:#fff;border-color:var(--blood)}
+.md-two,.md-x2 {border-radius:0}
+.mc-banner {border-radius:0}
+.xball .xb-glow {opacity:.38;animation:none}
+.x-order li,.chipbtn,.xg-cell {border-radius:0}
+.x-order li.now {animation:none;box-shadow:inset 0 -3px 0 var(--blood)}
+.xg-cell {background:var(--soot-2);animation:none}
+.xg-cell.sel {background:var(--blood-wash)}
+.xg-cell.mark {border-color:var(--bone);background:rgba(236,231,223,.12)}
+
+/* Occasional red printed panels. Never frame every object. */
+.moment.m-dawn,.moment.m-day1 {background:radial-gradient(ellipse at 50% 110%,#4b1815,var(--soot) 67%)}
+.moment.grim {background:radial-gradient(ellipse at 50% 60%,#641912,var(--soot) 72%)}
+.moment .m-title {letter-spacing:-.03em}
+.moment .m-kicker {letter-spacing:.2em}
+
+/* Mobile hierarchy and touch targets. */
+@media(max-width:899px) {
+  .h-table {min-height:335px}
+  .h-ring {width:min(82vw,342px)}
+  .h-title h1 {font-size:clamp(72px,19vw,97px)}
+  .h-title p {font-size:16px}
+  .h-panel {padding:27px 22px;gap:17px}
+  .h-tag {font-size:31px}
+  .h-panel::before {inset:9px}
+  .main {padding:16px 16px calc(113px + var(--safe-b))}
+  .mode-card {min-height:92px}
+  .b-side {padding:16px}
+  .h-top {padding:14px 16px}
+}
+@media(max-width:450px) {
+  .h-ring {width:min(80vw,307px)}
+  .h-table {min-height:320px}
+  .h-title h1 {font-size:clamp(67px,20vw,83px)}
+  .h-tag {font-size:29px}
+  .h-top .chip {padding-inline:8px;min-height:34px;font-size:10px}
+  .h-top .row {gap:2px!important}
+  .h-top .wordmark {font-size:26px}
+  .h-top .brand-icon {width:19px;height:23px;margin-left:6px}
+  .mode-card {grid-template-columns:42px 1fr;gap:10px;padding:15px 30px 15px 13px}
+  .mode-card b {font-size:25px}
+  .mode-card .glyph {font-size:29px}
+  .face.front .nm {font-size:36px}
+}
+@media(prefers-reduced-motion:reduce) {
+  .h-title h1 .l,.chair,.mode-card,.dcard,.xg-cell {animation:none!important}
+}
