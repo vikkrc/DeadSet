@@ -14,9 +14,9 @@ All modes share the Dead Set family's tools:
 
 ---
 
-## Beta 0 (step zero): every mode's setup shows only its own options
+## Beta 0 (step zero): foundations (clean setups, synced interludes, a lighter celebration, Hunches at the end)
 
-Before anything new, the lobby must be clean. Each game mode's setup only allows the roles, rules and other settings meant for that mode. With more modes coming, this has to be solid now.
+**Clean setups.** Before anything new, the lobby must be clean. Each game mode's setup only allows the roles, rules and other settings meant for that mode. With more modes coming, this has to be solid now.
 
 **Leaks found (2026-11-10):**
 - **Classic → Custom → "Choose every role":** the "Death" group of role counters lists every Death-aligned role, including the Missions roles (Reaper, Charlatan, Veiled, Stray, Shade). The server already refuses them, so their counters silently do nothing.
@@ -29,6 +29,39 @@ Before anything new, the lobby must be clean. Each game mode's setup only allows
 - Switching modes keeps each mode's own last settings, so going Classic → Missions → Classic loses nothing.
 - **Checks:** for each mode, automated tests that nothing from another mode appears in the lobby view or is accepted by the server. Also a browser pass of every lobby screen (host, guest, moderator, TV).
 
+
+**Interludes: same timing for everyone, and timers start only after them.**
+Today the full-screen interludes overlap with phase timers. Players skip past important votes by accident, or come out of an interlude with too little time left. The fix:
+- The server runs one shared sequence of interludes. Every phone and the TV show the same interlude at the same moment, for the same length. Covered interludes include:
+  - the first-leader lottery;
+  - the story intro;
+  - the mission card draw;
+  - the team-vote reveal;
+  - the card reveal;
+  - the mission result;
+  - nightfall;
+  - the Last Stand naming, the unmasking and the Reckoning;
+  - the classic game's dawn, tally, coin toss and the like.
+- Shared interludes **cannot be skipped**. Tapping does nothing; a progress bar shows the time left.
+- The **next phase's timer only starts when the interlude sequence has finished**. While one is on screen, nothing can be voted on or locked. Deadlines are counted from the end of the sequence.
+- **Exception: personal interludes** (your role, your night result, the Candle reveal, a gift, a stolen dream) stay private, and you can tap them away. They never hold up the shared timeline: they queue behind it, or appear in a quiet stretch.
+- Late joiners and reconnecting phones jump to the correct point in the current sequence.
+- Re-time every interlude so the total wait per round stays reasonable.
+
+**The Living's win celebration is too heavy.**
+The particle fireworks make browsers lag, especially on phones. Redesign it to stay exciting but light:
+- far fewer particles at once, reused rather than created fresh;
+- a hard cap per device, lower on phones than on the TV;
+- the frame rate is watched, and effects scale back automatically if it drops;
+- more of the spectacle carried by cheap CSS: the gold sunburst, the glow and the letter bounce, with a few well-timed bursts instead of a continuous stream;
+- reduced motion respected.
+
+Check that every other celebration (Death, Lovers, Cult, Ripper, Jester) stays smooth on a mid-range phone.
+
+**Show Hunches at the end.**
+Hunches are currently only in the end-screen list. Also show them:
+- **during the Death vote:** while Death confers in the Reckoning (and after the Last Stand naming), show what the table suspected all game, e.g. a heat ring around each portrait, sized by how many Hunches they got;
+- **on the TV's result screen:** a "Who suspected whom" reveal, with arrows from each player to their Hunches across the missions, next to the role reveal.
 ---
 
 ## Beta 1: Missions, part 2
@@ -87,7 +120,39 @@ Other Missions ideas kept for later:
 
 ---
 
-## Beta 3: Dead Set: Carnival (inspired by Mascarade)
+## Beta 3: Dead Set: Séance (a hidden-traitor co-op, a cousin of Mysterium)
+
+**The pitch:** someone was murdered. Their ghost wants to help you, but the ghost can't speak, and a second spirit is lying.
+
+- **Setup:** a secret WHO, WHERE and WHY are drawn from the story cards. One player is the **Ghost** and knows them.
+- **Each round:** the Ghost may only send each player one or two **vision cards**, abstract illustrations from a large deck (about 80+).
+- **The Deceiver:** a malicious spirit who also knows the answer and sends misleading visions disguised as the Ghost's.
+- **Play:** players discuss and lock in guesses for who, where and why.
+- **Win:** solve all three within six rounds and the Living win, but to claim the full victory they must then name the Deceiver, like the Reckoning.
+- **TV:** the board of suspects, places and motives, with visions laid out as they arrive.
+- **Players and length:** 4–10, about 30 minutes. Co-operative and visual.
+
+**To design:** vision card art and count, how many visions each player gets per round, Deceiver powers and limits, partial-credit rules, and difficulty settings.
+
+**Content:** many more WHO, WHERE and WHY cards to avoid repetition. This also affects the other modes: story intros, backdrops, scenes for every location, and all translations. Plan for a large content pass.
+
+---
+
+## Beta 4: Dead Set: Coffins (a cousin of Skull)
+
+**The pitch:** everyone buries something. Some coffins hold gold, one holds a curse. How many can you open?
+
+- **Play:** each player secretly lays coffin cards face down: gold, or their single cursed one.
+- **Bidding** goes round the table: "I can open four without finding a curse."
+- **The catch:** the highest bidder must open their own coffins first, then other players'. Hit a curse and you lose a card. Win two challenges and you win the game.
+- **TV:** every coffin lid creaks open.
+- **Players and length:** 3–10, about 10 minutes. Pure bluffing: a quick game between bigger ones.
+
+**To design:** bid and pass rules, choosing which coffins to open, card loss, elimination or ghosts, and a possible Dead Set twist (e.g. a Death coffin that steals a card).
+
+---
+
+## Beta 5: Dead Set: Carnival (inspired by Mascarade)
 
 **The pitch:** at a masked ball where Death is a guest, nobody is sure which mask they're wearing.
 
@@ -105,7 +170,44 @@ Other Missions ideas kept for later:
 
 ---
 
-## Beta 4: Dead Set: Lifeboat (survival with a traitor)
+## Beta 6: Dead Set: Midnight (a cousin of One Night Ultimate Werewolf)
+
+**The pitch:** one night, one vote, no second chances.
+
+- **Night:** every role acts once, in a fixed order, guided by the phones:
+  - the **Thief** swaps cards;
+  - the **Seer** looks at a card;
+  - the **Insomniac** checks whether they're still themself.
+
+  Cards change hands secretly, so by morning you may not be what you were dealt.
+- **Day:** five minutes of argument, then everyone points at once. If a player who is Death by morning is the most voted, the Living win.
+- **Why phones make it better:** the phones are silent narrators that track every swap exactly. The end reveal replays the whole night as a timeline.
+- **Players and length:** 4–12, about 10 minutes. It reuses the classic game's roles and art.
+
+**To design:** the role set and wake order, centre cards, special winners such as a Jester, tie rules, and balance by table size.
+
+---
+
+## Beta 7: Dead Set: Doppelgänger (a cousin of Spyfall)
+
+**The pitch:** everyone at the table knows where you are, except the thing wearing a friend's face.
+
+- **Setup:** every phone shows the same WHERE card plus a personal role there (on the Night Train: the conductor, the stowaway, the chef). The **Doppelgänger** sees only static.
+- **Play:** players take turns asking anyone a question. Answers must convince the others you've been there, without being so specific that the Doppelgänger works it out.
+- **Win:** at any moment one player can call a vote. Catch the Doppelgänger and the Living win. Accuse a Living player, or let the Doppelgänger guess the location correctly, and it wins.
+- **TV:** the location's backdrop blurred, sharpening as time runs out.
+- **Players and length:** 4–12, about 8 minutes.
+- **Spice it up** beyond the base pitch, e.g.:
+  - two Doppelgängers at big tables;
+  - a location that shifts halfway through;
+  - roles with tiny secret instructions ("mention the weather");
+  - a Witness who knows who the Doppelgänger is but must stay hidden.
+
+It benefits directly from Beta 3's bigger WHERE pool (Séance), and reuses the round-and-lobby machinery built for Exorcism (Beta 2).
+
+---
+
+## Beta 8: Dead Set: Lifeboat (survival with a traitor)
 
 **The pitch:** the ship is gone. Twelve days to land, too few rations, and someone aboard wants nobody to make it.
 
@@ -126,62 +228,7 @@ Other Missions ideas kept for later:
 
 ---
 
-## Beta 5: Dead Set: Séance (a hidden-traitor co-op, a cousin of Mysterium)
-
-**The pitch:** someone was murdered. Their ghost wants to help you, but the ghost can't speak, and a second spirit is lying.
-
-- **Setup:** a secret WHO, WHERE and WHY are drawn from the story cards. One player is the **Ghost** and knows them.
-- **Each round:** the Ghost may only send each player one or two **vision cards**, abstract illustrations from a large deck (about 80+).
-- **The Deceiver:** a malicious spirit who also knows the answer and sends misleading visions disguised as the Ghost's.
-- **Play:** players discuss and lock in guesses for who, where and why.
-- **Win:** solve all three within six rounds and the Living win, but to claim the full victory they must then name the Deceiver, like the Reckoning.
-- **TV:** the board of suspects, places and motives, with visions laid out as they arrive.
-- **Players and length:** 4–10, about 30 minutes. Co-operative and visual.
-
-**To design:** vision card art and count, how many visions each player gets per round, Deceiver powers and limits, partial-credit rules, and difficulty settings.
-
-**Content:** many more WHO, WHERE and WHY cards to avoid repetition. This also affects the other modes: story intros, backdrops, scenes for every location, and all translations. Plan for a large content pass.
-
----
-
-## Beta 6: Dead Set: Doppelgänger (a cousin of Spyfall)
-
-**The pitch:** everyone at the table knows where you are, except the thing wearing a friend's face.
-
-- **Setup:** every phone shows the same WHERE card plus a personal role there (on the Night Train: the conductor, the stowaway, the chef). The **Doppelgänger** sees only static.
-- **Play:** players take turns asking anyone a question. Answers must convince the others you've been there, without being so specific that the Doppelgänger works it out.
-- **Win:** at any moment one player can call a vote. Catch the Doppelgänger and the Living win. Accuse a Living player, or let the Doppelgänger guess the location correctly, and it wins.
-- **TV:** the location's backdrop blurred, sharpening as time runs out.
-- **Players and length:** 4–12, about 8 minutes.
-- **Spice it up** beyond the base pitch, e.g.:
-  - two Doppelgängers at big tables;
-  - a location that shifts halfway through;
-  - roles with tiny secret instructions ("mention the weather");
-  - a Witness who knows who the Doppelgänger is but must stay hidden.
-
-It benefits directly from Beta 5's bigger WHERE pool (Séance), and reuses the round-and-lobby machinery built for Exorcism (Beta 2).
-
----
-
-## Beta 7: Dead Set: Midnight (a cousin of One Night Ultimate Werewolf)
-
-**The pitch:** one night, one vote, no second chances.
-
-- **Night:** every role acts once, in a fixed order, guided by the phones:
-  - the **Thief** swaps cards;
-  - the **Seer** looks at a card;
-  - the **Insomniac** checks whether they're still themself.
-
-  Cards change hands secretly, so by morning you may not be what you were dealt.
-- **Day:** five minutes of argument, then everyone points at once. If a player who is Death by morning is the most voted, the Living win.
-- **Why phones make it better:** the phones are silent narrators that track every swap exactly. The end reveal replays the whole night as a timeline.
-- **Players and length:** 4–12, about 10 minutes. It reuses the classic game's roles and art.
-
-**To design:** the role set and wake order, centre cards, special winners such as a Jester, tie rules, and balance by table size.
-
----
-
-## Beta 8: Dead Set: Council (a cousin of Secret Hitler)
+## Beta 9: Dead Set: Council (a cousin of Secret Hitler)
 
 **The pitch:** the town is governed by decrees, and Death is quietly writing them.
 
@@ -209,21 +256,7 @@ It benefits directly from Beta 5's bigger WHERE pool (Séance), and reuses the r
 
 ---
 
-## Beta 9: Dead Set: Coffins (a cousin of Skull)
-
-**The pitch:** everyone buries something. Some coffins hold gold, one holds a curse. How many can you open?
-
-- **Play:** each player secretly lays coffin cards face down: gold, or their single cursed one.
-- **Bidding** goes round the table: "I can open four without finding a curse."
-- **The catch:** the highest bidder must open their own coffins first, then other players'. Hit a curse and you lose a card. Win two challenges and you win the game.
-- **TV:** every coffin lid creaks open.
-- **Players and length:** 3–10, about 10 minutes. Pure bluffing: a quick game between bigger ones.
-
-**To design:** bid and pass rules, choosing which coffins to open, card loss, elimination or ghosts, and a possible Dead Set twist (e.g. a Death coffin that steals a card).
-
----
-
-## Beta 10: the big final update before version 1.0
+## Beta 10: the big final game update before release
 
 Build one of the big modes left out so far (below), or something new worthy of the last big update before the first full version.
 
