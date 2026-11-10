@@ -1514,5 +1514,13 @@ export default {
     "Tap the ball to cloud it again.": "Tippe auf die Kugel, damit sie sich wieder trübt.",
     "Tap the ball to look inside.": "Tippe auf die Kugel, um hineinzusehen.",
     "Waiting for the host to start the next round.": "Warten, bis der Gastgeber die nächste Runde startet.",
+    "A new word": "Ein neues Wort",
+    "A new word can only be drawn before the vote.": "Ein neues Wort kann nur vor der Abstimmung gezogen werden.",
+    "Hold to draw another word": "Halten für ein neues Wort",
+    "Nothing to redraw.": "Nichts neu zu ziehen.",
+    "The host": "Der Gastgeber",
+    "The host drew another word. This round is not scored.": "Der Gastgeber hat ein neues Wort gezogen. Diese Runde zählt nicht.",
+    "This round is not scored. Look into your ball again.": "Diese Runde zählt nicht. Blick noch einmal in deine Kugel.",
+    "Too many people do not know this word? The round is dealt again with a new word and new roles. Nothing is scored.": "Zu viele kennen dieses Wort nicht? Die Runde wird mit neuem Wort und neuen Rollen neu verteilt. Es gibt keine Punkte.",
   },
 };

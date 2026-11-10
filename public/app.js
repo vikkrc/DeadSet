@@ -7,7 +7,7 @@ import { sound, score, haptic, burstAt, celebrate, ambient } from './fx.js';
 import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './board.js';
 import { seatLayout } from './layout.js';
 import { sceneMs, scenesFor } from './interludes.js';
-import { lobbyOrb, isExorcismPhase, exorcismMain, exorcismPicks, exorcismDock, exorcismActs, exorcismMoment, exorcismMomentHtml, X_MOMENT_TIME, exorcismEndHtml, exorcismLobbyDeck, setExorcismContent, mountBalls } from './exorcism.js';
+import { lobbyOrb, endOrb, isExorcismPhase, exorcismMain, exorcismPicks, exorcismDock, exorcismActs, exorcismMoment, exorcismMomentHtml, X_MOMENT_TIME, exorcismEndHtml, exorcismLobbyDeck, setExorcismContent, mountBalls } from './exorcism.js';
 import { avatarSvg, randomAvatar, PARTS, COLORS } from './avatar.js';
 import { giftHtml, productIndex } from './gifts.js';
 import { gazetteHtml, frontPageHtml } from './gazette.js';
@@ -1007,6 +1007,7 @@ function hostBox() {
     ${h.end ? `<button class="btn btn-sm btn-ghost" data-act="end">${t('End match')}</button>` : ''}
     ${h.rematch ? `<button class="btn btn-sm btn-solid" data-act="rematch">${t('New match, same table')}</button>` : ''}</div>
     ${h.advance ? `<p class="small muted">${t('Hold to advance. Anything not submitted becomes a pass or abstention.')}</p>` : ''}
+    ${h.redraw ? `<div class="x-redraw" data-key="xredraw">${holdBtn('xRedraw', t('Hold to draw another word'), 'btn-sm', { key: 'xredraw' })}<p class="small muted">${t('Too many people do not know this word? The round is dealt again with a new word and new roles. Nothing is scored.')}</p></div>` : ''}
     ${rec}
   </div>`;
 }
@@ -1772,7 +1773,7 @@ function endMain(v, me) {
   return `<section class="verdict ${v.winner === 'DEATH' || v.winner === 'DEMON' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<span class="kicker">${t('Verdict')}</span><h1>${letters(title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
       ${won === null ? '' : `<div class="result-stamp ${won ? 'win' : 'loss'}">${won ? t('Victory') : t('Defeat')}</div>`}</section>
     <div class="end-next" data-key="endnext">${v.host?.rematch ? `<button class="btn btn-solid btn-wide" data-act="rematch">${glyph('scroll')} ${t('Play again, same table')}</button>` : `<p class="small muted center-text">${t('Waiting for the host to start the next round.')}</p>`}</div>
-    ${revealed ? ring(v, { reveal: true, center: centerFor(v), marks: v.mode === 'missions' ? missionMarks(v) : {}, extra: v.mode === 'missions' ? hunchArrowsSvg(v) : '' }) : ''}
+    ${revealed ? ring(v, { reveal: true, center: v.mode === 'exorcism' ? '' : centerFor(v), marks: v.mode === 'missions' ? missionMarks(v) : {}, extra: v.mode === 'missions' ? hunchArrowsSvg(v) : '', orb: v.mode === 'exorcism' ? endOrb(v) : '' }) : ''}
     ${revealed && v.missions?.hunches?.length ? hunchLegend() : ''}
     ${v.mode === 'missions' ? missionEndHtml(v) : ''}
     ${v.mode === 'exorcism' ? exorcismEndHtml(v) : ''}
@@ -2086,6 +2087,7 @@ const ACT = {
   },
   back() { if (history.length > 1) history.back(); else go('/'); },
   backHome() { S.ui.sheet = null; go('/'); },
+  xRedraw() { S.ui.sheet = null; send('host.xredraw'); },
   sheet(el) { const id = el.dataset.id; S.ui.sheet = id && S.ui.sheet !== id ? id : null; if (S.ui.sheet) uiSound('whoosh'); render(); },
   seatSheet(el) { S.ui.sheet = `seat:${el.dataset.id}`; render(); },
   sound() { sound.toggle(); render(); },

@@ -1514,5 +1514,13 @@ export default {
     "Tap the ball to cloud it again.": "Koppints a gömbre, hogy újra elködösödjön.",
     "Tap the ball to look inside.": "Koppints a gömbre, hogy belenézz.",
     "Waiting for the host to start the next round.": "Várjuk, hogy a házigazda elindítsa a következő kört.",
+    "A new word": "Új szó",
+    "A new word can only be drawn before the vote.": "Új szót csak a szavazás előtt lehet húzni.",
+    "Hold to draw another word": "Tartsd egy új szóhoz",
+    "Nothing to redraw.": "Nincs mit újrahúzni.",
+    "The host": "A házigazda",
+    "The host drew another word. This round is not scored.": "A házigazda új szót húzott. Ez a kör nem számít.",
+    "This round is not scored. Look into your ball again.": "Ez a kör nem számít. Nézz újra a gömbödbe.",
+    "Too many people do not know this word? The round is dealt again with a new word and new roles. Nothing is scored.": "Túl sokan nem ismerik ezt a szót? A kört újraosztjuk új szóval és új szerepekkel. Nem jár érte pont.",
   },
 };

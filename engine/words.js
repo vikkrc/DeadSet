@@ -2,7 +2,7 @@
 // (word k of a category means the same thing in every language). The table's
 // language is forced on every phone, so one index is one password for all.
 //
-// Each list has exactly 20 words; the 4×4 grid draws 16 of them.
+// Each list has exactly 20 words (or names, or titles); the 4×4 grid draws 16 of them.
 
 const C = (id, name, words) => ({ id, name, words: Object.fromEntries(Object.entries(words).map(([l, s]) => [l, s.split('|')])) });
 
@@ -96,6 +96,69 @@ export const CATEGORIES = [
     de: 'Hut|Mantel|Handschuh|Stiefel|Schal|Kleid|Socke|Gürtel|Krawatte|Ring|Krone|Umhang|Schleier|Perücke|Schürze|Uniform|Schlafanzug|Sandale|Halskette|Regenschirm',
     fr: 'chapeau|manteau|gant|botte|écharpe|robe|chaussette|ceinture|cravate|bague|couronne|cape|voile|perruque|tablier|uniforme|pyjama|sandale|collier|parapluie',
     es: 'sombrero|abrigo|guante|bota|bufanda|vestido|calcetín|cinturón|corbata|anillo|corona|capa|velo|peluca|delantal|uniforme|pijama|sandalia|collar|paraguas',
+  }),
+  C('CARTOONS', { en: 'Cartoon characters', hu: 'Rajzfilmfigurák', sk: 'Kreslené postavičky', cs: 'Kreslené postavičky', de: 'Zeichentrickfiguren', fr: 'Personnages de dessins animés', es: 'Personajes de dibujos animados' }, {
+    en: 'Mickey Mouse|Donald Duck|Goofy|Bugs Bunny|Tweety|Homer Simpson|SpongeBob|Scooby-Doo|Popeye|Garfield|Snoopy|Winnie the Pooh|Pink Panther|Peppa Pig|Papa Smurf|Asterix|Tintin|Fred Flintstone|Pinocchio|Bambi',
+    hu: 'Miki egér|Donald kacsa|Goofy|Tapsi Hapsi|Csőrike|Homer Simpson|SpongyaBob|Scooby-Doo|Popeye|Garfield|Snoopy|Micimackó|Rózsaszín Párduc|Peppa malac|Törpapa|Asterix|Tintin|Frédi|Pinokkió|Bambi',
+    sk: 'Myšiak Mickey|Káčer Donald|Goofy|Bugs Bunny|Tweety|Homer Simpson|SpongeBob|Scooby-Doo|Pepek námorník|Garfield|Snoopy|Macko Pú|Ružový panter|Prasiatko Peppa|Papa Šmolko|Asterix|Tintin|Fred Flintstone|Pinocchio|Bambi',
+    cs: 'Myšák Mickey|Kačer Donald|Goofy|Bugs Bunny|Tweety|Homer Simpson|SpongeBob|Scooby-Doo|Pepek námořník|Garfield|Snoopy|Medvídek Pú|Růžový panter|Prasátko Peppa|Taťka Šmoula|Asterix|Tintin|Fred Flintstone|Pinocchio|Bambi',
+    de: 'Micky Maus|Donald Duck|Goofy|Bugs Bunny|Tweety|Homer Simpson|SpongeBob|Scooby-Doo|Popeye|Garfield|Snoopy|Winnie Puuh|Paulchen Panther|Peppa Wutz|Papa Schlumpf|Asterix|Tim|Fred Feuerstein|Pinocchio|Bambi',
+    fr: "Mickey|Donald|Dingo|Bugs Bunny|Titi|Homer Simpson|Bob l'éponge|Scooby-Doo|Popeye|Garfield|Snoopy|Winnie l'ourson|Panthère rose|Peppa Pig|Grand Schtroumpf|Astérix|Tintin|Fred Pierrafeu|Pinocchio|Bambi",
+    es: 'Mickey Mouse|Pato Donald|Goofy|Bugs Bunny|Piolín|Homer Simpson|Bob Esponja|Scooby-Doo|Popeye|Garfield|Snoopy|Winnie the Pooh|Pantera Rosa|Peppa Pig|Papá Pitufo|Astérix|Tintín|Pedro Picapiedra|Pinocho|Bambi',
+  }),
+  C('CELEBS', { en: 'Famous people', hu: 'Híres emberek', sk: 'Slávni ľudia', cs: 'Slavní lidé', de: 'Berühmte Menschen', fr: 'Personnes célèbres', es: 'Personas famosas' }, {
+    en: 'Albert Einstein|William Shakespeare|Mozart|Napoleon|Cleopatra|Elvis Presley|Michael Jackson|Marilyn Monroe|Leonardo da Vinci|Pablo Picasso|Taylor Swift|Lionel Messi|Cristiano Ronaldo|Elon Musk|Charlie Chaplin|Freddie Mercury|Madonna|Beyoncé|Usain Bolt|Barack Obama',
+    hu: 'Albert Einstein|William Shakespeare|Mozart|Napóleon|Kleopátra|Elvis Presley|Michael Jackson|Marilyn Monroe|Leonardo da Vinci|Pablo Picasso|Taylor Swift|Lionel Messi|Cristiano Ronaldo|Elon Musk|Charlie Chaplin|Freddie Mercury|Madonna|Beyoncé|Usain Bolt|Barack Obama',
+    sk: 'Albert Einstein|William Shakespeare|Mozart|Napoleon|Kleopatra|Elvis Presley|Michael Jackson|Marilyn Monroe|Leonardo da Vinci|Pablo Picasso|Taylor Swift|Lionel Messi|Cristiano Ronaldo|Elon Musk|Charlie Chaplin|Freddie Mercury|Madonna|Beyoncé|Usain Bolt|Barack Obama',
+    cs: 'Albert Einstein|William Shakespeare|Mozart|Napoleon|Kleopatra|Elvis Presley|Michael Jackson|Marilyn Monroe|Leonardo da Vinci|Pablo Picasso|Taylor Swift|Lionel Messi|Cristiano Ronaldo|Elon Musk|Charlie Chaplin|Freddie Mercury|Madonna|Beyoncé|Usain Bolt|Barack Obama',
+    de: 'Albert Einstein|William Shakespeare|Mozart|Napoleon|Kleopatra|Elvis Presley|Michael Jackson|Marilyn Monroe|Leonardo da Vinci|Pablo Picasso|Taylor Swift|Lionel Messi|Cristiano Ronaldo|Elon Musk|Charlie Chaplin|Freddie Mercury|Madonna|Beyoncé|Usain Bolt|Barack Obama',
+    fr: 'Albert Einstein|William Shakespeare|Mozart|Napoléon|Cléopâtre|Elvis Presley|Michael Jackson|Marilyn Monroe|Leonardo da Vinci|Pablo Picasso|Taylor Swift|Lionel Messi|Cristiano Ronaldo|Elon Musk|Charlie Chaplin|Freddie Mercury|Madonna|Beyoncé|Usain Bolt|Barack Obama',
+    es: 'Albert Einstein|William Shakespeare|Mozart|Napoleón|Cleopatra|Elvis Presley|Michael Jackson|Marilyn Monroe|Leonardo da Vinci|Pablo Picasso|Taylor Swift|Lionel Messi|Cristiano Ronaldo|Elon Musk|Charlie Chaplin|Freddie Mercury|Madonna|Beyoncé|Usain Bolt|Barack Obama',
+  }),
+  C('VIDEOGAMES', { en: 'Video games', hu: 'Videojátékok', sk: 'Videohry', cs: 'Videohry', de: 'Videospiele', fr: 'Jeux vidéo', es: 'Videojuegos' }, {
+    en: 'Minecraft|Tetris|Fortnite|Pac-Man|Mario Kart|The Sims|Grand Theft Auto|FIFA|Call of Duty|Angry Birds|Candy Crush|Among Us|Roblox|Space Invaders|Animal Crossing|Pokémon Go|Counter-Strike|League of Legends|World of Warcraft|Street Fighter',
+    hu: 'Minecraft|Tetris|Fortnite|Pac-Man|Mario Kart|The Sims|Grand Theft Auto|FIFA|Call of Duty|Angry Birds|Candy Crush|Among Us|Roblox|Space Invaders|Animal Crossing|Pokémon Go|Counter-Strike|League of Legends|World of Warcraft|Street Fighter',
+    sk: 'Minecraft|Tetris|Fortnite|Pac-Man|Mario Kart|The Sims|Grand Theft Auto|FIFA|Call of Duty|Angry Birds|Candy Crush|Among Us|Roblox|Space Invaders|Animal Crossing|Pokémon Go|Counter-Strike|League of Legends|World of Warcraft|Street Fighter',
+    cs: 'Minecraft|Tetris|Fortnite|Pac-Man|Mario Kart|The Sims|Grand Theft Auto|FIFA|Call of Duty|Angry Birds|Candy Crush|Among Us|Roblox|Space Invaders|Animal Crossing|Pokémon Go|Counter-Strike|League of Legends|World of Warcraft|Street Fighter',
+    de: 'Minecraft|Tetris|Fortnite|Pac-Man|Mario Kart|The Sims|Grand Theft Auto|FIFA|Call of Duty|Angry Birds|Candy Crush|Among Us|Roblox|Space Invaders|Animal Crossing|Pokémon Go|Counter-Strike|League of Legends|World of Warcraft|Street Fighter',
+    fr: 'Minecraft|Tetris|Fortnite|Pac-Man|Mario Kart|The Sims|Grand Theft Auto|FIFA|Call of Duty|Angry Birds|Candy Crush|Among Us|Roblox|Space Invaders|Animal Crossing|Pokémon Go|Counter-Strike|League of Legends|World of Warcraft|Street Fighter',
+    es: 'Minecraft|Tetris|Fortnite|Pac-Man|Mario Kart|The Sims|Grand Theft Auto|FIFA|Call of Duty|Angry Birds|Candy Crush|Among Us|Roblox|Space Invaders|Animal Crossing|Pokémon Go|Counter-Strike|League of Legends|World of Warcraft|Street Fighter',
+  }),
+  C('GAMEHEROES', { en: 'Video game characters', hu: 'Videojáték-szereplők', sk: 'Postavy z videohier', cs: 'Postavy z videoher', de: 'Videospielfiguren', fr: 'Personnages de jeux vidéo', es: 'Personajes de videojuegos' }, {
+    en: 'Mario|Luigi|Pikachu|Sonic|Lara Croft|Link|Donkey Kong|Kirby|Yoshi|Bowser|Peach|Creeper|Crash Bandicoot|Kratos|Wario|Mega Man|Geralt|Rayman|Spyro|Master Chief',
+    hu: 'Mario|Luigi|Pikachu|Sonic|Lara Croft|Link|Donkey Kong|Kirby|Yoshi|Bowser|Peach|Creeper|Crash Bandicoot|Kratos|Wario|Mega Man|Geralt|Rayman|Spyro|Master Chief',
+    sk: 'Mario|Luigi|Pikachu|Sonic|Lara Croft|Link|Donkey Kong|Kirby|Yoshi|Bowser|Peach|Creeper|Crash Bandicoot|Kratos|Wario|Mega Man|Geralt|Rayman|Spyro|Master Chief',
+    cs: 'Mario|Luigi|Pikachu|Sonic|Lara Croft|Link|Donkey Kong|Kirby|Yoshi|Bowser|Peach|Creeper|Crash Bandicoot|Kratos|Wario|Mega Man|Geralt|Rayman|Spyro|Master Chief',
+    de: 'Mario|Luigi|Pikachu|Sonic|Lara Croft|Link|Donkey Kong|Kirby|Yoshi|Bowser|Peach|Creeper|Crash Bandicoot|Kratos|Wario|Mega Man|Geralt|Rayman|Spyro|Master Chief',
+    fr: 'Mario|Luigi|Pikachu|Sonic|Lara Croft|Link|Donkey Kong|Kirby|Yoshi|Bowser|Peach|Creeper|Crash Bandicoot|Kratos|Wario|Mega Man|Geralt|Rayman|Spyro|Master Chief',
+    es: 'Mario|Luigi|Pikachu|Sonic|Lara Croft|Link|Donkey Kong|Kirby|Yoshi|Bowser|Peach|Creeper|Crash Bandicoot|Kratos|Wario|Mega Man|Geralt|Rayman|Spyro|Master Chief',
+  }),
+  C('MOVIES', { en: 'Movies', hu: 'Filmek', sk: 'Filmy', cs: 'Filmy', de: 'Filme', fr: 'Films', es: 'Películas' }, {
+    en: 'Titanic|Avatar|Star Wars|Shrek|Frozen|The Lion King|Harry Potter|Jurassic Park|Home Alone|The Matrix|Toy Story|Jaws|Ghostbusters|Finding Nemo|King Kong|Rocky|E.T.|Back to the Future|The Godfather|Pirates of the Caribbean',
+    hu: 'Titanic|Avatar|Csillagok háborúja|Shrek|Jégvarázs|Az oroszlánkirály|Harry Potter|Jurassic Park|Reszkessetek, betörők!|Mátrix|Toy Story|A cápa|Szellemirtók|Némó nyomában|King Kong|Rocky|E.T.|Vissza a jövőbe|A keresztapa|A Karib-tenger kalózai',
+    sk: 'Titanic|Avatar|Hviezdne vojny|Shrek|Ľadové kráľovstvo|Leví kráľ|Harry Potter|Jurský park|Sám doma|Matrix|Toy Story|Čeľuste|Krotitelia duchov|Hľadá sa Nemo|King Kong|Rocky|E.T.|Návrat do budúcnosti|Krstný otec|Piráti z Karibiku',
+    cs: 'Titanic|Avatar|Hvězdné války|Shrek|Ledové království|Lví král|Harry Potter|Jurský park|Sám doma|Matrix|Toy Story|Čelisti|Krotitelé duchů|Hledá se Nemo|King Kong|Rocky|E.T.|Návrat do budoucnosti|Kmotr|Piráti z Karibiku',
+    de: 'Titanic|Avatar|Star Wars|Shrek|Die Eiskönigin|Der König der Löwen|Harry Potter|Jurassic Park|Kevin – Allein zu Haus|Matrix|Toy Story|Der weiße Hai|Ghostbusters|Findet Nemo|King Kong|Rocky|E.T.|Zurück in die Zukunft|Der Pate|Fluch der Karibik',
+    fr: "Titanic|Avatar|Star Wars|Shrek|La Reine des neiges|Le Roi lion|Harry Potter|Jurassic Park|Maman, j'ai raté l'avion|Matrix|Toy Story|Les Dents de la mer|SOS Fantômes|Le Monde de Nemo|King Kong|Rocky|E.T.|Retour vers le futur|Le Parrain|Pirates des Caraïbes",
+    es: 'Titanic|Avatar|La guerra de las galaxias|Shrek|Frozen|El rey león|Harry Potter|Parque Jurásico|Solo en casa|Matrix|Toy Story|Tiburón|Los cazafantasmas|Buscando a Nemo|King Kong|Rocky|E.T.|Regreso al futuro|El padrino|Piratas del Caribe',
+  }),
+  C('HEROES', { en: 'Heroes and villains', hu: 'Hősök és gonoszok', sk: 'Hrdinovia a zloduchovia', cs: 'Hrdinové a padouši', de: 'Helden und Schurken', fr: 'Héros et méchants', es: 'Héroes y villanos' }, {
+    en: 'Batman|Superman|Spider-Man|Wonder Woman|Iron Man|Hulk|Thor|Captain America|Joker|Darth Vader|Wolverine|Black Panther|Catwoman|Thanos|Deadpool|Aquaman|Harley Quinn|Voldemort|Zorro|Robin Hood',
+    de: 'Batman|Superman|Spider-Man|Wonder Woman|Iron Man|Hulk|Thor|Captain America|Joker|Darth Vader|Wolverine|Black Panther|Catwoman|Thanos|Deadpool|Aquaman|Harley Quinn|Voldemort|Zorro|Robin Hood',
+    hu: 'Batman|Superman|Pókember|Csodanő|Vasember|Hulk|Thor|Amerika Kapitány|Joker|Darth Vader|Rozsomák|Fekete Párduc|Macskanő|Thanos|Deadpool|Aquaman|Harley Quinn|Voldemort|Zorro|Robin Hood',
+    sk: 'Batman|Superman|Spider-Man|Wonder Woman|Iron Man|Hulk|Thor|Kapitán Amerika|Joker|Darth Vader|Wolverine|Black Panther|Catwoman|Thanos|Deadpool|Aquaman|Harley Quinn|Voldemort|Zorro|Robin Hood',
+    cs: 'Batman|Superman|Spider-Man|Wonder Woman|Iron Man|Hulk|Thor|Kapitán Amerika|Joker|Darth Vader|Wolverine|Black Panther|Catwoman|Thanos|Deadpool|Aquaman|Harley Quinn|Voldemort|Zorro|Robin Hood',
+    fr: 'Batman|Superman|Spider-Man|Wonder Woman|Iron Man|Hulk|Thor|Captain America|Joker|Darth Vader|Wolverine|Black Panther|Catwoman|Thanos|Deadpool|Aquaman|Harley Quinn|Voldemort|Zorro|Robin des Bois',
+    es: 'Batman|Superman|Spider-Man|Mujer Maravilla|Iron Man|Hulk|Thor|Capitán América|Joker|Darth Vader|Lobezno|Pantera Negra|Catwoman|Thanos|Deadpool|Aquaman|Harley Quinn|Voldemort|El Zorro|Robin Hood',
+  }),
+  C('LANDMARKS', { en: 'Famous places', hu: 'Híres helyek', sk: 'Slávne miesta', cs: 'Slavná místa', de: 'Berühmte Orte', fr: 'Lieux célèbres', es: 'Lugares famosos' }, {
+    en: 'Eiffel Tower|Big Ben|Colosseum|Pyramids of Giza|Statue of Liberty|Great Wall of China|Taj Mahal|Stonehenge|Mount Everest|Niagara Falls|Sydney Opera House|Leaning Tower of Pisa|Machu Picchu|Hollywood|Kremlin|Acropolis|Sagrada Família|Golden Gate Bridge|Buckingham Palace|Disneyland',
+    hu: 'Eiffel-torony|Big Ben|Colosseum|Gízai piramisok|Szabadság-szobor|Kínai nagy fal|Tádzs Mahal|Stonehenge|Mount Everest|Niagara-vízesés|Sydney-i Operaház|Pisai ferde torony|Machu Picchu|Hollywood|Kreml|Akropolisz|Sagrada Família|Golden Gate híd|Buckingham-palota|Disneyland',
+    sk: 'Eiffelova veža|Big Ben|Koloseum|Pyramídy v Gíze|Socha slobody|Veľký čínsky múr|Tádž Mahal|Stonehenge|Mount Everest|Niagarské vodopády|Opera v Sydney|Šikmá veža v Pise|Machu Picchu|Hollywood|Kremeľ|Akropola|Sagrada Família|Golden Gate|Buckinghamský palác|Disneyland',
+    cs: 'Eiffelova věž|Big Ben|Koloseum|Pyramidy v Gíze|Socha svobody|Velká čínská zeď|Tádž Mahal|Stonehenge|Mount Everest|Niagarské vodopády|Opera v Sydney|Šikmá věž v Pise|Machu Picchu|Hollywood|Kreml|Akropole|Sagrada Família|Golden Gate|Buckinghamský palác|Disneyland',
+    de: 'Eiffelturm|Big Ben|Kolosseum|Pyramiden von Gizeh|Freiheitsstatue|Chinesische Mauer|Taj Mahal|Stonehenge|Mount Everest|Niagarafälle|Opernhaus Sydney|Schiefer Turm von Pisa|Machu Picchu|Hollywood|Kreml|Akropolis|Sagrada Família|Golden Gate Bridge|Buckingham Palace|Disneyland',
+    fr: 'Tour Eiffel|Big Ben|Colisée|Pyramides de Gizeh|Statue de la Liberté|Grande Muraille de Chine|Taj Mahal|Stonehenge|Mont Everest|Chutes du Niagara|Opéra de Sydney|Tour de Pise|Machu Picchu|Hollywood|Kremlin|Acropole|Sagrada Família|Golden Gate Bridge|Palais de Buckingham|Disneyland',
+    es: 'Torre Eiffel|Big Ben|Coliseo|Pirámides de Guiza|Estatua de la Libertad|Gran Muralla China|Taj Mahal|Stonehenge|Monte Everest|Cataratas del Niágara|Ópera de Sídney|Torre de Pisa|Machu Picchu|Hollywood|Kremlin|Acrópolis|Sagrada Familia|Puente Golden Gate|Palacio de Buckingham|Disneyland',
   }),
 ];
 

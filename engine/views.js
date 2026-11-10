@@ -6,7 +6,7 @@ import {
   byId, nameOf, hasRule, deathTeam, upcomingNight, isDayPhase,
 } from './state.js';
 import { setupReport, nominees, chatChannels, ballotWeight } from './game.js';
-import { exorcismPublic, exorcismAction, exorcismProgress, exorcismSecrets, xKnowledge, isExorcismPhase, X_ADVANCE_LABEL } from './exorcism.js';
+import { exorcismPublic, exorcismAction, exorcismProgress, exorcismSecrets, xKnowledge, isExorcismPhase, X_ADVANCE_LABEL, X_REDRAW_PHASES } from './exorcism.js';
 import { missionPublic, missionAction, missionMe, missionSecrets, isMissionPhase, MISSION_ADVANCE_LABEL } from './missions.js';
 
 const roleCard = (id) => {
@@ -108,6 +108,7 @@ export function publicView(m, now = Date.now()) {
 export function hostControls(m) {
   const c = { advance: null, extend: !!m.deadline, end: m.phase !== 'LOBBY' && m.phase !== 'ENDED', rematch: m.phase === 'ENDED' };
   if (ADVANCE_LABEL[m.phase]) c.advance = ADVANCE_LABEL[m.phase];
+  if (m.X && X_REDRAW_PHASES.includes(m.phase)) c.redraw = true;
   if (m.phase === 'DAY_DEFENSE') {
     const list = nominees(m);
     if (m.day.defenseIndex >= list.length - 1) c.advance = 'Open the vote';

@@ -140,10 +140,15 @@ async function staticFile(req, res, url) {
   try {
     const s = await stat(file);
     if (!s.isFile()) throw new Error('not a file');
+    // Revalidate everything (cheap 304s via the ETag), so a deploy never mixes
+    // new scripts with stale styles on a phone.
+    const etag = `"${s.size.toString(36)}-${Math.floor(s.mtimeMs).toString(36)}"`;
+    if (req.headers['if-none-match'] === etag) { res.writeHead(304, { etag, 'cache-control': 'no-cache' }); return res.end(); }
     const data = await readFile(file);
     res.writeHead(200, {
       'content-type': TYPES[extname(file)] || 'application/octet-stream',
-      'cache-control': extname(file) === '.html' ? 'no-cache' : 'public, max-age=300',
+      'cache-control': 'no-cache',
+      etag,
       'x-content-type-options': 'nosniff',
       'referrer-policy': 'no-referrer',
     });

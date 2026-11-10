@@ -1514,5 +1514,13 @@ export default {
     "Tap the ball to cloud it again.": "Ťukni na kouli a znovu se zahalí.",
     "Tap the ball to look inside.": "Ťukni na kouli a podívej se dovnitř.",
     "Waiting for the host to start the next round.": "Čeká se, až hostitel spustí další kolo.",
+    "A new word": "Nové slovo",
+    "A new word can only be drawn before the vote.": "Nové slovo lze vytáhnout jen před hlasováním.",
+    "Hold to draw another word": "Podrž pro nové slovo",
+    "Nothing to redraw.": "Není co táhnout znovu.",
+    "The host": "Hostitel",
+    "The host drew another word. This round is not scored.": "Hostitel vytáhl nové slovo. Toto kolo se nepočítá.",
+    "This round is not scored. Look into your ball again.": "Toto kolo se nepočítá. Podívej se znovu do své koule.",
+    "Too many people do not know this word? The round is dealt again with a new word and new roles. Nothing is scored.": "Příliš mnoho lidí to slovo nezná? Kolo se rozdá znovu s novým slovem a novými rolemi. Nic se nepočítá.",
   },
 };

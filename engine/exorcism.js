@@ -255,6 +255,22 @@ function endExorcism(m, winner, reason, now) {
   enter(m, 'ENDED', now, X_RETURN_SECONDS);
 }
 
+/**
+ * The host draws another word (too many people did not know it): the round is
+ * dealt afresh, new word and new roles, and nothing is scored. Only before the
+ * vote, so nobody can use it to escape a verdict.
+ */
+export const X_REDRAW_PHASES = ['X_REVEAL', 'X_LOTTERY', 'X_CLUES', 'X_DISCUSS'];
+export function redrawExorcism(m, rng, now) {
+  if (!X_REDRAW_PHASES.includes(m.phase)) throw new GameError('A new word can only be drawn before the vote.');
+  const old = { category: m.X.category, word: m.X.word };
+  for (let tries = 0; tries < 6; tries++) {
+    startExorcism(m, rng, now);
+    if (m.X.category !== old.category || m.X.word !== old.word) break;
+  }
+  pub(m, 'The host drew another word. This round is not scored.', 'host', { ev: 'x-redraw' });
+}
+
 // ── Commands ───────────────────────────────────────────────────────────────
 export function exorcismCommand(m, p, type, payload, rng, now) {
   const X = m.X;

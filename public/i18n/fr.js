@@ -1514,5 +1514,13 @@ export default {
     "Tap the ball to cloud it again.": "Touche la boule pour la voiler à nouveau.",
     "Tap the ball to look inside.": "Touche la boule pour regarder dedans.",
     "Waiting for the host to start the next round.": "En attente de l'hôte pour la manche suivante.",
+    "A new word": "Un nouveau mot",
+    "A new word can only be drawn before the vote.": "On ne peut tirer un nouveau mot qu'avant le vote.",
+    "Hold to draw another word": "Maintenir pour un autre mot",
+    "Nothing to redraw.": "Rien à retirer.",
+    "The host": "L'hôte",
+    "The host drew another word. This round is not scored.": "L'hôte a tiré un autre mot. Cette manche ne compte pas.",
+    "This round is not scored. Look into your ball again.": "Cette manche ne compte pas. Regarde à nouveau dans ta boule.",
+    "Too many people do not know this word? The round is dealt again with a new word and new roles. Nothing is scored.": "Trop de joueurs ne connaissent pas ce mot ? La manche est redistribuée avec un nouveau mot et de nouveaux rôles. Rien n'est compté.",
   },
 };

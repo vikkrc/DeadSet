@@ -1843,12 +1843,16 @@ button.chipbtn { cursor: pointer; }
 .xb-orbit { position: absolute; left: 0; right: 0; top: 0; aspect-ratio: 1; width: var(--size); margin: 0 auto; z-index: 3; pointer-events: none; }
 .xb-orbit .xo { position: absolute; transform: translate(-50%, -50%); animation: xoFloat 4.6s ease-in-out infinite; animation-delay: calc(var(--d) * -1); }
 @keyframes xoFloat { 0%, 100% { margin-top: 0; } 50% { margin-top: -7px; } }
-.xo-word { display: inline-block; padding: 3px 9px; border-radius: 999px; background: rgba(16, 12, 6, 0.82); border: 1px solid color-mix(in srgb, var(--tint) 60%, transparent);
-  color: #fff4d8; font: 500 12px/1.2 var(--sans, sans-serif); white-space: nowrap; box-shadow: 0 0 12px color-mix(in srgb, var(--tint) 40%, transparent); animation: fadeIn 0.8s var(--ease) both; }
-.board2 .xo-word { font-size: clamp(14px, 1.3vw, 22px); padding: 5px 14px; }
-.xo-face { display: grid; justify-items: center; gap: 2px; animation: fadeIn 0.8s var(--ease) both; }
-.xo-face .xo-av, .xo-face > b { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: #1b1610; border: 1px solid color-mix(in srgb, var(--tint) 70%, transparent); box-shadow: 0 0 10px color-mix(in srgb, var(--tint) 45%, transparent); }
-.board2 .xo-face .xo-av, .board2 .xo-face > b { width: 3.4vw; height: 3.4vw; }
-.xo-face small { font-size: 10px; color: #fff4d8; text-shadow: 0 1px 3px #000; }
+.xb-orbit .xo { transition: left 0.8s var(--ease), top 0.8s var(--ease); }
+.xo-pill { display: inline-flex; align-items: center; gap: 6px; max-width: 44vw; padding: 3px 10px 3px 3px; border-radius: 999px; background: rgba(16, 12, 6, 0.86);
+  border: 1px solid color-mix(in srgb, var(--tint) 60%, transparent); color: #fff4d8; font: 500 12px/1.2 var(--sans, sans-serif); white-space: nowrap;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--tint) 40%, transparent); animation: fadeIn 0.8s var(--ease) both; }
+.xo-pill .xo-av, .xo-pill .xo-ini { width: 22px; height: 22px; border-radius: 50%; flex: none; display: grid; place-items: center; background: #1b1610; font: 600 11px/1 var(--serif, serif); overflow: hidden; }
+.xo-w { overflow: hidden; text-overflow: ellipsis; }
+.xo-pill.spoken { padding-right: 8px; font-size: 11px; }
+.xo.quiet { opacity: 0.45; }
+.xb-orbit.crowded .xo-pill { font-size: 10px; padding: 2px 7px 2px 2px; } .xb-orbit.crowded .xo-pill .xo-av, .xb-orbit.crowded .xo-pill .xo-ini { width: 18px; height: 18px; }
+.xball.small .xo-pill { font-size: 10px; max-width: 36vw; } .xball.small .xo-pill .xo-av, .xball.small .xo-pill .xo-ini { width: 18px; height: 18px; }
+.board2 .xo-pill { font-size: clamp(14px, 1.2vw, 22px); padding: 4px 14px 4px 4px; max-width: 20vw; } .board2 .xo-pill .xo-av, .board2 .xo-pill .xo-ini { width: 2.4vw; height: 2.4vw; }
 @media (prefers-reduced-motion: reduce) { .xb-orbit .xo { animation: none; } }
 .xo-face.quiet { opacity: 0.45; }

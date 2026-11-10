@@ -172,3 +172,26 @@ test('bots play whole Exorcism rounds', async () => {
     assert.equal(m.X.clues.length, n);
   }
 });
+
+test('the host can draw another word before the vote: a fresh deal, nothing scored', () => {
+  const rm = new RoomManager({ botDelay: [10_000_000, 1] });
+  const host = rm.createRoom({ name: 'Ada' });
+  const m = rm.rooms.get(host.code).match;
+  for (let i = 1; i < 5; i++) { const s = rm.joinRoom(host.code, { name: NAMES[i] }); rm.command(host.code, s.token, { type: 'lobby.ready', payload: { ready: true } }); }
+  rm.command(host.code, host.token, { type: 'host.settings', payload: { preset: 'exorcism' } });
+  rm.command(host.code, host.token, { type: 'lobby.ready', payload: { ready: true } });
+  rm.command(host.code, host.token, { type: 'host.start' });
+  const before = `${m.X.category}:${m.X.word}`;
+  m.players.forEach((p) => { p.acknowledged = true; });
+  rm.command(host.code, host.token, { type: 'host.xredraw' });
+  assert.equal(m.phase, 'X_REVEAL');
+  assert.notEqual(`${m.X.category}:${m.X.word}`, before);
+  assert.ok(m.players.every((p) => !p.acknowledged), 'everyone looks again');
+  assert.deepEqual(m.xScores, {});
+  assert.ok(m.publicLog.some((l) => l.ev === 'x-redraw'));
+  // not once the vote is open
+  m.phase = 'X_VOTE';
+  assert.throws(() => rm.command(host.code, host.token, { type: 'host.xredraw' }), /before the vote/);
+  for (const r of rm.rooms.values()) clearTimeout(r.timer);
+  clearInterval(rm.sweeper);
+});
