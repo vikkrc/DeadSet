@@ -3,6 +3,9 @@ export default {
   and: 'y',
   numbers: ['ningún', 'un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'],
   roles: {
+    M_JESTER: { name: "Bufón", when: "Siempre", summary: "Ganas solo si la mesa te nombra en la Última Resistencia o el Segador te nombra en el Ajuste de cuentas.", detail: "No eres Vivo ni de la Muerte: el Médium no te ve y la Vela te muestra como Vivo. En misión puedes jugar Éxito o Sabotaje. Parece culpable, pero no demasiado." },
+    TWIN: { name: "Gemelo", when: "Siempre", summary: "Hay dos Gemelos. Os conocéis y los dos sois Vivos.", detail: "Solo puedes jugar Éxito. Confía en tu gemelo, pero cuidado: si os avaláis el uno al otro demasiado alto, la Muerte sabrá dónde mirar." },
+    UNDERTAKER: { name: "Enterrador", when: "Tras una misión fallida", summary: "Cuando una misión falla, sabes cuántos jugadores de la Muerte iban en ese equipo.", detail: "Cuentan todos los jugadores de la Muerte, también el Velado y el Errante, jugaran la carta que jugaran. Solo tú lo oyes. Solo puedes jugar Éxito." },
     MEDIUM: { name: "Médium", when: "Siempre", summary: "Ves a todos los jugadores de la Muerte, salvo al Velado. Guía a la expedición sin delatarte.", detail: "Si los Vivos ganan tres misiones, o atrapan a un jugador de la Muerte en la Última Resistencia, la Muerte tiene un intento para adivinar quién eres. Si te nombra, gana la Muerte." },
     BELIEVER: { name: "Creyente", when: "Siempre", summary: "Ves dos velas: el Médium y el Charlatán. No sabes cuál es cuál.", detail: "Averigua qué vela es el verdadero Médium y protégelo, a menudo haciéndote pasar tú por el Médium. Sin Charlatán en juego, tu única vela es el Médium." },
     COMPANION: { name: "Compañero", when: "Siempre", summary: "No sabes nada salvo lo que dice tu corazón. Observa los votos y las misiones.", detail: "Solo puedes jugar Éxito. Lee quién propone a quién, quién aprueba qué equipo y qué misiones fracasan." },
@@ -102,6 +105,7 @@ export default {
     genericSteps: ["El primer paso", "Más adentro", "El punto sin retorno", "Lo más difícil", "El final del camino"],
     genericScenes: ["La expedición se pone en marcha. Nadie mira atrás.", "El camino se estrecha, y la confianza también.", "A mitad de camino. Alguien cuenta los pasos.", "El aire se enfría con cada decisión.", "El último tramo. Lo que espera aquí os esperaba a vosotros."],
   },
+  sideMissions: {"GO_TWICE": "Ve al menos a dos misiones.", "GO_THRICE": "Ve al menos a tres misiones.", "STAY_BEHIND": "No vayas a más de una misión.", "EARLY_BIRD": "Ve a la misión 1 o a la misión 2.", "LATE_ARRIVAL": "No vayas ni a la misión 1 ni a la 2.", "LANTERN_LEADS": "Lidera un equipo que salga a su misión.", "NO_LANTERN": "Nunca lideres un equipo que salga a su misión.", "GOOD_COMPANY": "Ve en una misión que tenga éxito.", "BAD_LUCK": "Ve en una misión que fracase.", "CLEAN_RECORD": "Nunca vayas en una misión que fracase.", "NAYSAYER": "Vota Rechazar al menos tres veces.", "OPEN_HEART": "Nunca votes Rechazar.", "LONE_VOICE": "Rechaza un equipo que la mesa aprueba.", "LOST_CAUSE": "Aprueba un equipo que la mesa rechaza.", "CONTRARIAN": "Queda dos veces en el lado perdedor de una votación de equipo.", "CROWD": "Vota siempre con la mayoría.", "FIRST_TRUST": "Aprueba la primera propuesta de dos misiones distintas.", "POPULAR": "Aparece en al menos tres equipos propuestos.", "SELF_STARTER": "Ponte en un equipo que propongas.", "HUMBLE": "Nunca te pongas en un equipo que propongas.", "NEIGHBOURS": "Ve a una misión junto al jugador de tu izquierda.", "CANDLE_BEARER": "Sostén la Vela en algún momento.", "STEADY_EYE": "Nunca cambies tu Sospecha (y da al menos dos).", "RESTLESS": "Sospecha de tres jugadores distintos con tus Sospechas."},
   rules: {
     OPEN_BALLOT: { name: "Voto a la vista", text: "Cada voto es público: todos ven quién vota a quién a medida que llegan las papeletas.", enforcement: "Los votos se pueden cambiar hasta que se cierre la votación. Los votos de los fantasmas también son públicos." },
     FOG_OF_WAR: { name: 'Niebla de guerra', text: 'Durante la discusión solo puedes hablar directamente con los jugadores sentados a tu lado.', enforcement: 'En persona, por honor. A distancia, el chat de mesa se sustituye por susurros entre vecinos.' },
@@ -142,7 +146,7 @@ export default {
   ],
   guide: {
     missionsH: "Dead Set: Misiones",
-    missions: `<p>Un segundo modo para 5–10 jugadores, que se elige en la sala. Nadie muere: la Muerte se ha colado en la expedición, y la mesa debe encontrarla.</p>
+    missions: `<p>Un segundo modo para 5–12 jugadores, que se elige en la sala. Nadie muere: la Muerte se ha colado en la expedición, y la mesa debe encontrarla.</p>
 <ol>
 <li><b>La carta de misión.</b> Cada misión empieza robando una carta, antes de elegir el equipo. La mayoría son <i>Misiones normales</i>; de vez en cuando una carta cambia el equipo, la votación o la revelación. Vale para toda la misión.</li>
 <li><b>La propuesta.</b> El Líder de la misión (el farol) elige un equipo del tamaño indicado.</li>

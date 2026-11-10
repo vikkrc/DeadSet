@@ -272,13 +272,15 @@ function detectMoments(v) {
     entryMoments(l);
     sharedFrom(l, start);
   }
+  // Side Missions: the owner learns at once (personal, queued behind any shared scene).
+  if (v.mode === 'missions' && v.me && !v.me.moderator) for (const x of freshPriv.filter((e) => e.kind === 'side' && e.state)) out.push({ type: 'mside', side: x.side, state: x.state, sound: x.state === 'done' ? 'approve' : 'unpick', tapOnly: true });
   function entryMoments(l) {
     if (v.mode === 'missions') {
       if (l.ev === 'm-start') { const sc = fresh.find((x) => x.ev === 'scenario'); out.push({ type: 'night0', scenario: sc ? entryMsg(sc) : '', sc: v.scenario, rules: [], tapOnly: false }); return; }
       if (l.ev === 'm-dawn' && v.me && !v.me.moderator) {
         // The Candle gets its own reveal; everything else goes on the private card.
         for (const c of freshPriv.filter((x) => x.kind === 'candle' && x.target)) out.push({ type: 'mcandle', name: name(c.target), death: !!c.death, sound: 'candleLight', tapOnly: true });
-        const reports = freshPriv.filter((x) => ['witness', 'clue'].includes(x.kind) || (x.kind === 'candle' && !x.target));
+        const reports = freshPriv.filter((x) => ['witness', 'clue', 'undertaker'].includes(x.kind) || (x.kind === 'candle' && !x.target));
         out.push({ type: 'private', reports: reports.map((x) => ({ msg: entryMsg(x), lines: x.lines, kind: x.kind })), tapOnly: true });
         return;
       }
@@ -500,7 +502,7 @@ function momentHtml(m) {
       break;
     }
     case 'gift': body = giftHtml(m.idx, { t, th, esc, product: m.product }); break;
-    case 'mlottery': case 'mlantern': case 'mintro': case 'mcandle': case 'mcard': case 'mvotes': case 'mreveal': case 'mnamed': case 'munmask': case 'mreckon': body = missionMomentHtml(m, { letters, avatarSvg, onBoard }); break;
+    case 'mside': case 'mlottery': case 'mlantern': case 'mintro': case 'mcandle': case 'mcard': case 'mvotes': case 'mreveal': case 'mnamed': case 'munmask': case 'mreckon': body = missionMomentHtml(m, { letters, avatarSvg, onBoard }); break;
     case 'death':
       body = `<div class="m-art">${glyph(m.art || 'dagger')}</div><h1 class="m-title">${letters(t(m.title))}</h1>${m.names.length ? `<ul class="victims">${names(m.names)}</ul>` : ''}<p class="m-sub">${tmh(m.sub)}</p>`;
       break;
@@ -826,7 +828,7 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
       me?.teammates?.some((t) => t.id === p.id) ? 'mate' : '', pos[i].inner ? 'inner' : '',
       // What this phone privately knows (Missions): Death seen by the Medium or by Candlelight, the Believer's candles.
       me?.seesDeath?.some((x) => x.id === p.id) || me?.candleSeen?.some((x) => x.id === p.id && x.death) ? 'known-death' : '',
-      me?.candleSeen?.some((x) => x.id === p.id && !x.death) ? 'known-living' : '',
+      me?.candleSeen?.some((x) => x.id === p.id && !x.death) || me?.twin?.id === p.id ? 'known-living' : '',
       me?.candles?.some((x) => x.id === p.id) ? 'known-candle' : '',
     ].filter(Boolean).join(' ');
     const badges = [];
@@ -1226,6 +1228,9 @@ function lobbyDeck(v, isHost) {
   const toggle = (key, title, sub) => isHost
     ? `<label class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><input type="checkbox" class="switch" data-set-bool="${key}" ${v.table?.[key] ? 'checked' : ''}></label>`
     : `<div class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><span class="tag ${v.table?.[key] ? 'solid' : ''}">${t(v.table?.[key] ? 'On' : 'Off')}</span></div>`;
+  const setRow = (key, title, sub) => isHost
+    ? `<label class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><input type="checkbox" class="switch" data-set-bool="${key}" ${s[key] ? 'checked' : ''}></label>`
+    : `<div class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><span class="tag ${s[key] ? 'solid' : ''}">${t(s[key] ? 'On' : 'Off')}</span></div>`;
   const tableLang = v.table?.lang ?? 'en';
   return `<section class="lobby-deck" data-key="ldeck">
     <div class="rule">${t(v.players.length === 1 ? 'Tonight\'s deck · {n} player' : 'Tonight\'s deck · {n} players', { n: v.players.length })}</div>
@@ -1256,7 +1261,7 @@ function lobbyDeck(v, isHost) {
 /** Lobby deck and switches for Dead Set: Missions. */
 function missionLobbyDeck(v, isHost, cards) {
   const s = v.settings;
-  const on = { BELIEVER: true, CHARLATAN: true, VEILED: false, STRAY: false, ...(s.mRoles || {}) };
+  const on = { BELIEVER: true, CHARLATAN: true, VEILED: false, STRAY: false, UNDERTAKER: false, M_JESTER: false, ...(s.mRoles || {}) };
   const n = v.players.length;
   const sizes = S.content?.missionSizes?.[n];
   const roleRow = (id, sub) => isHost
@@ -1268,10 +1273,13 @@ function missionLobbyDeck(v, isHost, cards) {
   const select = (act, value, opts, title, sub) => isHost
     ? `<label class="toggle-row"><span><b>${t(title)}</b>${sub ? `<small>${t(sub)}</small>` : ''}</span><select class="input lang-select" data-act-change="${act}">${opts.map(([k, l]) => `<option value="${k}" ${value === k ? 'selected' : ''}>${t(l)}</option>`).join('')}</select></label>`
     : `<div class="toggle-row"><span><b>${t(title)}</b>${sub ? `<small>${t(sub)}</small>` : ''}</span><span class="tag">${t(opts.find(([k]) => k === value)?.[1] ?? '')}</span></div>`;
+  const setRow = (key, title, sub) => isHost
+    ? `<label class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><input type="checkbox" class="switch" data-set-bool="${key}" ${s[key] ? 'checked' : ''}></label>`
+    : `<div class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><span class="tag ${s[key] ? 'solid' : ''}">${t(s[key] ? 'On' : 'Off')}</span></div>`;
   const tableLang = v.table?.lang ?? 'en';
   return `<section class="lobby-deck" data-key="ldeck">
     <div class="rule">${t(n === 1 ? 'Tonight\'s deck · {n} player' : 'Tonight\'s deck · {n} players', { n })}</div>
-    <div class="deckrow">${cards || `<p class="small muted">${t('Seat 5 to 10 players to see the deck.')}</p>`}</div>
+    <div class="deckrow">${cards || `<p class="small muted">${t('Seat 5 to 12 players to see the deck.')}</p>`}</div>
     ${sizes ? `<p class="small muted" data-key="msizes">${th('Team sizes for missions 1–5: {sizes}.', { sizes: sizes.join(' · ') })}${n >= 7 ? ` ${t('Mission 4 needs two Sabotage cards to fail.')}` : ''}</p>` : ''}
     <div class="rule">${t('The table')}</div>
     ${isHost ? `<label class="toggle-row"><span><b>${t('Table language')}</b><small>${t('The default for everyone. Each player can still pick their own.')}</small></span><select class="input lang-select" data-act-change="tableLang">${LANGS.map((l) => `<option value="${l.code}" ${tableLang === l.code ? 'selected' : ''}>${esc(l.name)}</option>`).join('')}</select></label>`
@@ -1282,7 +1290,11 @@ function missionLobbyDeck(v, isHost, cards) {
     ${roleRow('CHARLATAN', 'Death: looks like the Medium to the Believer.')}
     ${roleRow('VEILED', 'Death: hidden from the Medium.')}
     ${roleRow('STRAY', 'Death: unknown to the rest of Death, and blind to them.')}
+    ${roleRow('UNDERTAKER', 'Living: learns how many Death players were on each failed team.')}
+    ${roleRow('M_JESTER', 'Plays for itself: wins if named in the Last Stand or by the Reaper. From 7 players.')}
+    ${setRow('twins', 'Twins', 'Two Living players who know each other.')}
     <div class="rule">${t('Twists')}</div>
+    ${setRow('sideMissions', 'Side Missions', 'Everyone gets a secret personal objective. Complete it and your Last Stand vote counts double; fail it and it counts half.')}
     ${select('leaderMode', s.leaderMode ?? 'next', [['next', 'Next in line'], ['choose', 'Chosen by the last leader']], 'Next Mission Leader', 'After a mission, the lantern goes to the next player in line, or the last leader hands it to someone who has not led a mission yet.')}
     ${select('missionCards', s.missionCards ?? 1, [[0, 'Off'], [1, 'Rare'], [2, 'Sometimes']], 'Mission cards', 'Most missions are Regular. Sometimes a card changes the team, the vote or the reveal.')}
     ${toggle('clues', 'Clues', 'Rarely, at dawn, one or two players find a true hint about Death\'s team.')}
@@ -1306,7 +1318,7 @@ function modeChooser(v, isHost) {
     <div class="rule">${t('Game mode')}</div>
     <div class="mode-cards">
       ${card('classic', 'death', t('Classic Dead Set'), t('Hidden roles, night kills, Dreams and Rule cards. 5–25 players.'))}
-      ${card('missions', 'mission', presetF('missions', 'name'), t('Teams, votes and sabotage. Nobody dies. 5–10 players.'))}
+      ${card('missions', 'mission', presetF('missions', 'name'), t('Teams, votes and sabotage. Nobody dies. 5–12 players.'))}
     </div>
   </section>`;
 }

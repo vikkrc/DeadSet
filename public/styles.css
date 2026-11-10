@@ -1712,3 +1712,8 @@ body.is-board .lot-disc { width: 70px; height: 70px; } body.is-board .lot-seat s
 .hunch-legend .hl::before { content: ''; width: 14px; height: 2px; background: #9fb3c8; }
 .hunch-legend .hl.hit::before { background: #e9c27a; } .hunch-legend .hl.liar::before { background: repeating-linear-gradient(90deg, var(--blood-ink) 0 3px, transparent 3px 6px); }
 @media (prefers-reduced-motion: reduce) { .hunch-arrows > path { animation: none; stroke-dashoffset: 0; } }
+
+/* ── Missions part 2: Side Missions, Twins ── */
+.side-panel.done { border-color: rgba(233, 194, 122, 0.55); }
+.side-panel.failed { border-color: rgba(226, 88, 94, 0.45); }
+.side-art.done { color: var(--gold); } .side-art.failed { color: var(--blood-ink); }

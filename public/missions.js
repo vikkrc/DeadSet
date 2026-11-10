@@ -2,7 +2,7 @@
 // Pure renderers over the filtered view; the shell (app.js) passes its helpers
 // in `h` and merges `missionActs` into its action table.
 import { glyph } from './icons.js';
-import { t, th, tmh, roleF, mcardF, missionStoryLine, scen } from './i18n.js';
+import { t, th, tmh, roleF, mcardF, sideF, missionStoryLine, scen } from './i18n.js';
 import { backdropHtml } from './backdrops.js';
 import { seatLayout } from './layout.js';
 
@@ -15,7 +15,16 @@ const CARD_GLYPH = {
   TRAIL: 'clue', WITNESS: 'mentalist', HAUNTED_ROAD: 'veiled',
 };
 export const cardGlyph = (id) => glyph(CARD_GLYPH[id] ?? 'mission');
+const isDone = (o) => o.state === 'done';
+const isFailed = (o) => o.state === 'failed';
 const name = (v, id) => v.players.find((p) => p.id === id)?.name ?? t('Someone');
+
+/** My Side Mission: the objective, and how it stands. */
+export function sideHtml(side) {
+  const st = { pending: ['Open', ''], done: ['Complete', 'gold'], failed: ['Failed', 'blood'] }[side.state] ?? ['Open', ''];
+  return `<div class="panel tight side-panel ${side.state}" data-key="k-side"><span class="kicker">${glyph('scroll')} ${t('Your Side Mission')}</span><p>${esc(sideF(side.id))}</p>
+    <p class="small"><span class="tag ${st[1]}">${t(st[0])}</span> <span class="muted">${t(isDone(side) ? 'Your Last Stand vote counts double.' : isFailed(side) ? 'Your Last Stand vote counts half.' : 'Secret. Judged automatically.')}</span></p></div>`;
+}
 
 // ── Track, card, grid ──────────────────────────────────────────────────────
 /** Five mission discs + the proposal pips. */
@@ -105,6 +114,8 @@ export function knowledgeHtml(me) {
   if (me.seesDeath) parts.push(`<div class="panel tight seal" data-key="k-medium"><span class="kicker blood">${t('You see Death in')}</span><p>${me.seesDeath.length ? esc(me.seesDeath.map((x) => x.name).join(', ')) : t('No one. Death is veiled from you.')}</p><p class="small muted">${t('Steer the expedition without giving yourself away.')}</p></div>`);
   if (me.candles) parts.push(`<div class="panel tight" data-key="k-believer"><span class="kicker">${t(me.candles.length > 1 ? 'Two candles burn for you' : 'The Medium')}</span><p>${esc(me.candles.map((x) => x.name).join(me.candles.length > 1 ? ` ${t('or')} ` : ''))}</p><p class="small muted">${t(me.candles.length > 1 ? 'One is the Medium, one is the Charlatan.' : 'Protect them.')}</p></div>`);
   if (me.teammates && !me.stray) parts.push(`<div class="panel tight seal" data-key="k-death"><span class="kicker blood">${t('Your Death team')}</span><p>${me.teammates.length ? me.teammates.map((x) => `${esc(x.name)}${x.reaper ? ` <small>(${esc(roleF('REAPER', 'name'))})</small>` : ''}`).join(', ') : t('No one else you can see.')}</p></div>`);
+  if (me.twin) parts.push(`<div class="panel tight" data-key="k-twin"><span class="kicker">${glyph('heart')} ${t('Your Twin')}</span><p>${esc(me.twin.name)}</p><p class="small muted">${t('Both of you are Living.')}</p></div>`);
+  if (me.side) parts.push(sideHtml(me.side));
   if (me.stray) parts.push(`<div class="panel tight seal" data-key="k-stray"><span class="kicker blood">${t('You serve Death alone')}</span><p class="small">${t('You do not know the rest of Death, and they do not know you.')}</p></div>`);
   if (me.candleSeen?.length) parts.push(`<div class="panel tight" data-key="k-candle"><span class="kicker">${glyph('candle')} ${t('By Candlelight')}</span>${me.candleSeen.map((c) => `<p>${esc(c.name)}: <b class="${c.death ? 'blood' : ''}">${t(c.death ? 'Death' : 'Living')}</b></p>`).join('')}</div>`);
   return parts.join('');
@@ -198,7 +209,7 @@ export function missionMain(v, me, h) {
     }
     case 'M_NIGHT': return nightStage(v, me, a, h, ctx, pick, table);
     case 'M_LAST_STAND':
-      stage = `<div class="banner blood" data-key="stand">${glyph('death')}<div><b>${t('The Last Stand')}</b><p>${t('Three missions have failed. Name one player you believe is Death. Catch one, and Death must still find the Medium to win.')}</p></div></div>`;
+      stage = `<div class="banner blood" data-key="stand">${glyph('death')}<div><b>${t('The Last Stand')}</b><p>${t('Three missions have failed. Name one player you believe is Death. Catch one, and Death must still find the Medium to win.')}</p>${me?.side && me.side.weight !== 1 ? `<p class="small"><b>${t(me.side.weight > 1 ? 'Your vote counts double (Side Mission complete).' : 'Your vote counts half (Side Mission failed).')}</b></p>` : ''}</div></div>`;
       break;
     case 'M_RECKONING':
       stage = a.type === 'mreckon' ? reckonStage(v, a) : `<div class="banner blood" data-key="reck">${glyph('death')}<div><b>${t('The Reckoning')}</b><p>${t('Death has unmasked and is hunting the Medium. Keep your nerve.')}</p></div></div>`;
@@ -376,9 +387,9 @@ export function missionMoment(l, v, fresh, { notify, name: nm, ...h }) {
     };
     case 'm-result': return { type: 'mreveal', mission: l.mission, cards: l.cards, count: l.count, fails: l.fails, need: l.need, failed: l.failed, weight: l.weight, sound: null, tapOnly: false };
     case 'm-stand': return { type: 'call', kicker: 'Three missions failed', title: 'The Last Stand', sub: 'Name one player you believe is Death.', sound: 'standDrum' };
-    case 'm-named': return { type: 'mnamed', target: nm(l.target), death: l.death, sound: 'knock' };
+    case 'm-named': return { type: 'mnamed', target: nm(l.target), death: l.death, jester: !!l.jester, sound: 'knock' };
     case 'm-unmask': return { type: 'munmask', ids: l.ids, names: l.ids.map(nm), from: l.from, sound: 'unmask' };
-    case 'm-reckon': return { type: 'mreckon', target: nm(l.target), hit: l.hit, medium: nm(l.medium), sound: 'heart' };
+    case 'm-reckon': return { type: 'mreckon', target: nm(l.target), hit: l.hit, jester: !!l.jester, medium: nm(l.medium), sound: 'heart' };
     case 'm-haunt': return { type: 'call', kicker: mcardF('HAUNTED_ROAD', 'name'), title: 'Haunted', sub: ['{b} cannot go on the next mission.', { b: nm(l.target) }], sound: 'death' };
     case 'm-night': return { type: 'nightfall', n: l.n };
     case 'm-candle': if (l.target) notify(t('{a} held the Candle to {b}', { a: nm(l.by), b: nm(l.target) })); return null;
@@ -393,7 +404,7 @@ export function missionMoment(l, v, fresh, { notify, name: nm, ...h }) {
   }
 }
 
-export const MISSION_MOMENT_TIME = { mlottery: 8600, mlantern: 3600, mintro: 9000, mcandle: 5200, mcard: 4200, mvotes: 5400, mnamed: 5200, munmask: 5200, mreckon: 6200 };
+export const MISSION_MOMENT_TIME = { mside: 5200, mlottery: 8600, mlantern: 3600, mintro: 9000, mcandle: 5200, mcard: 4200, mvotes: 5400, mnamed: 5200, munmask: 5200, mreckon: 6200 };
 export const revealTime = (m) => 2600 + (m.cards ? m.cards.length : m.count) * 1150 + 2600;
 
 export function missionMomentHtml(m, h) {
@@ -423,6 +434,11 @@ export function missionMomentHtml(m, h) {
         <p class="mi-lead">${esc(m.lead)}</p>
         <p class="mi-scene">${esc(m.scene)}</p>
         <p class="m-sub small mi-next">${esc(t('The mission card is drawn…'))}</p></div>`;
+    case 'mside':
+      return `<div class="m-art side-art ${m.state}">${glyph('scroll')}</div><span class="kicker">${esc(t('Side Mission'))}</span>
+        <h1 class="m-title">${letters(t(isDone(m) ? 'Complete' : 'Failed'))}</h1><p class="m-sub">${esc(sideF(m.side))}</p>
+        <div class="verdict-stamp" style="--d:1.2s"><span class="stamp ${isDone(m) ? 'gold' : ''} late-stamp">${esc(t(isDone(m) ? 'Vote ×2' : 'Vote ×½'))}</span></div>
+        <p class="m-sub small late">${esc(t('Only you know. It weighs your vote in the Last Stand.'))}</p>`;
     case 'mcandle':
       return `<div class="candle-art" aria-hidden="true"><span class="cl-flame"></span><span class="cl-glow"></span>${glyph('candle')}</div>
         <span class="kicker">${esc(t('By Candlelight'))}</span><h1 class="m-title">${letters(m.name)}</h1>
@@ -457,8 +473,8 @@ export function missionMomentHtml(m, h) {
     case 'mnamed':
       return `<span class="kicker">${t('The Last Stand')}</span><h1 class="m-title">${letters(t('The table names'))}</h1>
         <div class="named"><b class="named-name">${esc(m.target)}</b></div>
-        <div class="verdict-stamp" style="--d:2.4s"><span class="stamp ${m.death ? '' : 'gold'} late">${t(m.death ? 'Walks with Death' : 'One of the Living')}</span></div>
-        <p class="m-sub small late">${t(m.death ? 'Death is caught, but it may yet find the Medium.' : 'The wrong name. Death holds the expedition.')}</p>`;
+        <div class="verdict-stamp" style="--d:2.4s"><span class="stamp ${m.death ? '' : 'gold'} late">${t(m.jester ? 'The Jester' : m.death ? 'Walks with Death' : 'One of the Living')}</span></div>
+        <p class="m-sub small late">${t(m.jester ? 'Exactly what the Jester wanted.' : m.death ? 'Death is caught, but it may yet find the Medium.' : 'The wrong name. Death holds the expedition.')}</p>`;
     case 'munmask':
       return `<div class="m-art">${glyph('death')}</div><span class="kicker blood">${t(m.from === 'stand' ? 'Caught, not beaten' : 'Three missions succeed')}</span><h1 class="m-title blood">${letters(t('Death unmasks'))}</h1>
         <ul class="victims unmasked">${m.names.map((x, i) => `<li class="victim" style="--d:${0.9 + i * 0.45}s"><span>${esc(x)}</span></li>`).join('')}</ul>
@@ -466,7 +482,7 @@ export function missionMomentHtml(m, h) {
     case 'mreckon':
       return `<span class="kicker blood">${t('The Reckoning')}</span><h1 class="m-title">${letters(t('The Reaper names'))}</h1>
         <div class="named"><b class="named-name">${esc(m.target)}</b></div>
-        <div class="verdict-stamp" style="--d:2.8s"><span class="stamp ${m.hit ? '' : 'gold'} late">${t(m.hit ? 'The Medium' : 'Not the Medium')}</span></div>
+        <div class="verdict-stamp" style="--d:2.8s"><span class="stamp ${m.hit ? '' : 'gold'} late">${t(m.jester ? 'The Jester' : m.hit ? 'The Medium' : 'Not the Medium')}</span></div>
         ${m.hit ? '' : `<p class="m-sub small late">${th('The Medium was {b}.', { b: m.medium })}</p>`}`;
     default: return '';
   }
@@ -515,6 +531,7 @@ export function missionEndHtml(v) {
   const top = Object.entries(byTarget).sort((a, b) => b[1] - a[1]).slice(0, 3);
   return `${trackHtml(v)}
     <section data-key="endgrid"><div class="rule">${t('The missions')}</div>${gridHtml(v)}</section>
+    ${M.side ? `<section data-key="endside"><div class="rule">${t('Side Missions')}</div><ul class="ledger">${Object.entries(M.side).map(([id, o]) => `<li><span class="seat">${glyph(isDone(o) ? 'check' : isFailed(o) ? 'close' : 'scroll')}</span><span class="who"><b>${esc(name(v, id))}</b><small>${esc(sideF(o.id))}</small></span><span class="tags"><span class="tag ${isDone(o) ? 'solid' : isFailed(o) ? 'blood' : ''}">${t(isDone(o) ? 'Complete' : isFailed(o) ? 'Failed' : 'Open')}</span></span></li>`).join('')}</ul></section>` : ''}
     ${top.length ? `<section data-key="hunch"><div class="rule">${t('Most suspected (Hunches)')}</div><ul class="ledger">${top.map(([id, n]) => `<li><span class="seat">${n}</span><span class="who"><b>${esc(name(v, id))}</b><small>${th(n === 1 ? '{n} hunch' : '{n} hunches', { n })}</small></span></li>`).join('')}</ul></section>` : ''}`;
 }
 

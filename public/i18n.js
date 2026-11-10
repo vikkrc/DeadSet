@@ -48,6 +48,7 @@ export function setContent(c) {
     products: c.products ?? [],
     mcards: Object.fromEntries((c.missionCards ?? []).map((x) => [x.id, x])),
     missionStory: c.missionStory ?? null,
+    sides: Object.fromEntries((c.sideMissions ?? []).map((x) => [x.id, x])),
   };
 }
 
@@ -58,6 +59,7 @@ export const roleF = (id, f) => D?.roles?.[id]?.[f] ?? EN.roles[id]?.[f] ?? (f =
 export const dreamF = (id, f) => D?.dreams?.[id]?.[f] ?? EN.dreams[id]?.[f] ?? (f === 'name' ? id : '');
 export const ruleF = (id, f) => D?.rules?.[id]?.[f] ?? EN.rules[id]?.[f] ?? (f === 'name' ? id : '');
 export const mcardF = (id, f) => D?.mcards?.[id]?.[f] ?? EN.mcards?.[id]?.[f] ?? (f === 'name' ? id : '');
+export const sideF = (id) => D?.sideMissions?.[id] ?? EN.sides?.[id]?.text ?? id;
 export const presetF = (id, f) => D?.presets?.[id]?.[f] ?? EN.presets[id]?.[f] ?? id;
 /** Scenario card: translate the built-in cards, keep custom (host-written) text. */
 export function scen(kind, english) {
@@ -103,6 +105,7 @@ function val(k, v) {
   if (isMsg(v)) return tm(v);
   if (k.startsWith('role')) return roleF(v, 'name');
   if (k.startsWith('mcard')) return mcardF(v, 'name');
+  if (k === 'side') return sideF(v);
   if (k === 'dreamText') return dreamF(v, 'text');
   if (k.startsWith('dream')) return dreamF(v, 'name');
   if (k === 'rules') return list(v.map((r) => ruleF(r, 'name')));

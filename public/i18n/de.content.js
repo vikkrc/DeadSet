@@ -3,6 +3,9 @@ export default {
   and: 'und',
   numbers: ['kein', 'ein', 'zwei', 'drei', 'vier', 'fünf', 'sechs', 'sieben', 'acht', 'neun', 'zehn'],
   roles: {
+    M_JESTER: { name: "Narr", when: "Immer", summary: "Du gewinnst allein, wenn der Tisch dich im Letzten Gefecht benennt oder der Schnitter dich in der Abrechnung benennt.", detail: "Du bist weder Lebend noch Tod: Das Medium sieht dich nicht, die Kerze zeigt dich als Lebend. Auf Missionen darfst du Erfolg oder Sabotage spielen. Wirk verdächtig, aber nicht zu sehr." },
+    TWIN: { name: "Zwilling", when: "Immer", summary: "Es gibt zwei Zwillinge. Ihr kennt einander und gehört beide zu den Lebenden.", detail: "Du kannst nur Erfolg spielen. Vertrau deinem Zwilling, aber Vorsicht: Bürgt ihr zu laut füreinander, weiß der Tod, wo er suchen muss." },
+    UNDERTAKER: { name: "Totengräber", when: "Nach einer gescheiterten Mission", summary: "Scheitert eine Mission, erfährst du, wie viele Tod-Spieler in diesem Team waren.", detail: "Gezählt wird jeder Tod-Spieler, auch der Verschleierte und der Streuner, egal welche Karte sie spielten. Nur du hörst es. Du kannst nur Erfolg spielen." },
     MEDIUM: { name: "Medium", when: "Immer", summary: "Du siehst jeden Spieler des Todes, außer dem Verschleierten. Lenke die Expedition, ohne dich zu verraten.", detail: "Gewinnen die Lebenden drei Missionen oder fangen sie im letzten Gefecht einen Spieler des Todes, darf der Tod einmal raten, wer du bist. Nennt er dich, gewinnt der Tod." },
     BELIEVER: { name: "Gläubiger", when: "Immer", summary: "Du siehst zwei Kerzen: das Medium und den Scharlatan. Du weißt nicht, wer wer ist.", detail: "Finde heraus, welche Kerze das echte Medium ist, und schütze es – oft, indem du dich selbst wie das Medium verhältst. Ohne Scharlatan im Spiel ist deine einzige Kerze das Medium." },
     COMPANION: { name: "Gefährte", when: "Immer", summary: "Du weißt nichts außer deinem eigenen Herzen. Beobachte die Abstimmungen und die Missionen.", detail: "Du kannst nur Erfolg spielen. Lies, wer wen vorschlägt, wer welchem Team zustimmt und welche Missionen scheitern." },
@@ -102,6 +105,7 @@ export default {
     genericSteps: ["Der erste Schritt", "Tiefer hinein", "Der Punkt ohne Wiederkehr", "Der schwerste Teil", "Das Ende des Weges"],
     genericScenes: ["Die Expedition bricht auf. Niemand schaut zurück.", "Der Pfad wird enger – und das Vertrauen auch.", "Halbzeit. Jemand zählt die Schritte.", "Mit jeder Entscheidung wird die Luft kälter.", "Die letzte Strecke. Was hier wartet, hat auf euch gewartet."],
   },
+  sideMissions: {"GO_TWICE": "Geh auf mindestens zwei Missionen.", "GO_THRICE": "Geh auf mindestens drei Missionen.", "STAY_BEHIND": "Geh auf höchstens eine Mission.", "EARLY_BIRD": "Geh auf Mission 1 oder Mission 2.", "LATE_ARRIVAL": "Geh weder auf Mission 1 noch auf Mission 2.", "LANTERN_LEADS": "Führe ein Team, das auf seine Mission geht.", "NO_LANTERN": "Führe nie ein Team, das auf seine Mission geht.", "GOOD_COMPANY": "Sei auf einer Mission, die gelingt.", "BAD_LUCK": "Sei auf einer Mission, die scheitert.", "CLEAN_RECORD": "Sei nie auf einer Mission, die scheitert.", "NAYSAYER": "Stimme mindestens dreimal mit Ablehnen.", "OPEN_HEART": "Stimme nie mit Ablehnen.", "LONE_VOICE": "Lehne ein Team ab, das der Tisch annimmt.", "LOST_CAUSE": "Nimm ein Team an, das der Tisch ablehnt.", "CONTRARIAN": "Steh zweimal auf der unterlegenen Seite einer Teamabstimmung.", "CROWD": "Stimme immer mit der Mehrheit.", "FIRST_TRUST": "Nimm den ersten Vorschlag zweier verschiedener Missionen an.", "POPULAR": "Steh auf mindestens drei vorgeschlagenen Teams.", "SELF_STARTER": "Setz dich selbst auf ein Team, das du vorschlägst.", "HUMBLE": "Setz dich nie selbst auf ein Team, das du vorschlägst.", "NEIGHBOURS": "Geh zusammen mit deinem linken Nachbarn auf eine Mission.", "CANDLE_BEARER": "Halte irgendwann die Kerze.", "STEADY_EYE": "Ändere nie deinen Verdacht (und gib mindestens zwei ab).", "RESTLESS": "Richte deinen Verdacht auf drei verschiedene Spieler."},
   rules: {
     OPEN_BALLOT: { name: "Offene Abstimmung", text: "Jede Stimme ist öffentlich: Alle sehen, wer für wen stimmt, während die Stimmen eingehen.", enforcement: "Stimmen können bis zur Sperrung noch geändert werden. Auch Geisterstimmen sind öffentlich." },
     FOG_OF_WAR: { name: 'Nebel des Krieges', text: 'Während der Diskussion darfst du nur direkt mit den Spielern auf den Plätzen neben dir sprechen.', enforcement: 'Am Tisch Ehrensache. Online ersetzt Nachbarflüstern den Tischchat.' },
@@ -142,7 +146,7 @@ export default {
   ],
   guide: {
     missionsH: "Dead Set: Missionen",
-    missions: `<p>Ein zweiter Modus für 5–10 Spieler, in der Lobby wählbar. Niemand stirbt: Der Tod hat sich in die Expedition geschlichen, und der Tisch muss ihn finden.</p>
+    missions: `<p>Ein zweiter Modus für 5–12 Spieler, in der Lobby wählbar. Niemand stirbt: Der Tod hat sich in die Expedition geschlichen, und der Tisch muss ihn finden.</p>
 <ol>
 <li><b>Die Missionskarte.</b> Jede Mission beginnt mit einer gezogenen Karte, bevor ein Team gewählt wird. Die meisten sind <i>Normale Missionen</i>; ab und zu ändert eine Karte das Team, die Abstimmung oder die Aufdeckung. Sie gilt für die ganze Mission.</li>
 <li><b>Der Vorschlag.</b> Der Missionsanführer (die Laterne) wählt ein Team in der angezeigten Größe.</li>

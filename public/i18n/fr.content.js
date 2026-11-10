@@ -3,6 +3,9 @@ export default {
   and: 'et',
   numbers: ['aucun', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix'],
   roles: {
+    M_JESTER: { name: "Bouffon", when: "Toujours", summary: "Tu gagnes seul si la table te désigne au Dernier Carré, ou si le Faucheur te désigne lors du Jugement.", detail: "Tu n'es ni Vivant ni de la Mort : le Médium ne te voit pas, la Bougie te montre Vivant. En mission, tu peux jouer Réussite ou Sabotage. Aie l'air coupable, mais pas trop." },
+    TWIN: { name: "Jumeau", when: "Toujours", summary: "Il y a deux Jumeaux. Vous vous connaissez et vous êtes tous deux Vivants.", detail: "Tu ne peux jouer que Succès. Fais confiance à ton jumeau, mais attention : à trop vous porter garants l'un de l'autre, vous montrez à la Mort où chercher." },
+    UNDERTAKER: { name: "Croque-mort", when: "Après une mission ratée", summary: "Quand une mission échoue, tu apprends combien de joueurs de la Mort étaient dans cette équipe.", detail: "Le compte inclut tous les joueurs de la Mort, le Voilé et l'Égaré aussi, quelle que soit leur carte. Toi seul l'entends. Tu ne peux jouer que Succès." },
     MEDIUM: { name: "Médium", when: "Toujours", summary: "Tu vois chaque joueur de la Mort, sauf le Voilé. Guide l'expédition sans te trahir.", detail: "Si les Vivants gagnent trois missions, ou prennent un joueur de la Mort au Dernier Carré, la Mort a un essai pour deviner qui tu es. Si elle te désigne, la Mort gagne." },
     BELIEVER: { name: "Croyant", when: "Toujours", summary: "Tu vois deux bougies : le Médium et le Charlatan. Tu ne sais pas qui est qui.", detail: "Découvre quelle bougie est le vrai Médium et protège-le, souvent en te faisant passer toi-même pour le Médium. Sans Charlatan en jeu, ta seule bougie est le Médium." },
     COMPANION: { name: "Compagnon", when: "Toujours", summary: "Tu ne sais rien d'autre que ce que dit ton cœur. Observe les votes et les missions.", detail: "Tu ne peux jouer que Réussite. Lis qui propose qui, qui approuve quelle équipe, et quelles missions échouent." },
@@ -102,6 +105,7 @@ export default {
     genericSteps: ["Le premier pas", "Plus loin", "Le point de non-retour", "Le plus dur", "Le bout du chemin"],
     genericScenes: ["L'expédition se met en route. Personne ne se retourne.", "Le chemin se resserre, et la confiance aussi.", "À mi-chemin. Quelqu'un compte les pas.", "L'air se refroidit à chaque choix.", "La dernière ligne droite. Ce qui attend ici vous attendait."],
   },
+  sideMissions: {"GO_TWICE": "Pars en mission au moins deux fois.", "GO_THRICE": "Pars en mission au moins trois fois.", "STAY_BEHIND": "Ne pars pas en mission plus d'une fois.", "EARLY_BIRD": "Pars sur la mission 1 ou la mission 2.", "LATE_ARRIVAL": "Ne pars ni sur la mission 1 ni sur la mission 2.", "LANTERN_LEADS": "Mène une équipe qui part en mission.", "NO_LANTERN": "Ne mène jamais une équipe qui part en mission.", "GOOD_COMPANY": "Sois sur une mission réussie.", "BAD_LUCK": "Sois sur une mission ratée.", "CLEAN_RECORD": "Ne sois jamais sur une mission ratée.", "NAYSAYER": "Vote Rejeter au moins trois fois.", "OPEN_HEART": "Ne vote jamais Rejeter.", "LONE_VOICE": "Rejette une équipe que la table approuve.", "LOST_CAUSE": "Approuve une équipe que la table rejette.", "CONTRARIAN": "Sois deux fois du côté perdant d'un vote d'équipe.", "CROWD": "Vote toujours avec la majorité.", "FIRST_TRUST": "Approuve la première proposition de deux missions différentes.", "POPULAR": "Figure dans au moins trois équipes proposées.", "SELF_STARTER": "Mets-toi dans une équipe que tu proposes.", "HUMBLE": "Ne te mets jamais dans une équipe que tu proposes.", "NEIGHBOURS": "Pars en mission avec le joueur à ta gauche.", "CANDLE_BEARER": "Tiens la Bougie à un moment.", "STEADY_EYE": "Ne change jamais de Soupçon (et donnes-en au moins deux).", "RESTLESS": "Soupçonne trois joueurs différents avec tes Soupçons."},
   rules: {
     OPEN_BALLOT: { name: "Vote à découvert", text: "Chaque vote est public : tout le monde voit qui vote pour qui à mesure que les bulletins arrivent.", enforcement: "Les votes peuvent encore changer jusqu'au verrouillage. Les votes des fantômes sont publics aussi." },
     FOG_OF_WAR: { name: 'Brouillard de guerre', text: 'Pendant la discussion, tu ne peux parler directement qu’aux joueurs assis juste à côté de toi.', enforcement: 'Sur l’honneur en présentiel. À distance, le chat de table est remplacé par des murmures entre voisins.' },
@@ -142,7 +146,7 @@ export default {
   ],
   guide: {
     missionsH: "Dead Set : Missions",
-    missions: `<p>Un second mode pour 5 à 10 joueurs, à choisir dans le salon. Personne ne meurt : la Mort s'est glissée dans l'expédition, et la table doit la trouver.</p>
+    missions: `<p>Un second mode pour 5 à 12 joueurs, à choisir dans le salon. Personne ne meurt : la Mort s'est glissée dans l'expédition, et la table doit la trouver.</p>
 <ol>
 <li><b>La carte de mission.</b> Chaque mission commence par une carte tirée, avant le choix de l'équipe. La plupart sont des <i>Missions ordinaires</i> ; de temps en temps, une carte change l'équipe, le vote ou la révélation. Elle vaut pour toute la mission.</li>
 <li><b>La proposition.</b> Le Meneur de mission (la lanterne) choisit une équipe de la taille indiquée.</li>

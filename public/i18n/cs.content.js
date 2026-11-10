@@ -3,6 +3,9 @@ export default {
   and: 'a',
   numbers: ['žádný', 'jeden', 'dva', 'tři', 'čtyři', 'pět', 'šest', 'sedm', 'osm', 'devět', 'deset'],
   roles: {
+    M_JESTER: { name: "Šašek", when: "Vždy", summary: "Vyhráváš sám, když tě stůl označí v Posledním vzdoru nebo tě Ženec určí v Zúčtování.", detail: "Nejsi Živý ani ze Smrti: Médium tě nevidí a Svíčka tě ukáže jako Živého. Na misi můžeš hrát Úspěch i Sabotáž. Působ podezřele, ale ne moc." },
+    TWIN: { name: "Dvojče", when: "Vždy", summary: "Dvojčata jsou dvě. Znáte se a oba patříte k Živým.", detail: "Můžeš hrát jen Úspěch. Věř svému dvojčeti, ale pozor: když se za sebe budete zaručovat moc nahlas, Smrt bude vědět, kam se dívat." },
+    UNDERTAKER: { name: "Hrobník", when: "Po neúspěšné misi", summary: "Když mise selže, dozvíš se, kolik hráčů Smrti bylo v tom týmu.", detail: "Počítají se všichni hráči Smrti, i Zahalený a Tulák, ať zahráli jakoukoli kartu. Slyšíš to jen ty. Můžeš hrát jen Úspěch." },
     MEDIUM: { name: "Médium", when: "Vždy", summary: "Vidíš každého hráče Smrti kromě Zahaleného. Řiď výpravu tak, aby ses neprozradil.", detail: "Pokud Živí vyhrají tři mise nebo v Posledním vzdoru chytí hráče Smrti, má Smrt jeden pokus uhodnout, kdo jsi. Pokud označí tebe, vyhrává Smrt." },
     BELIEVER: { name: "Věřící", when: "Vždy", summary: "Vidíš dvě svíčky: Médium a Šarlatána. Nevíš, kdo je kdo.", detail: "Zjisti, která svíčka je skutečné Médium, a chraň ho – často tak, že se sám chováš jako Médium. Bez Šarlatána ve hře je tvou jedinou svíčkou Médium." },
     COMPANION: { name: "Společník", when: "Vždy", summary: "Nevíš nic kromě toho, co ti říká srdce. Sleduj hlasování a mise.", detail: "Můžeš hrát jen Úspěch. Čti, kdo koho navrhuje, kdo schvaluje který tým a které mise selhávají." },
@@ -102,6 +105,7 @@ export default {
     genericSteps: ["První krok", "Hlouběji", "Bod, odkud není návratu", "Nejtěžší část", "Konec cesty"],
     genericScenes: ["Výprava vyráží. Nikdo se neohlíží.", "Cesta se zužuje – a s ní i důvěra.", "V polovině cesty. Někdo počítá kroky.", "S každou volbou je vzduch chladnější.", "Poslední úsek. Co tu čeká, čekalo na vás."],
   },
+  sideMissions: {"GO_TWICE": "Jdi aspoň na dvě mise.", "GO_THRICE": "Jdi aspoň na tři mise.", "STAY_BEHIND": "Jdi nejvýš na jednu misi.", "EARLY_BIRD": "Jdi na misi 1 nebo 2.", "LATE_ARRIVAL": "Nejdi na misi 1 ani 2.", "LANTERN_LEADS": "Veď tým, který se vydá na misi.", "NO_LANTERN": "Nikdy neveď tým, který se vydá na misi.", "GOOD_COMPANY": "Buď na misi, která uspěje.", "BAD_LUCK": "Buď na misi, která selže.", "CLEAN_RECORD": "Nikdy nebuď na misi, která selže.", "NAYSAYER": "Hlasuj aspoň třikrát pro Zamítnutí.", "OPEN_HEART": "Nikdy nehlasuj pro Zamítnutí.", "LONE_VOICE": "Zamítni tým, který stůl schválí.", "LOST_CAUSE": "Schval tým, který stůl zamítne.", "CONTRARIAN": "Dvakrát skonči na prohrané straně hlasování o týmu.", "CROWD": "Vždy hlasuj s většinou.", "FIRST_TRUST": "Schval první návrh dvou různých misí.", "POPULAR": "Buď aspoň ve třech navržených týmech.", "SELF_STARTER": "Dej se do týmu, který sám navrhneš.", "HUMBLE": "Nikdy se nedávej do týmu, který sám navrhneš.", "NEIGHBOURS": "Jdi na misi spolu s hráčem po své levici.", "CANDLE_BEARER": "Někdy drž Svíčku.", "STEADY_EYE": "Nikdy neměň své Podezření (a dej aspoň dvě).", "RESTLESS": "Svými Podezřeními označ tři různé hráče."},
   rules: {
     OPEN_BALLOT: { name: "Veřejné hlasování", text: "Každý hlas je veřejný: všichni vidí, kdo hlasuje pro koho, jakmile hlasy přicházejí.", enforcement: "Hlasy lze měnit až do uzamčení. I hlasy duchů jsou veřejné." },
     FOG_OF_WAR: { name: 'Mlha války', text: 'Během diskuse smíš přímo mluvit jen s hráči na místech hned vedle tebe.', enforcement: 'Naživo na čestné slovo. Na dálku nahradí stolní chat šepot se sousedy.' },
@@ -142,7 +146,7 @@ export default {
   ],
   guide: {
     missionsH: "Dead Set: Mise",
-    missions: `<p>Druhý režim pro 5–10 hráčů, který se vybírá v lobby. Nikdo neumírá: Smrt se vloudila do výpravy a stůl ji musí najít.</p>
+    missions: `<p>Druhý režim pro 5–12 hráčů, který se vybírá v lobby. Nikdo neumírá: Smrt se vloudila do výpravy a stůl ji musí najít.</p>
 <ol>
 <li><b>Karta mise.</b> Každá mise začíná tahem karty, ještě před výběrem týmu. Většina jsou <i>Běžné mise</i>; občas karta změní tým, hlasování nebo odhalení. Platí pro celou misi.</li>
 <li><b>Návrh.</b> Vůdce mise (lucerna) vybere tým uvedené velikosti.</li>

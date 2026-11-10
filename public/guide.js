@@ -89,7 +89,7 @@ export const GUIDE_EN = {
 <li>MUTE, Fog of War and Cursed Silence are honour rules in person. Remote play enforces them in the chat.</li>
 </ul>`,
   missionsH: 'Dead Set: Missions',
-  missions: `<p>A second mode for 5–10 players, chosen in the lobby. Nobody dies: Death has slipped into the expedition, and the table must find it.</p>
+  missions: `<p>A second mode for 5–12 players, chosen in the lobby. Nobody dies: Death has slipped into the expedition, and the table must find it.</p>
 <ol>
 <li><b>The mission card.</b> Each mission starts by drawing a card, before any team is chosen. Most are <i>Regular Missions</i>; now and then a card changes the team, the vote or the reveal. It holds for the whole mission.</li>
 <li><b>The proposal.</b> The Mission Leader (the lantern) picks a team of the size shown.</li>

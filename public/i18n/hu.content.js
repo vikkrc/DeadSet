@@ -3,7 +3,10 @@ export default {
   and: 'és',
   numbers: ['nulla', 'egy', 'két', 'három', 'négy', 'öt', 'hat', 'hét', 'nyolc', 'kilenc', 'tíz'],
   roles: {
-    MEDIUM: { name: "Médium", when: "Mindig", summary: "Látod a Halál minden játékosát, kivéve a Fátylast. Irányítsd az expedíciót úgy, hogy ne áruld el magad.", detail: "Ha az Élők megnyernek három küldetést, vagy az Utolsó Állásban elkapnak egy Halál-játékost, a Halál egyszer tippelhet, ki vagy. Ha téged nevez meg, a Halál győz." },
+    M_JESTER: { name: "Bolond", when: "Mindig", summary: "Egyedül nyersz, ha az asztal téged nevez meg az Utolsó Esélyben, vagy a Kaszás téged nevez meg az Elszámolásban.", detail: "Se nem Élő, se nem a Halálé vagy: a Médium nem lát, a Gyertya Élőnek mutat. Küldetésen Sikert vagy Szabotázst is játszhatsz. Tűnj gyanúsnak, de ne túlságosan." },
+    TWIN: { name: "Iker", when: "Mindig", summary: "Ketten vagytok Ikrek. Ismeritek egymást, és mindketten Élők vagytok.", detail: "Csak Sikert játszhatsz. Bízz az ikredben, de vigyázz: ha túl hangosan kezeskedtek egymásért, a Halál tudni fogja, hol keressen." },
+    UNDERTAKER: { name: "Sírásó", when: "Elbukott küldetés után", summary: "Ha egy küldetés elbukik, megtudod, hány halálos játékos volt abban a csapatban.", detail: "A számba minden halálos játékos beletartozik, a Fátylas és a Kóborló is, bármit is játszottak. Csak te hallod. Csak Sikert játszhatsz." },
+    MEDIUM: { name: "Médium", when: "Mindig", summary: "Látod a Halál minden játékosát, kivéve a Fátylast. Irányítsd az expedíciót úgy, hogy ne áruld el magad.", detail: "Ha az Élők megnyernek három küldetést, vagy az Utolsó Esélyben elkapnak egy Halál-játékost, a Halál egyszer tippelhet, ki vagy. Ha téged nevez meg, a Halál győz." },
     BELIEVER: { name: "Hívő", when: "Mindig", summary: "Két gyertyát látsz: a Médiumot és a Sarlatánt. Nem tudod, melyik melyik.", detail: "Derítsd ki, melyik gyertya az igazi Médium, és védd meg, gyakran úgy, hogy te magad viselkedsz Médiumként. Ha nincs Sarlatán a játékban, az egyetlen gyertyád a Médium." },
     COMPANION: { name: "Társ", when: "Mindig", summary: "Semmit sem tudsz, csak amit a szíved súg. Figyeld a szavazásokat és a küldetéseket.", detail: "Csak Sikert játszhatsz ki. Olvasd ki, ki kit javasol, ki melyik csapatot fogadja el, és mely küldetések buknak el." },
     REAPER: { name: "Kaszás", when: "Mindig", summary: "Te vezeted a Halált. Az Elszámolásban te döntöd el, ki a Médium.", detail: "Látod a Halál többi tagját (a Kóborló kivételével). Küldetésen Sikert vagy Szabotázst játszhatsz. A csapatod javasolhat neveket az Elszámolásban; a te döntésed számít." },
@@ -102,6 +105,7 @@ export default {
     genericSteps: ["Az első lépés", "Mélyebbre", "A visszafordíthatatlan pont", "A legnehezebb rész", "Az út vége"],
     genericScenes: ["Az expedíció útnak indul. Senki sem néz vissza.", "Az ösvény szűkül – és vele a bizalom is.", "Félúton. Valaki számolja a lépéseket.", "Minden döntéssel hidegebb lesz a levegő.", "Az utolsó szakasz. Ami itt vár, rátok várt."],
   },
+  sideMissions: {"GO_TWICE": "Menj el legalább két küldetésre.", "GO_THRICE": "Menj el legalább három küldetésre.", "STAY_BEHIND": "Legfeljebb egy küldetésre menj el.", "EARLY_BIRD": "Menj el az 1. vagy a 2. küldetésre.", "LATE_ARRIVAL": "Ne menj el se az 1., se a 2. küldetésre.", "LANTERN_LEADS": "Vezess egy csapatot, amely útnak indul.", "NO_LANTERN": "Soha ne vezess olyan csapatot, amely útnak indul.", "GOOD_COMPANY": "Légy egy sikeres küldetés csapatában.", "BAD_LUCK": "Légy egy elbukott küldetés csapatában.", "CLEAN_RECORD": "Soha ne légy elbukott küldetés csapatában.", "NAYSAYER": "Szavazz legalább háromszor Elutasításra.", "OPEN_HEART": "Soha ne szavazz Elutasításra.", "LONE_VOICE": "Utasíts el egy csapatot, amelyet az asztal elfogad.", "LOST_CAUSE": "Fogadj el egy csapatot, amelyet az asztal elutasít.", "CONTRARIAN": "Kétszer légy a vesztes oldalon egy csapatszavazáson.", "CROWD": "Mindig a többséggel szavazz.", "FIRST_TRUST": "Fogadd el két különböző küldetés első javaslatát.", "POPULAR": "Legalább három javasolt csapatban szerepelj.", "SELF_STARTER": "Tedd magad egy általad javasolt csapatba.", "HUMBLE": "Soha ne tedd magad egy általad javasolt csapatba.", "NEIGHBOURS": "Menj küldetésre a tőled balra ülő játékossal együtt.", "CANDLE_BEARER": "Egyszer legyen nálad a Gyertya.", "STEADY_EYE": "Soha ne változtass a Gyanúdon (és legalább kettőt adj le).", "RESTLESS": "Három különböző játékosra tippelj a Gyanúiddal."},
   rules: {
     OPEN_BALLOT: { name: "Nyílt szavazás", text: "Minden szavazat nyilvános: mindenki látja, ki kire szavaz, ahogy a voksok beérkeznek.", enforcement: "A szavazatok a lezárásig még módosíthatók. A szellemek szavazatai is nyilvánosak." },
     FOG_OF_WAR: { name: 'A háború köde', text: 'A vita alatt csak a közvetlenül melletted ülő játékosokkal beszélhetsz.', enforcement: 'Személyesen becsületbeli szabály. Távoli játékban az asztali csevegést szomszédsuttogás váltja fel.' },
@@ -142,7 +146,7 @@ export default {
   ],
   guide: {
     missionsH: "Dead Set: Küldetések",
-    missions: `<p>Egy második mód 5–10 játékosnak, a váróban választható. Senki sem hal meg: a Halál beférkőzött az expedícióba, és az asztalnak meg kell találnia.</p>
+    missions: `<p>Egy második mód 5–12 játékosnak, a váróban választható. Senki sem hal meg: a Halál beférkőzött az expedícióba, és az asztalnak meg kell találnia.</p>
 <ol>
 <li><b>A küldetéskártya.</b> Minden küldetés egy kártya húzásával kezdődik, még a csapat kiválasztása előtt. A legtöbb <i>Szokásos küldetés</i>; néha egy kártya megváltoztatja a csapatot, a szavazást vagy a felfedést. Az egész küldetésre érvényes.</li>
 <li><b>A javaslat.</b> A Küldetésvezető (a lámpás) a megadott méretű csapatot választ.</li>
@@ -150,7 +154,7 @@ export default {
 <li><b>A küldetés.</b> Minden csapattag titokban kijátszik egy kártyát. Az Élők csak Sikert játszhatnak; a Halál Sikert vagy Szabotázst. Egy Szabotázs elbuktatja a küldetést (7 játékostól a 4. küldetésnél kettő). A kártyákat megkeverik, és egyenként fordítják fel.</li>
 <li><b>Az éjszakai szünet.</b> Mindenki választ egy titkos Gyanút. A 2., 3. és 4. küldetés után a Gyertya birtokosa megtudja egy játékos oldalát, és a Gyertya hozzá kerül. Hajnalban nyomok érkezhetnek.</li>
 </ol>
-<p><b>A vég.</b> Három siker: a Halál leleplezi magát, és a Kaszás megnevezi a Médiumot. Ha eltalálja, a Halál győz; ha nem, az Élők. Három kudarc: az Utolsó Állás. Mindenki megnevez egy játékost. Ha az egy Élő, a Halál győz; ha elkapjátok a Halált, a Kaszás akkor is megkapja az Elszámolást.</p>`,
+<p><b>A vég.</b> Három siker: a Halál leleplezi magát, és a Kaszás megnevezi a Médiumot. Ha eltalálja, a Halál győz; ha nem, az Élők. Három kudarc: az Utolsó Esély. Mindenki megnevez egy játékost. Ha az egy Élő, a Halál győz; ha elkapjátok a Halált, a Kaszás akkor is megkapja az Elszámolást.</p>`,
     missionCardsH: "Küldetéskártyák",
     sidesH: "Más oldalak és fordulatok",
     sides: `<p>Választhatók, a váróban kapcsolhatók be (vagy egyéni játékban a szerepszámlálókkal adhatók hozzá). A város csak akkor győz, ha a Halál, a Szekta és a Hasfelmetsző is eltűnt.</p>

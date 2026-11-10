@@ -15,11 +15,13 @@ Death has slipped into the expedition. Every round a **Mission Leader** assemble
 
 ### Table sizes
 
-| Players | 5 | 6 | 7 | 8 | 9 | 10 |
-|---|---|---|---|---|---|---|
-| Death | 2 | 2 | 3 | 3 | 3 | 4 |
-| Living | 3 | 4 | 4 | 5 | 6 | 6 |
-| Team sizes, missions 1–5 | 2·3·2·3·3 | 2·3·4·3·4 | 2·3·3·**4**·4 | 3·4·4·**5**·5 | 3·4·4·**5**·5 | 3·4·4·**5**·5 |
+| Players | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
+|---|---|---|---|---|---|---|---|---|
+| Death | 2 | 2 | 3 | 3 | 3 | 4 | 4 | 4 |
+| Living | 3 | 4 | 4 | 5 | 6 | 6 | 7 | 8 |
+| Team sizes, missions 1–5 | 2·3·2·3·3 | 2·3·4·3·4 | 2·3·3·**4**·4 | 3·4·4·**5**·5 | 3·4·4·**5**·5 | 3·4·4·**5**·5 | 3·4·4·**5**·5 | 4·4·5·**6**·6 |
+
+11 and 12 players were tuned with bot simulations (300 games per size): with 4 Death, both land at Death 51–53 %, in line with 8–10 players. Five Death at 12 players pushed Death to about 58 %.
 
 A **bold** mission needs **two** Sabotage cards to fail. Every other mission fails with one.
 
@@ -37,6 +39,9 @@ Every table has a **Medium** and a **Reaper**. The others are lobby switches. Un
 | **Veiled** *(off)* | Death | Death team | Hidden from the Medium. |
 | **Stray** *(off)* | Death | Nobody; Death doesn't know them either | Still seen by the Medium. Joins the others at the Reckoning. |
 | **Shade** | Death | Death team (except the Stray) | — |
+| **Undertaker** *(off)* | Living | — | When a mission fails, privately learns how many Death players were on that team (Veiled and Stray included, whatever they played). |
+| **Twins** *(lobby switch "Twins", off)* | Living | Each other | Two Companions become Twins who know they are both Living. Strong for the Living: the lobby suggests pairing them with the Veiled or the Stray. |
+| **Jester** *(off, 7+ players)* | Itself | Nothing | Takes a Living seat but is neither side: the Medium does not see it, the Candle shows it as Living, and it may play Succeed or Sabotage. Wins alone if the Last Stand names it, or the Reaper names it in the Reckoning. |
 
 **Seats:** Death has the Reaper plus the optional Death roles switched on. The Reaper always takes one Death seat, so at 5–6 players (2 Death) only one optional Death role fits. The lobby refuses more Death roles than Death seats.
 
@@ -191,9 +196,18 @@ Bots work in Missions too:
 - Death bots sabotage most of the time (less often when another Death is on the team).
 - They take their night actions, and in the Last Stand and the Reckoning they vote with what they know.
 
-## Not in version 1 (planned)
-- Undertaker (learns how many Death were on a failed team)
-- Jester for Missions
-- 11–12 players
+## 11. Side Missions (lobby switch, off by default)
+
+Everyone is dealt one **secret personal objective**, all different, from a pool of 24. They only look at things both sides can do in the open (going on missions, leading, team votes, proposals, the Candle, Hunches) and are dealt the same way to everyone, so holding one never reveals your side. Examples: *Go on at least two missions*, *Never vote Reject*, *Vote Approve on a team the table rejects*, *Go on a mission together with the player on your left*, *Never change your Hunch*.
+
+- They are judged automatically after every vote, mission and night, and the owner learns at once (a private card on their phone).
+- A **reach** objective succeeds the moment it is met; a **keep** objective fails the moment it is broken.
+- When the Last Stand opens (or the game ends), open ones are settled: an unmet reach fails, a kept promise succeeds.
+- **In the Last Stand** a completed Side Mission makes your vote count **double**; a failed one counts **half**. Ties still go to the coin.
+- They are listed for everyone on the end screen.
+
+## 12. Hunches at the end
+During the Reckoning (and on the end screen) portraits glow with how many Hunches pointed at them. The end screen and the TV draw **Who suspected whom**: an arrow per Hunch, gold onto Death, grey onto the Living, dashed red from Death.
+
+## Not yet (planned)
 - A "Swift" option with no team votes
-- An end-of-game recap with mission arrows

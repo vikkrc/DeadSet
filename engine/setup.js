@@ -2,7 +2,7 @@
 import {
   ROLES, PRESETS, RULE_CARDS, RULE_IDS, COPY_SENSITIVE, SCENARIO, MIN_PLAYERS, ABS_MAX_PLAYERS, LANGS,
   DREAM_WEIGHTS, DREAM_WEIGHT_MAX, SMALL_TABLE, STANDARD_EXTENDED, FULL_EXTENDED,
-  MISSION_OPTIONAL, MISSION_DEATH, MISSION_MIN, MISSION_MAX, modeOf, roleInMode,
+  MISSION_OPTIONAL, MISSION_DEATH, MISSION_MIN, MISSION_MAX, MISSION_JESTER_MIN, modeOf, roleInMode,
 } from './content.js';
 import { shuffle, pick, seededRng } from './rng.js';
 
@@ -59,9 +59,11 @@ export function defaultSettings() {
     tieBreak: 'none',
     backdrops: true,
     // Missions mode
-    mRoles: { BELIEVER: true, CHARLATAN: true, VEILED: false, STRAY: false },
+    mRoles: { BELIEVER: true, CHARLATAN: true, VEILED: false, STRAY: false, UNDERTAKER: false, M_JESTER: false },
     missionCards: 1,
     leaderMode: 'next',
+    twins: false,
+    sideMissions: false,
   };
 }
 
@@ -157,6 +159,8 @@ export function applySettingsPatch(settings, patch = {}) {
     for (const k of Object.keys(MISSION_OPTIONAL)) if (typeof patch.mRoles[k] === 'boolean') s.mRoles[k] = patch.mRoles[k];
   }
   if (['next', 'choose'].includes(patch.leaderMode)) s.leaderMode = patch.leaderMode;
+  if (typeof patch.twins === 'boolean') s.twins = patch.twins;
+  if (typeof patch.sideMissions === 'boolean') s.sideMissions = patch.sideMissions;
   if (patch.missionCards !== undefined) s.missionCards = clampInt(patch.missionCards, 0, 2, 1);
   if (patch.clueOdds !== undefined) s.clueOdds = clampInt(patch.clueOdds, 1, 3, 1);
   if (['none', 'coin'].includes(patch.tieBreak)) s.tieBreak = patch.tieBreak;
@@ -408,7 +412,7 @@ export { RULE_IDS };
 // ── Missions mode ──────────────────────────────────────────────────────────
 /** Which optional Missions roles are switched on. */
 export function missionRolesOn(settings) {
-  const on = { ...{ BELIEVER: true, CHARLATAN: true, VEILED: false, STRAY: false }, ...(settings.mRoles || {}) };
+  const on = { ...defaultSettings().mRoles, ...(settings.mRoles || {}) };
   return Object.keys(MISSION_OPTIONAL).filter((k) => on[k]);
 }
 
@@ -418,6 +422,8 @@ export function missionDeck(n, settings) {
   const on = missionRolesOn(settings);
   const deathRoles = ['REAPER', ...on.filter((r) => MISSION_OPTIONAL[r] === 'DEATH')];
   const livingRoles = ['MEDIUM', ...on.filter((r) => MISSION_OPTIONAL[r] === 'NON_DEATH')];
+  // Twins replace two plain Companions: two Living players who know each other.
+  if (settings.twins) livingRoles.push('TWIN', 'TWIN');
   while (deathRoles.length < death) deathRoles.push('SHADE');
   while (livingRoles.length < n - death) livingRoles.push('COMPANION');
   return [...livingRoles, ...deathRoles];
@@ -439,6 +445,13 @@ function validateMissions(n, settings) {
     if (deathOpt.length + 1 > death) errors.push(['Too many Death roles: {n} players have only {d} Death seats, and the Reaper takes one.', { n, d: death }]);
     else publicDeck = { exact: countBy(missionDeck(n, settings)) };
   }
+  if (n >= MISSION_MIN && n <= MISSION_MAX) {
+    const livingSeats = n - MISSION_DEATH[n];
+    const livingNeed = 1 + on.filter((r) => MISSION_OPTIONAL[r] === 'NON_DEATH').length + (settings.twins ? 2 : 0);
+    if (livingNeed > livingSeats) errors.push(['Too many Living roles: {n} players have only {d} Living seats, and the Medium takes one.', { n, d: livingSeats }]);
+    if (on.includes('M_JESTER') && n < MISSION_JESTER_MIN) errors.push(['The Jester needs at least {n} players.', { n: MISSION_JESTER_MIN }]);
+  }
   if (on.includes('CHARLATAN') && !on.includes('BELIEVER')) warnings.push('The Charlatan only matters when a Believer is in play.');
+  if (settings.twins && !on.includes('VEILED') && !on.includes('STRAY') && n >= 7) warnings.push('Twins help the Living. For balance, switch on the Veiled or the Stray.');
   return { ok: errors.length === 0, errors, warnings, publicDeck, suggestions: [] };
 }

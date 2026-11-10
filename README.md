@@ -4,7 +4,7 @@ A multiplayer social-deduction party game played on everyone's own phone. One au
 
 **→ Rules and modes: [GUIDE.md](GUIDE.md)** (also in the app at `/guide`)
 
-**→ Dead Set: Missions**, the team-and-sabotage mode for 5–10 players: [MISSIONS.md](MISSIONS.md)
+**→ Dead Set: Missions**, the team-and-sabotage mode for 5–12 players: [MISSIONS.md](MISSIONS.md)
 
 ## Run it
 

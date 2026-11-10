@@ -19,12 +19,16 @@ const CANDLE_AFTER = [1, 2, 3]; // after missions 2, 3 and 4 (0-based indices)
 /** The first-leader lottery runs this long before the first mission opens. */
 export const LOTTERY_SECONDS = 9;
 
+import { dealSideMissions, judgeSideMissions, standWeight } from './sidemissions.js';
+
 const T = (m, key) => m.settings.timers?.[key] || 0;
 const bump = (m) => { m.stateVersion++; };
 const seatOrder = (m) => [...m.players].sort((a, b) => a.seat - b.seat).map((p) => p.id);
 const isDeath = (m, id) => byId(m, id)?.alignment === 'DEATH';
 const roleOf = (m, id) => byId(m, id)?.roleId;
 const reaperId = (m) => m.players.find((p) => p.roleId === 'REAPER')?.id ?? null;
+/** Who may play Sabotage: Death, and the Jester (who plays for itself). */
+const canSabotage = (p) => p.alignment === 'DEATH' || p.roleId === 'M_JESTER';
 
 function enter(m, phase, now, seconds) {
   m.phase = phase;
@@ -51,7 +55,9 @@ export function startMissions(m, rng, now, { forceRoles = null } = {}) {
       teamJoinNight: null, tempRevival: null, revivedOnce: false, acknowledged: false, lover: null, diedAt: null, causes: null,
     });
   });
-  m.config = { mode: 'missions', preset: 'missions', missions: true, clues: m.settings.clues !== false, clueOdds: m.settings.clueOdds ?? 1, missionCards: m.settings.missionCards ?? 1, leaderMode: m.settings.leaderMode === 'choose' ? 'choose' : 'next' };
+  m.config = { mode: 'missions', preset: 'missions', missions: true, clues: m.settings.clues !== false, clueOdds: m.settings.clueOdds ?? 1, missionCards: m.settings.missionCards ?? 1, leaderMode: m.settings.leaderMode === 'choose' ? 'choose' : 'next',
+    sideMissions: !!m.settings.sideMissions, twins: assignment.filter((r) => r === 'TWIN').length === 2 };
+  m.jesterId = null;
   m.activeRules = [];
   m.scenario = drawScenario(m.settings, rng);
   m.history = [];
@@ -73,6 +79,7 @@ export function startMissions(m, rng, now, { forceRoles = null } = {}) {
     attempts: [], results: [], score: { S: 0, F: 0 },
     candle: { holder: order[(firstIdx - 1 + n) % n], past: [order[(firstIdx - 1 + n) % n]] }, candleChecks: [],
     haunted: null, night: null, hunches: [], stand: null, reckon: null, unmasked: null, clueCount: {},
+    voteLog: [], side: null,
   };
   pub(m, ['We are {who}, in {where}, trying to {why}.', { who: m.scenario.who, where: m.scenario.where, why: m.scenario.why }], 'scenario', { ev: 'scenario' });
   pub(m, 'The expedition gathers. Look only at your own screen.', 'phase', { ev: 'm-start' });
@@ -81,8 +88,10 @@ export function startMissions(m, rng, now, { forceRoles = null } = {}) {
     const k = knowledge(m, p);
     if (k.death) priv(m, p.id, k.death.length ? ['You see Death in: {names}.', { names: k.death.map((id) => nameOf(m, id)) }] : 'You see no one of Death.', 'medium');
     if (k.teammates) priv(m, p.id, k.teammates.length ? ['Your Death teammates: {names}.', { names: k.teammates.map((id) => nameOf(m, id)) }] : 'You serve Death alone.', 'death');
+    if (k.twin) priv(m, p.id, ['Your Twin is {b}. You are both Living.', { b: nameOf(m, k.twin) }], 'twin');
     if (k.candles) priv(m, p.id, k.candles.length > 1 ? ['Two candles burn for you: {names}. One of them is the Medium.', { names: k.candles.map((id) => nameOf(m, id)) }] : ['The Medium is {b}.', { b: nameOf(m, k.candles[0]) }], 'believer');
   }
+  if (m.config.sideMissions) dealSideMissions(m, rng);
   enter(m, 'M_REVEAL', now, 0);
 }
 
@@ -93,6 +102,7 @@ export function knowledge(m, p) {
   if (r === 'MEDIUM') out.death = m.players.filter((x) => x.alignment === 'DEATH' && x.roleId !== 'VEILED').map((x) => x.id);
   if (p.alignment === 'DEATH' && r !== 'STRAY') out.teammates = m.players.filter((x) => x.alignment === 'DEATH' && x.id !== p.id && x.roleId !== 'STRAY').map((x) => x.id);
   if (r === 'STRAY') out.teammates = [];
+  if (r === 'TWIN') out.twin = m.players.find((x) => x.roleId === 'TWIN' && x.id !== p.id)?.id ?? null;
   if (r === 'BELIEVER') out.candles = m.players.filter((x) => x.roleId === 'MEDIUM' || x.roleId === 'CHARLATAN').sort((a, b) => a.seat - b.seat).map((x) => x.id);
   return out;
 }
@@ -248,7 +258,7 @@ export function missionCommand(m, p, type, payload, rng, now) {
       need('M_MISSION');
       if (!M.proposal.team.includes(p.id)) throw new GameError('You are not on this mission.');
       let card = payload.card === 'F' ? 'F' : 'S';
-      if (card === 'F' && (p.alignment !== 'DEATH' || M.proposal.ward === p.id)) card = 'S';
+      if (card === 'F' && (!canSabotage(p) || M.proposal.ward === p.id)) card = 'S';
       M.plays[p.id] = card;
       if (M.proposal.team.every((id) => id in M.plays)) resolveMission(m, rng, now);
       return;
@@ -348,6 +358,9 @@ function resolveVote(m, rng, now) {
   const masked = M.card === 'MASKED_VOTE';
   const goes = approved || forced;
   M.attempts.push({ ...M.proposal, votes: masked ? null : { ...M.votes }, approve, reject, approved, goes });
+  // Private record (Masked Vote included) for Side Missions: each owner only ever learns about their own vote.
+  M.voteLog.push({ mission: M.mission, attempt: M.attempt, leader: M.proposal.leader, team: M.proposal.team, votes: { ...M.votes }, approve, reject, total: m.players.length, approved });
+  judgeSideMissions(m);
   pub(m, [goes ? (approved ? 'The team is approved ({a}–{r}).' : 'Rejected ({a}–{r}), but this proposal goes ahead regardless.') : 'The team is rejected ({a}–{r}).', { a: approve, r: reject }], 'vote',
     { ev: 'm-votes', votes: masked ? null : { ...M.votes }, approve, reject, approved, forced, goes, team: M.proposal.team, attempt: M.attempt });
   if (goes) {
@@ -380,6 +393,13 @@ function resolveMission(m, rng, now) {
   pub(m, [failed ? (smoke ? 'Mission {n} failed.' : 'Mission {n} failed: {f} Sabotage.') : (smoke ? 'Mission {n} succeeded.' : 'Mission {n} succeeded: {f} Sabotage.'), { n: M.mission + 1, f: fails }], failed ? 'death' : 'mission',
     { ev: 'm-result', mission: M.mission, cards: smoke ? null : cards, count: team.length, fails: smoke ? null : fails, need, failed, weight, card: M.card, score: { ...M.score } });
   M.proposal = { ...M.proposal };
+  if (failed) {
+    const count = team.filter((id) => isDeath(m, id)).length;
+    for (const u of m.players.filter((p) => p.roleId === 'UNDERTAKER')) {
+      priv(m, u.id, [count === 1 ? 'The Undertaker counts: {n} Death player was on mission {k}.' : 'The Undertaker counts: {n} Death players were on mission {k}.', { n: count, k: M.mission + 1 }], 'undertaker');
+    }
+  }
+  judgeSideMissions(m);
   enter(m, 'M_RESULT', now, RESULT_SECONDS(team.length));
 }
 
@@ -442,7 +462,7 @@ function closeNight(m, rng, now) {
   }
   // Clues: the lobby's odds, plus the Trail card.
   const r = M.results[M.results.length - 1];
-  const living = m.players.filter((p) => p.alignment !== 'DEATH' && p.roleId !== 'MEDIUM').map((p) => p.id);
+  const living = m.players.filter((p) => p.alignment === 'NON_DEATH' && p.roleId !== 'MEDIUM').map((p) => p.id);
   const getters = [];
   if (m.config.clues && rng.int(100, 'clue') < (CLUE_ODDS[m.config.clueOdds] ?? 0)) getters.push(...shuffle(rng, living, 'clue').slice(0, 2));
   if (r.card === 'TRAIL' && !r.failed) {
@@ -456,6 +476,7 @@ function closeNight(m, rng, now) {
   // Who leads next: the last leader's choice, or simply the next in line.
   const chooser = N.needs.lantern;
   M.night = null;
+  judgeSideMissions(m);
   pub(m, 'Dawn. The expedition moves on.', 'phase', { ev: 'm-dawn' });
   M.mission++;
   if (chooser) {
@@ -512,6 +533,7 @@ export function missionClue(m, forId, rng) {
 
 // ── The end ────────────────────────────────────────────────────────────────
 function openStand(m, now) {
+  judgeSideMissions(m, { final: true });
   m.M.stand = { votes: {}, named: null };
   pub(m, 'Three missions have failed. The Last Stand: name one player you believe is Death.', 'phase', { ev: 'm-stand' });
   enter(m, 'M_LAST_STAND', now, T(m, 'lastStand'));
@@ -520,7 +542,8 @@ function openStand(m, now) {
 function resolveStand(m, rng, now) {
   const S = m.M.stand;
   const tally = {};
-  for (const t of Object.values(S.votes)) tally[t] = (tally[t] || 0) + 1;
+  // Side Missions weigh the votes: a completed one counts double, a failed one half.
+  for (const [voter, t] of Object.entries(S.votes)) tally[t] = (tally[t] || 0) + standWeight(m, voter);
   const top = Math.max(0, ...Object.values(tally));
   let tied = Object.keys(tally).filter((id) => tally[id] === top);
   if (!tied.length) tied = m.players.map((p) => p.id);
@@ -531,6 +554,10 @@ function resolveStand(m, rng, now) {
   }
   S.named = named;
   S.tally = tally;
+  if (roleOf(m, named) === 'M_JESTER') {
+    pub(m, ['The table names {b}, and {b} is the Jester!', { b: nameOf(m, named) }], 'death', { ev: 'm-named', target: named, death: false, jester: true, tally, role: 'M_JESTER' });
+    return endMissions(m, { winner: 'JESTER', reason: 'The Jester was named in the Last Stand, and that was the plan all along.', jesterId: named }, now);
+  }
   const caught = isDeath(m, named);
   pub(m, [caught ? 'The table names {b}, and {b} walks with Death!' : 'The table names {b}, but {b} is one of the Living.', { b: nameOf(m, named) }], caught ? 'mission' : 'death',
     { ev: 'm-named', target: named, death: caught, tally, role: caught ? null : byId(m, named).roleId });
@@ -565,6 +592,10 @@ function finishReckoning(m, target, now) {
   M.reckon.target = target;
   const medium = m.players.find((p) => p.roleId === 'MEDIUM').id;
   const hit = target === medium;
+  if (roleOf(m, target) === 'M_JESTER') {
+    pub(m, ['The Reaper names {b}, and {b} is the Jester!', { b: nameOf(m, target) }], 'death', { ev: 'm-reckon', target, medium, hit: false, jester: true, role: 'M_JESTER' });
+    return endMissions(m, { winner: 'JESTER', reason: 'The Reaper named the Jester, and that was the plan all along.', jesterId: target }, now);
+  }
   pub(m, [hit ? 'The Reaper names {b}, and {b} is the Medium.' : 'The Reaper names {b}, but the Medium was {c}.', { b: nameOf(m, target), c: nameOf(m, medium) }], hit ? 'death' : 'mission',
     { ev: 'm-reckon', target, medium, hit, role: byId(m, target).roleId });
   endMissions(m, hit
@@ -573,9 +604,11 @@ function finishReckoning(m, target, now) {
 }
 
 function endMissions(m, result, now) {
+  judgeSideMissions(m, { final: true });
   m.winner = result.winner;
   m.endReason = result.reason;
-  pub(m, ['{label} {reason}', { label: [result.winner === 'DEATH' ? 'Death wins.' : 'The Living win.', {}], reason: [result.reason, {}] }], 'end', { ev: 'end', winner: result.winner, reason: result.reason });
+  m.jesterId = result.jesterId ?? null;
+  pub(m, ['{label} {reason}', { label: [result.winner === 'DEATH' ? 'Death wins.' : result.winner === 'JESTER' ? 'The Jester wins.' : 'The Living win.', {}], reason: [result.reason, {}] }], 'end', { ev: 'end', winner: result.winner, reason: result.reason });
   enter(m, 'ENDED', now, 0);
 }
 
@@ -641,6 +674,7 @@ export function missionPublic(m) {
     // aggregate suspicion (counts only, never who placed them) once Death is choosing or the game is over
     hunchHeat: ['M_RECKONING', 'ENDED'].includes(m.phase) ? M.hunches.reduce((o, x) => ({ ...o, [x.target]: (o[x.target] || 0) + 1 }), {}) : undefined,
     cardsUsed: M.cardsUsed,
+    side: m.phase === 'ENDED' && M.side ? M.side : undefined,
   };
 }
 
@@ -657,7 +691,7 @@ export function missionAction(m, p) {
     case 'M_VOTE': return { type: 'mvote', choice: p.id in M.votes ? M.votes[p.id] : null };
     case 'M_MISSION':
       if (!M.proposal.team.includes(p.id)) return { type: 'mwait' };
-      return { type: 'mplay', played: p.id in M.plays, canFail: p.alignment === 'DEATH' && M.proposal.ward !== p.id, warded: M.proposal.ward === p.id };
+      return { type: 'mplay', played: p.id in M.plays, canFail: canSabotage(p) && M.proposal.ward !== p.id, warded: M.proposal.ward === p.id };
     case 'M_NIGHT': {
       const N = M.night;
       const a = { type: 'mnight', done: !!N.done[p.id], hunch: N.hunch[p.id] ?? null };
@@ -683,7 +717,9 @@ export function missionMe(m, p) {
   if (k.death) out.seesDeath = k.death.map((id) => ({ id, name: nameOf(m, id) }));
   if (k.teammates) out.teammates = k.teammates.map((id) => ({ id, name: nameOf(m, id), reaper: roleOf(m, id) === 'REAPER' }));
   if (k.candles) out.candles = k.candles.map((id) => ({ id, name: nameOf(m, id) }));
+  if (k.twin) out.twin = { id: k.twin, name: nameOf(m, k.twin) };
   if (p.roleId === 'STRAY') out.stray = true;
+  if (m.M.side?.[p.id]) out.side = { ...m.M.side[p.id], weight: standWeight(m, p.id) };
   out.candleSeen = m.M.candleChecks.filter((c) => c.by === p.id).map((c) => ({ id: c.target, name: nameOf(m, c.target), death: c.death }));
   return out;
 }

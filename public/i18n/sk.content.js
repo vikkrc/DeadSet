@@ -3,6 +3,9 @@ export default {
   and: 'a',
   numbers: ['žiadny', 'jeden', 'dvaja', 'traja', 'štyria', 'piati', 'šiesti', 'siedmi', 'ôsmi', 'deviati', 'desiati'],
   roles: {
+    M_JESTER: { name: "Šašo", when: "Vždy", summary: "Vyhrávaš sám, ak ťa stôl označí v Poslednom odpore alebo ťa Žnec určí v Zúčtovaní.", detail: "Nie si Živý ani zo Smrti: Médium ťa nevidí a Sviečka ťa ukáže ako Živého. Na misii môžeš hrať Úspech aj Sabotáž. Pôsob podozrivo, ale nie príliš." },
+    TWIN: { name: "Dvojča", when: "Vždy", summary: "Dvojčatá sú dve. Poznáte sa a obaja patríte k Živým.", detail: "Môžeš hrať iba Úspech. Ver svojmu dvojčaťu, ale pozor: ak sa za seba budete zaručovať príliš nahlas, Smrť bude vedieť, kam sa pozrieť." },
+    UNDERTAKER: { name: "Hrobár", when: "Po neúspešnej misii", summary: "Keď misia zlyhá, dozvieš sa, koľko hráčov Smrti bolo v tom tíme.", detail: "Počítajú sa všetci hráči Smrti, aj Zahalený a Tulák, nech zahrali akúkoľvek kartu. Počuješ to len ty. Môžeš hrať iba Úspech." },
     MEDIUM: { name: "Médium", when: "Vždy", summary: "Vidíš každého hráča Smrti okrem Zahaleného. Riaď výpravu tak, aby si sa neprezradil.", detail: "Ak Živí vyhrajú tri misie alebo v Poslednom odpore chytia hráča Smrti, Smrť má jeden pokus uhádnuť, kto si. Ak označí teba, vyhráva Smrť." },
     BELIEVER: { name: "Veriaci", when: "Vždy", summary: "Vidíš dve sviečky: Médium a Šarlatána. Nevieš, kto je kto.", detail: "Zisti, ktorá sviečka je skutočné Médium, a chráň ho – často tak, že sa sám správaš ako Médium. Bez Šarlatána v hre je tvojou jedinou sviečkou Médium." },
     COMPANION: { name: "Spoločník", when: "Vždy", summary: "Nevieš nič okrem toho, čo ti hovorí srdce. Sleduj hlasovania a misie.", detail: "Môžeš hrať iba Úspech. Čítaj, kto koho navrhuje, kto schvaľuje ktorý tím a ktoré misie zlyhávajú." },
@@ -102,6 +105,7 @@ export default {
     genericSteps: ["Prvý krok", "Hlbšie", "Bod, odkiaľ niet návratu", "Najťažšia časť", "Koniec cesty"],
     genericScenes: ["Výprava vyráža. Nikto sa neobzerá.", "Cesta sa zužuje – a s ňou aj dôvera.", "V polovici cesty. Niekto počíta kroky.", "S každou voľbou je vzduch chladnejší.", "Posledný úsek. Čo tu čaká, čakalo na vás."],
   },
+  sideMissions: {"GO_TWICE": "Choď aspoň na dve misie.", "GO_THRICE": "Choď aspoň na tri misie.", "STAY_BEHIND": "Choď najviac na jednu misiu.", "EARLY_BIRD": "Choď na misiu 1 alebo 2.", "LATE_ARRIVAL": "Nechoď na misiu 1 ani 2.", "LANTERN_LEADS": "Veď tím, ktorý sa vydá na misiu.", "NO_LANTERN": "Nikdy neveď tím, ktorý sa vydá na misiu.", "GOOD_COMPANY": "Buď na misii, ktorá uspeje.", "BAD_LUCK": "Buď na misii, ktorá zlyhá.", "CLEAN_RECORD": "Nikdy nebuď na misii, ktorá zlyhá.", "NAYSAYER": "Hlasuj aspoň trikrát za Zamietnutie.", "OPEN_HEART": "Nikdy nehlasuj za Zamietnutie.", "LONE_VOICE": "Zamietni tím, ktorý stôl schváli.", "LOST_CAUSE": "Schváľ tím, ktorý stôl zamietne.", "CONTRARIAN": "Dvakrát skonči na prehratej strane hlasovania o tíme.", "CROWD": "Vždy hlasuj s väčšinou.", "FIRST_TRUST": "Schváľ prvý návrh dvoch rôznych misií.", "POPULAR": "Buď aspoň v troch navrhnutých tímoch.", "SELF_STARTER": "Daj sa do tímu, ktorý sám navrhneš.", "HUMBLE": "Nikdy sa nedaj do tímu, ktorý sám navrhneš.", "NEIGHBOURS": "Choď na misiu spolu s hráčom po tvojej ľavici.", "CANDLE_BEARER": "Niekedy drž Sviečku.", "STEADY_EYE": "Nikdy nemeň svoje Podozrenie (a daj aspoň dve).", "RESTLESS": "Svojimi Podozreniami označ troch rôznych hráčov."},
   rules: {
     OPEN_BALLOT: { name: "Verejné hlasovanie", text: "Každý hlas je verejný: všetci vidia, kto hlasuje za koho, hneď ako hlasy prichádzajú.", enforcement: "Hlasy sa dajú meniť až do uzamknutia. Aj hlasy duchov sú verejné." },
     FOG_OF_WAR: { name: 'Hmla vojny', text: 'Počas diskusie môžeš priamo hovoriť len s hráčmi na miestach hneď vedľa teba.', enforcement: 'Naživo na čestné slovo. Na diaľku nahradí stolový chat šepot so susedmi.' },
@@ -142,7 +146,7 @@ export default {
   ],
   guide: {
     missionsH: "Dead Set: Misie",
-    missions: `<p>Druhý režim pre 5–10 hráčov, ktorý sa vyberá v lobby. Nikto neumiera: Smrť sa vkradla do výpravy a stôl ju musí nájsť.</p>
+    missions: `<p>Druhý režim pre 5–12 hráčov, ktorý sa vyberá v lobby. Nikto neumiera: Smrť sa vkradla do výpravy a stôl ju musí nájsť.</p>
 <ol>
 <li><b>Karta misie.</b> Každá misia začína ťahom karty, ešte pred výberom tímu. Väčšina sú <i>Bežné misie</i>; občas karta zmení tím, hlasovanie alebo odhalenie. Platí pre celú misiu.</li>
 <li><b>Návrh.</b> Vodca misie (lampáš) vyberie tím uvedenej veľkosti.</li>

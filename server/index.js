@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { RoomManager } from './rooms.js';
 import { ROLES, DREAMS, RULE_CARDS, PRESETS, SCENARIO, RETIRED_RULES, PRODUCTS, LANGS, MISSION_CARDS, MISSION_SIZES, MISSION_DEATH, MISSION_STORY } from '../engine/content.js';
 import { scaling } from '../engine/setup.js';
+import { SIDE_MISSIONS } from '../engine/sidemissions.js';
 import { GameError } from '../engine/state.js';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
@@ -43,6 +44,7 @@ const content = {
   roles: Object.values(ROLES), dreams: Object.values(DREAMS), rules: Object.values(RULE_CARDS),
   presets: Object.values(PRESETS), scenario: SCENARIO, retired: RETIRED_RULES, products: PRODUCTS, langs: LANGS,
   missionCards: Object.values(MISSION_CARDS), missionSizes: MISSION_SIZES, missionDeath: MISSION_DEATH, missionStory: MISSION_STORY,
+  sideMissions: Object.entries(SIDE_MISSIONS).map(([id, o]) => ({ id, kind: o.kind, text: o.text })),
   scaling: Object.fromEntries([5, 6, 7, 8, 9, 10, 11, 12, 13].map((n) => [n, scaling(n)])),
 };
 

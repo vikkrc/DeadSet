@@ -46,7 +46,7 @@ function setup(roles, { settings = {}, script = {}, seed = 3, leader = 0 } = {})
 const FIVE = ['MEDIUM', 'COMPANION', 'COMPANION', D, 'SHADE'];
 
 test('deck sizes and Death seats follow the table', () => {
-  for (const [n, d] of [[5, 2], [6, 2], [7, 3], [8, 3], [9, 3], [10, 4]]) {
+  for (const [n, d] of [[5, 2], [6, 2], [7, 3], [8, 3], [9, 3], [10, 4], [11, 4], [12, 4]]) {
     const deck = missionDeck(n, { mRoles: { BELIEVER: true, CHARLATAN: true } });
     assert.equal(deck.length, n);
     assert.equal(deck.filter((r) => ['REAPER', 'CHARLATAN', 'VEILED', 'STRAY', 'SHADE'].includes(r)).length, d);
@@ -54,14 +54,16 @@ test('deck sizes and Death seats follow the table', () => {
   }
 });
 
-test('the lobby refuses more Death roles than Death seats, and tables outside 5–10', () => {
+test('the lobby refuses more Death roles than Death seats, and tables outside 5–12', () => {
   const m = newMatch({ id: 'x', code: 'X', hostId: 'p0' });
   for (let i = 0; i < 5; i++) addPlayer(m, { id: `p${i}`, name: NAMES[i] });
   updateSettings(m, { preset: 'missions', mRoles: { CHARLATAN: true, VEILED: true } });
   assert.ok(!setupReport(m).ok);
   updateSettings(m, { mRoles: { VEILED: false } });
   assert.ok(setupReport(m).ok);
-  for (let i = 5; i < 11; i++) addPlayer(m, { id: `p${i}`, name: NAMES[i] });
+  for (let i = 5; i < 12; i++) addPlayer(m, { id: `p${i}`, name: NAMES[i] });
+  assert.ok(setupReport(m).ok, '12 players are fine');
+  addPlayer(m, { id: 'p12', name: NAMES[12] });
   assert.ok(!setupReport(m).ok);
 });
 
@@ -450,4 +452,105 @@ test('leader choice: the last mission leader hands the lantern to someone who ha
   t.m.players.forEach((p) => { if (p.id !== 'p3') t.cmd(p.name, 'm.night', { hunch: t.id(p.name === 'Ada' ? 'Bo' : 'Ada'), done: true, ...(t.m.M.night.needs.candle === p.id ? { candle: t.m.players.find((x) => !t.m.M.candle.past.includes(x.id)).id } : {}) }); });
   t.advance();
   assert.equal(t.m.M.leader, 'p4'); // after Di comes Ed, who has not led
+});
+
+
+// ── Beta 1: Twins, Undertaker, Jester, Side Missions, 11–12 players ──────────
+test('Twins know each other and are both Living; the deck makes room for them', () => {
+  const deck = missionDeck(8, { mRoles: { BELIEVER: true, CHARLATAN: true }, twins: true });
+  assert.equal(deck.filter((r) => r === 'TWIN').length, 2);
+  assert.equal(deck.length, 8);
+  const t = setup(['MEDIUM', 'TWIN', 'TWIN', D, 'SHADE']);
+  const me = (n) => playerView(t.m, t.id(n)).me;
+  assert.equal(me('Bo').twin.id, t.id('Cy'));
+  assert.equal(me('Cy').twin.id, t.id('Bo'));
+  assert.equal(me('Ada').twin, undefined);
+  // too many Living roles for the seats is refused
+  const m = newMatch({ id: 'x', code: 'X', hostId: 'p0' });
+  for (let i = 0; i < 5; i++) addPlayer(m, { id: `p${i}`, name: NAMES[i] });
+  updateSettings(m, { preset: 'missions', twins: true, mRoles: { BELIEVER: true, UNDERTAKER: true } });
+  assert.ok(!setupReport(m).ok);
+});
+
+test('the Undertaker learns how many Death players were on a failed team', () => {
+  const t = setup(['MEDIUM', 'UNDERTAKER', 'COMPANION', D, 'SHADE']);
+  t.ackAll();
+  t.mission(['Ada', 'Di'], { Di: 'S' }); t.night();
+  assert.ok(!t.m.privateLog.p1.some((x) => x.kind === 'undertaker'), 'nothing on a success');
+  t.mission(['Bo', 'Di', 'Ed'], { Di: 'F', Ed: 'S' });
+  const u = t.m.privateLog.p1.filter((x) => x.kind === 'undertaker');
+  assert.equal(u.length, 1);
+  assert.match(u[0].text, /2 Death players were on mission 2/);
+});
+
+test('the Jester may sabotage, is not seen by the Medium, and wins when named', () => {
+  const roles = ['MEDIUM', 'COMPANION', 'COMPANION', 'M_JESTER', D, 'SHADE', 'SHADE'];
+  const t = setup(roles);
+  assert.ok(!playerView(t.m, 'p0').me.seesDeath.some((x) => x.id === 'p3'));
+  t.ackAll();
+  t.mission(['Ada', 'Di'], { Di: 'F' });
+  assert.equal(t.m.M.results[0].failed, true, 'the Jester\'s Sabotage counts');
+  t.night();
+  t.mission(['Ada', 'Bo', 'Di'], { Di: 'F' }); t.night();
+  t.mission(['Ada', 'Bo', 'Cy']); t.night();
+  // mission 4 at 7 players needs two Sabotage cards
+  t.mission(['Ada', 'Bo', 'Fay', 'Gus'], { Fay: 'F', Gus: 'F' });
+  assert.equal(t.m.phase, 'M_LAST_STAND');
+  for (const p of t.m.players) t.cmd(p.name, 'm.accuse', { target: t.id(p.name === 'Di' ? 'Ada' : 'Di') });
+  assert.equal(t.m.winner, 'JESTER');
+  assert.equal(publicView(t.m).jesterId, 'p3');
+  // …and in the Reckoning, the Reaper naming the Jester hands it the win
+  const r = setup(roles);
+  r.ackAll();
+  r.mission(['Ada', 'Bo']); r.night();
+  r.mission(['Ada', 'Bo', 'Cy']); r.night();
+  r.mission(['Ada', 'Bo', 'Cy']); r.night();
+  assert.equal(r.m.phase, 'M_RECKONING');
+  r.cmd('Ed', 'm.reckon', { target: r.id('Di') });
+  assert.equal(r.m.winner, 'JESTER');
+});
+
+test('Side Missions: dealt to everyone, judged at once, and they weigh the Last Stand', () => {
+  const t = setup(FIVE, { settings: { sideMissions: true } });
+  const side = t.m.M.side;
+  assert.equal(Object.keys(side).length, 5);
+  assert.equal(new Set(Object.values(side).map((o) => o.id)).size, 5, 'all different');
+  for (const p of t.m.players) assert.ok(t.m.privateLog[p.id].some((x) => x.kind === 'side'));
+  // the public view never carries them
+  assert.ok(!JSON.stringify(publicView(t.m)).includes(side.p0.id));
+  // force known objectives
+  side.p0 = { id: 'NAYSAYER', state: 'pending' };
+  side.p1 = { id: 'OPEN_HEART', state: 'pending' };
+  side.p3 = { id: 'GO_TWICE', state: 'pending' };
+  t.ackAll();
+  t.propose(['Ada', 'Di']);
+  t.voteAll(true, { Bo: false });
+  assert.equal(side.p1.state, 'failed', 'a broken "keep" fails immediately');
+  assert.ok(t.m.privateLog.p1.some((x) => x.kind === 'side' && x.state === 'failed'));
+  t.play({ Ada: 'S', Di: 'F' }); t.advance(); t.night();
+  t.mission(['Ada', 'Bo', 'Di'], { Di: 'F' });
+  assert.equal(side.p3.state, 'done', 'a "reach" succeeds the moment it is met');
+  t.night();
+  t.mission(['Ada', 'Ed'], { Ed: 'F' });
+  assert.equal(t.m.phase, 'M_LAST_STAND');
+  assert.equal(side.p0.state, 'failed', 'open reaches fail when the Last Stand opens');
+  // Di (done, ×2) names Bo; Ada (failed, ×0.5) and Cy name Ed: Bo 2 vs Ed 1.5 (+ Ed's own vote on Bo)
+  t.cmd('Ada', 'm.accuse', { target: t.id('Ed') });
+  t.cmd('Cy', 'm.accuse', { target: t.id('Ed') });
+  t.cmd('Bo', 'm.accuse', { target: t.id('Cy') });
+  t.cmd('Ed', 'm.accuse', { target: t.id('Cy') });
+  t.cmd('Di', 'm.accuse', { target: t.id('Bo') });
+  const tally = t.m.M.stand.tally;
+  assert.equal(tally.p4, 0.5 + (side.p2.state === 'done' ? 2 : side.p2.state === 'failed' ? 0.5 : 1));
+  assert.equal(tally.p1, 2);
+});
+
+test('12 players: four Death seats, bigger teams, two Sabotage on mission 4', () => {
+  const deck = missionDeck(12, { mRoles: {} });
+  assert.equal(deck.filter((r) => ['REAPER', 'SHADE', 'CHARLATAN'].includes(r)).length, 4);
+  const roles = ['MEDIUM', ...Array(7).fill('COMPANION'), D, 'SHADE', 'SHADE', 'SHADE'];
+  const t = setup(roles);
+  t.ackAll();
+  assert.deepEqual(t.m.M.sizes, [4, 4, 5, 6, 6]);
+  assert.equal(failsNeeded(t.m, 3, 'REGULAR'), 2);
 });

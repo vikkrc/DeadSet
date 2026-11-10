@@ -351,21 +351,33 @@ Object.assign(ROLES, {
   STRAY: { id: 'STRAY', name: 'Stray', set: 'missions', alignment: 'DEATH', glyph: 'stray', when: 'Always',
     summary: 'You serve Death alone: you do not know the others, and they do not know you.',
     detail: 'The Medium still sees you. On a mission you may play Succeed or Sabotage. In the Reckoning, Death unmasks and you join the others.' },
+  UNDERTAKER: { id: 'UNDERTAKER', name: 'Undertaker', set: 'missions', alignment: 'NON_DEATH', glyph: 'necro', when: 'After a failed mission',
+    summary: 'When a mission fails, you learn how many Death players were on that team.',
+    detail: 'The count includes every Death player, Veiled and Stray too, whatever card they played. Only you hear it. You can only play Succeed.' },
+  TWIN: { id: 'TWIN', name: 'Twin', set: 'missions', alignment: 'NON_DEATH', glyph: 'heart', when: 'Always',
+    summary: 'There are two Twins. You know each other, and you are both Living.',
+    detail: 'You can only play Succeed. Trust your Twin, but careful: vouching for each other too loudly tells Death where to look.' },
+  M_JESTER: { id: 'M_JESTER', name: 'Jester', set: 'missions', alignment: 'INDEPENDENT', glyph: 'jester', when: 'Always',
+    summary: 'You win alone if the table names you in the Last Stand, or the Reaper names you in the Reckoning.',
+    detail: 'You are neither Living nor Death: the Medium does not see you, and the Candle shows you as Living. On a mission you may play Succeed or Sabotage. Look guilty, but not too guilty.' },
   SHADE: { id: 'SHADE', name: 'Shade', set: 'missions', alignment: 'DEATH', glyph: 'death', when: 'Always',
     summary: 'You walk with Death and know your teammates.',
     detail: 'You see the rest of Death (except the Stray). On a mission you may play Succeed or Sabotage.' },
 });
 
 /** Optional Missions roles (lobby switches) and their side. */
-export const MISSION_OPTIONAL = { BELIEVER: 'NON_DEATH', CHARLATAN: 'DEATH', VEILED: 'DEATH', STRAY: 'DEATH' };
+export const MISSION_OPTIONAL = { BELIEVER: 'NON_DEATH', CHARLATAN: 'DEATH', VEILED: 'DEATH', STRAY: 'DEATH', UNDERTAKER: 'NON_DEATH', M_JESTER: 'NON_DEATH' };
+/** The Jester takes a Living seat but plays for itself; it needs a table big enough to hide in. */
+export const MISSION_JESTER_MIN = 7;
 export const MISSION_MIN = 5;
-export const MISSION_MAX = 10;
+export const MISSION_MAX = 12;
 /** Death seats per table size. */
-export const MISSION_DEATH = { 5: 2, 6: 2, 7: 3, 8: 3, 9: 3, 10: 4 };
+export const MISSION_DEATH = { 5: 2, 6: 2, 7: 3, 8: 3, 9: 3, 10: 4, 11: 4, 12: 4 };
 /** Team sizes for missions 1–5 per table size. */
 export const MISSION_SIZES = {
   5: [2, 3, 2, 3, 3], 6: [2, 3, 4, 3, 4], 7: [2, 3, 3, 4, 4],
   8: [3, 4, 4, 5, 5], 9: [3, 4, 4, 5, 5], 10: [3, 4, 4, 5, 5],
+  11: [3, 4, 4, 5, 5], 12: [4, 4, 5, 6, 6],
 };
 /** Sabotage cards needed to fail mission k (index 0–4): two on mission 4 from 7 players. */
 export const missionFailsNeeded = (n, k) => (n >= 7 && k === 3 ? 2 : 1);

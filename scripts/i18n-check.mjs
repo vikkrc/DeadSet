@@ -1,5 +1,6 @@
 // Checks every translation file: placeholders and HTML tags must match the
 // English key, and content tables must have the same shape as engine/content.js.
+import { SIDE_MISSIONS } from '../engine/sidemissions.js';
 import { ROLES, DREAMS, RULE_CARDS, PRESETS, SCENARIO, PRODUCTS, LANGS, MISSION_CARDS, MISSION_STORY } from '../engine/content.js';
 
 let bad = 0;
@@ -22,6 +23,7 @@ for (const code of LANGS.filter((c) => c !== 'en')) {
   if (d.products?.length !== PRODUCTS.length) err('products length');
   for (const k of ['steps', 'scenes']) MISSION_STORY[k].forEach((row, i) => { if (d.missionStory?.[k]?.[i]?.length !== row.length) err(`missionStory.${k}[${i}] shape`); });
   for (const k of ['genericSteps', 'genericScenes']) if (d.missionStory?.[k]?.length !== MISSION_STORY[k].length) err(`missionStory.${k} length`);
+  for (const id of Object.keys(SIDE_MISSIONS)) if (!d.sideMissions?.[id]) err(`side mission ${id} missing`);
   if (d.whispers?.length !== 9) err('whispers length');
   if (!d.and) err('and missing');
 }

@@ -74,6 +74,8 @@ const tables = [
 for (const [f, re] of tables) for (const m of read(f).matchAll(re)) for (const x of (m[1] ?? m[0]).matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/\s/.test(s) || /^[A-Z][a-z]/.test(s)) keys.add(s); }
 for (const f of ['public/app.js', 'public/missions.js']) for (const m of read(f).matchAll(/(?:title|sub|kicker): '((?:[^'\\]|\\.)*)'/g)) keys.add(unq(m[1]));
 for (const m of read('public/app.js').matchAll(/toggle\('\w+', '((?:[^'\\]|\\.)*)', '((?:[^'\\]|\\.)*)'\)/g)) { keys.add(unq(m[1])); keys.add(unq(m[2])); }
+for (const m of read('public/app.js').matchAll(/roleRow\('\w+', '((?:[^'\\]|\\.)*)'\)/g)) keys.add(unq(m[1]));
+for (const m of read('public/app.js').matchAll(/setRow\('\w+', '((?:[^'\\]|\\.)*)', '((?:[^'\\]|\\.)*)'\)/g)) { keys.add(unq(m[1])); keys.add(unq(m[2])); }
 // Labels passed through small helpers that call t() themselves.
 for (const m of read('public/app.js').matchAll(/timer\('\w+', '((?:[^'\\]|\\.)*)'\)/g)) keys.add(unq(m[1]));
 for (const m of read('public/app.js').matchAll(/\bcount\('((?:[^'\\]|\\.)*)'\)/g)) keys.add(unq(m[1]));
