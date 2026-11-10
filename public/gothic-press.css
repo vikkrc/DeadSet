@@ -438,3 +438,39 @@ em {font-size:1.06em}
 @media(prefers-reduced-motion:reduce) {
   .h-title h1 .l,.chair,.mode-card,.dcard,.xg-cell {animation:none!important}
 }
+
+
+/* Printer's furniture: use one engraved rule at meaningful section breaks. */
+.h-panel::after {
+  content:'';position:absolute;left:22%;right:22%;bottom:5px;height:17px;
+  background:url('/gothic-rule.svg') center / contain no-repeat;
+  pointer-events:none;opacity:.44;
+}
+.b-side .gazette .mast {position:relative;padding-bottom:18px}
+.b-side .gazette .mast::after {
+  content:'';position:absolute;bottom:3px;left:16%;right:16%;height:10px;
+  background:url('/gothic-rule.svg') center / contain no-repeat;
+  filter:brightness(.15);opacity:.48;pointer-events:none;
+}
+.face.front .corner {top:30px;left:29px;right:29px}
+.face.front .art {margin-top:16px}
+.paper .mh {position:relative}
+.paper .mh::after {
+  content:'';position:absolute;left:30%;right:30%;bottom:-10px;height:12px;
+  background:url('/gothic-rule.svg') center / contain no-repeat;
+  filter:brightness(.1);
+}
+.moment.grim {
+  /* Verdict edition: black ink on violent red stock, no gold/casino treatment. */
+  background-color:#d73b2f;
+  background-image:
+    repeating-linear-gradient(0deg,rgba(0,0,0,.024) 0px,rgba(0,0,0,.024) 1px,transparent 1px,transparent 4px),
+    radial-gradient(ellipse at 50% 110%,rgba(25,19,19,.17),transparent 70%);
+  color:#171312;
+}
+.moment.grim .m-title,.moment.grim .m-kicker {color:#171312}
+.moment.grim .m-body p {color:#26201c}
+@media(max-width:899px) {
+  .h-panel::after {height:11px;bottom:6px}
+  .face.front .corner {top:27px;left:25px;right:25px}
+}
