@@ -686,7 +686,7 @@ const STEP = new Proxy(STEP_EN, { get: (o, k) => (o[k] ? t(o[k]) : undefined) })
 const stepOf = (v) => (v.phase === 'DAY_VOTING' && v.day?.openBallots ? t('Open ballot') : STEP[v.phase] ?? '');
 const ALIGN_EN = { DEATH: 'Death', NON_DEATH: 'Non-Death', INDEPENDENT: 'Independent', CULT: 'Cult', RIPPER: 'The Ripper' };
 const ALIGN = new Proxy(ALIGN_EN, { get: (o, k) => (o[k] ? t(o[k]) : undefined) });
-const wordmark = () => '<a class="wordmark" href="/" data-link data-key="wm">Dead<i>Set</i><span class="seal"></span></a>';
+const wordmark = () => '<a class="wordmark" href="/" data-link data-key="wm">Dead<i>Set</i><img class="brand-icon" src="/gothic-sigil.svg" alt="" aria-hidden="true"></a>';
 
 // ── Home / join / guide ────────────────────────────────────────────────────
 const WHISPERS = [
