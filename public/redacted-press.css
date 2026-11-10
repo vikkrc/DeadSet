@@ -1,0 +1,269 @@
+/*
+ * DEAD SET / REDACTED PRESS — layout laboratory winner A
+ * Original source: claude/serene-franklin-v9ujky.
+ * No layered themes. Printed murder mystery, not casino UI.
+ * UI typography is Instrument Serif, Instrument Sans and JetBrains Mono.
+ * Grenze Gotisch is used only for the oversized cover masthead.
+ */
+:root {
+  --soot:#141412;
+  --soot-2:#1d1c1a;
+  --soot-3:#292723;
+  --bone:#f0e7d9;
+  --bone-2:#d3c7b8;
+  --ash:#ab9f91;
+  --ash-2:#82786d;
+  --line:rgba(240,231,217,.17);
+  --line-2:rgba(240,231,217,.40);
+  --blood:#dc3c2e;
+  --blood-ink:#ed4b3b;
+  --blood-wash:rgba(220,60,46,.14);
+  --gold:#dcc7af;
+  --gold-deep:#afa08e;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'Instrument Sans',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --press:'Grenze Gotisch','Instrument Serif',Georgia,serif;
+}
+body {background:var(--soot);color:var(--bone);}
+body::before {
+  background:
+    radial-gradient(ellipse 90% 85% at -10% 0%,rgba(154,38,27,.11),transparent 82%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.76' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .055 0'/%3E%3C/filter%3E%3Cpath fill='white' filter='url(%23n)' d='M0 0h160v160H0z'/%3E%3C/svg%3E");
+  opacity:.64;pointer-events:none;
+}
+::selection {background:var(--blood);color:#fff}
+:focus-visible {outline:2px solid var(--blood-ink);outline-offset:3px}
+
+/* The logo works without a glyph, a wax stamp, or ornate punctuation. */
+.wordmark {font:400 30px/.9 var(--serif);letter-spacing:-.045em;text-decoration:none;}
+.wordmark i {font-style:italic;color:var(--blood-ink)}
+.wordmark .seal {width:16px;height:3px;min-width:16px;background:var(--blood-ink);border:0;box-shadow:none;border-radius:0;transform:rotate(-34deg);animation:none;margin-left:8px}
+.kicker,.rule,.field>span {font-family:var(--mono);letter-spacing:.095em;font-size:10px;font-weight:600}
+h1,h2,h3 {letter-spacing:-.025em}
+
+/* A single deliberate graphic event on home, then controlled conventional UI. */
+.home2.press-home {max-width:none;min-height:100dvh;padding:0;display:flex;flex-direction:column;gap:0}
+.press-home .h-top {
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  min-height:68px;padding:12px clamp(17px,2.2vw,36px);
+  border-bottom:2px solid var(--bone);
+}
+.press-home .h-top .chip {border-radius:0;background:transparent;border:0;border-bottom:1px solid var(--line-2);min-height:35px;font-family:var(--mono);font-size:10px;letter-spacing:.02em}
+.press-grid {flex:1;min-width:0;display:grid;grid-template-columns:minmax(0,59fr) minmax(405px,41fr);min-height:calc(100dvh - 68px)}
+.press-cover {position:relative;isolation:isolate;min-height:630px;overflow:hidden;background:#e64231;color:#151210;border-right:3px solid #090909;padding:clamp(20px,2.5vw,38px)}
+.press-cover::before {
+  content:'';position:absolute;inset:11px;border:1px solid rgba(14,12,11,.87);
+  pointer-events:none;z-index:5;
+}
+.press-cover::after {
+  content:'';position:absolute;inset:0;opacity:.19;z-index:4;pointer-events:none;mix-blend-mode:multiply;
+  background:url("data:image/svg+xml,%3Csvg viewBox='0 0 150 150' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.92' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='150' height='150' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+.press-edition {display:flex;align-items:center;justify-content:space-between;gap:20px;border-block:3px double #1b1715;padding:9px 0 8px;position:relative;z-index:3;font:600 10px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.09em}
+.press-masthead {
+  position:relative;z-index:3;margin:clamp(24px,4vw,55px) 0 0;
+  font:600 clamp(136px,16vw,260px)/.63 var(--press);
+  letter-spacing:-.055em;
+  width:min-content;max-width:100%;
+  text-transform:none;color:#151210;
+}
+.press-masthead span {display:block;white-space:nowrap}
+.press-masthead span:last-child {
+  margin-left:12%;
+  color:#f4e8d7;
+  -webkit-text-stroke:1px #1b1715;
+  text-shadow:3px 4px 0 #1b1715;
+}
+.press-witness {
+  position:absolute;z-index:2;right:-4%;bottom:-17%;
+  height:77%;width:auto;max-width:67%;
+  object-fit:contain;object-position:bottom right;
+  mix-blend-mode:multiply;
+}
+.press-cover-side {
+  position:absolute;right:20px;top:45%;z-index:6;
+  writing-mode:vertical-rl;transform:rotate(180deg);
+  font:600 10px/1.4 var(--mono);letter-spacing:.13em;text-transform:uppercase;
+}
+.press-cover-bottom {
+  position:absolute;z-index:6;left:clamp(20px,2.5vw,38px);bottom:25px;
+  display:flex;gap:15px;align-items:end;width:min(56%,420px);
+  border-top:2px solid #181210;background:#e64231;padding:11px 12px 0 0;
+}
+.press-volume {font:600 73px/.76 var(--serif);letter-spacing:-.04em;flex:none}
+.press-whisper {font:italic 400 clamp(16px,1.5vw,23px)/1.04 var(--serif);color:#241a16;min-width:0}
+.press-panel {
+  position:relative;min-width:0;background:#151514;color:var(--bone);
+  display:grid;align-content:center;gap:20px;
+  padding:clamp(42px,5.4vw,86px) clamp(34px,5.5vw,84px);
+}
+.press-panel::before {content:'';position:absolute;inset:17px;border:1px solid #5b554d;pointer-events:none}
+.press-case {display:flex;justify-content:space-between;gap:8px;padding-bottom:10px;border-bottom:1px solid #988b7d;color:#b6a99a;font:600 10px/1.35 var(--mono);letter-spacing:.085em;text-transform:uppercase}
+.press-lede {font:400 clamp(43px,4.4vw,70px)/.92 var(--serif);letter-spacing:-.038em;max-width:12ch}
+.press-lede em {font-style:italic;color:var(--blood-ink)}
+.press-description {color:#ada196;font:400 15px/1.43 var(--sans);max-width:34ch}
+.press-panel .seg {border:1px solid #948578;border-radius:0}
+.press-panel .seg button {font:600 11px var(--mono);letter-spacing:.055em;min-height:51px;color:var(--bone-2);border-radius:0}
+.press-panel .seg button[aria-pressed='true'] {background:#eee5d7;color:#181715}
+.press-panel .field>span {color:#b2a699}
+.press-panel .field .input {border-radius:0;background:transparent;color:#f4eee0;border:0;border-bottom:2px solid #aea192;padding:7px 0 11px;font:italic 400 24px/1.1 var(--serif);min-height:45px}
+.press-panel .field .input::placeholder {color:#96897d;opacity:1}
+.press-panel .stack {gap:17px}
+.press-panel .check {padding-block:12px;border-bottom:1px solid #55514c}
+.press-panel .check small {color:#a99b8b}
+.press-panel .check input {border-radius:0}
+.press-panel .btn {border-radius:0}
+.press-panel .btn-solid {background:var(--blood);border-color:var(--blood);color:#171310;min-height:58px;font:700 12px var(--mono);letter-spacing:.075em;box-shadow:6px 6px 0 #050505;transition:background .18s,transform .18s}
+.press-panel .btn-solid:hover {background:#f04a38}
+.press-panel .btn-solid:active {transform:translate(3px,3px);box-shadow:3px 3px 0 #050505}
+.press-panel .foot {color:#9b9085;text-align:center;font:600 10px/1.5 var(--mono);letter-spacing:.055em}
+.press-panel .code-in span {border-radius:0;box-shadow:none;background:transparent;border-color:var(--line-2)}
+.press-panel .code-in:focus-within span.cur {border-color:var(--blood-ink);box-shadow:inset 0 -3px var(--blood-ink)}
+.press-panel .portrait-row {color:var(--bone)}
+.press-panel .portrait-row .avatar {border-radius:0}
+.press-home .h-panel {animation:none}
+
+/* A printed selection table instead of three product cards. */
+.main {max-width:760px}
+.phase-head h1 {letter-spacing:-.035em}
+.mode-pick {gap:11px}
+.mode-cards {display:grid;grid-template-columns:1fr;gap:9px}
+.mode-card {
+  border-radius:0;
+  border:1px solid var(--line-2);
+  border-left:6px solid var(--line-2);
+  box-shadow:none;transform:none!important;
+  background:
+    repeating-linear-gradient(90deg,transparent 0 23px,rgba(236,229,217,.018) 23px 24px),
+    var(--soot-2);
+  min-height:98px;grid-template-columns:50px minmax(0,1fr);
+  gap:12px;padding:15px 36px 15px 17px;
+  position:relative;
+}
+.mode-card::after {content:'I';position:absolute;right:13px;top:13px;font:italic 22px var(--serif);color:var(--ash)}
+.mode-card[data-mode='missions']::after {content:'II'}
+.mode-card[data-mode='exorcism']::after {content:'III'}
+.mode-card .glyph {font-size:37px;color:var(--bone)}
+.mode-card b {font:400 28px/.94 var(--serif);letter-spacing:-.025em}
+.mode-card small {font:400 13px/1.45 var(--sans);color:var(--bone-2)}
+.mode-card.on,.mode-card[data-mode='missions'].on {
+  background:#e64231;color:#181310;
+  border-color:#e64231;border-left-color:#15110e;box-shadow:6px 6px 0 rgba(0,0,0,.38)
+}
+.mode-card.on .glyph,.mode-card.on small,.mode-card.on::after {color:#241410}
+.mode-card[data-mode='missions'].on {background:#eee5d7;border-color:#eee5d7}
+.mode-card[data-mode='exorcism'].on {background:#bcc2bd;border-color:#bcc2bd}
+.mode-card.off {opacity:.65}
+.preset {border-radius:0;background:var(--soot-2)}
+.preset[aria-pressed=true] {transform:none;box-shadow:inset 4px 0 var(--blood)}
+.dcard,.deck-card {border-radius:0;animation:none;background:var(--soot-2)}
+.dcard.death,.deck-card.death {border-bottom:4px solid var(--blood)}
+.pool-grid>* {border-radius:0}
+.panel,.banner,.tag,.option,.rule-card,.role-mini,.dream,.death-room {border-radius:0}
+.banner.blood {border-left:4px solid var(--blood)}
+.option[aria-pressed=true] {transform:none;border-left:4px solid var(--blood)}
+
+/* A card is a printed evidence plate. No levitation or glossy casino shimmer. */
+.card-stage {animation:none}
+.face {border-radius:0;box-shadow:7px 8px 0 rgba(0,0,0,.54)}
+.face.back {
+  border:1px solid #d5c9ba;background:#1a1816 url('/press-cardback.svg') center/cover no-repeat
+}
+.face.back .mono-gram {display:none}
+.face.front {
+  outline:1px solid #8d8074;outline-offset:-12px;
+  background:
+    repeating-linear-gradient(0deg,transparent 0 3px,rgba(20,16,14,.013) 3px 4px),
+    #e9dfd1;color:#171512;
+  border:1px solid #b7aa99;
+}
+.face.front .corner {color:#71685e;top:21px;left:20px;right:20px;font-family:var(--mono)}
+.face.front .nm {font:400 clamp(33px,11vw,43px)/.94 var(--serif);letter-spacing:-.035em;color:#181513}
+.face.front .art .glyph {color:#2d241f;stroke-width:1.2}
+.face.front .sum {font:400 14px/1.4 var(--sans);color:#4e433d}
+.face.front.death {background:#dc3c2e;color:#17120e;border-color:#121110;outline-color:#17120e}
+.face.front.death .nm,.face.front.death .art .glyph,.face.front.death .sum,.face.front.death .corner {color:#16100d}
+.shine {display:none}
+.flipcard.flipped .art {animation:none}
+.flipcard.flipped .shine {animation:none}
+
+/* Voting and table state: only accused/dead elements get the hostile red. */
+.ring-table {background:#1b1a18;box-shadow:inset 0 0 0 1px var(--line-2);border-color:var(--line-2)}
+.tok-disc {background:var(--soot-2);box-shadow:none;border:1px solid var(--line-2)}
+.sigil {animation:none}
+.tok.dead .tok-disc {border-color:var(--blood-ink)}
+.code-tiles .tile {border-radius:0;box-shadow:none;animation:none}
+.topbar {background:var(--soot);border-bottom:1px solid var(--line-2);box-shadow:none}
+.tb-emblem .glyph {animation:none}
+.side {background:var(--soot);border-color:var(--line-2)}
+.dock {animation:none;background:linear-gradient(transparent,var(--soot) 34%)}
+.dock .btn {border-radius:0;box-shadow:5px 5px 0 rgba(0,0,0,.65)}
+.dock-note {border-radius:0}
+.sheet {border-radius:0;background:var(--soot-2);border-top:3px solid var(--blood);box-shadow:0 30px 80px rgba(0,0,0,.75)}
+.plaque {border-radius:0;box-shadow:none!important}
+.b-sound {border-radius:0}
+.b-sound.start {animation:none}
+.b-head {border-bottom:2px solid var(--line-2)}
+.b-phase {font-family:var(--serif);font-size:48px}
+.board2 .ring-table,.board2.is-night .ring-table {background:#1c1a18;box-shadow:inset 0 0 0 1px var(--line-2)}
+.b-fog {opacity:.22}
+.b-threads path {filter:none}
+.b-side {
+  --soot:#e9dfd1;--soot-2:#e9dfd1;--soot-3:#ddd2c1;
+  --bone:#201b17;--bone-2:#584f47;--ash:#695f54;--ash-2:#877a6d;
+  --line:rgba(32,27,23,.17);--line-2:rgba(32,27,23,.41);
+  --blood-ink:#a72a20;
+  background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(35,26,18,.016) 3px 4px),#e9dfd1;
+  border-radius:0;color:#201b17;border:3px double #564a3f;
+  padding:25px;box-shadow:inset 0 0 0 7px #e9dfd1,inset 0 0 0 8px #8a7b6b;
+}
+.b-side .gazette .mast {border-color:#211c17}
+.b-side .gazette .mast h3 {font-size:37px}
+.b-side .edition h4 {font-size:24px}
+.b-side .ev {border-radius:0}
+.paper {background:#e9dfd1;border:3px double #302721;box-shadow:11px 11px 0 rgba(0,0,0,.55)}
+.paper .stampx {border-radius:0}
+.moment.grim {background:#e43f2e;color:#1d1512}
+.moment.grim .m-title,.moment.grim .m-kicker {color:#1d1512}
+.md,.xg-cell,.chipbtn,.x-order li {border-radius:0}
+.md.now {animation:none;box-shadow:none}
+.xball .xb-glow {opacity:.34}
+
+/* Intentional mobile break, not the desktop layout squeezed to width. */
+@media(max-width:899px) {
+  .press-home .h-top {min-height:58px;padding:11px 16px;gap:7px}
+  .press-home .h-top .wordmark {font-size:26px}
+  .press-home .h-top .row {gap:2px!important}
+  .press-home .h-top .chip {padding-inline:6px;font-size:9px;min-height:33px}
+  .press-grid {grid-template-columns:1fr;min-height:auto}
+  .press-cover {min-height:430px;padding:20px 19px;border-right:0;border-bottom:3px solid #141110}
+  .press-cover::before {inset:7px}
+  .press-edition {font-size:9px;padding:6px 0}
+  .press-masthead {font-size:clamp(106px,26vw,170px);margin:28px 0 0}
+  .press-masthead span:last-child {margin-left:14%}
+  .press-witness {width:59%;height:auto;max-width:59%;right:-3%;bottom:-12%}
+  .press-cover-side {display:none}
+  .press-cover-bottom {left:20px;bottom:19px;width:60%;gap:9px;padding:10px 5px 2px 0}
+  .press-volume {font-size:47px}
+  .press-whisper {font-size:15.5px}
+  .press-panel {padding:44px 32px 49px;gap:18px}
+  .press-panel::before {inset:10px}
+  .press-lede {font-size:clamp(46px,11.4vw,56px)}
+  .press-description {font-size:14px}
+  .press-panel .field .input {font-size:24px}
+  .press-panel .btn-solid {min-height:59px}
+  .main {padding-inline:18px}
+}
+@media(max-width:350px) {
+  .press-masthead {font-size:clamp(95px,28vw,119px)}
+  .press-edition {font-size:8px}
+  .press-cover-bottom {width:62%}
+  .press-volume {font-size:40px}
+  .press-whisper {font-size:14px}
+  .press-panel {padding-inline:25px}
+  .press-home .h-top .chip {font-size:8.5px}
+}
+@media(prefers-reduced-motion:reduce) {
+  .card-stage,.chair,.press-masthead span,.mode-card,.dcard,.deck-card {animation:none!important}
+}
