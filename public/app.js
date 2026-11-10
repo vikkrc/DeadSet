@@ -6,10 +6,11 @@ import { renderGuide } from './guide.js';
 import { sound, score, haptic, burstAt, celebrate, ambient } from './fx.js';
 import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './board.js';
 import { seatLayout } from './layout.js';
+import { sceneMs, scenesFor } from './interludes.js';
 import { avatarSvg, randomAvatar, PARTS, COLORS } from './avatar.js';
 import { giftHtml, productIndex } from './gifts.js';
 import { gazetteHtml, frontPageHtml } from './gazette.js';
-import { isMissionPhase, missionMain, missionPicks, missionCenter, missionDock, missionActs, missionMoment, missionMomentHtml, MISSION_MOMENT_TIME, revealTime, missionEndHtml, knowledgeHtml, trackHtml, gridHtml, missionMarks } from './missions.js';
+import { isMissionPhase, missionMain, missionPicks, missionCenter, missionDock, missionActs, missionMoment, missionMomentHtml, MISSION_MOMENT_TIME, revealTime, missionEndHtml, knowledgeHtml, trackHtml, gridHtml, missionMarks, hunchArrowsSvg, hunchLegend } from './missions.js';
 import { LANGS, t, th, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, mcardF, scen, optLabel, list as tlist, loadLang, setContent, browserLang, isLang, getLang, extra as tx } from './i18n.js';
 
 const app = document.getElementById('app');
@@ -231,12 +232,32 @@ function connect(board = false) {
 function detectMoments(v) {
   const top = maxI(v.log);
   const ptop = maxI(v.private);
-  if (S.seenLog === null) { S.seenLog = top; S.seenPriv = ptop; return; } // fresh load: no replay
+  if (S.seenLog === null) {
+    // Fresh load: no replay, except a shared scene sequence still playing, which this screen joins mid-way.
+    S.seenPriv = ptop;
+    const live = v.log.find((l) => l.mAt && l.mAt + l.mDur > v.serverNow);
+    S.seenLog = live ? live.i - 1 : top;
+    if (!live) return;
+  }
   if (top < S.seenLog) S.seenLog = -1; // a rematch reset the record
   if (ptop < S.seenPriv) S.seenPriv = -1;
   const fresh = v.log.filter((l) => l.i > S.seenLog);
   const freshPriv = (v.private || []).filter((l) => l.i > S.seenPriv);
   S.seenLog = top; S.seenPriv = ptop;
+  const sharedFrom = (l, start) => {
+    // Moments this entry produced that the server runs as shared scenes get its window; the rest stay personal.
+    if (!l.mAt) return;
+    const types = scenesFor(l, fresh).map(([type]) => type);
+    let at = l.mAt;
+    const end = l.mAt + l.mDur;
+    for (const m of out.slice(start)) {
+      if (!types.includes(m.type)) continue;
+      const dur = Math.min(sceneMs(m.type, sceneData(m)), end - at);
+      if (dur <= 0) continue;
+      Object.assign(m, { at, dur, tapOnly: false });
+      at += dur;
+    }
+  };
   const name = (id) => v.players.find((p) => p.id === id)?.name ?? t('Someone');
   const meId = v.me?.id;
   const out = [];
@@ -247,16 +268,21 @@ function detectMoments(v) {
     out.push({ type: 'dreamswap', from: v.me.dreamFrom.id, to: v.me.dream.id, stole: !!v.me.dreamStole, sound: null });
   }
   for (const l of fresh) {
+    const start = out.length;
+    entryMoments(l);
+    sharedFrom(l, start);
+  }
+  function entryMoments(l) {
     if (v.mode === 'missions') {
-      if (l.ev === 'm-start') { const sc = fresh.find((x) => x.ev === 'scenario'); out.push({ type: 'night0', scenario: sc ? entryMsg(sc) : '', sc: v.scenario, rules: [], tapOnly: false }); continue; }
+      if (l.ev === 'm-start') { const sc = fresh.find((x) => x.ev === 'scenario'); out.push({ type: 'night0', scenario: sc ? entryMsg(sc) : '', sc: v.scenario, rules: [], tapOnly: false }); return; }
       if (l.ev === 'm-dawn' && v.me && !v.me.moderator) {
         // The Candle gets its own reveal; everything else goes on the private card.
         for (const c of freshPriv.filter((x) => x.kind === 'candle' && x.target)) out.push({ type: 'mcandle', name: name(c.target), death: !!c.death, sound: 'candleLight', tapOnly: true });
         const reports = freshPriv.filter((x) => ['witness', 'clue'].includes(x.kind) || (x.kind === 'candle' && !x.target));
         out.push({ type: 'private', reports: reports.map((x) => ({ msg: entryMsg(x), lines: x.lines, kind: x.kind })), tapOnly: true });
-        continue;
+        return;
       }
-      if (l.ev?.startsWith('m-')) { const mm = missionMoment(l, v, fresh, { notify, name, content: S.content }); if (mm) out.push(...[].concat(mm)); continue; }
+      if (l.ev?.startsWith('m-')) { const mm = missionMoment(l, v, fresh, { notify, name, content: S.content }); if (mm) out.push(...[].concat(mm)); return; }
     }
     switch (l.ev) {
       case 'night0': {
@@ -319,8 +345,10 @@ function detectMoments(v) {
   if (out.length) {
     S.moments.push(...out.map((m) => ({ ...m, id: uid() })));
     if (!S.moment) nextMoment();
+    else if (!S.moment.at && out.some((m) => m.at)) { S.moments.unshift(S.moment); S.moment = null; nextMoment(); } // a shared scene pre-empts a personal one
   }
 }
+const sceneData = (m) => ({ rules: m.rules?.length ?? 0, dead: (m.killed?.length ?? 0) + (m.expired?.length ?? 0), n: m.cards ? m.cards.length : m.count ?? 0 });
 
 const MOMENT_SOUND = { night0: 'night', day1: 'dawn', nightfall: 'night', dawn: 'dawn', tally: 'knock', death: 'death', revive: 'revive', bloodmoon: 'bloodmoon' };
 const END_THEME = { DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester', LOVERS: 'winLovers', CULT: 'winCult', RIPPER: 'winRipper' };
@@ -329,7 +357,11 @@ const momentTime = (m) => (m.type === 'mreveal' ? revealTime(m) : MISSION_MOMENT
 
 function nextMoment() {
   clearTimeout(S.momentTimer);
-  S.moment = S.moments.shift() ?? null;
+  const now = Date.now() + clockSkew;
+  // Shared scenes run on the server's clock: drop any that already ended, and play them before personal ones.
+  S.moments = S.moments.filter((x) => !x.at || x.at + x.dur > now);
+  const k = S.moments.findIndex((x) => x.at);
+  S.moment = (k >= 0 ? S.moments.splice(k, 1)[0] : S.moments.shift()) ?? null;
   const m = S.moment;
   if (m) {
     const snd = m.sound ?? MOMENT_SOUND[m.type];
@@ -372,7 +404,8 @@ function nextMoment() {
         haptic([40, 60, 40, 60, 120]);
       }, 500);
     }
-    if (!m.tapOnly) S.momentTimer = setTimeout(nextMoment, calm.matches ? Math.min(momentTime(m), 2500) : momentTime(m));
+    if (m.at) S.momentTimer = setTimeout(nextMoment, Math.max(50, m.at + m.dur - now));
+    else if (!m.tapOnly) S.momentTimer = setTimeout(nextMoment, calm.matches ? Math.min(momentTime(m), 2500) : momentTime(m));
   }
   render();
 }
@@ -482,9 +515,10 @@ function momentHtml(m) {
     default: break;
   }
   const auto = !m.tapOnly;
-  return `<div class="moment m-${m.type} ${m.winner === 'DEATH' || m.type === 'death' || m.type === 'munmask' ? 'grim' : ''} ${m.type === 'end' ? WIN_CLASS[m.winner] ?? '' : ''} ${onBoard() && m.type === 'dawn' ? 'front' : ''}" data-key="moment-${m.id}" data-act="momentNext" role="dialog" aria-live="assertive">
+  const left = m.at ? Math.max(0, m.at + m.dur - (Date.now() + clockSkew)) : momentTime(m);
+  return `<div class="moment ${m.at ? 'shared' : ''} m-${m.type} ${m.winner === 'DEATH' || m.type === 'death' || m.type === 'munmask' ? 'grim' : ''} ${m.type === 'end' ? WIN_CLASS[m.winner] ?? '' : ''} ${onBoard() && m.type === 'dawn' ? 'front' : ''}" data-key="moment-${m.id}" data-act="momentNext" role="dialog" aria-live="assertive">
     ${m.type === 'end' && WIN_CLASS[m.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<div class="m-body">${body}</div>
-    <div class="m-foot">${auto ? `<span class="m-timer" style="--t:${momentTime(m)}ms"><i></i></span>` : ''}<span class="kicker">${t(auto ? 'Tap to skip' : 'Tap to continue')}${S.moments.length ? ` · ${t('{n} more', { n: S.moments.length })}` : ''}</span></div>
+    <div class="m-foot">${auto ? `<span class="m-timer" style="--t:${left}ms"><i></i></span>` : ''}<span class="kicker">${t(m.at ? 'Everyone sees this together' : auto ? 'Tap to skip' : 'Tap to continue')}${S.moments.length ? ` · ${t('{n} more', { n: S.moments.length })}` : ''}</span></div>
   </div>`;
 }
 
@@ -1343,7 +1377,8 @@ const SUGGESTION_LABEL = {
   sharp: ['Sharp eyes', 'More information and protection for the town.'],
   wild: ['Wild night', 'The whole deck, swings and all.'],
 };
-const ROLE_GROUPS = [['Death', (r) => r.alignment === 'DEATH'], ['Core', (r) => r.set === 'core' && r.alignment !== 'DEATH'], ['Standard', (r) => r.set === 'standard'], ['Full Deck', (r) => r.set === 'full'], ['Other sides', (r) => r.set === 'side']];
+const CLASSIC_SETS = ['core', 'standard', 'full', 'side'];
+const ROLE_GROUPS = [['Death', (r) => r.alignment === 'DEATH' && CLASSIC_SETS.includes(r.set)], ['Core', (r) => r.set === 'core' && r.alignment !== 'DEATH'], ['Standard', (r) => r.set === 'standard'], ['Full Deck', (r) => r.set === 'full'], ['Other sides', (r) => r.set === 'side']];
 
 /** Custom deck: automatic (by player count) or exact role counters, plus suggestions. */
 function customDeckEditor(v) {
@@ -1703,7 +1738,8 @@ function endMain(v, me) {
   const revealed = v.players.some((p) => p.role);
   return `<section class="verdict ${v.winner === 'DEATH' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<span class="kicker">${t('Verdict')}</span><h1>${letters(title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
       ${won === null ? '' : `<div class="result-stamp ${won ? 'win' : 'loss'}">${won ? t('Victory') : t('Defeat')}</div>`}</section>
-    ${revealed ? ring(v, { reveal: true, center: centerFor(v) }) : ''}
+    ${revealed ? ring(v, { reveal: true, center: centerFor(v), marks: v.mode === 'missions' ? missionMarks(v) : {}, extra: v.mode === 'missions' ? hunchArrowsSvg(v) : '' }) : ''}
+    ${revealed && v.missions?.hunches?.length ? hunchLegend() : ''}
     ${v.mode === 'missions' ? missionEndHtml(v) : ''}
     <section data-key="reveal"><div class="rule">${t('Every secret')}</div>${revealed ? `<ul class="ledger">${v.players.map((p, i) => `<li class="${p.alive ? '' : 'dead'} ${p.id === me?.id ? 'me' : ''}" style="--i:${i}" data-key="rv-${p.id}">
       <span class="seat">${p.role ? glyph(p.role.glyph) : ''}</span>
@@ -2025,13 +2061,10 @@ const ACT = {
   async start() { await send('host.start'); },
   preset(el) { send('host.settings', { preset: el.dataset.id }); },
   gameMode(el) {
-    const cur = V().settings.preset;
-    const missions = el.dataset.mode === 'missions';
-    if (missions === !!V().presets.find((p) => p.id === cur)?.missions) return;
-    if (!missions) return send('host.settings', { preset: S.lastBasePreset || 'standard' });
-    S.lastBasePreset = cur;
-    burstAt(el);
-    send('host.settings', { preset: 'missions' });
+    if (el.dataset.mode === V().mode) return;
+    if (el.dataset.mode !== 'classic') burstAt(el);
+    // The server remembers each mode's own last settings.
+    send('host.settings', { mode: el.dataset.mode });
   },
   rulesMode(el) { send('host.settings', { rules: { mode: el.dataset.mode } }); },
   ruleCount(el) { send('host.settings', { rules: { count: Number(el.dataset.n) } }); },
@@ -2118,7 +2151,7 @@ const ACT = {
   reopen() { send('night.reopen'); },
   chatTab(el) { S.ui.chat = el.dataset.id; render(); },
   tab(el) { S.ui.tab = el.dataset.id; render(); },
-  momentNext() { nextMoment(); },
+  momentNext() { if (!S.moment?.at) nextMoment(); },
   deckMode(el) {
     const mode = el.dataset.mode;
     const sug = V().setup?.suggestions?.[0]?.roles;

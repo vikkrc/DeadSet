@@ -1298,5 +1298,12 @@ export default {
     "Chosen by the last leader": "Vybraný posledním vůdcem",
     "Next Mission Leader": "Další Vůdce mise",
     "After a mission, the lantern goes to the next player in line, or the last leader hands it to someone who has not led a mission yet.": "Po misi přejde lucerna k dalšímu v pořadí, nebo ji poslední vůdce předá někomu, kdo ještě nevedl misi.",
+    "Everyone sees this together": "Všichni to vidí společně",
+    "That role is not part of this game mode.": "Tato role nepatří do tohoto herního režimu.",
+    "Wait for the scene to finish.": "Počkej, až scéna skončí.",
+    "Who suspected whom": "Kdo koho podezíral",
+    "from Death": "od Smrti",
+    "on Death": "na Smrt",
+    "on the Living": "na Živé",
   },
 };

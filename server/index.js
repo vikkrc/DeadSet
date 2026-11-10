@@ -17,7 +17,7 @@ const PORT = Number(process.env.PORT) || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
 const DATA = process.env.DEADSET_DATA ?? join(ROOT, '..', 'data', 'rooms.json');
 
-const rooms = new RoomManager({ dataFile: DATA || null });
+const rooms = new RoomManager({ dataFile: DATA || null, interludes: process.env.DEADSET_INTERLUDES !== '0' });
 
 const TYPES = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',

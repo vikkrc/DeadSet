@@ -2,7 +2,7 @@
 // Pure functions over a plain serialisable match object. The server wraps each
 // call in a single synchronous critical section (Node is single-threaded), so
 // every command or transition is atomic.
-import { ROLES, DREAMS, DREAM_IDS, RULES_VERSION, PRESETS, RULE_CARDS, ABS_MAX_PLAYERS, INSOMNIA_CAP, AVATAR_PARTS } from './content.js';
+import { ROLES, DREAMS, DREAM_IDS, RULES_VERSION, PRESETS, RULE_CARDS, ABS_MAX_PLAYERS, INSOMNIA_CAP, AVATAR_PARTS, modeOf, roleInMode } from './content.js';
 import {
   defaultSettings, applySettingsPatch, validateSetup, buildDeck, drawRules, drawScenario, dreamWeightsFor,
 } from './setup.js';
@@ -95,7 +95,10 @@ export function moveSeat(m, pid, dir) {
 
 export function updateSettings(m, patch) {
   if (m.phase !== 'LOBBY') throw new GameError('Settings are locked once the match starts.');
+  const before = modeOf(m.settings.preset);
   m.settings = applySettingsPatch(m.settings, patch);
+  // A mode switch drops manual role picks: they belong to the old mode's roles.
+  if (modeOf(m.settings.preset) !== before) m.manualRoles = {};
   bump(m);
 }
 
@@ -106,7 +109,7 @@ export function setupReport(m) {
     const roles = m.players.map((p) => m.manualRoles[p.id]).filter(Boolean);
     if (roles.length !== m.players.length) report.errors.push('Manual assignment: every player needs a role (or clear them all).');
     const missions = !!PRESETS[m.settings.preset]?.missions;
-    if (roles.some((r) => (ROLES[r].set === 'missions') !== missions)) report.errors.push(missions ? 'Manual assignment: use Missions roles only.' : 'Manual assignment: Missions roles cannot be used in this mode.');
+    if (roles.some((r) => !roleInMode(r, modeOf(m.settings.preset)))) report.errors.push(missions ? 'Manual assignment: use Missions roles only.' : 'Manual assignment: Missions roles cannot be used in this mode.');
     if (missions && roles.length === m.players.length && !(roles.includes('MEDIUM') && roles.includes('REAPER'))) report.errors.push('Manual assignment needs a Medium and a Reaper.');
     const d = roles.filter((r) => ROLES[r].alignment === 'DEATH').length;
     if (roles.length === m.players.length && d < 1) report.errors.push('Manual assignment needs at least one Death.');
@@ -148,6 +151,7 @@ export function startMatch(m, rng, now, { forceRoles = null } = {}) {
   });
   const preset = PRESETS[m.settings.preset];
   m.config = {
+    mode: 'classic',
     preset: preset.id,
     dreams: m.settings.dreams,
     doomsday: preset.doomsday || (preset.custom && m.settings.doomsday),

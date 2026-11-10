@@ -51,7 +51,7 @@ export function startMissions(m, rng, now, { forceRoles = null } = {}) {
       teamJoinNight: null, tempRevival: null, revivedOnce: false, acknowledged: false, lover: null, diedAt: null, causes: null,
     });
   });
-  m.config = { preset: 'missions', missions: true, clues: m.settings.clues !== false, clueOdds: m.settings.clueOdds ?? 1, missionCards: m.settings.missionCards ?? 1, leaderMode: m.settings.leaderMode === 'choose' ? 'choose' : 'next' };
+  m.config = { mode: 'missions', preset: 'missions', missions: true, clues: m.settings.clues !== false, clueOdds: m.settings.clueOdds ?? 1, missionCards: m.settings.missionCards ?? 1, leaderMode: m.settings.leaderMode === 'choose' ? 'choose' : 'next' };
   m.activeRules = [];
   m.scenario = drawScenario(m.settings, rng);
   m.history = [];
@@ -638,6 +638,8 @@ export function missionPublic(m) {
     reckon: M.reckon ? { from: M.reckon.from, target: M.reckon.target } : null,
     unmasked: M.unmasked,
     hunches: m.phase === 'ENDED' ? M.hunches : undefined,
+    // aggregate suspicion (counts only, never who placed them) once Death is choosing or the game is over
+    hunchHeat: ['M_RECKONING', 'ENDED'].includes(m.phase) ? M.hunches.reduce((o, x) => ({ ...o, [x.target]: (o[x.target] || 0) + 1 }), {}) : undefined,
     cardsUsed: M.cardsUsed,
   };
 }

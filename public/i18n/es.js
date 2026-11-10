@@ -1298,5 +1298,12 @@ export default {
     "Chosen by the last leader": "Elegido por el último líder",
     "Next Mission Leader": "Próximo Líder de la misión",
     "After a mission, the lantern goes to the next player in line, or the last leader hands it to someone who has not led a mission yet.": "Tras una misión, el farol pasa al siguiente jugador, o el último líder se lo da a alguien que aún no haya liderado una misión.",
+    "Everyone sees this together": "Todos lo ven a la vez",
+    "That role is not part of this game mode.": "Ese rol no forma parte de este modo de juego.",
+    "Wait for the scene to finish.": "Espera a que termine la escena.",
+    "Who suspected whom": "Quién sospechó de quién",
+    "from Death": "desde la Muerte",
+    "on Death": "sobre la Muerte",
+    "on the Living": "sobre los Vivos",
   },
 };

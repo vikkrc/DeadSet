@@ -1298,5 +1298,12 @@ export default {
     "Chosen by the last leader": "Vybraný posledným vodcom",
     "Next Mission Leader": "Ďalší Vodca misie",
     "After a mission, the lantern goes to the next player in line, or the last leader hands it to someone who has not led a mission yet.": "Po misii prejde lampáš k ďalšiemu v poradí, alebo ho posledný vodca odovzdá niekomu, kto ešte neviedol misiu.",
+    "Everyone sees this together": "Všetci to vidia spolu",
+    "That role is not part of this game mode.": "Táto rola nepatrí do tohto herného režimu.",
+    "Wait for the scene to finish.": "Počkaj, kým sa scéna skončí.",
+    "Who suspected whom": "Kto koho podozrieval",
+    "from Death": "od Smrti",
+    "on Death": "na Smrť",
+    "on the Living": "na Živých",
   },
 };

@@ -3,7 +3,7 @@
 import { gazetteHtml } from './gazette.js';
 import { seatLayout } from './layout.js';
 import { backdropHtml } from './backdrops.js';
-import { missionBoardStage, missionBoardRing, gridHtml } from './missions.js';
+import { missionBoardStage, missionBoardRing, gridHtml, hunchArrowsSvg, hunchLegend } from './missions.js';
 
 /** Which Rule cards shape the current phase, with a one-line note. */
 export function activeRuleNotes(v) {
@@ -95,7 +95,8 @@ export function boardScreen(v, h) {
       deckHtml = Object.entries(deck.core).filter(([, n]) => n > 0).map(([id, n]) => card(id, n, id === 'DEATH' ? 'death' : '')).join('')
         + (deck.extended ? `<div class="dcard secret" data-key="dk-ext"><span class="q">?</span><b>${th('{n} extended', { n: deck.extended })}</b></div>` : '');
     }
-    const ruleCards = s.rules.mode === 'manual'
+    const classic = v.mode === 'classic';
+    const ruleCards = !classic ? '' : s.rules.mode === 'manual'
       ? (s.rules.selected.length ? s.rules.selected.map((id) => `<div class="dcard rcard" data-key="rc-${id}">${glyph(ruleGlyph(id))}<b>${esc(ruleF(id, 'name'))}</b></div>`).join('') : `<p class="small muted">${t('No rule cards.')}</p>`)
       : Array.from({ length: s.rules.count }, (_, i) => `<div class="dcard rcard fd" data-key="rc-r${i}"><span class="q">?</span><b>${t('Drawn at start')}</b></div>`).join('') || `<p class="small muted">${t('No rule cards.')}</p>`;
     return `<main class="board2 lobby" data-key="board-lobby">${header}
@@ -111,10 +112,10 @@ export function boardScreen(v, h) {
           <span class="kicker">${t('Tonight\'s deck')} · ${esc(presetF(s.preset, 'name'))}</span>
           <div class="deckrow">${deckHtml}</div>
           ${deck?.extended ? `<p class="small muted">${th('Extended seats are drawn secretly from: {names}.', { names: deck.pool.map((id) => roleF(id, 'name')) })}</p>` : ''}
-          <span class="kicker">${t('Rule cards')}</span>
-          <div class="deckrow">${ruleCards}</div>
-          <span class="kicker">${t('Story')}</span>
-          <p class="scenario">${s.scenario.mode === 'manual' && s.scenario.who ? esc(`${scen('WHO', s.scenario.who)} · ${scen('WHERE', s.scenario.where)} · ${scen('WHY', s.scenario.why)}`) : t('Dealt when the match begins.')}</p>
+          ${classic ? `<span class="kicker">${t('Rule cards')}</span>
+          <div class="deckrow">${ruleCards}</div>` : ''}
+          ${v.mode === 'exorcism' ? '' : `<span class="kicker">${t('Story')}</span>`}
+          ${v.mode === 'exorcism' ? '' : `<p class="scenario">${s.scenario.mode === 'manual' && s.scenario.who ? esc(`${scen('WHO', s.scenario.who)} · ${scen('WHERE', s.scenario.where)} · ${scen('WHY', s.scenario.why)}`) : t('Dealt when the match begins.')}</p>`}
         </section>
       </div></main>`;
   }
@@ -169,6 +170,7 @@ export function boardScreen(v, h) {
   const live = activeRuleNotes(v);
   const plaques = (v.activeRules || []).map((r) => `<span class="plaque ${live[r.id] ? 'on' : ''}" data-key="pl-${r.id}">${glyph(ruleGlyph(r.id))}<span>${esc(ruleF(r.id, 'name'))}${live[r.id] ? `<em>${tmh(live[r.id])}</em>` : ''}</span></span>`).join('');
   const mr = v.mode === 'missions' ? missionBoardRing(v) : null;
+  if (mr && v.phase === 'ENDED') extra += hunchArrowsSvg(v);
   const table = ring(v, { center: (mr ? '' : centerExtra) + centerFor(v), reveal: v.phase === 'ENDED', crack: true, extra, marks: mr?.marks ?? {}, pick: mr?.team.length ? { ids: [], selected: mr.team, act: '' } : null });
   const where = (h.content?.scenario?.WHERE ?? []).indexOf(v.scenario?.where);
   const backdrop = v.table?.backdrops !== false && where >= 0 ? backdropHtml(where, night) : '';
@@ -176,7 +178,7 @@ export function boardScreen(v, h) {
     ${backdrop}
     ${header}
     <div class="b-cols">
-      <section class="b-stage">${mr ? missionBoardStage(v, h) : ''}${table}<div class="plaques">${plaques}</div>
+      <section class="b-stage">${mr ? missionBoardStage(v, h) : ''}${table}${mr && v.phase === 'ENDED' && v.missions?.hunches?.length ? hunchLegend() : ''}<div class="plaques">${plaques}</div>
       </section>
       <aside class="b-side" data-scroll="b-gz">${mr ? `<div class="b-grid"><span class="kicker">${t('The missions')}</span>${gridHtml(v)}</div>` : ''}${gazetteHtml(v, h)}</aside>
     </div>

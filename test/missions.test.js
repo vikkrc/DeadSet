@@ -382,7 +382,7 @@ async function botGame(n, settings = {}) {
   rm.command(host.code, host.token, { type: 'host.settings', payload: { preset: 'missions', missionCards: 2, clueOdds: 3, ...settings } });
   rm.command(host.code, host.token, { type: 'host.bots', payload: { count: n } });
   rm.command(host.code, host.token, { type: 'host.start' });
-  for (let i = 0; i < 4000 && m.phase !== 'ENDED'; i++) {
+  for (const until = Date.now() + 120_000; Date.now() < until && m.phase !== 'ENDED';) {
     await new Promise((r) => setTimeout(r, 10));
     if (m.phase === 'M_RESULT' || m.phase === 'M_LOTTERY') rm.command(host.code, host.token, { type: 'host.advance', payload: {}, phaseId: m.phaseId });
   }

@@ -1,7 +1,7 @@
 // Audience-filtered views (§20 "Event views"). Every payload sent to a client is
 // built here. A player's view only ever contains: public facts, their own
 // secrets, and — for active Death members — their teammates. Nothing else.
-import { ROLES, DREAMS, RULE_CARDS, PRESETS } from './content.js';
+import { ROLES, DREAMS, RULE_CARDS, PRESETS, modeOf, roleInMode } from './content.js';
 import {
   byId, nameOf, hasRule, deathTeam, upcomingNight, isDayPhase,
 } from './state.js';
@@ -75,7 +75,7 @@ export function publicView(m, now = Date.now()) {
     progress: progress(m),
     log: m.publicLog.slice(-250),
     winner: m.winner, endReason: m.endReason, jesterId: m.jesterId ?? null,
-    mode: (m.config?.missions || (m.phase === 'LOBBY' && PRESETS[m.settings.preset]?.missions)) ? 'missions' : 'classic',
+    mode: m.phase === 'LOBBY' || !m.config ? modeOf(m.settings.preset) : m.config.mode ?? (m.config.missions ? 'missions' : 'classic'),
   };
   if (m.M && m.phase !== 'LOBBY') v.missions = missionPublic(m);
   // The end-of-game recap reveals every action, so it follows the role reveal.
@@ -252,7 +252,8 @@ export function moderatorView(m, now = Date.now()) {
   v.me = { id: m.moderatorId, isHost: true, moderator: true };
   v.host = hostControls(m);
   v.manualRoles = m.phase === 'LOBBY' ? m.manualRoles : undefined;
-  v.allRoles = Object.values(ROLES).map((r) => ({ id: r.id, name: r.name, set: r.set }));
+  // Only roles this mode can deal: the moderator never sees another mode's roles.
+  v.allRoles = Object.values(ROLES).filter((r) => roleInMode(r.id, modeOf(m.settings.preset))).map((r) => ({ id: r.id, name: r.name, set: r.set }));
   v.secrets = m.phase === 'LOBBY' ? null : m.players.map((p) => ({
     id: p.id, role: roleCard(p.roleId)?.name, roleId: p.roleId, alignment: p.alignment, charges: p.charges,
     dream: N?.dreams[p.id] ? DREAMS[N.dreams[p.id]].name : null, dreamId: N?.dreams[p.id] ?? null,

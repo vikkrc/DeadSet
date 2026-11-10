@@ -1298,5 +1298,12 @@ export default {
     "Chosen by the last leader": "Az előző vezető választja",
     "Next Mission Leader": "Következő Küldetésvezető",
     "After a mission, the lantern goes to the next player in line, or the last leader hands it to someone who has not led a mission yet.": "Egy küldetés után a lámpás a sorban következőhöz kerül, vagy az előző vezető olyannak adja, aki még nem vezetett küldetést.",
+    "Everyone sees this together": "Mindenki együtt látja",
+    "That role is not part of this game mode.": "Ez a szerep nem része ennek a játékmódnak.",
+    "Wait for the scene to finish.": "Várd meg, amíg a jelenet véget ér.",
+    "Who suspected whom": "Ki kit gyanúsított",
+    "from Death": "a Halál részéről",
+    "on Death": "a Halálra",
+    "on the Living": "az Élőkre",
   },
 };

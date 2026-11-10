@@ -437,3 +437,16 @@ export const MISSION_STORY = {
   genericSteps: ['The first step', 'Deeper in', 'The point of no return', 'The hardest part', 'The end of the road'],
   genericScenes: ['The expedition sets out. Nobody looks back.', 'The path narrows, and so does trust.', 'Halfway there. Someone is counting the steps.', 'The air grows colder with every choice.', 'The last stretch. Whatever waits here has waited for you.'],
 };
+
+// ── Game modes ─────────────────────────────────────────────────────────────
+/** Every role set, rule card and setting belongs to a mode. Setup screens and
+ *  the server only ever offer and accept what the current mode declares. */
+export const MODES = {
+  classic: { id: 'classic', roleSets: ['core', 'standard', 'full', 'side'], rules: true, dreams: true },
+  missions: { id: 'missions', roleSets: ['missions'], rules: false, dreams: false },
+  exorcism: { id: 'exorcism', roleSets: ['exorcism'], rules: false, dreams: false },
+};
+/** The mode a preset belongs to. */
+export const modeOf = (presetId) => (PRESETS[presetId]?.missions ? 'missions' : PRESETS[presetId]?.exorcism ? 'exorcism' : 'classic');
+/** Can this role be dealt in this mode? */
+export const roleInMode = (roleId, mode) => !!ROLES[roleId] && MODES[mode].roleSets.includes(ROLES[roleId].set);

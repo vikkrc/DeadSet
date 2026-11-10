@@ -511,6 +511,17 @@ let ambientMode = null;
 let W = 0;
 let H = 0;
 
+// Budget: phones get fewer particles and no canvas glow; a frame-time guard
+// drops to the lite budget (and thins the live particles) when frames run long.
+const coarse = matchMedia('(pointer: coarse)').matches;
+let lite = coarse;
+const CAP = () => (lite ? 170 : 420);
+const Q = () => (lite ? 0.45 : 0.8);
+const n = (k) => Math.max(1, Math.round(k * Q()));
+const pool = [];
+let slow = 0;
+let last = 0;
+
 function ensure() {
   if (canvas) return;
   canvas = document.createElement('canvas');
@@ -519,14 +530,14 @@ function ensure() {
   document.body.appendChild(canvas);
   c2 = canvas.getContext('2d');
   const size = () => {
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const dpr = Math.min(lite ? 1.5 : 2, window.devicePixelRatio || 1);
     W = window.innerWidth; H = window.innerHeight;
     canvas.width = W * dpr; canvas.height = H * dpr;
     c2.setTransform(dpr, 0, 0, dpr, 0, 0);
   };
   size();
   window.addEventListener('resize', size);
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) kick(); });
+  document.addEventListener('visibilitychange', () => { last = 0; if (!document.hidden) kick(); });
 }
 
 const rand = (a, b) => a + Math.random() * (b - a);
@@ -537,10 +548,19 @@ function kick() {
 
 function loop() {
   raf = 0;
-  c2.clearRect(0, 0, W, H);
   const now = performance.now();
-  parts = parts.filter((p) => p.life > 0);
+  // frame guard: a run of long frames switches to the lite budget for good
+  if (last && now - last > 30) {
+    if (++slow > 12 && !lite) {
+      lite = true;
+      for (let i = parts.length - 1; i >= 0; i -= 2) if (parts[i].kind !== 'mote') parts[i].life = 0;
+    }
+  } else if (slow > 0) slow--;
+  last = now;
+  c2.clearRect(0, 0, W, H);
+  let k = 0;
   for (const p of parts) {
+    if (p.life <= 0 || p.dead) { pool.push(p); continue; }
     p.vx *= p.drag; p.vy = p.vy * p.drag + p.g;
     if (p.sway) p.vx += Math.sin(now / 400 + p.phase) * p.sway;
     p.x += p.vx; p.y += p.vy; p.rot += p.vr;
@@ -550,10 +570,14 @@ function loop() {
       if (p.y < -10) { p.y = H + 10; p.x = rand(0, W); }
       if (ambientMode !== 'night') p.dead = true;
     }
+    // off-screen falling particles are done
+    if (p.y > H + 40 && p.vy > 0 && p.g >= 0) p.life = 0;
     draw(p);
+    parts[k++] = p;
   }
-  parts = parts.filter((p) => !p.dead);
+  parts.length = k;
   if (parts.length && !document.hidden) raf = requestAnimationFrame(loop);
+  else last = 0;
 }
 
 function draw(p) {
@@ -565,7 +589,7 @@ function draw(p) {
   c2.fillStyle = p.color;
   switch (p.kind) {
     case 'spark':
-      c2.shadowColor = p.color; c2.shadowBlur = 8;
+      if (!lite) { c2.shadowColor = p.color; c2.shadowBlur = 8; }
       c2.beginPath(); c2.arc(0, 0, p.size, 0, Math.PI * 2); c2.fill();
       break;
     case 'slip':
@@ -577,7 +601,7 @@ function draw(p) {
       break;
     case 'glitter': {
       c2.globalAlpha = a * (0.45 + 0.55 * Math.abs(Math.sin(p.phase + p.life * 40)));
-      c2.shadowColor = p.color; c2.shadowBlur = 6;
+      if (!lite) { c2.shadowColor = p.color; c2.shadowBlur = 6; }
       c2.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
       break;
     }
@@ -585,7 +609,7 @@ function draw(p) {
       // a spark with a short tail along its velocity
       c2.rotate(-p.rot);
       c2.strokeStyle = p.color; c2.lineWidth = p.size; c2.lineCap = 'round';
-      c2.shadowColor = p.color; c2.shadowBlur = 10;
+      if (!lite) { c2.shadowColor = p.color; c2.shadowBlur = 10; }
       c2.beginPath(); c2.moveTo(0, 0); c2.lineTo(-p.vx * 3, -p.vy * 3); c2.stroke();
       break;
     }
@@ -600,7 +624,7 @@ function draw(p) {
     }
     case 'slash': {
       c2.strokeStyle = p.color; c2.lineWidth = p.size; c2.lineCap = 'round';
-      c2.shadowColor = '#e2585e'; c2.shadowBlur = 16;
+      if (!lite) { c2.shadowColor = '#e2585e'; c2.shadowBlur = 16; }
       const len = p.len * Math.min(1, (1 - p.life) * 6);
       c2.beginPath(); c2.moveTo(-p.len / 2, 0); c2.lineTo(-p.len / 2 + len, 0); c2.stroke();
       break;
@@ -620,8 +644,21 @@ function draw(p) {
   c2.restore();
 }
 
+const BASE = { vx: 0, vy: 0, g: 0, drag: 0.98, rot: 0, vr: 0, life: 1, decay: 0.015, alpha: 1, size: 3, sway: 0, kind: 'spark', color: '#ece5d5', len: 0, dead: false };
 function add(p) {
-  parts.push({ vx: 0, vy: 0, g: 0, drag: 0.98, rot: 0, vr: 0, life: 1, decay: 0.015, alpha: 1, size: 3, sway: 0, phase: Math.random() * 6, kind: 'spark', color: '#ece5d5', ...p });
+  if (parts.length >= CAP()) return;
+  const o = pool.pop() || {};
+  Object.assign(o, BASE, { phase: Math.random() * 6 }, p);
+  parts.push(o);
+}
+
+/** A CSS-carried layer (glow, rays, flash) that cleans itself up. */
+function cssLayer(cls, ms) {
+  const el = document.createElement('div');
+  el.className = `fx-layer ${cls}`;
+  el.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), ms);
 }
 
 /** Small burst from a point (e.g. a confirmed tap). */
@@ -644,17 +681,20 @@ export function burstAt(el, opts) {
 
 /** Victory / defeat celebrations, themed per outcome. */
 export function celebrate(kind) {
+  const glow = { DEATH: 'fx-ember', JESTER: 'fx-jest', LOVERS: 'fx-rose', CULT: 'fx-cult', RIPPER: 'fx-blood', NON_DEATH: 'fx-dawn', win: 'fx-dawn' }[kind];
+  // the CSS layer carries most of the spectacle and stays (softened) under reduced motion
+  if (glow) cssLayer(glow, 7000);
   if (calm.matches) return;
   ensure();
   if (kind === 'DEATH') {
     // crimson petals and ash drifting down
-    for (let i = 0; i < 90; i++) {
+    for (let i = 0, N = n(90); i < N; i++) {
       add({ kind: i % 3 ? 'petal' : 'spark', x: rand(0, W), y: rand(-H * 0.6, -10), vx: rand(-0.4, 0.4), vy: rand(0.8, 2.2), g: 0.004, drag: 0.995, sway: 0.03,
         vr: rand(-0.05, 0.05), rot: rand(0, 6), size: i % 3 ? rand(4, 8) : rand(1, 2), decay: rand(0.002, 0.004),
         color: ['#b3242d', '#e2585e', '#7e1820', '#5d564d'][i % 4] });
     }
   } else if (kind === 'JESTER') {
-    for (let i = 0; i < 120; i++) {
+    for (let i = 0, N = n(120); i < N; i++) {
       const left = i % 2 === 0;
       add({ kind: i % 3 === 0 ? 'tri' : 'slip', x: left ? -10 : W + 10, y: H * rand(0.55, 0.85), vx: (left ? 1 : -1) * rand(4, 11), vy: rand(-12, -5), g: 0.22, drag: 0.985,
         vr: rand(-0.3, 0.3), size: rand(3, 6), decay: rand(0.004, 0.008), color: ['#ece5d5', '#e2585e', '#d6a24a', '#8fb59a'][i % 4] });
@@ -666,32 +706,32 @@ export function celebrate(kind) {
     // hearts rising in waves, rose petals drifting down
     for (let w = 0; w < 4; w++) {
       setTimeout(() => {
-        for (let i = 0; i < 26; i++) add({ kind: 'heart', x: rand(0, W), y: H + rand(0, 80), vx: rand(-0.6, 0.6), vy: rand(-5.5, -2.5), g: -0.01, drag: 0.995, sway: 0.05, size: rand(5, 13), decay: rand(0.003, 0.006), color: ['#ff6b8a', '#ffb3c4', '#e2585e', '#ffd1dc'][i % 4], alpha: 0.9 });
+        for (let i = 0, N = n(26); i < N; i++) add({ kind: 'heart', x: rand(0, W), y: H + rand(0, 80), vx: rand(-0.6, 0.6), vy: rand(-5.5, -2.5), g: -0.01, drag: 0.995, sway: 0.05, size: rand(5, 13), decay: rand(0.003, 0.006), color: ['#ff6b8a', '#ffb3c4', '#e2585e', '#ffd1dc'][i % 4], alpha: 0.9 });
         kick();
       }, w * 650);
     }
-    for (let i = 0; i < 70; i++) add({ kind: 'petal', x: rand(0, W), y: rand(-H * 0.8, -10), vx: rand(-0.6, 0.6), vy: rand(1, 2.4), g: 0.005, drag: 0.996, sway: 0.04, vr: rand(-0.06, 0.06), rot: rand(0, 6), size: rand(5, 9), decay: rand(0.0025, 0.004), color: ['#c33a5a', '#ff8fa6', '#9e1c3a'][i % 3] });
+    for (let i = 0, N = n(70); i < N; i++) add({ kind: 'petal', x: rand(0, W), y: rand(-H * 0.8, -10), vx: rand(-0.6, 0.6), vy: rand(1, 2.4), g: 0.005, drag: 0.996, sway: 0.04, vr: rand(-0.06, 0.06), rot: rand(0, 6), size: rand(5, 9), decay: rand(0.0025, 0.004), color: ['#c33a5a', '#ff8fa6', '#9e1c3a'][i % 3] });
   } else if (kind === 'CULT') {
     // a slow purple vortex of embers around the centre, then candle sparks rising
     const cx = W / 2; const cy = H * 0.38;
-    for (let i = 0; i < 140; i++) {
-      const a = (i / 140) * Math.PI * 12; const r = 30 + i * 2.2;
+    for (let i = 0, N = n(140); i < N; i++) {
+      const a = (i / N) * Math.PI * 12; const r = 30 + (i / N) * 308;
       add({ kind: i % 4 ? 'spark' : 'glitter', x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r * 0.6, vx: -Math.sin(a) * 2.2, vy: Math.cos(a) * 1.3 - 0.3, g: -0.004, drag: 0.985, size: rand(1.2, 2.6), decay: rand(0.006, 0.01), color: ['#b59be0', '#7d4fd6', '#9fe0b0', '#e0d0ff'][i % 4] });
     }
     setTimeout(() => {
-      for (let i = 0; i < 80; i++) add({ kind: 'spark', x: rand(W * 0.1, W * 0.9), y: H + 10, vx: rand(-0.4, 0.4), vy: rand(-6, -3), g: -0.01, drag: 0.99, sway: 0.03, size: rand(1.2, 2.4), decay: rand(0.005, 0.009), color: ['#9fe0b0', '#b59be0', '#e9c27a'][i % 3] });
+      for (let i = 0, N = n(80); i < N; i++) add({ kind: 'spark', x: rand(W * 0.1, W * 0.9), y: H + 10, vx: rand(-0.4, 0.4), vy: rand(-6, -3), g: -0.01, drag: 0.99, sway: 0.03, size: rand(1.2, 2.4), decay: rand(0.005, 0.009), color: ['#9fe0b0', '#b59be0', '#e9c27a'][i % 3] });
       kick();
     }, 1300);
   } else if (kind === 'RIPPER') {
     // three blade slashes across the screen, then a fine red mist falling
     [[0, -0.42], [420, 0.36], [820, -0.12]].forEach(([d, ang]) => setTimeout(() => {
       add({ kind: 'slash', x: W / 2 + rand(-40, 40), y: H * rand(0.3, 0.6), rot: ang, len: Math.hypot(W, H) * 0.9, size: rand(5, 8), decay: 0.012, color: '#f2e6e6' });
-      for (let i = 0; i < 40; i++) add({ kind: 'spark', x: W / 2 + rand(-W / 2, W / 2), y: H * 0.45 + rand(-60, 60), vx: rand(-1, 1), vy: rand(0.5, 3), g: 0.12, drag: 0.98, size: rand(1.5, 3.5), decay: rand(0.008, 0.016), color: ['#b3242d', '#e2585e', '#7e1820'][i % 3] });
+      for (let i = 0, N = n(40); i < N; i++) add({ kind: 'spark', x: W / 2 + rand(-W / 2, W / 2), y: H * 0.45 + rand(-60, 60), vx: rand(-1, 1), vy: rand(0.5, 3), g: 0.12, drag: 0.98, size: rand(1.5, 3.5), decay: rand(0.008, 0.016), color: ['#b3242d', '#e2585e', '#7e1820'][i % 3] });
       kick();
     }, d));
-    for (let i = 0; i < 90; i++) add({ kind: 'spark', x: rand(0, W), y: rand(-H, -10), vx: rand(-0.2, 0.2), vy: rand(0.8, 2), g: 0.004, drag: 0.998, size: rand(0.8, 1.8), decay: rand(0.002, 0.004), color: '#b3242d', alpha: 0.7 });
+    for (let i = 0, N = n(90); i < N; i++) add({ kind: 'spark', x: rand(0, W), y: rand(-H, -10), vx: rand(-0.2, 0.2), vy: rand(0.8, 2), g: 0.004, drag: 0.998, size: rand(0.8, 1.8), decay: rand(0.002, 0.004), color: '#b3242d', alpha: 0.7 });
   } else {
-    for (let i = 0; i < 40; i++) add({ kind: 'spark', x: rand(0, W), y: rand(0, H), vx: rand(-0.3, 0.3), vy: rand(-0.6, -0.1), size: rand(1, 2), decay: rand(0.004, 0.008), color: '#bdb4a4', alpha: 0.6 });
+    for (let i = 0, N = n(40); i < N; i++) add({ kind: 'spark', x: rand(0, W), y: rand(0, H), vx: rand(-0.3, 0.3), vy: rand(-0.6, -0.1), size: rand(1, 2), decay: rand(0.004, 0.008), color: '#bdb4a4', alpha: 0.6 });
   }
   kick();
 }
@@ -699,15 +739,16 @@ export function celebrate(kind) {
 /** The living win: confetti cannons, waves of fireworks, then a glitter shower. */
 const FIRE = [['#ffd36b', '#fff1c2', '#e9a43a'], ['#f2f2f2', '#c9e3ff', '#8fb4e6'], ['#ff8a6b', '#ffd0b8', '#e9c27a'], ['#b8f0c2', '#f6ffe8', '#7fd39a'], ['#e0b8ff', '#fff0ff', '#b59be0']];
 const CONF = ['#e9c27a', '#ece5d5', '#e2585e', '#8fd3a5', '#8fb4e6', '#f2b66b'];
-function firework(x, y, colors, n = 96) {
+function firework(x, y, colors, count = 96) {
+  const N = n(count);
   const scale = Math.min(1.4, Math.max(0.8, Math.min(W, H) / 500));
   add({ kind: 'flash', x, y, size: 70 * scale, decay: 0.06, alpha: 0.55, color: colors[1] });
-  for (let i = 0; i < n; i++) {
-    const ang = (i / n) * Math.PI * 2 + rand(-0.05, 0.05);
+  for (let i = 0; i < N; i++) {
+    const ang = (i / N) * Math.PI * 2 + rand(-0.05, 0.05);
     const sp = rand(2.8, 8) * scale;
     add({ kind: i % 3 ? 'streak' : 'spark', x, y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, g: 0.065, drag: 0.962, size: rand(1.4, 2.8), decay: rand(0.008, 0.014), color: colors[i % colors.length] });
   }
-  for (let i = 0; i < 18; i++) add({ kind: 'glitter', x, y, vx: rand(-1.5, 1.5), vy: rand(-1.5, 1), g: 0.03, drag: 0.98, size: rand(1.5, 2.6), decay: rand(0.006, 0.01), color: colors[0] });
+  for (let i = 0, N = n(18); i < N; i++) add({ kind: 'glitter', x, y, vx: rand(-1.5, 1.5), vy: rand(-1.5, 1), g: 0.03, drag: 0.98, size: rand(1.5, 2.6), decay: rand(0.006, 0.01), color: colors[0] });
   kick();
 }
 function rocket(x, colors, delay) {
@@ -722,9 +763,9 @@ function rocket(x, colors, delay) {
 }
 function livingCelebration() {
   // confetti cannons from both bottom corners
-  for (const [delay, side] of [[0, 1], [80, -1], [1600, 1], [1680, -1]]) {
+  for (const [delay, side] of lite ? [[0, 1], [80, -1]] : [[0, 1], [80, -1], [1600, 1], [1680, -1]]) {
     setTimeout(() => {
-      for (let i = 0; i < 70; i++) {
+      for (let i = 0, N = n(70); i < N; i++) {
         const x = side > 0 ? -10 : W + 10;
         add({ kind: i % 4 ? 'slip' : 'petal', x, y: H * rand(0.7, 0.95), vx: side * rand(5, 14), vy: rand(-17, -8), g: 0.24, drag: 0.982, sway: 0.03,
           vr: rand(-0.35, 0.35), rot: rand(0, 6), size: rand(3, 6.5), decay: rand(0.003, 0.006), color: CONF[i % CONF.length] });
@@ -733,11 +774,11 @@ function livingCelebration() {
     }, delay);
   }
   // waves of fireworks
-  const shots = Math.round(rand(7, 9));
-  for (let i = 0; i < shots; i++) rocket(rand(W * 0.15, W * 0.85), FIRE[i % FIRE.length], 250 + i * rand(380, 520));
+  const shots = lite ? 4 : Math.round(rand(5, 6));
+  for (let i = 0; i < shots; i++) rocket(rand(W * 0.15, W * 0.85), FIRE[i % FIRE.length], 250 + i * rand(520, 700));
   // a slow golden glitter shower to finish
   setTimeout(() => {
-    for (let i = 0; i < 120; i++) {
+    for (let i = 0, N = n(120); i < N; i++) {
       add({ kind: i % 3 ? 'glitter' : 'slip', x: rand(0, W), y: rand(-H * 0.5, -10), vx: rand(-0.4, 0.4), vy: rand(1, 2.6), g: 0.01, drag: 0.995, sway: 0.025,
         vr: rand(-0.1, 0.1), size: i % 3 ? rand(1.4, 2.8) : rand(3, 5), decay: rand(0.002, 0.004), color: ['#ffd36b', '#ece5d5', '#e9c27a', '#fff1c2'][i % 4] });
     }

@@ -9,21 +9,26 @@ import {
 } from '../engine/game.js';
 import { playerView, publicView, moderatorView } from '../engine/views.js';
 import { secureRng } from '../engine/rng.js';
-import { ROLES, PRESETS, LANGS } from '../engine/content.js';
+import { ROLES, PRESETS, LANGS, modeOf, roleInMode } from '../engine/content.js';
 import { byId, pub } from '../engine/state.js';
 import { botDecide, botAvatar, BOT_NAMES } from './bots.js';
+import { interludeMs, OPEN_DURING_SCENES } from '../public/interludes.js';
 
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no 0/O/1/I
 const HOST_GRACE_MS = 60_000;
 const ROOM_TTL_MS = 12 * 60 * 60 * 1000;
+// Phases that only exist to show a scene: they end shortly after it does.
+const SHOWCASE = new Set(['M_LOTTERY', 'M_RESULT', 'X_LOTTERY']);
 
 const sha = (s) => createHash('sha256').update(s).digest('hex');
 const newToken = () => randomBytes(32).toString('base64url');
 const newId = () => randomBytes(9).toString('base64url');
 
 export class RoomManager {
-  constructor({ dataFile = null, rng = secureRng(), clock = () => Date.now(), botDelay = [700, 1800] } = {}) {
+  constructor({ dataFile = null, rng = secureRng(), clock = () => Date.now(), botDelay = [700, 1800], interludes = false } = {}) {
     this.botDelay = botDelay;
+    // Shared interludes (one synced scene sequence; inputs locked meanwhile). Off by default so engine-level tests stay instant.
+    this.interludes = interludes;
     this.rooms = new Map();
     this.dataFile = dataFile;
     this.rng = rng;
@@ -115,6 +120,7 @@ export class RoomManager {
     }
     const type = String(cmd.type || '');
     const payload = cmd.payload && typeof cmd.payload === 'object' ? cmd.payload : {};
+    if (!type.startsWith('host.') && !OPEN_DURING_SCENES(type) && this.holding(room)) throw new GameError('Wait for the scene to finish.', 'HOLD');
     if (type.startsWith('host.')) this.hostCommand(room, pid, type, payload, cmd.phaseId);
     else playerCommand(m, pid, { type, payload, phaseId: cmd.phaseId }, this.rng, this.clock());
     this.changed(room);
@@ -127,6 +133,8 @@ export class RoomManager {
     if (type === 'host.claim') return this.claimHost(room, pid);
     if (m.hostId !== pid) throw new GameError('Only the host can do that.', 'AUTH');
     const phaseBound = ['host.advance', 'host.extend'];
+    // Shared scenes cannot be skipped: the host waits with everyone else.
+    if (type === 'host.advance' && this.holding(room)) throw new GameError('Wait for the scene to finish.', 'HOLD');
     if (phaseBound.includes(type) && phaseId && phaseId !== m.phaseId) throw new GameError('The phase already moved on.', 'STALE');
     switch (type) {
       case 'host.settings': updateSettings(m, payload); break;
@@ -165,7 +173,8 @@ export class RoomManager {
         if (!m.moderated || m.phase !== 'LOBBY') throw new GameError('Manual assignment is only for trusted moderators in the lobby.');
         if (payload.clear) m.manualRoles = {};
         else if (byId(m, payload.playerId)) {
-          if (payload.roleId && ROLES[payload.roleId]) m.manualRoles[payload.playerId] = payload.roleId;
+          if (payload.roleId && roleInMode(payload.roleId, modeOf(m.settings.preset))) m.manualRoles[payload.playerId] = payload.roleId;
+          else if (payload.roleId) throw new GameError('That role is not part of this game mode.');
           else delete m.manualRoles[payload.playerId];
         }
         m.stateVersion++;
@@ -302,7 +311,45 @@ export class RoomManager {
     }
   }
 
+  /** Is a shared scene still playing? */
+  holding(room) {
+    return !!room.match.holdUntil && room.match.holdUntil > this.clock();
+  }
+
+  /**
+   * Stamp new public events with their shared scene window and hold the table
+   * until the sequence ends: the new phase's timer starts afterwards, and a
+   * timer already running pauses for scenes that open mid-phase.
+   */
+  stampScenes(room) {
+    const m = room.match;
+    const log = m.publicLog;
+    const now = this.clock();
+    if ((room.stampedTo ?? -1) >= log.length) room.stampedTo = -1; // a rematch reset the record
+    const from = room.stampedTo ?? log.length - 1;
+    const batch = log.slice(from + 1);
+    room.stampedTo = log.length - 1;
+    const phaseMoved = room.lastPhaseId !== undefined && room.lastPhaseId !== m.phaseId;
+    room.lastPhaseId = m.phaseId;
+    if (!this.interludes || !batch.length) return;
+    const before = Math.max(now, m.holdUntil ?? 0);
+    let cursor = before;
+    const ctx = { rules: m.activeRules?.length ?? 0 };
+    for (const l of batch) {
+      const ms = interludeMs(l, batch, ctx);
+      if (!ms) continue;
+      l.mAt = cursor; l.mDur = ms;
+      cursor += ms;
+    }
+    if (cursor === before) return;
+    m.holdUntil = cursor;
+    if (!m.deadline) return;
+    if (SHOWCASE.has(m.phase)) m.deadline = Math.max(m.deadline, cursor + 1500);
+    else m.deadline += phaseMoved ? cursor - now : cursor - before;
+  }
+
   changed(room) {
+    this.stampScenes(room);
     this.syncPresence(room);
     this.arm(room);
     this.broadcast(room);
@@ -321,12 +368,12 @@ export class RoomManager {
         let move = null;
         try { move = botDecide(m, p.id, this.rng); } catch { move = null; }
         if (!move) return;
-        if (move.wait) { this.wakeBots(room); return; }
+        if (move.wait || this.holding(room)) { this.wakeBots(room); return; }
         try {
           playerCommand(m, p.id, { ...move.cmd, phaseId: m.phaseId }, this.rng, this.clock());
           this.changed(room);
         } catch { /* the window moved on; try again next change */ }
-      }, this.botDelay[0] + this.rng.int(this.botDelay[1])).unref?.() ?? null);
+      }, Math.max(0, (m.holdUntil ?? 0) - this.clock()) + this.botDelay[0] + this.rng.int(this.botDelay[1])).unref?.() ?? null);
     }
   }
 
@@ -369,6 +416,8 @@ export class RoomManager {
       for (const r of data) {
         const room = { code: r.code, match: r.match, sessions: new Map(r.sessions), recovery: new Map(r.recovery), clients: new Set(), timer: null, touched: r.touched, hostSeen: this.clock(), transferVotes: new Set(), moderatorName: r.moderatorName };
         for (const p of room.match.players) p.connected = false;
+        room.stampedTo = room.match.publicLog.length - 1;
+        room.lastPhaseId = room.match.phaseId;
         this.rooms.set(r.code, room);
         this.arm(room);
       }

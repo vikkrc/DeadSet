@@ -2,7 +2,7 @@
 import {
   ROLES, PRESETS, RULE_CARDS, RULE_IDS, COPY_SENSITIVE, SCENARIO, MIN_PLAYERS, ABS_MAX_PLAYERS, LANGS,
   DREAM_WEIGHTS, DREAM_WEIGHT_MAX, SMALL_TABLE, STANDARD_EXTENDED, FULL_EXTENDED,
-  MISSION_OPTIONAL, MISSION_DEATH, MISSION_MIN, MISSION_MAX,
+  MISSION_OPTIONAL, MISSION_DEATH, MISSION_MIN, MISSION_MAX, modeOf, roleInMode,
 } from './content.js';
 import { shuffle, pick, seededRng } from './rng.js';
 
@@ -73,13 +73,31 @@ const clampInt = (v, lo, hi, d) => {
 /** Merge an untrusted client patch into settings, coercing every field. */
 export function applySettingsPatch(settings, patch = {}) {
   const s = structuredClone(settings);
-  if (patch.preset && PRESETS[patch.preset]) {
+  // Switching modes (Classic / Missions / Exorcism): each mode keeps its own
+  // last preset and options, so going there and back loses nothing.
+  if (patch.mode && ['classic', 'missions', 'exorcism'].includes(patch.mode) && patch.mode !== modeOf(s.preset)) {
+    const from = modeOf(s.preset);
+    s.memory = { ...(s.memory || {}) };
+    s.memory[from] = { preset: s.preset, dreams: s.dreams, doomsday: s.doomsday, rules: structuredClone(s.rules) };
+    const back = s.memory[patch.mode];
+    if (patch.mode === 'classic') {
+      s.preset = back?.preset && PRESETS[back.preset] && modeOf(back.preset) === 'classic' ? back.preset : 'standard';
+      if (back) { s.dreams = back.dreams; s.doomsday = back.doomsday; s.rules = structuredClone(back.rules); } else { s.dreams = PRESETS[s.preset].dreams; s.doomsday = PRESETS[s.preset].doomsday; }
+    } else s.preset = patch.mode;
+  } else if (patch.preset && PRESETS[patch.preset] && modeOf(patch.preset) === modeOf(s.preset)) {
+    // Within a mode (e.g. Classic's Standard → Full Deck), presets clamp the classic options.
     s.preset = patch.preset;
     const p = PRESETS[s.preset];
-    s.dreams = p.dreams;
-    s.doomsday = p.doomsday;
-    s.rules.count = Math.max(p.rulesMin, Math.min(p.rulesMax, s.rules.count));
-    s.rules.selected = s.rules.selected.filter((r) => p.ruleIds.includes(r)).slice(0, p.rulesMax);
+    if (modeOf(s.preset) === 'classic') {
+      s.dreams = p.dreams;
+      s.doomsday = p.doomsday;
+      s.rules.count = Math.max(p.rulesMin, Math.min(p.rulesMax, s.rules.count));
+      s.rules.selected = s.rules.selected.filter((r) => p.ruleIds.includes(r)).slice(0, p.rulesMax);
+    }
+  } else if (patch.preset && PRESETS[patch.preset]) {
+    // A preset from another mode: switch modes properly.
+    const switched = applySettingsPatch(settings, { mode: modeOf(patch.preset) });
+    return applySettingsPatch(switched, { ...patch, mode: undefined });
   }
   const preset = PRESETS[s.preset];
   if (Array.isArray(patch.extendedPool)) {
@@ -90,7 +108,7 @@ export function applySettingsPatch(settings, patch = {}) {
     const out = {};
     for (const [id, c] of Object.entries(patch.customRoles)) {
       const k = clampInt(c, 0, ABS_MAX_PLAYERS, 0);
-      if (ROLES[id] && ROLES[id].set !== 'missions' && k > 0) out[id] = k;
+      if (roleInMode(id, 'classic') && k > 0) out[id] = k;
     }
     s.customRoles = out;
   }
@@ -159,7 +177,7 @@ export function parseCustomDeck(text) {
   const out = [];
   const errors = [];
   const byName = {};
-  for (const r of Object.values(ROLES).filter((x) => x.set !== 'missions')) {
+  for (const r of Object.values(ROLES).filter((x) => roleInMode(x.id, 'classic'))) {
     byName[r.name.toLowerCase()] = r.id;
     byName[r.id.toLowerCase()] = r.id;
     if (r.alias) byName[r.alias.toLowerCase()] = r.id;

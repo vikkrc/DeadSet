@@ -4,6 +4,7 @@
 import { glyph } from './icons.js';
 import { t, th, tmh, roleF, mcardF, missionStoryLine, scen } from './i18n.js';
 import { backdropHtml } from './backdrops.js';
+import { seatLayout } from './layout.js';
 
 export const isMissionPhase = (ph) => typeof ph === 'string' && ph.startsWith('M_');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -89,6 +90,9 @@ export function missionMarks(v) {
   add(M.haunted, `<span class="mk haunt" title="${esc(t('Haunted'))}">${glyph('veiled')}</span>`);
   if (M.proposal?.ward && ['M_VOTE', 'M_MISSION', 'M_RESULT'].includes(v.phase)) add(M.proposal.ward, `<span class="mk ward">${glyph('guardian')}</span>`);
   for (const id of M.unmasked ?? []) add(id, `<span class="mk unmask">${glyph('death')}</span>`);
+  const heat = M.hunchHeat ?? {};
+  const most = Math.max(1, ...Object.values(heat));
+  for (const [id, n] of Object.entries(heat)) add(id, `<span class="mk heat" style="--h:${(n / most).toFixed(2)}" title="${esc(th(n === 1 ? '{n} hunch' : '{n} hunches', { n }))}">${glyph('mentalist')}${n}</span>`);
   return marks;
 }
 
@@ -466,6 +470,39 @@ export function missionMomentHtml(m, h) {
         ${m.hit ? '' : `<p class="m-sub small late">${th('The Medium was {b}.', { b: m.medium })}</p>`}`;
     default: return '';
   }
+}
+
+// ── Hunches: who suspected whom ────────────────────────────────────────────
+/** Arrows between seats, one per (hunter → suspect) pair, thicker for repeated hunches. Goes in a ring's `extra`. */
+export function hunchArrowsSvg(v) {
+  const list = v.missions?.hunches;
+  if (!list?.length) return '';
+  const seated = [...v.players].sort((a, b) => a.seat - b.seat);
+  const { pos } = seatLayout(seated.length);
+  const at = (id) => { const i = seated.findIndex((p) => p.id === id); return i < 0 ? null : pos[i]; };
+  const death = new Set(v.players.filter((p) => p.alignment === 'DEATH').map((p) => p.id));
+  const pairs = {};
+  for (const x of list) { const k = `${x.pid}>${x.target}`; pairs[k] = (pairs[k] || 0) + 1; }
+  const paths = Object.entries(pairs).map(([k, n], i) => {
+    const [a, b] = k.split('>');
+    const p1 = at(a); const p2 = at(b);
+    if (!p1 || !p2) return '';
+    // pull the curve toward the centre; trim both ends so arrows stop at the portrait's edge
+    const dx = p2.x - p1.x; const dy = p2.y - p1.y; const len = Math.hypot(dx, dy) || 1;
+    const trim = 6.5;
+    const x1 = p1.x + (dx / len) * trim; const y1 = p1.y + (dy / len) * trim;
+    const x2 = p2.x - (dx / len) * trim; const y2 = p2.y - (dy / len) * trim;
+    const mx = ((x1 + x2) / 2) * 0.7 + 50 * 0.3; const my = ((y1 + y2) / 2) * 0.7 + 50 * 0.3;
+    const cls = death.has(b) ? 'hit' : death.has(a) ? 'liar' : '';
+    return `<path class="${cls}" d="M${x1.toFixed(2)} ${y1.toFixed(2)} Q${mx.toFixed(2)} ${my.toFixed(2)} ${x2.toFixed(2)} ${y2.toFixed(2)}" stroke-width="${(1 + Math.min(4, n) * 0.8).toFixed(1)}" style="--i:${i}" marker-end="url(#ha-${cls || 'miss'})"/>`;
+  }).join('');
+  const marker = (id) => `<marker id="ha-${id}" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="3.2" markerHeight="3.2" orient="auto-start-reverse"><path d="M0 0L6 3L0 6z" class="${id}"/></marker>`;
+  return `<svg class="hunch-arrows" viewBox="0 0 100 100" data-key="hunch-arrows" aria-hidden="true"><defs>${marker('hit')}${marker('liar')}${marker('miss')}</defs>${paths}</svg>`;
+}
+
+/** Caption for the arrows. */
+export function hunchLegend() {
+  return `<p class="hunch-legend small muted" data-key="hunch-legend"><b>${t('Who suspected whom')}</b> · <span class="hl hit">${t('on Death')}</span> <span class="hl miss">${t('on the Living')}</span> <span class="hl liar">${t('from Death')}</span></p>`;
 }
 
 // ── End screen extras ──────────────────────────────────────────────────────
