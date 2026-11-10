@@ -1717,3 +1717,66 @@ body.is-board .lot-disc { width: 70px; height: 70px; } body.is-board .lot-seat s
 .side-panel.done { border-color: rgba(233, 194, 122, 0.55); }
 .side-panel.failed { border-color: rgba(226, 88, 94, 0.45); }
 .side-art.done { color: var(--gold); } .side-art.failed { color: var(--blood-ink); }
+
+/* ── Dead Set: Exorcism ─────────────────────────────────────────────────── */
+.xball { --size: min(64vw, 260px); position: relative; width: var(--size); margin: 18px auto 10px; display: grid; justify-items: center; }
+.xball.big { --size: min(78vw, 320px); }
+.xboard .xball.big { --size: min(36vh, 380px); }
+.xb-glow { position: absolute; inset: -18%; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--tint) 35%, transparent), transparent 62%); filter: blur(6px); animation: xbPulse 4.2s ease-in-out infinite; pointer-events: none; }
+@keyframes xbPulse { 50% { opacity: 0.55; transform: scale(0.96); } }
+.xb-orb { position: relative; width: var(--size); aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 35% 30%, #2a2140, #07050c 70%);
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8), 0 0 0 1px color-mix(in srgb, var(--tint) 40%, transparent), 0 18px 40px rgba(0, 0, 0, 0.6); }
+.xball-gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.xb-css { position: absolute; inset: 0; display: none; }
+.xball.no-gl .xb-css { display: block; }
+.xb-css i { position: absolute; inset: -20%; border-radius: 50%; background: radial-gradient(ellipse 40% 30% at 40% 50%, color-mix(in srgb, var(--tint) 55%, transparent), transparent 70%); animation: xbSwirl 9s linear infinite; mix-blend-mode: screen; }
+.xb-css i:nth-child(2) { animation-duration: 13s; animation-direction: reverse; background: radial-gradient(ellipse 30% 45% at 60% 45%, color-mix(in srgb, var(--tint) 45%, transparent), transparent 70%); }
+.xb-css i:nth-child(3) { animation-duration: 17s; background: radial-gradient(ellipse 50% 25% at 50% 65%, rgba(255, 255, 255, 0.12), transparent 70%); }
+.xball.clear .xb-css i { opacity: 0.45; }
+@keyframes xbSwirl { to { transform: rotate(360deg); } }
+.xb-in { position: absolute; inset: 14%; display: grid; place-content: center; text-align: center; gap: 4px; pointer-events: none; }
+.xb-k { font: 600 10px/1.3 var(--sans, sans-serif); letter-spacing: 0.16em; text-transform: uppercase; color: color-mix(in srgb, var(--tint) 70%, #fff); opacity: 0.9; }
+.xb-word { font-family: var(--serif, serif); font-size: clamp(22px, calc(var(--size) / 7.5), 48px); line-height: 1.05; color: #fff; text-shadow: 0 0 18px var(--tint), 0 0 4px rgba(0, 0, 0, 0.8); overflow-wrap: anywhere; }
+.xb-sub { font-size: 12px; color: rgba(255, 255, 255, 0.78); text-shadow: 0 1px 4px #000; }
+.xball:not(.clear) .xb-word { opacity: 0; }
+.xball.clear .xb-word { animation: xbAppear 2.4s var(--ease) both; animation-delay: 0.6s; }
+@keyframes xbAppear { from { opacity: 0; filter: blur(10px); transform: scale(0.92); } to { opacity: 1; filter: none; transform: none; } }
+.xb-stand { width: calc(var(--size) * 0.5); height: calc(var(--size) * 0.11); margin-top: -6px; border-radius: 0 0 40% 40% / 0 0 100% 100%; background: linear-gradient(#3a2c1c, #1b140c); box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6); }
+.xball-btn { display: block; margin: 0 auto; background: none; border: 0; padding: 0; cursor: pointer; color: inherit; }
+.xball.demon .xb-word { font-size: clamp(18px, calc(var(--size) / 10), 34px); }
+@media (prefers-reduced-motion: reduce) { .xb-glow, .xb-css i, .xball.clear .xb-word { animation: none !important; } }
+
+.x-turn { text-align: center; margin: 14px auto; max-width: 30rem; }
+.x-turn h2 { font-family: var(--serif, serif); font-size: 30px; margin: 4px 0 6px; }
+.x-turn.me h2 { color: var(--gold); }
+.x-turn.demon h2 { color: var(--blood-ink); }
+.x-input { margin-top: 10px; text-align: center; font-size: 18px; }
+.x-order { list-style: none; padding: 0; margin: 10px auto; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; max-width: 36rem; }
+.x-order li { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid var(--line-2, #333); border-radius: 999px; font-size: 13px; opacity: 0.7; }
+.x-order li.said { opacity: 1; }
+.x-order li.now { opacity: 1; border-color: var(--gold); box-shadow: 0 0 0 2px rgba(233, 194, 122, 0.25); animation: xNow 1.6s ease-in-out infinite; }
+@keyframes xNow { 50% { box-shadow: 0 0 0 6px rgba(233, 194, 122, 0.08); } }
+.x-order .xo-n { font: 600 10px/1 var(--mono, monospace); opacity: 0.6; }
+.x-order small { color: var(--gold); font-style: italic; }
+.x-order small .glyph { font-size: 11px; }
+.xgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 10px 0; }
+.xg-cell { padding: 10px 4px; border: 1px solid var(--line-2, #333); border-radius: 8px; text-align: center; font-size: 13px; background: rgba(255, 255, 255, 0.03); color: inherit; overflow-wrap: anywhere; animation: fadeIn 0.5s var(--ease) both; animation-delay: calc(var(--i) * 0.03s); }
+button.xg-cell { cursor: pointer; font: inherit; font-size: 13px; }
+.xg-cell.sel { border-color: var(--blood-ink); background: rgba(226, 88, 94, 0.18); }
+.xg-cell.mark { border-color: var(--gold); background: rgba(233, 194, 122, 0.18); color: #fff; font-weight: 600; }
+.xboard .xg-cell { font-size: clamp(14px, 1.4vw, 22px); padding: 1.6vh 6px; }
+.x-gridwrap { margin: 8px 0; }
+.x-explain .x-steps { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 8px; }
+.x-steps li { display: flex; gap: 10px; align-items: flex-start; animation: fadeIn 0.5s var(--ease) both; animation-delay: calc(var(--i) * 0.08s); }
+.x-steps .xs-g { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line-2, #333); color: var(--gold); flex: none; }
+.x-steps b { display: block; } .x-steps small { color: var(--muted, #aaa); }
+.x-cats .chips-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.chipbtn { padding: 6px 10px; border-radius: 999px; border: 1px solid var(--line-2, #333); background: none; color: inherit; font: inherit; font-size: 12px; opacity: 0.55; }
+.chipbtn.on { opacity: 1; border-color: var(--gold); color: var(--gold); }
+button.chipbtn { cursor: pointer; }
+.bars .b-name small { display: block; font-size: 10px; opacity: 0.65; }
+.xboard .x-cols { display: grid; grid-template-columns: 1.2fr 1fr; gap: 3vw; padding: 2vh 3vw; align-items: start; }
+.xboard .x-left { display: grid; justify-items: center; gap: 1vh; }
+.xboard .x-order li { font-size: clamp(13px, 1.2vw, 20px); }
+.xboard .b-now { text-align: center; }
+@media (max-width: 900px) { .xboard .x-cols { grid-template-columns: 1fr; } }

@@ -14,6 +14,7 @@ import { resolveNight } from './night.js';
 import { checkVictory } from './victory.js';
 import { ballotWeight, tally } from './day.js';
 import { startMissions, missionCommand, missionAdvance, isMissionPhase } from './missions.js';
+import { startExorcism, exorcismCommand, exorcismAdvance, isExorcismPhase } from './exorcism.js';
 
 export { GameError };
 
@@ -35,7 +36,7 @@ export function newMatch({ id, code, hostId, moderated = false }) {
     scenario: null, activeRules: [], config: null,
     publicLog: [], privateLog: {}, chats: {},
     day: null, night: null, pendingStatuses: [], gamblerBets: [],
-    winner: null, endReason: null, manualRoles: {}, hostTransferVotes: [], M: null,
+    winner: null, endReason: null, manualRoles: {}, hostTransferVotes: [], M: null, X: null,
   };
 }
 
@@ -120,13 +121,15 @@ export function setupReport(m) {
 }
 
 // ── Start / Night 0 ────────────────────────────────────────────────────────
-export function startMatch(m, rng, now, { forceRoles = null } = {}) {
+export function startMatch(m, rng, now, { forceRoles = null, forceWord = null } = {}) {
   if (m.phase !== 'LOBBY') throw new GameError('The match has already started.');
   const report = setupReport(m);
   if (!report.ok) throw new GameError(report.errors[0]);
   if (!forceRoles && report.notReady) throw new GameError('Everyone must tap Ready first.');
   const n = m.players.length;
   if (PRESETS[m.settings.preset]?.missions) { startMissions(m, rng, now, { forceRoles }); return; }
+  if (PRESETS[m.settings.preset]?.exorcism) { startExorcism(m, rng, now, { forceRoles, forceWord }); return; }
+  m.X = null;
   m.M = null;
   let assignment;
   if (forceRoles) {
@@ -597,6 +600,9 @@ function closeActions(m, now) {
 export function hostAdvance(m, rng, now, { skipAll = false } = {}) {
   rngRef = rng;
   if (isMissionPhase(m.phase)) { missionAdvance(m, rng, now); return; }
+  if (isExorcismPhase(m.phase)) { exorcismAdvance(m, rng, now); return; }
+  // Exorcism: the end screen returns the table to the same lobby (settings and scores kept).
+  if (m.phase === 'ENDED' && m.config?.mode === 'exorcism') { rematch(m, { ready: true }); return; }
   switch (m.phase) {
     case 'NIGHT_0_REVEAL': pub(m, 'Night 0 ends.', 'phase'); beginDay(m, now); break;
     case 'DAY_PREP': closeMorning(m, now); break;
@@ -630,15 +636,18 @@ export function abortMatch(m, now) {
   endMatch(m, { winner: 'ABORTED', reason: 'No faction is awarded a win.' }, now);
 }
 
-export function rematch(m) {
+export function rematch(m, { ready = false } = {}) {
   if (m.phase !== 'ENDED') throw new GameError('Finish the current match first.');
-  const keep = m.players.map((p) => ({ id: p.id, name: p.name, seat: p.seat, connected: p.connected }));
+  const keep = m.players.map((p) => ({ id: p.id, name: p.name, seat: p.seat, connected: p.connected, avatar: p.avatar, bot: p.bot }));
+  const scores = m.xScores;
   const fresh = newMatch({ id: m.id, code: m.code, hostId: m.hostId, moderated: m.moderated });
   Object.assign(m, { ...fresh, settings: m.settings, stateVersion: m.stateVersion + 1, phaseSeq: m.phaseSeq + 1 });
   m.phaseId = `LOBBY:${m.phaseSeq}`;
+  if (scores) m.xScores = scores;
   for (const k of keep) {
     const p = addPlayer(m, k);
     p.connected = k.connected;
+    if (ready || p.bot) p.ready = true;
   }
 }
 
@@ -650,6 +659,11 @@ export function playerCommand(m, actorId, cmd, rng, now) {
   const { type, payload = {} } = cmd;
   if (type !== 'chat.send' && type !== 'lobby.ready' && cmd.phaseId && cmd.phaseId !== m.phaseId) {
     throw new GameError('That window has closed.', 'STALE');
+  }
+  if (type.startsWith('x.')) {
+    if (!m.X || !isExorcismPhase(m.phase)) throw new GameError('That window has closed.', 'STALE');
+    exorcismCommand(m, p, type, payload, rng, now);
+    return;
   }
   if (type.startsWith('m.')) {
     if (!m.M || !isMissionPhase(m.phase)) throw new GameError('That window has closed.', 'STALE');
@@ -862,7 +876,7 @@ export function chatChannels(m, p) {
   if (!p || m.phase === 'LOBBY' || m.phase === 'ENDED') return out;
   const remote = m.settings.transport === 'remote';
   const muted = p.statuses.some((s) => s.type === 'MUTE');
-  const inDay = isDayPhase(m.phase) || (isMissionPhase(m.phase) && !['M_REVEAL', 'M_NIGHT'].includes(m.phase));
+  const inDay = isDayPhase(m.phase) || (isMissionPhase(m.phase) && !['M_REVEAL', 'M_NIGHT'].includes(m.phase)) || isExorcismPhase(m.phase);
   if (remote && inDay) {
     if (hasRule(m, 'FOG_OF_WAR')) {
       const seats = [...m.players].sort((a, b) => a.seat - b.seat);

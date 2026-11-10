@@ -3,6 +3,7 @@
 import { gazetteHtml } from './gazette.js';
 import { seatLayout } from './layout.js';
 import { backdropHtml } from './backdrops.js';
+import { exorcismBoard } from './exorcism.js';
 import { missionBoardStage, missionBoardRing, gridHtml, hunchArrowsSvg, hunchLegend } from './missions.js';
 
 /** Which Rule cards shape the current phase, with a one-line note. */
@@ -35,7 +36,7 @@ export function activeRuleNotes(v) {
 export function moodFor(v) {
   switch (v.phase) {
     case 'LOBBY': return 'lobby';
-    case 'ENDED': return { DEATH: 'endDeath', NON_DEATH: 'endLiving', JESTER: 'endJester', LOVERS: 'endLovers', CULT: 'endCult', RIPPER: 'endRipper' }[v.winner] ?? 'endDraw';
+    case 'ENDED': return { DEMON: 'endDeath', DEATH: 'endDeath', NON_DEATH: 'endLiving', JESTER: 'endJester', LOVERS: 'endLovers', CULT: 'endCult', RIPPER: 'endRipper' }[v.winner] ?? 'endDraw';
     case 'NIGHT_0_REVEAL': return 'ceremony';
     case 'NIGHT_DREAM_SWAP': case 'NIGHT_ACTIONS': case 'NIGHT_RESOLVING': return v.bloodMoon ? 'bloodmoon' : 'night';
     case 'M_REVEAL': return 'mGather';
@@ -46,6 +47,11 @@ export function moodFor(v) {
     case 'M_NIGHT': return 'mCandle';
     case 'M_LAST_STAND': return 'mStand';
     case 'M_RECKONING': return 'mReckon';
+    case 'X_REVEAL': case 'X_LOTTERY': return 'mGather';
+    case 'X_CLUES': return 'mCamp';
+    case 'X_DISCUSS': return 'discussion';
+    case 'X_VOTE': return 'mVote';
+    case 'X_GUESS': return 'mReckon';
     case 'DAY_PREP': return 'morning';
     case 'DAY_DISCUSSION': return 'discussion';
     case 'DAY_DEFENSE': return 'defense';
@@ -119,6 +125,8 @@ export function boardScreen(v, h) {
         </section>
       </div></main>`;
   }
+
+  if (v.mode === 'exorcism' && v.exorcism) return exorcismBoard(v, { header });
 
   // ── 1 · Living table + 2 · sky + 6 · threads + 17 · plaques ────────────
   const players = [...v.players].sort((a, b) => a.seat - b.seat);

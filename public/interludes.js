@@ -51,7 +51,8 @@ export function scenesFor(l, batch = [], ctx = {}) {
   const has = (ev) => batch.some((x) => x.ev === ev);
   switch (l.ev) {
     case 'night0': return [['night0', { rules: ctx.rules ?? 0 }]];
-    case 'm-start': case 'x-start': return [['night0', { rules: 0 }]];
+    case 'm-start': return [['night0', { rules: 0 }]];
+    case 'x-start': return [['xball']];
     case 'day1': return [['day1']];
     case 'nightfall': case 'm-night': return [['nightfall']];
     case 'bloodmoon': return [['bloodmoon']];
@@ -62,7 +63,7 @@ export function scenesFor(l, batch = [], ctx = {}) {
     case 'coinflip': return [['coin']];
     case 'heartbreak': case 'shot': case 'exchange': return [['death']];
     case 'scapegoat': return has('tally') ? [] : [['death']];
-    case 'm-lottery': case 'x-lottery': return [[l.ev === 'm-lottery' ? 'mlottery' : 'xlottery']];
+    case 'm-lottery': case 'x-lottery': return [['mlottery']];
     case 'm-lantern': return [['mlantern']];
     case 'm-card': return [['mintro'], ['mcard']];
     case 'm-votes': return [['mvotes']];

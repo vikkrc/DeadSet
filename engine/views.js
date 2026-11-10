@@ -6,6 +6,7 @@ import {
   byId, nameOf, hasRule, deathTeam, upcomingNight, isDayPhase,
 } from './state.js';
 import { setupReport, nominees, chatChannels, ballotWeight } from './game.js';
+import { exorcismPublic, exorcismAction, exorcismProgress, exorcismSecrets, xKnowledge, isExorcismPhase, X_ADVANCE_LABEL } from './exorcism.js';
 import { missionPublic, missionAction, missionMe, missionSecrets, isMissionPhase, MISSION_ADVANCE_LABEL } from './missions.js';
 
 const roleCard = (id) => {
@@ -15,6 +16,7 @@ const roleCard = (id) => {
 };
 
 function progress(m) {
+  if (isExorcismPhase(m.phase)) return exorcismProgress(m);
   const N = m.night;
   switch (m.phase) {
     case 'LOBBY': return { label: 'ready', done: m.players.filter((p) => p.ready).length, total: m.players.length };
@@ -45,6 +47,7 @@ const ADVANCE_LABEL = {
   NIGHT_DREAM_SWAP: 'Open night actions now',
   NIGHT_ACTIONS: 'Bring the dawn',
   ...MISSION_ADVANCE_LABEL,
+  ...X_ADVANCE_LABEL,
 };
 
 export function publicView(m, now = Date.now()) {
@@ -78,6 +81,8 @@ export function publicView(m, now = Date.now()) {
     mode: m.phase === 'LOBBY' || !m.config ? modeOf(m.settings.preset) : m.config.mode ?? (m.config.missions ? 'missions' : 'classic'),
   };
   if (m.M && m.phase !== 'LOBBY') v.missions = missionPublic(m);
+  if (m.X && m.phase !== 'LOBBY') v.exorcism = exorcismPublic(m);
+  if (m.xScores && Object.keys(m.xScores).length) v.xScores = m.xScores;
   // The end-of-game recap reveals every action, so it follows the role reveal.
   if (revealAll && m.history?.length) v.recap = m.history;
   if (m.day && isDayPhase(m.phase)) {
@@ -95,7 +100,7 @@ export function publicView(m, now = Date.now()) {
   if (m.phase === 'LOBBY') {
     v.settings = m.settings;
     v.setup = setupReport(m);
-    v.presets = Object.values(PRESETS).map((p) => ({ id: p.id, name: p.name, blurb: p.blurb, min: p.min, max: p.max, rulesMin: p.rulesMin, rulesMax: p.rulesMax, ruleIds: p.ruleIds, recommended: !!p.recommended, custom: !!p.custom, missions: !!p.missions, pool: p.pool }));
+    v.presets = Object.values(PRESETS).map((p) => ({ id: p.id, name: p.name, blurb: p.blurb, min: p.min, max: p.max, rulesMin: p.rulesMin, rulesMax: p.rulesMax, ruleIds: p.ruleIds, recommended: !!p.recommended, custom: !!p.custom, missions: !!p.missions, exorcism: !!p.exorcism, pool: p.pool }));
   }
   return v;
 }
@@ -130,6 +135,7 @@ export function playerView(m, pid, now = Date.now()) {
     ready: p.ready,
   };
   if (m.M && started) Object.assign(me, missionMe(m, p));
+  if (m.X && started) me.x = xKnowledge(m, p);
   if (started && p.lover) me.lover = { id: p.lover, name: nameOf(m, p.lover), alive: !!byId(m, p.lover)?.alive };
   if (started && p.alignment === 'CULT') me.cultmates = m.players.filter((x) => x.alignment === 'CULT' && x.id !== p.id).map((x) => ({ id: x.id, name: x.name, alive: x.alive }));
   // Death teammates: only for currently active (or about-to-be-active) members.
@@ -158,6 +164,7 @@ export function playerView(m, pid, now = Date.now()) {
 
 function actionFor(m, p) {
   if (isMissionPhase(m.phase)) return missionAction(m, p);
+  if (isExorcismPhase(m.phase)) return exorcismAction(m, p);
   const N = m.night;
   const d = m.day;
   switch (m.phase) {
@@ -262,6 +269,7 @@ export function moderatorView(m, now = Date.now()) {
     ballot: m.day?.ballots[p.id] ?? null,
   }));
   if (m.M && m.phase !== 'LOBBY') v.missionSecrets = missionSecrets(m);
+  if (m.X && m.phase !== 'LOBBY') v.xSecrets = exorcismSecrets(m);
   if (N?.death) v.deathTeam = { members: N.death.members, capacity: N.death.capacity, proposals: N.death.proposals, confirmed: N.death.confirmed };
   v.private = [];
   v.action = { type: 'moderator' };

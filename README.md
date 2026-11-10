@@ -6,6 +6,8 @@ A multiplayer social-deduction party game played on everyone's own phone. One au
 
 **→ Dead Set: Missions**, the team-and-sabotage mode for 5–12 players: [MISSIONS.md](MISSIONS.md)
 
+**→ Dead Set: Exorcism**, the word game of bluff for 3–12 players: [EXORCISM.md](EXORCISM.md)
+
 ## Run it
 
 Requires Node.js 18+. There are **no dependencies** to install.

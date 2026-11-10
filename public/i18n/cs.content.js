@@ -3,6 +3,8 @@ export default {
   and: 'a',
   numbers: ['žádný', 'jeden', 'dva', 'tři', 'čtyři', 'pět', 'šest', 'sedm', 'osm', 'devět', 'deset'],
   roles: {
+    X_LIVING: { name: "Živý", when: "Vždy", summary: "V křišťálové kouli vidíš heslo. Řekni slovo, které dokáže, že ho znáš, ale nedej ho Démonovi.", detail: "Příliš jasné, a Démon heslo zjistí. Příliš nejasné, a stůl podezírá tebe. Pak označte Démona." },
+    X_DEMON: { name: "Démon", when: "Vždy", summary: "Vidíš jen kategorii. Splyň s ostatními: řekni slovo, jako bys heslo znal.", detail: "Poslouchej ostatní a rozlušti heslo. Když stůl označí někoho jiného, vyhráváš. Když tě chytí, jeden správný pokus stejně vyhraje." },
     M_JESTER: { name: "Šašek", when: "Vždy", summary: "Vyhráváš sám, když tě stůl označí v Posledním vzdoru nebo tě Ženec určí v Zúčtování.", detail: "Nejsi Živý ani ze Smrti: Médium tě nevidí a Svíčka tě ukáže jako Živého. Na misi můžeš hrát Úspěch i Sabotáž. Působ podezřele, ale ne moc." },
     TWIN: { name: "Dvojče", when: "Vždy", summary: "Dvojčata jsou dvě. Znáte se a oba patříte k Živým.", detail: "Můžeš hrát jen Úspěch. Věř svému dvojčeti, ale pozor: když se za sebe budete zaručovat moc nahlas, Smrt bude vědět, kam se dívat." },
     UNDERTAKER: { name: "Hrobník", when: "Po neúspěšné misi", summary: "Když mise selže, dozvíš se, kolik hráčů Smrti bylo v tom týmu.", detail: "Počítají se všichni hráči Smrti, i Zahalený a Tulák, ať zahráli jakoukoli kartu. Slyšíš to jen ty. Můžeš hrát jen Úspěch." },
@@ -120,6 +122,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Mstiví duchové', text: 'Každý vyřazený hráč může každý den odevzdat jeden hlas ducha s váhou 1.', enforcement: 'Duchové nemohou nominovat, používat schopnosti ani ovlivnit Pravidlo většiny.' },
   },
   presets: {
+    exorcism: { name: "Dead Set: Exorcismus", blurb: "Slovní hra plná blafování. V křišťálové kouli všichni vidí heslo, kromě Démona. Každý jedno slovo, pak odhalte Démona." },
     missions: { name: "Dead Set: Mise", blurb: "Týmy, hlasování a sabotáž. Nikdo neumírá: veďte mise, čtěte hlasy a najděte Smrt dřív, než ona najde Médium." },
     standard: { name: 'Standard', blurb: 'Zamýšlený zážitek z Dead Set. Deset rozšířených rolí od 7 hráčů, Sen pro každého každou noc, 1–3 karty pravidel.' },
     classic: { name: 'Klasika / Učení', blurb: 'Na učení. Jen základní role — rozšířená místa obsadí Nevinní. Sny ve výchozím stavu vypnuté, nejvýš jedno jednoduché pravidlo.' },
@@ -145,6 +148,16 @@ export default {
     'Smrt hlasovala s městem. Samozřejmě.',
   ],
   guide: {
+    exorcismH: "Dead Set: Exorcismus",
+    exorcism: `<p>Slovní hra plná blafování pro 3–12 hráčů, vybírá se v lobby. Na každém telefonu platí jazyk stolu, aby se slova shodovala.</p>
+<ol>
+<li><b>Křišťálová koule.</b> Všichni vidí kategorii. Živí vidí i heslo; Démon (jeden, od 7 hráčů dva) ne, nanejvýš dostane nejasný šepot, pokud to hostitel povolí.</li>
+<li><b>Los.</b> Los určí, kdo začíná; pak se jde dokola podle míst.</li>
+<li><b>Každý jedno slovo.</b> Když jsi na řadě, řekni jedno slovo související s heslem a podrž tlačítko v telefonu. Dokaž, že ho znáš, ale nedej ho Démonovi. Volitelně se slova i píšou a zobrazí na televizi.</li>
+<li><b>Označte Démona.</b> Proberte to a pak všichni hlasují. Když označíte Živého (nebo je nerozhodně a mince je vypnutá), Démon vyhraje.</li>
+<li><b>Poslední pokus.</b> Odhalený Démon smí jednou hádat heslo, z mřížky 4×4 nebo napsáním. Když se trefí, stejně vyhraje.</li>
+</ol>
+<p>Kolo končí ve stejném lobby se stejným nastavením a body se sčítají: za výhru Živí +1, Démoni +2.</p>`,
     missionsH: "Dead Set: Mise",
     missions: `<p>Druhý režim pro 5–12 hráčů, který se vybírá v lobby. Nikdo neumírá: Smrt se vloudila do výpravy a stůl ji musí najít.</p>
 <ol>

@@ -3,6 +3,8 @@ export default {
   and: 'y',
   numbers: ['ningún', 'un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'],
   roles: {
+    X_LIVING: { name: "Vivo", when: "Siempre", summary: "Ves la contraseña en la bola de cristal. Di una palabra que demuestre que la sabes, sin dársela al Demonio.", detail: "Demasiado obvia, y el Demonio descubre la contraseña. Demasiado rebuscada, y la mesa sospecha de ti. Luego nombrad al Demonio." },
+    X_DEMON: { name: "Demonio", when: "Siempre", summary: "Solo ves la categoría. Pasa desapercibido: di una palabra como si conocieras la contraseña.", detail: "Escucha a los demás y descifra la contraseña. Si la mesa nombra a otro, ganas. Si te descubren, un intento acertado gana igualmente." },
     M_JESTER: { name: "Bufón", when: "Siempre", summary: "Ganas solo si la mesa te nombra en la Última Resistencia o el Segador te nombra en el Ajuste de cuentas.", detail: "No eres Vivo ni de la Muerte: el Médium no te ve y la Vela te muestra como Vivo. En misión puedes jugar Éxito o Sabotaje. Parece culpable, pero no demasiado." },
     TWIN: { name: "Gemelo", when: "Siempre", summary: "Hay dos Gemelos. Os conocéis y los dos sois Vivos.", detail: "Solo puedes jugar Éxito. Confía en tu gemelo, pero cuidado: si os avaláis el uno al otro demasiado alto, la Muerte sabrá dónde mirar." },
     UNDERTAKER: { name: "Enterrador", when: "Tras una misión fallida", summary: "Cuando una misión falla, sabes cuántos jugadores de la Muerte iban en ese equipo.", detail: "Cuentan todos los jugadores de la Muerte, también el Velado y el Errante, jugaran la carta que jugaran. Solo tú lo oyes. Solo puedes jugar Éxito." },
@@ -120,6 +122,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Fantasmas vengativos', text: 'Cada jugador eliminado puede emitir una papeleta fantasma de peso 1 por día.', enforcement: 'Los fantasmas no pueden nominar, usar poderes ni influir en la Regla de mayoría.' },
   },
   presets: {
+    exorcism: { name: "Dead Set: Exorcismo", blurb: "Un juego de palabras y faroles. Todos ven la contraseña en la bola de cristal, menos el Demonio. Una palabra cada uno y luego desenmascarad al Demonio." },
     missions: { name: "Dead Set: Misiones", blurb: "Equipos, votos y sabotaje. Nadie muere: dirigid misiones, leed los votos y encontrad a la Muerte antes de que ella encuentre al Médium." },
     standard: { name: 'Estándar', blurb: 'La experiencia Dead Set tal como se pensó. Diez roles extendidos desde 7 jugadores, un Sueño para todos cada noche, 1–3 cartas de regla.' },
     classic: { name: 'Clásico / Aprender', blurb: 'Para enseñar. Solo roles básicos — los asientos extendidos son Inocentes. Sueños desactivados por defecto, como mucho una regla sencilla.' },
@@ -145,6 +148,16 @@ export default {
     'La Muerte votó con el pueblo. Cómo no.',
   ],
   guide: {
+    exorcismH: "Dead Set: Exorcismo",
+    exorcism: `<p>Un juego de palabras y faroles para 3–12 jugadores, que se elige en la sala. El idioma de la mesa se impone en todos los móviles, para que las palabras coincidan.</p>
+<ol>
+<li><b>La bola de cristal.</b> Todos ven la categoría. Los Vivos ven también la contraseña; el Demonio (uno, o dos desde 7 jugadores) no, como mucho un vago susurro si el anfitrión lo permite.</li>
+<li><b>El sorteo.</b> Un sorteo elige quién empieza; luego el turno da la vuelta a la mesa por orden de asiento.</li>
+<li><b>Una palabra cada uno.</b> En tu turno, di una palabra relacionada con la contraseña y mantén el botón del móvil. Demuestra que la sabes sin dársela al Demonio. Opcionalmente las palabras se escriben y salen en la tele.</li>
+<li><b>Nombrad al Demonio.</b> Hablad y luego vota todo el mundo. Si nombráis a un Vivo (o hay empate sin moneda), gana el Demonio.</li>
+<li><b>Un último intento.</b> Un Demonio descubierto tiene un intento con la contraseña, en la cuadrícula de 4×4 o escribiéndola. Si acierta, gana igualmente.</li>
+</ol>
+<p>La ronda termina en la misma sala con los mismos ajustes, y los puntos se acumulan: Vivos +1 por victoria, Demonios +2.</p>`,
     missionsH: "Dead Set: Misiones",
     missions: `<p>Un segundo modo para 5–12 jugadores, que se elige en la sala. Nadie muere: la Muerte se ha colado en la expedición, y la mesa debe encontrarla.</p>
 <ol>

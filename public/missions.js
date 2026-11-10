@@ -418,9 +418,9 @@ export function missionMomentHtml(m, h) {
           <span class="lot-disc">${x.av ? avatarSvg(x.av, 'lot-av') : `<b>${esc(x.name[0])}</b>`}</span><small>${esc(x.name)}</small></li>`;
       }).join('');
       const turn = m.spins * 360 + (m.idx / n) * 360;
-      return `<span class="kicker">${esc(t('Before the first mission'))}</span><h1 class="m-title">${letters(t('Who carries the lantern?'))}</h1>
+      return `<span class="kicker">${esc(m.kickerText ?? t('Before the first mission'))}</span><h1 class="m-title">${letters(m.titleText ?? t('Who carries the lantern?'))}</h1>
         <div class="lot-wheel" style="--turn:${turn}deg"><ul>${seats}</ul><div class="lot-hand" aria-hidden="true"><i></i>${glyph('lantern')}</div></div>
-        <div class="lot-result"><span class="kicker">${esc(t('The first Mission Leader'))}</span><b>${esc(m.leaderName)}</b></div>`;
+        <div class="lot-result"><span class="kicker">${esc(m.resultText ?? t('The first Mission Leader'))}</span><b>${esc(m.leaderName)}</b></div>`;
     }
     case 'mlantern':
       return `<div class="m-art lantern-art">${glyph('lantern')}</div><span class="kicker">${esc(t(m.chosen ? 'The lantern is handed on' : 'The lantern passes on'))}</span>

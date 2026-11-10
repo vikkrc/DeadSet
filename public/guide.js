@@ -88,6 +88,16 @@ export const GUIDE_EN = {
 <li>Each player picks their own language from the language button on the start screen, the invitation or the room menu. The host sets the table's default language in the lobby.</li>
 <li>MUTE, Fog of War and Cursed Silence are honour rules in person. Remote play enforces them in the chat.</li>
 </ul>`,
+  exorcismH: 'Dead Set: Exorcism',
+  exorcism: `<p>A word game of bluff for 3–12 players, chosen in the lobby. The table's language is used on every phone, so the words match.</p>
+<ol>
+<li><b>The crystal ball.</b> Everyone sees the category. The Living also see the password; the Demon (one, or two from 7 players) does not, and may get a vague hint if the host allows it.</li>
+<li><b>The lots.</b> A lottery picks who speaks first; then the turn goes around the table in seat order.</li>
+<li><b>One word each.</b> On your turn, say one word linked to the password, then hold the button on your phone. Prove you know it without handing it to the Demon. Optionally the words are typed and shown on the TV.</li>
+<li><b>Name the Demon.</b> Talk it over, then everyone votes. Name one of the Living (or tie, unless the coin is on) and the Demon wins.</li>
+<li><b>One last guess.</b> A caught Demon gets one guess at the password, from the 4×4 word grid or typed. Right, and the Demon still wins.</li>
+</ol>
+<p>The round ends back in the same lobby with the same settings, and the scores carry on: Living +1 for a win, Demons +2.</p>`,
   missionsH: 'Dead Set: Missions',
   missions: `<p>A second mode for 5–12 players, chosen in the lobby. Nobody dies: Death has slipped into the expedition, and the table must find it.</p>
 <ol>
@@ -112,7 +122,7 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   return `<div class="guide">
   <header class="phase-head"><span class="kicker">${G.kicker}</span><h1>${G.title}</h1>
     <p class="scenario">${G.intro}</p></header>
-  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}<a class="tag" href="#g11">${G.sidesH}</a><a class="tag" href="#g12">${G.missionsH}</a></nav>
+  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}<a class="tag" href="#g11">${G.sidesH}</a><a class="tag" href="#g12">${G.missionsH}</a><a class="tag" href="#g13">${G.exorcismH}</a></nav>
   <section id="g0"><h2>${G.basicsH}</h2>${G.basics}</section>
   <section id="g1"><h2>${G.roundH}</h2>${G.round}</section>
   <section id="g2"><h2>${G.winH}</h2>${G.win}</section>
@@ -139,5 +149,6 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   <section id="g11"><h2>${G.sidesH}</h2>${G.sides}${roles.filter((r) => r.set === 'side').map(entry).join('')}</section>
   <section id="g12"><h2>${G.missionsH}</h2>${G.missions}${roles.filter((r) => r.set === 'missions').map(entry).join('')}
     <h3>${G.missionCardsH}</h3>${(c?.missionCards ?? []).map((x) => `<div class="entry">${glyph('mission')}<div><h4>${esc(mcardF(x.id, 'name'))}</h4><p>${esc(mcardF(x.id, 'text'))}</p></div></div>`).join('')}</section>
+  <section id="g13"><h2>${G.exorcismH}</h2>${G.exorcism}${roles.filter((r) => r.set === 'exorcism').map(entry).join('')}</section>
   </div>`;
 }

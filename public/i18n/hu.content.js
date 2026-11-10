@@ -3,6 +3,8 @@ export default {
   and: 'és',
   numbers: ['nulla', 'egy', 'két', 'három', 'négy', 'öt', 'hat', 'hét', 'nyolc', 'kilenc', 'tíz'],
   roles: {
+    X_LIVING: { name: "Élő", when: "Mindig", summary: "A kristálygömbben látod a jelszót. Mondj egy szót, ami bizonyítja, hogy tudod, de ne add a Démon kezébe.", detail: "Ha túl nyilvánvaló, a Démon megtudja a jelszót. Ha túl homályos, az asztal téged gyanúsít. Aztán nevezzétek meg a Démont." },
+    X_DEMON: { name: "Démon", when: "Mindig", summary: "Csak a kategóriát látod. Olvadj be: mondj olyan szót, mintha tudnád a jelszót.", detail: "Figyeld a többieket, és fejtsd meg a jelszót. Ha az asztal mást nevez meg, nyersz. Ha elkapnak, egy jó tipp még így is győzelem." },
     M_JESTER: { name: "Bolond", when: "Mindig", summary: "Egyedül nyersz, ha az asztal téged nevez meg az Utolsó Esélyben, vagy a Kaszás téged nevez meg az Elszámolásban.", detail: "Se nem Élő, se nem a Halálé vagy: a Médium nem lát, a Gyertya Élőnek mutat. Küldetésen Sikert vagy Szabotázst is játszhatsz. Tűnj gyanúsnak, de ne túlságosan." },
     TWIN: { name: "Iker", when: "Mindig", summary: "Ketten vagytok Ikrek. Ismeritek egymást, és mindketten Élők vagytok.", detail: "Csak Sikert játszhatsz. Bízz az ikredben, de vigyázz: ha túl hangosan kezeskedtek egymásért, a Halál tudni fogja, hol keressen." },
     UNDERTAKER: { name: "Sírásó", when: "Elbukott küldetés után", summary: "Ha egy küldetés elbukik, megtudod, hány halálos játékos volt abban a csapatban.", detail: "A számba minden halálos játékos beletartozik, a Fátylas és a Kóborló is, bármit is játszottak. Csak te hallod. Csak Sikert játszhatsz." },
@@ -120,6 +122,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Bosszúálló szellemek', text: 'Minden kiesett játékos naponta egy 1 súlyú szellemszavazatot adhat le.', enforcement: 'A szellemek nem jelölhetnek, nem használhatnak képességet, és nem befolyásolják a Többségi szabályt.' },
   },
   presets: {
+    exorcism: { name: "Dead Set: Ördögűzés", blurb: "Blöffölős szójáték. A kristálygömbben mindenki látja a jelszót, kivéve a Démont. Mindenki egy szót mond, aztán leleplezitek a Démont." },
     missions: { name: "Dead Set: Küldetések", blurb: "Csapatok, szavazások és szabotázs. Senki sem hal meg: vezessetek küldetéseket, olvassátok a szavazatokat, és találjátok meg a Halált, mielőtt ő a Médiumot." },
     standard: { name: 'Alap', blurb: 'Az igazi Dead Set-élmény. Tíz kiegészítő szerep 7 játékostól, mindenkinek Álom minden éjjel, 1–3 szabálykártya.' },
     classic: { name: 'Klasszikus / Tanuló', blurb: 'Tanításhoz. Csak alapszerepek — a kiegészítő helyekre Ártatlanok kerülnek. Álmok alapból kikapcsolva, legfeljebb egy egyszerű szabály.' },
@@ -145,6 +148,16 @@ export default {
     'A Halál a várossal szavazott. Hát persze.',
   ],
   guide: {
+    exorcismH: "Dead Set: Ördögűzés",
+    exorcism: `<p>Blöffölős szójáték 3–12 játékosnak, a lobbiban választható. Minden telefonon az asztal nyelve szól, hogy a szavak egyezzenek.</p>
+<ol>
+<li><b>A kristálygömb.</b> Mindenki látja a kategóriát. Az Élők a jelszót is látják; a Démon (egy, 7 játékostól kettő) nem, legfeljebb halvány súgást kap, ha a házigazda engedi.</li>
+<li><b>A sorsolás.</b> Sorsolás dönti el, ki kezd; utána ülésrendben körbe megy a szó.</li>
+<li><b>Mindenki egy szót.</b> Amikor rád kerül a sor, mondj egy szót, ami a jelszóhoz kapcsolódik, aztán tartsd nyomva a gombot a telefonodon. Bizonyítsd, hogy tudod, de ne add a Démon kezébe. Kérésre a szavakat be is gépelitek, és megjelennek a tévén.</li>
+<li><b>Nevezzétek meg a Démont.</b> Beszéljétek meg, aztán mindenki szavaz. Ha egy Élőt neveztek meg (vagy döntetlen, hacsak nincs érme), a Démon nyer.</li>
+<li><b>Egy utolsó tipp.</b> A lebukott Démon egyszer tippelhet a jelszóra, a 4×4-es szórácsból vagy begépelve. Ha eltalálja, mégis ő nyer.</li>
+</ol>
+<p>A kör végén ugyanabba a lobbiba kerültök vissza, ugyanazokkal a beállításokkal, és a pontok megmaradnak: győzelemért az Élők +1, a Démonok +2.</p>`,
     missionsH: "Dead Set: Küldetések",
     missions: `<p>Egy második mód 5–12 játékosnak, a váróban választható. Senki sem hal meg: a Halál beférkőzött az expedícióba, és az asztalnak meg kell találnia.</p>
 <ol>

@@ -3,6 +3,8 @@ export default {
   and: 'und',
   numbers: ['kein', 'ein', 'zwei', 'drei', 'vier', 'fünf', 'sechs', 'sieben', 'acht', 'neun', 'zehn'],
   roles: {
+    X_LIVING: { name: "Lebend", when: "Immer", summary: "In der Kristallkugel siehst du das Passwort. Sag ein Wort, das beweist, dass du es kennst, ohne es dem Dämon zu verraten.", detail: "Zu offensichtlich, und der Dämon kennt das Passwort. Zu rätselhaft, und der Tisch verdächtigt dich. Dann benennt den Dämon." },
+    X_DEMON: { name: "Dämon", when: "Immer", summary: "Du siehst nur die Kategorie. Fall nicht auf: Sag ein Wort, als würdest du das Passwort kennen.", detail: "Hör den anderen zu und knack das Passwort. Benennt der Tisch jemand anderen, gewinnst du. Wirst du entlarvt, gewinnt ein richtiger Tipp trotzdem." },
     M_JESTER: { name: "Narr", when: "Immer", summary: "Du gewinnst allein, wenn der Tisch dich im Letzten Gefecht benennt oder der Schnitter dich in der Abrechnung benennt.", detail: "Du bist weder Lebend noch Tod: Das Medium sieht dich nicht, die Kerze zeigt dich als Lebend. Auf Missionen darfst du Erfolg oder Sabotage spielen. Wirk verdächtig, aber nicht zu sehr." },
     TWIN: { name: "Zwilling", when: "Immer", summary: "Es gibt zwei Zwillinge. Ihr kennt einander und gehört beide zu den Lebenden.", detail: "Du kannst nur Erfolg spielen. Vertrau deinem Zwilling, aber Vorsicht: Bürgt ihr zu laut füreinander, weiß der Tod, wo er suchen muss." },
     UNDERTAKER: { name: "Totengräber", when: "Nach einer gescheiterten Mission", summary: "Scheitert eine Mission, erfährst du, wie viele Tod-Spieler in diesem Team waren.", detail: "Gezählt wird jeder Tod-Spieler, auch der Verschleierte und der Streuner, egal welche Karte sie spielten. Nur du hörst es. Du kannst nur Erfolg spielen." },
@@ -120,6 +122,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Rachsüchtige Geister', text: 'Jeder ausgeschiedene Spieler darf pro Tag eine Geisterstimme mit Gewicht 1 abgeben.', enforcement: 'Geister können nicht nominieren, keine Fähigkeiten nutzen und die Mehrheitsregel nicht beeinflussen.' },
   },
   presets: {
+    exorcism: { name: "Dead Set: Exorzismus", blurb: "Ein Wortspiel voller Bluff. In der Kristallkugel sehen alle das Passwort, nur der Dämon nicht. Jeder ein Wort, dann wird der Dämon benannt." },
     missions: { name: "Dead Set: Missionen", blurb: "Teams, Abstimmungen und Sabotage. Niemand stirbt: Führt Missionen an, lest die Stimmen und findet den Tod, bevor er das Medium findet." },
     standard: { name: 'Standard', blurb: 'Das eigentliche Dead-Set-Erlebnis. Zehn Zusatzrollen ab 7 Spielern, jede Nacht ein Traum für alle, 1–3 Regelkarten.' },
     classic: { name: 'Klassisch / Lernen', blurb: 'Zum Beibringen. Nur Grundrollen — Zusatzplätze werden mit Unschuldigen gefüllt. Träume standardmäßig aus, höchstens eine einfache Regel.' },
@@ -145,6 +148,16 @@ export default {
     'Der Tod stimmte mit der Stadt. Natürlich.',
   ],
   guide: {
+    exorcismH: "Dead Set: Exorzismus",
+    exorcism: `<p>Ein Wortspiel voller Bluff für 3–12 Spieler, in der Lobby wählbar. Auf jedem Handy gilt die Sprache des Tisches, damit die Wörter passen.</p>
+<ol>
+<li><b>Die Kristallkugel.</b> Alle sehen die Kategorie. Die Lebenden sehen auch das Passwort; der Dämon (einer, ab 7 Spielern zwei) nicht, er bekommt höchstens ein vages Flüstern, wenn der Gastgeber es erlaubt.</li>
+<li><b>Das Los.</b> Ein Los bestimmt, wer anfängt; dann geht es reihum in Sitzordnung.</li>
+<li><b>Jeder ein Wort.</b> Bist du dran, sag ein Wort, das zum Passwort passt, und halte den Knopf auf deinem Handy. Zeig, dass du es kennst, ohne es dem Dämon zu verraten. Auf Wunsch werden die Wörter eingetippt und auf dem Fernseher gezeigt.</li>
+<li><b>Benennt den Dämon.</b> Beratet euch, dann stimmen alle ab. Wird ein Lebender benannt (oder steht es unentschieden ohne Münze), gewinnt der Dämon.</li>
+<li><b>Ein letzter Versuch.</b> Ein entlarvter Dämon darf einmal das Passwort raten, aus dem 4×4-Wortgitter oder getippt. Trifft er, gewinnt er trotzdem.</li>
+</ol>
+<p>Die Runde endet in derselben Lobby mit denselben Einstellungen, und die Punkte laufen weiter: Lebende +1 für einen Sieg, Dämonen +2.</p>`,
     missionsH: "Dead Set: Missionen",
     missions: `<p>Ein zweiter Modus für 5–12 Spieler, in der Lobby wählbar. Niemand stirbt: Der Tod hat sich in die Expedition geschlichen, und der Tisch muss ihn finden.</p>
 <ol>

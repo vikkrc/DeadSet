@@ -59,6 +59,9 @@ export const roleF = (id, f) => D?.roles?.[id]?.[f] ?? EN.roles[id]?.[f] ?? (f =
 export const dreamF = (id, f) => D?.dreams?.[id]?.[f] ?? EN.dreams[id]?.[f] ?? (f === 'name' ? id : '');
 export const ruleF = (id, f) => D?.rules?.[id]?.[f] ?? EN.rules[id]?.[f] ?? (f === 'name' ? id : '');
 export const mcardF = (id, f) => D?.mcards?.[id]?.[f] ?? EN.mcards?.[id]?.[f] ?? (f === 'name' ? id : '');
+const NAMERS = {};
+/** Let a mode name its own message params (e.g. Exorcism's {category}). */
+export const setNamer = (key, fn) => { NAMERS[key] = fn; };
 export const sideF = (id) => D?.sideMissions?.[id] ?? EN.sides?.[id]?.text ?? id;
 export const presetF = (id, f) => D?.presets?.[id]?.[f] ?? EN.presets[id]?.[f] ?? id;
 /** Scenario card: translate the built-in cards, keep custom (host-written) text. */
@@ -106,6 +109,7 @@ function val(k, v) {
   if (k.startsWith('role')) return roleF(v, 'name');
   if (k.startsWith('mcard')) return mcardF(v, 'name');
   if (k === 'side') return sideF(v);
+  if (NAMERS[k]) return NAMERS[k](v);
   if (k === 'dreamText') return dreamF(v, 'text');
   if (k.startsWith('dream')) return dreamF(v, 'name');
   if (k === 'rules') return list(v.map((r) => ruleF(r, 'name')));

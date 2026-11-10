@@ -7,6 +7,7 @@ import { sound, score, haptic, burstAt, celebrate, ambient } from './fx.js';
 import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './board.js';
 import { seatLayout } from './layout.js';
 import { sceneMs, scenesFor } from './interludes.js';
+import { isExorcismPhase, exorcismMain, exorcismPicks, exorcismDock, exorcismActs, exorcismMoment, exorcismMomentHtml, X_MOMENT_TIME, exorcismEndHtml, exorcismLobbyDeck, setExorcismContent, mountBalls } from './exorcism.js';
 import { avatarSvg, randomAvatar, PARTS, COLORS } from './avatar.js';
 import { giftHtml, productIndex } from './gifts.js';
 import { gazetteHtml, frontPageHtml } from './gazette.js';
@@ -31,7 +32,7 @@ const V = () => S.view;
 const player = (id) => V()?.players.find((p) => p.id === id);
 const pname = (id) => esc(player(id)?.name ?? t('Someone'));
 const rawName = (id) => player(id)?.name ?? t('Someone');
-const isNight = (phase) => phase === 'NIGHT_0_REVEAL' || phase === 'NIGHT_DREAM_SWAP' || phase === 'NIGHT_ACTIONS' || phase === 'M_REVEAL' || phase === 'M_NIGHT';
+const isNight = (phase) => phase === 'NIGHT_0_REVEAL' || phase === 'NIGHT_DREAM_SWAP' || phase === 'NIGHT_ACTIONS' || phase === 'M_REVEAL' || phase === 'M_NIGHT' || phase === 'X_REVEAL';
 const sessionKey = (code) => `deadset:${code}`;
 const saveSession = (code, data) => localStorage.setItem(sessionKey(code), JSON.stringify(data));
 const loadSession = (code) => { try { return JSON.parse(localStorage.getItem(sessionKey(code))); } catch { return null; } };
@@ -88,8 +89,10 @@ const toast = (text, kind = '') => notify(t(text), kind === 'err' ? 'err' : kind
 const LANG_KEY = 'deadset:lang';
 const wantedLang = () => {
   const pref = localStorage.getItem(LANG_KEY);
-  if (isLang(pref)) return pref;
   const table = S.view?.table?.lang ?? S.peek?.lang;
+  // Exorcism is a word game: the table's language is forced on every phone so the words match.
+  if (S.view?.mode === 'exorcism' && isLang(table)) return table;
+  if (isLang(pref)) return pref;
   return isLang(table) ? table : browserLang();
 };
 let langLoading = null;
@@ -182,7 +185,7 @@ async function reportBoardAudio(on) {
 }
 
 async function loadContent() {
-  try { S.content = await api('/api/content'); setContent(S.content); render(); } catch { /* offline */ }
+  try { S.content = await api('/api/content'); setContent(S.content); setExorcismContent(S.content); render(); } catch { /* offline */ }
 }
 
 function connect(board = false) {
@@ -275,6 +278,7 @@ function detectMoments(v) {
   // Side Missions: the owner learns at once (personal, queued behind any shared scene).
   if (v.mode === 'missions' && v.me && !v.me.moderator) for (const x of freshPriv.filter((e) => e.kind === 'side' && e.state)) out.push({ type: 'mside', side: x.side, state: x.state, sound: x.state === 'done' ? 'approve' : 'unpick', tapOnly: true });
   function entryMoments(l) {
+    if (v.mode === 'exorcism' && l.ev?.startsWith('x-')) { const mm = exorcismMoment(l, v, fresh, { notify, name }); if (mm) out.push(...[].concat(mm)); return; }
     if (v.mode === 'missions') {
       if (l.ev === 'm-start') { const sc = fresh.find((x) => x.ev === 'scenario'); out.push({ type: 'night0', scenario: sc ? entryMsg(sc) : '', sc: v.scenario, rules: [], tapOnly: false }); return; }
       if (l.ev === 'm-dawn' && v.me && !v.me.moderator) {
@@ -353,9 +357,9 @@ function detectMoments(v) {
 const sceneData = (m) => ({ rules: m.rules?.length ?? 0, dead: (m.killed?.length ?? 0) + (m.expired?.length ?? 0), n: m.cards ? m.cards.length : m.count ?? 0 });
 
 const MOMENT_SOUND = { night0: 'night', day1: 'dawn', nightfall: 'night', dawn: 'dawn', tally: 'knock', death: 'death', revive: 'revive', bloodmoon: 'bloodmoon' };
-const END_THEME = { DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester', LOVERS: 'winLovers', CULT: 'winCult', RIPPER: 'winRipper' };
+const END_THEME = { DEMON: 'winDeath', DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester', LOVERS: 'winLovers', CULT: 'winCult', RIPPER: 'winRipper' };
 const MOMENT_TIME = { coin: 5200, gift: 5600, night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 5200, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
-const momentTime = (m) => (m.type === 'mreveal' ? revealTime(m) : MISSION_MOMENT_TIME[m.type] ? MISSION_MOMENT_TIME[m.type] : !onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : MOMENT_TIME[m.type] + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
+const momentTime = (m) => (m.type === 'mreveal' ? revealTime(m) : X_MOMENT_TIME[m.type] ? X_MOMENT_TIME[m.type] : MISSION_MOMENT_TIME[m.type] ? MISSION_MOMENT_TIME[m.type] : !onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : MOMENT_TIME[m.type] + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
 
 function nextMoment() {
   clearTimeout(S.momentTimer);
@@ -399,7 +403,7 @@ function nextMoment() {
     if (m.type === 'end') {
       const won = didIWin(V(), m.winner);
       setTimeout(() => {
-        celebrate(m.winner === 'ABORTED' || m.winner === 'DRAW' ? 'neutral' : m.winner);
+        celebrate(m.winner === 'ABORTED' || m.winner === 'DRAW' ? 'neutral' : m.winner === 'DEMON' ? 'DEATH' : m.winner);
         pubSound(END_THEME[m.winner] ?? 'draw');
         // Your own result follows the table's theme, on your own phone only.
         if (!onBoard() && won !== null && !V()?.boardAudio) setTimeout(() => sound.play(won ? 'win' : 'lose'), 3200);
@@ -417,7 +421,7 @@ function reportHtml(msg, lines) {
   return `${tmh(msg)}${lines?.length ? `<ul class="ins-lines">${lines.map((l) => `<li>${tmh(l)}</li>`).join('')}</ul>` : ''}`;
 }
 
-const WIN_GLYPH = { DEATH: 'death', JESTER: 'jester', NON_DEATH: 'innocent', LOVERS: 'heart', CULT: 'cult', RIPPER: 'ripper' };
+const WIN_GLYPH = { DEMON: 'death', DEATH: 'death', JESTER: 'jester', NON_DEATH: 'innocent', LOVERS: 'heart', CULT: 'cult', RIPPER: 'ripper' };
 const WIN_CLASS = { NON_DEATH: 'living', LOVERS: 'lovers', CULT: 'cult', RIPPER: 'ripper' };
 
 function didIWin(v, winner) {
@@ -427,6 +431,7 @@ function didIWin(v, winner) {
   if (winner === 'LOVERS') return !!me.lover;
   if (winner === 'RIPPER') return me.alignment === 'RIPPER';
   if (winner === 'CULT') return me.alignment === 'CULT';
+  if (winner === 'DEMON') return me.alignment === 'DEATH';
   return (winner === 'DEATH' && me.alignment === 'DEATH') || (winner === 'NON_DEATH' && me.alignment === 'NON_DEATH');
 }
 
@@ -501,13 +506,14 @@ function momentHtml(m) {
         <div class="verdict-stamp coin-verdict ${m.meSentenced ? 'me' : ''}"><span class="v-name">${esc(m.meSentenced ? t('You') : m.winner)}</span><span class="stamp">${t(V()?.mode === 'missions' ? 'Named' : 'Sentenced')}</span></div>`;
       break;
     }
+    case 'xball': case 'xvotes': case 'xguess': body = exorcismMomentHtml(m, { letters, onBoard, V }); break;
     case 'gift': body = giftHtml(m.idx, { t, th, esc, product: m.product }); break;
     case 'mside': case 'mlottery': case 'mlantern': case 'mintro': case 'mcandle': case 'mcard': case 'mvotes': case 'mreveal': case 'mnamed': case 'munmask': case 'mreckon': body = missionMomentHtml(m, { letters, avatarSvg, onBoard }); break;
     case 'death':
       body = `<div class="m-art">${glyph(m.art || 'dagger')}</div><h1 class="m-title">${letters(t(m.title))}</h1>${m.names.length ? `<ul class="victims">${names(m.names)}</ul>` : ''}<p class="m-sub">${tmh(m.sub)}</p>`;
       break;
     case 'end': {
-      const title = t({ DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[m.winner] ?? 'The end');
+      const title = t({ DEMON: 'The Demon wins', DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[m.winner] ?? 'The end');
       const won = didIWin(V(), m.winner);
       body = `<div class="m-art">${glyph(WIN_GLYPH[m.winner] ?? 'scroll')}</div>
         <span class="kicker">${t('The verdict')}</span><h1 class="m-title ${m.winner === 'DEATH' ? 'blood' : ''}">${letters(title)}</h1><p class="m-sub">${tmh(m.reason)}</p>
@@ -518,7 +524,7 @@ function momentHtml(m) {
   }
   const auto = !m.tapOnly;
   const left = m.at ? Math.max(0, m.at + m.dur - (Date.now() + clockSkew)) : momentTime(m);
-  return `<div class="moment ${m.at ? 'shared' : ''} m-${m.type} ${m.winner === 'DEATH' || m.type === 'death' || m.type === 'munmask' ? 'grim' : ''} ${m.type === 'end' ? WIN_CLASS[m.winner] ?? '' : ''} ${onBoard() && m.type === 'dawn' ? 'front' : ''}" data-key="moment-${m.id}" data-act="momentNext" role="dialog" aria-live="assertive">
+  return `<div class="moment ${m.at ? 'shared' : ''} m-${m.type} ${m.winner === 'DEATH' || m.winner === 'DEMON' || m.type === 'death' || m.type === 'munmask' ? 'grim' : ''} ${m.type === 'end' ? WIN_CLASS[m.winner] ?? '' : ''} ${onBoard() && m.type === 'dawn' ? 'front' : ''}" data-key="moment-${m.id}" data-act="momentNext" role="dialog" aria-live="assertive">
     ${m.type === 'end' && WIN_CLASS[m.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<div class="m-body">${body}</div>
     <div class="m-foot">${auto ? `<span class="m-timer" style="--t:${left}ms"><i></i></span>` : ''}<span class="kicker">${t(m.at ? 'Everyone sees this together' : auto ? 'Tap to skip' : 'Tap to continue')}${S.moments.length ? ` · ${t('{n} more', { n: S.moments.length })}` : ''}</span></div>
   </div>`;
@@ -589,6 +595,7 @@ function render() {
   document.body.classList.toggle('has-sheet', !!S.ui.sheet && (S.route?.name === 'room' || S.ui.sheet === 'lang' || S.ui.sheet === 'avatar'));
   ambient(night ? 'night' : null);
   morph(app, view());
+  mountBalls(app);
   app.querySelectorAll('[data-scroll]').forEach((el) => { if (bottoms[el.dataset.scroll] !== false) el.scrollTop = el.scrollHeight; });
   tickClock();
 }
@@ -662,6 +669,7 @@ function phaseWord(v) {
   if (v.phase === 'ENDED') return { word: t('The End'), num: '', night: false };
   if (v.phase === 'NIGHT_0_REVEAL') return { word: t('Night'), num: '0', night: true };
   if (v.phase === 'M_REVEAL') return { word: t('Missions'), num: '', night: true };
+  if (isExorcismPhase(v.phase)) return { word: t('Exorcism'), num: v.exorcism?.rounds > 1 && v.phase === 'X_CLUES' ? roman(v.exorcism.round) : '', night: v.phase === 'X_REVEAL' };
   if (isMissionPhase(v.phase)) return { word: v.phase === 'M_LAST_STAND' || v.phase === 'M_RECKONING' ? t('The End') : t('Mission'), num: v.phase === 'M_LAST_STAND' || v.phase === 'M_RECKONING' ? '' : roman((v.missions?.mission ?? 0) + 1), night: v.phase === 'M_NIGHT' };
   if (isNight(v.phase) || v.phase === 'NIGHT_RESOLVING') return { word: t('Night'), num: roman(v.nightNumber), night: true };
   return { word: t('Day'), num: roman(v.dayNumber), night: false };
@@ -671,6 +679,7 @@ const STEP_EN = {
   DAY_DEFENSE: 'Defence', DAY_VOTING: 'Secret ballot', DAY_RESOLVING: 'Final act', NIGHT_DREAM_SWAP: 'Nightfall', NIGHT_ACTIONS: 'Night actions', ENDED: 'Match over',
   M_REVEAL: 'Role reveal', M_LOTTERY: 'The first leader', M_PROPOSE: 'The proposal', M_VOTE: 'Team vote', M_MISSION: 'On the mission', M_RESULT: 'The reveal',
   M_NIGHT: 'Night interlude', M_LAST_STAND: 'The Last Stand', M_RECKONING: 'The Reckoning',
+  X_REVEAL: 'The crystal ball', X_LOTTERY: 'The first speaker', X_CLUES: 'One word each', X_DISCUSS: 'Talk it over', X_VOTE: 'Name the Demon', X_GUESS: 'The last guess',
 };
 const STEP = new Proxy(STEP_EN, { get: (o, k) => (o[k] ? t(o[k]) : undefined) });
 // The phase label, aware of the Open Ballot rule (votes are public then).
@@ -885,6 +894,7 @@ function pickContexts(v) {
   const me = v.me;
   if (!a || !me || me.moderator) return [];
   if (isMissionPhase(v.phase)) return missionPicks(v, S);
+  if (isExorcismPhase(v.phase)) return exorcismPicks(v, S);
   const out = [];
   switch (v.phase) {
     case 'DAY_PREP':
@@ -1036,6 +1046,7 @@ function mainFor(v, me) {
     case 'ENDED': return endMain(v, me);
     default:
       if (isMissionPhase(v.phase)) return missionMain(v, me, MH);
+      if (isExorcismPhase(v.phase)) return exorcismMain(v, me, MH);
       return isNight(v.phase) ? nightMain(v, me) : dayMain(v, me);
   }
 }
@@ -1197,6 +1208,7 @@ function botsPanel(v) {
 
 /** 20 · Tonight's deck, the extended pool, rule cards and table switches. */
 function lobbyDeck(v, isHost) {
+  if (v.mode === 'exorcism') return exorcismLobbyDeck(v, isHost, { LANGS });
   const s = v.settings;
   const deck = v.setup?.publicDeck;
   const preset = v.presets.find((p) => p.id === s.preset);
@@ -1306,9 +1318,8 @@ function missionLobbyDeck(v, isHost, cards) {
 
 /** The top-line choice: classic Dead Set or Dead Set: Missions. Everything below follows it. */
 function modeChooser(v, isHost) {
-  const missions = !!v.presets.find((p) => p.id === v.settings.preset)?.missions;
   const card = (mode, glyphName, title, sub) => {
-    const on = (mode === 'missions') === missions;
+    const on = v.mode === mode;
     const inner = `${glyph(glyphName)}<span><b>${esc(title)}</b><small>${esc(sub)}</small></span>`;
     return isHost
       ? `<button class="mode-card ${on ? 'on' : ''}" data-act="gameMode" data-mode="${mode}" aria-pressed="${on}" data-key="mode-${mode}">${inner}</button>`
@@ -1319,6 +1330,7 @@ function modeChooser(v, isHost) {
     <div class="mode-cards">
       ${card('classic', 'death', t('Classic Dead Set'), t('Hidden roles, night kills, Dreams and Rule cards. 5–25 players.'))}
       ${card('missions', 'mission', presetF('missions', 'name'), t('Teams, votes and sabotage. Nobody dies. 5–12 players.'))}
+      ${card('exorcism', 'veiled', presetF('exorcism', 'name'), t('A word game of bluff: one word each, then name the Demon. 3–12 players.'))}
     </div>
   </section>`;
 }
@@ -1348,8 +1360,14 @@ function setupForm(v) {
   const timer = (key, label) => `<label class="field"><span>${t(label)}</span><select class="input" data-set="timers.${key}">
       ${OPTS.map((n) => `<option value="${n}" ${tm8[key] === n ? 'selected' : ''}>${n === 0 ? t('Untimed') : n < 60 ? t('{n} s', { n }) : t('{n} min', { n: n / 60 })}</option>`).join('')}
       ${OPTS.includes(tm8[key]) ? '' : `<option selected value="${tm8[key]}">${t('{n} s', { n: tm8[key] })}</option>`}</select></label>`;
+  if (preset.exorcism) {
+    return `<div class="stack" style="gap:18px"><details class="more" data-key="d-xtable" open><summary>${t('Table & timers')}</summary><div>
+      <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
+      <div class="grid2">${timer('xClue', 'Each speaker')}${timer('xDiscuss', 'Discussion')}${timer('xVote', 'Voting')}${timer('xGuess', 'The Demon\'s guess')}</div>
+    </div></details></div>`;
+  }
   return `<div class="stack" style="gap:18px">
-    ${preset.missions ? '' : `<div class="carousel" data-key="presets">${v.presets.filter((p) => !p.missions).map((p) => `<button class="preset" data-act="preset" data-id="${p.id}" aria-pressed="${s.preset === p.id}" data-key="pr-${p.id}"><b>${esc(presetF(p.id, 'name'))}</b>${p.recommended ? `<span class="tag solid">${t('Best first game')}</span>` : ''}<small>${esc(presetF(p.id, 'blurb'))}</small><span class="kicker">${t('{a}–{b} players', { a: p.min, b: p.max })}</span></button>`).join('')}</div>`}
+    ${preset.missions ? '' : `<div class="carousel" data-key="presets">${v.presets.filter((p) => !p.missions && !p.exorcism).map((p) => `<button class="preset" data-act="preset" data-id="${p.id}" aria-pressed="${s.preset === p.id}" data-key="pr-${p.id}"><b>${esc(presetF(p.id, 'name'))}</b>${p.recommended ? `<span class="tag solid">${t('Best first game')}</span>` : ''}<small>${esc(presetF(p.id, 'blurb'))}</small><span class="kicker">${t('{a}–{b} players', { a: p.min, b: p.max })}</span></button>`).join('')}</div>`}
 
     ${preset.custom ? `<details class="more" data-key="d-custom" open><summary>${t('Custom deck')}</summary><div>
       <label class="check"><input type="checkbox" data-set-bool="dreams" ${s.dreams ? 'checked' : ''}><span><b>${t('Dreams')}</b><small>${t('Everyone draws a Dream card each night.')}</small></span></label>
@@ -1745,14 +1763,15 @@ function deathRoom(v, me, D) {
 
 // ── End ────────────────────────────────────────────────────────────────────
 function endMain(v, me) {
-  const title = t({ DEATH: 'Death wins.', NON_DEATH: 'The living win.', JESTER: 'The Jester wins.', DRAW: 'A draw.', ABORTED: 'Abandoned.', LOVERS: 'The Lovers win.', CULT: 'The Cult wins.', RIPPER: 'The Ripper wins.' }[v.winner] ?? 'The End');
+  const title = t({ DEMON: 'The Demon wins.', DEATH: 'Death wins.', NON_DEATH: 'The living win.', JESTER: 'The Jester wins.', DRAW: 'A draw.', ABORTED: 'Abandoned.', LOVERS: 'The Lovers win.', CULT: 'The Cult wins.', RIPPER: 'The Ripper wins.' }[v.winner] ?? 'The End');
   const won = didIWin(v, v.winner);
   const revealed = v.players.some((p) => p.role);
-  return `<section class="verdict ${v.winner === 'DEATH' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<span class="kicker">${t('Verdict')}</span><h1>${letters(title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
+  return `<section class="verdict ${v.winner === 'DEATH' || v.winner === 'DEMON' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<span class="kicker">${t('Verdict')}</span><h1>${letters(title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
       ${won === null ? '' : `<div class="result-stamp ${won ? 'win' : 'loss'}">${won ? t('Victory') : t('Defeat')}</div>`}</section>
     ${revealed ? ring(v, { reveal: true, center: centerFor(v), marks: v.mode === 'missions' ? missionMarks(v) : {}, extra: v.mode === 'missions' ? hunchArrowsSvg(v) : '' }) : ''}
     ${revealed && v.missions?.hunches?.length ? hunchLegend() : ''}
     ${v.mode === 'missions' ? missionEndHtml(v) : ''}
+    ${v.mode === 'exorcism' ? exorcismEndHtml(v) : ''}
     <section data-key="reveal"><div class="rule">${t('Every secret')}</div>${revealed ? `<ul class="ledger">${v.players.map((p, i) => `<li class="${p.alive ? '' : 'dead'} ${p.id === me?.id ? 'me' : ''}" style="--i:${i}" data-key="rv-${p.id}">
       <span class="seat">${p.role ? glyph(p.role.glyph) : ''}</span>
       <span class="who"><b>${esc(p.name)}</b><small>${p.role ? esc(roleF(p.role.id, 'name')) : '—'}${p.originalRole ? ` ${th('(was {role})', { role: p.originalRole.id })}` : ''} · ${p.alive ? t('alive') : `† ${esc(stamp(p.diedAt))}`}</small></span>
@@ -1765,7 +1784,7 @@ function endMain(v, me) {
 // ── Moderator ──────────────────────────────────────────────────────────────
 function moderatorMain(v) {
   if (v.phase === 'LOBBY') return lobbyMain(v, v.me);
-  if (v.phase === 'ENDED' && v.mode === 'missions') return endMain(v, v.me);
+  if (v.phase === 'ENDED' && v.mode !== 'classic') return endMain(v, v.me);
   const sec = Object.fromEntries((v.secrets || []).map((s) => [s.id, s]));
   if (isMissionPhase(v.phase)) {
     const ms = v.missionSecrets || {};
@@ -1980,6 +1999,7 @@ function dock(v) {
         break;
       default:
         if (isMissionPhase(v.phase)) parts.push(...missionDock(v, { S, btn, holdBtn, rawName }));
+        if (isExorcismPhase(v.phase)) parts.push(...exorcismDock(v, { S, btn, holdBtn, rawName }));
         break;
     }
   }
@@ -2230,9 +2250,17 @@ const ACT = {
   boardMute() { S.board.audio = false; score.stop(); reportBoardAudio(false); render(); },
 };
 
+Object.assign(ACT, exorcismActs({ S, V, send: (...a) => send(...a), render: () => render(), picked, burstAt, sound, haptic }), {
+  xCat(el) {
+    const all = (S.content?.exorcism?.categories ?? []).map((c) => c.id);
+    const on = new Set(V().settings.x?.categories ?? all);
+    if (on.has(el.dataset.id)) on.delete(el.dataset.id); else on.add(el.dataset.id);
+    send('host.settings', { x: { categories: all.filter((id) => on.has(id)) } }, { quiet: true });
+  },
+});
 Object.assign(ACT, missionActs({ S, V, send: (...a) => send(...a), render: () => render(), picked, burstAt, sound, haptic }));
 
-const QUIET = new Set(['mPickLantern', 'mPickTeam', 'mPickWard', 'mPickHunch', 'mPickCandle', 'mPickWitness', 'mPickHaunt', 'mPickAccuse', 'mPickReckon', 'mPickCard', 'avPart', 'avRandom', 'codeTap', 'boardScore', 'boardMute', 'pickNominate', 'pickVote', 'pickRetaliate', 'pickSwap', 'pickTarget', 'pickOption', 'pickNightmare', 'pickConspire', 'pickDeath', 'shoot', 'sound', 'pickUseOption', 'momentNext']);
+const QUIET = new Set(['xPickVote', 'xPickGuess', 'xFlip', 'xPeek', 'xGrid', 'mPickLantern', 'mPickTeam', 'mPickWard', 'mPickHunch', 'mPickCandle', 'mPickWitness', 'mPickHaunt', 'mPickAccuse', 'mPickReckon', 'mPickCard', 'avPart', 'avRandom', 'codeTap', 'boardScore', 'boardMute', 'pickNominate', 'pickVote', 'pickRetaliate', 'pickSwap', 'pickTarget', 'pickOption', 'pickNightmare', 'pickConspire', 'pickDeath', 'shoot', 'sound', 'pickUseOption', 'momentNext']);
 document.addEventListener('click', (e) => {
   const link = e.target.closest('a[data-link]');
   if (link && link.origin === location.origin && !e.metaKey && !e.ctrlKey) { e.preventDefault(); go(link.pathname); return; }
@@ -2320,6 +2348,10 @@ document.addEventListener('change', (e) => {
   if (el.dataset.actChange === 'leaderMode') send('host.settings', { leaderMode: el.value });
   if (el.dataset.actChange === 'missionCards') send('host.settings', { missionCards: Number(el.value) });
   if (el.dataset.actChange === 'mRole') send('host.settings', { mRoles: { [el.dataset.id]: el.checked } });
+  if (el.dataset.actChange === 'xSet') {
+    const k = el.dataset.id;
+    send('host.settings', { x: { [k]: el.type === 'checkbox' ? el.checked : ['demons', 'rounds'].includes(k) ? Number(el.value) : el.value } });
+  }
   if (el.dataset.actChange === 'tieBreak') send('host.settings', { tieBreak: el.checked ? 'coin' : 'none' });
   if (el.dataset.actChange === 'assign') send('host.assign', { playerId: el.dataset.pid, roleId: el.value || null });
 });

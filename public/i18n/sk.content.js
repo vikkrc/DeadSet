@@ -3,6 +3,8 @@ export default {
   and: 'a',
   numbers: ['žiadny', 'jeden', 'dvaja', 'traja', 'štyria', 'piati', 'šiesti', 'siedmi', 'ôsmi', 'deviati', 'desiati'],
   roles: {
+    X_LIVING: { name: "Živý", when: "Vždy", summary: "V krištáľovej guli vidíš heslo. Povedz slovo, ktoré dokáže, že ho poznáš, ale nedaj ho Démonovi.", detail: "Príliš jasné, a Démon heslo zistí. Príliš nejasné, a stôl podozrieva teba. Potom označte Démona." },
+    X_DEMON: { name: "Démon", when: "Vždy", summary: "Vidíš len kategóriu. Splyň s ostatnými: povedz slovo, akoby si heslo poznal.", detail: "Počúvaj ostatných a rozlúšti heslo. Ak stôl označí niekoho iného, vyhrávaš. Ak ťa chytia, jeden správny pokus aj tak vyhrá." },
     M_JESTER: { name: "Šašo", when: "Vždy", summary: "Vyhrávaš sám, ak ťa stôl označí v Poslednom odpore alebo ťa Žnec určí v Zúčtovaní.", detail: "Nie si Živý ani zo Smrti: Médium ťa nevidí a Sviečka ťa ukáže ako Živého. Na misii môžeš hrať Úspech aj Sabotáž. Pôsob podozrivo, ale nie príliš." },
     TWIN: { name: "Dvojča", when: "Vždy", summary: "Dvojčatá sú dve. Poznáte sa a obaja patríte k Živým.", detail: "Môžeš hrať iba Úspech. Ver svojmu dvojčaťu, ale pozor: ak sa za seba budete zaručovať príliš nahlas, Smrť bude vedieť, kam sa pozrieť." },
     UNDERTAKER: { name: "Hrobár", when: "Po neúspešnej misii", summary: "Keď misia zlyhá, dozvieš sa, koľko hráčov Smrti bolo v tom tíme.", detail: "Počítajú sa všetci hráči Smrti, aj Zahalený a Tulák, nech zahrali akúkoľvek kartu. Počuješ to len ty. Môžeš hrať iba Úspech." },
@@ -120,6 +122,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Pomstychtiví duchovia', text: 'Každý vyradený hráč môže každý deň odovzdať jeden hlas ducha s váhou 1.', enforcement: 'Duchovia nemôžu nominovať, používať schopnosti ani ovplyvniť Pravidlo väčšiny.' },
   },
   presets: {
+    exorcism: { name: "Dead Set: Exorcizmus", blurb: "Slovná hra plná blafovania. V krištáľovej guli všetci vidia heslo, okrem Démona. Každý jedno slovo, potom odhaľte Démona." },
     missions: { name: "Dead Set: Misie", blurb: "Tímy, hlasovania a sabotáž. Nikto neumiera: veďte misie, čítajte hlasy a nájdite Smrť skôr, než ona nájde Médium." },
     standard: { name: 'Štandard', blurb: 'Zamýšľaný zážitok z Dead Set. Desať rozšírených rol od 7 hráčov, Sen pre každého každú noc, 1–3 karty pravidiel.' },
     classic: { name: 'Klasika / Učenie', blurb: 'Na učenie. Iba základné roly — rozšírené miesta obsadia Nevinní. Sny predvolene vypnuté, najviac jedno jednoduché pravidlo.' },
@@ -145,6 +148,16 @@ export default {
     'Smrť hlasovala s mestom. Samozrejme.',
   ],
   guide: {
+    exorcismH: "Dead Set: Exorcizmus",
+    exorcism: `<p>Slovná hra plná blafovania pre 3–12 hráčov, vyberá sa v lobby. Na každom telefóne platí jazyk stola, aby sa slová zhodovali.</p>
+<ol>
+<li><b>Krištáľová guľa.</b> Všetci vidia kategóriu. Živí vidia aj heslo; Démon (jeden, od 7 hráčov dvaja) nie, najviac dostane nejasný šepot, ak to hostiteľ povolí.</li>
+<li><b>Žreb.</b> Žreb určí, kto začína; potom sa ide dookola podľa miest.</li>
+<li><b>Každý jedno slovo.</b> Keď si na rade, povedz jedno slovo súvisiace s heslom a podrž tlačidlo v telefóne. Dokáž, že ho poznáš, ale nedaj ho Démonovi. Voliteľne sa slová aj píšu a zobrazia na televízore.</li>
+<li><b>Označte Démona.</b> Porozprávajte sa a potom všetci hlasujú. Ak označíte Živého (alebo je nerozhodne a minca je vypnutá), Démon vyhrá.</li>
+<li><b>Posledný pokus.</b> Odhalený Démon môže raz hádať heslo, z mriežky 4×4 alebo napísaním. Ak trafí, aj tak vyhrá.</li>
+</ol>
+<p>Kolo sa končí v tom istom lobby s rovnakými nastaveniami a body sa sčítavajú: za výhru Živí +1, Démoni +2.</p>`,
     missionsH: "Dead Set: Misie",
     missions: `<p>Druhý režim pre 5–12 hráčov, ktorý sa vyberá v lobby. Nikto neumiera: Smrť sa vkradla do výpravy a stôl ju musí nájsť.</p>
 <ol>

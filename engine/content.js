@@ -453,6 +453,19 @@ export const MISSION_STORY = {
 // ── Game modes ─────────────────────────────────────────────────────────────
 /** Every role set, rule card and setting belongs to a mode. Setup screens and
  *  the server only ever offer and accept what the current mode declares. */
+// ── Dead Set: Exorcism (see EXORCISM.md) ───────────────────────────────────
+Object.assign(ROLES, {
+  X_LIVING: { id: 'X_LIVING', name: 'Living', set: 'exorcism', alignment: 'NON_DEATH', glyph: 'innocent', when: 'Always',
+    summary: 'You see the password in the crystal ball. Give a word that proves you know it, without handing it to the Demon.',
+    detail: 'Too obvious, and the Demon learns the password. Too obscure, and the table suspects you. Then name the Demon.' },
+  X_DEMON: { id: 'X_DEMON', name: 'Demon', set: 'exorcism', alignment: 'DEATH', glyph: 'death', when: 'Always',
+    summary: 'You see only the category. Blend in: say a word that sounds like you know the password.',
+    detail: 'Listen to the others and work out the password. If the table names someone else, you win. If they catch you, one right guess still wins it.' },
+});
+PRESETS.exorcism = { id: 'exorcism', name: 'Dead Set: Exorcism', min: 3, max: 12, pool: [], dreams: false,
+  rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, exorcism: true,
+  blurb: 'A word game of bluff. Everyone sees the password in the crystal ball, except the Demon. One word each, then name the Demon.' };
+
 export const MODES = {
   classic: { id: 'classic', roleSets: ['core', 'standard', 'full', 'side'], rules: true, dreams: true },
   missions: { id: 'missions', roleSets: ['missions'], rules: false, dreams: false },

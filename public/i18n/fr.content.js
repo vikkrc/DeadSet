@@ -3,6 +3,8 @@ export default {
   and: 'et',
   numbers: ['aucun', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix'],
   roles: {
+    X_LIVING: { name: "Vivant", when: "Toujours", summary: "Tu vois le mot de passe dans la boule de cristal. Donne un mot qui prouve que tu le connais, sans le livrer au Démon.", detail: "Trop évident, et le Démon apprend le mot de passe. Trop obscur, et la table te soupçonne. Puis désignez le Démon." },
+    X_DEMON: { name: "Démon", when: "Toujours", summary: "Tu ne vois que la catégorie. Fonds-toi dans la masse : dis un mot comme si tu connaissais le mot de passe.", detail: "Écoute les autres et perce le mot de passe. Si la table désigne quelqu'un d'autre, tu gagnes. Si on te démasque, un bon essai gagne quand même." },
     M_JESTER: { name: "Bouffon", when: "Toujours", summary: "Tu gagnes seul si la table te désigne au Dernier Carré, ou si le Faucheur te désigne lors du Jugement.", detail: "Tu n'es ni Vivant ni de la Mort : le Médium ne te voit pas, la Bougie te montre Vivant. En mission, tu peux jouer Réussite ou Sabotage. Aie l'air coupable, mais pas trop." },
     TWIN: { name: "Jumeau", when: "Toujours", summary: "Il y a deux Jumeaux. Vous vous connaissez et vous êtes tous deux Vivants.", detail: "Tu ne peux jouer que Succès. Fais confiance à ton jumeau, mais attention : à trop vous porter garants l'un de l'autre, vous montrez à la Mort où chercher." },
     UNDERTAKER: { name: "Croque-mort", when: "Après une mission ratée", summary: "Quand une mission échoue, tu apprends combien de joueurs de la Mort étaient dans cette équipe.", detail: "Le compte inclut tous les joueurs de la Mort, le Voilé et l'Égaré aussi, quelle que soit leur carte. Toi seul l'entends. Tu ne peux jouer que Succès." },
@@ -120,6 +122,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Fantômes vengeurs', text: 'Chaque joueur éliminé peut déposer un bulletin fantôme de poids 1 par jour.', enforcement: 'Les fantômes ne peuvent pas nommer, utiliser de pouvoirs ni influencer la Règle de la majorité.' },
   },
   presets: {
+    exorcism: { name: "Dead Set : Exorcisme", blurb: "Un jeu de mots et de bluff. Tout le monde voit le mot de passe dans la boule de cristal, sauf le Démon. Un mot chacun, puis démasquez le Démon." },
     missions: { name: "Dead Set : Missions", blurb: "Équipes, votes et sabotage. Personne ne meurt : menez des missions, lisez les votes, et trouvez la Mort avant qu'elle ne trouve le Médium." },
     standard: { name: 'Standard', blurb: 'L’expérience Dead Set telle que prévue. Dix rôles étendus dès 7 joueurs, un Rêve pour tous chaque nuit, 1–3 cartes de règle.' },
     classic: { name: 'Classique / Apprentissage', blurb: 'Pour apprendre. Rôles de base seulement — les sièges étendus sont des Innocents. Rêves désactivés par défaut, au plus une règle simple.' },
@@ -145,6 +148,16 @@ export default {
     'La Mort a voté avec la ville. Évidemment.',
   ],
   guide: {
+    exorcismH: "Dead Set : Exorcisme",
+    exorcism: `<p>Un jeu de mots et de bluff pour 3 à 12 joueurs, à choisir dans le salon. La langue de la table s'impose sur chaque téléphone, pour que les mots correspondent.</p>
+<ol>
+<li><b>La boule de cristal.</b> Tout le monde voit la catégorie. Les Vivants voient aussi le mot de passe ; le Démon (un, ou deux dès 7 joueurs) non, tout au plus un vague murmure si l'hôte le permet.</li>
+<li><b>Le tirage au sort.</b> Un tirage désigne qui commence ; puis on fait le tour de la table dans l'ordre des places.</li>
+<li><b>Un mot chacun.</b> À ton tour, dis un mot lié au mot de passe, puis maintiens le bouton sur ton téléphone. Prouve que tu le connais sans le livrer au Démon. En option, les mots sont tapés et affichés sur la télé.</li>
+<li><b>Désignez le Démon.</b> Discutez, puis tout le monde vote. Désignez un Vivant (ou une égalité, sauf avec la pièce) et le Démon gagne.</li>
+<li><b>Un dernier essai.</b> Un Démon démasqué a droit à un essai sur le mot de passe, dans la grille de 4×4 mots ou en le tapant. S'il trouve, il gagne quand même.</li>
+</ol>
+<p>La manche se termine dans le même salon avec les mêmes réglages, et les scores continuent : Vivants +1 par victoire, Démons +2.</p>`,
     missionsH: "Dead Set : Missions",
     missions: `<p>Un second mode pour 5 à 12 joueurs, à choisir dans le salon. Personne ne meurt : la Mort s'est glissée dans l'expédition, et la table doit la trouver.</p>
 <ol>

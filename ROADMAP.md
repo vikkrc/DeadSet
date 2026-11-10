@@ -16,6 +16,8 @@ All modes share the Dead Set family's tools:
 
 ## Beta 0 (step zero): foundations (clean setups, synced interludes, a lighter celebration, Hunches at the end)
 
+**Status: built.**
+
 **Clean setups.** Before anything new, the lobby must be clean. Each game mode's setup only allows the roles, rules and other settings meant for that mode. With more modes coming, this has to be solid now.
 
 **Leaks found (2026-11-10):**
@@ -66,6 +68,8 @@ Hunches are currently only in the end-screen list. Also show them:
 
 ## Beta 1: Missions, part 2
 
+**Status: built** (see MISSIONS.md §2, §11, §12).
+
 - **Side Missions** (lobby switch). Every player is dealt one secret personal objective at random when the game starts, from a large pool. Examples:
   - "Go on three missions."
   - "Never approve a team you're not on."
@@ -103,6 +107,8 @@ Other Missions ideas kept for later:
 ---
 
 ## Beta 2: Dead Set: Exorcism (based on Chameleon), the first new mode
+
+**Status: built** (see EXORCISM.md).
 
 **The pitch:** the Living know the secret word of the exorcism: the password that would banish the Death among them.
 

@@ -1,0 +1,50 @@
+# Dead Set: Exorcism — rules and game spec
+
+A word game of bluff for **3–12 players**, chosen in the lobby next to Classic and Missions. One phone each, plus an optional TV board.
+
+## 1. Sides
+
+| Side | Sees | Wins when |
+|---|---|---|
+| **The Living** | The category **and the password** in their crystal ball | The table names a Demon **and** that Demon misses the password |
+| **The Demon** (one; or two from 7 players) | Only the category (and, if the host allows, a vague hint) | The table names someone else, **or** the caught Demon names the password |
+
+## 2. A round
+
+1. **The crystal ball** (a shared scene on every screen). Phones show their own ball: the password for the Living, "You are the Demon" for the Demon. The category is always shown, to everyone. The TV shows the category only. Players then tap the ball to look again and confirm **I have seen it**.
+2. **The lots.** The same lottery wheel as Missions picks who speaks first. The timers only start after it.
+3. **One word each.** In seat order from the first speaker, each player says one word linked to the password, then **holds the button** on their phone to confirm. The TV and phones show whose turn it is. A speaker who runs out of time is skipped. Optionally the word is typed too and shown on the TV.
+4. **Talk it over.** Open discussion; everyone taps **Ready to vote** (or the timer runs out).
+5. **Name the Demon.** Everyone votes for one other player. The most votes is named. A tie lets the Demon escape (or, with the coin option, a coin decides). Naming a Living player, or nobody, means **the Demon wins**.
+6. **One last guess.** A caught Demon gets one guess at the password: tap a word in the 4×4 grid, or type it when the grid is off (accents and case never matter; one typo is forgiven in words of five letters or more). Right, and the Demon still wins; wrong, and the Living win.
+7. **The end.** The password, the Demon(s), the grid, what was said and who named whom are revealed. After 40 seconds (or when the host taps Rematch), the table returns to **the same lobby with the same settings**, everyone already ready, and the **scores carry on**: Living +1 for a win, Demons +2.
+
+## 3. Setup (lobby)
+
+| Setting | Options (default first) |
+|---|---|
+| Demons | **One**, two (7+ players) |
+| Demons know each other | **Off**, on (two Demons only) |
+| The Demon's hint | **None**, number of letters, first letter |
+| One last guess | **On**, off (off: a caught Demon simply loses) |
+| Tied vote | **The Demon escapes**, a coin decides |
+| Word grid | **On** (16 of the category's 20 words; the password is one of them), off |
+| Rounds | **1**, 2, 3 |
+| Type the words | **Off** (say it aloud), on |
+| Categories | **All ten** on; switch any off (at least one) |
+| Timers | Each speaker 30 s, discussion 90 s, voting 45 s, the Demon's guess 45 s |
+| Table language | Forced on every phone in this mode, so the words match |
+
+The lobby shows a short **How Exorcism works** explainer for everyone.
+
+## 4. Words
+
+Ten categories × 20 words, index-aligned in all seven languages (`engine/words.js`): Animals, Food and drink, In the house, Places, Jobs, Nature and weather, Sports and games, Getting around, Things that go bump, Clothes and accessories.
+
+## 5. Interludes and sound
+
+Shared scenes (the crystal ball, the lottery, the call to vote, the vote reveal, the last guess) play in sync on every screen and lock inputs while they run (see Beta 0). The ball is a WebGL mist shader with a CSS fallback, and calm under reduced motion.
+
+## 6. Practice bots
+
+Bots acknowledge the ball, speak on their turn (typing a word from the category when typing is on), get ready, vote at random (never for a Demon they know), and a caught Demon bot guesses at random from the grid.

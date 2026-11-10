@@ -1,6 +1,7 @@
 // Practice bots: stand-in players for testing a table alone. They see exactly
 // what a human in their seat would see (playerView) and act with simple random
 // choices. They never chat. The host adds them from a hidden lobby panel.
+import { categoryById } from '../engine/words.js';
 import { playerView } from '../engine/views.js';
 import { AVATAR_PARTS } from '../engine/content.js';
 import { randomTeam } from '../engine/missions.js';
@@ -41,7 +42,35 @@ export function botDecide(m, botId, rng) {
       if (a.type === 'swap' && a.snatcher && a.choice == null && a.targets?.length && chance(rng, 0.5)) return { cmd: { type: 'dream.swap', payload: { target: pick(rng, a.targets) } } };
       return null;
     case 'NIGHT_ACTIONS': return nightMove(m, v, rng);
-    default: return m.M ? missionMove(m, v, rng) : null;
+    default: return m.X ? exorcismMove(m, v, rng) : m.M ? missionMove(m, v, rng) : null;
+  }
+}
+
+// ── Exorcism ───────────────────────────────────────────────────────────────
+// Bots say a word from the category (a Living bot sometimes says the password's
+// neighbour in the list, a Demon bot a random one), vote for someone they did
+// not hear much sense from (random, never a known fellow Demon), and a caught
+// Demon guesses at random on the grid.
+function exorcismMove(m, v, rng) {
+  const a = v.action || {};
+  const me = v.me;
+  switch (a.type) {
+    case 'xack': return a.done ? null : { cmd: { type: 'x.ack', payload: {} } };
+    case 'xspeak': {
+      const cat = categoryById(m.X.category);
+      const words = cat.words[m.config.lang] ?? cat.words.en;
+      const k = me.x?.demon ? rng.int(words.length) : (m.X.word + 1 + rng.int(3)) % words.length;
+      return { cmd: { type: 'x.done', payload: { word: a.typed ? words[k] : undefined } } };
+    }
+    case 'xready': return a.ready ? null : { cmd: { type: 'x.ready', payload: { ready: true } } };
+    case 'xvote': {
+      if (a.choice) return null;
+      const mates = new Set((me.x?.demonMates ?? []).map((x) => x.id));
+      const pool = a.targets.filter((id) => !mates.has(id));
+      return { cmd: { type: 'x.vote', payload: { target: pick(rng, pool.length ? pool : a.targets) } } };
+    }
+    case 'xguess': return { cmd: { type: 'x.guess', payload: { index: pick(rng, a.grid ?? [0]) } } };
+    default: return null;
   }
 }
 
