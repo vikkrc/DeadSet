@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 500" fill="none">
+<rect width="360" height="500" fill="#151514"/>
+<rect x="12" y="12" width="336" height="476" stroke="#E7E1D3" stroke-width="1.6"/>
+<rect x="20" y="20" width="320" height="460" stroke="#E7E1D3" stroke-width=".7" opacity=".9"/>
+<path d="M30 125V52L52 30H125M235 30H308L330 52V125M330 375V448L308 470H235M125 470H52L30 448V375" stroke="#E7E1D3" stroke-width="2"/>
+<path d="M180 70V430M60 250H300" stroke="#E7E1D3" stroke-width=".7" opacity=".45"/>
+<path d="M22 35 l6 -4 6 4 -6 4Z M326 35 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M22 59 l6 -4 6 4 -6 4Z M326 59 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M22 83 l6 -4 6 4 -6 4Z M326 83 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M22 107 l6 -4 6 4 -6 4Z M326 107 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M22 131 l6 -4 6 4 -6 4Z M326 131 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M22 155 l6 -4 6 4 -6 4Z M326 155 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M22 179 l6 -4 6 4 -6 4Z M326 179 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M22 203 l6 -4 6 4 -6 4Z M326 203 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M22 227 l6 -4 6 4 -6 4Z M326 227 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M22 251 l6 -4 6 4 -6 4Z M326 251 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M22 275 l6 -4 6 4 -6 4Z M326 275 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M22 299 l6 -4 6 4 -6 4Z M326 299 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M22 323 l6 -4 6 4 -6 4Z M326 323 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M22 347 l6 -4 6 4 -6 4Z M326 347 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M22 371 l6 -4 6 4 -6 4Z M326 371 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M22 395 l6 -4 6 4 -6 4Z M326 395 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M22 419 l6 -4 6 4 -6 4Z M326 419 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M22 443 l6 -4 6 4 -6 4Z M326 443 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M22 467 l6 -4 6 4 -6 4Z M326 467 l6 -4 6 4 -6 4Z" stroke="#E7E1D3" stroke-width=".65" opacity=".65"/>
+<path d="M40 22 l3 -3 3 3 -3 3Z M40 478 l3 -3 3 3 -3 3Z" stroke="#E7E1D3" stroke-width=".7" opacity=".65"/>
+<path d="M75 22 l3 -3 3 3 -3 3Z M75 478 l3 -3 3 3 -3 3Z" stroke="#E7E1D3" stroke-width=".7" opacity=".65"/>
+<path d="M110 22 l3 -3 3 3 -3 3Z M110 478 l3 -3 3 3 -3 3Z" stroke="#E7E1D3" stroke-width=".7" opacity=".65"/>
+<path d="M145 22 l3 -3 3 3 -3 3Z M145 478 l3 -3 3 3 -3 3Z" stroke="#E7E1D3" stroke-width=".7" opacity=".65"/>
+<path d="M180 22 l3 -3 3 3 -3 3Z M180 478 l3 -3 3 3 -3 3Z" stroke="#E7E1D3" stroke-width=".7" opacity=".65"/>
+<path d="M215 22 l3 -3 3 3 -3 3Z M215 478 l3 -3 3 3 -3 3Z" stroke="#E7E1D3" stroke-width=".7" opacity=".65"/>
+<path d="M250 22 l3 -3 3 3 -3 3Z M250 478 l3 -3 3 3 -3 3Z" stroke="#E7E1D3" stroke-width=".7" opacity=".65"/>
+<path d="M285 22 l3 -3 3 3 -3 3Z M285 478 l3 -3 3 3 -3 3Z" stroke="#E7E1D3" stroke-width=".7" opacity=".65"/>
+<path d="M320 22 l3 -3 3 3 -3 3Z M320 478 l3 -3 3 3 -3 3Z" stroke="#E7E1D3" stroke-width=".7" opacity=".65"/>
+<path d="M180 92 208 123 180 156 152 123ZM180 344 208 377 180 410 152 377Z" stroke="#E7E1D3" stroke-width="1.2"/>
+<path d="M180 163c-58 34-79 77-79 87 0 10 21 53 79 87 58-34 79-77 79-87 0-10-21-53-79-87Z" stroke="#E7E1D3" stroke-width="1.2"/>
+<path d="M180 177c-28 28-38 49-38 73 0 24 10 45 38 73 28-28 38-49 38-73 0-24-10-45-38-73Z" stroke="#E7E1D3" stroke-width="1"/>
+<path d="m180 200 18 50-18 50-18-50 18-50Z" stroke="#E7E1D3" stroke-width="1.8"/>
+<path d="m130 311 99-122" stroke="#F04A39" stroke-width="3"/>
+<path d="M145 96 180 70 215 96M145 404 180 430 215 404" stroke="#E7E1D3" stroke-width=".8"/>
+<path d="M44 56 56 44m248 0 12 12M44 444l12 12m248 0 12-12" stroke="#E7E1D3" stroke-width="1.5"/>
+</svg>
