@@ -1,3 +1,5 @@
+import { emblem, EMBLEMS } from './emblems.js';
+
 // Hand-drawn line glyphs on a 32×32 grid. Stroke only; colour comes from CSS.
 const P = {
   // roles
@@ -79,7 +81,16 @@ const P = {
   bellOff: '<path d="M9 22V14a7 7 0 0 1 14 0v8l2 3H7z"/><path d="M14 28h4M5 5l22 22"/>',
 };
 
+// Role, Dream, mission and subject glyphs come from the Codex emblems; the small
+// interface glyphs (menu, close, check, arrows, moon, sun, bell…) stay line glyphs.
+const EMBLEM_FOR = {
+  heart: 'lovers', mission: 'regular', plus: 'extra', minus: 'skeleton', mask: 'maskedvote', hourglass: 'patience',
+  shield: 'steadfast', crack: 'brittle', crown: 'grand', clue: 'trail', cult: 'cult', ripper: 'ripper',
+};
+const INTERFACE = new Set(['moon', 'sun', 'key', 'coin', 'gift', 'bell']);
 export function glyph(name, cls = '') {
+  const em = EMBLEM_FOR[name] ?? (EMBLEMS[name] && !INTERFACE.has(name) ? name : null);
+  if (em) return emblem(em, { cls: `glyph ${cls}` });
   const d = P[name] || P.scroll;
   return `<svg class="glyph ${cls}" viewBox="0 0 32 32" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
 }

@@ -7,6 +7,7 @@ import { sound, score, haptic, burstAt, celebrate, ambient } from './fx.js';
 import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './board.js';
 import { seatLayout } from './layout.js';
 import { sceneMs, scenesFor } from './interludes.js';
+import { cardArt, roleEmblemId, roleNumber } from './cards.js';
 import { lobbyOrb, endOrb, isExorcismPhase, exorcismMain, exorcismPicks, exorcismDock, exorcismActs, exorcismMoment, exorcismMomentHtml, X_MOMENT_TIME, exorcismEndHtml, exorcismLobbyDeck, setExorcismContent, mountBalls } from './exorcism.js';
 import { avatarSvg, randomAvatar, PARTS, COLORS } from './avatar.js';
 import { giftHtml, productIndex } from './gifts.js';
@@ -445,9 +446,9 @@ function momentHtml(m) {
       const sc = m.sc ?? { who: '?', where: '?', why: '?' };
       const cards = [['Who', 'mentalist', scen('WHO', sc.who)], ['Where', 'necro', scen('WHERE', sc.where)], ['Why', 'scroll', scen('WHY', sc.why)]];
       body = `<span class="kicker">${t('Night 0 · the story is dealt')}</span><h1 class="m-title">${letters(t('The game begins'))}</h1>
-        <div class="cer-cards">${cards.map(([k, g, txt], i) => `<div class="cer-card" style="--d:${0.9 + i * 0.85}s"><div class="cer-in"><div class="cer-face back"><b>DS</b></div><div class="cer-face front">${glyph(g)}<span class="k">${t(k)}</span><b>${esc(txt)}</b></div></div></div>`).join('')}</div>
+        <div class="cer-cards">${cards.map(([k, g, txt], i) => `<div class="cer-card" style="--d:${0.9 + i * 0.85}s"><div class="cer-in"><div class="cer-face back arc back"><span class="sig">DS</span></div><div class="cer-face front arc"><span class="arc-num">${['I', 'II', 'III'][i]}</span><span class="k">${t(k)}</span><b>${esc(txt)}</b></div></div></div>`).join('')}</div>
         <p class="m-sub cer-line" style="--d:3.6s">${tmh(m.scenario)}</p>
-        ${m.rules.length ? `<div class="cer-rules">${m.rules.map((r, i) => `<div class="cer-rule" style="--d:${4.2 + i * 0.7}s">${glyph(ruleGlyph(r.id))}<span><span class="k">${t('Rule card')}</span><b>${esc(ruleF(r.id, 'name'))}</b><small>${esc(ruleF(r.id, 'text'))}</small></span></div>`).join('')}</div>` : ''}
+        ${m.rules.length ? `<div class="cer-rules">${m.rules.map((r, i) => `<div class="cer-rule edict" style="--d:${4.2 + i * 0.7}s"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(r.id, 'name')][0] ?? '')}</i><span><span class="k">${t('Rule card')}</span><b>${esc(ruleF(r.id, 'name'))}</b><small>${esc(ruleF(r.id, 'text'))}</small></span><span class="ed-wax" aria-hidden="true">DS</span></div>`).join('')}</div>` : ''}
         <p class="m-sub small cer-line" style="--d:${4.6 + m.rules.length * 0.7}s">${onBoard() ? t('Players: look only at your own screen.') : t('Next: your role card, face down. Look only at your own screen.')}</p>`;
       break;
     }
@@ -1083,7 +1084,7 @@ function sheet(v) {
   } else if (s === 'rules') {
     title = t('Rules in force');
     const live = activeRuleNotes(v);
-    body = v.activeRules.map((r) => `<div class="rule-card ${live[r.id] ? 'live' : ''}">${glyph(ruleGlyph(r.id))}<div><b>${esc(ruleF(r.id, 'name'))}</b>${live[r.id] ? `<span class="in-effect">${t('In effect now')} · ${tmh(live[r.id])}</span>` : ''}<p>${esc(ruleF(r.id, 'text'))}</p><p class="small muted">${esc(ruleF(r.id, 'enforcement'))}</p></div></div>`).join('');
+    body = v.activeRules.map((r) => `<div class="rule-card edict ${live[r.id] ? 'live' : ''}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(r.id, 'name')][0] ?? '')}</i><div><b>${esc(ruleF(r.id, 'name'))}</b>${live[r.id] ? `<span class="in-effect">${t('In effect now')} · ${tmh(live[r.id])}</span>` : ''}<p>${esc(ruleF(r.id, 'text'))}</p><p class="small muted">${esc(ruleF(r.id, 'enforcement'))}</p></div></div>`).join('');
   } else if (s === 'story') {
     title = t('The story');
     body = `<p class="scenario">${storyLine(v.scenario)}</p><p class="small muted">${t('Pure flavour — it never changes the rules. Play it up.')}</p>`;
@@ -1219,12 +1220,12 @@ function lobbyDeck(v, isHost) {
   const deck = v.setup?.publicDeck;
   const preset = v.presets.find((p) => p.id === s.preset);
   const roles = Object.fromEntries((S.content?.roles ?? []).map((r) => [r.id, r]));
-  const card = (id, n, cls = '') => `<div class="dcard ${cls}" data-key="ld-${id}">${roles[id] ? glyph(roles[id].glyph) : ''}<b>${esc(roleF(id, 'name'))}</b>${n > 1 ? `<i>×${n}</i>` : ''}</div>`;
+  const card = (id, n, cls = '') => `<div class="dcard arc ${roles[id]?.alignment === 'DEATH' ? 'noir' : ''} ${cls}" data-key="ld-${id}">${roles[id] ? cardArt(roleEmblemId(roles[id])) : ''}<b>${esc(roleF(id, 'name'))}</b>${n > 1 ? `<i>×${n}</i>` : ''}</div>`;
   let cards = '';
   if (deck?.exact) cards = Object.entries(deck.exact).map(([id, n]) => card(id, n, roles[id]?.alignment === 'DEATH' ? 'death' : '')).join('');
   else if (deck) {
     cards = Object.entries(deck.core).filter(([, n]) => n > 0).map(([id, n]) => card(id, n, id === 'DEATH' ? 'death' : '')).join('')
-      + (deck.extended ? `<div class="dcard secret" data-key="ld-ext"><span class="q">?</span><b>${t('{n} extended', { n: deck.extended })}</b></div>` : '');
+      + (deck.extended ? `<div class="dcard arc back secret" data-key="ld-ext"><span class="sig">?</span><b>${t('{n} extended', { n: deck.extended })}</b></div>` : '');
   }
   if (preset.missions) return missionLobbyDeck(v, isHost, cards);
   const allExt = (S.content?.roles ?? []).filter((r) => r.set === 'standard' || r.set === 'full').map((r) => r.id);
@@ -1240,9 +1241,9 @@ function lobbyDeck(v, isHost) {
     }).join('')}</div>${editable ? `<p class="small muted">${t('Tap to add or remove roles from the pool.')}</p>` : ''}` : '';
   const ruleCards = s.rules.mode === 'manual'
     ? (s.rules.selected.length ? s.rules.selected.map((id) => isHost
-      ? `<button class="dcard rcard" data-act="ruleToggle" data-id="${id}" data-key="lr-${id}" aria-label="${esc(t('Remove {x}', { x: ruleF(id, 'name') }))}">${glyph(ruleGlyph(id))}<b>${esc(ruleF(id, 'name'))}</b><i>×</i></button>`
-      : `<div class="dcard rcard" data-key="lr-${id}">${glyph(ruleGlyph(id))}<b>${esc(ruleF(id, 'name'))}</b></div>`).join('') : `<p class="small muted">${t('No rule cards chosen.')}</p>`)
-    : Array.from({ length: s.rules.count }, (_, i) => `<div class="dcard rcard fd" data-key="lr-r${i}"><span class="q">?</span><b>${t('Drawn at start')}</b></div>`).join('') || `<p class="small muted">${t('No rule cards.')}</p>`;
+      ? `<button class="dcard rcard arc edict" data-act="ruleToggle" data-id="${id}" data-key="lr-${id}" aria-label="${esc(t('Remove {x}', { x: ruleF(id, 'name') }))}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><b>${esc(ruleF(id, 'name'))}</b><i>×</i></button>`
+      : `<div class="dcard rcard arc edict" data-key="lr-${id}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><b>${esc(ruleF(id, 'name'))}</b></div>`).join('') : `<p class="small muted">${t('No rule cards chosen.')}</p>`)
+    : Array.from({ length: s.rules.count }, (_, i) => `<div class="dcard rcard fd arc back" data-key="lr-r${i}"><span class="sig">?</span><b>${t('Drawn at start')}</b></div>`).join('') || `<p class="small muted">${t('No rule cards.')}</p>`;
   const toggle = (key, title, sub) => isHost
     ? `<label class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><input type="checkbox" class="switch" data-set-bool="${key}" ${v.table?.[key] ? 'checked' : ''}></label>`
     : `<div class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><span class="tag ${v.table?.[key] ? 'solid' : ''}">${t(v.table?.[key] ? 'On' : 'Off')}</span></div>`;
@@ -1459,18 +1460,21 @@ function roleCardHtml(role, { align = null, flipKey = 'role', flipped = null, mi
   if (!role) return '';
   const a = align ?? role.alignment;
   const isFlipped = flipped ?? !!S.ui.flipped[flipKey];
+  // The Death team's own card is vellum like every other (same brightness across the table); only its ink is red.
+  const rubric = a === 'DEATH' ? 'rubric' : '';
   if (mini) {
-    return `<button class="role-mini ${a === 'DEATH' ? 'death' : ''}" data-act="sheet" data-id="role" data-key="rolemini">${glyph(role.glyph)}<span><b>${esc(roleF(role.id, 'name'))}</b><small>${esc(roleF(role.id, 'summary'))}</small></span></button>`;
+    return `<button class="role-mini" data-act="sheet" data-id="role" data-key="rolemini"><span class="arc mini ${rubric}">${cardArt(roleEmblemId(role))}</span><span><b>${esc(roleF(role.id, 'name'))}</b><small>${esc(roleF(role.id, 'summary'))}</small></span></button>`;
   }
   return `<div class="card-stage" data-key="stage-${flipKey}">
     <button class="flipcard ${isFlipped ? 'flipped' : ''}" data-act="flip" data-key="${flipKey}" data-tilt aria-label="${isFlipped ? esc(t('Your role: {x}', { x: roleF(role.id, 'name') })) : esc(t('Turn over your role card'))}">
-      <span class="face back"><span class="mono-gram">DS</span><span class="hint kicker">${t('Tap to turn over')}</span></span>
-      <span class="face front ${a === 'DEATH' ? 'death' : ''}">
-        <span class="corner"><b>${esc(ALIGN[a])}</b><span>${esc(roleF(role.id, 'when'))}</span></span>
-        <span class="art">${glyph(role.glyph)}</span>
+      <span class="face back arc back"><span class="sig">DS</span><span class="hint kicker">${t('Tap to turn over')}</span></span>
+      <span class="face front arc ${rubric}">
+        <span class="arc-num">${esc(roleNumber(role, t))}</span>
+        ${cardArt(roleEmblemId(role))}
         <span class="nm">${esc(roleF(role.id, 'name'))}</span>
-        ${roleF(role.id, 'alias') ? `<span class="small muted">${th('also called {x}', { x: roleF(role.id, 'alias') })}</span>` : ''}
+        ${roleF(role.id, 'alias') ? `<span class="arc-alias">${th('also called {x}', { x: roleF(role.id, 'alias') })}</span>` : ''}
         <span class="sum">${esc(roleF(role.id, 'summary'))}</span>
+        <span class="arc-fac">${esc(ALIGN[a] ?? '')} · ${esc(roleF(role.id, 'when'))}</span>
         <span class="shine" aria-hidden="true"></span>
       </span>
     </button></div>`;
@@ -1666,7 +1670,7 @@ function nightfallStage(v, me, a) {
   // Everyone turns over tonight's Dream; Dream Snatchers may also swap.
   const reveal = `<div class="dream-reveal" data-key="dr-${me.dream.id}-${v.phaseId}"><div class="dr-in">
       <div class="dr-face back">${moon(0.08)}</div>
-      <div class="dr-face front">${dreamGlyph(me.dream.id)}<span class="kicker">${t('Tonight\'s dream')}</span><h3>${esc(dreamF(me.dream.id, 'name'))}</h3><p>${esc(dreamF(me.dream.id, 'text'))}</p></div>
+      <div class="dr-face front arc dreamsuit">${cardArt(DREAM_EMB[me.dream.id] ?? 'moon')}<span class="kicker">${t('Tonight\'s dream')}</span><h3>${esc(dreamF(me.dream.id, 'name'))}</h3><p>${esc(dreamF(me.dream.id, 'text'))}</p></div>
     </div></div>`;
   if (a.type === 'swap' && a.snatcher) {
     // Snatchers need the table, so their card is compact and the ring comes first.
@@ -1690,9 +1694,13 @@ function sleepingHtml(v, line) {
   </section>`;
 }
 
+const DREAM_EMB = {
+  SLEEP_PARALYSIS: 'paralysis', PREMONITION: 'premonition', WHISPERS: 'whispers', SLEEPWALKING: 'sleepwalk', DREAM_SNATCHER: 'snatcher',
+  NIGHT_SHIFT: 'nightshift', SHARED_NIGHTMARE: 'nightmare', INSOMNIA: 'insomnia', GUARDIAN_ANGEL: 'angel',
+};
 function dreamCard(d) {
   if (!d) return '';
-  return `<div class="dream" data-key="dream-${d.id}">${dreamGlyph(d.id)}<div><span class="kicker">${t('Tonight\'s dream')}</span><h3>${esc(dreamF(d.id, 'name'))}</h3><p>${esc(dreamF(d.id, 'text'))}</p></div></div>`;
+  return `<div class="dream" data-key="dream-${d.id}"><span class="arc mini dreamsuit">${cardArt(DREAM_EMB[d.id] ?? 'moon')}</span><div><span class="kicker">${t('Tonight\'s dream')}</span><h3>${esc(dreamF(d.id, 'name'))}</h3><p>${esc(dreamF(d.id, 'text'))}</p></div></div>`;
 }
 
 function actionsStage(v, me, a) {

@@ -2222,3 +2222,210 @@ input.switch:checked::after { transform: translateX(18px) rotate(45deg) scale(0.
 .sky-orb { width: 20px; height: 20px; margin: -10px 0 0 -10px; z-index: 3; }
 .sky-orb.sun { background: radial-gradient(circle at 40% 35%, #fff6d8, var(--gilt-hi) 45%, var(--gilt)); box-shadow: 0 0 22px 6px color-mix(in srgb, var(--gilt) 45%, transparent); }
 body.pressure .sky-orb.sun, body.pressure .sky-orb.moon { background: radial-gradient(circle at 40% 35%, #ffd2c8, var(--blood-ink)); box-shadow: 0 0 22px 6px rgba(228, 93, 80, 0.5); }
+
+/* ═════════════════════════════════════════════════════════════════════════
+   Codex step 5 · The Arcana: one tarot deck, one back
+   Anatomy (.arc, sized by font-size; every inner size is em): ink nine-slice
+   frame, number in rubric caps, lancet-arched art window with halftone and
+   the emblem inside its ray ring, blackletter title, one italic line,
+   faction in tiny caps. Faces: vellum (every role, Death included on a
+   phone: .rubric is red ink on the same paper), noir (Death in public),
+   the night suit (Dreams), edicts (Rule cards), the lattice back.
+   ═════════════════════════════════════════════════════════════════════════ */
+:root {
+  --vellum-stain: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='s'><feTurbulence type='fractalNoise' baseFrequency='.011 .019' numOctaves='4' stitchTiles='stitch' seed='7'/><feColorMatrix values='0 0 0 0 .36 0 0 0 0 .22 0 0 0 0 .08 0 0 0 .75 -.3'/></filter><rect width='100%' height='100%' filter='url(%23s)'/></svg>");
+  --frame-ink: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='%231d1510'><defs><g id='c'><path d='M32 2.5H17A14.5 14.5 0 0 1 2.5 17V32'/><path d='M32 6.5H20.5A18.4 18.4 0 0 1 6.5 20.5V32' stroke-width='.6'/><path d='M6.5 2l4.5 4.5-4.5 4.5L2 6.5z' fill='%238e1b1f' stroke='none'/><path d='M15.5 15.5c4 5 10.5 4.5 10.5.5 0-2.6-3.6-2.8-3.8-.4M15.5 15.5c5 4 4.5 10.5.5 10.5-2.6 0-2.8-3.6-.4-3.8' stroke-width='.8'/></g></defs><use href='%23c'/><use href='%23c' transform='matrix(-1 0 0 1 96 0)'/><use href='%23c' transform='matrix(1 0 0 -1 0 96)'/><use href='%23c' transform='matrix(-1 0 0 -1 96 96)'/><path d='M32 2.5H64M32 93.5H64M2.5 32V64M93.5 32V64'/><path d='M32 6.5H64M32 89.5H64M6.5 32V64M89.5 32V64' stroke-width='.6'/></svg>");
+  --frame-rubric: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='%238e1b1f'><defs><g id='c'><path d='M32 2.5H17A14.5 14.5 0 0 1 2.5 17V32'/><path d='M32 6.5H20.5A18.4 18.4 0 0 1 6.5 20.5V32' stroke-width='.6'/><path d='M6.5 2l4.5 4.5-4.5 4.5L2 6.5z' fill='%238e1b1f' stroke='none'/><path d='M15.5 15.5c4 5 10.5 4.5 10.5.5 0-2.6-3.6-2.8-3.8-.4M15.5 15.5c5 4 4.5 10.5.5 10.5-2.6 0-2.8-3.6-.4-3.8' stroke-width='.8'/></g></defs><use href='%23c'/><use href='%23c' transform='matrix(-1 0 0 1 96 0)'/><use href='%23c' transform='matrix(1 0 0 -1 0 96)'/><use href='%23c' transform='matrix(-1 0 0 -1 96 96)'/><path d='M32 2.5H64M32 93.5H64M2.5 32V64M93.5 32V64'/><path d='M32 6.5H64M32 89.5H64M6.5 32V64M89.5 32V64' stroke-width='.6'/></svg>");
+  --frame-gilt-card: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='%23c9a35a'><defs><g id='c'><path d='M32 2.5H17A14.5 14.5 0 0 1 2.5 17V32'/><path d='M32 6.5H20.5A18.4 18.4 0 0 1 6.5 20.5V32' stroke-width='.6'/><path d='M6.5 2l4.5 4.5-4.5 4.5L2 6.5z' fill='%23d0483f' stroke='none'/><path d='M15.5 15.5c4 5 10.5 4.5 10.5.5 0-2.6-3.6-2.8-3.8-.4M15.5 15.5c5 4 4.5 10.5.5 10.5-2.6 0-2.8-3.6-.4-3.8' stroke-width='.8'/></g></defs><use href='%23c'/><use href='%23c' transform='matrix(-1 0 0 1 96 0)'/><use href='%23c' transform='matrix(1 0 0 -1 0 96)'/><use href='%23c' transform='matrix(-1 0 0 -1 96 96)'/><path d='M32 2.5H64M32 93.5H64M2.5 32V64M93.5 32V64'/><path d='M32 6.5H64M32 89.5H64M6.5 32V64M89.5 32V64' stroke-width='.6'/></svg>");
+}
+/* emblems on dark grounds hide what is behind their shapes with the ground colour */
+.emblem { --paper: var(--ink-2); overflow: visible; }
+
+/* ── The card ── */
+.arc {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.55em;
+  padding: 1.5em 1.35em 1.25em; text-align: center; border-radius: 0.4em; color: var(--sepia);
+  background: var(--vellum-stain), var(--vellum); background-size: 100% 100%, auto;
+  box-shadow: 0 0 0 1px #77633f, 0 1.8em 3em -1.4em #000, inset 0 0 2em rgba(84, 54, 18, 0.24);
+}
+.arc::before {
+  content: ''; position: absolute; inset: 0.42em; pointer-events: none; z-index: 0;
+  border: 1px solid var(--sepia-2); border-image: var(--frame-ink) 32 / 1.5em stretch;
+}
+.arc > * { position: relative; z-index: 1; }
+.arc-num { font: 600 0.74em/1 var(--text); letter-spacing: 0.34em; text-indent: 0.34em; color: var(--rubric); text-transform: uppercase; }
+.arc-art { position: relative; flex: 1; min-height: 0; width: 86%; clip-path: var(--arch); background: var(--sepia); display: grid; align-items: end; justify-items: center; overflow: hidden; }
+.arc-art::before {
+  content: ''; position: absolute; inset: 1.5px; clip-path: var(--arch);
+  background: linear-gradient(var(--vellum) 30%, transparent 95%), radial-gradient(circle, rgba(29, 21, 16, 0.6) 0.9px, transparent 1.4px) 0 0 / 5px 5px, var(--vellum-2);
+}
+.arc-art .emblem { position: relative; width: 100%; height: auto; max-height: 100%; padding: 19% 4% 3%; color: var(--sepia); --paper: var(--vellum); filter: url(#ds-wobble); stroke-width: 2.2; }
+.arc .nm, .arc .arc-ttl { font: 600 2em/0.98 var(--black); color: var(--sepia); padding-bottom: 0.08em; }
+.arc .sum, .arc .arc-sub { font: italic 400 0.86em/1.25 var(--text); color: var(--sepia-2); max-width: 22ch; }
+.arc-fac { font: 600 0.6em/1.2 var(--text); letter-spacing: 0.3em; text-indent: 0.3em; text-transform: uppercase; color: var(--sepia-2); }
+.arc-alias { font: italic 400 0.72em/1 var(--text); color: var(--sepia-2); }
+/* Death on a phone: the same paper, red ink and a red edge */
+.arc.rubric { box-shadow: 0 0 0 1px var(--rubric), 0 1.8em 3em -1.4em #000, inset 0 0 2em rgba(84, 54, 18, 0.24); }
+.arc.rubric::before { border-image-source: var(--frame-rubric); }
+.arc.rubric .nm, .arc.rubric .arc-fac { color: var(--rubric); }
+/* Death in public (TV lobby deck, end reveal, guide): the one black card */
+.arc.noir { color: var(--bone); background: radial-gradient(120% 90% at 50% 20%, #2a0c0e, #0c0707 70%); box-shadow: 0 0 0 1px var(--gilt-2), 0 1.8em 3em -1.4em #000; }
+.arc.noir::before { border-image-source: var(--frame-gilt-card); }
+.arc.noir .arc-num { color: var(--blood-ink); }
+.arc.noir .nm, .arc.noir .arc-ttl, .arc.noir b { color: #f1e4c8; }
+.arc.noir .sum, .arc.noir .arc-sub, .arc.noir .arc-fac { color: #c2b496; }
+.arc.noir .arc-art { background: #c9a35a; }
+.arc.noir .arc-art::before { background: linear-gradient(#150809 30%, transparent 95%), radial-gradient(circle, rgba(201, 163, 90, 0.5) 0.9px, transparent 1.4px) 0 0 / 5px 5px, #1d0b0c; }
+.arc.noir .arc-art .emblem { color: #efe1c2; --paper: #1d0b0c; }
+/* Dreams: the night suit, silver on indigo */
+.arc.dreamsuit { color: #dbe1ec; background: radial-gradient(120% 90% at 50% 20%, #18213a, #070a12 72%); box-shadow: 0 0 0 1px #5d6a82, 0 1.8em 3em -1.4em #000; }
+.arc.dreamsuit::before { border-image-source: var(--frame-silver); }
+.arc.dreamsuit .arc-art { background: #b9c4d8; }
+.arc.dreamsuit .arc-art::before { background: linear-gradient(#0a0e18 30%, transparent 95%), radial-gradient(circle, rgba(185, 196, 216, 0.45) 0.9px, transparent 1.4px) 0 0 / 5px 5px, #101627; }
+.arc.dreamsuit .arc-art .emblem { color: #e3e9f4; --paper: #101627; }
+/* The back: every face-down card in the game */
+.arc.back, .face.back.arc {
+  justify-content: center; align-items: center; color: var(--gilt);
+  background:
+    repeating-linear-gradient(45deg, transparent 0 0.62em, rgba(201, 163, 90, 0.34) 0.62em 0.68em),
+    repeating-linear-gradient(-45deg, transparent 0 0.62em, rgba(201, 163, 90, 0.34) 0.62em 0.68em),
+    radial-gradient(120% 90% at 50% 50%, #2a0c0e, #0c0707 75%);
+  box-shadow: 0 0 0 1px var(--gilt-2), 0 1.8em 3em -1.4em #000;
+}
+.arc.back::before { border-image-source: var(--frame-gilt-card); }
+.arc .sig {
+  display: grid; place-items: center; width: 3.4em; height: 3.4em; border-radius: 50%;
+  border: 1px solid #c9a35a; box-shadow: 0 0 0 0.2em #0c0707, 0 0 0 0.24em #8a6d35; background: #0c0707;
+  font: 700 2.2em/1 var(--mark); color: #c9a35a; letter-spacing: -0.02em;
+}
+
+/* ── The role card on a phone (flips from the lattice back) ── */
+.flipcard { width: min(64vw, 272px); aspect-ratio: 11 / 18; font-size: min(4.1vw, 17px); }
+.face { border-radius: 0.4em; overflow: visible; box-shadow: none; }
+.face.front.arc { transform: rotateY(180deg); justify-content: flex-start; padding: 1.5em 1.35em 1.25em; border: 0; outline: 0; background: var(--vellum-stain), var(--vellum); background-size: 100% 100%, auto; }
+.face.front.arc.rubric { background: var(--vellum-stain), var(--vellum); }
+.face.front.arc .nm { font-size: 2.05em; }
+.face.front.arc .sum { font-size: 0.86em; }
+.face.back.arc .sig { font-size: 2.2em; }
+.face.back.arc .hint { position: absolute; bottom: 2.2em; left: 0; right: 0; text-indent: 0.24em; color: var(--gilt); }
+.face.front .corner { display: none; }
+.shine { z-index: 2; border-radius: 0.4em; background: linear-gradient(115deg, transparent 32%, rgba(236, 210, 143, 0.32) 46%, transparent 60%); }
+.sheet .flipcard { width: min(46vw, 196px); font-size: min(2.9vw, 12px); }
+.sheet .face.front.arc .nm { font-size: 2.05em; }
+.sheet .face.front.arc .sum { font-size: 0.86em; }
+/* the thumbnail: the same card, small, beside its text */
+.role-mini { grid-template-columns: 50px 1fr; border-radius: 0; border-color: var(--iron); }
+.arc.mini { width: 50px; aspect-ratio: 11 / 18; font-size: 5px; padding: 1.4em 1.2em; gap: 0; justify-content: flex-end; }
+.arc.mini .arc-art { flex: 1; width: 92%; }
+
+/* ── Dreams ── */
+.dream-reveal { width: min(56vw, 232px); aspect-ratio: 11 / 18; }
+.dr-face { border-radius: 0.4em; border: 0; }
+.dr-face.back { background: radial-gradient(120% 90% at 50% 30%, #18213a, #070a12 72%); box-shadow: 0 0 0 1px #5d6a82; }
+.dr-face.front.arc { font-size: min(3.6vw, 14.5px); justify-content: flex-start; gap: 0.4em; padding: 1.5em 1.2em 1.2em; }
+.dr-face.front.arc h3 { font: 600 1.7em/1 var(--black); color: #eef3fb; }
+.dr-face.front.arc p { font: italic 400 0.86em/1.3 var(--text); color: #a9b2c4; }
+.dr-face.front.arc .kicker { color: #9fb0d2; font-size: max(0.62em, 10px); }
+.dream { grid-template-columns: 46px 1fr; border: 1px solid #5d6a82; border-image: var(--frame-silver) 32 / 22px stretch; border-radius: 0; padding: 16px 18px; }
+.dream .arc.mini { width: 46px; }
+.dream h3 { font: 600 22px/1 var(--black); }
+.dream p { font: italic 400 15px/1.35 var(--text); }
+
+/* ── Edicts: Rule cards, typographic, a giant rubric initial and a wax seal ── */
+.edict:not(.arc) {
+  position: relative; display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: start; text-align: left;
+  padding: 14px 16px; color: var(--sepia); border: 0; border-radius: 0.4em;
+  background: var(--vellum-stain), #cdb98c; background-size: 100% 100%, auto;
+  box-shadow: 0 0 0 1px #77633f, inset 0 0 1.6em rgba(84, 54, 18, 0.24);
+}
+.edict .ed-ini { font: 800 46px/0.86 var(--black); color: var(--rubric); font-style: normal; text-shadow: 0.03em 0.02em 0 rgba(142, 27, 31, 0.3); padding-top: 4px; }
+.edict .k { color: var(--rubric); font: 600 10px/1.2 var(--text); letter-spacing: 0.26em; text-transform: uppercase; }
+.edict b { color: var(--sepia); font-family: var(--black); font-weight: 600; }
+.edict small, .edict p { color: var(--sepia-2); font: italic 400 14px/1.35 var(--text); }
+.edict .ed-wax {
+  display: grid; place-items: center; width: 34px; height: 34px; border-radius: 47% 53% 50% 50% / 52% 47% 53% 48%; align-self: end;
+  background: radial-gradient(circle at 36% 28%, #cf3d40, #8f1a20 46%, #4a090d); color: #3a0609; font: 700 15px/1 var(--mark);
+  box-shadow: inset 0 0 0 3px rgba(0, 0, 0, 0.13), inset 0 -4px 7px rgba(0, 0, 0, 0.35), 0 4px 10px -4px #000;
+}
+.rule-card.edict { grid-template-columns: auto 1fr; margin-bottom: 10px; }
+.rule-card.edict .in-effect { color: var(--rubric); font: italic 400 13px var(--text); }
+.rule-card.edict.live { box-shadow: 0 0 0 1px var(--gilt), 0 0 22px -6px var(--gilt), inset 0 0 1.6em rgba(84, 54, 18, 0.24); }
+.cer-rule.edict { background: var(--vellum-stain), #cdb98c; background-size: 100% 100%, auto; border: 0; }
+
+/* ── The story spread (opening ceremony): three typographic cards turning ── */
+.cer-cards { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.cer-card { height: auto; aspect-ratio: 11 / 18; font-size: clamp(8px, 2.5vw, 13px); }
+.cer-face.arc { border: 0; border-radius: 0.4em; }
+.cer-face.front.arc { justify-content: center; gap: 0.5em; padding: 1.6em 0.9em; }
+.cer-face.front .arc-num { position: absolute; top: 1.7em; left: 0; right: 0; font-size: max(0.74em, 9px); }
+.cer-face.front .k { font: 600 3em/0.95 var(--black); letter-spacing: 0; text-transform: none; color: var(--rubric); padding-bottom: 0.1em; border-bottom: 1px solid rgba(142, 27, 31, 0.5); }
+.cer-face.front b { font: italic 400 1.35em/1.15 var(--text); color: var(--sepia); }
+.cer-face.back.arc .sig { font-size: 1.6em; }
+
+/* ── Lobby deck: small real cards (titles in caps: blackletter never goes under 20px) ── */
+.dcard.arc { width: 74px; height: auto; aspect-ratio: 11 / 18; padding: 9px 6px 7px; gap: 4px; justify-content: flex-start; font-size: 6px; border: 0; animation: dealIn 0.5s var(--spring) both; }
+.dcard.arc .arc-art { flex: 1; width: 90%; }
+.dcard.arc b { font: 600 8.5px/1.1 var(--text); letter-spacing: 0.08em; text-transform: uppercase; color: var(--sepia); }
+.dcard.arc.noir b { color: #f1e4c8; }
+.dcard.arc i { top: 6px; right: 8px; z-index: 2; font: 600 10px/1 var(--bit); color: var(--rubric); }
+.dcard.arc.noir i { color: var(--blood-ink); }
+.dcard.arc.back { justify-content: center; }
+.dcard.arc.back b { color: var(--gilt); font-size: 8px; }
+.dcard.arc .sig { font-size: 1.5em; width: 34px; height: 34px; font-size: 18px; }
+.dcard.arc.edict { justify-content: center; gap: 6px; background: var(--vellum-stain), #cdb98c; background-size: 100% 100%, auto; width: 74px; }
+.dcard.arc.edict .ed-ini { font: 800 32px/0.9 var(--black); color: var(--rubric); font-style: normal; }
+.board2 .dcard.arc { width: 96px; }
+.board2 .dcard.arc b { font-size: 10px; }
+.board2 .dcard.arc.edict { width: 96px; }
+
+/* ── Mission cards: tarot cards; Succeed and Sabotage share one vellum face on phones ── */
+.mcard.arc { width: 210px; min-height: 0; height: 344px; padding: 1.5em 1.2em 1.2em; border: 0; font-size: 13px; display: flex; }
+.mcard.arc .mc-name { font: 600 1.9em/1 var(--black); color: var(--sepia); }
+.mcard.arc .mc-text { font: italic 400 0.92em/1.3 var(--text); color: var(--sepia-2); max-width: 22ch; }
+.mcard.arc .mc-foot { font: 600 0.68em/1.2 var(--text); letter-spacing: 0.2em; text-transform: uppercase; color: var(--rubric); }
+.mcard.arc.special { box-shadow: 0 0 0 1px var(--gilt), 0 0 40px -6px var(--gilt), inset 0 0 2em rgba(84, 54, 18, 0.24); }
+.mc-in { width: 210px; height: 344px; }
+.mc-back { border: 0; border-radius: 0.4em; font-size: 13px; }
+.mc-back, .mrc-back {
+  color: var(--gilt);
+  background:
+    repeating-linear-gradient(45deg, transparent 0 8px, rgba(201, 163, 90, 0.34) 8px 9px),
+    repeating-linear-gradient(-45deg, transparent 0 8px, rgba(201, 163, 90, 0.34) 8px 9px),
+    radial-gradient(120% 90% at 50% 50%, #2a0c0e, #0c0707 75%);
+  box-shadow: 0 0 0 1px var(--gilt-2), 0 10px 24px rgba(0, 0, 0, 0.5);
+  font-family: var(--mark);
+}
+.mplay-card { width: 140px; height: 229px; border: 0; border-radius: 0.4em; background: none; padding: 0; font-size: 9px; }
+.mplay-card .mpc-in.arc { width: 100%; height: 100%; justify-content: flex-start; }
+.mplay-card .mpc-in b { font: 600 2.5em/1 var(--black); color: var(--sepia); }
+.mplay-card .mpc-in small { font: italic 400 1.2em/1.25 var(--text); color: var(--sepia-2); }
+.mplay-card.good .mpc-art .glyph, .mplay-card.bad .mpc-art .glyph { color: inherit; }
+/* chosen: the same lift and gilt glow for either card */
+.mplay-card.sel, .mplay-card.good.sel, .mplay-card.bad.sel { transform: translateY(-10px) scale(1.04); box-shadow: 0 0 0 2px var(--gilt-hi), 0 0 34px color-mix(in srgb, var(--gilt) 55%, transparent); border-color: transparent; }
+/* a card you cannot play looks the same from across the table: no dimming */
+.mplay-card:disabled { opacity: 1; cursor: not-allowed; }
+/* the public reveal: Succeed on vellum, Sabotage flips black with a red flare */
+.mrc-front.arc { font-size: calc(var(--w) / 11); padding: 1.2em 0.8em 1em; gap: 0.35em; border: 0; border-radius: 0.4em; justify-content: flex-start; }
+.mrc-front.arc b { font: 600 1.9em/1 var(--black); white-space: nowrap; color: var(--sepia); }
+.mrc-front.arc.noir b { color: #f1e4c8; }
+.mrc.good .mrc-front.arc { color: var(--sepia); border: 0; }
+.mrc.bad .mrc-front.arc { border: 0; box-shadow: 0 0 0 1px var(--blood-ink), 0 0 36px rgba(228, 93, 80, 0.55); }
+.mrc-back { border: 0; border-radius: 0.4em; }
+
+/* the print wobble lives in index.html (#ds-wobble); reduced motion changes nothing: it is static */
+/* the turning faces stay stacked on top of each other */
+.face.arc, .cer-face.arc, .dr-face.arc, .mrc-front.arc { position: absolute; inset: 0; }
+.face.front.arc, .dr-face.front.arc, .mrc-front.arc { transform: rotateY(180deg); }
+.cer-face.front.arc { transform: rotateX(180deg); display: flex; grid-template-columns: none; text-align: center; }
+.mrc { height: calc(var(--w) * 18 / 11); }
+.face.front.arc .sum { color: var(--sepia-2); max-width: 22ch; }
+.face.front.arc .nm { color: var(--sepia); }
+.face.front.arc.rubric .nm { color: var(--rubric); }
+.cer-rule.edict small, .rule-card.edict small, .rule-card.edict p { display: block; line-height: 1.3; margin-top: 3px; }
+.cer-rule.edict .k { color: var(--rubric); }
+.cer-rule.edict b { color: var(--sepia); }
+/* small deck cards: the emblem fills the window instead of sinking to its sill */
+.dcard.arc .arc-art { align-items: center; }
+.dcard.arc .arc-art .emblem { padding: 22% 2% 2%; }
+.dcard.arc.back { gap: 8px; }
+.dcard.arc.back b { position: static; text-align: center; line-height: 1.2; }
