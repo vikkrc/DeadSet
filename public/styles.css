@@ -1940,3 +1940,153 @@ h1, h2, .m-title, .b-phase, .paper .hl, .paper .mh h2, .recap-title { line-heigh
 /* numerals beside blackletter phase names stay Garamond */
 .topbar .phase-mini strong .num, .b-phase sup { font-family: var(--bit); font-weight: 500; font-variant-numeric: lining-nums; }
 .b-phase i { font-style: normal; }
+/* breathing room between a phase name and its number */
+.topbar .phase-mini strong .num { margin-left: 0.22em; }
+.phase-head h1 .num, .b-phase sup { margin-left: 0.3em; }
+
+/* ═════════════════════════════════════════════════════════════════════════
+   Codex step 3 · Controls
+   Buttons are engraved plaques (gilt border, inner hairline, lozenge tips).
+   Vellum for the main safe action; oxblood wax for anything pressed and held.
+   ═════════════════════════════════════════════════════════════════════════ */
+:root {
+  /* the nine-slice ornate frame: bitten corners, a jewel, twin curls */
+  --frame-gilt: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='%23c9a35a'><defs><g id='c'><path d='M32 2.5H17A14.5 14.5 0 0 1 2.5 17V32'/><path d='M32 6.5H20.5A18.4 18.4 0 0 1 6.5 20.5V32' stroke-width='.6'/><path d='M6.5 2l4.5 4.5-4.5 4.5L2 6.5z' fill='%23c9a35a' stroke='none'/><path d='M15.5 15.5c4 5 10.5 4.5 10.5.5 0-2.6-3.6-2.8-3.8-.4M15.5 15.5c5 4 4.5 10.5.5 10.5-2.6 0-2.8-3.6-.4-3.8' stroke-width='.8'/><circle cx='27' cy='11' r='.9' fill='%23c9a35a' stroke='none'/><circle cx='11' cy='27' r='.9' fill='%23c9a35a' stroke='none'/></g></defs><use href='%23c'/><use href='%23c' transform='matrix(-1 0 0 1 96 0)'/><use href='%23c' transform='matrix(1 0 0 -1 0 96)'/><use href='%23c' transform='matrix(-1 0 0 -1 96 96)'/><path d='M32 2.5H64M32 93.5H64M2.5 32V64M93.5 32V64'/><path d='M32 6.5H64M32 89.5H64M6.5 32V64M89.5 32V64' stroke-width='.6'/></svg>");
+  --frame-silver: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='%23b9c4d8'><defs><g id='c'><path d='M32 2.5H17A14.5 14.5 0 0 1 2.5 17V32'/><path d='M32 6.5H20.5A18.4 18.4 0 0 1 6.5 20.5V32' stroke-width='.6'/><path d='M6.5 2l4.5 4.5-4.5 4.5L2 6.5z' fill='%23b9c4d8' stroke='none'/><path d='M15.5 15.5c4 5 10.5 4.5 10.5.5 0-2.6-3.6-2.8-3.8-.4M15.5 15.5c5 4 4.5 10.5.5 10.5-2.6 0-2.8-3.6-.4-3.8' stroke-width='.8'/><circle cx='27' cy='11' r='.9' fill='%23b9c4d8' stroke='none'/><circle cx='11' cy='27' r='.9' fill='%23b9c4d8' stroke='none'/></g></defs><use href='%23c'/><use href='%23c' transform='matrix(-1 0 0 1 96 0)'/><use href='%23c' transform='matrix(1 0 0 -1 0 96)'/><use href='%23c' transform='matrix(-1 0 0 -1 96 96)'/><path d='M32 2.5H64M32 93.5H64M2.5 32V64M93.5 32V64'/><path d='M32 6.5H64M32 89.5H64M6.5 32V64M89.5 32V64' stroke-width='.6'/></svg>");
+  --frame: var(--frame-gilt);
+}
+body[data-time='night'] { --frame: var(--frame-silver); }
+.fr { border: 1px solid var(--gilt-2); border-image: var(--frame) 32 / 32px stretch; }
+
+/* ── Buttons: the engraved plaque ── */
+.btn {
+  border-radius: 1px;
+  border-color: var(--gilt-2);
+  outline: 1px solid color-mix(in srgb, var(--gilt-2) 50%, transparent);
+  outline-offset: -5px;
+  background: linear-gradient(var(--ink-3), var(--ink-2));
+  color: var(--bone);
+  font: 600 13px/1.15 var(--text);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 0 30px;
+}
+.btn:hover { border-color: var(--gilt); }
+.btn:focus-visible { outline: 2px solid var(--gilt-hi); outline-offset: 2px; }
+/* the lozenge tips (replacing the earlier masked diamonds and hairline) */
+.btn:not(.btn-ghost):not(.icon-btn)::before,
+.btn:not(.btn-ghost):not(.icon-btn)::after {
+  content: ''; position: absolute; inset: auto; top: 50%; width: 6px; height: 6px;
+  border: 1px solid var(--gilt); border-radius: 0; background: none; opacity: 1;
+  -webkit-mask: none; mask: none;
+  transform: translateY(-50%) rotate(45deg);
+  transition: left 0.75s linear, right 0.75s linear, border-color 0.2s;
+}
+.btn:not(.btn-ghost):not(.icon-btn)::before { left: 13px; }
+.btn:not(.btn-ghost):not(.icon-btn)::after { right: 13px; }
+.btn:hover::before, .btn:hover::after, .btn:active::before { opacity: 1; }
+.btn:active::before { inset: auto; top: 50%; left: 13px; }
+.btn-sm { min-height: 44px; padding: 0 24px; font-size: 11.5px; }
+.btn-sm:not(.btn-ghost):not(.icon-btn)::before { inset: auto; top: 50%; left: 9px; }
+.btn-sm:not(.btn-ghost):not(.icon-btn)::after { right: 9px; }
+.btn[disabled] { opacity: 0.4; }
+.btn[disabled]::before, .btn[disabled]::after { opacity: 0.4; }
+.btn.is-on { border-color: var(--gilt); color: var(--gilt-hi); box-shadow: 0 0 0 1px var(--gilt-2), 0 0 22px -6px var(--gilt); }
+/* bone: vellum fill, sepia ink */
+.btn-solid, .btn-solid:hover { background: var(--vellum); border-color: var(--vellum-2); outline-color: rgba(29, 21, 16, 0.4); color: var(--sepia); }
+.btn-solid:not(.btn-ghost)::before, .btn-solid:not(.btn-ghost)::after { border-color: var(--sepia); }
+.btn-gold, .btn-gold:hover { background: linear-gradient(var(--gilt-hi), var(--gilt)); border-color: var(--gilt); outline-color: rgba(42, 29, 8, 0.35); color: #2a1d08; }
+.btn-gold::before, .btn-gold::after { border-color: #2a1d08 !important; }
+/* seal: oxblood wax for every red action and every hold-to-confirm */
+.btn-blood, .btn-blood:hover, .hold, .hold:hover {
+  background: radial-gradient(120% 170% at 50% 0, #b3272c, var(--wax));
+  border-color: #c8534a; outline-color: rgba(246, 231, 210, 0.28); color: #f8ead6;
+  box-shadow: 0 12px 26px -14px rgba(190, 30, 36, 0.95);
+}
+.btn-blood::before, .btn-blood::after, .hold::before, .hold::after { border-color: #f0c9b4 !important; }
+/* held: a darker wax sweeps left to right while the tips close inward; release sets it */
+.hold .hold-fill, .hold.btn-solid .hold-fill, .hold.btn-host .hold-fill { background: linear-gradient(90deg, #4a080c, #6f1016); opacity: 0.85; }
+.hold.holding { transform: scale(0.985); }
+.hold.holding:not(.btn-ghost)::before { left: 22px; }
+.hold.holding:not(.btn-ghost)::after { right: 22px; }
+.hold:not(.holding) { animation: none; }
+.hold[disabled] { filter: grayscale(0.5); }
+/* ghost: caps text only */
+.btn-ghost, .btn-ghost:hover { background: none; border-color: transparent; outline: none; color: var(--bone-2); box-shadow: none; }
+.btn-ghost:hover { color: var(--bone); }
+/* round icon buttons with an iron ring */
+.icon-btn { border-radius: 50%; border: 1px solid var(--iron); outline: none; background: none; color: var(--bone-2); padding: 0; }
+.icon-btn:hover { border-color: var(--gilt-2); color: var(--bone); }
+.btn.btn-ghost.icon-btn { border-color: var(--iron); }
+/* host controls in the dock: a quieter plaque */
+.host-slot .btn-host { background: linear-gradient(var(--ink-3), var(--ink-2)); }
+
+/* ── Segmented control: a framed pair, the chosen half in vellum ── */
+.seg { border: 1px solid var(--gilt-2); border-radius: 0; padding: 3px; gap: 3px; overflow: visible; }
+.seg button { border: 0; border-right: 0; min-height: 44px; font: 600 12px/1.15 var(--text); letter-spacing: 0.2em; text-transform: uppercase; color: var(--bone-2); }
+.seg button[aria-pressed='true'] { background: var(--vellum); color: var(--sepia); }
+.stepper span { font: 600 11px/1 var(--text); letter-spacing: 0.24em; }
+.stepper button { border-radius: 0; font-family: var(--bit); font-weight: 500; }
+.stepper button[aria-pressed='true'] { background: var(--vellum); color: var(--sepia); border-color: var(--vellum-2); }
+
+/* ── Inputs: an underline, as if signing a register ── */
+.field > span { font: 600 11px/1 var(--text); letter-spacing: 0.24em; color: var(--ash); }
+.input { border-radius: 0; border-bottom: 1px solid var(--gilt-2); padding: 10px 2px; font: italic 400 21px/1.2 var(--text); color: var(--bone); }
+.input:focus { border-bottom-color: var(--gilt-hi); box-shadow: 0 1px 0 var(--gilt-hi); }
+.input::placeholder { color: var(--ash); }
+select.input { font: 400 17px/1.2 var(--text); font-style: normal; }
+textarea.input { font: 400 16px/1.4 var(--text); }
+.input-code { font: 600 28px/1 var(--bit); letter-spacing: 0.3em; font-style: normal; }
+.check input { border-radius: 0; border-color: var(--gilt-2); }
+.check input:checked { background: var(--vellum); border-color: var(--vellum-2); }
+.check input:checked::after { border-color: var(--sepia); }
+.check b { font-weight: 500; font-size: 17px; }
+.check small { font-size: 14px; color: var(--bone-2); }
+input.switch { border-radius: 0; border-color: var(--gilt-2); }
+input.switch::after { border-radius: 0; transform: rotate(45deg) scale(0.72); background: var(--ash); }
+input.switch:checked { background: var(--vellum); border-color: var(--vellum-2); }
+input.switch:checked::after { transform: translateX(18px) rotate(45deg) scale(0.72); background: var(--wax); }
+.toggle-row b { font-size: 16px; font-weight: 500; }
+.toggle-row small { font-size: 13.5px; color: var(--bone-2); }
+
+/* ── Chips and tags: square-cornered slips, italic ── */
+.chip { border-radius: 0; border: 1px solid var(--iron); background: var(--ink-2); color: var(--bone-2); font: italic 400 15px/1 var(--text); letter-spacing: 0; text-transform: none; min-height: 44px; padding: 0 14px; }
+.chip .glyph { color: var(--gilt); }
+.chip b { border-radius: 0; background: var(--gilt); color: var(--ink); font: 600 11px/18px var(--bit); font-style: normal; }
+.chip.on { background: var(--vellum); color: var(--sepia); border-color: var(--vellum-2); }
+.chip.live { border-color: var(--gilt); color: var(--gilt-hi); box-shadow: 0 0 18px -6px var(--gilt); }
+.chip.live .glyph { color: var(--gilt-hi); }
+.tag { border-radius: 0; font: italic 400 13px/1 var(--text); letter-spacing: 0; text-transform: none; border-color: var(--iron); color: var(--bone-2); }
+.tag.solid { background: var(--gilt); border-color: var(--gilt); color: var(--ink); font-style: normal; font-weight: 600; }
+.tag.blood { border-color: var(--blood); color: var(--blood-ink); }
+.chipbtn { border-radius: 0; font: italic 400 14px/1.2 var(--text); min-height: 36px; }
+.chipbtn.on { border-color: var(--gilt); color: var(--gilt-hi); }
+.lang-opt { border-radius: 0; font: 400 17px/1 var(--text); }
+.lang-opt.on { border-color: var(--gilt); background: rgba(201, 163, 90, 0.08); }
+.ev { border-radius: 0; font: italic 400 14px/1.2 var(--text); }
+.ev .mini { font-family: var(--bit); font-style: normal; }
+
+/* ── Dock: stays flat ── */
+.dock { background: linear-gradient(transparent, var(--ink) 38%); }
+.dock-note { border-radius: 0; font: 600 12px/1.2 var(--text); letter-spacing: 0.2em; }
+.dock-note.stamped { border-color: var(--blood); color: var(--bone); }
+
+/* ── Sheets: the ornate frame, a blackletter title ── */
+.sheet {
+  border-radius: 0; border: 1px solid var(--gilt-2); border-image: var(--frame) 32 / 28px stretch;
+  background: linear-gradient(180deg, var(--ink-3), var(--ink-2) 140px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.75);
+  padding: 24px 24px 0;
+}
+.sheet > .row h2 { font-family: var(--black); font-weight: 600; font-size: 28px; line-height: 1; padding-bottom: 0.15em; }
+.sheet-scrim { background: rgba(5, 4, 3, 0.74); }
+/* toasts: framed slips */
+.toast { border-radius: 0; border-color: var(--gilt-2); font: italic 400 15px/1.3 var(--text); background: var(--ink-2); }
+.toast.accuse { border-color: var(--blood); }
+.toast.err { background: var(--wax); border-color: var(--blood); }
+/* mode and preset choices: framed choices, the chosen one gilt */
+.mode-card, .preset { border-radius: 0; }
+/* tips ride above the wax sweep; tight plaques get room for their tips */
+.btn:not(.btn-ghost):not(.icon-btn)::before, .btn:not(.btn-ghost):not(.icon-btn)::after { z-index: 2; }
+.host-slot .btn-host { padding: 0 28px; }
+.host-slot .btn-host::before, .host-slot .btn-host::after { border-color: var(--gilt) !important; }

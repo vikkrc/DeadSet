@@ -2000,7 +2000,7 @@ function dock(v) {
         }
         break;
       case 'NIGHT_ACTIONS':
-        if (a.type === 'night' && !a.done && !S.ui.veiled[v.phaseId]) { const r = commitReady(a); parts.push(btn(`${glyph('moon')} ${esc(r.label)}`, 'commit', a.death ? 'btn-blood' : 'btn-solid', !r.ok)); }
+        if (a.type === 'night' && !a.done && !S.ui.veiled[v.phaseId]) { const r = commitReady(a); parts.push(btn(`${glyph('moon')} ${esc(r.label)}`, 'commit', 'btn-solid', !r.ok)); }
         break;
       default:
         if (isMissionPhase(v.phase)) parts.push(...missionDock(v, { S, btn, holdBtn, rawName }));

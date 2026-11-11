@@ -276,7 +276,7 @@ export function missionDock(v, h) {
       parts.push(btn(`${glyph('reject')} ${t('Reject')}`, 'mVote', `btn-blood ${a.choice === false ? 'is-on' : ''}`, false, 'reject', 'data-v="0"'));
       break;
     case 'mplay':
-      if (!a.played && S.sel.mcard && S.ui.mcover?.[v.phaseId] === false) parts.push(holdBtn('mPlay', t(S.sel.mcard === 'F' ? 'Hold to play Sabotage' : 'Hold to play Succeed'), S.sel.mcard === 'F' ? 'btn-blood' : 'btn-solid'));
+      if (!a.played && S.sel.mcard && S.ui.mcover?.[v.phaseId] === false) parts.push(holdBtn('mPlay', t(S.sel.mcard === 'F' ? 'Hold to play Sabotage' : 'Hold to play Succeed'), 'btn-solid'));
       break;
     case 'mnight':
       if (!a.done && S.ui.veiled[v.phaseId] === false) {
