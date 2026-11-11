@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#141110">
+<title>Dead Set — Gothic Deco visual laboratory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&family=Grenze+Gotisch:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/redacted-press.css">
+<style>
+/* The lab contains only fixtures and layout controls; the visual system itself
+   comes from the same stylesheets as the running game. */
+body {min-height:100dvh;}
+.labbar {position:sticky;top:0;z-index:90;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px 20px;background:#100f0d;border-bottom:1px solid #a79989;}
+.labbar span {font:600 10px/1.2 var(--mono);letter-spacing:.10em;color:#b4a695;}
+.labbar nav {display:flex;flex-wrap:wrap;gap:6px;}
+.labbar button {color:#eee4d4;background:#25201c;border:1px solid #9a8977;min-height:40px;padding:0 14px;font:500 12px var(--sans);cursor:pointer;}
+.labbar button[aria-pressed=true] {background:#d63b30;color:#1d1310;border-color:#ecb39d;}
+.labpad {padding:30px 12px 60px;display:grid;justify-items:center;}
+.labpane {display:none;width:100%;min-width:0;}
+.labpane.active {display:block;}
+.labphone {position:relative;overflow:hidden;width:min(100%,420px);min-height:780px;margin:0 auto;border:2px solid #e0d3c1;background:#161310;padding:22px 22px 34px;box-shadow:12px 14px 0 #080707;}
+.labphone:before {content:'';position:absolute;inset:4px;pointer-events:none;border:20px solid transparent;border-image:url('/deco-frame-bone.svg') 80 / 20px;opacity:.58;}
+.labphone > * {position:relative;z-index:1;}
+.lab-title {font:600 38px/.95 var(--press);text-align:center;margin:0;color:#eee2cf;}
+.labphase {display:flex;justify-content:space-between;align-items:center;gap:8px;margin:16px 0 18px;padding:10px 12px;background:#e8dcc9;color:#1c1511;font:600 12px var(--mono);letter-spacing:.08em;}
+.labphase strong {font:400 25px var(--serif);}
+.labsub {text-align:center;margin:14px auto 8px;font:italic 22px var(--serif);max-width:25ch;color:#e7d6bf;}
+.labrow {display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #a5947e;min-height:48px;padding:10px 14px;font:400 21px var(--serif);}
+.labrow.selected {background:#bc3329;color:#fbecdc;}
+.labrow small {font:600 12px var(--mono);color:inherit;}
+.lablist {margin:17px 0 22px;border:2px double #ac9b88;}
+.lablist h3 {padding:10px 12px;border-bottom:1px solid #958775;text-align:center;font:400 25px var(--serif);}
+.lab-fixed {margin-top:16px;}
+.labfixture {display:block;margin:12px 0 0;text-align:center;font:500 10px/1.4 var(--mono);letter-spacing:.04em;color:#8f847a;}
+.labphone .ring {margin:16px auto;width:min(100%,340px);--tok:55px;}
+.labphone .tok {position:absolute;transform:translate(-50%,-50%);display:grid;justify-items:center;width:70px;color:#e7dbc7;border:none;background:none;}
+.labphone .tok-disc {position:relative;width:55px;height:55px;border-radius:50%;display:grid;place-items:center;font:italic 26px var(--serif);}
+.labphone .tok.sel .tok-disc {background:#d63b30;color:#1b0f0b;}
+.labphone .tok-name {font-size:10px;text-align:center;}
+.labphone .ring-table {inset:23%;}
+.labphone .ring-center {display:grid;place-content:center;inset:31%;text-align:center;}
+.labphone .c-big {font-size:27px;}
+.lab-role .face.front {transform:none;backface-visibility:visible;}
+.lab-role .flipcard {transform:none;cursor:default;}
+.lab-role .card-stage {margin:30px auto;}
+.lab-role .face.front .art {width:48%;}
+.labtag {font:600 10px var(--mono);letter-spacing:.11em;text-align:center;color:#b8aa98;}
+.labboard {min-height:700px;border:2px solid #e0d3c1;background:#171411;padding:20px;position:relative;}
+.labboard:before {content:'';position:absolute;inset:5px;pointer-events:none;border:24px solid transparent;border-image:url('/deco-frame-bone.svg') 80 / 24px;opacity:.65;}
+.labboard > * {position:relative;z-index:1;}
+.labboard-head {display:flex;gap:14px;align-items:center;border-bottom:3px double #e8dccc;padding:14px 7px 20px;flex-wrap:wrap;}
+.labboard-head h1 {font:600 52px/.9 var(--press);}
+.labboard-head span {font:400 32px var(--serif);}
+.labboard-body {display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.75fr);gap:24px;padding-top:20px;align-items:start;}
+.labboard .ring {width:min(100%,590px);margin:auto;--tok:66px;}
+.labboard .tok {position:absolute;transform:translate(-50%,-50%);width:88px;border:none;background:none;display:grid;justify-items:center;color:#f0e4d5;}
+.labboard .tok-disc {width:66px;height:66px;border-radius:50%;display:grid;place-items:center;font:italic 32px var(--serif);}
+.labboard .tok-name {margin-top:5px;}
+.labgazette {background:#e9ddc9;color:#231810;border:3px double #3c2b20;padding:28px 24px;min-height:520px;position:relative;}
+.labgazette:before {content:'';position:absolute;inset:4px;pointer-events:none;border:21px solid transparent;border-image:url('/deco-frame-ink.svg') 80 / 21px;}
+.labgazette > * {position:relative;}
+.labgazette h2 {font:600 46px/.88 var(--press);border-bottom:4px double #231910;padding-bottom:14px;}
+.labgazette h3 {font:400 26px/.97 var(--serif);}
+.labgazette p {font:italic 19px/1.28 var(--serif);padding:10px 0;border-bottom:1px solid #a3917c;}
+.labgazette small {font:600 10px var(--mono);letter-spacing:.1em;}
+.labgazette .labred {color:#b72f26;}
+@media(max-width:920px){.labboard-body{grid-template-columns:1fr;}.labboard .ring{width:min(100%,490px)}.labgazette{min-height:auto;}}
+@media(max-width:460px){.labpad{padding:10px 6px 35px;}.labphone{padding:19px 14px 30px;min-height:770px;}.labbar{padding:10px;}.labbar nav{width:100%}.labbar button{flex:1;min-width:68px;padding:0 8px;font-size:11px}.labphone .ring{width:100%;}.labboard{padding:12px}.labboard-head h1{font-size:37px}.labboard-head span{font-size:25px}.labboard .ring{--tok:52px}.labboard .tok{width:65px}.labboard .tok-disc{width:52px;height:52px}.labboard .tok-name{font-size:10px}.labgazette{padding:22px 18px}}
+</style>
+</head>
+<body data-time="night">
+<header class="labbar">
+  <div><a class="wordmark" href="/" aria-label="Go to Dead Set home">Dead<i>Set</i></a><span> &nbsp; / visual laboratory · noninteractive fixtures</span></div>
+  <nav aria-label="Preview screens">
+    <button data-target="reveal" aria-pressed="true">Role reveal</button>
+    <button data-target="night" aria-pressed="false">Night</button>
+    <button data-target="vote" aria-pressed="false">Voting</button>
+    <button data-target="board" aria-pressed="false">TV board</button>
+  </nav>
+</header>
+<div class="labpad">
+  <section class="labpane active" id="reveal">
+    <div class="labphone lab-role">
+      <p class="labtag">NIGHT 0 / PRIVATE ROLE</p>
+      <h1 class="lab-title">The cards are dealt.</h1>
+      <p class="labsub">Your secret identity.</p>
+      <div class="card-stage"><div class="flipcard flipped">
+        <span class="face front">
+          <span class="corner"><b>NON-DEATH</b><span>AT NIGHT</span></span>
+          <span class="art"><svg viewBox="0 0 100 100" fill="none" width="74" height="74" aria-hidden="true"><path d="M8 50Q50 4 92 50 50 96 8 50Z" stroke="#211810" stroke-width="4"/><circle cx="50" cy="50" r="17" stroke="#211810" stroke-width="4"/><circle cx="50" cy="50" r="7" fill="#211810"/><path d="M50 3v21M50 76v21M3 50h20M77 50h20" stroke="#211810" stroke-width="2"/></svg></span>
+          <span class="nm">Mentalist</span>
+          <span class="sum">You may read one player's hidden role. Keep what you learn to yourself.</span>
+        </span>
+      </div></div>
+      <div class="lab-fixed"><button class="btn btn-blood btn-wide">Understood</button></div>
+      <p class="labfixture">Visual fixture — placeholder glyph, not finalized character art</p>
+    </div>
+  </section>
+  <section class="labpane" id="night">
+    <div class="labphone">
+      <p class="labtag">SECRET ACTION / NIGHT II</p>
+      <h1 class="lab-title">Night falls.</h1>
+      <div class="labphase"><span>Night II</span><strong>Choose a target</strong></div>
+      <div class="ring"><div class="ring-table"></div><div class="ring-center"><span class="c-big">Who?</span></div></div>
+      <p class="labsub">Select one player to investigate under cover of darkness.</p>
+      <div class="lab-fixed"><button class="btn btn-blood btn-wide">Confirm target</button></div>
+      <p class="labfixture">Visual fixture — no target is submitted</p>
+    </div>
+  </section>
+  <section class="labpane" id="vote">
+    <div class="labphone">
+      <p class="labtag">PUBLIC DISCUSSION / DAY III</p>
+      <h1 class="lab-title">The accusation.</h1>
+      <div class="labphase"><span>Day III</span><strong>02:30</strong></div>
+      <div class="ring"><div class="ring-table"></div><div class="ring-center"><span class="c-big">Vote.</span></div></div>
+      <div class="lablist"><h3>Choose a player</h3><div class="labrow">Morgan <small>01 / —</small></div><div class="labrow selected">Fay <small>02 / ✓</small></div><div class="labrow">Leo <small>03 / —</small></div><div class="labrow">Gus <small>04 / —</small></div></div>
+      <div class="lab-fixed"><button class="btn btn-blood btn-wide">Cast vote</button></div>
+      <p class="labfixture">Visual fixture — real game ballots still use server logic</p>
+    </div>
+  </section>
+  <section class="labpane" id="board">
+    <div class="labboard">
+      <header class="labboard-head"><h1>Dead Set</h1><span>Day III · Discussion</span><span style="margin-left:auto">02:30</span></header>
+      <div class="labboard-body">
+        <div><p class="labtag">THE TABLE / PUBLIC PLAYERS</p><div class="ring"><div class="ring-table"></div><div class="ring-center"><span class="c-big">Who do<br>you trust?</span></div></div><img src="/deco-frieze.svg" style="width:100%;height:60px;object-fit:contain" alt="" aria-hidden="true"></div>
+        <aside class="labgazette"><h2>The Gazette</h2><small>PUBLIC EDITION / DAY III</small><p class="labred">THE ROOM HAS TURNED</p><h3>Someone did not survive the night.</h3><p>Eight remain. Another accusation hangs over the table.</p><h3>Fay stands accused.</h3><p>The defense has yet to be heard. The record is far from complete.</p><small>ALL ACCUSATIONS ARE PUBLIC</small></aside>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+const names=['Ada','Bo','Fay','Gus','Leo','Morgan','June','Kai'];
+for (const ring of document.querySelectorAll('.labphone .ring, .labboard .ring')) {
+ const r=ring.closest('.labboard')?39:39, n=names.length;
+ for(let i=0;i<n;i++) {
+   const angle=(-90+i*360/n)*Math.PI/180;
+   const x=50+Math.cos(angle)*r,y=50+Math.sin(angle)*r;
+   const el=document.createElement('div');
+   el.className='tok'+(names[i]==='Fay'?' sel':'');
+   el.style.cssText='left:'+x+'%;top:'+y+'%';
+   el.innerHTML='<span class="tok-disc"><span class="tok-ini">'+names[i][0]+'</span></span><span class="tok-name">'+names[i]+'</span>';
+   ring.append(el);
+ }
+}
+document.querySelectorAll('[data-target]').forEach(button=>button.addEventListener('click',()=>{
+ document.querySelectorAll('[data-target]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
+ document.querySelectorAll('.labpane').forEach(p=>p.classList.toggle('active',p.id===button.dataset.target));
+ document.body.dataset.time=button.dataset.target==='night'?'night':'day';
+}));
+</script>
+</body></html>
