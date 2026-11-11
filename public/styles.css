@@ -2700,3 +2700,145 @@ body.pressure .sky-orb.sun, body.pressure .sky-orb.moon { background: radial-gra
 .sheet .gazette { padding: 18px 16px 8px; background: var(--vellum-stain), linear-gradient(170deg, #e2d3ae, var(--vellum) 60%, #d3c094); background-size: 100% 100%, auto; box-shadow: 0 0 0 1px #77633f, inset 0 0 2em rgba(84, 54, 18, 0.2); }
 /* room codes are read aloud and typed: never blackletter */
 .code-txt { font: 600 0.8em/1 var(--text); letter-spacing: 0.08em; font-variant-numeric: lining-nums tabular-nums; vertical-align: 0.04em; }
+
+/* ═════════════════════════════════════════════════════════════════════════
+   Codex step 8 · Missions and Exorcism specifics; themes
+   ═════════════════════════════════════════════════════════════════════════ */
+/* ── Themes: token overrides on body (vellum stays paper whatever the theme) ── */
+body.blood-moon {
+  --ink: #0d0607; --ink-2: #180b0c; --ink-3: #261112; --iron: #47201f;
+  --bone: #ecd9cf; --bone-2: #c4a79c; --ash: #9b7f76;
+  --gilt: #e08a78; --gilt-2: #8c3a35; --gilt-hi: #ffc9b8; --glow: rgba(200, 40, 40, 0.22);
+  --frame: var(--frame-ember);
+}
+:root { --frame-ember: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='%23e08a78'><defs><g id='c'><path d='M32 2.5H17A14.5 14.5 0 0 1 2.5 17V32'/><path d='M32 6.5H20.5A18.4 18.4 0 0 1 6.5 20.5V32' stroke-width='.6'/><path d='M6.5 2l4.5 4.5-4.5 4.5L2 6.5z' fill='%23e08a78' stroke='none'/><path d='M15.5 15.5c4 5 10.5 4.5 10.5.5 0-2.6-3.6-2.8-3.8-.4M15.5 15.5c5 4 4.5 10.5.5 10.5-2.6 0-2.8-3.6-.4-3.8' stroke-width='.8'/></g></defs><use href='%23c'/><use href='%23c' transform='matrix(-1 0 0 1 96 0)'/><use href='%23c' transform='matrix(1 0 0 -1 0 96)'/><use href='%23c' transform='matrix(-1 0 0 -1 96 96)'/><path d='M32 2.5H64M32 93.5H64M2.5 32V64M93.5 32V64'/><path d='M32 6.5H64M32 89.5H64M6.5 32V64M89.5 32V64' stroke-width='.6'/></svg>");
+  --frame-amethyst: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='%23c3b3ee'><defs><g id='c'><path d='M32 2.5H17A14.5 14.5 0 0 1 2.5 17V32'/><path d='M32 6.5H20.5A18.4 18.4 0 0 1 6.5 20.5V32' stroke-width='.6'/><path d='M6.5 2l4.5 4.5-4.5 4.5L2 6.5z' fill='%23c3b3ee' stroke='none'/><path d='M15.5 15.5c4 5 10.5 4.5 10.5.5 0-2.6-3.6-2.8-3.8-.4M15.5 15.5c5 4 4.5 10.5.5 10.5-2.6 0-2.8-3.6-.4-3.8' stroke-width='.8'/></g></defs><use href='%23c'/><use href='%23c' transform='matrix(-1 0 0 1 96 0)'/><use href='%23c' transform='matrix(1 0 0 -1 0 96)'/><use href='%23c' transform='matrix(-1 0 0 -1 96 96)'/><path d='M32 2.5H64M32 93.5H64M2.5 32V64M93.5 32V64'/><path d='M32 6.5H64M32 89.5H64M6.5 32V64M89.5 32V64' stroke-width='.6'/></svg>"); }
+/* Exorcism: amethyst mist, day or night */
+body.mode-exorcism, body.mode-exorcism[data-time='night'] {
+  --ink: #09070f; --ink-2: #120f1c; --ink-3: #1c172b; --iron: #342c4a;
+  --bone: #e3dcf0; --bone-2: #b3a9c9; --ash: #8a80a3;
+  --gilt: #c3b3ee; --gilt-2: #6a5b96; --gilt-hi: #efe8ff; --glow: rgba(143, 123, 208, 0.17);
+  --frame: var(--frame-amethyst);
+}
+/* Dead: the existing cold fade; gilt desaturates to ash */
+body.is-dead { --gilt: #8f97a3; --gilt-2: #4b5363; --gilt-hi: #c9ced6; }
+
+/* ── Missions: the track ── */
+.mtrack { gap: 10px; }
+.mscore { gap: 12px; }
+.mscore > span { font: 400 26px/1 var(--bit); }
+.discs { gap: 0; align-items: flex-start; }
+.discs .md + .md { margin-left: 18px; }
+.discs .md + .md::before { content: ''; position: absolute; right: calc(100% + 1px); top: 50%; width: 18px; height: 1px; background: var(--gilt-2); }
+.md { width: 44px; height: 44px; border: 1px dashed var(--gilt-2); background: none; color: var(--ash); font: 600 15px/1 var(--text); letter-spacing: 0.04em; }
+.md .md-n { padding-top: 1px; }
+.md .md-size { position: absolute; top: calc(100% + 5px); left: 0; right: 0; text-align: center; font: italic 400 13px/1 var(--text); color: var(--ash); }
+.mtrack { padding-bottom: 14px; }
+.md.now { border: 1px solid var(--gilt); color: var(--bone); background: var(--ink-2); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--gilt-2), 0 0 22px color-mix(in srgb, var(--gilt) 45%, transparent); }
+.md.ok { border: 1px solid var(--gilt-hi); color: #2a1d08; background: radial-gradient(circle at 40% 32%, var(--gilt-hi), var(--gilt) 70%); }
+.md.fail { border: 1px solid #e46b62; color: #fff1ec; background: radial-gradient(circle at 40% 32%, #d64a4a, var(--blood) 75%); }
+.md.two { border-style: double; border-width: 3px; }
+.md-two, .md-x2 { border-radius: 0; font: 600 10px/1 var(--text); }
+.mtrack.big .md { width: 62px; height: 62px; font-size: 21px; }
+.mtrack.big .md .md-size { font-size: 16px; }
+.mtrack.big .discs .md + .md { margin-left: 26px; }
+.mtrack.big .discs .md + .md::before { width: 26px; }
+.pips i { border-radius: 0; transform: rotate(45deg); width: 8px; height: 8px; }
+.pips i.hammer { width: 10px; height: 10px; }
+
+/* ── The chapter slip: the mission card in force, on vellum ── */
+.mc-banner {
+  position: relative; gap: 14px; padding: 16px 20px; border: 1px solid #77633f; border-image: var(--frame-ink) 32 / 20px stretch; border-radius: 0;
+  background: var(--vellum-stain), linear-gradient(170deg, #e2d3ae, var(--vellum) 60%, #d3c094); background-size: 100% 100%, auto; color: var(--sepia);
+  box-shadow: 0 18px 30px -18px #000, inset 0 0 2em rgba(84, 54, 18, 0.2);
+}
+.mc-banner > .glyph, .mc-banner > .emblem { font-size: 40px; width: 1em; height: 1em; color: var(--sepia); --paper: var(--vellum); }
+.mc-banner .kicker { color: var(--rubric); }
+.mc-banner b { font: 600 26px/1.02 var(--black); color: var(--sepia); padding-bottom: 0.06em; }
+.mc-banner small, .mc-banner .mcb-step { font: italic 400 16px/1.3 var(--text); color: var(--sepia-2); }
+.mc-banner.special { border-color: #77633f; background: var(--vellum-stain), linear-gradient(170deg, #e2d3ae, var(--vellum) 60%, #d3c094); background-size: 100% 100%, auto; box-shadow: 0 0 0 1px var(--gilt), 0 0 26px -6px var(--gilt), inset 0 0 2em rgba(84, 54, 18, 0.2); }
+.mc-banner.special > .glyph, .mc-banner.special > .emblem { color: var(--rubric); }
+
+/* ── The deduction grid, on the Gazette's vellum (TV) ── */
+.b-side .b-grid { background: none; border: 0; border-bottom: 3px double var(--sepia); border-radius: 0; padding: 0 0 14px; color: var(--sepia); }
+.b-side .b-grid .kicker { color: var(--rubric); }
+.b-side .b-grid .small.muted { color: var(--sepia-2); }
+.b-side .mgrid th, .b-side .mgrid td { border-bottom-color: rgba(29, 21, 16, 0.22); color: var(--sepia); }
+.b-side .mgrid tr > th:first-child { color: var(--sepia); }
+.b-side .mgrid th.ok { color: var(--sepia); } .b-side .mgrid th.fail { color: var(--rubric); }
+.b-side .mgrid td.went { background: rgba(84, 54, 18, 0.1); } .b-side .mgrid td.went.f { background: rgba(142, 27, 31, 0.12); }
+.b-side .mgrid .emblem, .b-side .mgrid .glyph { color: var(--sepia-2); --paper: var(--vellum); }
+.mgrid thead th, .mgrid tr:first-child th { font: 600 18px var(--text); }
+
+/* ── Side Mission: a vellum slip, its state stamped ── */
+.side-panel {
+  border: 1px solid #77633f; border-image: var(--frame-ink) 32 / 18px stretch; border-radius: 0; padding: 18px 20px;
+  background: var(--vellum-stain), linear-gradient(170deg, #e2d3ae, var(--vellum) 60%, #d3c094); background-size: 100% 100%, auto; color: var(--sepia);
+  box-shadow: inset 0 0 1.8em rgba(84, 54, 18, 0.2);
+}
+.side-panel .kicker { color: var(--rubric); }
+.side-panel p { color: var(--sepia); font: italic 400 17px/1.35 var(--text); }
+.side-panel .small, .side-panel .muted { color: var(--sepia-2); font-size: 14px; }
+.side-panel .tag { border-color: rgba(29, 21, 16, 0.4); color: var(--sepia); }
+.side-panel .stamp { font-size: 24px; margin-right: 8px; animation: none; mix-blend-mode: multiply; color: var(--rubric); }
+.side-panel .stamp.gold { color: var(--sepia); }
+.side-panel.done { box-shadow: 0 0 0 1px var(--gilt), 0 0 24px -6px var(--gilt), inset 0 0 1.8em rgba(84, 54, 18, 0.2); border-color: #77633f; }
+.side-panel.failed { border-color: #77633f; filter: grayscale(0.4) brightness(0.9); }
+
+/* ── Buttons that carry an icon drop the lozenge tips (they would collide) ── */
+.btn:has(> .glyph)::before, .btn:has(> .glyph)::after, .btn:has(> .emblem)::before, .btn:has(> .emblem)::after { display: none; }
+.dock:has(> .btn:nth-child(3)) .btn { letter-spacing: 0.12em; padding-inline: 10px; }
+
+/* ── Exorcism: the lettered ring, a gilt stand, the password in blackletter ── */
+.xb-letters { position: absolute; z-index: 2; left: 50%; top: calc(var(--size) * -0.11); width: calc(var(--size) * 1.22); height: calc(var(--size) * 1.22); transform: translateX(-50%); overflow: visible; pointer-events: none; animation: xbTurn 120s linear infinite; }
+.xb-letters text { font: 600 4.6px var(--text); letter-spacing: 0.9px; fill: var(--gilt); opacity: 0.85; }
+.xb-letters .xbl-dots { fill: none; stroke: var(--gilt); stroke-width: 0.35; stroke-dasharray: 0.4 1.6; opacity: 0.55; }
+.xball.small .xb-letters, .xball.in-ring .xb-letters { display: none; }
+.xb-stand {
+  position: relative; width: calc(var(--size) * 0.5); height: calc(var(--size) * 0.1); margin-top: -4px; border-radius: 0 0 50% 50% / 0 0 100% 100%;
+  background: none; border: 1px solid var(--gilt); border-top: 0; box-shadow: none;
+}
+.xb-stand::after { content: ''; position: absolute; left: -22%; right: -22%; bottom: -10px; height: 8px; border: 1px solid var(--gilt); }
+.xb-word { font-family: var(--black); font-weight: 600; line-height: 1.02; }
+.xb-k { font: 600 10px/1.3 var(--text); letter-spacing: 0.24em; }
+.xg-cell { border-radius: 0; font: 400 17px/1.15 var(--text); }
+.x-order li { border-radius: 0; font: 400 16px/1.2 var(--text); }
+.x-order .xo-n { font: 600 11px/1 var(--text); }
+.xo-pill { border-radius: 0; font-family: var(--text); }
+@media (prefers-reduced-motion: reduce) { .xb-letters { animation: none; } }
+/* the lettered ring sits just inside the rim, clear of the stand and the speakers' names */
+.xb-letters { top: calc(var(--size) * 0.03); width: calc(var(--size) * 0.94); height: calc(var(--size) * 0.94); }
+.xb-letters text { font-size: 4.3px; letter-spacing: 0.7px; fill: color-mix(in srgb, var(--gilt-hi) 80%, transparent); paint-order: stroke; stroke: rgba(9, 7, 15, 0.55); stroke-width: 0.6px; }
+.xb-letters .xbl-dots { opacity: 0.45; }
+.xball:has(.xb-orbit .xo) .xb-letters { opacity: 0.4; }
+.xb-stand { background: linear-gradient(var(--ink-3), var(--ink)); }
+.xb-stand::after { left: -16%; right: -16%; bottom: -9px; height: 6px; background: var(--ink-2); }
+/* track: room for the team-size figures above the proposal pips */
+.mtrack { row-gap: 26px; }
+/* the chapter slip wraps inside the column */
+.mc-banner > div { min-width: 0; }
+.mc-banner .kicker { white-space: normal; overflow-wrap: anywhere; }
+/* the unturned mission card: the lattice back with its DS roundel */
+.mrc-back b { display: grid; place-items: center; width: 52%; aspect-ratio: 1; border-radius: 50%; border: 1px solid #c9a35a; box-shadow: 0 0 0 0.18em #0c0707, 0 0 0 0.22em #8a6d35; background: #0c0707; font: 700 calc(var(--w) * 0.2)/1 var(--mark); color: #c9a35a; }
+/* the team vote: medallions that turn to Aye (gilt) or Nay (blood) */
+.vf-face { border: 1px solid var(--gilt-2); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--iron); }
+.vf-face.front.y { background: radial-gradient(circle at 50% 35%, var(--ink-3), var(--ink-2)); border-color: var(--gilt); color: var(--gilt); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--gilt-2), 0 0 20px color-mix(in srgb, var(--gilt) 30%, transparent); }
+.vf-face.front.n { background: radial-gradient(circle at 50% 35%, #3a0d10, #1a0607); border-color: var(--blood-ink); color: var(--blood-ink); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--blood), 0 0 20px rgba(228, 93, 80, 0.3); }
+.vf-face .emblem { --paper: transparent; }
+.vflip small { font: 600 10px/1.2 var(--text); letter-spacing: 0.18em; text-transform: uppercase; color: var(--bone-2); }
+.vcount { font: 400 26px/1 var(--bit); }
+/* the phone column never widens to fit a child */
+.main { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 480px) {
+  .md { width: 38px; height: 38px; font-size: 13px; }
+  .discs .md + .md { margin-left: 11px; }
+  .discs .md + .md::before { width: 11px; }
+  .mscore { gap: 8px; }
+  .mscore > span { font-size: 22px; }
+}
+/* three buttons in the dock: no tips, so nothing collides */
+.dock:has(> .btn:nth-child(3)) .btn::before, .dock:has(> .btn:nth-child(3)) .btn::after { display: none; }
+.btn-solid .emblem { --paper: var(--vellum); }
+.btn-blood .emblem, .hold .emblem { --paper: transparent; }
+/* heavy strokes in the etchings (gear teeth) stay pencil-thin */
+.backdrop svg [stroke-width] { stroke-width: 0.9; }

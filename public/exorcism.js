@@ -112,6 +112,7 @@ export function ballHtml({ key, kicker = '', title = '', sub = '', tint = '#8fc7
     <div class="xb-glow" aria-hidden="true"></div>
     <div class="xb-orb"><canvas class="xball-gl" data-key="${key}-gl" data-clear="${clear ? 1 : 0}" data-tint="${tint}" data-speed="${speed}" aria-hidden="true"></canvas><div class="xb-css" aria-hidden="true"><i></i><i></i><i></i></div>
       <div class="xb-in">${kicker ? `<span class="xb-k">${kicker}</span>` : ''}${title ? `<b class="xb-word">${title}</b>` : ''}${sub ? `<span class="xb-sub">${sub}</span>` : ''}</div></div>
+    <svg class="xb-letters" viewBox="0 0 100 100" aria-hidden="true"><defs><path id="${key}-lp" d="M50 50m-46.5 0a46.5 46.5 0 1 1 93 0a46.5 46.5 0 1 1-93 0"/></defs><circle class="xbl-dots" cx="50" cy="50" r="43"/><text><textPath href="#${key}-lp" textLength="288">VERBVM · VMBRA · SILENTIVM · NOMEN · SPIRITVS · </textPath></text></svg>
     <div class="xb-stand" aria-hidden="true"></div>
   </div>`;
 }
@@ -186,6 +187,7 @@ export function myBall(v, { key = 'myball', open = true, big = false, small = fa
     <div class="xb-orb"><canvas class="xball-gl" data-key="${key}-gl" data-clear="${open ? 1 : 0}" data-tint="${tint}" data-speed="${speed}" aria-hidden="true"></canvas><div class="xb-css" aria-hidden="true"><i></i><i></i><i></i></div>
       ${extra}
       <div class="xb-in"><span class="xb-k">${k}</span><b class="xb-word">${word}</b><span class="xb-sub">${sub}</span><span class="xb-tap">${esc(t('Tap to look inside'))}</span></div></div>
+    <svg class="xb-letters" viewBox="0 0 100 100" aria-hidden="true"><defs><path id="${key}-lp" d="M50 50m-46.5 0a46.5 46.5 0 1 1 93 0a46.5 46.5 0 1 1-93 0"/></defs><circle class="xbl-dots" cx="50" cy="50" r="43"/><text><textPath href="#${key}-lp" textLength="288">VERBVM · VMBRA · SILENTIVM · NOMEN · SPIRITVS · </textPath></text></svg>
     <div class="xb-stand" aria-hidden="true"></div>
   </div></${tag}>`;
 }

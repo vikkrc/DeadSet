@@ -24,8 +24,8 @@ const name = (v, id) => v.players.find((p) => p.id === id)?.name ?? t('Someone')
 /** My Side Mission: the objective, and how it stands. */
 export function sideHtml(side) {
   const st = { pending: ['Open', ''], done: ['Complete', 'gold'], failed: ['Failed', 'blood'] }[side.state] ?? ['Open', ''];
-  return `<div class="panel tight side-panel ${side.state}" data-key="k-side"><span class="kicker">${glyph('scroll')} ${t('Your Side Mission')}</span><p>${esc(sideF(side.id))}</p>
-    <p class="small"><span class="tag ${st[1]}">${t(st[0])}</span> <span class="muted">${t(isDone(side) ? 'Your Last Stand vote counts double.' : isFailed(side) ? 'Your Last Stand vote counts half.' : 'Secret. Judged automatically.')}</span></p></div>`;
+  return `<div class="panel tight side-panel ${side.state}" data-key="k-side"><span class="kicker">${t('Your Side Mission')}</span><p>${esc(sideF(side.id))}</p>
+    <p class="small"><span class="${side.state === 'pending' ? 'tag' : `stamp ${st[1]}`}">${t(st[0])}</span> <span class="muted">${t(isDone(side) ? 'Your Last Stand vote counts double.' : isFailed(side) ? 'Your Last Stand vote counts half.' : 'Secret. Judged automatically.')}</span></p></div>`;
 }
 
 // ── Track, card, grid ──────────────────────────────────────────────────────
@@ -37,7 +37,7 @@ export function trackHtml(v, { big = false } = {}) {
     const r = M.results.find((x) => x.mission === k);
     const state = r ? (r.failed ? 'fail' : 'ok') : k === M.mission && v.phase !== 'ENDED' ? 'now' : '';
     return `<li class="md ${state} ${s.fails > 1 ? 'two' : ''}" data-key="md-${k}" title="${esc(t('Mission {n}', { n: k + 1 }))}">
-      <span class="md-n">${r ? glyph(r.failed ? 'sabotage' : 'succeed') : s.size}</span>
+      <span class="md-n">${ROMAN[k + 1]}</span><small class="md-size" aria-label="${esc(t('team of {n}', { n: s.size }))}">${s.size}</small>
       ${s.fails > 1 && !r ? `<b class="md-two" title="${esc(t('Needs two Sabotage cards to fail'))}">2</b>` : ''}
       ${r?.weight > 1 ? '<b class="md-x2">×2</b>' : ''}</li>`;
   }).join('');

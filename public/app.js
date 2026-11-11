@@ -601,6 +601,8 @@ function render() {
   const ghost = !!v?.me && !v.me.moderator && v.me.alive === false && v.phase !== 'LOBBY' && v.phase !== 'ENDED' && S.route?.name === 'room';
   document.body.classList.toggle('is-dead', ghost);
   document.body.classList.toggle('is-board', onBoard());
+  document.body.classList.toggle('mode-exorcism', v?.mode === 'exorcism' && ['room', 'board'].includes(S.route?.name));
+  document.body.classList.toggle('mode-missions', v?.mode === 'missions' && ['room', 'board'].includes(S.route?.name));
   if (onBoard() && v && S.board.audio && v.table?.score !== false) { score.play(moodFor(v)); score.tension(tenseFor(v)); } else score.stop();
   document.body.classList.toggle('has-sheet', !!S.ui.sheet && (S.route?.name === 'room' || S.ui.sheet === 'lang' || S.ui.sheet === 'avatar'));
   ambient(night ? 'night' : null);
