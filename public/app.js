@@ -714,19 +714,24 @@ function homeScreen() {
   if (!whisperTimer) whisperTimer = setInterval(() => { if (S.route?.name === 'home') { S.whisper = (S.whisper ?? 0) + 1; render(); } }, 6500);
   const lines = tx('whispers', WHISPERS);
   const line = lines[(S.whisper ?? 0) % lines.length];
-  const chairs = Array.from({ length: 7 }, (_, i) => { const [x, y] = seatXY(i, 7, 41); return `<span class="chair" style="left:${x}%;top:${y}%;--i:${i}">${sigil(`chair${i}`)}<i></i></span>`; }).join('');
   const code = (d.joinCode ?? '').toUpperCase();
-  return `<main class="home2" data-key="home">
+  return `<main class="home2 press-home" data-key="home">
     <div class="h-top">${wordmark()}<div class="row" style="gap:6px">${langChip()}<button class="chip" data-act="sound" aria-label="${t(sound.on ? 'Mute' : 'Sound on')}">${glyph(sound.on ? 'bell' : 'bellOff')}</button><a class="chip" href="/guide" data-link>${t('How to play')}</a></div></div>
-    <div class="h-grid">
-      <section class="h-table" aria-hidden="true">
-        <div class="h-ring"><div class="h-tabletop"></div>${chairs}
-          <div class="h-title"><h1>${letters('Dead')}<br><i>${letters('Set.')}</i></h1><p>${t('Death sits among you.')}</p></div>
+    <div class="press-grid">
+      <section class="press-cover">
+        <div class="press-edition"><span>Dead Set / 001</span><span>${t('A letter for you')}</span></div>
+        <h1 class="press-masthead"><span>Dead</span><span>Set.</span></h1>
+        <img class="press-witness" src="/press-witness.svg" alt="" aria-hidden="true">
+        <span class="press-cover-side">The table remembers everything.</span>
+        <div class="press-cover-bottom">
+          <span class="press-volume" aria-hidden="true">01.</span>
+          <p class="press-whisper" data-key="wh-${S.whisper ?? 0}">“${esc(line)}”</p>
         </div>
-        <p class="whisper" data-key="wh-${S.whisper ?? 0}">“${esc(line)}”</p>
       </section>
-      <section class="h-panel">
-        <p class="h-tag">${t('Hidden roles. Secret votes. Find them before they outnumber you.')}</p>
+      <section class="h-panel press-panel">
+        <div class="press-case"><span>${t('A letter for you')}</span><span>CASE / 001</span></div>
+        <h2 class="press-lede">${t('Death sits among you.')}</h2>
+        <p class="press-description">${t('Hidden roles. Secret votes. Find them before they outnumber you.')}</p>
         <div class="seg" role="tablist"><button role="tab" data-act="homeTab" data-id="host" aria-pressed="${tab === 'host'}">${t('Host a table')}</button><button role="tab" data-act="homeTab" data-id="join" aria-pressed="${tab === 'join'}">${t('Join a table')}</button></div>
         ${tab === 'host' ? `<div class="stack" data-key="h-host">
           <label class="field"><span>${t('Your name')}</span><input class="input" maxlength="20" autocomplete="nickname" placeholder="${esc(t('e.g. Morgan'))}" data-draft="createName" value="${esc(d.createName ?? '')}"></label>
