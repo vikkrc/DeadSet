@@ -646,8 +646,8 @@ function tickClock() {
     const orb = document.querySelector('[data-orb]');
     if (orb) {
       const a = (-90 + frac * 360) * (Math.PI / 180);
-      orb.style.left = `${50 + 49 * Math.cos(a)}%`;
-      orb.style.top = `${50 + 49 * Math.sin(a)}%`;
+      orb.style.left = `calc(${50 + 49 * Math.cos(a)}% + ${(15.7 * Math.cos(a)).toFixed(2)}px)`;
+      orb.style.top = `calc(${50 + 49 * Math.sin(a)}% + ${(15.7 * Math.sin(a)).toFixed(2)}px)`;
     }
     const pressure = secs != null && secs <= 10 && secs > 0;
     document.body.classList.toggle('pressure', pressure);
@@ -855,7 +855,9 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     seats.push(`<button type="button" class="${cls}" data-key="tok-${p.id}" style="left:${x}%;top:${y}%" ${selectable ? `data-act="${pick.act}" data-id="${p.id}"` : 'tabindex="-1"'} aria-pressed="${isSel}" aria-label="${label}">
       <span class="tok-disc">${sigil(p.id)}${crack && !p.alive ? CRACK : ''}${inner}${badges.join('')}</span><span class="tok-name">${esc(p.name)}</span></button>`);
   }
-  return `<div class="ring-wrap" data-key="ring-wrap"><div class="ring ${dense ? 'dense' : ''} ${pick ? 'picking' : ''} ${pick?.tone === 'kill' ? 'kill' : ''} ${orb ? 'orb' : ''}" style="--tok:${tok}px" data-key="ring">
+  // the orbit line runs through the seat centres; small seats drop their bead ring
+  const orbitInset = dense ? 0 : (50 - Math.hypot(pos[0].x - 50, pos[0].y - 50)).toFixed(2);
+  return `<div class="ring-wrap" data-key="ring-wrap"><div class="ring ${dense ? 'dense' : ''} ${tok < 44 ? 'small-tok' : ''} ${pick ? 'picking' : ''} ${pick?.tone === 'kill' ? 'kill' : ''} ${orb ? 'orb' : ''}" style="--tok:${tok}px;--orbit:${orbitInset}%" data-key="ring">
     <svg class="ring-fuse off" viewBox="0 0 100 100" data-ringfuse aria-hidden="true"><circle class="track" cx="50" cy="50" r="49"/><circle class="burn" cx="50" cy="50" r="49" pathLength="100"/></svg>
     <div class="ring-table" aria-hidden="true"></div>
     ${orb ? `<div class="ring-orb" data-key="ring-orb">${orb}</div>` : ''}

@@ -2090,3 +2090,135 @@ input.switch:checked::after { transform: translateX(18px) rotate(45deg) scale(0.
 .btn:not(.btn-ghost):not(.icon-btn)::before, .btn:not(.btn-ghost):not(.icon-btn)::after { z-index: 2; }
 .host-slot .btn-host { padding: 0 28px; }
 .host-slot .btn-host::before, .host-slot .btn-host::after { border-color: var(--gilt) !important; }
+
+/* ═════════════════════════════════════════════════════════════════════════
+   Codex step 4 · The table: an astrolabe
+   Tick ring and timer arc sit 16px OUTSIDE the seat area, so seat names
+   never touch them; an orbit line runs through the seat centres; the inner
+   disc carries rays. Threads pass under the disc. Seats are struck
+   medallions with the portrait inside as a cameo and the name on a ribbon.
+   ═════════════════════════════════════════════════════════════════════════ */
+.ring { width: min(calc(100% - 36px), 400px); margin: 22px auto 22px; }
+/* tick ring, just outside the seats */
+.ring::before {
+  content: ''; position: absolute; inset: -9px; border-radius: 50%; pointer-events: none; z-index: 0;
+  background: repeating-conic-gradient(var(--gilt-2) 0 0.5deg, transparent 0.5deg 6deg);
+  -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 8px), #000 calc(100% - 7px));
+  mask: radial-gradient(closest-side, transparent calc(100% - 8px), #000 calc(100% - 7px));
+  opacity: 0.85;
+}
+/* the orbit line through the seat centres */
+.ring::after {
+  content: ''; position: absolute; inset: var(--orbit, 11.5%); border-radius: 50%; border: 1px solid var(--iron); pointer-events: none; z-index: 0;
+}
+.ring.dense::after { display: none; }
+/* the timer arc, outermost, 16px beyond the seats; it burns down from the top */
+.ring-fuse { inset: auto; left: -16px; top: -16px; width: calc(100% + 32px); height: calc(100% + 32px); z-index: 0; }
+.ring-fuse.off { opacity: 1; }
+.ring-fuse.off .burn { opacity: 0; }
+.ring-fuse .track { stroke: var(--iron); stroke-width: 0.45; }
+.ring-fuse .burn { stroke: var(--gilt); stroke-width: 0.7; stroke-linecap: butt; filter: drop-shadow(0 0 2px color-mix(in srgb, var(--gilt) 60%, transparent)); }
+.ring-fuse.low .burn { stroke: var(--blood-ink); filter: drop-shadow(0 0 3px rgba(228, 93, 80, 0.8)); }
+/* the inner disc with rays */
+.ring-table {
+  z-index: 1; border: 1px solid var(--gilt-2);
+  background: radial-gradient(circle at 50% 40%, var(--ink-3), var(--ink) 72%);
+  box-shadow: 0 0 0 5px var(--ink), 0 0 0 6px var(--iron), inset 0 0 50px #000;
+}
+.ring-table::before {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  background: repeating-conic-gradient(color-mix(in srgb, var(--gilt) 13%, transparent) 0 1.5deg, transparent 1.5deg 9deg);
+  -webkit-mask: radial-gradient(closest-side, transparent 52%, #000 54%, #000 95%, transparent 96%);
+  mask: radial-gradient(closest-side, transparent 52%, #000 54%, #000 95%, transparent 96%);
+}
+.ring.kill .ring-table { border-color: var(--blood); background: radial-gradient(circle at 50% 40%, #2a0c0e, var(--ink) 72%); }
+.ring-center { z-index: 2; }
+.b-threads, .hunch-arrows, .b-votes { z-index: 0; }
+.c-sub { font: 600 11px/1.25 var(--text); letter-spacing: 0.24em; color: var(--ash); }
+.c-big { margin-bottom: 4px; }
+.c-hint { font: italic 400 16px/1.2 var(--text); }
+.c-name { font-family: var(--text); font-weight: 500; }
+
+/* ── Seats: struck medallions ── */
+.sigil { display: none; }
+.tok { z-index: 2; }
+.tok-disc {
+  background: radial-gradient(circle at 50% 32%, var(--ink-3), var(--ink) 78%);
+  border: 1px solid var(--gilt-2);
+  box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--gilt-2), 0 8px 18px -6px #000;
+}
+/* the dotted bead ring (dropped on small seats) */
+.tok-disc::before { content: ''; position: absolute; inset: -9px; border-radius: 50%; border: 1px dotted var(--gilt-2); opacity: 0.75; pointer-events: none; transition: border-color 0.3s; }
+.ring.small-tok .tok-disc::before, .ring.dense .tok-disc::before { display: none; }
+.tok-disc > .tok-av { inset: 0; width: 100%; height: 100%; border-radius: 50%; }
+.avatar .av-bg { fill: #4a3b2a; }
+.avatar .av-robe { fill: #15110e; }
+.tok-ini { font: 600 calc(var(--tok) * 0.48)/1 var(--black); }
+/* the name on a small ink ribbon */
+.tok-name { margin-top: 10px; padding: 3px 5px 2px; background: var(--ink); font: 600 10.5px/1 var(--text); letter-spacing: 0.2em; text-indent: 0.2em; color: var(--bone-2); }
+.ring.small-tok .tok-name, .ring.dense .tok-name { margin-top: 6px; letter-spacing: 0.12em; text-indent: 0.12em; }
+/* you */
+.tok.me .tok-disc { border-color: var(--gilt-2); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--gilt-2), 0 8px 18px -6px #000; }
+.tok.me .tok-name { color: var(--gilt); font-weight: 600; }
+.tok.me .tok-name::before { content: '◆'; font-size: 0.7em; letter-spacing: 0; margin-right: 0.6em; vertical-align: 0.1em; }
+/* choosable: gilt ring and glow */
+.tok.can .tok-disc { border-color: var(--gilt); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--gilt), 0 0 24px color-mix(in srgb, var(--gilt) 55%, transparent); }
+.tok.can .tok-disc::before { border-color: var(--gilt); }
+/* chosen: vellum ground, bright gilt ring */
+.tok.sel .tok-disc { background: var(--vellum); color: var(--sepia); border-color: var(--vellum); transform: scale(1.1);
+  box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--gilt-hi), 0 0 26px color-mix(in srgb, var(--gilt) 60%, transparent); }
+.tok.sel .tok-disc > .tok-av { inset: 3px; width: calc(100% - 6px); height: calc(100% - 6px); }
+.tok.sel .tok-name { color: var(--gilt-hi); }
+.tok.kill.sel .tok-disc { background: radial-gradient(circle at 50% 32%, #8e1b1f, #3a0a0d 82%); border-color: var(--blood-ink); color: #f6d3c8;
+  box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--blood-ink), 0 0 30px rgba(210, 40, 40, 0.6); }
+/* accused: a blood medallion with a red bead ring */
+.tok.accused .tok-disc { border-color: var(--blood-ink); background: radial-gradient(circle at 50% 32%, #641519, #1c0809 82%);
+  box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--blood), 0 0 28px rgba(210, 40, 40, 0.6); }
+.tok.accused .tok-disc::before { border-color: var(--blood-ink); }
+.tok.accused .tok-name { color: var(--blood-ink); }
+/* speaking: the gilt ring breathes */
+.tok.speaking .tok-disc { border-color: var(--gilt-hi); }
+/* dead: dashed ring, grey cameo, one centred X, the name struck through */
+.tok.dead { opacity: 0.6; }
+.tok.dead .tok-disc { border-style: dashed; border-color: var(--ash); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--iron); }
+.tok.dead .tok-disc::before { border-color: var(--iron); }
+.tok.dead .tok-disc::after {
+  content: ''; position: absolute; inset: 16%; width: auto; height: auto; transform: none; z-index: 1;
+  background:
+    linear-gradient(45deg, transparent calc(50% - 1px), var(--blood-ink) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)),
+    linear-gradient(-45deg, transparent calc(50% - 1px), var(--blood-ink) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px));
+}
+.tok.dead .tok-av { filter: grayscale(1) brightness(0.6); }
+.tok.dead .tok-name { text-decoration: line-through; text-decoration-color: var(--blood-ink); }
+/* lobby readiness; away; immune; the end reveal; empty chairs */
+.tok.ready .tok-disc { border-color: var(--gilt); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--gilt), 0 0 18px -4px var(--gilt); }
+.tok.unready { opacity: 0.6; }
+.tok.away .tok-disc { border-style: dashed; }
+.tok.immune .tok-disc { box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--gilt), 0 0 0 6px var(--ink), 0 0 0 7px var(--gilt-2); }
+.tok.death .tok-disc { border-color: var(--blood-ink); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--blood); }
+.tok.death .tok-name { color: var(--blood-ink); }
+.tok.empty .tok-disc { background: transparent; border: 1px dashed var(--gilt-2); box-shadow: none; }
+.tok.empty .tok-disc::before { display: none; }
+.tok.empty .tok-name { background: none; text-transform: none; letter-spacing: 0; text-indent: 0; font: italic 400 13px/1 var(--text); color: var(--ash); }
+
+/* ── Badges: small struck tokens ── */
+.bdg { border-radius: 0; background: var(--ink); border: 1px solid var(--gilt-2); color: var(--bone); font: 600 10px/1 var(--bit); }
+.b-nom { border-radius: 50%; background: var(--blood); border-color: var(--blood-ink); color: #f8ead6; font: 600 11px/1 var(--bit); min-width: 20px; height: 20px; top: -7px; left: -7px; }
+.b-ok { border-radius: 0; transform: rotate(45deg) scale(0.85); background: var(--gilt); border-color: var(--gilt); color: var(--ink); }
+.b-ok .glyph { transform: rotate(-45deg); }
+.b-mark { border-radius: 0; background: var(--blood); border-color: var(--blood-ink); color: #f8ead6; font: 600 10px/1 var(--bit); }
+.b-stamp { border-radius: 0; background: var(--blood); }
+.b-host { background: var(--blood-ink); }
+
+/* ── Accusations: slips spoken before the table ── */
+.accused li { border-radius: 0; border-color: var(--blood); background: rgba(156, 28, 34, 0.12); }
+.accused b { font: 500 19px/1.1 var(--text); }
+.accused small { font: italic 400 13px/1 var(--text); color: var(--bone-2); }
+
+/* ── TV: the same astrolabe, larger; the rider bead on the timer arc ── */
+.board2 .ring { margin: 26px auto; }
+.board2 .ring-table { inset: 20%; background: radial-gradient(circle at 50% 42%, var(--ink-3), var(--ink) 72%); box-shadow: 0 0 0 7px var(--ink), 0 0 0 8px var(--iron), inset 0 0 90px #000; }
+.board2 .tok-name { font-size: clamp(11px, 1.4vh, 14px); }
+.sky-orb { width: 20px; height: 20px; margin: -10px 0 0 -10px; z-index: 3; }
+.sky-orb.sun { background: radial-gradient(circle at 40% 35%, #fff6d8, var(--gilt-hi) 45%, var(--gilt)); box-shadow: 0 0 22px 6px color-mix(in srgb, var(--gilt) 45%, transparent); }
+body.pressure .sky-orb.sun, body.pressure .sky-orb.moon { background: radial-gradient(circle at 40% 35%, #ffd2c8, var(--blood-ink)); box-shadow: 0 0 22px 6px rgba(228, 93, 80, 0.5); }
