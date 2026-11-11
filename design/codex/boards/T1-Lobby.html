@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dead Set — TV lobby</title>
+<link rel="stylesheet" href="../codex.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Grenze+Gotisch:wght@400;600;800&family=Jacquard+24&family=UnifrakturCook:wght@700&display=swap">
+<style>
+body{margin:0}
+.tile{display:grid;place-items:center;width:52px;height:66px;border:1px solid #8a6d35;background:#15110e;font:600 40px/1 'EB Garamond',Georgia,serif;color:#ecd28f}
+.mini{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;justify-items:center;text-align:center}
+.mini .lab{font-size:10px;letter-spacing:.12em}
+</style>
+</head>
+<body style="background:#050404">
+
+<div class="ds tv" style="width:1600px;height:900px;padding:40px 56px 44px;display:grid;grid-template-rows:auto 1fr;gap:26px">
+  <div class="tvh">
+    <span class="mark">Dead <span class="red">Set</span></span>
+    <h1 class="press">The gathering</h1>
+    <span class="lab" style="padding-bottom:12px">Lobby · 7 of 7 ready</span>
+    <button class="btn" style="margin-left:auto;margin-bottom:6px">Start the score</button>
+  </div>
+
+  <div style="display:grid;grid-template-columns:330px 1fr 500px;gap:40px;align-items:center">
+    <!-- summons -->
+    <div style="display:grid;gap:18px;justify-items:center">
+      <span class="lab gilt">Scan to take a seat</span>
+      <div class="vellum fr k" style="width:300px;height:300px;padding:30px">
+        <div role="img" aria-label="QR code placeholder" style="position:relative;width:100%;height:100%;background:conic-gradient(#1d1510 25%,transparent 0 50%,#1d1510 0 75%,transparent 0) 0 0/24px 24px,conic-gradient(transparent 25%,#1d1510 0 50%,transparent 0) 6px 12px/36px 60px">
+          <span style="position:absolute;left:0;top:0;width:66px;height:66px;background:#dccba4;border:10px solid #1d1510;box-shadow:inset 0 0 0 9px #dccba4,inset 0 0 0 40px #1d1510,0 0 0 6px #dccba4"></span>
+          <span style="position:absolute;right:0;top:0;width:66px;height:66px;background:#dccba4;border:10px solid #1d1510;box-shadow:inset 0 0 0 9px #dccba4,inset 0 0 0 40px #1d1510,0 0 0 6px #dccba4"></span>
+          <span style="position:absolute;left:0;bottom:0;width:66px;height:66px;background:#dccba4;border:10px solid #1d1510;box-shadow:inset 0 0 0 9px #dccba4,inset 0 0 0 40px #1d1510,0 0 0 6px #dccba4"></span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px"><span class="tile">J</span><span class="tile">V</span><span class="tile">S</span><span class="tile">T</span><span class="tile">J</span><span class="tile">L</span></div>
+      <span class="it ash" style="font-size:18px">[YOUR ADDRESS] / JVSTJL</span>
+    </div>
+
+    <!-- the table -->
+    <div class="table" style="width:600px;margin:0 auto;--t:1">
+      <div class="orbit"></div>
+      <div class="disc">
+        <span class="bit gilt" style="font-size:150px;line-height:.9;margin-bottom:10px">7</span>
+        <span class="lab">Seven are seated</span>
+      </div>
+      <div class="seat lg you" style="left:50%;top:9%"><i>A</i><b>Ada</b></div>
+      <div class="seat lg pick" style="left:82.1%;top:24.4%"><i>B</i><b>Bo</b></div>
+      <div class="seat lg pick" style="left:90%;top:59.1%"><i>C</i><b>Cy</b></div>
+      <div class="seat lg pick" style="left:67.8%;top:86.9%"><i>D</i><b>Di</b></div>
+      <div class="seat lg pick" style="left:32.2%;top:86.9%"><i>E</i><b>Ed</b></div>
+      <div class="seat lg" style="left:10%;top:59.1%"><i>F</i><b>Fay</b></div>
+      <div class="seat lg pick" style="left:17.9%;top:24.4%"><i>G</i><b>Gus</b></div>
+    </div>
+
+    <!-- the deck -->
+    <div style="display:grid;gap:14px;align-content:center">
+      <div class="orn"><span class="lab gilt">Tonight’s deck · Standard</span></div>
+      <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px">
+        <div class="mini"><div class="card noir" style="width:100%;font-size:4.6px"><span class="num">XIII</span><div class="art"><img src="../art/death.svg" alt=""></div></div><span class="lab red">Death ×2</span></div>
+        <div class="mini"><div class="card" style="width:100%;font-size:4.6px"><span class="num">0</span><div class="art"><img src="../art/innocent.svg" alt=""></div></div><span class="lab">Innocent</span></div>
+        <div class="mini"><div class="card" style="width:100%;font-size:4.6px"><span class="num">VII</span><div class="art"><img src="../art/guardian.svg" alt=""></div></div><span class="lab">Guardian</span></div>
+        <div class="mini"><div class="card" style="width:100%;font-size:4.6px"><span class="num">II</span><div class="art"><img src="../art/mentalist.svg" alt=""></div></div><span class="lab">Mentalist</span></div>
+        <div class="mini"><div class="card" style="width:100%;font-size:4.6px"><span class="num">XV</span><div class="art"><img src="../art/psycho.svg" alt=""></div></div><span class="lab">Psycho</span></div>
+        <div class="mini"><div class="card back" style="width:100%;font-size:4.6px"><span class="sig" style="font-family:'Grenze Gotisch',serif;font-weight:600">?</span></div><span class="lab">1 secret</span></div>
+      </div>
+      <p class="it ash" style="font-size:17px;line-height:1.3">The secret seat is drawn from: Whore, Traveling Agent, Terrorist, Mimic, Double Agent, Diplomat, Scapegoat, Necromancer, Conspirator, Magistrate.</p>
+
+      <div class="orn" style="margin-top:8px"><span class="lab gilt">Edicts and the story</span></div>
+      <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;align-items:end">
+        <div class="mini"><div class="card back" style="width:100%;font-size:4.6px"><span class="sig">DS</span></div><span class="lab">Edict</span></div>
+        <span></span>
+        <div class="mini"><div class="card back" style="width:100%;font-size:4.6px;transform:rotate(-4deg)"><span class="sig">DS</span></div><span class="lab">Who</span></div>
+        <div class="mini"><div class="card back" style="width:100%;font-size:4.6px"><span class="sig">DS</span></div><span class="lab">Where</span></div>
+        <div class="mini"><div class="card back" style="width:100%;font-size:4.6px;transform:rotate(4deg)"><span class="sig">DS</span></div><span class="lab">Why</span></div>
+      </div>
+      <p class="it ash" style="font-size:17px">Turned over when the match begins.</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>
