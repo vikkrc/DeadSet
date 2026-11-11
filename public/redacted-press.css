@@ -806,3 +806,70 @@ body::before {
   .tok.can .tok-disc,.mode-card,.card-stage,.moment .m-body,.dr-face,
   .ring-center,.b-fog i {animation:none!important;}
 }
+
+
+/* Brand-signature masthead: blackletter belongs to the name only. Keep
+   Instrument Serif/Sans/JetBrains Mono everywhere gameplay requires reading. */
+.wordmark {
+  font:600 31px/.86 var(--press);
+  letter-spacing:-.028em;
+  align-items:baseline;
+}
+.wordmark i {
+  font-style:normal;
+  color:var(--blood-ink);
+}
+.press-home .h-top .wordmark {font-size:30px;}
+.b-head .wordmark {font-size:34px;}
+.press-cover {
+  background-image:
+    linear-gradient(180deg,rgba(0,0,0,.05),transparent 43%),
+    radial-gradient(ellipse 82% 44% at 50% 18%,rgba(32,6,5,.20),transparent 85%);
+}
+.press-cover .press-masthead {
+  position:relative;
+}
+.press-masthead span:first-child {letter-spacing:-.07em;}
+.press-masthead span:last-child {letter-spacing:-.07em;}
+.press-cover .press-masthead::after {
+  content:'';position:absolute;z-index:-2;pointer-events:none;
+  left:-13%;right:-13%;width:126%;height:42%;
+  top:-38%;
+  background:url('/deco-masthead.svg') center top/contain no-repeat;
+  opacity:.45;filter:brightness(.19);
+}
+.b-head,.topbar {
+  background-image:linear-gradient(90deg,transparent 3%,rgba(235,223,204,.035) 50%,transparent 95%);
+}
+.phase-head .ph-row {align-items:baseline;}
+
+/* Preserve clear and distinct controls even where long translations wrap. */
+.btn, .chip, .mode-card,.tok,.option,.preset {touch-action:manipulation;}
+.mode-card span,.mode-card small,.panel p,.banner p,.dr-face p {overflow-wrap:break-word;}
+.mode-card b {overflow-wrap:anywhere;}
+.sheet-body,.main,.press-panel,.b-side {min-width:0;}
+.press-panel .seg button {font-family:var(--sans);font-size:12px;letter-spacing:.055em;}
+.press-panel .btn.btn-solid {font-family:var(--sans);font-size:13px;letter-spacing:.12em;}
+
+/* Decorative hierarchy loses density on small devices; content never does. */
+@media(max-width:600px) {
+  .wordmark {font-size:25px;}
+  .press-home .h-top .wordmark {font-size:26px;}
+  .topbar .wordmark {font-size:25px;}
+  .press-cover .press-masthead::after {top:-19%;height:25%;opacity:.23;}
+  .mode-card::before {opacity:.54;}
+  .face.front::after {border-image-width:15px;inset:2px;opacity:.65;}
+  .face.front .art {width:43%;}
+  .panel::before,.banner::before,.coach::before,.role-mini::before {opacity:.42;}
+  .ring {background-image:url('/deco-ring.svg');}
+  .tok-disc {box-shadow:inset 0 0 0 2px #1c1714,inset 0 0 0 3px rgba(235,223,204,.3);}
+  .side .count {overflow-wrap:anywhere;}
+  .dock .btn {font-size:12px;}
+}
+@media(max-width:365px) {
+  .press-home .h-top .wordmark {font-size:22px;}
+  .press-panel {padding-inline:21px;}
+  .press-panel .seg button {font-size:11px;}
+  .face.front::after {border-image-width:12px;}
+  .mode-card .glyph {font-size:27px;}
+}
