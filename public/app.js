@@ -471,7 +471,7 @@ function momentHtml(m) {
       break;
     case 'dreamswap':
       body = `<span class="kicker">${m.stole ? esc(dreamF('DREAM_SNATCHER', 'name')) : t('A Dream Snatcher struck')}</span><h1 class="m-title">${letters(t(m.stole ? 'You stole a dream' : 'Your dream was stolen'))}</h1>
-        <div class="swap-cards"><div class="swap-card gone">${dreamGlyph(m.from)}<b>${esc(dreamF(m.from, 'name'))}</b></div><span class="swap-arrow">⟶</span><div class="swap-card new">${dreamGlyph(m.to)}<b>${esc(dreamF(m.to, 'name'))}</b><small>${esc(dreamF(m.to, 'text'))}</small></div></div>
+        <div class="swap-cards"><div class="swap-card gone arc dreamsuit">${cardArt(DREAM_EMB[m.from] ?? 'moon')}<b>${esc(dreamF(m.from, 'name'))}</b></div><span class="swap-arrow">⟶</span><div class="swap-card new arc dreamsuit">${cardArt(DREAM_EMB[m.to] ?? 'moon')}<b>${esc(dreamF(m.to, 'name'))}</b><small>${esc(dreamF(m.to, 'text'))}</small></div></div>
         <p class="m-sub small">${t('Tonight you dream this instead. Keep it to yourself.')}</p>`;
       break;
     case 'dawn': {
@@ -485,7 +485,7 @@ function momentHtml(m) {
     }
     case 'private':
       body = `<div class="m-art">${glyph('mentalist')}</div><span class="kicker">${t('Only you know')}</span><h1 class="m-title">${letters(t('Your night'))}</h1>
-        ${m.reports.length ? `<ul class="m-reports">${m.reports.map((r, i) => `<li style="--d:${0.5 + i * 0.35}s">${reportHtml(r.msg, r.lines)}</li>`).join('')}</ul>` : `<p class="m-sub">${t('You slept. Nothing reached you.')}</p>`}
+        <ul class="m-reports">${m.reports.length ? m.reports.map((r, i) => `<li style="--d:${0.5 + i * 0.35}s">${reportHtml(r.msg, r.lines)}</li>`).join('') : `<li style="--d:.5s">${t('You slept. Nothing reached you.')}</li>`}</ul>
         <p class="m-sub small">${t('Keep this to yourself — or don\'t.')}</p>`;
       break;
     case 'revive':
@@ -770,10 +770,11 @@ function joinScreen() {
     return `<main class="invite2" data-key="inv-sealed">
       <div class="h-top">${wordmark()}${langChip()}</div>
       <span class="kicker inv-kicker">${t('A letter for you')}</span>
-      <div class="envelope"><div class="flap"></div><div class="addr">${t('For whoever holds this link')}<small>${th('Table {code}', { code: S.code })}${pk?.seated != null ? ` · ${t('{n} seated', { n: pk.seated })}` : ''}</small></div></div>
-      <button class="wax-btn ${S.ui.holding === 'seal' ? 'holding' : ''}" data-hold="openSeal" data-key="hold-seal" aria-label="${esc(t('Press and hold to break the seal'))}">
-        <svg class="wax-ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" pathLength="100"/></svg><span class="wax"><span>DS</span></span>
-      </button>
+      <div class="envelope"><div class="flap"></div>
+        <button class="wax-btn ${S.ui.holding === 'seal' ? 'holding' : ''}" data-hold="openSeal" data-key="hold-seal" aria-label="${esc(t('Press and hold to break the seal'))}">
+          <svg class="wax-ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="wr-track" cx="50" cy="50" r="46"/><circle cx="50" cy="50" r="46" pathLength="100"/></svg><span class="wax"><span>D</span></span>
+        </button>
+        <div class="addr"><span class="kicker">${t('For whoever holds this link')}</span><b class="inv-code">${esc(S.code ?? '')}</b>${pk?.seated != null ? `<small>${t('{n} seated', { n: pk.seated })}</small>` : ''}</div></div>
       <div class="inv-hint"><p>${t('Press and hold the seal')}</p><span class="small muted">${th('{a} has saved you a seat.', { a: hostName })}</span></div>
       <button class="inv-recover" data-act="recoverInvite">${t('Already seated? Recover your seat')}</button>
     </main>`;

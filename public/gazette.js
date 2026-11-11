@@ -5,6 +5,7 @@
 const ROMAN = ['0', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX'];
 const roman = (n) => ROMAN[n] ?? String(n);
 import { mcardF } from './i18n.js';
+import { avatarSvg } from './avatar.js';
 
 const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
 
@@ -127,7 +128,7 @@ export function gazetteHtml(v, h, { masthead = true, limit = 40 } = {}) {
   const alive = v.players.filter((p) => p.alive).length;
   const eds = editions(v, h).slice(0, limit);
   const edLabel = v.phase === 'ENDED' ? t('Final edition') : v.missions ? t('Mission {n} edition', { n: roman(v.missions.mission + 1) }) : v.dayNumber ? t('Day {n} edition', { n: roman(v.dayNumber) }) : t('First edition');
-  const when = (e) => (e.kind === 'start' ? t('Night {n}', { n: 0 }) : e.kind === 'end' ? t('Verdict') : e.kind === 'night' ? t('Night') : e.kind === 'mission' ? t('Mission') : e.kind === 'finale' ? t('Finale') : t('Day'));
+  const when = (e) => (e.kind === 'start' ? t('Night') : e.kind === 'end' ? t('Verdict') : e.kind === 'night' ? t('Night') : e.kind === 'mission' ? t('Mission') : e.kind === 'finale' ? t('Finale') : t('Day'));
   const chip = (c) => {
     if (c.acc) return `<span class="ev"><span class="mini">${esc(c.acc[0][0])}</span><span class="arrow">⟶</span><span class="mini">${esc(c.acc[1][0])}</span>${esc(c.text)}</span>`;
     return `<span class="ev ${c.cls ?? ''}">${c.icon ? glyph(c.icon) : ''}${esc(c.text)}</span>`;
@@ -135,7 +136,7 @@ export function gazetteHtml(v, h, { masthead = true, limit = 40 } = {}) {
   return `<div class="gazette">
     ${masthead ? `<div class="mast"><h3>${th('The Dead Set <i>Gazette</i>')}</h3><div><span>${esc(v.scenario ? w.place : t('Unknown parts'))}</span><span>${esc(edLabel)}</span><span>${th('{a} of {b} alive', { a: alive, b: v.players.length })}</span></div></div>` : ''}
     ${eds.length ? eds.map((e, i) => `<article class="edition ${i === 0 && v.phase !== 'ENDED' ? 'today' : ''}" data-key="ed-${esc(e.key)}">
-      <div class="when">${glyph(e.kind === 'night' || e.kind === 'start' ? 'moon' : e.kind === 'end' ? 'scroll' : e.kind === 'mission' ? 'mission' : e.kind === 'finale' ? 'death' : 'sun')}<b>${e.kind === 'end' || e.kind === 'finale' ? '·' : roman(e.num)}</b><span>${esc(when(e))}</span></div>
+      <div class="when"><b>${e.kind === 'end' || e.kind === 'finale' ? '·' : roman(e.num)}</b><span>${esc(when(e))}</span></div>
       <div><h4 class="${e.tone}">${esc(e.title)}</h4><div class="events">${e.chips.map(chip).join('')}</div></div>
     </article>`).join('') : `<p class="small muted">${t('The presses are quiet. Nothing has happened yet.')}</p>`}
   </div>`;
@@ -165,11 +166,12 @@ export function frontPageHtml(v, m, h) {
   const deadAll = v.players.filter((x) => !x.alive).map((x) => x.name);
   const lastTally = [...v.log].reverse().find((l) => l.at === `Day ${m.day - 1}` && ['sentence', 'nosentence', 'novote', 'cancelled', 'scapegoat'].includes(l.ev));
   const yesterday = !lastTally ? '—' : lastTally.ev === 'sentence' ? t('{name} sentenced', { name: v.players.find((x) => x.id === lastTally.victims?.[0])?.name ?? '?' }) : lastTally.ev === 'scapegoat' ? t('Scapegoat paid') : t('No sentence');
-  const portrait = dead ? `<div class="portrait">${esc(killed[0][0])}<svg viewBox="0 0 100 100"><path d="M52 8 L46 30 L58 42 L44 60 L54 76 L48 94"/><path d="M58 42 L74 46"/><path d="M44 60 L28 58"/></svg></div>`
+  const victim = dead ? v.players.find((x) => x.name === killed[0]) : null;
+  const portrait = dead ? `<div class="portrait">${victim?.avatar ? avatarSvg(victim.avatar, 'gz-av') : `<span class="gz-ini">${esc([...killed[0]][0] ?? '')}</span>`}<svg class="gz-x" viewBox="0 0 100 100" aria-hidden="true"><path d="M22 22L78 78M78 22L22 78"/></svg></div>`
     : '<div class="portrait empty">∅</div>';
   return `<div class="paper" data-key="paper-${m.id}">
     <div class="mh"><h2>${esc(t('The Dead Set Gazette'))}</h2><div><span>${esc(w.place)}</span><span>${esc(t('Dawn of Day {n}', { n: roman(m.day) }))}</span><span>${esc(t('Price: one soul'))}</span></div></div>
-    <div class="hl">${esc(headline.toLocaleUpperCase(h.getLang()))}</div>
+    <div class="hl">${esc(headline)}</div>
     <p class="dk">${esc(dek)}${m.revived?.length ? ` ${esc(t('{names} returned from the grave.', { names: m.revived }))}` : ''}${expired.length ? ` ${esc(t('Borrowed time ran out for {names}.', { names: expired }))}` : ''}</p>
     <div class="cols">
       <p>${esc(body)}</p>
@@ -182,6 +184,6 @@ export function frontPageHtml(v, m, h) {
         <div><span>${esc(t('Their purpose'))}</span><span>${esc(w.why)}</span></div>
       </div>
     </div>
-    ${dead ? `<div class="stampx">${esc(t('Extra'))}</div>` : ''}
+    ${dead ? `<div class="stampx"><span class="stamp">${esc(t('Extra'))}</span></div>` : ''}
   </div>`;
 }

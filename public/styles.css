@@ -2551,3 +2551,150 @@ body.pressure .sky-orb.sun, body.pressure .sky-orb.moon { background: radial-gra
 .is-board .m-tally .m-body:has(.ballot) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 72px; max-width: 1400px; align-items: center; }
 .is-board .m-tally .m-body:has(.ballot) > .kicker, .is-board .m-tally .m-body:has(.ballot) > .m-title { grid-column: 1 / -1; }
 .is-board .m-tally .ballot { justify-self: end; }
+
+/* ═════════════════════════════════════════════════════════════════════════
+   Codex step 7 · The vellum surfaces: Gazette, invitation, private reports;
+   the backdrops redrawn as pencil etchings
+   ═════════════════════════════════════════════════════════════════════════ */
+/* a sheet of vellum: paper, quiet stains, a faint edge burn */
+.gazette, .b-side, .paper, .envelope, .letter, .m-reports li {
+  background: var(--vellum-stain), linear-gradient(170deg, #e2d3ae, var(--vellum) 60%, #d3c094); background-size: 100% 100%, auto;
+  color: var(--sepia);
+}
+.gazette .emblem, .paper .emblem, .letter .emblem, .m-reports .emblem { --paper: var(--vellum); }
+
+/* ── The Gazette column (TV side panel; phone record) ── */
+.gazette { position: relative; padding: 24px 24px 16px; border: 1px solid #77633f; border-image: var(--frame-ink) 32 / 22px stretch; box-shadow: inset 0 0 2.4em rgba(84, 54, 18, 0.22); }
+.sheet .gazette, .b-side .gazette { border: 0; border-image: none; padding: 0; background: none; box-shadow: none; }
+.b-side { border: 1px solid #77633f; border-image: var(--frame-ink) 32 / 24px stretch; border-radius: 0; padding: 30px 30px 20px; box-shadow: 0 40px 70px -30px #000, inset 0 0 2.4em rgba(84, 54, 18, 0.22); }
+.gazette .mast { border-bottom: 3px double var(--sepia); padding-bottom: 6px; margin-bottom: 2px; }
+.gazette .mast h3 { font: 600 30px/1 var(--black); color: var(--sepia); text-shadow: 0.03em 0.02em 0 rgba(142, 27, 31, 0.28); padding-bottom: 0.1em; }
+.gazette .mast h3 i { font-style: normal; color: inherit; }
+.board2 .gazette .mast h3 { font-size: 40px; }
+.gazette .mast div { font: 600 10px/1.3 var(--text); letter-spacing: 0.2em; color: var(--sepia-2); border-top: 1px solid var(--sepia); padding-top: 6px; margin-top: 10px; }
+.gazette .mast div span:last-child { color: var(--rubric); }
+.edition { grid-template-columns: 48px 1fr; gap: 14px; padding: 14px 0 13px; border-bottom: 1px solid rgba(29, 21, 16, 0.22); }
+.edition.today { background: linear-gradient(90deg, rgba(84, 54, 18, 0.1), transparent 80%); }
+.edition .when b { font: 600 28px/1 var(--bit); color: var(--rubric); }
+.edition .when span { font: 600 9px/1.2 var(--text); letter-spacing: 0.2em; color: var(--sepia-2); }
+.edition h4 { font: 600 24px/1.02 var(--black); color: var(--sepia); padding-bottom: 0.08em; margin-bottom: 8px; }
+.edition h4.dead { color: var(--sepia); }
+.gazette .ev, .paper .ev { border: 1px solid rgba(29, 21, 16, 0.38); background: rgba(255, 250, 235, 0.18); color: var(--sepia); font: italic 400 14px/1.2 var(--text); padding: 4px 9px; }
+.gazette .ev .glyph { color: var(--sepia-2); }
+.gazette .ev.kill { border-color: rgba(142, 27, 31, 0.6); color: var(--rubric); background: rgba(142, 27, 31, 0.05); }
+.gazette .ev.kill .glyph { color: var(--rubric); }
+.gazette .ev.rulechip { border-color: rgba(29, 21, 16, 0.38); }
+.gazette .ev.rulechip .glyph { color: var(--sepia-2); }
+.gazette .ev .mini { border-color: rgba(29, 21, 16, 0.5); color: var(--sepia); }
+.gazette .ev .arrow { color: var(--rubric); }
+.gazette .small.muted { color: var(--sepia-2); }
+
+/* ── The dawn front page (TV): a broadsheet moment over a sunrise glow ── */
+.moment.front { background: radial-gradient(90% 60% at 50% 110%, #4a3218, #110d0a 62%); }
+.paper { width: min(92vw, 1180px); padding: 3.4vh 54px 3.2vh; border: 1px solid #77633f; border-image: var(--frame-ink) 32 / 26px stretch; border-radius: 0; box-shadow: 0 60px 90px -30px #000, inset 0 0 3em rgba(84, 54, 18, 0.24); }
+.paper .mh { border-bottom: 0; padding-bottom: 0; }
+.paper .mh h2 { font: 600 clamp(48px, 8vh, 80px)/1 var(--black); color: var(--sepia); padding-bottom: 0.06em; }
+.paper .mh div { font: 600 11.5px/1.3 var(--text); letter-spacing: 0.22em; color: var(--sepia-2); border-top: 3px double var(--sepia); border-bottom: 1px solid var(--sepia); padding: 8px 2px 6px; margin-top: 10px; }
+.paper .mh div span:last-child { color: var(--rubric); }
+.paper .hl { font: 600 clamp(56px, 10vh, 104px)/1 var(--black); letter-spacing: 0; color: var(--sepia); margin: 2.6vh 0 0.25em; padding-bottom: 0.06em; }
+.paper .dk { font: italic 400 clamp(19px, 2.7vh, 27px)/1.28 var(--text); color: var(--sepia-2); }
+.paper .cols { grid-template-columns: 1fr 240px 1fr; gap: 34px; border-top: 1px solid var(--sepia); padding-top: 20px; }
+.paper .cols p { font: 400 17px/1.55 var(--text); color: var(--sepia); }
+.paper .cols p::first-letter { font: 600 3.4em/0.8 var(--black); color: var(--rubric); float: left; margin: 0.06em 0.1em 0 0; }
+/* the portrait: printed in sepia inside the lancet arch, struck through with a centred X */
+.paper .photo { border: 0; padding: 0; font: italic 400 15px var(--text); color: var(--sepia-2); }
+.paper .photo .portrait {
+  position: relative; width: 190px; height: 210px; border-radius: 0; clip-path: var(--arch); display: grid; place-items: center; overflow: hidden;
+  background: linear-gradient(var(--vellum) 30%, transparent 95%), radial-gradient(circle, rgba(29, 21, 16, 0.55) 0.9px, transparent 1.4px) 0 0 / 5px 5px, var(--vellum-2);
+}
+.paper .photo .portrait::before { content: ''; position: absolute; inset: 0; clip-path: var(--arch); box-shadow: inset 0 0 0 1.5px var(--sepia); background: none; border: 1.5px solid var(--sepia); }
+.paper .photo .portrait .gz-av { position: relative; width: 112px; height: 112px; margin-top: 54px; border-radius: 50%; filter: grayscale(1) sepia(0.5) contrast(1.1); box-shadow: 0 0 0 1.5px var(--sepia); }
+.paper .photo .portrait .gz-ini { position: relative; margin-top: 54px; display: grid; place-items: center; width: 112px; height: 112px; border-radius: 50%; background: var(--sepia); color: #e8dcc0; font: 600 54px/1 var(--black); }
+.paper .photo .portrait .gz-x { position: absolute; width: 112px; height: 112px; left: calc(50% - 56px); top: calc(50% - 56px + 27px); inset: auto; stroke: var(--rubric); stroke-width: 3; stroke-linecap: round; fill: none; }
+.paper .photo .portrait .gz-x path { stroke-dasharray: 80; animation: drawLine 0.9s 1.6s var(--ease) both; }
+.paper .photo .portrait.empty { font: 400 56px/1 var(--text); color: var(--sepia-2); }
+.paper .facts { gap: 9px; }
+.paper .facts div { border-bottom: 1px dotted rgba(29, 21, 16, 0.5); font: 600 11px/1.3 var(--text); letter-spacing: 0.2em; color: var(--sepia-2); padding-bottom: 5px; }
+.paper .facts div span:last-child { font: italic 400 16px/1.2 var(--text); letter-spacing: 0; text-transform: none; color: var(--sepia); }
+.paper .stampx { position: absolute; right: 60px; top: 15vh; bottom: auto; border: 0; padding: 0; transform: none; animation: none; }
+.paper .stampx .stamp { font-size: 46px; transform: rotate(-8deg); animation-delay: 1.9s; }
+
+/* ── The invitation: a tilted vellum envelope; the seal on the flap's point ── */
+.invite2 { background: radial-gradient(90% 55% at 50% 40%, #241a14, #0b0908 70%); }
+.envelope {
+  width: min(82vw, 330px); aspect-ratio: 0.71; margin-top: 18px; transform: rotate(-3deg); border-radius: 0;
+  border: 1px solid #77633f; border-image: var(--frame-ink) 32 / 20px stretch;
+  box-shadow: 0 40px 70px -24px rgba(0, 0, 0, 0.9), inset 0 0 2.6em rgba(84, 54, 18, 0.26);
+}
+.envelope::before { inset: 0; background: none; }
+.envelope .flap {
+  height: 38%; clip-path: none; background:
+    linear-gradient(to bottom left, transparent calc(50% - 0.6px), rgba(29, 21, 16, 0.55) 50%, transparent calc(50% + 0.6px)) left / 50% 100% no-repeat,
+    linear-gradient(to bottom right, transparent calc(50% - 0.6px), rgba(29, 21, 16, 0.55) 50%, transparent calc(50% + 0.6px)) right / 50% 100% no-repeat;
+}
+.envelope .wax-btn { position: absolute; left: 50%; top: 38%; margin: 0; transform: translate(-50%, -50%); width: 128px; height: 128px; z-index: 2; }
+.wax-ring { transform: rotate(-90deg); }
+.wax-ring circle { stroke: var(--rubric); stroke-width: 2.2; }
+.wax-ring .wr-track { stroke: rgba(29, 21, 16, 0.22); stroke-dasharray: none; stroke-dashoffset: 0; transition: none; }
+.wax { width: 90px; height: 90px; background: radial-gradient(circle at 38% 30%, #d4484f, #a0222a 50%, #6a1118); box-shadow: 0 8px 16px rgba(60, 10, 12, 0.5), inset 0 -5px 10px rgba(0, 0, 0, 0.3), inset 0 0 0 5px rgba(0, 0, 0, 0.12); }
+.wax::before { inset: 10px; border-color: rgba(60, 6, 9, 0.35); }
+.wax span { font: 700 40px/1 var(--mark); color: #5a0b10; text-shadow: 0 1px 0 rgba(255, 190, 180, 0.35); }
+.envelope .addr { bottom: 34px; display: grid; gap: 6px; justify-items: center; font: inherit; color: var(--sepia); }
+.envelope .addr .kicker { color: var(--sepia-2); }
+.envelope .addr .inv-code { font: 600 40px/1 var(--text); letter-spacing: 0.14em; text-indent: 0.14em; color: var(--sepia); }
+.envelope .addr small { margin: 0; font: italic 400 14px/1.2 var(--text); letter-spacing: 0; text-transform: none; color: var(--sepia-2); }
+.inv-hint { margin-top: 34px; }
+.inv-hint p { font: italic 400 22px var(--text); }
+.inv-recover, .letter-link { font: italic 400 16px var(--text); }
+/* the opened letter */
+.letter { border: 1px solid #77633f; border-image: var(--frame-ink) 32 / 22px stretch; border-radius: 0; padding: 40px 30px 26px; box-shadow: 0 50px 80px -30px rgba(0, 0, 0, 0.95), inset 0 0 2.4em rgba(84, 54, 18, 0.22); }
+.letter::before { display: none; }
+.letter .k { font: 600 11px/1.3 var(--text); letter-spacing: 0.24em; color: var(--rubric); }
+.letter h2 { font: 600 40px/1 var(--black); color: var(--sepia); padding-bottom: 0.08em; }
+.letter h2 i { font-style: normal; color: var(--rubric); }
+.letter p { font: italic 400 18px/1.4 var(--text); color: var(--sepia-2); }
+.letter .meta span { font: italic 400 14px/1.2 var(--text); letter-spacing: 0; text-transform: none; border: 1px solid rgba(29, 21, 16, 0.38); border-radius: 0; color: var(--sepia); }
+.sign { border-bottom-color: var(--sepia); }
+.sign input { font: italic 400 26px var(--text); color: var(--sepia); }
+.sign small { font: 600 10px var(--text); letter-spacing: 0.22em; color: var(--sepia-2); }
+.letter-portrait { border-radius: 0; border-color: rgba(29, 21, 16, 0.38); background: none; color: var(--sepia); font: italic 400 16px var(--text); }
+.letter-check { color: var(--sepia); font: italic 400 16px/1.3 var(--text); }
+.letter .letter-link { color: var(--sepia-2); }
+.seal-shards i { background: radial-gradient(circle at 55% 35%, #d4484f, #6a1118 80%); }
+
+/* ── Private reports: vellum slips with a drop cap; every player gets one ── */
+.m-reports { gap: 12px; }
+.m-reports li {
+  position: relative; border: 1px solid #77633f; border-left: 1px solid #77633f; border-image: var(--frame-ink) 32 / 18px stretch;
+  padding: 18px 22px 16px; font: 400 18px/1.4 var(--text); color: var(--sepia); box-shadow: 0 18px 30px -18px #000, inset 0 0 1.8em rgba(84, 54, 18, 0.2);
+}
+.m-reports li::first-letter { font: 600 2.3em/0.8 var(--black); color: var(--rubric); float: left; margin: 0.08em 0.08em 0 0; }
+.m-reports li b, .m-reports li strong { color: var(--sepia); }
+
+/* ── Backdrops: pencil etchings, dim, fading toward the middle ── */
+.backdrop { color: color-mix(in srgb, var(--gilt-2) 36%, transparent); --ground: var(--ink);
+  -webkit-mask: radial-gradient(70% 70% at 50% 50%, rgba(0, 0, 0, 0.3), #000 85%); mask: radial-gradient(70% 70% at 50% 50%, rgba(0, 0, 0, 0.3), #000 85%); }
+.backdrop.is-night { color: color-mix(in srgb, #8792a6 34%, transparent); --ground: #070a10; }
+.backdrop .bd-rock { animation: bdRock 7s ease-in-out infinite; }
+.backdrop .bd-waves { animation: bdWaves 6s linear infinite; }
+.backdrop .bd-beam { animation: bdBeam 9s ease-in-out infinite; }
+@keyframes bdRock { 50% { transform: rotate(-3deg) translateY(1px); } }
+@keyframes bdWaves { to { transform: translateX(-20px); } }
+@keyframes bdBeam { 50% { transform: rotate(-8deg); } }
+.letter-check input { appearance: none; display: grid; place-content: center; width: 22px; height: 22px; border: 1px solid var(--sepia-2); background: rgba(255, 250, 235, 0.3); cursor: pointer; }
+.letter-check input:checked { background: var(--rubric); border-color: var(--rubric); }
+.letter-check input:checked::after { content: ''; width: 10px; height: 5px; border: 2px solid #f3e3c4; border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px, -1px); }
+/* the arch: sepia rule, then the halftone window inside it (two clipped layers 1.5px apart) */
+.paper .photo .portrait { background: var(--sepia); }
+.paper .photo .portrait::before { inset: 1.5px; border: 0; box-shadow: none; background: linear-gradient(var(--vellum) 30%, transparent 95%), radial-gradient(circle, rgba(29, 21, 16, 0.55) 0.9px, transparent 1.4px) 0 0 / 5px 5px, var(--vellum-2); }
+.paper .photo .portrait .gz-x { inset: auto; left: calc(50% - 56px); top: calc(50% - 56px + 27px); width: 112px; height: 112px; }
+/* the Extra stamp sits under the masthead rule, clear of the headline */
+.paper .stampx { top: calc(3.4vh + clamp(48px, 8vh, 80px) + 66px); right: 58px; }
+.paper .stampx .stamp { font-size: 40px; }
+.paper:has(.stampx) .hl { padding-inline: 190px; }
+/* the stolen dream: two night-suit cards, the old one fading out */
+.swap-card.arc { width: 134px; min-height: 0; aspect-ratio: 11 / 18; border: 0; border-radius: 0.4em; padding: 1.3em 0.9em 1em; gap: 0.4em; font-size: 9px; justify-content: flex-start; }
+.swap-card.arc b { font: 600 20px/1 var(--black); color: #eef3fb; padding-bottom: 0.08em; }
+.swap-card.arc small { font: italic 400 12px/1.25 var(--text); color: #a9b2c4; }
+.swap-card.arc.new { width: 150px; box-shadow: 0 0 0 1px #9fb0d2, 0 0 30px rgba(159, 176, 210, 0.3), 0 1.8em 3em -1.4em #000; }
+.sheet .gazette { padding: 18px 16px 8px; background: var(--vellum-stain), linear-gradient(170deg, #e2d3ae, var(--vellum) 60%, #d3c094); background-size: 100% 100%, auto; box-shadow: 0 0 0 1px #77633f, inset 0 0 2em rgba(84, 54, 18, 0.2); }
