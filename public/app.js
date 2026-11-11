@@ -974,7 +974,7 @@ function roomScreen() {
     </aside>`;
   const top = `<header class="topbar" data-key="top">
       <span class="tb-emblem">${isNight(v.phase) ? glyph('moon') : glyph('sun')}</span>
-      <div class="phase-mini"><strong>${esc(pw.word)} ${esc(pw.num)}</strong><span>${esc(stepOf(v))} · ${v.phase === 'LOBBY' ? t('{n} seated', { n: v.players.length }) : t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}</span></div>
+      <div class="phase-mini"><strong>${esc(pw.word)}${pw.num ? ` <span class="num">${esc(pw.num)}</span>` : ''}</strong><span>${esc(stepOf(v))} · ${v.phase === 'LOBBY' ? t('{n} seated', { n: v.players.length }) : t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}</span></div>
       <span class="clock" data-clock></span>
       <button class="btn btn-ghost icon-btn" data-act="sound" aria-label="${esc(t(sound.on ? 'Mute sounds' : 'Turn sounds on'))}">${glyph(sound.on ? 'bell' : 'bellOff')}</button>
       <button class="btn btn-ghost icon-btn" data-act="sheet" data-id="record" aria-label="${esc(t('Open match record'))}">${glyph('menu')}</button>

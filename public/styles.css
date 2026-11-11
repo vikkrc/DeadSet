@@ -1891,3 +1891,52 @@ button.chipbtn { cursor: pointer; }
 .board2 .xo-pill { font-size: clamp(14px, 1.2vw, 22px); padding: 4px 14px 4px 4px; max-width: 20vw; } .board2 .xo-pill .xo-av, .board2 .xo-pill .xo-ini { width: 2.4vw; height: 2.4vw; }
 @media (prefers-reduced-motion: reduce) { .xb-orbit .xo { animation: none; } }
 .xo-face.quiet { opacity: 0.45; }
+
+/* ═════════════════════════════════════════════════════════════════════════
+   Codex step 2 · Type roles
+   Blackletter (--black) speaks for the game: phase names, card titles,
+   verdicts, mastheads, moment titles. 20px minimum, mixed case, never caps,
+   line-height ≥ 0.95 (descenders hang low). Garamond (--text) is for
+   everything a person reads at length or types, player names included.
+   Every number is plain Garamond with tabular lining figures (--bit).
+   ═════════════════════════════════════════════════════════════════════════ */
+h1, h2, h3,
+.topbar .phase-mini strong, .b-phase, .m-title, .recap-title, .nightfall h2,
+.face.front .nm, .role-mini b, .rule-card b, .cer-rule b, .dr-face h3, .guide .entry h4,
+.letter h2, .gazette .mast h3, .edition h4, .paper .mh h2, .paper .hl,
+.mc-name, .mc-banner b, .mplay-card b, .mrc-front b, .big-result,
+.mode-card b, .preset b, .coach b, .dead-banner b, .sg-head b {
+  font-family: var(--black);
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: 0.005em;
+  text-transform: none;
+}
+h1, h2, .m-title, .b-phase, .paper .hl, .paper .mh h2, .recap-title { line-height: 0.98; overflow-wrap: anywhere; hyphens: manual; }
+/* the 20px floor for blackletter (the rest are already 20px or more) */
+.role-mini b, .cer-rule b { font-size: 20px; }
+/* failed-press ghost on H1-level display type only */
+.m-title, .phase-head h1, .verdict h1, .b-phase, .paper .hl, .recap-title, .letter h2 { text-shadow: 0.035em 0.025em 0 rgba(156, 28, 34, 0.7); }
+.letter h2, .paper .hl, .paper .mh h2 { text-shadow: 0.03em 0.02em 0 rgba(142, 27, 31, 0.32); }
+/* titles press in: opacity + a 2px settle */
+.m-title { letter-spacing: 0.005em; }
+.phase-head h1 { letter-spacing: 0.005em; }
+.phase-head h1 .num { font-family: var(--bit); font-weight: 500; }
+/* the wordmark and the home hero speak in UnifrakturCook (Latin only, never translated text) */
+.wordmark { font-family: var(--mark); font-weight: 700; letter-spacing: 0; }
+.h-title h1 { font-family: var(--mark); font-weight: 700; letter-spacing: 0; line-height: 0.86; text-shadow: 0.035em 0.025em 0 rgba(156, 28, 34, 0.7); }
+/* labels: Garamond 600 caps, wide tracking */
+.rule, .kicker { font: 600 11px/1.25 var(--text); letter-spacing: 0.24em; text-transform: uppercase; color: var(--ash); }
+.rule .idx { font-family: var(--bit); }
+.tok-name { font-family: var(--text); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 11px; }
+/* numbers: plain Garamond, tabular, never blackletter */
+.c-big, .nightfall-count b, .vcount, .mscore > span, .md, .mi-num, .side .count b, .b-nom, .b-mark, .rc-ctl b, .accused .num, .clock, .mono, .code-tiles, .code-sm {
+  font-family: var(--bit);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.c-big { font-weight: 500; }
+/* reading text and flavour lines: Garamond, italic carries the flavour */
+.scenario, .m-sub, .lede, .whisper, .h-title p, .mi-scene, .paper .dk { font-family: var(--text); }
+/* numerals beside blackletter phase names stay Garamond */
+.topbar .phase-mini strong .num, .b-phase sup { font-family: var(--bit); font-weight: 500; font-variant-numeric: lining-nums; }
+.b-phase i { font-style: normal; }
