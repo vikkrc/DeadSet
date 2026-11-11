@@ -2698,3 +2698,5 @@ body.pressure .sky-orb.sun, body.pressure .sky-orb.moon { background: radial-gra
 .swap-card.arc small { font: italic 400 12px/1.25 var(--text); color: #a9b2c4; }
 .swap-card.arc.new { width: 150px; box-shadow: 0 0 0 1px #9fb0d2, 0 0 30px rgba(159, 176, 210, 0.3), 0 1.8em 3em -1.4em #000; }
 .sheet .gazette { padding: 18px 16px 8px; background: var(--vellum-stain), linear-gradient(170deg, #e2d3ae, var(--vellum) 60%, #d3c094); background-size: 100% 100%, auto; box-shadow: 0 0 0 1px #77633f, inset 0 0 2em rgba(84, 54, 18, 0.2); }
+/* room codes are read aloud and typed: never blackletter */
+.code-txt { font: 600 0.8em/1 var(--text); letter-spacing: 0.08em; font-variant-numeric: lining-nums tabular-nums; vertical-align: 0.04em; }

@@ -1074,7 +1074,7 @@ function sheet(v) {
   let title = '';
   let body = '';
   if (s === 'record') {
-    title = th('Room {code}', { code: v.code });
+    title = th('Room {code}', { code: '%CODE%' }).replace('%CODE%', `<span class="code-txt">${esc(v.code)}</span>`);
     body = `${hostBox()}${langRow(v)}${v.me?.moderator ? '' : tutorialToggle()}<div>${recordBlock(v)}</div>
       <div class="row"><a class="btn btn-sm btn-ghost" href="/guide" data-link>${t('How to play')}</a><button class="btn btn-sm btn-ghost" data-act="leave">${glyph('out')} ${t('Leave this device')}</button></div>
       ${holdBtn('backHome', t('Hold to go back to the start'), 'btn-ghost btn-sm', { key: 'backhome' })}`;
@@ -1112,7 +1112,7 @@ function sheet(v) {
       ${p.id !== me?.id ? `<button class="btn btn-sm btn-ghost danger" data-act="kick" data-pid="${p.id}">${glyph('close')} ${t('Remove from table')}</button>` : ''}`;
   }
   return `<div class="sheet-scrim" data-act="sheet" data-key="scrim"></div>
-    <div class="sheet" role="dialog" aria-label="${title}" data-key="sheet-${s}">
+    <div class="sheet" role="dialog" aria-label="${title.replace(/<[^>]*>/g, '')}" data-key="sheet-${s}">
       <div class="sheet-grip" aria-hidden="true"></div>
       <div class="row between"><h2>${title}</h2><button class="btn btn-ghost icon-btn" data-act="sheet" aria-label="${esc(t('Close'))}">${glyph('close')}</button></div>
       <div class="sheet-body">${body}</div>
