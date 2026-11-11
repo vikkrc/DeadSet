@@ -2429,3 +2429,125 @@ body.pressure .sky-orb.sun, body.pressure .sky-orb.moon { background: radial-gra
 .dcard.arc .arc-art .emblem { padding: 22% 2% 2%; }
 .dcard.arc.back { gap: 8px; }
 .dcard.arc.back b { position: static; text-align: center; line-height: 1.2; }
+
+/* ═════════════════════════════════════════════════════════════════════════
+   Codex step 6 · Moments, stamps, vote tallies
+   A moment: centred label, one blackletter title, one divider, on a tinted
+   glow; a gilt tap-to-skip bar at the foot. Stamps are double-ruled
+   blackletter set at an angle. Votes are lozenge beads on a line.
+   ═════════════════════════════════════════════════════════════════════════ */
+:root {
+  --orn-loz: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='12' viewBox='0 0 64 12'><path d='M10 2.5l3.5 3.5-3.5 3.5-3.5-3.5z' fill='none' stroke='%23c9a35a'/><path d='M32 1l5 5-5 5-5-5z' fill='%23c9a35a'/><path d='M54 2.5l3.5 3.5-3.5 3.5-3.5-3.5z' fill='none' stroke='%23c9a35a'/></svg>");
+}
+/* the divider: hairline, three lozenges, hairline */
+.orn-rule, .m-body > .m-title::after {
+  content: ''; display: block; height: 12px; width: min(100%, 340px); margin: 0.3em auto 0;
+  background:
+    var(--orn-loz) center / 64px 12px no-repeat,
+    linear-gradient(90deg, transparent, var(--gilt-2) 22%, var(--gilt-2) calc(50% - 40px), transparent calc(50% - 40px), transparent calc(50% + 40px), var(--gilt-2) calc(50% + 40px), var(--gilt-2) 78%, transparent) center / 100% 1px no-repeat;
+  opacity: 0.9; animation: fadeUp 0.6s 0.6s var(--ease) both;
+}
+.m-body > .m-title::after { font-size: 16px; margin-top: 18px; }
+.m-night0 .m-body > .m-title::after { display: none; } /* the three cards are the ornament there */
+.moment .m-body > .kicker { color: var(--gilt); }
+.moment .m-body > .kicker.blood { color: var(--blood-ink); }
+.moment .m-sub { font: italic 400 19px/1.35 var(--text); }
+.moment .m-sub.small { font: italic 400 15px/1.4 var(--text); color: var(--ash); }
+/* tap to skip: a gilt bar burning down over a dark track */
+.m-timer { width: 120px; height: 2px; border-radius: 0; background: #3b3027; }
+.m-timer i { background: var(--gilt); }
+.m-foot .kicker { color: var(--ash); }
+
+/* the emblem of a moment sits in a whole ray burst (the box is sized to hold the whole circle) */
+.m-art:has(> .emblem) { display: grid; place-items: center; width: 188px; height: 188px; }
+.m-art:has(> .emblem)::before {
+  content: ''; position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  background: repeating-conic-gradient(color-mix(in srgb, currentColor 34%, transparent) 0 1.5deg, transparent 1.5deg 9deg);
+  -webkit-mask: radial-gradient(closest-side, transparent 58%, #000 60%, transparent 100%); mask: radial-gradient(closest-side, transparent 58%, #000 60%, transparent 100%);
+}
+.m-art > .emblem { position: relative; font-size: 104px; width: 1em; height: 1em; --paper: #120d0c; }
+.moment.grim .m-art { color: var(--blood-ink); }
+.moment.grim .m-art > .emblem { --paper: #1c0809; }
+
+/* names struck from the roll */
+.victim { font: 600 36px/1.05 var(--black); }
+.victim.expired { font-size: 28px; }
+
+/* ── The stamp ── */
+.stamp, .result-stamp {
+  display: inline-block; padding: 0.12em 0.42em 0.2em; border: 0.07em double currentColor; border-radius: 0;
+  outline: 0.03em solid currentColor; outline-offset: 0.06em; box-shadow: none; background: none;
+  color: var(--blood-ink); font: 800 40px/1 var(--black); letter-spacing: 0.03em; text-transform: none;
+  text-shadow: 0.025em 0.02em 0 color-mix(in srgb, currentColor 25%, transparent);
+  transform: rotate(-7deg); animation: stampDown 0.5s var(--spring) 1.7s both;
+}
+.stamp.soft { color: var(--bone-2); border-color: currentColor; }
+.stamp.gold { color: var(--gilt); border-color: currentColor; }
+.result-stamp { font-size: 48px; margin-top: 10px; animation-delay: 1.3s; }
+.result-stamp.win { color: var(--gilt); border-color: currentColor; box-shadow: none; }
+.result-stamp.loss { color: var(--blood-ink); }
+.reveal-stamp .stamp { font-size: 30px; padding: 0.12em 0.42em 0.2em; }
+.vellum .stamp, .paper .stamp { color: var(--rubric); mix-blend-mode: multiply; }
+@keyframes stampDown { from { opacity: 0; transform: rotate(-9deg) scale(1.6); } 70% { opacity: 1; transform: rotate(-5deg) scale(0.98); } to { opacity: 1; transform: rotate(-7deg) scale(1); } }
+/* the sheet takes the blow: one short shake as the stamp lands */
+.m-tally:has(.verdict-stamp .stamp) .m-body, .m-coin .m-body { animation: thud 0.06s 2.05s 1; }
+@keyframes thud { 33% { transform: translate(1.5px, 1px); } 66% { transform: translate(-1.5px, -1px); } }
+
+/* ── The verdict: the sentenced medallion in a red ray burst ── */
+.verdict-stamp { gap: 14px; }
+.v-medal { position: relative; display: grid; place-items: center; width: 210px; height: 210px; animation: artIn 0.9s 1.2s var(--spring) both; }
+.v-medal::before {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  background: repeating-conic-gradient(rgba(228, 93, 80, 0.3) 0 1.5deg, transparent 1.5deg 9deg);
+  -webkit-mask: radial-gradient(closest-side, transparent 60%, #000 62%, transparent 100%); mask: radial-gradient(closest-side, transparent 60%, #000 62%, transparent 100%);
+}
+.v-medal::after { content: ''; position: absolute; inset: 31px; border-radius: 50%; border: 1px dotted rgba(228, 93, 80, 0.65); }
+.v-disc {
+  position: relative; display: grid; place-items: center; width: 128px; height: 128px; border-radius: 50%; overflow: hidden;
+  background: radial-gradient(circle at 50% 35%, #7b1a1f, #2a0709 75%);
+  box-shadow: 0 0 0 1px var(--blood-ink), 0 0 0 5px #120607, 0 0 0 6px rgba(228, 93, 80, 0.55), 0 0 40px rgba(200, 40, 40, 0.45);
+}
+.v-disc .tok-av { width: 100%; height: 100%; }
+.vm-ini { font: 600 66px/1 var(--black); color: #f3dcd2; padding-bottom: 0.08em; }
+.v-name { font: 600 40px/1 var(--black); }
+
+/* ── The tally: beads on a line inside one frame ── */
+.ballot {
+  width: 100%; display: grid; gap: 14px; padding: 20px 22px; margin-top: 6px;
+  border: 1px solid var(--gilt-2); border-image: var(--frame) 32 / 22px stretch;
+  animation: fadeUp 0.5s 0.2s var(--ease) both;
+}
+.ballot .bars { margin: 0; gap: 12px; }
+.ballot .bars li { grid-template-columns: minmax(56px, 32%) 1fr auto; gap: 12px; }
+.ballot .b-name { font: 600 28px/1.05 var(--black); text-align: left; color: var(--bone); padding-bottom: 0.08em; }
+.ballot .b-name small { display: block; font: italic 400 13px/1.25 var(--text); color: var(--ash); white-space: normal; }
+.ballot .b-n { font: 400 34px/1 var(--bit); color: var(--gilt); text-align: right; }
+.beads { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-width: 0; }
+.beads i { width: 10px; height: 10px; transform: rotate(45deg); background: var(--gilt); animation: fadeUp 0.35s var(--d) both; }
+.ballot .bars li.top .b-name, .ballot .bars li.top .b-n { color: var(--blood-ink); }
+.ballot .bars li.top .beads i { background: var(--blood-ink); }
+.ballot .t-foot { text-align: center; color: var(--ash); margin: 0; }
+
+/* the TV reads the same moment from across the room */
+.is-board .moment .stamp { font-size: 64px; }
+.is-board .moment .result-stamp { font-size: 72px; }
+.is-board .ballot { max-width: 760px; padding: 28px 34px; }
+.is-board .ballot .b-name { font-size: 40px; }
+.is-board .ballot .b-n { font-size: 48px; }
+.is-board .beads i { width: 15px; height: 15px; }
+.is-board .beads { gap: 9px; }
+.is-board .v-medal { width: 260px; height: 260px; }
+.is-board .v-medal::after { inset: 40px; }
+.is-board .v-disc { width: 156px; height: 156px; }
+.is-board .v-name { font-size: 56px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp, .result-stamp { animation: fadeUp 0.4s 1s both; }
+  .m-tally .m-body, .m-coin .m-body { animation: none; }
+  .v-medal { animation: fadeUp 0.4s 0.6s both; }
+}
+/* on the TV the ballot and the verdict stand side by side so nothing leaves the screen */
+.is-board .moment .m-body > .kicker { font-size: 16px; }
+.is-board .m-tally .m-body:has(.ballot) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 72px; max-width: 1400px; align-items: center; }
+.is-board .m-tally .m-body:has(.ballot) > .kicker, .is-board .m-tally .m-body:has(.ballot) > .m-title { grid-column: 1 / -1; }
+.is-board .m-tally .ballot { justify-self: end; }

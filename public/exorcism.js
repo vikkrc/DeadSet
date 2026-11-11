@@ -429,7 +429,7 @@ export function exorcismMomentHtml(m, h) {
       const max = Math.max(1, ...m.totals.map((x) => x.n));
       const stamp = m.named ? (m.demon ? t('The Demon!') : t('One of the Living')) : t('Nobody');
       return `<span class="kicker">${t('The vote')}</span><h1 class="m-title">${letters(t('The table names'))}</h1>
-        ${m.totals.length ? `<ul class="bars">${m.totals.map((x, i) => `<li style="--w:${(x.n / max) * 100}%;--d:${0.3 + i * 0.15}s"><span class="b-name">${esc(x.name)}<small>${esc(x.by.join(', '))}</small></span><span class="b-bar"><i></i></span><span class="b-n">${x.n}</span></li>`).join('')}</ul>` : `<p class="m-sub">${t('No votes.')}</p>`}
+        ${m.totals.length ? `<div class="ballot"><ul class="bars">${m.totals.map((x, i) => `<li style="--w:${(x.n / max) * 100}%;--d:${0.3 + i * 0.15}s"><span class="b-name">${esc(x.name)}<small>${esc(x.by.join(', '))}</small></span><span class="beads" aria-hidden="true">${'<i></i>'.repeat(Math.min(12, x.n))}</span><span class="b-n">${x.n}</span></li>`).join('')}</ul></div>` : `<p class="m-sub">${t('No votes.')}</p>`}
         ${m.tied.length ? `<p class="m-sub small">${th(m.coin ? 'Tied: {names}. A coin decides.' : 'Tied: {names}.', { names: m.tied })}</p>` : ''}
         <div class="named"><b class="named-name">${esc(m.named ?? '—')}</b></div>
         <div class="verdict-stamp" style="--d:2.4s"><span class="stamp ${m.demon ? 'gold' : ''} late">${esc(stamp)}</span></div>

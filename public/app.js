@@ -322,7 +322,7 @@ function detectMoments(v) {
         const goat = fresh.find((x) => x.i > l.i && x.ev === 'scapegoat');
         const sentence = fresh.find((x) => x.i > l.i && x.ev === 'sentence');
         out.push({ type: 'tally', totals: Object.entries(l.totals || {}).map(([id, w]) => ({ name: name(id), w, id })).sort((a, b) => b.w - a.w),
-          threshold: l.threshold, outcome: outcomeEv?.ev ?? 'nosentence', reason: outcomeEv ? entryMsg(outcomeEv) : '', sentenced: sentence ? name(sentence.victims[0]) : null,
+          threshold: l.threshold, outcome: outcomeEv?.ev ?? 'nosentence', reason: outcomeEv ? entryMsg(outcomeEv) : '', sentenced: sentence ? name(sentence.victims[0]) : null, sentencedId: sentence?.victims?.[0] ?? null,
           meSentenced: !!sentence?.victims?.includes(meId), goat: goat ? name(goat.victims[0]) : null });
         break;
       }
@@ -423,6 +423,14 @@ function reportHtml(msg, lines) {
   return `${tmh(msg)}${lines?.length ? `<ul class="ins-lines">${lines.map((l) => `<li>${tmh(l)}</li>`).join('')}</ul>` : ''}`;
 }
 
+// a vote total as lozenge beads (capped so a long row never wraps; the figure carries the exact count)
+const beads = (w) => `<span class="beads" aria-hidden="true">${'<i></i>'.repeat(Math.max(0, Math.min(12, Math.round(w))))}</span>`;
+// the sentenced player's medallion: their portrait if they have one, else the initial in blackletter
+function verdictMedal(id, nm) {
+  const p = V()?.players?.find((x) => x.id === id);
+  const inner = p?.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="vm-ini">${esc([...(nm ?? '?')][0] ?? '?')}</span>`;
+  return `<span class="v-medal" aria-hidden="true"><span class="v-disc">${inner}</span></span>`;
+}
 const WIN_GLYPH = { DEMON: 'death', DEATH: 'death', JESTER: 'jester', NON_DEATH: 'innocent', LOVERS: 'heart', CULT: 'cult', RIPPER: 'ripper' };
 const WIN_CLASS = { NON_DEATH: 'living', LOVERS: 'lovers', CULT: 'cult', RIPPER: 'ripper' };
 
@@ -489,13 +497,13 @@ function momentHtml(m) {
     case 'tally': {
       const max = Math.max(1, ...m.totals.map((x) => x.w));
       const outcome = m.sentenced
-        ? `<div class="verdict-stamp ${m.meSentenced ? 'me' : ''}"><span class="v-name">${esc(m.meSentenced ? t('You') : m.sentenced)}</span><span class="stamp">${t('Sentenced')}</span></div>`
+        ? `<div class="verdict-stamp ${m.meSentenced ? 'me' : ''}">${verdictMedal(m.sentencedId, m.sentenced)}<span class="v-name">${esc(m.meSentenced ? t('You') : m.sentenced)}</span><span class="stamp">${t('Sentenced')}</span></div>`
         : m.outcome === 'tie' ? `<div class="verdict-stamp"><span class="v-name">${t('A tie')}</span><span class="stamp soft">${t('Coin toss')}</span></div>`
         : m.outcome === 'cancelled' ? `<div class="verdict-stamp"><span class="v-name">${t('Fate intervenes')}</span><span class="stamp soft">${t('Cancelled')}</span></div><p class="m-sub small">${t('A wager was won. Nobody hangs today.')}</p>`
           : `<div class="verdict-stamp"><span class="v-name">${t('No one')}</span><span class="stamp soft">${t('Spared')}</span></div><p class="m-sub small">${tmh(m.reason)}</p>`;
       body = `<span class="kicker">${t('The ballots')}</span><h1 class="m-title">${letters(t('The town decides'))}</h1>
-        ${m.totals.length ? `<ul class="bars">${m.totals.map((x, i) => `<li style="--w:${(x.w / max) * 100}%;--d:${0.3 + i * 0.15}s"><span class="b-name">${esc(x.name)}</span><span class="b-bar"><i></i></span><span class="b-n">${x.w}</span></li>`).join('')}</ul>` : `<p class="m-sub">${t('No valid votes.')}</p>`}
-        ${m.threshold != null ? `<p class="m-sub small">${t('Majority Rule: more than {n} needed.', { n: m.threshold })}</p>` : ''}
+        ${m.totals.length ? `<div class="ballot"><ul class="bars">${m.totals.map((x, i) => `<li class="${m.sentenced && x.name === m.sentenced ? 'top' : ''}" style="--w:${(x.w / max) * 100}%;--d:${0.3 + i * 0.15}s"><span class="b-name">${esc(x.name)}</span>${beads(x.w)}<span class="b-n">${x.w}</span></li>`).join('')}</ul>
+        ${m.threshold != null ? `<p class="kicker t-foot">${t('Majority Rule: more than {n} needed.', { n: m.threshold })}</p>` : ''}</div>` : `<p class="m-sub">${t('No valid votes.')}</p>`}
         <div class="m-outcome">${outcome}${m.goat ? `<p class="m-sub blood">${th('The Scapegoat pays: {a} dies.', { a: m.goat })}</p>` : ''}</div>`;
       break;
     }
