@@ -1,6 +1,6 @@
 # Dead Set: Carnival — rules and game spec (DRAFT)
 
-**Status: design draft for Beta 4. Nothing here is built. To be agreed before implementation.**
+**Status: design draft for Beta 4, main decisions taken 2026-11-12 (§10). Nothing here is built.**
 
 A bluffing and memory game for **4–12 players**, about 25 minutes, chosen in the lobby next to the other modes. One phone each, plus the TV board as the ballroom.
 
@@ -52,7 +52,7 @@ On your turn, do **one** of three things.
    - If the claimed mask is on someone who stayed silent, or on an empty chair, every revealed player pays and nobody uses the power.
    - The revealed masks turn face down again, now known to all, until the next shuffles.
 
-**The opening dance:** each player's **first turn must be Swap or pretend**, so the ball is mixed before anyone claims.
+**The opening dance:** each player's **first turn must be Swap or pretend** (a setup option makes it the first **two** turns), so the ball is mixed before anyone claims.
 
 **Paying with nothing:** a player who must pay more than they have pays what they have, and Ruin is checked at once.
 
@@ -70,8 +70,8 @@ Every mask is an existing Dead Set role card. On a successful claim, the mask's 
 | **Ripper** | Take **1 Soul from each neighbour**. |
 | **Bard** | You and **both neighbours** each take 1 Soul from the bank. |
 | **Guardian** | Take 1 Soul. **Until your next turn**, nobody can take Souls from you (a Death claim, the Ripper or the Jester). A shield shows on your portrait. |
-| **Mentalist** | Secretly look at **one other** player's or empty chair's mask. |
-| **Oracle** | Secretly look at **two other** masks. |
+| **Mentalist** | Look at **one other** player's or empty chair's mask, **entirely in private**. You choose on your phone, and nobody learns whose mask you looked at: the TV and every phone show only *"The Mentalist reads someone's mask"*. |
+| **Oracle** | Look at **two other** masks (players or empty chairs). **Whose masks are public:** the TV lights up both and draws the Oracle's gaze to them. **What they are stays private**, on the Oracle's phone only. |
 | **Witch** | Choose **two other** masks (players or chairs) and secretly swap or pretend, as in §3. Every phone shows the same shuffle. |
 | **Double Agent** | Swap your mask **for real** with any other, then look at your new one. |
 | **Mimic** | Use the power of **the mask claimed in the turn just before yours**. If there wasn't one, or it was the Mimic, take 1 Soul. |
@@ -90,7 +90,7 @@ Every mask is an existing Dead Set role card. On a successful claim, the mask's 
 - the challenge prompt when someone claims;
 - pickers for powers.
 
-**The ball diary (memory aid, on by default):** a private log of only what **you** have seen, such as *"Turn 4: you peeked: Witch"* or *"Turn 7: Bram revealed the Mentalist"*. It records sightings, never the swaps since; working out where masks went is the game. Hardcore tables can switch the diary off.
+**The ball diary (memory aid, off by default; a setup option):** a private log of only what **you** have seen, such as *"Turn 4: you peeked: Witch"* or *"Turn 7: Bram revealed the Mentalist"*. It records sightings, never the swaps since; working out where masks went is the game. Tables who want a gentler memory game can switch it on.
 
 **TV:**
 - the ballroom backdrop, with portrait medallions around the astrolabe ring and a face-down mask on each;
@@ -105,7 +105,7 @@ Every mask is an existing Dead Set role card. On a successful claim, the mask's 
 **Privacy rules (as in every Dead Set mode):**
 - Swap and Pretend look identical on the phone.
 - Every player answers every challenge prompt.
-- Looks (Peek, the Mentalist, the Oracle, the Double Agent) are private, with the same timing for everyone.
+- What a look shows (Peek, the Mentalist, the Oracle, the Double Agent) is always private, with the same timing for everyone. Who was looked at is hidden for the Mentalist and public for the Oracle (§4).
 - During any power, every phone shows the same waiting screen.
 
 ## 6. Setup (lobby)
@@ -128,11 +128,12 @@ The host can swap in any of the **Diplomat, Oracle, Mimic, Scapegoat or Innocent
 | Setting | Options (default first) |
 |---|---|
 | Masks | **Recommended**, custom (Death required; only Innocent may repeat) |
-| Win target | **13 Souls**, 10, 16 |
-| Death's harvest | **6**, 4, 8 |
+| Win target | **13 Souls**; customisable from 8 to 20 |
+| Death's harvest | **6**; customisable from 2 to 12 (even numbers, since each reap is 2 Souls), or off |
 | Starting Souls | **6** |
 | Penalty for a wrong claim | **1 Soul**, 2 |
-| Ball diary | **On**, off |
+| Opening dance | **1 forced swap turn each**, 2 |
+| Ball diary | **Off**, on |
 | Games per match | **1**, 3 |
 | Timers | Turn 45 s, challenges 10 s, power picks 20 s, peek 3 s |
 
@@ -163,10 +164,15 @@ Everything is validated per mode (Beta 0).
 
 Simulations tune the targets and the penalty, so a 6-player game lasts about 20–25 minutes and Death's harvest wins about one game in five.
 
-## 10. To decide
+## 10. Decided (2026-11-12)
 
-1. **The targets:** 13 Souls and a Harvest of 6, or something else?
-2. **The opening dance:** one forced Swap-or-pretend turn each, or two?
-3. **Should empty chairs ever take part at 6 or more players?** This draft says no.
-4. **Should the Guardian's shield block a Scapegoat payment?** This draft says no; the Scapegoat pays into the Offering, not to a player.
-5. **The ball diary:** on by default, as here, or off?
+- **The Mentalist** looks in complete private: nobody learns whose mask was read.
+- **The Oracle** looks at two masks: whose is public, what they are is private.
+- **Targets:** 13 Souls and a Harvest of 6 by default, both customisable in setup.
+- **The opening dance:** one forced Swap-or-pretend turn each by default, two as a setup option.
+- **The ball diary:** off by default, on as a setup option.
+
+## 11. Still to decide
+
+1. **Should empty chairs ever take part at 6 or more players?** This draft says no.
+2. **Should the Guardian's shield block a Scapegoat payment?** This draft says no; the Scapegoat pays into the Offering, not to a player.
