@@ -87,10 +87,11 @@ const EMBLEM_FOR = {
   heart: 'lovers', mission: 'regular', plus: 'extra', minus: 'skeleton', mask: 'maskedvote', hourglass: 'patience',
   shield: 'steadfast', crack: 'brittle', crown: 'grand', clue: 'trail', cult: 'cult', ripper: 'ripper',
 };
-const INTERFACE = new Set(['moon', 'sun', 'key', 'coin', 'gift', 'bell']);
+const INTERFACE = new Set(['key', 'coin', 'gift', 'bell']);
+const TIME_OF_DAY = new Set(['sun', 'moon']); // drawn in the pencil line of the cards
 export function glyph(name, cls = '') {
   const em = EMBLEM_FOR[name] ?? (EMBLEMS[name] && !INTERFACE.has(name) ? name : null);
-  if (em) return emblem(em, { cls: `glyph ${cls}` });
+  if (em) return emblem(em, { cls: `glyph ${TIME_OF_DAY.has(name) ? 'tod' : ''} ${cls}` });
   const d = P[name] || P.scroll;
   return `<svg class="glyph ${cls}" viewBox="0 0 32 32" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
 }

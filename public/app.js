@@ -924,7 +924,7 @@ function centerFor(v, pick) {
       return `<span class="c-big">${v.players.length}</span><span class="c-sub">${need ? t('{n} more needed', { n: need }) : t('{n}/{total} ready', { n: prog.done, total: prog.total })}</span>`;
     }
     case 'NIGHT_0_REVEAL': return `${moon(prog.done / Math.max(1, prog.total), 'c-moon')}<span class="c-sub">${t('{n}/{total} have seen their role', { n: prog.done, total: prog.total })}</span>`;
-    case 'DAY_PREP': return `<span class="c-emblem sun">${glyph('sun')}</span><span class="c-sub">${t('Morning')}</span>${hint}${clock}`;
+    case 'DAY_PREP': return `<span class="c-emblem sun">${glyph('sun')}</span>${onBoard() ? `<span class="c-sub">${t('Morning')}</span>` : ''}${hint}${clock}`;
     case 'DAY_DISCUSSION': return `<span class="c-big">${v.day.nominees.length}</span><span class="c-sub">${t('accused')}</span>${hint}${clock}`;
     case 'DAY_DEFENSE': return `<span class="c-sub">${t('Speaking')}</span><span class="c-name">${v.day.speaking ? pname(v.day.speaking) : '—'}</span>${clock}`;
     case 'DAY_VOTING': return `${tally(prog.done, prog.total)}<span class="c-sub">${t('{n}/{total} voted', { n: prog.done, total: prog.total })}</span>${hint}${clock}`;
@@ -1022,7 +1022,7 @@ function roomScreen() {
     </aside>`;
   const top = `<header class="topbar" data-key="top">
       <span class="tb-emblem">${isNight(v.phase) ? glyph('moon') : glyph('sun')}</span>
-      <div class="phase-mini"><strong>${esc(pw.word)}${pw.num ? ` <span class="num">${esc(pw.num)}</span>` : ''}</strong><span>${esc(stepOf(v))} · ${v.phase === 'LOBBY' ? t('{n} seated', { n: v.players.length }) : t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}</span></div>
+      <div class="phase-mini"><strong class="${pw.night ? 'night' : ''}">${esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</strong><span>${esc(stepOf(v))}${v.phase === 'LOBBY' ? ` · ${t('{n} seated', { n: v.players.length })}` : v.mode === 'missions' || v.mode === 'exorcism' ? '' : ` · ${t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}`}</span></div>
       <span class="clock" data-clock></span>
       <button class="btn btn-ghost icon-btn" data-act="sound" aria-label="${esc(t(sound.on ? 'Mute sounds' : 'Turn sounds on'))}">${glyph(sound.on ? 'bell' : 'bellOff')}</button>
       <button class="btn btn-ghost icon-btn" data-act="sheet" data-id="record" aria-label="${esc(t('Open match record'))}">${glyph('menu')}</button>
@@ -1073,7 +1073,7 @@ function head(v, extra = '') {
   const pw = phaseWord(v);
   return `<header class="phase-head" data-key="head-${v.phase}">
     <div class="ph-row"><h1>${pw.night ? `<i>${esc(pw.word)}</i>` : esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</h1>
-    <span class="kicker">${esc(stepOf(v))}${v.doomsday && v.phase !== 'LOBBY' ? ` · ${t('Doom after Day {n}', { n: roman(v.doomsday) })}` : ''}${v.bloodMoon && isNight(v.phase) ? ` · <span class="blood">${t('Blood Moon')}</span>` : ''}</span>${v.me && v.me.alive === false && !v.me.moderator && v.phase !== 'ENDED' ? `<span class="ghost-tag" data-key="ghosttag">${t(isGhostTable(v) ? 'Ghost' : 'Dead')}</span>` : ''}${extra}</div>
+    <span class="kicker"><span class="ph-step">${esc(stepOf(v))}</span>${v.doomsday && v.phase !== 'LOBBY' ? `<span class="ph-x">${t('Doom after Day {n}', { n: roman(v.doomsday) })}</span>` : ''}${v.bloodMoon && isNight(v.phase) ? `<span class="ph-x blood">${t('Blood Moon')}</span>` : ''}</span>${v.me && v.me.alive === false && !v.me.moderator && v.phase !== 'ENDED' ? `<span class="ghost-tag" data-key="ghosttag">${t(isGhostTable(v) ? 'Ghost' : 'Dead')}</span>` : ''}${extra}</div>
   </header>`;
 }
 
@@ -1120,6 +1120,26 @@ function sheet(v) {
   } else if (s === 'lang') {
     title = t('Language');
     body = langList(v);
+  } else if (s === 'card' && S.ui.cardInfo) {
+    const { kind, id } = S.ui.cardInfo;
+    const roles = Object.fromEntries((S.content?.roles ?? []).map((r) => [r.id, r]));
+    if (kind === 'role' && roles[id]) {
+      title = roleF(id, 'name');
+      body = `${roleCardHtml(roles[id], { align: roles[id].alignment, flipKey: `info-${id}`, flipped: true })}<p class="muted small card-info">${esc(roleF(id, 'detail'))}</p>`;
+    } else if (kind === 'rule') {
+      title = t('Rule card');
+      body = `<div class="rule-card edict"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><div><b>${esc(ruleF(id, 'name'))}</b><p>${esc(ruleF(id, 'text'))}</p></div></div>
+        ${v.host && v.phase === 'LOBBY' ? `<button class="btn btn-ghost danger" data-act="ruleToggle" data-id="${id}">${esc(t('Remove {x}', { x: ruleF(id, 'name') }))}</button>` : ''}`;
+    } else if (kind === 'ext') {
+      const deck = v.setup?.publicDeck;
+      const pool = (deck?.pool ?? []).filter((x) => roles[x]);
+      title = t('{n} extended', { n: id });
+      body = `<p class="muted card-info">${esc(t('Extended pool · used from 7 players'))}</p>
+        <div class="info-pool">${pool.map((x) => `<button class="dcard arc ${roles[x].alignment === 'DEATH' ? 'noir' : ''}" data-act="cardInfo" data-kind="role" data-id="${x}">${cardArt(roleEmblemId(roles[x]))}<b>${esc(roleF(x, 'name'))}</b></button>`).join('')}</div>`;
+    } else {
+      title = t('Rule cards');
+      body = `<p class="muted card-info">${esc(t('Drawn at start'))} · ${id}</p>`;
+    }
   } else if (s === 'role' && me?.role) {
     title = t('My role');
     body = `${roleCardHtml(me.role, { align: me.alignment, flipKey: 'sheet', flipped: true })}${roleNotes(me)}`;
@@ -1198,7 +1218,7 @@ function lobbyMain(v, me) {
       <div class="row center">
         <button class="btn btn-sm" data-act="share" data-text="${esc(url)}">${t('Invite')}</button>
         <button class="btn btn-sm" data-act="sheet" data-id="qr">${t('Show QR')}</button>
-        <a class="btn btn-sm btn-ghost" href="/board/${esc(v.code)}" target="_blank" rel="noopener">${t('TV board ↗')}</a>
+        <a class="btn btn-sm btn-ghost" href="/board/${esc(v.code)}" target="_blank" rel="noopener">${esc(t('TV board ↗').replace('↗', '').trim())} ${glyph('out')}</a>
       </div>
     </section>
     ${ring(v, { pick, slots: Math.max(5, v.players.length), lobby: true, center: centerFor(v), orb: v.mode === 'exorcism' ? lobbyOrb() : '' })}
@@ -1265,12 +1285,12 @@ function lobbyDeck(v, isHost) {
   const deck = v.setup?.publicDeck;
   const preset = v.presets.find((p) => p.id === s.preset);
   const roles = Object.fromEntries((S.content?.roles ?? []).map((r) => [r.id, r]));
-  const card = (id, n, cls = '') => `<div class="dcard arc ${roles[id]?.alignment === 'DEATH' ? 'noir' : ''} ${cls}" data-key="ld-${id}">${roles[id] ? cardArt(roleEmblemId(roles[id])) : ''}<b>${esc(roleF(id, 'name'))}</b>${n > 1 ? `<i>×${n}</i>` : ''}</div>`;
+  const card = (id, n, cls = '') => `<button class="dcard arc ${roles[id]?.alignment === 'DEATH' ? 'noir' : ''} ${cls}" data-act="cardInfo" data-kind="role" data-id="${id}" data-key="ld-${id}" aria-label="${esc(roleF(id, 'name'))}">${roles[id] ? cardArt(roleEmblemId(roles[id])) : ''}<b>${esc(roleF(id, 'name'))}</b>${n > 1 ? `<i>×${n}</i>` : ''}</button>`;
   let cards = '';
   if (deck?.exact) cards = Object.entries(deck.exact).map(([id, n]) => card(id, n, roles[id]?.alignment === 'DEATH' ? 'death' : '')).join('');
   else if (deck) {
     cards = Object.entries(deck.core).filter(([, n]) => n > 0).map(([id, n]) => card(id, n, id === 'DEATH' ? 'death' : '')).join('')
-      + (deck.extended ? `<div class="dcard arc back secret" data-key="ld-ext"><span class="sig">?</span><b>${t('{n} extended', { n: deck.extended })}</b></div>` : '');
+      + (deck.extended ? `<button class="dcard arc back secret" data-act="cardInfo" data-kind="ext" data-id="${deck.extended}" data-key="ld-ext"><span class="sig">?</span><b>${t('{n} extended', { n: deck.extended })}</b></button>` : '');
   }
   if (preset.missions) return missionLobbyDeck(v, isHost, cards);
   const allExt = (S.content?.roles ?? []).filter((r) => r.set === 'standard' || r.set === 'full').map((r) => r.id);
@@ -1286,9 +1306,9 @@ function lobbyDeck(v, isHost) {
     }).join('')}</div>${editable ? `<p class="small muted">${t('Tap to add or remove roles from the pool.')}</p>` : ''}` : '';
   const ruleCards = s.rules.mode === 'manual'
     ? (s.rules.selected.length ? s.rules.selected.map((id) => isHost
-      ? `<button class="dcard rcard arc edict" data-act="ruleToggle" data-id="${id}" data-key="lr-${id}" aria-label="${esc(t('Remove {x}', { x: ruleF(id, 'name') }))}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><b>${esc(ruleF(id, 'name'))}</b><i>×</i></button>`
-      : `<div class="dcard rcard arc edict" data-key="lr-${id}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><b>${esc(ruleF(id, 'name'))}</b></div>`).join('') : `<p class="small muted">${t('No rule cards chosen.')}</p>`)
-    : Array.from({ length: s.rules.count }, (_, i) => `<div class="dcard rcard fd arc back" data-key="lr-r${i}"><span class="sig">?</span><b>${t('Drawn at start')}</b></div>`).join('') || `<p class="small muted">${t('No rule cards.')}</p>`;
+      ? `<button class="dcard rcard arc edict" data-act="cardInfo" data-kind="rule" data-id="${id}" data-key="lr-${id}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><b>${esc(ruleF(id, 'name'))}</b><i>×</i></button>`
+      : `<button class="dcard rcard arc edict" data-act="cardInfo" data-kind="rule" data-id="${id}" data-key="lr-${id}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><b>${esc(ruleF(id, 'name'))}</b></button>`).join('') : `<p class="small muted">${t('No rule cards chosen.')}</p>`)
+    : Array.from({ length: s.rules.count }, (_, i) => `<button class="dcard rcard fd arc back" data-act="cardInfo" data-kind="ruledraw" data-id="${s.rules.count}" data-key="lr-r${i}"><span class="sig">?</span><b>${t('Drawn at start')}</b></button>`).join('') || `<p class="small muted">${t('No rule cards.')}</p>`;
   const toggle = (key, title, sub) => isHost
     ? `<label class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><input type="checkbox" class="switch" data-set-bool="${key}" ${v.table?.[key] ? 'checked' : ''}></label>`
     : `<div class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><span class="tag ${v.table?.[key] ? 'solid' : ''}">${t(v.table?.[key] ? 'On' : 'Off')}</span></div>`;
@@ -2123,7 +2143,7 @@ const ACT = {
   },
   toggleRecover() { S.ui.recover = !S.ui.recover; render(); },
   poolToggle(el) { const pool = new Set(V().settings.extendedPool); if (pool.has(el.dataset.id)) pool.delete(el.dataset.id); else pool.add(el.dataset.id); send('host.settings', { extendedPool: [...pool] }); },
-  ruleToggle(el) { const sel = V().settings.rules.selected.filter((x) => x !== el.dataset.id); send('host.settings', { rules: { selected: sel } }); },
+  ruleToggle(el) { const sel = V().settings.rules.selected.filter((x) => x !== el.dataset.id); send('host.settings', { rules: { selected: sel } }); if (S.ui.sheet === 'card') { S.ui.sheet = null; render(); } },
   recordMode() { S.ui.recordList = !S.ui.recordList; localStorage.setItem('deadset:record', S.ui.recordList ? 'list' : 'gazette'); render(); },
   homeTab(el) { S.ui.homeTab = el.dataset.id; render(); },
   openSeal(el) { S.ui.invite = true; sound.play('crack'); setTimeout(() => sound.play('unfold'), 250); haptic([25, 40, 25]); burstAt(el, { colors: ['#c33a43', '#7d151d', '#ece5d5'], count: 22, power: 4 }); render(); },
@@ -2144,6 +2164,7 @@ const ACT = {
   backHome() { S.ui.sheet = null; go('/'); },
   xRedraw() { S.ui.sheet = null; send('host.xredraw'); },
   sheet(el) { const id = el.dataset.id; S.ui.sheet = id && S.ui.sheet !== id ? id : null; if (S.ui.sheet) uiSound('whoosh'); render(); },
+  cardInfo(el) { S.ui.cardInfo = { kind: el.dataset.kind, id: el.dataset.id }; S.ui.sheet = 'card'; uiSound('whoosh'); render(); },
   seatSheet(el) { S.ui.sheet = `seat:${el.dataset.id}`; render(); },
   sound() { sound.toggle(); render(); },
   copy(el) { navigator.clipboard?.writeText(el.dataset.text).then(() => toast(t('Invite link copied')), () => notify(el.dataset.text)); burstAt(el); },
