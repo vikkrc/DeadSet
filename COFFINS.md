@@ -2,6 +2,8 @@
 
 **Status: built for Beta 3 (2026-11-12).** Bot simulations (300 games per table size) gave about 8 rounds at 3 players, 12 at 5, 21 at 8 and 26 at 10; every game ended by digs or the last one standing.
 
+> **Design rework pending (noted 2026-11-12).** The rules and engine stand, but the current visual design of Coffins (phone and TV) is a placeholder and will be redone from scratch, for usability and to match the design codex (`design/codex/DESIGN-GUIDE.md`): Dead Set's elegant, ornamental, dark gothic and mystical hand-drawn witchy look. The owner will create most of the assets and give exact guidance on how to implement them. Don't polish the current Coffins UI further until then.
+
 A quick bluffing game for **3–10 players**, about 10 minutes, chosen in the lobby next to the other modes. One phone each, plus the TV board as the graveyard.
 
 Everyone buries coffins in their own plot. Most hold **gold**; one holds **your curse**. Players bid on how many coffins they can open without finding a curse, and the highest bidder has to dig. They start with their own grave.
