@@ -158,6 +158,7 @@ export default {
     "Final act": "Último acto",
     "Final edition": "Última edición",
     "Find the table": "Buscar la mesa",
+    "Open TV table": "Abrir la mesa en la TV",
     "Finding your seat…": "Buscando tu asiento…",
     "Finish the current match first.": "Termina primero la partida actual.",
     "First edition": "Primera edición",

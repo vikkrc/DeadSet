@@ -158,6 +158,7 @@ export default {
     "Final act": "Utolsó tett",
     "Final edition": "Utolsó kiadás",
     "Find the table": "Az asztal keresése",
+    "Open TV table": "TV-asztal megnyitása",
     "Finding your seat…": "Keressük a helyed…",
     "Finish the current match first.": "Előbb fejezd be az aktuális meccset.",
     "First edition": "Első kiadás",

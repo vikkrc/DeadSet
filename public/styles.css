@@ -2961,3 +2961,44 @@ svg.avatar { border-radius: 50%; clip-path: circle(50% at 50% 50%); }
 .moment.cult .m-art > .emblem { filter: url(#ds-pencil) drop-shadow(0 0 20px rgba(181, 155, 224, 0.7)); }
 .moment.ripper .m-art > .emblem { filter: url(#ds-pencil) drop-shadow(0 0 16px rgba(226, 88, 94, 0.9)); }
 .lot-wheel::before { inset: -11%; }
+
+/* ── The Empty Table (home): the game's astrolabe, role emblems taking the chairs ── */
+.h-ring::before {
+  content: ''; position: absolute; inset: -3%; border-radius: 50%; pointer-events: none;
+  background: repeating-conic-gradient(var(--gilt-2) 0 0.7deg, transparent 0.7deg 6deg);
+  -webkit-mask: radial-gradient(closest-side, transparent 95%, #000 96%, #000 99%, transparent 100%); mask: radial-gradient(closest-side, transparent 95%, #000 96%, #000 99%, transparent 100%);
+  opacity: 0.8; animation: fadeIn 1.4s 0.2s both;
+}
+.h-ring::after { content: ''; position: absolute; inset: 9%; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--gilt-2) 55%, transparent); pointer-events: none; }
+.h-tabletop {
+  inset: 19%; border: 1px solid var(--gilt-2); z-index: 1;
+  background: radial-gradient(circle at 50% 40%, var(--ink-3), var(--ink) 72%);
+  box-shadow: 0 0 0 6px var(--ink), 0 0 0 7px var(--iron), inset 0 0 60px #000;
+}
+.h-tabletop::before {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  background: repeating-conic-gradient(color-mix(in srgb, var(--gilt) 12%, transparent) 0 1.5deg, transparent 1.5deg 9deg);
+  -webkit-mask: radial-gradient(closest-side, transparent 60%, #000 62%, #000 95%, transparent 96%); mask: radial-gradient(closest-side, transparent 60%, #000 62%, #000 95%, transparent 96%);
+}
+/* the chairs: empty medallions (double ring, dotted bead ring) */
+.chair {
+  z-index: 2; width: 15%; border: 1px solid var(--gilt-2); background: radial-gradient(circle at 50% 35%, var(--ink-3), var(--ink-2));
+  box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px color-mix(in srgb, var(--gilt-2) 70%, transparent); transition: box-shadow 0.8s, border-color 0.8s;
+}
+.chair::before { content: ''; position: absolute; inset: -9px; border-radius: 50%; border: 1px dotted color-mix(in srgb, var(--gilt-2) 80%, transparent); pointer-events: none; }
+.chair::after { animation: none; opacity: 0; inset: -4px; border-color: var(--blood-ink); transition: opacity 0.8s; }
+.chair.red { border-color: var(--blood-ink); }
+.chair.red::after { opacity: 1; }
+/* a role sits down, stays a moment, and fades */
+.ch-emb { display: grid; place-items: center; width: 78%; height: 78%; color: var(--bone-2); animation: chSit 6.4s var(--ease) both; }
+.ch-emb .emblem { width: 100%; height: 100%; --paper: var(--ink-2); filter: url(#ds-wobble) drop-shadow(0 0 8px color-mix(in srgb, var(--gilt) 30%, transparent)); }
+.ch-emb.red { color: var(--blood-ink); }
+.ch-emb.red .emblem { filter: url(#ds-wobble) drop-shadow(0 0 10px rgba(228, 93, 80, 0.55)); }
+@keyframes chSit { 0% { opacity: 0; transform: scale(0.6); } 14% { opacity: 1; transform: scale(1.04); } 22% { transform: none; } 58% { opacity: 1; } 100% { opacity: 0; transform: scale(0.94); } }
+/* the wordmark letters animate inside boxes wide enough for their swashes */
+.h-title h1 .l, .m-title .l { padding: 0 0.16em; margin: 0 -0.16em; }
+.h-title { overflow: visible; }
+@media (prefers-reduced-motion: reduce) { .ch-emb { animation: fadeIn 0.6s both; } }
+/* join: a quieter way to open the TV view from the TV's own browser */
+.tv-open { align-self: center; justify-self: center; min-height: 40px; padding: 0 22px; font-size: 11.5px; text-decoration: none; animation: fadeUp 0.4s var(--ease) both; }
+.tv-open { padding: 0 38px; }

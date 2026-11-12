@@ -158,6 +158,7 @@ export default {
     "Final act": "Poslední čin",
     "Final edition": "Poslední vydání",
     "Find the table": "Najít stůl",
+    "Open TV table": "Otevřít stůl na TV",
     "Finding your seat…": "Hledáme tvé místo…",
     "Finish the current match first.": "Nejdřív dokonči aktuální hru.",
     "First edition": "První vydání",

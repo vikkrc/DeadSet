@@ -8,6 +8,7 @@ import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './bo
 import { seatLayout } from './layout.js';
 import { sceneMs, scenesFor } from './interludes.js';
 import { cardArt, roleEmblemId, roleNumber } from './cards.js';
+import { emblem } from './emblems.js';
 import { lobbyOrb, endOrb, isExorcismPhase, exorcismMain, exorcismPicks, exorcismDock, exorcismActs, exorcismMoment, exorcismMomentHtml, X_MOMENT_TIME, exorcismEndHtml, exorcismLobbyDeck, setExorcismContent, mountBalls } from './exorcism.js';
 import { avatarSvg, randomAvatar, PARTS, COLORS } from './avatar.js';
 import { giftHtml, productIndex } from './gifts.js';
@@ -713,6 +714,32 @@ const WHISPERS = [
   'Death voted with the town. Of course it did.',
 ];
 let whisperTimer = null;
+// The Empty Table: role emblems take a chair one by one, then fade. Random roles (never the same twice in a row);
+// Death-aligned roles in red. Decorative only.
+const HOME_POOL_FALLBACK = ['death', 'innocent', 'mentalist', 'guardian', 'psycho', 'whore', 'agent', 'terrorist', 'mimic', 'double', 'diplomat', 'scapegoat', 'necro', 'conspirator', 'magistrate', 'oracle', 'gambler', 'vigilante', 'jester', 'bodyguard', 'bard', 'witch', 'cult', 'ripper'];
+const homeSeats = { chairs: Array(7).fill(null), k: 0, last: null, timer: null };
+function homeRolePool() {
+  const red = new Set(['death']);
+  const ids = [];
+  for (const r of S.content?.roles ?? []) {
+    const id = roleEmblemId(r);
+    if (r.alignment === 'DEATH') red.add(id);
+    if (!ids.includes(id)) ids.push(id);
+  }
+  return { ids: ids.length ? ids : HOME_POOL_FALLBACK, red };
+}
+function homeSeatTick() {
+  if (S.route?.name !== 'home' || document.hidden) return;
+  const now = Date.now();
+  const free = homeSeats.chairs.map((c, i) => (!c || now - c.at > 6600 ? i : -1)).filter((i) => i >= 0);
+  if (!free.length) return;
+  const { ids, red } = homeRolePool();
+  let id = ids[Math.floor(Math.random() * ids.length)];
+  if (id === homeSeats.last && ids.length > 1) id = ids[(ids.indexOf(id) + 1 + Math.floor(Math.random() * (ids.length - 1))) % ids.length];
+  homeSeats.last = id;
+  homeSeats.chairs[free[Math.floor(Math.random() * free.length)]] = { id, red: red.has(id), n: ++homeSeats.k, at: now };
+  render();
+}
 function seatXY(i, n, R) {
   const a = (-90 + (i * 360) / n) * (Math.PI / 180);
   return [(50 + R * Math.cos(a)).toFixed(2), (50 + R * Math.sin(a)).toFixed(2)];
@@ -725,7 +752,13 @@ function homeScreen() {
   if (!whisperTimer) whisperTimer = setInterval(() => { if (S.route?.name === 'home') { S.whisper = (S.whisper ?? 0) + 1; render(); } }, 6500);
   const lines = tx('whispers', WHISPERS);
   const line = lines[(S.whisper ?? 0) % lines.length];
-  const chairs = Array.from({ length: 7 }, (_, i) => { const [x, y] = seatXY(i, 7, 41); return `<span class="chair" style="left:${x}%;top:${y}%;--i:${i}">${sigil(`chair${i}`)}<i></i></span>`; }).join('');
+  if (!homeSeats.timer) homeSeats.timer = setInterval(homeSeatTick, 1700);
+  const chairs = Array.from({ length: 7 }, (_, i) => {
+    const [x, y] = seatXY(i, 7, 41);
+    const c = homeSeats.chairs[i];
+    const art = c ? `<span class="ch-emb ${c.red ? 'red' : ''}" data-key="ch-${i}-${c.n}">${emblem(c.id, { cls: 'glyph' })}</span>` : '';
+    return `<span class="chair ${c?.red && Date.now() - c.at < 6600 ? 'red' : ''}" style="left:${x}%;top:${y}%;--i:${i}" data-key="chair-${i}">${art}</span>`;
+  }).join('');
   const code = (d.joinCode ?? '').toUpperCase();
   return `<main class="home2" data-key="home">
     <div class="h-top">${wordmark()}<div class="row" style="gap:6px">${langChip()}<button class="chip" data-act="sound" aria-label="${t(sound.on ? 'Mute' : 'Sound on')}">${glyph(sound.on ? 'bell' : 'bellOff')}</button><a class="chip" href="/guide" data-link>${t('How to play')}</a></div></div>
@@ -750,6 +783,7 @@ function homeScreen() {
             <input data-draft="joinCode" maxlength="6" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" value="${esc(code)}">
             ${Array.from({ length: 6 }, (_, i) => `<span class="${i === Math.min(code.length, 5) ? 'cur' : ''} ${code[i] ? 'on' : ''}">${esc(code[i] ?? '')}</span>`).join('')}
           </label>
+          ${code.length === 6 ? `<a class="btn btn-sm tv-open" href="/board/${esc(code)}" data-key="tv-open">${t('Open TV table')}</a>` : ''}
           <button class="btn btn-wide btn-tall ${code.length === 6 ? 'btn-solid' : ''}" data-act="gotoRoom" ${code.length === 6 ? '' : 'disabled'}>${t('Find the table')}</button>
           <p class="foot">${t('Or scan the QR code on the host\'s screen')}</p>
         </div>`}
@@ -2347,7 +2381,7 @@ document.addEventListener('input', (e) => {
     let v = el.value;
     if (el.dataset.draft === 'joinCode') { v = v.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6); el.value = v; }
     S.drafts[el.dataset.draft] = v;
-    if (el.dataset.draft === 'joinCode') { render(); if (v.length === 6) setTimeout(() => ACT.gotoRoom(), 250); }
+    if (el.dataset.draft === 'joinCode') render(); // a full code shows two ways on: join, or open the TV table
   }
   if (el.dataset.setText) {
     const path = el.dataset.setText;
