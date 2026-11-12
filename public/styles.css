@@ -3002,3 +3002,5 @@ svg.avatar { border-radius: 50%; clip-path: circle(50% at 50% 50%); }
 /* join: a quieter way to open the TV view from the TV's own browser */
 .tv-open { align-self: center; justify-self: center; min-height: 40px; padding: 0 22px; font-size: 11.5px; text-decoration: none; animation: fadeUp 0.4s var(--ease) both; }
 .tv-open { padding: 0 38px; }
+/* Missions on the TV: the track and chapter slip sit above the table, so the ring takes the height that is left */
+.b-stage:has(.b-mission) .ring { width: min(100%, calc(100vh - 480px), 640px); }
