@@ -42,7 +42,7 @@ export function botDecide(m, botId, rng) {
       if (a.type === 'swap' && a.snatcher && a.choice == null && a.targets?.length && chance(rng, 0.5)) return { cmd: { type: 'dream.swap', payload: { target: pick(rng, a.targets) } } };
       return null;
     case 'NIGHT_ACTIONS': return nightMove(m, v, rng);
-    default: return m.X ? exorcismMove(m, v, rng) : m.M ? missionMove(m, v, rng) : null;
+    default: return m.X ? exorcismMove(m, v, rng) : m.C ? coffinsMove(m, v, rng) : m.M ? missionMove(m, v, rng) : null;
   }
 }
 
@@ -70,6 +70,59 @@ function exorcismMove(m, v, rng) {
       return { cmd: { type: 'x.vote', payload: { target: pick(rng, pool.length ? pool : a.targets) } } };
     }
     case 'xguess': return { cmd: { type: 'x.guess', payload: { index: pick(rng, a.grid ?? [0]) } } };
+    default: return null;
+  }
+}
+
+// ── Coffins ────────────────────────────────────────────────────────────────
+// Bots bury their curse early about a third of the time (the Death coffin
+// early, so it gets dug), bid what they believe is safe (their own buried gold
+// plus a share of the table) and sometimes bluff a raise, dig the plots of
+// players who passed rather than those who bid high, and wager like the dice.
+function coffinsMove(m, v, rng) {
+  const a = v.action || {};
+  const c = v.me.c || {};
+  const C = v.coffins;
+  const cmd = (type, payload = {}) => ({ cmd: { type, payload } });
+  const hand = (c.cards || []).filter((x) => !x.buried);
+  const pickCard = (preferCurse) => {
+    const death = hand.find((x) => x.face === 'D');
+    if (death && chance(rng, 0.7)) return death.id;
+    const curse = hand.find((x) => x.face === 'C');
+    if (curse && preferCurse) return curse.id;
+    const golds = hand.filter((x) => x.face !== 'C');
+    return (golds.length ? pick(rng, golds) : pick(rng, hand)).id;
+  };
+  const safeGuess = () => {
+    const mine = (c.cards || []).filter((x) => x.buried);
+    const ownSafe = mine.some((x) => x.face === 'C') ? 0 : mine.length;
+    const others = C.total - mine.length;
+    // Most players bury gold on top, so a few of the others' coffins are fairly safe; more players, more risk each.
+    const players = C.plots.filter((x) => !x.out).length;
+    return Math.max(1, ownSafe + Math.min(others, Math.floor((players - 1) * (0.15 + rng.int(20) / 100)) + rng.int(2)));
+  };
+  switch (a.type) {
+    case 'cbury': return a.done ? null : cmd('c.bury', { card: pickCard(chance(rng, 0.35)) });
+    case 'cturn': {
+      if (a.lantern?.length && chance(rng, 0.3)) return cmd('c.lantern', { owner: pick(rng, a.lantern) });
+      if (a.canBury && chance(rng, 0.55)) return cmd('c.bury', { card: pickCard(chance(rng, 0.25)) });
+      return cmd('c.challenge', { n: Math.min(a.max, safeGuess()) });
+    }
+    case 'cbid': {
+      const safe = safeGuess();
+      if (a.min <= a.max && (a.min <= safe || chance(rng, 0.08))) return cmd('c.raise', { n: a.min });
+      return cmd('c.pass');
+    }
+    case 'cwager': return a.bet ? null : cmd('c.wager', { bet: chance(rng, 0.55) ? 'gold' : 'curse' });
+    case 'ckey': return cmd('c.key', { owner: chance(rng, 0.6) && a.targets.length ? pick(rng, a.targets) : null });
+    case 'cdig': {
+      const passed = a.targets.filter((id) => C.passed.includes(id));
+      return cmd('c.open', { owner: pick(rng, passed.length && chance(rng, 0.7) ? passed : a.targets) });
+    }
+    case 'closs': {
+      const curse = a.cards.find((x) => x.face === 'C');
+      return cmd('c.lose', { card: curse && chance(rng, 0.4) ? curse.id : pick(rng, a.cards).id, first: v.me.id });
+    }
     default: return null;
   }
 }

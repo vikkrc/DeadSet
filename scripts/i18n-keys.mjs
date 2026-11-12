@@ -44,7 +44,7 @@ function strings(src) {
 }
 
 // Client: every string literal inside a t( / th( / tm( / tmh( call (balanced parens).
-for (const f of ['public/app.js', 'public/board.js', 'public/gazette.js', 'public/guide.js', 'public/gifts.js', 'public/missions.js', 'public/exorcism.js']) {
+for (const f of ['public/app.js', 'public/board.js', 'public/gazette.js', 'public/guide.js', 'public/gifts.js', 'public/missions.js', 'public/exorcism.js', 'public/coffins.js']) {
   const src = read(f);
   const re = /\b(?:t|th)\(/g;
   let m;
@@ -84,6 +84,9 @@ for (const k of ['Who', 'Where', 'Why']) keys.add(k);
 // Tables of labels the client translates at render time.
 for (const m of read('public/app.js').matchAll(/const (?:SUGGESTION_LABEL|WEIGHT_LABEL|ROLE_GROUPS|TUTORIAL|RECAP_ROLE|AV_ROWS) = ([\s\S]*?);\n/g)) for (const x of m[1].matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/[A-Za-z]/.test(s) && !/^[A-Z_]+$/.test(s) && !/^[a-z]+$/.test(s)) keys.add(s); }
 
+// Coffins: explainer steps, label tables and the advance labels.
+for (const m of read('public/coffins.js').matchAll(/const (?:steps|FACE_EN|RELIC_EN|RELIC_WHEN) = [\[{]([\s\S]*?)[\]}];/g)) for (const x of m[1].matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/\s|^[A-Z][a-z]/.test(s)) keys.add(s); }
+for (const m of read('engine/coffins.js').matchAll(/export const C_ADVANCE_LABEL = \{([\s\S]*?)\};/g)) for (const x of m[1].matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/\s/.test(s)) keys.add(s); }
 // Exorcism's explainer steps.
 for (const m of read('public/exorcism.js').matchAll(/const steps = \[([\s\S]*?)\];/g)) for (const x of m[1].matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/\s|^[A-Z][a-z]/.test(s)) keys.add(s); }
 for (const m of read('engine/exorcism.js').matchAll(/export const X_ADVANCE_LABEL = \{([\s\S]*?)\};/g)) for (const x of m[1].matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/\s/.test(s)) keys.add(s); }
@@ -95,7 +98,7 @@ for (const m of read('public/gifts.js').matchAll(/const QUIP = \[([\s\S]*?)\];/g
 
 // Engine: message templates (strings shaped like sentences or containing {params}).
 for (const m of read('engine/content.js').matchAll(/verb: '([^']+)'/g)) keys.add(m[1]);
-for (const f of ['engine/missions.js', 'engine/exorcism.js', 'engine/game.js', 'engine/night.js', 'engine/day.js', 'engine/setup.js', 'engine/views.js', 'engine/victory.js', 'engine/state.js', 'server/rooms.js', 'server/index.js']) {
+for (const f of ['engine/missions.js', 'engine/exorcism.js', 'engine/coffins.js', 'engine/game.js', 'engine/night.js', 'engine/day.js', 'engine/setup.js', 'engine/views.js', 'engine/victory.js', 'engine/state.js', 'server/rooms.js', 'server/index.js']) {
   for (const s of strings(read(f))) {
     if (/\{\w+\}/.test(s) || (/^[A-Z]/.test(s) && /\s/.test(s) && !/^[A-Z_]+$/.test(s))) keys.add(s);
     else if (/^(ready|asleep|ballots recorded|have seen their role|are ready|have spoken|ready to vote|votes in|Table|Lobby|End)$/.test(s)) keys.add(s);

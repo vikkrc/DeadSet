@@ -15,6 +15,7 @@ import { checkVictory } from './victory.js';
 import { ballotWeight, tally } from './day.js';
 import { startMissions, missionCommand, missionAdvance, isMissionPhase } from './missions.js';
 import { startExorcism, exorcismCommand, exorcismAdvance, isExorcismPhase } from './exorcism.js';
+import { startCoffins, coffinsCommand, coffinsAdvance, isCoffinsPhase } from './coffins.js';
 
 export { GameError };
 
@@ -129,6 +130,8 @@ export function startMatch(m, rng, now, { forceRoles = null, forceWord = null } 
   const n = m.players.length;
   if (PRESETS[m.settings.preset]?.missions) { startMissions(m, rng, now, { forceRoles }); return; }
   if (PRESETS[m.settings.preset]?.exorcism) { startExorcism(m, rng, now, { forceRoles, forceWord }); return; }
+  if (PRESETS[m.settings.preset]?.coffins) { startCoffins(m, rng, now, { forceRoles }); return; }
+  m.C = null;
   m.X = null;
   m.M = null;
   let assignment;
@@ -601,8 +604,9 @@ export function hostAdvance(m, rng, now, { skipAll = false } = {}) {
   rngRef = rng;
   if (isMissionPhase(m.phase)) { missionAdvance(m, rng, now); return; }
   if (isExorcismPhase(m.phase)) { exorcismAdvance(m, rng, now); return; }
+  if (isCoffinsPhase(m.phase)) { coffinsAdvance(m, rng, now); return; }
   // Exorcism: the end screen returns the table to the same lobby (settings and scores kept).
-  if (m.phase === 'ENDED' && m.config?.mode === 'exorcism') { rematch(m, { ready: true }); return; }
+  if (m.phase === 'ENDED' && (m.config?.mode === 'exorcism' || m.config?.mode === 'coffins')) { rematch(m, { ready: true }); return; }
   switch (m.phase) {
     case 'NIGHT_0_REVEAL': pub(m, 'Night 0 ends.', 'phase'); beginDay(m, now); break;
     case 'DAY_PREP': closeMorning(m, now); break;
@@ -640,10 +644,14 @@ export function rematch(m, { ready = false } = {}) {
   if (m.phase !== 'ENDED') throw new GameError('Finish the current match first.');
   const keep = m.players.map((p) => ({ id: p.id, name: p.name, seat: p.seat, connected: p.connected, avatar: p.avatar, bot: p.bot }));
   const scores = m.xScores;
+  const cScores = m.cScores;
+  const cMatch = m.cMatch;
   const fresh = newMatch({ id: m.id, code: m.code, hostId: m.hostId, moderated: m.moderated });
   Object.assign(m, { ...fresh, settings: m.settings, stateVersion: m.stateVersion + 1, phaseSeq: m.phaseSeq + 1 });
   m.phaseId = `LOBBY:${m.phaseSeq}`;
   if (scores) m.xScores = scores;
+  if (cScores) m.cScores = cScores;
+  if (cMatch) m.cMatch = cMatch;
   for (const k of keep) {
     const p = addPlayer(m, k);
     p.connected = k.connected;
@@ -663,6 +671,11 @@ export function playerCommand(m, actorId, cmd, rng, now) {
   if (type.startsWith('x.')) {
     if (!m.X || !isExorcismPhase(m.phase)) throw new GameError('That window has closed.', 'STALE');
     exorcismCommand(m, p, type, payload, rng, now);
+    return;
+  }
+  if (type.startsWith('c.')) {
+    if (!m.C || !isCoffinsPhase(m.phase)) throw new GameError('That window has closed.', 'STALE');
+    coffinsCommand(m, p, type, payload, rng, now);
     return;
   }
   if (type.startsWith('m.')) {
@@ -876,7 +889,7 @@ export function chatChannels(m, p) {
   if (!p || m.phase === 'LOBBY' || m.phase === 'ENDED') return out;
   const remote = m.settings.transport === 'remote';
   const muted = p.statuses.some((s) => s.type === 'MUTE');
-  const inDay = isDayPhase(m.phase) || (isMissionPhase(m.phase) && !['M_REVEAL', 'M_NIGHT'].includes(m.phase)) || isExorcismPhase(m.phase);
+  const inDay = isDayPhase(m.phase) || (isMissionPhase(m.phase) && !['M_REVEAL', 'M_NIGHT'].includes(m.phase)) || isExorcismPhase(m.phase) || isCoffinsPhase(m.phase);
   if (remote && inDay) {
     if (hasRule(m, 'FOG_OF_WAR')) {
       const seats = [...m.players].sort((a, b) => a.seat - b.seat);

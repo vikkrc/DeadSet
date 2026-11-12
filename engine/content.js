@@ -466,12 +466,23 @@ PRESETS.exorcism = { id: 'exorcism', name: 'Dead Set: Exorcism', min: 3, max: 12
   rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, exorcism: true,
   blurb: 'A word game of bluff. Everyone sees the password in the crystal ball, except the Demon. One word each, then name the Demon.' };
 
+// ── Dead Set: Coffins (see COFFINS.md) ─────────────────────────────────────
+Object.assign(ROLES, {
+  C_DIGGER: { id: 'C_DIGGER', name: 'Gravedigger', set: 'coffins', alignment: 'INDEPENDENT', glyph: 'undertaker', when: 'Always',
+    summary: 'Bury your coffins, bid how many you can open, and dig. Two clean digs win.',
+    detail: 'Your Curse is your bluff: bury it to make others stumble on it. If you win the bid, you open your own grave first.' },
+});
+PRESETS.coffins = { id: 'coffins', name: 'Dead Set: Coffins', min: 3, max: 10, pool: [], dreams: false,
+  rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, coffins: true,
+  blurb: 'A quick bluffing game. Bury gold and one curse, bid how many coffins you can open, then dig. Two clean digs win.' };
+
 export const MODES = {
   classic: { id: 'classic', roleSets: ['core', 'standard', 'full', 'side'], rules: true, dreams: true },
   missions: { id: 'missions', roleSets: ['missions'], rules: false, dreams: false },
   exorcism: { id: 'exorcism', roleSets: ['exorcism'], rules: false, dreams: false },
+  coffins: { id: 'coffins', roleSets: ['coffins'], rules: false, dreams: false },
 };
 /** The mode a preset belongs to. */
-export const modeOf = (presetId) => (PRESETS[presetId]?.missions ? 'missions' : PRESETS[presetId]?.exorcism ? 'exorcism' : 'classic');
+export const modeOf = (presetId) => (PRESETS[presetId]?.missions ? 'missions' : PRESETS[presetId]?.exorcism ? 'exorcism' : PRESETS[presetId]?.coffins ? 'coffins' : 'classic');
 /** Can this role be dealt in this mode? */
 export const roleInMode = (roleId, mode) => !!ROLES[roleId] && MODES[mode].roleSets.includes(ROLES[roleId].set);

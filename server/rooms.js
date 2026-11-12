@@ -144,7 +144,7 @@ export class RoomManager {
       case 'host.extend': extendDeadline(m, Math.max(10, Math.min(300, Number(payload.seconds) || 30)), now); break;
       case 'host.end': abortMatch(m, now); break;
       case 'host.xredraw': if (!m.X) throw new GameError('Nothing to redraw.'); redrawExorcism(m, this.rng, now); break;
-      case 'host.rematch': { const x = m.config?.mode === 'exorcism'; rematch(m, { ready: x }); m.players.forEach((p) => { p.ready = x || p.bot || p.id === m.hostId; p.connected = this.isConnected(room, p.id); }); break; }
+      case 'host.rematch': { const x = m.config?.mode === 'exorcism' || m.config?.mode === 'coffins'; rematch(m, { ready: x }); m.players.forEach((p) => { p.ready = x || p.bot || p.id === m.hostId; p.connected = this.isConnected(room, p.id); }); break; }
       case 'host.kick': {
         if (payload.playerId === pid) throw new GameError('You cannot remove yourself.');
         removePlayer(m, payload.playerId);

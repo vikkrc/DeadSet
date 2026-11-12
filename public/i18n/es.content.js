@@ -3,6 +3,7 @@ export default {
   and: 'y',
   numbers: ['ningún', 'un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'],
   roles: {
+    C_DIGGER: { name: "Sepulturero", when: "Siempre", summary: "Entierra tus ataúdes, apuesta cuántos puedes abrir y cava. Dos excavaciones limpias ganan.", detail: "Tu Maldición es tu farol: entiérrala para que otros tropiecen con ella. Si ganas la puja, abres primero tu propia tumba." },
     X_LIVING: { name: "Vivo", when: "Siempre", summary: "Ves la contraseña en la bola de cristal. Di una palabra que demuestre que la sabes, sin dársela al Demonio.", detail: "Demasiado obvia, y el Demonio descubre la contraseña. Demasiado rebuscada, y la mesa sospecha de ti. Luego nombrad al Demonio." },
     X_DEMON: { name: "Demonio", when: "Siempre", summary: "Solo ves la categoría. Pasa desapercibido: di una palabra como si conocieras la contraseña.", detail: "Escucha a los demás y descifra la contraseña. Si la mesa nombra a otro, ganas. Si te descubren, un intento acertado gana igualmente." },
     M_JESTER: { name: "Bufón", when: "Siempre", summary: "Ganas solo si la mesa te nombra en la Última Resistencia o el Segador te nombra en el Ajuste de cuentas.", detail: "No eres Vivo ni de la Muerte: el Médium no te ve y la Vela te muestra como Vivo. En misión puedes jugar Éxito o Sabotaje. Parece culpable, pero no demasiado." },
@@ -122,6 +123,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Fantasmas vengativos', text: 'Cada jugador eliminado puede emitir una papeleta fantasma de peso 1 por día.', enforcement: 'Los fantasmas no pueden nominar, usar poderes ni influir en la Regla de mayoría.' },
   },
   presets: {
+    coffins: { name: "Dead Set: Ataúdes", blurb: "Un juego de faroles rápido. Entierra oro y una maldición, puja cuántos ataúdes puedes abrir y luego cava. Dos excavaciones limpias ganan." },
     exorcism: { name: "Dead Set: Exorcismo", blurb: "Un juego de palabras y faroles. Todos ven la contraseña en la bola de cristal, menos el Demonio. Una palabra cada uno y luego desenmascarad al Demonio." },
     missions: { name: "Dead Set: Misiones", blurb: "Equipos, votos y sabotaje. Nadie muere: dirigid misiones, leed los votos y encontrad a la Muerte antes de que ella encuentre al Médium." },
     standard: { name: 'Estándar', blurb: 'La experiencia Dead Set tal como se pensó. Diez roles extendidos desde 7 jugadores, un Sueño para todos cada noche, 1–3 cartas de regla.' },
@@ -148,6 +150,17 @@ export default {
     'La Muerte votó con el pueblo. Cómo no.',
   ],
   guide: {
+    coffinsH: "Dead Set: Ataúdes",
+    coffins: `<p>Un juego de faroles rápido para 3–10 jugadores, que se elige en la sala. Cada cual tiene 3 ataúdes de Oro y una Maldición (4 y una con la opción larga).</p>
+<ol>
+<li><b>El entierro.</b> Todos entierran en secreto un ataúd a la vez: tócalo y mantén. Después, desde el primer jugador de la ronda, en tu turno entierras otro ataúd encima de tu pila o lanzas un desafío: <i>«Puedo abrir N»</i>, como mucho el total enterrado.</li>
+<li><b>La puja.</b> Por turnos, cada uno sube o pasa. Pasar vale para toda la ronda. El último que queda es el Sepulturero.</li>
+<li><b>La excavación.</b> El Sepulturero abre primero sus propios ataúdes de arriba abajo; luego elige otras tumbas, siempre el ataúd de arriba, hasta abrir N.</li>
+<li><b>Limpia o maldita.</b> Todo Oro: una excavación limpia, y la lápida se dora. Una maldición en tu tumba: eliges qué ataúd pierdes. La de otro: saca a ciegas uno de tus ataúdes y desaparece. El dueño de la maldición empieza la ronda siguiente.</li>
+<li><b>Gana</b> con tus excavaciones limpias (2 por defecto; 1 o 3 en la sala), o siendo el último con ataúdes.</li>
+</ol>
+<p><b>El ataúd de la Muerte</b> (activado por defecto): cada ronda lo tiene un jugador oculto en lugar de un ataúd de Oro. Desentiérralo y la excavación fracasa; su dueño te roba un ataúd, que se vuelve de Oro. <b>Apuestas de fantasmas</b> (activadas por defecto): los jugadores sin ataúdes apuestan Oro o Maldición en cada excavación; tras tres aciertos se levantan como Aparecidos con un ataúd de Oro. <b>Reliquias</b> (desactivadas por defecto): un Farol secreto (mirar en una tumba), una Llave (abrir otra tumba antes que la tuya) o una Protección (una maldición no cuesta nada), cada una de un solo uso.</p>
+<p>Los puntos se acumulan entre partidas: el ganador +3, cada excavación limpia +1, cada resurrección +1.</p>`,
     exorcismH: "Dead Set: Exorcismo",
     exorcism: `<p>Un juego de palabras y faroles para 3–12 jugadores, que se elige en la sala. El idioma de la mesa se impone en todos los móviles, para que las palabras coincidan.</p>
 <ol>

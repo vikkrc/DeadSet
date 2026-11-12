@@ -3,6 +3,7 @@ export default {
   and: 'a',
   numbers: ['žiadny', 'jeden', 'dvaja', 'traja', 'štyria', 'piati', 'šiesti', 'siedmi', 'ôsmi', 'deviati', 'desiati'],
   roles: {
+    C_DIGGER: { name: "Hrobár", when: "Vždy", summary: "Zakop svoje rakvy, povedz, koľko ich dokážeš otvoriť, a kopaj. Dve čisté vykopávky vyhrávajú.", detail: "Tvoja Kliatba je tvoj blaf: zakop ju, nech na ňu narazia iní. Ak vyhráš dražbu, otváraš najprv vlastný hrob." },
     X_LIVING: { name: "Živý", when: "Vždy", summary: "V krištáľovej guli vidíš heslo. Povedz slovo, ktoré dokáže, že ho poznáš, ale nedaj ho Démonovi.", detail: "Príliš jasné, a Démon heslo zistí. Príliš nejasné, a stôl podozrieva teba. Potom označte Démona." },
     X_DEMON: { name: "Démon", when: "Vždy", summary: "Vidíš len kategóriu. Splyň s ostatnými: povedz slovo, akoby si heslo poznal.", detail: "Počúvaj ostatných a rozlúšti heslo. Ak stôl označí niekoho iného, vyhrávaš. Ak ťa chytia, jeden správny pokus aj tak vyhrá." },
     M_JESTER: { name: "Šašo", when: "Vždy", summary: "Vyhrávaš sám, ak ťa stôl označí v Poslednom odpore alebo ťa Žnec určí v Zúčtovaní.", detail: "Nie si Živý ani zo Smrti: Médium ťa nevidí a Sviečka ťa ukáže ako Živého. Na misii môžeš hrať Úspech aj Sabotáž. Pôsob podozrivo, ale nie príliš." },
@@ -122,6 +123,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Pomstychtiví duchovia', text: 'Každý vyradený hráč môže každý deň odovzdať jeden hlas ducha s váhou 1.', enforcement: 'Duchovia nemôžu nominovať, používať schopnosti ani ovplyvniť Pravidlo väčšiny.' },
   },
   presets: {
+    coffins: { name: "Dead Set: Rakvy", blurb: "Rýchla blafovacia hra. Zakop zlato a jednu kliatbu, ponúkni, koľko rakiev dokážeš otvoriť, a kopaj. Dve čisté vykopávky vyhrávajú." },
     exorcism: { name: "Dead Set: Exorcizmus", blurb: "Slovná hra plná blafovania. V krištáľovej guli všetci vidia heslo, okrem Démona. Každý jedno slovo, potom odhaľte Démona." },
     missions: { name: "Dead Set: Misie", blurb: "Tímy, hlasovania a sabotáž. Nikto neumiera: veďte misie, čítajte hlasy a nájdite Smrť skôr, než ona nájde Médium." },
     standard: { name: 'Štandard', blurb: 'Zamýšľaný zážitok z Dead Set. Desať rozšírených rol od 7 hráčov, Sen pre každého každú noc, 1–3 karty pravidiel.' },
@@ -148,6 +150,17 @@ export default {
     'Smrť hlasovala s mestom. Samozrejme.',
   ],
   guide: {
+    coffinsH: "Dead Set: Rakvy",
+    coffins: `<p>Rýchla blafovacia hra pre 3–10 hráčov, voliteľná v lobby. Každý má 3 Zlaté rakvy a jednu Kliatbu (v dlhšej verzii 4 a jednu).</p>
+<ol>
+<li><b>Pohreb.</b> Všetci naraz tajne zakopú jednu rakvu: ťukni na ňu a podrž. Potom od prvého hráča kola na svojom ťahu buď zakopeš ďalšiu rakvu navrch svojej kopy, alebo vyzveš: <i>„Dokážem otvoriť N“</i>, najviac toľko, koľko je spolu zakopaných.</li>
+<li><b>Dražba.</b> Dookola každý zvýši alebo pasuje. Pas platí na celé kolo. Posledný, kto ostane, je Hrobár.</li>
+<li><b>Kopanie.</b> Hrobár najprv otvorí vlastné rakvy zhora nadol, potom vyberá iné hroby, vždy vrchnú rakvu, kým nie je otvorených N.</li>
+<li><b>Čisto, alebo prekliate.</b> Samé Zlato: čistá vykopávka a náhrobok zozlatne. Kliatba vo vlastnom hrobe: vyberieš si, ktorú rakvu stratíš. Cudzia kliatba: jej majiteľ naslepo vytiahne jednu tvoju rakvu a tá je preč. Majiteľ kliatby začína ďalšie kolo.</li>
+<li><b>Vyhráš</b> svojimi čistými vykopávkami (predvolene 2; v lobby 1 alebo 3), alebo ako posledný hráč, ktorému ostali rakvy.</li>
+</ol>
+<p><b>Rakva Smrti</b> (predvolene zapnutá): v každom kole ju má jeden skrytý hráč namiesto jednej Zlatej. Ak ju vykopeš, kopanie zlyhá a jej majiteľ ti ukradne rakvu, ktorá sa zmení na Zlatú. <b>Stávky duchov</b> (predvolene zapnuté): hráči bez rakiev stavia na každé kopanie Zlato alebo Kliatbu; po troch správnych vstanú ako Navrátilci s jednou Zlatou rakvou. <b>Relikvie</b> (predvolene vypnuté): tajný Lampáš (nazrieš do hrobu), Kľúč (otvoríš cudzí hrob pred svojím) alebo Ochrana (kliatba ťa nič nestojí), každá raz.</p>
+<p>Body sa prenášajú medzi hrami: víťaz +3, každá čistá vykopávka +1, každé vstanie +1.</p>`,
     exorcismH: "Dead Set: Exorcizmus",
     exorcism: `<p>Slovná hra plná blafovania pre 3–12 hráčov, vyberá sa v lobby. Na každom telefóne platí jazyk stola, aby sa slová zhodovali.</p>
 <ol>

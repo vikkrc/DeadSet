@@ -3176,3 +3176,212 @@ body:has(#app > .recap) #app > :not(.recap):not(.moment):not(.toasts):not(.conn)
 .recap-nav .btn { min-width: 0; padding: 0 8px; letter-spacing: 0.14em; }
 .recap-nav .btn::before, .recap-nav .btn::after { display: none; }
 body:has(#app > .recap) .fx-canvas, body:has(#app > .recap) .fx-layer { display: none; } /* the replay is read in peace */
+
+/* ══ Coffins (Beta 3): the graveyard ══════════════════════════════════════ */
+body.mode-coffins, body.mode-coffins[data-time='night'] {
+  --ink: #0a0c0c; --ink-2: #111515; --ink-3: #1b2120; --iron: #33403d;
+  --bone: #e1e2d8; --bone-2: #b6b9aa; --ash: #858a7c;
+  --glow: rgba(150, 175, 160, 0.10);
+}
+/* Coffin cards: the same dark wood and the same brightness for every face. */
+.ccard { position: relative; display: inline-grid; place-items: center; width: 64px; aspect-ratio: 60 / 100; padding: 0; border: 0; background: none; color: inherit; flex: none; transition: transform .25s var(--ease), filter .25s; }
+.ccard .cc-wood { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.cc-box { fill: #3a2819; stroke: #1b120b; stroke-width: 1.5; }
+.cc-lid { fill: #4a3322; stroke: rgba(201, 163, 90, .55); stroke-width: 1; }
+.cc-cross { stroke: rgba(201, 163, 90, .7); stroke-width: 2.4; stroke-linecap: round; fill: none; }
+.cc-nail { fill: rgba(201, 163, 90, .8); }
+.cc-face { position: relative; width: 62%; aspect-ratio: 1; display: grid; place-items: center; margin-top: -8%; }
+.cc-face > svg, .cc-face .emblem, .cc-face .c-face-em { width: 100%; height: 100%; }
+.ccard.f-G .cc-face { color: var(--gilt); filter: drop-shadow(0 0 4px rgba(236, 210, 143, .35)); }
+.ccard.f-C .cc-face { filter: drop-shadow(0 0 4px rgba(236, 210, 143, .35)); }
+.ccard.f-D .cc-face { color: var(--bone); filter: drop-shadow(0 0 4px rgba(236, 210, 143, .35)); }
+.c-seal { width: 100%; height: 100%; }
+button.ccard { cursor: pointer; }
+button.ccard:active { transform: scale(.96); }
+.ccard.sel { transform: translateY(-10px); }
+.ccard.sel .cc-lid { stroke: var(--gilt-hi); stroke-width: 2.2; }
+.ccard.sel::after { content: ''; position: absolute; inset: -6px; border-radius: 10px; box-shadow: 0 0 0 1px var(--gilt), 0 0 18px var(--glow); pointer-events: none; }
+.ccard.buried { filter: saturate(.5) brightness(.62); transform: scale(.86); }
+.cc-buried { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); white-space: nowrap; font: italic 12px/1 var(--text); color: var(--ash); }
+
+.chand { margin: 14px 0 6px; }
+.ch-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; padding: 16px 4px 22px; }
+.chand.picking .ch-row button.ccard:not(.sel) { animation: cBob 2.4s ease-in-out infinite; animation-delay: calc(var(--i, 0) * .2s); }
+@keyframes cBob { 50% { transform: translateY(-3px); } }
+
+/* Headstones */
+.cyard { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px 8px; margin: 10px 0; align-items: end; }
+.cstone { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0; border: 0; background: none; color: inherit; font: inherit; min-width: 0; }
+.cs-head { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 12px 6px 8px; background: linear-gradient(180deg, #3a403d, #262b29 70%, #1d2220); border: 1px solid #4d5551; border-bottom-color: #151918; border-radius: 48px 48px 6px 6px; box-shadow: inset 0 2px 0 rgba(255, 255, 255, .06), 0 6px 14px rgba(0, 0, 0, .45); transition: box-shadow .3s, border-color .3s; }
+.cs-med { position: relative; width: 46px; height: 46px; border-radius: 50%; overflow: visible; display: grid; place-items: center; background: var(--ink-2); border: 1.5px solid #6c7570; }
+.cs-med .cs-av, .cs-med svg.cs-av { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; }
+.cs-ini { font: 600 20px/1 var(--text); color: var(--bone-2); }
+.cs-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 600 14px/1.1 var(--text); color: var(--bone); }
+.c-wins { display: flex; gap: 4px; }
+.c-wins i { width: 8px; height: 8px; transform: rotate(45deg); border: 1px solid var(--gilt-2); }
+.c-wins i.on { background: var(--gilt); border-color: var(--gilt-hi); box-shadow: 0 0 6px var(--gilt); }
+.cs-bid, .cs-pass { position: absolute; top: -8px; right: -4px; min-width: 26px; height: 26px; padding: 0 6px; border-radius: 13px; display: grid; place-items: center; font: 700 15px/1 var(--text); }
+.cs-bid { background: var(--blood); color: var(--bone); border: 1px solid var(--blood-ink); box-shadow: 0 0 10px rgba(156, 28, 34, .6); animation: cPop .4s var(--ease) both; }
+.cs-pass { background: var(--ink-3); color: var(--ash); border: 1px solid var(--iron); font: italic 12px/1 var(--text); }
+.cs-relic { position: absolute; top: 6px; left: 6px; width: 18px; height: 18px; color: var(--gilt); opacity: .8; }
+.cs-relic svg { width: 100%; height: 100%; }
+.cs-rev, .cs-shade { position: absolute; right: -8px; bottom: -6px; width: 22px; height: 22px; border-radius: 50%; background: var(--ink); border: 1px solid var(--gilt-2); display: grid; place-items: center; color: var(--gilt); }
+.cs-rev svg, .cs-shade svg { width: 16px; height: 16px; }
+.cs-plot { display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 18px; width: 100%; }
+.cs-empty { font: italic 11px/1 var(--text); color: var(--ash-2); padding-top: 4px; }
+.cs-foot { min-height: 16px; }
+.cs-tag { font: italic 12px/1 var(--text); color: var(--ash); }
+.c-candles { display: inline-flex; gap: 5px; }
+.c-candles i { position: relative; width: 6px; height: 13px; border-radius: 2px 2px 1px 1px; background: #cfc7b2; opacity: .35; }
+.c-candles i.lit { opacity: 1; }
+.c-candles i.lit::before { content: ''; position: absolute; left: 50%; top: -8px; width: 6px; height: 8px; transform: translateX(-50%); border-radius: 50% 50% 40% 40%; background: radial-gradient(circle at 50% 70%, #fff3c4, #f2a64a 60%, transparent 70%); animation: flicker 1.6s ease-in-out infinite; }
+@keyframes flicker { 50% { transform: translateX(-50%) scale(.85, 1.1); opacity: .85; } }
+
+/* A coffin lying in its plot */
+.cslab { position: relative; display: block; width: 72%; max-width: 76px; aspect-ratio: 100 / 34; animation: cLower .5s var(--ease) both; animation-delay: calc(var(--i) * .05s); }
+.cslab svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cs-box { fill: #33241a; stroke: #150e08; stroke-width: 1.4; }
+.cs-lid { fill: #432e1f; stroke: rgba(201, 163, 90, .45); stroke-width: 1; }
+.cslab.open .cs-lid { fill: #1a120c; stroke: rgba(201, 163, 90, .25); }
+.cs-face { position: absolute; left: 50%; top: 50%; width: 30%; aspect-ratio: 1; transform: translate(-40%, -50%); display: grid; place-items: center; color: var(--gilt); }
+.cs-face > svg { width: 100%; height: 100%; }
+.cslab.f-D .cs-face { color: var(--bone); }
+.cslab.fresh { animation: cLidOff .7s var(--ease) both; }
+.cslab.fresh.f-G::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; background: radial-gradient(circle, rgba(236, 210, 143, .55), transparent 65%); animation: fadeOut 1.4s ease-out both; pointer-events: none; }
+.cslab.fresh.f-C::after, .cslab.fresh.f-D::after { content: ''; position: absolute; inset: -8px; background: radial-gradient(circle, rgba(156, 28, 34, .7), transparent 65%); animation: fadeOut 1.6s ease-out both; pointer-events: none; }
+@keyframes cLower { from { transform: translateY(-10px); opacity: 0; } }
+@keyframes cLidOff { 0% { transform: rotate(0); } 30% { transform: rotate(-6deg) translateY(-3px); } 100% { transform: none; } }
+@keyframes fadeOut { to { opacity: 0; } }
+
+/* States */
+.cstone.me .cs-head { border-color: var(--gilt-2); }
+.cstone.me .cs-name { color: var(--gilt-hi); }
+.cstone.now .cs-head { border-color: var(--gilt); box-shadow: 0 0 0 1px var(--gilt), 0 0 22px var(--glow), 0 6px 14px rgba(0, 0, 0, .45); }
+.cstone.digger .cs-head { border-color: var(--blood-ink); box-shadow: 0 0 0 1px var(--blood), 0 0 24px rgba(156, 28, 34, .45); }
+.cstone.gilt .cs-head { background: linear-gradient(180deg, #4d4632, #2e2a1e 70%, #22201a); }
+.cstone.passed { opacity: .55; }
+.cstone.out .cs-head { background: linear-gradient(180deg, #252a28, #1a1e1d); filter: grayscale(.8); }
+.cstone.out .cs-med { opacity: .55; }
+.cs-crack { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(115deg, transparent 47%, rgba(0, 0, 0, .8) 48%, rgba(0, 0, 0, .8) 49%, transparent 50%), linear-gradient(65deg, transparent 58%, rgba(0, 0, 0, .7) 59%, transparent 60%); }
+.cstone.risen .cs-med { border-color: var(--gilt); }
+.cstone.away { opacity: .6; }
+button.cstone { cursor: pointer; }
+button.cstone.can .cs-head { border-color: var(--gilt); animation: cCan 1.8s ease-in-out infinite; }
+button.cstone.sel .cs-head { border-color: var(--gilt-hi); box-shadow: 0 0 0 2px var(--gilt-hi), 0 0 26px var(--glow); }
+@keyframes cCan { 50% { box-shadow: 0 0 0 1px var(--gilt-2), 0 0 16px var(--glow); } }
+
+/* The bell tower */
+.ctower { position: relative; margin: 8px auto; width: max-content; min-width: 132px; padding: 10px 18px 10px; display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; background: linear-gradient(180deg, var(--ink-3), var(--ink-2)); border: 1px solid var(--iron); border-radius: 60px 60px 8px 8px; }
+.ct-bell { width: 26px; height: 26px; fill: none; stroke: var(--gilt); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transform-origin: 50% 10%; }
+.ctower .ct-n { font: 600 44px/1 var(--text); color: var(--bone); animation: cPop .45s var(--ease) both; }
+.ctower .ct-n small { font-size: 22px; color: var(--ash); }
+.ctower > small { font: italic 14px/1.2 var(--text); color: var(--bone-2); }
+.ct-of { font: italic 12px/1 var(--text); color: var(--ash); }
+.ctower.dig { border-color: var(--blood); }
+.ctower.dig .ct-bell { stroke: var(--blood-ink); animation: cRing 1.2s ease-in-out infinite; }
+@keyframes cRing { 25% { transform: rotate(14deg); } 75% { transform: rotate(-14deg); } }
+
+/* Turn panel, stepper, wager */
+.cturn { text-align: center; margin: 10px auto; max-width: 30rem; }
+.cturn h2 { font-family: var(--serif, serif); font-size: 28px; margin: 4px 0 6px; }
+.cturn.me h2 { color: var(--gilt); }
+.cturn.demon h2 { color: var(--blood-ink); }
+.cchal { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 10px 0; }
+.cstep { display: flex; align-items: center; gap: 16px; }
+.cs-btn { width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--gilt-2); background: var(--ink-2); color: var(--gilt); font: 600 28px/1 var(--text); cursor: pointer; }
+.cs-btn:disabled { opacity: .3; cursor: default; }
+.cs-val { display: flex; flex-direction: column; align-items: center; min-width: 84px; }
+.cs-val b { font: 600 52px/1 var(--text); color: var(--bone); animation: cPop .3s var(--ease) both; }
+.cs-val small { font: italic 13px/1.2 var(--text); color: var(--ash); }
+.cwager { display: flex; justify-content: center; gap: 14px; margin: 14px 0 4px; }
+.cw-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 18px 10px; border-radius: 12px; border: 1px solid var(--iron); background: var(--ink-2); color: inherit; font: inherit; cursor: pointer; }
+.cw-btn .ccard { width: 54px; }
+.cw-btn small { color: var(--ash); font-style: italic; }
+.cw-btn.on { border-color: var(--gilt); box-shadow: 0 0 0 1px var(--gilt), 0 0 18px var(--glow); }
+.cstarter { text-align: center; margin: 8px 0; }
+.cstarter .chips-row { justify-content: center; }
+.c-goal { margin: 2px 0 8px; }
+.c-ghostnote { display: flex; align-items: center; gap: 8px; justify-content: center; color: var(--bone-2); font-style: italic; }
+.c-ghostnote .glyph { width: 22px; height: 22px; color: var(--gilt); }
+.crelic { display: flex; align-items: center; gap: 10px; margin: 10px 0; padding: 10px 12px; border: 1px solid var(--iron); border-radius: 10px; background: var(--ink-2); }
+.crelic.used { opacity: .5; }
+.crelic > span:nth-child(2) { flex: 1; min-width: 0; }
+.crelic b { display: block; } .crelic small { color: var(--ash); }
+.cr-art { width: 34px; height: 34px; color: var(--gilt); flex: none; }
+.cr-art svg { width: 100%; height: 100%; }
+.c-lobbyhand { display: flex; justify-content: center; gap: 10px; margin: 10px 0 6px; }
+.c-lobbyhand .ccard { width: 48px; }
+.c-lobbyhand .ccard:nth-child(odd) { transform: rotate(-4deg); } .c-lobbyhand .ccard:nth-child(even) { transform: rotate(3deg); }
+
+/* Moments */
+.m-cresult .c-opened { list-style: none; padding: 0; margin: 16px auto 6px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 34rem; }
+.c-opened li { animation: cFlipIn .55s var(--ease) both; animation-delay: var(--d); }
+.c-opened .ccard { width: 58px; }
+.c-opened li.f-C .ccard, .c-opened li.f-D .ccard { filter: drop-shadow(0 0 12px rgba(156, 28, 34, .8)); }
+.c-opened li.f-G .ccard { filter: drop-shadow(0 0 10px rgba(236, 210, 143, .4)); }
+@keyframes cFlipIn { from { transform: perspective(500px) rotateY(90deg) translateY(10px); opacity: 0; } }
+.c-verdict { animation: fadeIn .5s var(--ease) both; animation-delay: var(--d); }
+.c-verdict.gold .m-title { color: var(--gilt-hi); }
+.c-verdict.grim .m-title { color: var(--blood-ink); }
+.c-verdict .result-stamp { margin: 8px auto; }
+.c-lantern-card { display: flex; justify-content: center; margin: 10px 0; }
+.c-lantern-card .ccard { width: 80px; }
+.c-rise-candles { display: flex; justify-content: center; margin: 12px 0; }
+.c-rise-candles .c-candles { gap: 14px; }
+.c-rise-candles .c-candles i { width: 10px; height: 26px; }
+.c-rise-candles .c-candles i.lit::before { width: 10px; height: 14px; top: -14px; }
+.c-rise-candles .c-candles i:nth-child(1) { animation: fadeIn .4s .4s both; } .c-rise-candles .c-candles i:nth-child(2) { animation: fadeIn .4s .9s both; } .c-rise-candles .c-candles i:nth-child(3) { animation: fadeIn .4s 1.4s both; }
+.m-art.c-spade, .m-art.c-rise { color: var(--gilt); }
+
+/* End */
+.c-award { display: flex; align-items: center; gap: 10px; justify-content: center; margin: 12px 0; }
+.c-award .glyph { width: 30px; height: 30px; color: var(--gilt); }
+.c-award b { display: block; } .c-award small { color: var(--ash); }
+.c-graph { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 6px; }
+.c-graph li { display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; align-items: end; }
+.cg-r { font: 600 13px/1 var(--text); color: var(--ash); }
+.cg-bars { display: flex; gap: 3px; align-items: flex-end; height: 34px; border-bottom: 1px solid var(--iron); }
+.cg-bars i { position: relative; flex: 0 1 22px; height: max(6px, var(--h)); background: var(--gilt-2); border-radius: 2px 2px 0 0; }
+.cg-bars i.bluff { background: var(--blood); }
+.cg-bars i b { position: absolute; top: -13px; left: 0; right: 0; text-align: center; font: 600 10px/1 var(--text); color: var(--bone-2); }
+.c-graph small { font-style: italic; } .c-graph small.ok { color: var(--gilt); } .c-graph small.bad { color: var(--blood-ink); }
+
+/* TV: the graveyard */
+.cboard .c-cols { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 28px; padding: 8px 36px 28px; position: relative; z-index: 1; }
+.cboard .c-main { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+.cboard .c-side { display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+.cyard.big { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 26px 22px; }
+.cyard.big.n3, .cyard.big.n4 { grid-template-columns: repeat(var(--cols, 4), minmax(0, 220px)); justify-content: center; }
+.cyard.big.n3 { --cols: 3; }
+.cyard.big.n6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.cyard.big.n7, .cyard.big.n8 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.cyard.big .cs-head { padding: 18px 10px 12px; }
+.cyard.big .cs-med { width: 74px; height: 74px; }
+.cyard.big .cs-name { font-size: 20px; }
+.cyard.big .c-wins i { width: 11px; height: 11px; }
+.cyard.big .cslab { max-width: 112px; }
+.cyard.big .cs-tag { font-size: 15px; }
+.cyard.big .cs-bid, .cyard.big .cs-pass { min-width: 36px; height: 36px; border-radius: 18px; font-size: 20px; }
+.cboard .ctower.big { min-width: 200px; padding: 16px 26px; }
+.cboard .ctower.big .ct-n { font-size: 84px; }
+.cboard .ctower.big .ct-bell { width: 40px; height: 40px; }
+.cboard .c-goal { text-align: center; font: 600 18px/1.3 var(--text); }
+.c-legend { display: flex; justify-content: center; gap: 16px; }
+.c-legend > span { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.c-legend .ccard { width: 42px; }
+.c-legend small { color: var(--ash); font-style: italic; }
+.cboard .b-now { text-align: center; margin-top: 18px; }
+@media (max-width: 380px) { .cyard { grid-template-columns: repeat(3, minmax(0, 1fr)); } .ccard { width: 56px; } }
+@keyframes cPop { from { opacity: 0; transform: scale(1.7); } }
+/* Coffins: the compact bell tower on phones, the result stamp */
+.ctower:not(.big) { flex-direction: row; gap: 10px; border-radius: 30px; padding: 6px 18px; min-width: 0; }
+.ctower:not(.big) .ct-bell { width: 20px; height: 20px; }
+.ctower:not(.big) .ct-n { font-size: 30px; }
+.ctower:not(.big) .ct-n small { font-size: 16px; }
+.ctower:not(.big) .ct-of { display: none; }
+.c-stamp { display: inline-block; margin: 10px auto 6px; padding: 6px 16px; border: 2px solid currentColor; border-radius: 4px; font: 600 20px/1.1 var(--text); letter-spacing: .04em; transform: rotate(-3deg); animation: cPop .4s var(--ease) both; animation-delay: calc(var(--d, 0s) + .3s); }
+.c-stamp.win { color: var(--gilt-hi); }
+.c-stamp.loss { color: var(--blood-ink); }
+body.is-board .m-cresult .c-opened .ccard { width: 96px; }
+body.is-board .c-stamp { font-size: 30px; }
+.cyard.big .cstone { max-width: 260px; justify-self: center; width: 100%; }

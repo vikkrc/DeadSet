@@ -1,6 +1,6 @@
 # Dead Set: Coffins — rules and game spec
 
-**Status: rules agreed for Beta 3 (2026-11-12). Not built yet.** Balance numbers (timers, the bot bluff rate) are to be confirmed by bot simulations during implementation.
+**Status: built for Beta 3 (2026-11-12).** Bot simulations (300 games per table size) gave about 8 rounds at 3 players, 12 at 5, 21 at 8 and 26 at 10; every game ended by digs or the last one standing.
 
 A quick bluffing game for **3–10 players**, about 10 minutes, chosen in the lobby next to the other modes. One phone each, plus the TV board as the graveyard.
 

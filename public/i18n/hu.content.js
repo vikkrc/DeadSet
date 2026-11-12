@@ -3,6 +3,7 @@ export default {
   and: 'és',
   numbers: ['nulla', 'egy', 'két', 'három', 'négy', 'öt', 'hat', 'hét', 'nyolc', 'kilenc', 'tíz'],
   roles: {
+    C_DIGGER: { name: "Sírásó", when: "Mindig", summary: "Temesd el a koporsóidat, licitálj, hányat tudsz kinyitni, és áss. Két tiszta ásás győz.", detail: "Az Átkod a blöfföd: temesd el, hogy mások belebotoljanak. Ha te nyered a licitet, a saját sírodat nyitod ki először." },
     X_LIVING: { name: "Élő", when: "Mindig", summary: "A kristálygömbben látod a jelszót. Mondj egy szót, ami bizonyítja, hogy tudod, de ne add a Démon kezébe.", detail: "Ha túl nyilvánvaló, a Démon megtudja a jelszót. Ha túl homályos, az asztal téged gyanúsít. Aztán nevezzétek meg a Démont." },
     X_DEMON: { name: "Démon", when: "Mindig", summary: "Csak a kategóriát látod. Olvadj be: mondj olyan szót, mintha tudnád a jelszót.", detail: "Figyeld a többieket, és fejtsd meg a jelszót. Ha az asztal mást nevez meg, nyersz. Ha elkapnak, egy jó tipp még így is győzelem." },
     M_JESTER: { name: "Bolond", when: "Mindig", summary: "Egyedül nyersz, ha az asztal téged nevez meg az Utolsó Esélyben, vagy a Kaszás téged nevez meg az Elszámolásban.", detail: "Se nem Élő, se nem a Halálé vagy: a Médium nem lát, a Gyertya Élőnek mutat. Küldetésen Sikert vagy Szabotázst is játszhatsz. Tűnj gyanúsnak, de ne túlságosan." },
@@ -122,6 +123,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Bosszúálló szellemek', text: 'Minden kiesett játékos naponta egy 1 súlyú szellemszavazatot adhat le.', enforcement: 'A szellemek nem jelölhetnek, nem használhatnak képességet, és nem befolyásolják a Többségi szabályt.' },
   },
   presets: {
+    coffins: { name: "Dead Set: Koporsók", blurb: "Gyors blöffjáték. Temess el aranyat és egy átkot, licitálj, hány koporsót tudsz kinyitni, aztán áss. Két tiszta ásás győz." },
     exorcism: { name: "Dead Set: Ördögűzés", blurb: "Blöffölős szójáték. A kristálygömbben mindenki látja a jelszót, kivéve a Démont. Mindenki egy szót mond, aztán leleplezitek a Démont." },
     missions: { name: "Dead Set: Küldetések", blurb: "Csapatok, szavazások és szabotázs. Senki sem hal meg: vezessetek küldetéseket, olvassátok a szavazatokat, és találjátok meg a Halált, mielőtt ő a Médiumot." },
     standard: { name: 'Alap', blurb: 'Az igazi Dead Set-élmény. Tíz kiegészítő szerep 7 játékostól, mindenkinek Álom minden éjjel, 1–3 szabálykártya.' },
@@ -148,6 +150,17 @@ export default {
     'A Halál a várossal szavazott. Hát persze.',
   ],
   guide: {
+    coffinsH: "Dead Set: Koporsók",
+    coffins: `<p>Gyors blöffjáték 3–10 játékosnak, a lobbiban választható. Mindenkinél 3 Arany koporsó és egy Átok van (a hosszabb változatban 4 és egy).</p>
+<ol>
+<li><b>A temetés.</b> Mindenki egyszerre, titokban eltemet egy koporsót: koppints rá, majd tartsd nyomva. Aztán a kör első játékosától kezdve a körödben vagy eltemetsz még egy koporsót a halmod tetejére, vagy kihívást teszel: <i>„Ki tudok nyitni N-et”</i>, legfeljebb annyit, ahány összesen el van temetve.</li>
+<li><b>A licit.</b> Körben mindenki emel vagy passzol. A passz az egész körre szól. Az utolsó licitáló lesz az Ásó.</li>
+<li><b>Az ásás.</b> Az Ásó előbb a saját koporsóit nyitja ki felülről lefelé, aztán más sírokat választ, mindig a legfelső koporsót, amíg N nyitva nincs.</li>
+<li><b>Tiszta vagy átkozott.</b> Csupa Arany: tiszta ásás, a sírkő bearanyozódik. Átok a saját sírodban: te választod ki, melyik koporsót veszíted el. Más átka: ő vakon húz egyet a koporsóid közül, és az elvész. Az átok gazdája kezdi a következő kört.</li>
+<li><b>Győzelem</b> a tiszta ásásaiddal (alapból 2; a lobbiban 1 vagy 3), vagy ha egyedül neked maradt koporsód.</li>
+</ol>
+<p><b>A Halál koporsója</b> (alapból bekapcsolva): minden körben egy rejtett játékosnál van, egy Arany helyett. Ha kiásod, az ásás elbukik, és a gazdája ellop tőled egy koporsót, ami Arannyá válik. <b>Szellemfogadások</b> (alapból bekapcsolva): akinek elfogyott a koporsója, minden ásásra Aranyra vagy Átokra fogad; három talált után Visszajáróként feltámad egy Arany koporsóval. <b>Ereklyék</b> (alapból kikapcsolva): titkos Lámpás (belesel egy sírba), Kulcs (előbb más sírját nyitod ki) vagy Oltalom (az átok nem kerül semmibe), mindegyik egyszer használható.</p>
+<p>A pontok játékról játékra öröklődnek: a győztes +3, minden tiszta ásás +1, minden feltámadás +1.</p>`,
     exorcismH: "Dead Set: Ördögűzés",
     exorcism: `<p>Blöffölős szójáték 3–12 játékosnak, a lobbiban választható. Minden telefonon az asztal nyelve szól, hogy a szavak egyezzenek.</p>
 <ol>

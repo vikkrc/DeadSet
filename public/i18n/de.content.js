@@ -3,6 +3,7 @@ export default {
   and: 'und',
   numbers: ['kein', 'ein', 'zwei', 'drei', 'vier', 'fünf', 'sechs', 'sieben', 'acht', 'neun', 'zehn'],
   roles: {
+    C_DIGGER: { name: "Totengräber", when: "Immer", summary: "Vergrabe deine Särge, biete, wie viele du öffnen kannst, und grabe. Zwei saubere Grabungen gewinnen.", detail: "Dein Fluch ist dein Bluff: Vergrabe ihn, damit andere darüber stolpern. Gewinnst du das Bieten, öffnest du zuerst dein eigenes Grab." },
     X_LIVING: { name: "Lebend", when: "Immer", summary: "In der Kristallkugel siehst du das Passwort. Sag ein Wort, das beweist, dass du es kennst, ohne es dem Dämon zu verraten.", detail: "Zu offensichtlich, und der Dämon kennt das Passwort. Zu rätselhaft, und der Tisch verdächtigt dich. Dann benennt den Dämon." },
     X_DEMON: { name: "Dämon", when: "Immer", summary: "Du siehst nur die Kategorie. Fall nicht auf: Sag ein Wort, als würdest du das Passwort kennen.", detail: "Hör den anderen zu und knack das Passwort. Benennt der Tisch jemand anderen, gewinnst du. Wirst du entlarvt, gewinnt ein richtiger Tipp trotzdem." },
     M_JESTER: { name: "Narr", when: "Immer", summary: "Du gewinnst allein, wenn der Tisch dich im Letzten Gefecht benennt oder der Schnitter dich in der Abrechnung benennt.", detail: "Du bist weder Lebend noch Tod: Das Medium sieht dich nicht, die Kerze zeigt dich als Lebend. Auf Missionen darfst du Erfolg oder Sabotage spielen. Wirk verdächtig, aber nicht zu sehr." },
@@ -122,6 +123,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Rachsüchtige Geister', text: 'Jeder ausgeschiedene Spieler darf pro Tag eine Geisterstimme mit Gewicht 1 abgeben.', enforcement: 'Geister können nicht nominieren, keine Fähigkeiten nutzen und die Mehrheitsregel nicht beeinflussen.' },
   },
   presets: {
+    coffins: { name: "Dead Set: Särge", blurb: "Ein schnelles Bluffspiel. Vergrabe Gold und einen Fluch, biete, wie viele Särge du öffnen kannst, dann grabe. Zwei saubere Grabungen gewinnen." },
     exorcism: { name: "Dead Set: Exorzismus", blurb: "Ein Wortspiel voller Bluff. In der Kristallkugel sehen alle das Passwort, nur der Dämon nicht. Jeder ein Wort, dann wird der Dämon benannt." },
     missions: { name: "Dead Set: Missionen", blurb: "Teams, Abstimmungen und Sabotage. Niemand stirbt: Führt Missionen an, lest die Stimmen und findet den Tod, bevor er das Medium findet." },
     standard: { name: 'Standard', blurb: 'Das eigentliche Dead-Set-Erlebnis. Zehn Zusatzrollen ab 7 Spielern, jede Nacht ein Traum für alle, 1–3 Regelkarten.' },
@@ -148,6 +150,17 @@ export default {
     'Der Tod stimmte mit der Stadt. Natürlich.',
   ],
   guide: {
+    coffinsH: "Dead Set: Särge",
+    coffins: `<p>Ein schnelles Bluffspiel für 3–10 Spieler, in der Lobby wählbar. Jeder hält 3 Goldsärge und einen Fluch (4 und einen mit der längeren Option).</p>
+<ol>
+<li><b>Das Begräbnis.</b> Alle vergraben gleichzeitig heimlich einen Sarg: antippen, dann halten. Danach, ab dem ersten Spieler der Runde, vergräbst du in deinem Zug entweder einen weiteren Sarg oben auf deinem Stapel oder forderst heraus: <i>„Ich kann N öffnen“</i>, höchstens so viele, wie insgesamt vergraben sind.</li>
+<li><b>Das Bieten.</b> Reihum erhöht jeder oder passt. Ein Pass gilt für die ganze Runde. Wer zuletzt übrig bleibt, ist der Gräber.</li>
+<li><b>Die Grabung.</b> Der Gräber öffnet zuerst seine eigenen Särge von oben nach unten, dann wählt er andere Gräber, immer den obersten Sarg, bis N offen sind.</li>
+<li><b>Sauber oder verflucht.</b> Nur Gold: eine saubere Grabung, der Grabstein wird vergoldet. Ein Fluch im eigenen Grab: Du wählst einen Sarg, den du verlierst. Der Fluch eines anderen: Er zieht blind einen deiner Särge, und der ist weg. Wem der Fluch gehört, beginnt die nächste Runde.</li>
+<li><b>Gewinne</b> mit deinen sauberen Grabungen (standardmäßig 2; 1 oder 3 in der Lobby) oder als letzter Spieler mit Särgen.</li>
+</ol>
+<p><b>Der Sarg des Todes</b> (standardmäßig an): Jede Runde hält ihn ein verborgener Spieler anstelle eines Goldsargs. Gräbst du ihn aus, scheitert die Grabung, und sein Halter stiehlt dir einen Sarg, der zu Gold wird. <b>Geisterwetten</b> (standardmäßig an): Spieler ohne Särge wetten bei jeder Grabung auf Gold oder Fluch; nach drei Treffern erheben sie sich als Wiedergänger mit einem Goldsarg. <b>Reliquien</b> (standardmäßig aus): eine geheime Laterne (in ein Grab spähen), ein Schlüssel (ein fremdes Grab vor dem eigenen öffnen) oder ein Schutz (ein Fluch kostet nichts), je einmal nutzbar.</p>
+<p>Punkte werden zwischen Spielen übernommen: der Sieger +3, jede saubere Grabung +1, jedes Auferstehen +1.</p>`,
     exorcismH: "Dead Set: Exorzismus",
     exorcism: `<p>Ein Wortspiel voller Bluff für 3–12 Spieler, in der Lobby wählbar. Auf jedem Handy gilt die Sprache des Tisches, damit die Wörter passen.</p>
 <ol>

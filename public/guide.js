@@ -98,6 +98,17 @@ export const GUIDE_EN = {
 <li><b>One last guess.</b> A caught Demon gets one guess at the password, from the 4×4 word grid or typed. Right, and the Demon still wins.</li>
 </ol>
 <p>The round ends back in the same lobby with the same settings, and the scores carry on: Living +1 for a win, Demons +2.</p>`,
+  coffinsH: 'Dead Set: Coffins',
+  coffins: `<p>A quick bluffing game for 3–10 players, chosen in the lobby. Everyone holds 3 Gold coffins and one Curse (4 and one with the longer option).</p>
+<ol>
+<li><b>The burial.</b> Everyone secretly buries one coffin at once: tap it, then hold. Then, from the round's first player, each turn you either bury another coffin on top of your stack, or challenge: <i>"I can open N"</i>, up to the number buried in total.</li>
+<li><b>The bidding.</b> Around the table, raise or pass. A pass is final for the round. The last bidder left is the Digger.</li>
+<li><b>The dig.</b> The Digger opens their own coffins first, top down, then picks other graves, one top coffin at a time, until N are open.</li>
+<li><b>Clean, or cursed.</b> All Gold: a clean dig, and the headstone turns gilt. A curse in your own grave: you choose a coffin to lose. Someone else's curse: they draw one of your coffins blindly, and it is gone. Their owner starts the next round.</li>
+<li><b>Win</b> with your clean digs (2 by default; 1 or 3 in the lobby), or as the last player with coffins.</li>
+</ol>
+<p><b>The Death coffin</b> (on by default): each round one hidden player holds it in place of a Gold coffin. Dig it up and the dig fails; its holder steals one of your coffins, which becomes Gold. <b>Ghost wagers</b> (on by default): players with no coffins left wager Gold or Curse on every dig; three right and they rise as a Revenant with one Gold coffin. <b>Relics</b> (off by default): a secret Lantern (peek at a grave), Key (open another grave before your own) or Ward (a curse costs nothing), each used once.</p>
+<p>Scores carry over between games: the winner +3, every clean dig +1, every rise +1.</p>`,
   missionsH: 'Dead Set: Missions',
   missions: `<p>A second mode for 5–12 players, chosen in the lobby. Nobody dies: Death has slipped into the expedition, and the table must find it.</p>
 <ol>
@@ -122,7 +133,7 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   return `<div class="guide">
   <header class="phase-head"><span class="kicker">${G.kicker}</span><h1>${G.title}</h1>
     <p class="scenario">${G.intro}</p></header>
-  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}<a class="tag" href="#g11">${G.sidesH}</a><a class="tag" href="#g12">${G.missionsH}</a><a class="tag" href="#g13">${G.exorcismH}</a></nav>
+  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}<a class="tag" href="#g11">${G.sidesH}</a><a class="tag" href="#g12">${G.missionsH}</a><a class="tag" href="#g13">${G.exorcismH}</a><a class="tag" href="#g14">${G.coffinsH}</a></nav>
   <section id="g0"><h2>${G.basicsH}</h2>${G.basics}</section>
   <section id="g1"><h2>${G.roundH}</h2>${G.round}</section>
   <section id="g2"><h2>${G.winH}</h2>${G.win}</section>
@@ -150,5 +161,6 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   <section id="g12"><h2>${G.missionsH}</h2>${G.missions}${roles.filter((r) => r.set === 'missions').map(entry).join('')}
     <h3>${G.missionCardsH}</h3>${(c?.missionCards ?? []).map((x) => `<div class="entry">${glyph('mission')}<div><h4>${esc(mcardF(x.id, 'name'))}</h4><p>${esc(mcardF(x.id, 'text'))}</p></div></div>`).join('')}</section>
   <section id="g13"><h2>${G.exorcismH}</h2>${G.exorcism}${roles.filter((r) => r.set === 'exorcism').map(entry).join('')}</section>
+  <section id="g14"><h2>${G.coffinsH}</h2>${G.coffins}${roles.filter((r) => r.set === 'coffins').map(entry).join('')}</section>
   </div>`;
 }

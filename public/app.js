@@ -9,6 +9,7 @@ import { seatLayout } from './layout.js';
 import { sceneMs, scenesFor } from './interludes.js';
 import { cardArt, roleEmblemId, roleNumber } from './cards.js';
 import { emblem } from './emblems.js';
+import { isCoffinsPhase, coffinsMain, coffinsDock, coffinsActs, coffinsMoment, coffinsMomentHtml, lanternMoments, C_MOMENT_TIME, coffinsEndHtml, coffinsLobbyDeck, COFFINS_QUIET } from './coffins.js';
 import { lobbyOrb, endOrb, isExorcismPhase, exorcismMain, exorcismPicks, exorcismDock, exorcismActs, exorcismMoment, exorcismMomentHtml, X_MOMENT_TIME, exorcismEndHtml, exorcismLobbyDeck, setExorcismContent, mountBalls } from './exorcism.js';
 import { avatarSvg, randomAvatar, PARTS, COLORS } from './avatar.js';
 import { giftHtml, productIndex } from './gifts.js';
@@ -277,9 +278,11 @@ function detectMoments(v) {
     entryMoments(l);
     sharedFrom(l, start);
   }
+  if (v.mode === 'coffins' && v.me && !v.me.moderator) out.push(...lanternMoments(freshPriv, name));
   // Side Missions: the owner learns at once (personal, queued behind any shared scene).
   if (v.mode === 'missions' && v.me && !v.me.moderator) for (const x of freshPriv.filter((e) => e.kind === 'side' && e.state)) out.push({ type: 'mside', side: x.side, state: x.state, sound: x.state === 'done' ? 'approve' : 'unpick', tapOnly: true });
   function entryMoments(l) {
+    if (v.mode === 'coffins' && l.ev?.startsWith('c-')) { const mm = coffinsMoment(l, v, fresh, { notify, name, sound: pubSound }); if (mm) out.push(...[].concat(mm)); return; }
     if (v.mode === 'exorcism' && l.ev?.startsWith('x-')) { const mm = exorcismMoment(l, v, fresh, { notify, name }); if (mm) out.push(...[].concat(mm)); return; }
     if (v.mode === 'missions') {
       if (l.ev === 'm-start') { const sc = fresh.find((x) => x.ev === 'scenario'); out.push({ type: 'night0', scenario: sc ? entryMsg(sc) : '', sc: v.scenario, rules: [], tapOnly: false }); return; }
@@ -335,7 +338,7 @@ function detectMoments(v) {
       case 'shot': out.push({ type: 'death', sound: 'shot', title: 'A shot rings out', names: (l.victims ?? []).map(name), sub: l.victims?.length ? 'Nobody saw who pulled the trigger.' : 'The bullet found no one.' }); break;
       case 'final-act': out.push({ type: 'call', kicker: ruleF('EQUAL_EXCHANGE', 'name'), title: 'A final act', sub: 'The condemned may take one more with them.', sound: 'knock' }); break;
       case 'exchange': out.push({ type: 'death', title: 'An equal exchange', names: (l.victims ?? []).map(name), sub: 'The condemned did not go alone.' }); break;
-      case 'end': out.push({ type: 'end', winner: l.winner, reason: l.reason, tapOnly: true }); break;
+      case 'end': out.push({ type: 'end', winner: l.winner, reason: l.reason, who: l.pid ? name(l.pid) : '', tapOnly: true }); break;
       case 'discussion': notify(t('Day {n} · the floor is open', { n: roman(v.dayNumber) })); break;
       case 'defense': notify(t('Defence: each nominee speaks in turn')); pubSound('spot'); break;
       case 'novote': notify(t('Nobody was nominated. No vote today.')); break;
@@ -360,9 +363,9 @@ function detectMoments(v) {
 const sceneData = (m) => ({ rules: m.rules?.length ?? 0, dead: (m.killed?.length ?? 0) + (m.expired?.length ?? 0), n: m.cards ? m.cards.length : m.count ?? 0 });
 
 const MOMENT_SOUND = { night0: 'night', day1: 'dawn', nightfall: 'night', dawn: 'dawn', tally: 'knock', death: 'death', revive: 'revive', bloodmoon: 'bloodmoon' };
-const END_THEME = { DEMON: 'winDeath', DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester', LOVERS: 'winLovers', CULT: 'winCult', RIPPER: 'winRipper' };
+const END_THEME = { COFFINS: 'winLiving', DEMON: 'winDeath', DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester', LOVERS: 'winLovers', CULT: 'winCult', RIPPER: 'winRipper' };
 const MOMENT_TIME = { end: 9000, private: 6000, gift: 5600, mside: 5200, coin: 5200, night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 5200, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
-const momentTime = (m) => (m.type === 'mreveal' ? revealTime(m) : X_MOMENT_TIME[m.type] ? X_MOMENT_TIME[m.type] : MISSION_MOMENT_TIME[m.type] ? MISSION_MOMENT_TIME[m.type] : !onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : (MOMENT_TIME[m.type] ?? 6000) + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
+const momentTime = (m) => (m.type === 'mreveal' ? revealTime(m) : C_MOMENT_TIME[m.type] ? C_MOMENT_TIME[m.type] : X_MOMENT_TIME[m.type] ? X_MOMENT_TIME[m.type] : MISSION_MOMENT_TIME[m.type] ? MISSION_MOMENT_TIME[m.type] : !onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : (MOMENT_TIME[m.type] ?? 6000) + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
 
 function nextMoment() {
   clearTimeout(S.momentTimer);
@@ -432,12 +435,13 @@ function verdictMedal(id, nm) {
   const inner = p?.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="vm-ini">${esc([...(nm ?? '?')][0] ?? '?')}</span>`;
   return `<span class="v-medal" aria-hidden="true"><span class="v-disc">${inner}</span></span>`;
 }
-const WIN_GLYPH = { DEMON: 'death', DEATH: 'death', JESTER: 'jester', NON_DEATH: 'innocent', LOVERS: 'heart', CULT: 'cult', RIPPER: 'ripper' };
+const WIN_GLYPH = { COFFINS: 'undertaker', DEMON: 'death', DEATH: 'death', JESTER: 'jester', NON_DEATH: 'innocent', LOVERS: 'heart', CULT: 'cult', RIPPER: 'ripper' };
 const WIN_CLASS = { NON_DEATH: 'living', LOVERS: 'lovers', CULT: 'cult', RIPPER: 'ripper' };
 
 function didIWin(v, winner) {
   const me = v?.me;
   if (!me || me.moderator || winner === 'DRAW' || winner === 'ABORTED') return null;
+  if (winner === 'COFFINS') return v.coffins?.winner === me.id;
   if (winner === 'JESTER') return v.jesterId === me.id;
   if (winner === 'LOVERS') return !!me.lover;
   if (winner === 'RIPPER') return me.alignment === 'RIPPER';
@@ -518,13 +522,14 @@ function momentHtml(m) {
       break;
     }
     case 'xball': case 'xvotes': case 'xguess': body = exorcismMomentHtml(m, { letters, onBoard, V }); break;
+    case 'cdig': case 'cresult': case 'crise': case 'clantern': body = coffinsMomentHtml(m, { letters, onBoard, V }); break;
     case 'gift': body = giftHtml(m.idx, { t, th, esc, product: m.product }); break;
     case 'mside': case 'mlottery': case 'mlantern': case 'mintro': case 'mcandle': case 'mcard': case 'mvotes': case 'mreveal': case 'mnamed': case 'munmask': case 'mreckon': body = missionMomentHtml(m, { letters, avatarSvg, onBoard }); break;
     case 'death':
       body = `<div class="m-art">${glyph(m.art || 'dagger')}</div><h1 class="m-title">${letters(t(m.title))}</h1>${m.names.length ? `<ul class="victims">${names(m.names)}</ul>` : ''}<p class="m-sub">${tmh(m.sub)}</p>`;
       break;
     case 'end': {
-      const title = t({ DEMON: 'The Demon wins', DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[m.winner] ?? 'The end');
+      const title = m.winner === 'COFFINS' ? th('{a} wins', { a: m.who ?? '' }) : t({ DEMON: 'The Demon wins', DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[m.winner] ?? 'The end');
       const won = didIWin(V(), m.winner);
       body = `<div class="m-art">${glyph(WIN_GLYPH[m.winner] ?? 'scroll')}</div>
         <span class="kicker">${t('The verdict')}</span><h1 class="m-title ${m.winner === 'DEATH' ? 'blood' : ''}">${letters(title)}</h1><p class="m-sub">${tmh(m.reason)}</p>
@@ -603,6 +608,7 @@ function render() {
   document.body.classList.toggle('is-dead', ghost);
   document.body.classList.toggle('is-board', onBoard());
   document.body.classList.toggle('mode-exorcism', v?.mode === 'exorcism' && ['room', 'board'].includes(S.route?.name));
+  document.body.classList.toggle('mode-coffins', v?.mode === 'coffins' && ['room', 'board'].includes(S.route?.name));
   document.body.classList.toggle('mode-missions', v?.mode === 'missions' && ['room', 'board'].includes(S.route?.name));
   if (onBoard() && v && S.board.audio && v.table?.score !== false) { score.setTheme(v.table?.scoreTheme ?? 'classic'); score.play(moodFor(v)); score.tension(tenseFor(v)); } else score.stop();
   document.body.classList.toggle('has-sheet', !!S.ui.sheet && (S.route?.name === 'room' || S.ui.sheet === 'lang' || S.ui.sheet === 'avatar'));
@@ -682,6 +688,7 @@ function phaseWord(v) {
   if (v.phase === 'ENDED') return { word: t('The End'), num: '', night: false };
   if (v.phase === 'NIGHT_0_REVEAL') return { word: t('Night'), num: '0', night: true };
   if (v.phase === 'M_REVEAL') return { word: t('Missions'), num: '', night: true };
+  if (isCoffinsPhase(v.phase)) return { word: t('Round'), num: roman(v.coffins?.round ?? 1), night: false };
   if (isExorcismPhase(v.phase)) return { word: t('Exorcism'), num: v.exorcism?.rounds > 1 && v.phase === 'X_CLUES' ? roman(v.exorcism.round) : '', night: v.phase === 'X_REVEAL' };
   if (isMissionPhase(v.phase)) return { word: v.phase === 'M_LAST_STAND' || v.phase === 'M_RECKONING' ? t('The End') : t('Mission'), num: v.phase === 'M_LAST_STAND' || v.phase === 'M_RECKONING' ? '' : roman((v.missions?.mission ?? 0) + 1), night: v.phase === 'M_NIGHT' };
   if (isNight(v.phase) || v.phase === 'NIGHT_RESOLVING') return { word: t('Night'), num: roman(v.nightNumber), night: true };
@@ -692,6 +699,7 @@ const STEP_EN = {
   DAY_DEFENSE: 'Defence', DAY_VOTING: 'Secret ballot', DAY_RESOLVING: 'Final act', NIGHT_DREAM_SWAP: 'Nightfall', NIGHT_ACTIONS: 'Night actions', ENDED: 'Match over',
   M_REVEAL: 'Role reveal', M_LOTTERY: 'The first leader', M_PROPOSE: 'The proposal', M_VOTE: 'Team vote', M_MISSION: 'On the mission', M_RESULT: 'The reveal',
   M_NIGHT: 'Night interlude', M_LAST_STAND: 'The Last Stand', M_RECKONING: 'The Reckoning',
+  C_LOTTERY: 'The first player', C_BURY: 'The burial', C_TURN: 'Bury or challenge', C_BID: 'The bidding', C_WAGER: 'Ghost wagers', C_DIG: 'The dig', C_LOSE: 'A coffin is lost',
   X_REVEAL: 'The crystal ball', X_LOTTERY: 'The first speaker', X_CLUES: 'One word each', X_DISCUSS: 'Talk it over', X_VOTE: 'Name the Demon', X_GUESS: 'The last guess',
 };
 const STEP = new Proxy(STEP_EN, { get: (o, k) => (o[k] ? t(o[k]) : undefined) });
@@ -945,6 +953,7 @@ function pickContexts(v) {
   if (!a || !me || me.moderator) return [];
   if (isMissionPhase(v.phase)) return missionPicks(v, S);
   if (isExorcismPhase(v.phase)) return exorcismPicks(v, S);
+  if (isCoffinsPhase(v.phase)) return [];
   const out = [];
   switch (v.phase) {
     case 'DAY_PREP':
@@ -1098,6 +1107,7 @@ function mainFor(v, me) {
     default:
       if (isMissionPhase(v.phase)) return missionMain(v, me, MH);
       if (isExorcismPhase(v.phase)) return exorcismMain(v, me, MH);
+      if (isCoffinsPhase(v.phase)) return coffinsMain(v, me, MH);
       return isNight(v.phase) ? nightMain(v, me) : dayMain(v, me);
   }
 }
@@ -1300,6 +1310,7 @@ function musicRow(v, isHost) {
 /** 20 · Tonight's deck, the extended pool, rule cards and table switches. */
 function lobbyDeck(v, isHost) {
   if (v.mode === 'exorcism') return exorcismLobbyDeck(v, isHost, { LANGS, music: musicRow(v, isHost) });
+  if (v.mode === 'coffins') return coffinsLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
   const s = v.settings;
   const deck = v.setup?.publicDeck;
   const preset = v.presets.find((p) => p.id === s.preset);
@@ -1424,6 +1435,7 @@ function modeChooser(v, isHost) {
       ${card('classic', 'death', t('Classic Dead Set'), t('Hidden roles, night kills, Dreams and Rule cards. 5–25 players.'))}
       ${card('missions', 'mission', presetF('missions', 'name'), t('Teams, votes and sabotage. Nobody dies. 5–12 players.'))}
       ${card('exorcism', 'veiled', presetF('exorcism', 'name'), t('A word game of bluff: one word each, then name the Demon. 3–12 players.'))}
+      ${card('coffins', 'undertaker', presetF('coffins', 'name'), t('A quick bluffing game: bury gold, hide your curse, bid and dig. 3–10 players.'))}
     </div>
   </section>`;
 }
@@ -1453,6 +1465,12 @@ function setupForm(v) {
   const timer = (key, label) => `<label class="field"><span>${t(label)}</span><select class="input" data-set="timers.${key}">
       ${OPTS.map((n) => `<option value="${n}" ${tm8[key] === n ? 'selected' : ''}>${n === 0 ? t('Untimed') : n < 60 ? t('{n} s', { n }) : t('{n} min', { n: n / 60 })}</option>`).join('')}
       ${OPTS.includes(tm8[key]) ? '' : `<option selected value="${tm8[key]}">${t('{n} s', { n: tm8[key] })}</option>`}</select></label>`;
+  if (preset.coffins) {
+    return `<div class="stack" style="gap:18px"><details class="more" data-key="d-ctable" open><summary>${t('Table & timers')}</summary><div>
+      <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
+      <div class="grid2">${timer('cBury', 'Burial')}${timer('cTurn', 'Each turn')}${timer('cBid', 'Each bid')}${timer('cDig', 'Each dig pick')}${timer('cWager', 'Ghost wagers')}</div>
+    </div></details></div>`;
+  }
   if (preset.exorcism) {
     return `<div class="stack" style="gap:18px"><details class="more" data-key="d-xtable" open><summary>${t('Table & timers')}</summary><div>
       <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
@@ -1460,7 +1478,7 @@ function setupForm(v) {
     </div></details></div>`;
   }
   return `<div class="stack" style="gap:18px">
-    ${preset.missions ? '' : `<div class="carousel" data-key="presets">${v.presets.filter((p) => !p.missions && !p.exorcism).map((p) => `<button class="preset" data-act="preset" data-id="${p.id}" aria-pressed="${s.preset === p.id}" data-key="pr-${p.id}"><b>${esc(presetF(p.id, 'name'))}</b>${p.recommended ? `<span class="tag solid">${t('Best first game')}</span>` : ''}<small>${esc(presetF(p.id, 'blurb'))}</small><span class="kicker">${t('{a}–{b} players', { a: p.min, b: p.max })}</span></button>`).join('')}</div>`}
+    ${preset.missions ? '' : `<div class="carousel" data-key="presets">${v.presets.filter((p) => !p.missions && !p.exorcism && !p.coffins).map((p) => `<button class="preset" data-act="preset" data-id="${p.id}" aria-pressed="${s.preset === p.id}" data-key="pr-${p.id}"><b>${esc(presetF(p.id, 'name'))}</b>${p.recommended ? `<span class="tag solid">${t('Best first game')}</span>` : ''}<small>${esc(presetF(p.id, 'blurb'))}</small><span class="kicker">${t('{a}–{b} players', { a: p.min, b: p.max })}</span></button>`).join('')}</div>`}
 
     ${preset.custom ? `<details class="more" data-key="d-custom" open><summary>${t('Custom deck')}</summary><div>
       <label class="check"><input type="checkbox" data-set-bool="dreams" ${s.dreams ? 'checked' : ''}><span><b>${t('Dreams')}</b><small>${t('Everyone draws a Dream card each night.')}</small></span></label>
@@ -1863,9 +1881,13 @@ function deathRoom(v, me, D) {
 
 // ── End ────────────────────────────────────────────────────────────────────
 function endMain(v, me) {
-  const title = t({ DEMON: 'The Demon wins.', DEATH: 'Death wins.', NON_DEATH: 'The living win.', JESTER: 'The Jester wins.', DRAW: 'A draw.', ABORTED: 'Abandoned.', LOVERS: 'The Lovers win.', CULT: 'The Cult wins.', RIPPER: 'The Ripper wins.' }[v.winner] ?? 'The End');
+  const title = v.winner === 'COFFINS' ? t('{a} wins.', { a: v.players.find((p) => p.id === v.coffins?.winner)?.name ?? '' }) : t({ DEMON: 'The Demon wins.', DEATH: 'Death wins.', NON_DEATH: 'The living win.', JESTER: 'The Jester wins.', DRAW: 'A draw.', ABORTED: 'Abandoned.', LOVERS: 'The Lovers win.', CULT: 'The Cult wins.', RIPPER: 'The Ripper wins.' }[v.winner] ?? 'The End');
   const won = didIWin(v, v.winner);
-  const revealed = v.players.some((p) => p.role);
+  const revealed = v.mode !== 'coffins' && v.players.some((p) => p.role);
+  const everySecret = () => `<section data-key="reveal"><div class="rule">${t('Every secret')}</div>${revealed ? `<ul class="ledger">${v.players.map((p, i) => `<li class="${p.alive ? '' : 'dead'} ${p.id === me?.id ? 'me' : ''}" style="--i:${i}" data-key="rv-${p.id}">
+      <span class="seat">${p.role ? glyph(p.role.glyph) : ''}</span>
+      <span class="who"><b>${esc(p.name)}</b><small>${p.role ? esc(roleF(p.role.id, 'name')) : '—'}${p.originalRole ? ` ${th('(was {role})', { role: p.originalRole.id })}` : ''} · ${p.alive ? t('alive') : `† ${esc(stamp(p.diedAt))}`}</small></span>
+      <span class="tags">${p.lover ? `<span class="tag love" title="${esc(t('Lovers'))}">${glyph('heart')}</span>` : ''}<span class="tag ${p.alignment === 'DEATH' ? 'blood' : ''}">${esc(ALIGN[p.alignment] ?? '')}</span></span></li>`).join('')}</ul>` : `<p class="muted">${t('The host chose not to reveal roles.')}</p>`}</section>`;
   return `<section class="verdict ${v.winner === 'DEATH' || v.winner === 'DEMON' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<span class="kicker">${t('Verdict')}</span><h1>${letters(title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
       ${won === null ? '' : `<div class="result-stamp ${won ? 'win' : 'loss'}">${won ? t('Victory') : t('Defeat')}</div>`}</section>
     <div class="end-next" data-key="endnext">${v.host?.rematch ? `<button class="btn btn-solid btn-wide" data-act="rematch">${glyph('scroll')} ${t('Play again, same table')}</button>` : `<p class="small muted center-text">${t('Waiting for the host to start the next round.')}</p>`}</div>
@@ -1873,10 +1895,8 @@ function endMain(v, me) {
     ${revealed && v.missions?.hunches?.length ? hunchLegend() : ''}
     ${v.mode === 'missions' ? missionEndHtml(v) : ''}
     ${v.mode === 'exorcism' ? exorcismEndHtml(v) : ''}
-    <section data-key="reveal"><div class="rule">${t('Every secret')}</div>${revealed ? `<ul class="ledger">${v.players.map((p, i) => `<li class="${p.alive ? '' : 'dead'} ${p.id === me?.id ? 'me' : ''}" style="--i:${i}" data-key="rv-${p.id}">
-      <span class="seat">${p.role ? glyph(p.role.glyph) : ''}</span>
-      <span class="who"><b>${esc(p.name)}</b><small>${p.role ? esc(roleF(p.role.id, 'name')) : '—'}${p.originalRole ? ` ${th('(was {role})', { role: p.originalRole.id })}` : ''} · ${p.alive ? t('alive') : `† ${esc(stamp(p.diedAt))}`}</small></span>
-      <span class="tags">${p.lover ? `<span class="tag love" title="${esc(t('Lovers'))}">${glyph('heart')}</span>` : ''}<span class="tag ${p.alignment === 'DEATH' ? 'blood' : ''}">${esc(ALIGN[p.alignment] ?? '')}</span></span></li>`).join('')}</ul>` : `<p class="muted">${t('The host chose not to reveal roles.')}</p>`}</section>
+    ${v.mode === 'coffins' ? coffinsEndHtml(v) : ''}
+    ${v.mode === 'coffins' ? '' : everySecret()}
     ${me && !me.moderator ? `<details class="more" data-key="endnotes"><summary>${t('My notes')}</summary><div>${feed([...(v.private || [])].reverse(), 'feed-private')}</div></details>` : ''}
     <details class="more" data-key="endrec"><summary>${t('Public record')}</summary><div>${recordBlock(v)}</div></details>
     <div class="row center" data-key="endbtns">${v.recap ? `<button class="btn" data-act="recap">${glyph('scroll')} ${t('View recap')}</button>` : ''}</div>`;
@@ -2066,7 +2086,7 @@ function dock(v) {
   } else if (me) {
     switch (v.phase) {
       case 'LOBBY': {
-        const need = 5 - v.players.length;
+        const need = (v.presets.find((p) => p.id === v.settings.preset)?.min ?? 5) - v.players.length;
         if (v.host) parts.push(holdBtn('start', need > 0 ? (need === 1 ? t('Need 1 more player') : th('Need {n} more players', { n: need })) : startLabel(), `btn-solid ${v.setup.ok && !v.setup.notReady ? 'glow' : ''}`, { dis: !v.setup.ok || !!v.setup.notReady }));
         else parts.push(btn(me.ready ? `${glyph('check')} ${t('Ready')}` : t('I\'m ready'), 'ready', me.ready ? 'is-on' : 'btn-solid glow'));
         break;
@@ -2101,6 +2121,7 @@ function dock(v) {
       default:
         if (isMissionPhase(v.phase)) parts.push(...missionDock(v, { S, btn, holdBtn, rawName }));
         if (isExorcismPhase(v.phase)) parts.push(...exorcismDock(v, { S, btn, holdBtn, rawName }));
+        if (isCoffinsPhase(v.phase)) parts.push(...coffinsDock(v, { S, btn, holdBtn, rawName }));
         break;
     }
   }
@@ -2362,9 +2383,10 @@ Object.assign(ACT, exorcismActs({ S, V, send: (...a) => send(...a), render: () =
     send('host.settings', { x: { categories: all.filter((id) => on.has(id)) } }, { quiet: true });
   },
 });
+Object.assign(ACT, coffinsActs({ S, V, send: (...a) => send(...a), render: () => render(), burstAt, sound, haptic }));
 Object.assign(ACT, missionActs({ S, V, send: (...a) => send(...a), render: () => render(), picked, burstAt, sound, haptic }));
 
-const QUIET = new Set(['xPickVote', 'xPickGuess', 'xFlip', 'xPeek', 'xGrid', 'mPickLantern', 'mPickTeam', 'mPickWard', 'mPickHunch', 'mPickCandle', 'mPickWitness', 'mPickHaunt', 'mPickAccuse', 'mPickReckon', 'mPickCard', 'avPart', 'avRandom', 'codeTap', 'boardScore', 'boardMute', 'pickNominate', 'pickVote', 'pickRetaliate', 'pickSwap', 'pickTarget', 'pickOption', 'pickNightmare', 'pickConspire', 'pickDeath', 'shoot', 'sound', 'pickUseOption', 'momentNext']);
+const QUIET = new Set([...COFFINS_QUIET, 'xPickVote', 'xPickGuess', 'xFlip', 'xPeek', 'xGrid', 'mPickLantern', 'mPickTeam', 'mPickWard', 'mPickHunch', 'mPickCandle', 'mPickWitness', 'mPickHaunt', 'mPickAccuse', 'mPickReckon', 'mPickCard', 'avPart', 'avRandom', 'codeTap', 'boardScore', 'boardMute', 'pickNominate', 'pickVote', 'pickRetaliate', 'pickSwap', 'pickTarget', 'pickOption', 'pickNightmare', 'pickConspire', 'pickDeath', 'shoot', 'sound', 'pickUseOption', 'momentNext']);
 document.addEventListener('click', (e) => {
   const link = e.target.closest('a[data-link]');
   if (link && link.origin === location.origin && !e.metaKey && !e.ctrlKey) { e.preventDefault(); go(link.pathname); return; }

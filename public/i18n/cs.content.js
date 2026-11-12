@@ -3,6 +3,7 @@ export default {
   and: 'a',
   numbers: ['žádný', 'jeden', 'dva', 'tři', 'čtyři', 'pět', 'šest', 'sedm', 'osm', 'devět', 'deset'],
   roles: {
+    C_DIGGER: { name: "Hrobník", when: "Vždy", summary: "Zakopej své rakve, řekni, kolik jich dokážeš otevřít, a kopej. Dvě čisté vykopávky vyhrávají.", detail: "Tvoje Kletba je tvůj blaf: zakopej ji, ať na ni narazí ostatní. Když vyhraješ dražbu, otevíráš nejdřív vlastní hrob." },
     X_LIVING: { name: "Živý", when: "Vždy", summary: "V křišťálové kouli vidíš heslo. Řekni slovo, které dokáže, že ho znáš, ale nedej ho Démonovi.", detail: "Příliš jasné, a Démon heslo zjistí. Příliš nejasné, a stůl podezírá tebe. Pak označte Démona." },
     X_DEMON: { name: "Démon", when: "Vždy", summary: "Vidíš jen kategorii. Splyň s ostatními: řekni slovo, jako bys heslo znal.", detail: "Poslouchej ostatní a rozlušti heslo. Když stůl označí někoho jiného, vyhráváš. Když tě chytí, jeden správný pokus stejně vyhraje." },
     M_JESTER: { name: "Šašek", when: "Vždy", summary: "Vyhráváš sám, když tě stůl označí v Posledním vzdoru nebo tě Ženec určí v Zúčtování.", detail: "Nejsi Živý ani ze Smrti: Médium tě nevidí a Svíčka tě ukáže jako Živého. Na misi můžeš hrát Úspěch i Sabotáž. Působ podezřele, ale ne moc." },
@@ -122,6 +123,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Mstiví duchové', text: 'Každý vyřazený hráč může každý den odevzdat jeden hlas ducha s váhou 1.', enforcement: 'Duchové nemohou nominovat, používat schopnosti ani ovlivnit Pravidlo většiny.' },
   },
   presets: {
+    coffins: { name: "Dead Set: Rakve", blurb: "Rychlá blafovací hra. Zakopej zlato a jednu kletbu, nabídni, kolik rakví dokážeš otevřít, a kopej. Dvě čisté vykopávky vyhrávají." },
     exorcism: { name: "Dead Set: Exorcismus", blurb: "Slovní hra plná blafování. V křišťálové kouli všichni vidí heslo, kromě Démona. Každý jedno slovo, pak odhalte Démona." },
     missions: { name: "Dead Set: Mise", blurb: "Týmy, hlasování a sabotáž. Nikdo neumírá: veďte mise, čtěte hlasy a najděte Smrt dřív, než ona najde Médium." },
     standard: { name: 'Standard', blurb: 'Zamýšlený zážitek z Dead Set. Deset rozšířených rolí od 7 hráčů, Sen pro každého každou noc, 1–3 karty pravidel.' },
@@ -148,6 +150,17 @@ export default {
     'Smrt hlasovala s městem. Samozřejmě.',
   ],
   guide: {
+    coffinsH: "Dead Set: Rakve",
+    coffins: `<p>Rychlá blafovací hra pro 3–10 hráčů, volitelná v lobby. Každý má 3 Zlaté rakve a jednu Kletbu (v delší verzi 4 a jednu).</p>
+<ol>
+<li><b>Pohřeb.</b> Všichni najednou tajně zakopou jednu rakev: ťukni na ni a podrž. Pak od prvního hráče kola na svém tahu buď zakopeš další rakev navrch své hromádky, nebo vyzveš: <i>„Dokážu otevřít N“</i>, nejvýš tolik, kolik je celkem zakopáno.</li>
+<li><b>Dražba.</b> Dokola každý zvýší, nebo pasuje. Pas platí na celé kolo. Poslední, kdo zbude, je Hrobník.</li>
+<li><b>Kopání.</b> Hrobník nejdřív otevře vlastní rakve shora dolů, pak vybírá jiné hroby, vždy vrchní rakev, dokud jich není otevřeno N.</li>
+<li><b>Čistě, nebo prokletě.</b> Samé Zlato: čistá vykopávka a náhrobek zezlátne. Kletba ve vlastním hrobě: vybereš si, kterou rakev ztratíš. Cizí kletba: její majitel naslepo vytáhne jednu tvou rakev a ta je pryč. Majitel kletby začíná další kolo.</li>
+<li><b>Vyhraješ</b> svými čistými vykopávkami (výchozí 2; v lobby 1 nebo 3), nebo jako poslední hráč, kterému zbyly rakve.</li>
+</ol>
+<p><b>Rakev Smrti</b> (výchozí zapnuto): každé kolo ji má jeden skrytý hráč místo jedné Zlaté. Když ji vykopeš, kopání selže a její majitel ti ukradne rakev, která se změní na Zlatou. <b>Sázky duchů</b> (výchozí zapnuto): hráči bez rakví sázejí na každé kopání Zlato, nebo Kletbu; po třech správných vstanou jako Navrátilci s jednou Zlatou rakví. <b>Relikvie</b> (výchozí vypnuto): tajná Lucerna (nahlédneš do hrobu), Klíč (otevřeš cizí hrob před svým) nebo Ochrana (kletba tě nic nestojí), každá jednou.</p>
+<p>Body se přenášejí mezi hrami: vítěz +3, každá čistá vykopávka +1, každé vstání +1.</p>`,
     exorcismH: "Dead Set: Exorcismus",
     exorcism: `<p>Slovní hra plná blafování pro 3–12 hráčů, vybírá se v lobby. Na každém telefonu platí jazyk stolu, aby se slova shodovala.</p>
 <ol>

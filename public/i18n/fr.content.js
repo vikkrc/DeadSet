@@ -3,6 +3,7 @@ export default {
   and: 'et',
   numbers: ['aucun', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix'],
   roles: {
+    C_DIGGER: { name: "Fossoyeur", when: "Toujours", summary: "Enterre tes cercueils, annonce combien tu peux en ouvrir, et creuse. Deux fouilles propres gagnent.", detail: "Ta Malédiction est ton bluff : enterre-la pour que les autres tombent dessus. Si tu remportes l'enchère, tu ouvres d'abord ta propre tombe." },
     X_LIVING: { name: "Vivant", when: "Toujours", summary: "Tu vois le mot de passe dans la boule de cristal. Donne un mot qui prouve que tu le connais, sans le livrer au Démon.", detail: "Trop évident, et le Démon apprend le mot de passe. Trop obscur, et la table te soupçonne. Puis désignez le Démon." },
     X_DEMON: { name: "Démon", when: "Toujours", summary: "Tu ne vois que la catégorie. Fonds-toi dans la masse : dis un mot comme si tu connaissais le mot de passe.", detail: "Écoute les autres et perce le mot de passe. Si la table désigne quelqu'un d'autre, tu gagnes. Si on te démasque, un bon essai gagne quand même." },
     M_JESTER: { name: "Bouffon", when: "Toujours", summary: "Tu gagnes seul si la table te désigne au Dernier Carré, ou si le Faucheur te désigne lors du Jugement.", detail: "Tu n'es ni Vivant ni de la Mort : le Médium ne te voit pas, la Bougie te montre Vivant. En mission, tu peux jouer Réussite ou Sabotage. Aie l'air coupable, mais pas trop." },
@@ -122,6 +123,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Fantômes vengeurs', text: 'Chaque joueur éliminé peut déposer un bulletin fantôme de poids 1 par jour.', enforcement: 'Les fantômes ne peuvent pas nommer, utiliser de pouvoirs ni influencer la Règle de la majorité.' },
   },
   presets: {
+    coffins: { name: "Dead Set : Cercueils", blurb: "Un jeu de bluff rapide. Enterre de l'or et une malédiction, annonce combien de cercueils tu peux ouvrir, puis creuse. Deux fouilles propres gagnent." },
     exorcism: { name: "Dead Set : Exorcisme", blurb: "Un jeu de mots et de bluff. Tout le monde voit le mot de passe dans la boule de cristal, sauf le Démon. Un mot chacun, puis démasquez le Démon." },
     missions: { name: "Dead Set : Missions", blurb: "Équipes, votes et sabotage. Personne ne meurt : menez des missions, lisez les votes, et trouvez la Mort avant qu'elle ne trouve le Médium." },
     standard: { name: 'Standard', blurb: 'L’expérience Dead Set telle que prévue. Dix rôles étendus dès 7 joueurs, un Rêve pour tous chaque nuit, 1–3 cartes de règle.' },
@@ -148,6 +150,17 @@ export default {
     'La Mort a voté avec la ville. Évidemment.',
   ],
   guide: {
+    coffinsH: "Dead Set : Cercueils",
+    coffins: `<p>Un jeu de bluff rapide pour 3 à 10 joueurs, à choisir dans le salon. Chacun tient 3 cercueils d'Or et une Malédiction (4 et une avec l'option longue).</p>
+<ol>
+<li><b>L'enterrement.</b> Tout le monde enterre en secret un cercueil en même temps : touche-le, puis maintiens. Ensuite, à partir du premier joueur de la manche, à ton tour tu enterres un autre cercueil sur ta pile, ou tu lances un défi : <i>« Je peux en ouvrir N »</i>, au plus le nombre total enterré.</li>
+<li><b>L'enchère.</b> À tour de rôle, chacun surenchérit ou passe. Passer vaut pour toute la manche. Le dernier encore en lice devient le Fossoyeur.</li>
+<li><b>La fouille.</b> Le Fossoyeur ouvre d'abord ses propres cercueils de haut en bas, puis choisit d'autres tombes, toujours le cercueil du dessus, jusqu'à en avoir ouvert N.</li>
+<li><b>Propre ou maudit.</b> Que de l'Or : une fouille propre, et la stèle se dore. Une malédiction dans ta tombe : tu choisis le cercueil que tu perds. Celle d'un autre : il tire à l'aveugle un de tes cercueils, qui disparaît. Le propriétaire de la malédiction commence la manche suivante.</li>
+<li><b>Gagne</b> avec tes fouilles propres (2 par défaut ; 1 ou 3 dans le salon), ou en étant le dernier à avoir des cercueils.</li>
+</ol>
+<p><b>Le cercueil de la Mort</b> (activé par défaut) : à chaque manche, un joueur caché le tient à la place d'un cercueil d'Or. Déterre-le et la fouille échoue ; son détenteur te vole un cercueil, qui devient de l'Or. <b>Paris des fantômes</b> (activés par défaut) : les joueurs sans cercueil parient Or ou Malédiction sur chaque fouille ; après trois bons paris, ils se relèvent en Revenant avec un cercueil d'Or. <b>Reliques</b> (désactivées par défaut) : une Lanterne secrète (jeter un œil dans une tombe), une Clé (ouvrir une autre tombe avant la tienne) ou une Protection (une malédiction ne coûte rien), chacune utilisable une fois.</p>
+<p>Les scores se cumulent d'une partie à l'autre : le vainqueur +3, chaque fouille propre +1, chaque résurrection +1.</p>`,
     exorcismH: "Dead Set : Exorcisme",
     exorcism: `<p>Un jeu de mots et de bluff pour 3 à 12 joueurs, à choisir dans le salon. La langue de la table s'impose sur chaque téléphone, pour que les mots correspondent.</p>
 <ol>
