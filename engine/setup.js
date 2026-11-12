@@ -13,6 +13,9 @@ const TABLE = {
 };
 
 /** Returns { DEATH, INNOCENT, GUARDIAN, MENTALIST, PSYCHO, EXTENDED } for N players. */
+/** The TV board's music styles (public/scorethemes.js plays them). */
+export const SCORE_THEMES = ['classic', 'cathedral', 'neon', 'abyss', 'lullaby', 'ghosttown', 'chiptune'];
+
 export function scaling(n) {
   if (n < MIN_PLAYERS) throw new Error(`Dead Set needs at least ${MIN_PLAYERS} players`);
   let [death, innocent, ext] = TABLE[Math.min(n, 13)];
@@ -47,6 +50,7 @@ export function defaultSettings() {
     threads: false,
     lang: 'en',
     score: true,
+    scoreTheme: 'classic',
     dreamWeights: { ...DREAM_WEIGHTS },
     customRoles: {},
     deckMode: 'auto',
@@ -169,6 +173,7 @@ export function applySettingsPatch(settings, patch = {}) {
   if (patch.missionCards !== undefined) s.missionCards = clampInt(patch.missionCards, 0, 2, 1);
   if (patch.clueOdds !== undefined) s.clueOdds = clampInt(patch.clueOdds, 1, 3, 1);
   if (['none', 'coin'].includes(patch.tieBreak)) s.tieBreak = patch.tieBreak;
+  if (SCORE_THEMES.includes(patch.scoreTheme)) s.scoreTheme = patch.scoreTheme;
   for (const k of ['revealOnDeath', 'endReveal', 'selfNomination', 'selfVote', 'threads', 'score', 'bloodMoon', 'finalTwoDeath', 'clues', 'lovers', 'cult', 'ripper', 'backdrops']) {
     if (typeof patch[k] === 'boolean') s[k] = patch[k];
   }

@@ -1,3 +1,4 @@
+import { buildThemed, SCORE_THEMES, THEME_TRIM } from './scorethemes.js';
 // Dead Set — sensory layer: synthesized sound, haptics and particles.
 //
 // Privacy rule: sound and haptics fire only for PUBLIC events (phase changes,
@@ -313,10 +314,23 @@ function scoreBus(a) {
   if (!bus) { bus = a.createGain(); bus.gain.value = 0.9; bus.connect(master); }
   return bus;
 }
+let theme = 'classic';
 function buildLayer(a, mood) {
   const m = MOODS[mood];
   const shift = mood === 'tension' ? 0 : [0, 0, -2, 2, 3, -3][Math.floor(Math.random() * 6)];
   const root = semi(m.root, shift);
+  // Other themes: the same mood played by a different band. The tension overlay and the
+  // near-silent card reveal stay as they are in every theme.
+  if (theme !== 'classic' && mood !== 'tension' && mood !== 'mResult') {
+    const out = a.createGain();
+    out.gain.value = 0.0001;
+    out.connect(scoreBus(a));
+    const L = { out, nodes: [], mood, theme, timers: [] };
+    const later = (fn, sec) => { const id = setTimeout(() => { if (layerAlive(L)) fn(); }, sec * 1000); L.timers.push(id); };
+    buildThemed(theme, { a, m, mood, root, out, bus: scoreBus(a), L, later, audio, kit: { bell, heartbeat } });
+    out.gain.exponentialRampToValueAtTime(m.gain * (THEME_TRIM[theme] ?? 1), a.currentTime + 3);
+    return L;
+  }
   const out = a.createGain();
   out.gain.value = 0.0001;
   out.connect(scoreBus(a));
@@ -385,7 +399,7 @@ function buildLayer(a, mood) {
   }
   nodes.forEach((n) => n.start());
   out.gain.exponentialRampToValueAtTime(m.gain, a.currentTime + 3.5);
-  const L = { out, nodes, mood, timers: [] };
+  const L = { out, nodes, mood, theme, timers: [] };
   const later = (fn, sec) => { const id = setTimeout(() => { if (layerAlive(L)) fn(); }, sec * 1000); L.timers.push(id); };
   const span = ([lo, hi]) => lo + Math.random() * (hi - lo);
   if (m.motif) {
@@ -478,11 +492,18 @@ export const score = {
     if (!MOODS[mood]) return;
     const a = audio();
     if (!a) { this.stop(); return; }
-    if (layer?.mood === mood) return;
+    if (layer?.mood === mood && layer.theme === theme) return;
     const old = layer;
     layer = null;
     dropLayer(a, old);
     layer = buildLayer(a, mood);
+  },
+  /** The band: 'classic' or one of the score themes. Takes effect on the next mood, or at once if one is playing. */
+  setTheme(id) {
+    const next = SCORE_THEMES.includes(id) ? id : 'classic';
+    if (next === theme) return;
+    theme = next;
+    if (layer && ctx) { const mood = layer.mood; this.play(mood); }
   },
   /** The last-few-alive overlay: a shimmer and a fast heartbeat on top. */
   tension(on) {

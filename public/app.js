@@ -604,7 +604,7 @@ function render() {
   document.body.classList.toggle('is-board', onBoard());
   document.body.classList.toggle('mode-exorcism', v?.mode === 'exorcism' && ['room', 'board'].includes(S.route?.name));
   document.body.classList.toggle('mode-missions', v?.mode === 'missions' && ['room', 'board'].includes(S.route?.name));
-  if (onBoard() && v && S.board.audio && v.table?.score !== false) { score.play(moodFor(v)); score.tension(tenseFor(v)); } else score.stop();
+  if (onBoard() && v && S.board.audio && v.table?.score !== false) { score.setTheme(v.table?.scoreTheme ?? 'classic'); score.play(moodFor(v)); score.tension(tenseFor(v)); } else score.stop();
   document.body.classList.toggle('has-sheet', !!S.ui.sheet && (S.route?.name === 'room' || S.ui.sheet === 'lang' || S.ui.sheet === 'avatar'));
   ambient(night ? 'night' : null);
   morph(app, view());
@@ -1278,9 +1278,28 @@ function botsPanel(v) {
     ${bots ? `<button class="btn btn-sm btn-ghost danger" data-act="clearBots">${t('Remove bots ({n})', { n: bots })}</button>` : ''}</div></div></section>`;
 }
 
+/** The TV board's music style (shown while the score is on). */
+const MUSIC_STYLES = [
+  ['classic', 'Classic', 'Music boxes, bells and a slow pad'],
+  ['cathedral', 'Cathedral', 'Pipe organ chorales, harpsichord and tolling bells'],
+  ['neon', 'Neon Noir', 'Eighties synth pads, arpeggios and a drum machine'],
+  ['abyss', 'Abyss', 'Drones, distant metal and sub-bass, with no tune at all'],
+  ['lullaby', 'Lullaby', 'A wavering toy-piano waltz from the attic'],
+  ['ghosttown', 'Ghost Town', 'Twangy guitar, a lone whistle and a galloping woodblock'],
+  ['chiptune', '8-Bit Haunt', 'Pulse-wave tunes, fast arpeggios and noise drums'],
+];
+function musicRow(v, isHost) {
+  if (v.table?.score === false) return '';
+  const cur = v.table?.scoreTheme ?? 'classic';
+  const style = MUSIC_STYLES.find(([k]) => k === cur) ?? MUSIC_STYLES[0];
+  return isHost
+    ? `<label class="toggle-row"><span><b>${t('Music style')}</b><small>${t(style[2])}</small></span><select class="input lang-select" data-set-str="scoreTheme" data-key="music-style">${MUSIC_STYLES.map(([k, l]) => `<option value="${k}" ${k === cur ? 'selected' : ''}>${t(l)}</option>`).join('')}</select></label>`
+    : `<div class="toggle-row"><span><b>${t('Music style')}</b><small>${t(style[2])}</small></span><span class="tag">${t(style[1])}</span></div>`;
+}
+
 /** 20 · Tonight's deck, the extended pool, rule cards and table switches. */
 function lobbyDeck(v, isHost) {
-  if (v.mode === 'exorcism') return exorcismLobbyDeck(v, isHost, { LANGS });
+  if (v.mode === 'exorcism') return exorcismLobbyDeck(v, isHost, { LANGS, music: musicRow(v, isHost) });
   const s = v.settings;
   const deck = v.setup?.publicDeck;
   const preset = v.presets.find((p) => p.id === s.preset);
@@ -1338,6 +1357,7 @@ function lobbyDeck(v, isHost) {
     ${toggle('finalTwoDeath', 'Death wins in the final two', 'If a Death is among the last two players alive, Death wins at once.')}
     ${toggle('threads', 'Threads of suspicion', 'Draws who accused whom across the table')}
     ${toggle('score', 'Atmospheric score', 'Music and effects play on the TV board')}
+    ${musicRow(v, isHost)}
     ${toggle('backdrops', 'Location backdrops', 'The TV board shows a scene for the story\'s WHERE card.')}
   </section>`;
 }
@@ -1384,6 +1404,7 @@ function missionLobbyDeck(v, isHost, cards) {
     ${toggle('clues', 'Clues', 'Rarely, at dawn, one or two players find a true hint about Death\'s team.')}
     ${v.table?.clues ? select('clueOdds', v.table.clueOdds, [[1, 'Rare'], [2, 'Uncommon'], [3, 'Common']], 'How often', '') : ''}
     ${toggle('score', 'Atmospheric score', 'Music and effects play on the TV board')}
+    ${musicRow(v, isHost)}
     ${toggle('backdrops', 'Location backdrops', 'The TV board shows a scene for the story\'s WHERE card.')}
   </section>`;
 }
@@ -2416,6 +2437,7 @@ document.addEventListener('change', (e) => {
   if (el.dataset.draft) S.drafts[el.dataset.draft] = el.value;
   if (el.dataset.set) send('host.settings', nest(el.dataset.set, Number(el.value)));
   if (el.dataset.setBool) send('host.settings', { [el.dataset.setBool]: el.checked });
+  if (el.dataset.setStr) send('host.settings', { [el.dataset.setStr]: el.value });
   if (el.dataset.actChange === 'pool' && s) {
     const pool = new Set(s.extendedPool);
     if (el.checked) pool.add(el.dataset.id); else pool.delete(el.dataset.id);

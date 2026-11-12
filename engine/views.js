@@ -61,7 +61,7 @@ export function publicView(m, now = Date.now()) {
     hostId: m.hostId, moderated: m.moderated,
     preset: m.config?.preset ?? m.settings.preset,
     transport: m.settings.transport,
-    table: { threads: !!m.settings.threads, score: m.settings.score !== false, lang: m.settings.lang || 'en', bloodMoon: m.config ? m.config.bloodMoon : m.settings.bloodMoon !== false, finalTwoDeath: m.config ? m.config.finalTwoDeath : !!m.settings.finalTwoDeath, tieBreak: m.config?.tieBreak ?? m.settings.tieBreak ?? 'none', backdrops: m.settings.backdrops !== false, clues: m.settings.clues !== false, clueOdds: m.settings.clueOdds ?? 1, lovers: !!m.settings.lovers, cult: !!m.settings.cult, ripper: !!m.settings.ripper, leaderMode: m.config?.leaderMode ?? m.settings.leaderMode ?? 'next' },
+    table: { threads: !!m.settings.threads, score: m.settings.score !== false, scoreTheme: m.settings.scoreTheme ?? 'classic', lang: m.settings.lang || 'en', bloodMoon: m.config ? m.config.bloodMoon : m.settings.bloodMoon !== false, finalTwoDeath: m.config ? m.config.finalTwoDeath : !!m.settings.finalTwoDeath, tieBreak: m.config?.tieBreak ?? m.settings.tieBreak ?? 'none', backdrops: m.settings.backdrops !== false, clues: m.settings.clues !== false, clueOdds: m.settings.clueOdds ?? 1, lovers: !!m.settings.lovers, cult: !!m.settings.cult, ripper: !!m.settings.ripper, leaderMode: m.config?.leaderMode ?? m.settings.leaderMode ?? 'next' },
     bloodMoon: !!m.night?.bloodMoon,
     doomsday: m.config?.doomsday ? m.config.doomsdayDays : null,
     scenario: m.scenario, activeRules: m.activeRules.map((id) => RULE_CARDS[id]),

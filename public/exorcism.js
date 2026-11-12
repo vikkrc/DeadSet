@@ -268,6 +268,7 @@ export function exorcismLobbyDeck(v, isHost, h) {
     <div class="x-cats" data-key="xcats"><span class="kicker">${t('Categories')} · ${on.size}/${cats.length}</span><div class="chips-row">${cats.map((c) => isHost
       ? `<button class="chipbtn ${on.has(c.id) ? 'on' : ''}" data-act="xCat" data-id="${c.id}" aria-pressed="${on.has(c.id)}">${esc(c.name[wl()] ?? c.name.en)}</button>`
       : `<span class="chipbtn ${on.has(c.id) ? 'on' : ''}">${esc(c.name[wl()] ?? c.name.en)}</span>`).join('')}</div></div>
+    ${h.music ?? ''}
     ${scores}
   </section>`;
 }
