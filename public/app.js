@@ -1113,7 +1113,7 @@ function sheet(v) {
     title = th('Room {code}', { code: '%CODE%' }).replace('%CODE%', `<span class="code-txt">${esc(v.code)}</span>`);
     body = `${hostBox()}${langRow(v)}${v.me?.moderator ? '' : tutorialToggle()}<div>${recordBlock(v)}</div>
       <div class="row"><a class="btn btn-sm btn-ghost" href="/guide" data-link>${t('How to play')}</a><button class="btn btn-sm btn-ghost" data-act="leave">${glyph('out')} ${t('Leave this device')}</button></div>
-      ${holdBtn('backHome', t('Hold to go back to the start'), 'btn-ghost btn-sm', { key: 'backhome' })}`;
+      ${holdBtn('backHome', t('Hold to go back to the start'), 'btn-sm btn-wide', { key: 'backhome' })}`;
   } else if (s === 'avatar') {
     title = t('Your portrait');
     body = avatarEditor();
