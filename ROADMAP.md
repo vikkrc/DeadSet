@@ -126,71 +126,164 @@ Other Missions ideas kept for later:
 
 ---
 
-## Beta 3: Dead Set: Séance (a hidden-traitor co-op, a cousin of Mysterium)
+## Order of the next betas (reordered 2026-11-12)
 
-**The pitch:** someone was murdered. Their ghost wants to help you, but the ghost can't speak, and a second spirit is lying.
+Séance needs by far the most new art (84 vision cards, more story cards and backdrops), so it moves back. The lighter modes come first:
 
-- **Setup:** a secret WHO, WHERE and WHY are drawn from the story cards. One player is the **Ghost** and knows them.
-- **Each round:** the Ghost may only send each player one or two **vision cards**, abstract illustrations from a large deck (about 80+).
-- **The Deceiver:** a malicious spirit who also knows the answer and sends misleading visions disguised as the Ghost's.
-- **Play:** players discuss and lock in guesses for who, where and why.
-- **Win:** solve all three within six rounds and the Living win, but to claim the full victory they must then name the Deceiver, like the Reckoning.
-- **TV:** the board of suspects, places and motives, with visions laid out as they arrive.
-- **Players and length:** 4–10, about 30 minutes. Co-operative and visual.
+| Beta | Mode | Status |
+|---|---|---|
+| 3 | **Coffins** | Rules agreed (COFFINS.md) |
+| 4 | **Carnival** | Rules drafted (CARNIVAL.md) |
+| 5 | **Midnight** | Pitch |
+| 6 | **Séance** | Rules drafted (SEANCE.md), decisions pending |
+| 7 | **Doppelgänger** | Pitch |
+| 8 | **Council** | Pitch |
+| 9 | **Lifeboat** | Pitch |
+| 10 | **To be decided:** a new big game | — |
 
-**To design:** vision card art and count, how many visions each player gets per round, Deceiver powers and limits, partial-credit rules, and difficulty settings.
-
-**Content:** many more WHO, WHERE and WHY cards to avoid repetition. This also affects the other modes: story intros, backdrops, scenes for every location, and all translations. Plan for a large content pass.
+**Reuse first.** Every mode casts its characters from the existing Dead Set roles, emblems and cards wherever the role fits, so most art is already drawn and the brand stays one family. Each mode below lists its cast and which existing design it reuses. Anything marked **new** needs fresh art.
 
 ---
 
-## Beta 4: Dead Set: Coffins (a cousin of Skull)
+## Beta 3: Dead Set: Coffins (a cousin of Skull)
+
+**Status: rules agreed** (see COFFINS.md).
 
 **The pitch:** everyone buries something. Some coffins hold gold, one holds a curse. How many can you open?
 
-- **Play:** each player secretly lays coffin cards face down: gold, or their single cursed one.
+- **Play:** each player secretly buries coffin cards face down: gold, or their single cursed one.
 - **Bidding** goes round the table: "I can open four without finding a curse."
-- **The catch:** the highest bidder must open their own coffins first, then other players'. Hit a curse and you lose a card. Win two challenges and you win the game.
+- **The catch:** the highest bidder must open their own coffins first, then other players'.
+  - A clean dig wins a challenge. **Two challenges win the game**, as does being the last player with coffins.
+  - A curse costs you a coffin.
+- **Twists:**
+  - **Ghost wagers and Revenants:** on by default.
+  - **The Death coffin:** on by default, switchable.
+  - **Relics:** off by default, switchable.
 - **TV:** every coffin lid creaks open.
 - **Players and length:** 3–10, about 10 minutes. Pure bluffing: a quick game between bigger ones.
 
-**To design:** bid and pass rules, choosing which coffins to open, card loss, elimination or ghosts, and a possible Dead Set twist (e.g. a Death coffin that steals a card).
+**Cast (reused):**
+
+| Piece | Art |
+|---|---|
+| Gold | the **coin** emblem |
+| The curse | the red wax **seal** |
+| The Death coffin | **Death** |
+| Ghosts | the **Shade** |
+| Revenants | the **Necromancer** |
+| The Lantern relic | the **Lantern** mission card |
+| The Key relic | the **Key** |
+| The Ward relic | the **Ward** mission card |
+| The graveyard | the WHERE backdrops |
+
+**New art:** only the coffin itself (a lid and a stack), and the headstones.
 
 ---
 
-## Beta 5: Dead Set: Carnival (inspired by Mascarade)
+## Beta 4: Dead Set: Carnival (inspired by Mascarade)
+
+**Status: rules drafted** (see CARNIVAL.md).
 
 **The pitch:** at a masked ball where Death is a guest, nobody is sure which mask they're wearing.
 
 - **Setup:** everyone starts with a mask (a role card), shown once. Then all masks are face-down.
 - **On your turn, do one of three things:**
-  - **Swap or pretend:** swap masks with another player, or only pretend to. Everyone's phones show the same shuffle either way, so nobody knows whether it was real.
+  - **Swap or pretend:** swap masks with another player, or only pretend to. Everyone's phones show the same shuffle either way.
   - **Peek** at your own mask.
-  - **Claim:** "I am the Fortune Teller", and use that mask's power. Anyone who thinks they hold that mask may challenge. Every challenger's mask is revealed, and the wrong claimants pay a penalty.
-- **Goal:** collect **Souls** (coins). The first to reach the target wins, unless the holder of the Death mask is the first to steal enough.
-- **Masks:** Dead Set characters such as the Mentalist, the Witch, the Ripper and the Jester, each with a power and a sting when claimed.
-- **Why phones make it better:** the server tracks every swap, the phone tells you only what you've seen, and the TV animates each two-mask shuffle.
+  - **Claim** a mask and use its power. Anyone who thinks they hold it may challenge; the wrong claimants pay a Soul.
+- **Goal:** collect **Souls**. The first to the target wins, unless a Death claimant reaps enough Souls first.
 - **Players and length:** 4–12, about 25 minutes. Light, loud and funny.
 
-**To design:** the full mask list and powers, the Soul economy and win target, penalties for wrong claims, rules for fake swaps, balance at each table size, and timers.
+**Cast (reused):** every mask is an existing role card:
+
+| Mask | Power |
+|---|---|
+| **Death** | reaps |
+| **Conspirator** | the rich one |
+| **Diplomat** | |
+| **Gambler** | |
+| **Magistrate** | takes the Offering |
+| **Ripper** | |
+| **Bard** | |
+| **Guardian** | |
+| **Mentalist** | |
+| **Oracle** | |
+| **Witch** | |
+| **Double Agent** | |
+| **Mimic** | |
+| **Jester** | |
+| **Scapegoat** | |
+| **Innocent** | |
+
+- Souls use the **coin** emblem; the Offering uses the **Gift**.
+- The **arcana** card faces and the lattice back are reused as the mask cards.
+
+**New art:** only the mask frame over a card, and a shuffle cloak.
 
 ---
 
-## Beta 6: Dead Set: Midnight (a cousin of One Night Ultimate Werewolf)
+## Beta 5: Dead Set: Midnight (a cousin of One Night Ultimate Werewolf)
 
 **The pitch:** one night, one vote, no second chances.
 
-- **Night:** every role acts once, in a fixed order, guided by the phones:
-  - the **Thief** swaps cards;
-  - the **Seer** looks at a card;
-  - the **Insomniac** checks whether they're still themself.
-
-  Cards change hands secretly, so by morning you may not be what you were dealt.
+- **Night:** every role acts once, in a fixed order, guided by the phones. Cards change hands secretly, so by morning you may not be what you were dealt.
 - **Day:** five minutes of argument, then everyone points at once. If a player who is Death by morning is the most voted, the Living win.
 - **Why phones make it better:** the phones are silent narrators that track every swap exactly. The end reveal replays the whole night as a timeline.
-- **Players and length:** 4–12, about 10 minutes. It reuses the classic game's roles and art.
+- **Players and length:** 4–12, about 10 minutes.
 
-**To design:** the role set and wake order, centre cards, special winners such as a Jester, tie rules, and balance by table size.
+**Cast (reused):** each night role is played by the classic role whose name and art already fit it.
+
+| Role | Plays the part of |
+|---|---|
+| **Death** | the killers; they see each other |
+| **Conspirator** | Death's lookout: sees Death but isn't seen |
+| **Mentalist** | looks at one player's card, or two of the cards left on the table |
+| **Double Agent** | swaps their card with another player's and looks at their new one |
+| **Witch** | swaps two other players' cards without looking |
+| **Gambler** | swaps their card with a table card, blind |
+| **Mimic** | copies another player's role and acts as it |
+| **Twins** | wake together and see each other |
+| **Insomniac** | checks their own card last; art from the *Insomnia* Dream |
+| **Vigilante** | if voted out, takes the person they point at with them |
+| **Jester** | wins alone if voted out |
+| **Innocent** | no night action |
+
+- The table cards are "the empty chairs" from the home screen.
+- **New art:** none needed for the roles.
+
+**To design:** the wake order, the number of table cards, special winners, tie rules, and balance by table size.
+
+---
+
+## Beta 6: Dead Set: Séance (a hidden-traitor co-op, a cousin of Mysterium)
+
+**Status: rules drafted** (see SEANCE.md); decisions pending.
+
+**The pitch:** someone was murdered. Their ghost wants to help you, but the ghost can't speak, and a second spirit is lying.
+
+- **Setup:** a secret WHO, WHERE and WHY are drawn from the story cards. One player is the **Ghost** and knows them.
+- **Each round:** the Ghost sends each player **vision cards**: abstract etchings.
+- **The Deceiver:** a malicious spirit among the players who also knows the answer and swaps some visions for its own.
+- **Win:** solve all three before the séance clock burns out, then name the Deceiver for the full victory.
+- **TV:** the board of suspects, places and motives, with visions laid out as they arrive.
+- **Players and length:** 4–10, about 30 minutes. Co-operative and visual.
+
+**Cast (reused):**
+
+| Character | Art |
+|---|---|
+| The Ghost | the **Shade** |
+| The players | **Mediums** (the Missions **Medium** card) |
+| The Deceiver | the **Charlatan** (the Missions Death card) |
+| Cold spots | the **Haunted** mission card |
+| The candle clock | the **Candle** |
+| The board | the story cards themselves |
+
+**New art (large):**
+- 84 vision etchings;
+- about 20 more WHO, 15 more WHERE (each with a backdrop) and 15 more WHY cards;
+- every translation.
 
 ---
 
@@ -198,43 +291,32 @@ Other Missions ideas kept for later:
 
 **The pitch:** everyone at the table knows where you are, except the thing wearing a friend's face.
 
-- **Setup:** every phone shows the same WHERE card plus a personal role there (on the Night Train: the conductor, the stowaway, the chef). The **Doppelgänger** sees only static.
-- **Play:** players take turns asking anyone a question. Answers must convince the others you've been there, without being so specific that the Doppelgänger works it out.
-- **Win:** at any moment one player can call a vote. Catch the Doppelgänger and the Living win. Accuse a Living player, or let the Doppelgänger guess the location correctly, and it wins.
+- **Setup:** every phone shows the same WHERE card plus a personal role there. The **Doppelgänger** sees only static.
+- **Play:** players take turns asking anyone a question. Answers must convince the others you've been there, without being specific enough for the Doppelgänger to work it out.
+- **Win:** at any moment one player can call a vote. Catch the Doppelgänger and the Living win. Accuse a Living player, or let the Doppelgänger guess the location, and it wins.
 - **TV:** the location's backdrop blurred, sharpening as time runs out.
 - **Players and length:** 4–12, about 8 minutes.
-- **Spice it up** beyond the base pitch, e.g.:
+- **Spice it up:**
   - two Doppelgängers at big tables;
   - a location that shifts halfway through;
-  - roles with tiny secret instructions ("mention the weather");
+  - roles with tiny secret instructions;
   - a Witness who knows who the Doppelgänger is but must stay hidden.
 
-It benefits directly from Beta 3's bigger WHERE pool (Séance), and reuses the round-and-lobby machinery built for Exorcism (Beta 2).
+**Cast (reused):**
+
+| Character | Art |
+|---|---|
+| The Doppelgänger | the **Mimic** |
+| The Witness | the **Witness** mission card |
+| Location roles | the existing **WHO** cards, cast as the people found at each WHERE (on the Night Train: the *Night-Shift Nurses*, the *Exiled Royals*, the *Lost Tourists*…) |
+| The location | the backdrop and story card |
+
+- Secret instructions reuse the **side-mission** emblems.
+- **New art:** none required. It benefits from Séance's bigger WHERE pool (Beta 6) and reuses Exorcism's round-and-lobby machinery (Beta 2).
 
 ---
 
-## Beta 8: Dead Set: Lifeboat (survival with a traitor)
-
-**The pitch:** the ship is gone. Twelve days to land, too few rations, and someone aboard wants nobody to make it.
-
-- **Each day:** a **crisis card** appears, such as a storm, thirst or a shark. Everyone secretly gives cards from their hand (oars, water, rope). The total is shown, but who gave what is not. Fall short and the boat loses supplies or hope.
-- **Each night:** the boat may vote someone **overboard**. They become a **ghost in the water** who can still whisper one clue a day.
-- **The traitor:** Death wins if the boat sinks.
-- **Private goals:** some Living players carry desperate private goals, like "keep the flare gun for yourself", so not every selfish move is evil.
-- **TV:** the boat, the horizon, supplies and morale running down.
-- **Players and length:** 5–10, about 40 minutes. The most strategic mode.
-
-**To design (a lot):**
-- the crisis deck and the hand and supply cards;
-- how hope and supplies run down, and the win conditions;
-- the overboard vote and ghost clues;
-- how private goals work, so selfish play stays ambiguous;
-- traitor count by table size;
-- the pace across the 12 days.
-
----
-
-## Beta 9: Dead Set: Council (a cousin of Secret Hitler)
+## Beta 8: Dead Set: Council (a cousin of Secret Hitler)
 
 **The pitch:** the town is governed by decrees, and Death is quietly writing them.
 
@@ -243,28 +325,62 @@ It benefits directly from Beta 3's bigger WHERE pool (Séance), and reuses the r
   - The Magistrate enacts one.
   - The deck is weighted towards **Dark** decrees.
 - **Dark decrees unlock Death's powers:** a peek, a forced election, an execution.
-- **Blame:** the two officials often blame each other ("he passed me two Dark ones!"), and only one of them is lying.
 - **Win:**
   - The Living win with five Lawful decrees, or by executing the Reaper.
   - Death wins with six Dark decrees, or by getting the Reaper elected Magistrate late in the game.
 - **TV:** the decree tracks and the election tracker. The Gazette prints every law.
 - **Players and length:** 5–10, about 30 minutes.
 
-**To design (thoroughly; this is a very involved mode):**
-- election and term rules, and the chaos rule after failed elections;
-- deck composition;
-- the power track for each table size;
-- veto rules;
-- the Reaper's knowledge;
-- execution and investigation details;
-- how blame and claims are recorded;
-- balance testing with bots.
+**Cast (reused):**
+
+| Character | Art |
+|---|---|
+| The Mayor | the **Diplomat** |
+| The Magistrate | the **Magistrate** |
+| The Reaper | the **Reaper** (Missions) |
+| Death's followers | **Death** |
+| The Living | **Innocent** |
+| Investigation | the **Mentalist** |
+| Execution | the **Vigilante** |
+| Elections and the tracker | the **Approve** / **Reject** tokens and the Missions proposal pips |
+
+- **New art:** two decree cards, *Lawful* and *Dark*, in the edict style already used for Rule cards.
+
+**To design (thoroughly; a very involved mode):** election and term rules, the chaos rule after failed elections, deck composition, the power track by table size, veto rules, the Reaper's knowledge, how blame and claims are recorded, and balance testing with bots.
+
+---
+
+## Beta 9: Dead Set: Lifeboat (survival with a traitor)
+
+**The pitch:** the ship is gone. Twelve days to land, too few rations, and someone aboard wants nobody to make it.
+
+- **Each day:** a **crisis card** appears. Everyone secretly gives cards from their hand. The total is shown, but who gave what is not.
+- **Each night:** the boat may vote someone **overboard**. They become a ghost in the water who can still whisper one clue a day.
+- **The traitor:** Death wins if the boat sinks.
+- **Private goals:** some Living players carry desperate private goals, so not every selfish move is evil.
+- **TV:** the boat, the horizon, supplies and morale running down.
+- **Players and length:** 5–10, about 40 minutes. The most strategic mode.
+
+**Cast (reused):**
+
+| Character | Art |
+|---|---|
+| The traitor | **Death** |
+| Crew roles | the **Guardian** (the medic), the **Bodyguard** (the strong rower), the **Lantern** keeper (the navigator, from the Missions Lantern), the **Traveling Agent** (the stowaway with supplies) |
+| Ghosts in the water | the **Shade** |
+| Private goals | the **side-mission** system and emblems |
+| Supply cards | the **parcel** emblems (key, compass, candle, watch…) |
+| The setting | the **Sinking Ship** backdrop |
+
+**New art:** the crisis deck (storm, thirst, shark…) and the boat.
+
+**To design (a lot):** the crisis deck and the hand and supply cards; how hope and supplies run down, and the win conditions; the overboard vote and ghost clues; private goals; traitor count by table size; the pace across 12 days.
 
 ---
 
 ## Beta 10: the big final game update before release
 
-Build one of the big modes left out so far (below), or something new worthy of the last big update before the first full version.
+**To be decided:** a new big game, either one of the parked modes below or something new worthy of the last big update before the first full version. The same reuse-first rule applies.
 
 ---
 

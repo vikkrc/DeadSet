@@ -1,6 +1,6 @@
 # Dead Set: Séance — rules and game spec (DRAFT)
 
-**Status: design draft for Beta 3. Nothing here is built. To be agreed before implementation.**
+**Status: design draft for Beta 6 (moved back on 2026-11-12: it needs the most new art). Nothing here is built. Decisions pending (§10).**
 
 A co-operative deduction game with a hidden traitor, for **4–10 players**, chosen in the lobby next to Classic, Missions and Exorcism. One phone each, plus the TV board, which matters more here than in any other mode.
 
@@ -146,7 +146,20 @@ Everything is validated per mode, following the Beta 0 rule: no Classic roles, r
   - every WHO, WHERE and WHY card tagged with the same concept vocabulary as the visions.
 - **Tags** drive three things: near-miss boards, bot play, and a "vision fits" sanity check when generating content.
 
-## 9. Practice bots
+## 9. Cast (reused art)
+
+| Character | Art |
+|---|---|
+| The Ghost | the **Shade** |
+| The players (Mediums) | the Missions **Medium** card |
+| The Deceiver | the **Charlatan** (the Missions Death card) |
+| Cold spots | the **Haunted** mission card |
+| The séance clock | the **Candle** |
+| The board | the story cards themselves |
+
+**New art:** the vision etchings and the extra story cards and backdrops (§8).
+
+## 9b. Practice bots
 
 - **Ghost bot:** sends each Medium the vision in its hand whose tags overlap most with the truth of that Medium's row, and least with the row's other cards.
 - **Medium bot:** lights its candle on the candidate whose tags overlap most with the visions in its row, frosted visions excluded. Bots discount visions from Mediums whose verdicts went wrong.
