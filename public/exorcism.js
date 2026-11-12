@@ -106,6 +106,26 @@ export function mountBalls(root = document) {
   if (balls.size && !rafId) rafId = requestAnimationFrame(frame);
 }
 
+/** The ball's pedestal: a pencil-drawn cradle, stem and footed plinth (same pencil filter as the backdrops and card art). */
+function standSvg(key) {
+  const id = `${key}-pencil`;
+  return `<svg viewBox="0 0 200 74" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <defs><filter id="${id}" filterUnits="userSpaceOnUse" x="-4" y="-4" width="208" height="82"><feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="2" seed="5" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.1" xChannelSelector="R" yChannelSelector="G" result="d"/><feTurbulence type="fractalNoise" baseFrequency="3.6" numOctaves="1" seed="41"/><feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.4 1.9" result="g"/><feComposite in="d" in2="g" operator="in"/></filter></defs>
+    <g filter="url(#${id})" stroke-width="1.8">
+      <path class="xs-fill" d="M30 1c8 18 34 27 70 27s62-9 70-27c-9 9-34 14-70 14S39 10 30 1z"/>
+      <path d="M44 8c14 9 34 12 56 12s42-3 56-12" stroke-width=".7"/>
+      <path d="M58 14l3 3-3 3-3-3zM100 20l3 3-3 3-3-3zM142 14l3 3-3 3-3-3z" class="xs-dot"/>
+      <path class="xs-fill" d="M88 28c0 4-3 6-3 9s6 4 15 4 15-1 15-4-3-5-3-9"/>
+      <ellipse class="xs-fill" cx="100" cy="43" rx="13" ry="3.6"/>
+      <path d="M90 46c-1 3-4 5-4 8h28c0-3-3-5-4-8"/>
+      <path d="M86 47c-10-4-22 0-20 7 1 4 7 4 8 0 1-3-3-4-4-2M114 47c10-4 22 0 20 7-1 4-7 4-8 0-1-3 3-4 4-2" stroke-width=".9"/>
+      <path class="xs-fill" d="M52 54h96l6 7H46z"/>
+      <path class="xs-fill" d="M40 61h120c3 0 5 2 5 5v2H35v-2c0-3 2-5 5-5z"/>
+      <path d="M60 64.5h80" stroke-width=".6" stroke-dasharray=".6 2.4"/>
+      <path d="M40 68c-5 0-8 2-7 4h12c1-2-1-4-5-4zM160 68c5 0 8 2 7 4h-12c-1-2 1-4 5-4z"/>
+    </g></svg>`;
+}
+
 /** A crystal ball. `clear`: the mist parts and the inside shows. */
 export function ballHtml({ key, kicker = '', title = '', sub = '', tint = '#8fc7d6', clear = true, big = false, cls = '', speed = 1, orbit = '' }) {
   return `<div class="xball ${big ? 'big' : ''} ${clear ? 'clear' : ''} ${cls}" data-key="${key}" style="--tint:${tint};--spin:${(1 / speed).toFixed(2)}">${orbit}
@@ -113,7 +133,7 @@ export function ballHtml({ key, kicker = '', title = '', sub = '', tint = '#8fc7
     <div class="xb-orb"><canvas class="xball-gl" data-key="${key}-gl" data-clear="${clear ? 1 : 0}" data-tint="${tint}" data-speed="${speed}" aria-hidden="true"></canvas><div class="xb-css" aria-hidden="true"><i></i><i></i><i></i></div>
       <div class="xb-in">${kicker ? `<span class="xb-k">${kicker}</span>` : ''}${title ? `<b class="xb-word">${title}</b>` : ''}${sub ? `<span class="xb-sub">${sub}</span>` : ''}</div></div>
     <svg class="xb-letters" viewBox="0 0 100 100" aria-hidden="true"><defs><path id="${key}-lp" d="M50 50m-46.5 0a46.5 46.5 0 1 1 93 0a46.5 46.5 0 1 1-93 0"/></defs><circle class="xbl-dots" cx="50" cy="50" r="43"/><text><textPath href="#${key}-lp" textLength="288">VERBVM · VMBRA · SILENTIVM · NOMEN · SPIRITVS · </textPath></text></svg>
-    <div class="xb-stand" aria-hidden="true"></div>
+    <div class="xb-stand" aria-hidden="true">${standSvg(key)}</div>
   </div>`;
 }
 const LIVING_TINT = '#8fc7d6';
@@ -188,7 +208,7 @@ export function myBall(v, { key = 'myball', open = true, big = false, small = fa
       ${extra}
       <div class="xb-in"><span class="xb-k">${k}</span><b class="xb-word">${word}</b><span class="xb-sub">${sub}</span><span class="xb-tap">${esc(t('Tap to look inside'))}</span></div></div>
     <svg class="xb-letters" viewBox="0 0 100 100" aria-hidden="true"><defs><path id="${key}-lp" d="M50 50m-46.5 0a46.5 46.5 0 1 1 93 0a46.5 46.5 0 1 1-93 0"/></defs><circle class="xbl-dots" cx="50" cy="50" r="43"/><text><textPath href="#${key}-lp" textLength="288">VERBVM · VMBRA · SILENTIVM · NOMEN · SPIRITVS · </textPath></text></svg>
-    <div class="xb-stand" aria-hidden="true"></div>
+    <div class="xb-stand" aria-hidden="true">${standSvg(key)}</div>
   </div></${tag}>`;
 }
 

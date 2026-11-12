@@ -2866,3 +2866,98 @@ body.is-dead { --gilt: #8f97a3; --gilt-2: #4b5363; --gilt-hi: #c9ced6; }
 .cer-face.back.arc .sig { font-size: max(1.6em, 20px); }
 .edict .ed-wax { font-size: 20px; width: 38px; height: 38px; }
 body.is-dead { --ash: #8a919c; } /* labels keep 4.5:1 under the cold fade */
+
+/* ═════════════════════════════════════════════════════════════════════════
+   Polish · after the nine steps
+   ═════════════════════════════════════════════════════════════════════════ */
+/* Rules in force, under the TV table and on phones: nailed edict strips with a wax dot */
+.plaque, .rr {
+  position: relative; border-radius: 0; padding: 9px 16px 9px 34px; gap: 10px;
+  border: 1px solid var(--gilt-2); outline: 1px solid color-mix(in srgb, var(--gilt-2) 55%, transparent); outline-offset: -5px;
+  background: linear-gradient(180deg, var(--ink-3), var(--ink-2)); box-shadow: 0 10px 22px -14px #000;
+}
+.plaque::before, .rr::before {
+  content: ''; position: absolute; left: 11px; top: 50%; width: 13px; height: 13px; margin-top: -6.5px; border-radius: 47% 53% 50% 50% / 52% 47% 53% 48%;
+  background: radial-gradient(circle at 36% 28%, #cf3d40, #8f1a20 50%, #4a090d); box-shadow: inset 0 -2px 3px rgba(0, 0, 0, 0.35), 0 1px 2px #000;
+}
+.plaque .glyph, .rr .glyph, .plaque .emblem, .rr .emblem { display: none; }
+.plaque { font: 600 11.5px/1.2 var(--text); letter-spacing: 0.22em; text-transform: uppercase; color: var(--bone-2); }
+.plaque em, .rr span { font: italic 400 15px/1.2 var(--text); letter-spacing: 0; text-transform: none; color: var(--gilt); }
+.rr b { font: 600 11px/1.2 var(--text); letter-spacing: 0.22em; color: var(--gilt); }
+.plaque.on, .rr { border-color: var(--gilt); outline-color: color-mix(in srgb, var(--gilt) 45%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--gilt) 20%, transparent), 0 0 26px -6px color-mix(in srgb, var(--gilt) 55%, transparent), 0 10px 22px -14px #000; }
+.plaque.on { color: var(--bone); }
+
+/* Exorcism: the word grid in the ornate frame (TV panel and phone) */
+.x-right .b-grid, .x-gridwrap {
+  border: 1px solid var(--gilt-2); border-image: var(--frame) 32 / 22px stretch; border-radius: 0;
+  padding: 26px 26px 20px; background: color-mix(in srgb, var(--ink-2) 80%, transparent);
+}
+.x-right .b-grid .kicker, .x-gridwrap .kicker { display: block; text-align: center; color: var(--gilt); margin-bottom: 4px; }
+.xg-cell { border-color: var(--iron); outline: 1px solid transparent; }
+.xg-cell.mark { outline: 1px solid color-mix(in srgb, var(--gilt) 45%, transparent); outline-offset: -4px; }
+
+/* the pedestal: a pencil-drawn cradle and footed plinth, gilt on the dark */
+.xb-stand { position: relative; z-index: 2; width: calc(var(--size) * 0.66); height: auto; margin-top: calc(var(--size) * -0.075); background: none; border: 0; box-shadow: none; color: var(--gilt); }
+.xb-stand::after { display: none; }
+.xb-stand svg { display: block; width: 100%; height: auto; overflow: visible; }
+.xb-stand .xs-fill { fill: var(--ink-2); }
+.xb-stand .xs-dot { fill: currentColor; stroke: none; }
+
+/* Missions, 'The table decides': the tick or cross nearly fills its medallion */
+.vf-face.front .glyph, .vf-face.front .emblem { width: 78%; height: 78%; font-size: inherit; }
+.vf-face.front .glyph, .vf-face.front .emblem { width: 100%; height: 100%; overflow: visible; }
+
+/* Missions lottery: the same astrolabe as the table, a gilt needle carrying the lantern */
+.lot-wheel { width: min(330px, 84vw); }
+.lot-wheel::before {
+  content: ''; position: absolute; inset: -2%; border-radius: 50%; pointer-events: none;
+  background: repeating-conic-gradient(var(--gilt-2) 0 0.7deg, transparent 0.7deg 6deg);
+  -webkit-mask: radial-gradient(closest-side, transparent 95%, #000 96%, #000 99%, transparent 100%); mask: radial-gradient(closest-side, transparent 95%, #000 96%, #000 99%, transparent 100%);
+}
+.lot-wheel::after { content: ''; position: absolute; inset: 8%; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--gilt-2) 60%, transparent); pointer-events: none; }
+.lot-wheel ul::before {
+  content: ''; position: absolute; inset: 27%; border-radius: 50%;
+  background: repeating-conic-gradient(color-mix(in srgb, var(--gilt) 14%, transparent) 0 1.5deg, transparent 1.5deg 9deg), radial-gradient(circle at 50% 40%, var(--ink-3), var(--ink) 72%);
+  box-shadow: 0 0 0 1px var(--gilt-2), 0 0 0 5px var(--ink), 0 0 0 6px var(--iron), inset 0 0 40px #000;
+}
+.lot-seat { z-index: 2; gap: 0; }
+.lot-disc { width: 48px; height: 48px; border: 1px solid var(--gilt-2); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--gilt-2); position: relative; }
+.lot-seat small { position: relative; z-index: 1; margin-top: -4px; padding: 2px 7px; background: var(--ink); font: 600 10px/1.2 var(--text); letter-spacing: 0.18em; text-transform: uppercase; color: var(--bone-2); max-width: 86px; }
+.lot-seat.win .lot-disc { border-color: var(--gilt-hi); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--gilt), 0 0 26px color-mix(in srgb, var(--gilt) 60%, transparent); }
+.lot-seat.win small { color: var(--gilt); }
+.lot-hand { z-index: 3; }
+.lot-hand::before { content: ''; position: absolute; left: -6px; top: -6px; width: 12px; height: 12px; border-radius: 50%; background: var(--gilt); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--gilt-2); }
+.lot-hand i { left: -1px; width: 2px; height: calc(min(330px, 84vw) * 0.22); background: linear-gradient(to top, var(--gilt-2), var(--gilt)); }
+.lot-hand .glyph, .lot-hand .emblem { left: -17px; top: calc(min(330px, 84vw) * -0.22 - 34px); width: 34px; height: 34px; font-size: 34px; color: var(--gilt); --paper: var(--ink); filter: drop-shadow(0 0 10px color-mix(in srgb, var(--gilt) 70%, transparent)); }
+.lot-result b { font: 600 clamp(36px, 9vw, 56px)/1 var(--black); color: var(--gilt); padding-bottom: 0.08em; }
+body.is-board .lot-wheel { width: min(460px, 54vh); }
+body.is-board .lot-disc { width: 64px; height: 64px; }
+body.is-board .lot-hand i { height: calc(min(460px, 54vh) * 0.22); }
+body.is-board .lot-hand .glyph, body.is-board .lot-hand .emblem { top: calc(min(460px, 54vh) * -0.22 - 34px); }
+body.is-board .lot-seat small { font-size: 13px; max-width: 120px; }
+
+/* A winner's emblem (and every moment emblem) carries the card art's print wobble */
+.moment .m-art > .emblem { filter: url(#ds-wobble); stroke-width: 2.2; }
+.moment.living .m-art > .emblem { filter: url(#ds-wobble) drop-shadow(0 0 18px rgba(255, 211, 107, 0.75)); }
+.moment.lovers .m-art > .emblem { filter: url(#ds-wobble) drop-shadow(0 0 18px rgba(255, 107, 138, 0.8)); }
+.moment.cult .m-art > .emblem { filter: url(#ds-wobble) drop-shadow(0 0 20px rgba(181, 155, 224, 0.7)); }
+.moment.ripper .m-art > .emblem { filter: url(#ds-wobble) drop-shadow(0 0 16px rgba(226, 88, 94, 0.9)); }
+
+/* Cameos are always round */
+svg.avatar { border-radius: 50%; clip-path: circle(50% at 50% 50%); }
+.portrait-row .pr-av, .letter-portrait .lp-av { border-radius: 50%; box-shadow: 0 0 0 1px var(--gilt-2); }
+.letter-portrait .lp-av { box-shadow: 0 0 0 1px rgba(29, 21, 16, 0.5); }
+/* the cameo creator: round options in sideways rows, the chosen one ringed in gilt */
+.av-preview .av-big { width: 148px; height: 148px; box-shadow: 0 0 0 1px var(--gilt-2), 0 0 0 5px var(--ink), 0 0 0 6px var(--gilt-2); filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.55)); }
+.av-opts { gap: 10px; padding: 4px 2px 6px; -webkit-mask: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 18px), transparent); mask: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 18px), transparent); padding-inline: 14px; }
+.av-opt { width: 46px; height: 46px; padding: 0; border-radius: 50%; border: 1px solid var(--iron); overflow: hidden; background: var(--ink-2); transition: box-shadow 0.25s, border-color 0.25s; }
+.av-opt .av-mini { width: 100%; height: 100%; }
+.av-opt i { width: 100%; height: 100%; border-radius: 50%; }
+.av-opt.on { border-color: var(--gilt); box-shadow: 0 0 0 2px var(--ink), 0 0 0 3px var(--gilt), 0 0 14px color-mix(in srgb, var(--gilt) 45%, transparent); }
+/* moment emblems (the winner's above all) in the pencil line of the card art and backdrops */
+.moment .m-art > .emblem { filter: url(#ds-pencil); }
+.moment.living .m-art > .emblem { filter: url(#ds-pencil) drop-shadow(0 0 18px rgba(255, 211, 107, 0.75)); }
+.moment.lovers .m-art > .emblem { filter: url(#ds-pencil) drop-shadow(0 0 18px rgba(255, 107, 138, 0.8)); }
+.moment.cult .m-art > .emblem { filter: url(#ds-pencil) drop-shadow(0 0 20px rgba(181, 155, 224, 0.7)); }
+.moment.ripper .m-art > .emblem { filter: url(#ds-pencil) drop-shadow(0 0 16px rgba(226, 88, 94, 0.9)); }
+.lot-wheel::before { inset: -11%; }
