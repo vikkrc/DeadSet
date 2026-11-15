@@ -233,6 +233,17 @@ export function carnivalMain(v, me, h) {
         stage = slip(th('{a} wears the power', { a: pname(v, K.power?.user) }), th('The {role}', { role: roleName(K.power?.mask) }), t(POWER[K.power?.mask] ?? ''));
       }
       break;
+    case 'K_LOOK':
+      if (a.type === 'klook') {
+        // Only on the looker's phone: the card(s), until they are done reading.
+        const title = a.kind === 'peek' ? t('Your mask') : a.kind === 'DOUBLE_AGENT' ? t('Your new mask') : t(a.looks.length > 1 ? 'The masks you read' : 'The mask you read');
+        stage = `<div class="k-look rise-in" data-key="klook-${v.phaseId}"><span class="kicker">${esc(title)}</span>
+          <div class="kl-cards">${a.looks.map((x) => `<figure class="kl-c">${maskCard(x.mask, { cls: 'big' })}<figcaption><b>${esc(roleName(x.mask))}</b>${x.seat === v.me.id ? '' : `<small>${esc(pname(v, x.seat))}</small>`}</figcaption></figure>`).join('')}</div>
+          <p class="small muted">${t('Only you see this. Remember it.')}</p></div>`;
+        return `${head(v)}${stage}${chipsRow(v)}`;
+      }
+      stage = slip(t('A moment'), K.look?.kind === 'peek' ? th('{a} lifts their mask…', { a: pname(v, K.look?.pid) }) : th('{a} reads the masks…', { a: pname(v, K.look?.pid) }), t('The ball waits until they are done.'));
+      break;
     default: break;
   }
   return `${head(v)}${stage}${ballroom(v, { pick, open })}${purse(v)}${below}${chipsRow(v)}`;
@@ -258,6 +269,9 @@ export function carnivalDock(v, h) {
       else parts.push(note(t('Choose what to do')));
       break;
     }
+    case 'klook':
+      parts.push(`<button class="btn btn-solid" data-act="kDone" data-key="d-kdone">${t('I have seen it')}</button>`);
+      break;
     case 'kanswer':
       if (!a.answer) {
         parts.push(holdBtn('kPass', t('Hold: Let it pass'), 'btn-solid k-twin', { key: 'k-ans-a' }));
@@ -305,13 +319,24 @@ export function carnivalActs(h) {
     async kClaim(el) { if (await send('k.claim', { mask: S.sel.kmask })) { clear(); sound.play('stamp'); burstAt(el, { colors: ['#c9a35a', '#ecd28f'] }); } },
     async kMine(el) { if (await send('k.answer', { mine: true })) burstAt(el, { colors: ['#9c1c22', '#ece5d5'] }); },
     async kPass() { await send('k.answer', { mine: false }); },
+    async kDone() { await send('k.done', {}); },
     async kPower() { const a = V().action; const sel = S.sel.kseat ?? []; if (await send('k.power', a.two ? { targets: sel } : { target: sel[0], mask: S.sel.kmask })) clear(); },
     async kWitchReal() { if (await send('k.power', { targets: S.sel.kseat, real: true })) clear(); },
     async kWitchFake() { if (await send('k.power', { targets: S.sel.kseat, real: false })) clear(); },
     kSet(el) {
       const key = el.dataset.id;
       const val = el.type === 'checkbox' ? el.checked : key === 'masks' ? el.value : Number(el.value);
-      send('host.settings', { k: { [key]: val } }, { quiet: true });
+      const patch = { [key]: val };
+      // Going custom starts from the masks the table would play now.
+      if (key === 'masks' && val === 'custom') patch.pool = Object.entries(V().setup?.publicDeck?.exact ?? {}).flatMap(([id, n]) => Array(n).fill(id));
+      send('host.settings', { k: patch }, { quiet: true });
+    },
+    kPoolStep(el) {
+      const pool = [...(V().settings.k?.pool ?? [])];
+      const id = el.dataset.id;
+      if (Number(el.dataset.d) > 0) pool.push(id); else { const i = pool.lastIndexOf(id); if (i >= 0) pool.splice(i, 1); }
+      haptic(6);
+      send('host.settings', { k: { pool } }, { quiet: true });
     },
     kPool(el) {
       const k = V().settings.k ?? {};
@@ -364,7 +389,7 @@ export function carnivalMoment(l, v, fresh, { notify, name: nm, sound }) {
 export function lookMoments(freshPriv, v) {
   return freshPriv.filter((x) => x.kind === 'look' && x.mask).map((x) => ({ type: 'klook', mask: x.mask, whose: x.seat === v.me?.id ? null : pname(v, x.seat), tapOnly: true, sound: null }));
 }
-export const K_MOMENT_TIME = { kintro: 2600, kswap: 2600, kclaim: 2400, kreveal: 6000, kpower: 3400, klook: 4200 };
+export const K_MOMENT_TIME = { kintro: 3400, kswap: 3400, kclaim: 3200, kreveal: 7000, kpower: 4400 };
 
 export function carnivalMomentHtml(m, h) {
   const { letters } = h;
@@ -388,7 +413,7 @@ export function carnivalMomentHtml(m, h) {
       return `<span class="kicker">${esc(t('The masks are lifted'))}</span><h1 class="m-title">${letters(t('The {role}?', { role: roleName(m.mask) }))}</h1><ol class="k-reveal">${rows}</ol>`;
     }
     case 'kpower': {
-      const coin = m.coin ? `<div class="coin-stage"><div class="coin lands-${m.coin === 'heads' ? 0 : 1}"><div class="coin-face heads"><span>${esc(t('Heads'))}</span></div><div class="coin-face tails"><span>${esc(t('Tails'))}</span></div></div><div class="coin-shadow"></div></div>` : '';
+      const coin = m.coin ? `<div class="coin-stage k-coinstage"><div class="coin lands-${m.coin === 'heads' ? 0 : 1}"><div class="coin-face heads k-coin" aria-label="${esc(t('Heads'))}"><span class="kc-skull">${emblem('death')}</span></div><div class="coin-face tails k-coin" aria-label="${esc(t('Tails'))}"><span class="kc-ds">DS</span></div></div><div class="coin-shadow"></div></div>` : '';
       return `<div class="m-art k-sting">${emblem(embOf(m.mask), { rays: true })}</div><span class="kicker">${esc(t('The {role}', { role: roleName(m.mask) }))}</span>
         ${coin}<h1 class="m-title">${letters(m.user)}</h1><p class="m-sub">${tmh(m.msg)}</p>`;
     }
@@ -420,6 +445,28 @@ export function scoreboard(v) {
     <p class="small muted">${t('The winner +3; everyone else +1 for each Soul above 6.')}</p></section>`;
 }
 
+/** Custom masks: a stepper per mask, the total against the seats, Death required. */
+function maskEditor(v, isHost, need) {
+  const pool = v.settings.k?.pool ?? [];
+  const count = (id) => pool.filter((x) => x === id).length;
+  const total = pool.length;
+  const rows = MASKS.map((id) => {
+    const n = count(id);
+    const req = id === 'DEATH';
+    const max = id === 'INNOCENT' ? need : 1;
+    const canDown = n > (req ? 1 : 0);
+    const canUp = n < max && total < need;
+    const step = (d, on) => `<button class="kme-btn" data-act="kPoolStep" data-id="${id}" data-d="${d}" ${on ? '' : 'disabled'} aria-label="${esc(d > 0 ? t('Add {x}', { x: roleName(id) }) : t('Remove {x}', { x: roleName(id) }))}">${d > 0 ? '+1' : '−1'}</button>`;
+    return `<li class="kme-row ${n ? 'on' : ''} ${req ? 'req' : ''}" data-key="kme-${id}">${maskCard(id, { cls: 'thumb' })}
+      <span class="kme-name"><b>${esc(roleName(id))}</b>${req ? `<small class="kme-req">${t('Required')}</small>` : ''}${runes(id, 'sm')}</span>
+      <span class="kme-step">${isHost ? step(-1, canDown) : ''}<em data-key="kme-n-${n}">${n}<small>/${max}</small></em>${isHost ? step(1, canUp) : ''}</span></li>`;
+  }).join('');
+  return `<div class="k-medit" data-key="kmedit"><div class="kme-head ${total === need ? 'ok' : 'bad'}"><span class="kicker">${t('Your masks')}</span>
+    <b>${th('{n} of {m} seats', { n: total, m: need })}</b></div>
+    <p class="small muted">${t('One mask per seat. Death is required; only the Innocent may appear more than once.')}</p>
+    <ul class="kme-list">${rows}</ul></div>`;
+}
+
 export function carnivalLobbyDeck(v, isHost, h) {
   const k = v.settings.k ?? {};
   const n = v.players.length;
@@ -440,9 +487,7 @@ export function carnivalLobbyDeck(v, isHost, h) {
     <button class="btn btn-ghost btn-sm" data-act="sheet" data-id="masks" data-key="kref-btn">${glyph('mask')} ${t('What every mask does')}</button>
     <div class="rule">${t('The masks')}</div>
     ${row(t('Masks'), t('Recommended grows with the table. Custom: pick one mask per seat (Death is required; only the Innocent may repeat).'), sel('masks', custom ? 'custom' : 'recommended', [['recommended', t('Recommended')], ['custom', t('Custom')]]), t(custom ? 'Custom' : 'Recommended'))}
-    ${custom ? `<div class="x-cats" data-key="kpool"><span class="kicker">${th('Chosen {n} of {m}', { n: pool.size, m: need })}</span><div class="chips-row">${MASKS.map((id) => (isHost
-      ? `<button class="chipbtn ${pool.has(id) ? 'on' : ''}" data-act="kPool" data-id="${id}" aria-pressed="${pool.has(id)}">${esc(roleName(id))}</button>`
-      : `<span class="chipbtn ${pool.has(id) ? 'on' : ''}">${esc(roleName(id))}</span>`)).join('')}</div></div>` : ''}
+    ${custom ? maskEditor(v, isHost, need) : ''}
     <div class="rule">${t('Winning')}</div>
     ${row(t('A full purse'), t('Souls needed to win.'), sel('target', k.target ?? 13, [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((x) => [x, String(x)])), String(k.target ?? 13))}
     ${row(t('Death\'s harvest'), t('Souls reaped with Death to win. Each reap is 2.'), sel('harvest', k.harvest ?? 6, harvests), (harvests.find(([x]) => x === (k.harvest ?? 6)) ?? harvests[3])[1])}
@@ -495,6 +540,7 @@ export function carnivalBoard(v, h) {
     K_TURN: th('{a}: swap or pretend, peek, or claim?', { a: turn }),
     K_CHALLENGE: K.claim ? `${th('{a} claims the {role}.', { a: pname(v, K.claim.by), role: roleName(K.claim.mask) })} <b>${th('{done}/{total} have answered', v.progress ?? { done: 0, total: 0 })}</b>` : '',
     K_POWER: K.power ? th('{a} uses the {role}…', { a: pname(v, K.power.user), role: roleName(K.power.mask) }) : '',
+    K_LOOK: K.look ? (K.look.kind === 'peek' ? th('{a} lifts their mask…', { a: pname(v, K.look.pid) }) : th('{a} reads the masks…', { a: pname(v, K.look.pid) })) : '',
     ENDED: th('{names} wins.', { names: (K.winners ?? []).map((id) => pname(v, id)) }),
   }[v.phase] ?? '';
   const ended = v.phase === 'ENDED';

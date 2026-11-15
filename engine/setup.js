@@ -45,7 +45,7 @@ export function defaultSettings() {
       proposal: 0, teamVote: 60, mission: 45, interlude: 45, lastStand: 240, reckoning: 180,
       xClue: 30, xDiscuss: 90, xVote: 45, xGuess: 45,
       cBury: 20, cTurn: 30, cBid: 20, cDig: 15, cWager: 10,
-      kTurn: 45, kChallenge: 10, kPower: 20 },
+      kTurn: 45, kChallenge: 12, kPower: 20, kLook: 12 },
     transport: 'in-person',
     revealOnDeath: false,
     endReveal: true,

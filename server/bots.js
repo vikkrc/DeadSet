@@ -99,6 +99,7 @@ function carnivalMove(m, v, rng) {
       if (mine.p >= 0.7 && value(mine.mask) < 2) return { cmd: { type: 'k.swap', payload: { target: pick(rng, a.targets), real: true } } };
       return { cmd: { type: 'k.swap', payload: { target: pick(rng, a.targets), real: chance(rng, 0.5) } } };
     }
+    case 'klook': return { cmd: { type: 'k.done', payload: {} } };
     case 'kanswer':
       if (a.answer) return null;
       return { cmd: { type: 'k.answer', payload: { mine: mine.mask === a.mask && mine.p >= (a.mask === 'DEATH' ? 0.3 : 0.55) } } };

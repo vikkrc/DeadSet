@@ -39,11 +39,11 @@ export function sceneMs(type, d = {}) {
     case 'xvotes': return 5600;
     case 'xguess': return 6200;
     // Carnival
-    case 'kintro': return 2600;
-    case 'kswap': return 2600;
-    case 'kclaim': return 2400;
-    case 'kreveal': return 2600 + Math.min(d.n ?? 0, 12) * 700 + 1600;
-    case 'kpower': return d.coin ? 4800 : 3400;
+    case 'kintro': return 3400;
+    case 'kswap': return 3400;
+    case 'kclaim': return 3200;
+    case 'kreveal': return 3200 + Math.min(d.n ?? 0, 12) * 800 + 2400;
+    case 'kpower': return d.coin ? 6000 : 4400;
     // Coffins
     case 'cdig': return 2800;
     case 'cresult': return 3800 + Math.min(d.n ?? 0, 12) * 600;

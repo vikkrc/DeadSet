@@ -50,10 +50,10 @@ export function moodFor(v) {
     case 'M_NIGHT': return 'mCandle';
     case 'M_LAST_STAND': return 'mStand';
     case 'M_RECKONING': return 'mReckon';
-    case 'K_UNMASK': case 'K_LOTTERY': return 'mGather';
-    case 'K_TURN': return 'discussion';
-    case 'K_CHALLENGE': return 'mVote';
-    case 'K_POWER': return 'mMission';
+    case 'K_UNMASK': case 'K_LOTTERY': return 'kUnmask';
+    case 'K_TURN': return 'kBall';
+    case 'K_CHALLENGE': return 'kChallenge';
+    case 'K_POWER': case 'K_LOOK': return 'kPower';
     case 'C_LOTTERY': case 'C_BURY': return 'mGather';
     case 'C_TURN': return 'mCamp';
     case 'C_BID': return 'mVote';

@@ -11,11 +11,11 @@
 import { GameError, nameOf, pub, priv } from './state.js';
 import { ROLES } from './content.js';
 
-export const K_PHASES = ['K_UNMASK', 'K_LOTTERY', 'K_TURN', 'K_CHALLENGE', 'K_POWER'];
+export const K_PHASES = ['K_UNMASK', 'K_LOTTERY', 'K_TURN', 'K_CHALLENGE', 'K_POWER', 'K_LOOK'];
 export const isCarnivalPhase = (ph) => typeof ph === 'string' && ph.startsWith('K_');
 export const K_MIN = 4;
 export const K_MAX = 12;
-export const K_UNMASK_SECONDS = 10;
+export const K_UNMASK_SECONDS = 15;
 export const K_LOTTERY_SECONDS = 9;
 export const K_RETURN_SECONDS = 60;
 
@@ -40,7 +40,7 @@ export const K_DEFAULTS = {
   diary: false,         // the ball diary (Notes): a private log of what you have seen
   games: 1,             // games per match: 1 or 3
 };
-export const K_TIMER_DEFAULTS = { kTurn: 45, kChallenge: 10, kPower: 20 };
+export const K_TIMER_DEFAULTS = { kTurn: 45, kChallenge: 12, kPower: 20, kLook: 12 };
 
 let RNG = null;
 const T = (m, key) => m.settings.timers?.[key] ?? K_TIMER_DEFAULTS[key] ?? 0;
@@ -63,7 +63,16 @@ export function applyCarnivalPatch(s, patch) {
   if (!patch || typeof patch !== 'object') return;
   const k = kSettings(s);
   if (['recommended', 'custom'].includes(patch.masks)) k.masks = patch.masks;
-  if (Array.isArray(patch.pool)) k.pool = [...new Set(patch.pool.filter((id) => MASKS.includes(id)))];
+  if (Array.isArray(patch.pool)) {
+    // Counts per mask: only the Innocent may repeat; at most one mask per seat.
+    const out = [];
+    for (const id of patch.pool) {
+      if (!MASKS.includes(id) || out.length >= K_MAX) continue;
+      if (id !== 'INNOCENT' && out.includes(id)) continue;
+      out.push(id);
+    }
+    k.pool = out.sort((a, b) => MASKS.indexOf(a) - MASKS.indexOf(b));
+  }
   const n = Number(patch.target);
   if (Number.isInteger(n) && n >= 8 && n <= 20) k.target = n;
   const h = Number(patch.harvest);
@@ -72,7 +81,7 @@ export function applyCarnivalPatch(s, patch) {
   if ([1, 2].includes(Number(patch.dance))) k.dance = Number(patch.dance);
   if ([1, 3].includes(Number(patch.games))) k.games = Number(patch.games);
   if (typeof patch.diary === 'boolean') k.diary = patch.diary;
-  if (k.masks === 'custom' && !k.pool.length) k.pool = recommendedMasks(Math.max(6, (patch.n ?? 6)));
+  if (k.masks === 'custom' && !k.pool.length) k.pool = recommendedMasks(6);
   s.k = k;
 }
 
@@ -174,7 +183,7 @@ export function startCarnival(m, rng, now) {
     chairs, masks: Object.fromEntries(seats.map((id, i) => [id, deck[i]])), inPlay: [...new Set(deck)].sort((a, b) => MASKS.indexOf(a) - MASKS.indexOf(b)),
     souls: Object.fromEntries(order.map((id) => [id, k.start])), harvest: Object.fromEntries(order.map((id) => [id, 0])), offering: 0,
     shield: {}, forced: Object.fromEntries(order.map((id) => [id, k.dance])), turn: null, turnNo: 0, first: null,
-    claim: null, power: null, prevClaim: null, thisClaim: null, last: null,
+    claim: null, power: null, look: null, prevClaim: null, thisClaim: null, last: null,
     belief: {}, timeline: [], liar: {}, eye: {}, winners: null, where: rng.int(15, 'kwhere'),
   };
   for (const s of seats) believeAll(m, s);
@@ -211,6 +220,17 @@ function endTurn(m, now) {
 }
 
 const note = (m, pid, msg, extra = {}) => priv(m, pid, msg, 'look', { kturn: K(m).turnNo, ...extra });
+
+/** A look (a peek, the Mentalist, the Oracle, the Double Agent): the game waits while the looker reads it. */
+function startLook(m, pid, seats, now, kind) {
+  const S = K(m);
+  S.look = { pid, kind, seats: seats.map((seat) => ({ seat, mask: S.masks[seat] })) };
+  enter(m, 'K_LOOK', now, T(m, 'kLook'));
+}
+function endLook(m, now) {
+  K(m).look = null;
+  endTurn(m, now);
+}
 
 // ── The three turn actions ────────────────────────────────────────────────
 function swap(m, by, a, b, real, now, { power = null } = {}) {
@@ -326,6 +346,11 @@ function applyPower(m, payload, now) {
     pub(m, msg, 'mission', { ev: 'k-power', user, mask, mimic, ...extra });
     if (!checkWin(m, actor, now)) endTurn(m, now);
   };
+  const lookDone = (msg, extra, seats) => {
+    S.power = null;
+    pub(m, msg, 'mission', { ev: 'k-power', user, mask, mimic, ...extra });
+    if (!checkWin(m, actor, now)) startLook(m, user, seats, now, mask);
+  };
   switch (mask) {
     case 'DEATH': {
       const t = need(payload.target);
@@ -350,7 +375,7 @@ function applyPower(m, payload, now) {
       believe(m, user, t);
       note(m, user, ['The mask of {a}: {role}.', { a: seatName(m, t), role: S.masks[t] }], { seat: t, mask: S.masks[t] });
       S.timeline.push({ n: S.turnNo, by: user, kind: 'look', seats: [t], secret: true });
-      return done('The Mentalist reads someone\'s mask.', {});
+      return lookDone('The Mentalist reads someone\'s mask.', {}, [t]);
     }
     case 'ORACLE': {
       const a = need(payload.targets?.[0]);
@@ -358,7 +383,7 @@ function applyPower(m, payload, now) {
       if (a === b) throw new GameError('Pick two different masks.');
       for (const t of [a, b]) { believe(m, user, t); note(m, user, ['The mask of {a}: {role}.', { a: seatName(m, t), role: S.masks[t] }], { seat: t, mask: S.masks[t] }); }
       S.timeline.push({ n: S.turnNo, by: user, kind: 'look', seats: [a, b] });
-      return done(['The Oracle gazes at {a} and {b}.', { a: seatName(m, a), b: seatName(m, b) }], { seats: [a, b] });
+      return lookDone(['The Oracle gazes at {a} and {b}.', { a: seatName(m, a), b: seatName(m, b) }], { seats: [a, b] }, [a, b]);
     }
     case 'WITCH': {
       const a = need(payload.targets?.[0]);
@@ -376,7 +401,7 @@ function applyPower(m, payload, now) {
       believe(m, user, user);
       note(m, user, ['Your new mask: {role}.', { role: S.masks[user] }], { seat: user, mask: S.masks[user] });
       S.timeline.push({ n: S.turnNo, by: user, kind: 'swap', a: user, b: t, real: true, agent: true });
-      return done(['{a} trades masks with {b}, for real.', { a: nameOf(m, user), b: seatName(m, t) }], { target: t, seats: [user, t] });
+      return lookDone(['{a} trades masks with {b}, for real.', { a: nameOf(m, user), b: seatName(m, t) }], { target: t, seats: [user, t] }, [user]);
     }
     default: throw new GameError('Unknown power.');
   }
@@ -453,7 +478,7 @@ export function carnivalCommand(m, p, type, payload, rng, now) {
       note(m, p.id, ['You lift your mask: {role}.', { role: S.masks[p.id] }], { seat: p.id, mask: S.masks[p.id], peek: true });
       S.timeline.push({ n: S.turnNo, by: p.id, kind: 'peek' });
       pub(m, ['{a} lifts their mask for a moment.', { a: nameOf(m, p.id) }], 'mission', { ev: 'k-peek', by: p.id });
-      return endTurn(m, now);
+      return startLook(m, p.id, [p.id], now, 'peek');
     }
     case 'k.claim': {
       myTurn();
@@ -467,6 +492,11 @@ export function carnivalCommand(m, p, type, payload, rng, now) {
       S.claim.answers[p.id] = payload.mine ? 'mine' : 'pass';
       if (players(m).filter((id) => id !== S.claim.by).every((id) => S.claim.answers[id])) return resolveClaim(m, now);
       return bump(m);
+    }
+    case 'k.done': {
+      need('K_LOOK');
+      if (S.look?.pid !== p.id) throw new GameError('That window has closed.', 'STALE');
+      return endLook(m, now);
     }
     case 'k.power': {
       need('K_POWER');
@@ -496,18 +526,19 @@ export function carnivalAdvance(m, rng, now) {
       note(m, id, ['You lift your mask: {role}.', { role: S.masks[id] }], { seat: id, mask: S.masks[id], peek: true });
       S.timeline.push({ n: S.turnNo, by: id, kind: 'peek', auto: true });
       pub(m, ['{a} lifts their mask for a moment.', { a: nameOf(m, id) }], 'mission', { ev: 'k-peek', by: id, auto: true });
-      return endTurn(m, now);
+      return startLook(m, id, [id], now, 'peek');
     }
     case 'K_CHALLENGE':
       for (const id of players(m)) if (id !== S.claim.by && !S.claim.answers[id]) S.claim.answers[id] = 'pass';
       return resolveClaim(m, now);
     case 'K_POWER': return applyPower(m, randomPower(m), now);
+    case 'K_LOOK': return endLook(m, now);
     default: throw new GameError('Nothing to advance.');
   }
 }
 
 export const K_ADVANCE_LABEL = {
-  K_UNMASK: 'Hide the masks', K_LOTTERY: 'Skip the draw', K_TURN: 'Peek for them', K_CHALLENGE: 'Close the challenges', K_POWER: 'Choose for them',
+  K_UNMASK: 'Hide the masks', K_LOTTERY: 'Skip the draw', K_TURN: 'Peek for them', K_CHALLENGE: 'Close the challenges', K_POWER: 'Choose for them', K_LOOK: 'Move on',
 };
 
 // ── Views ──────────────────────────────────────────────────────────────────
@@ -525,6 +556,7 @@ export function carnivalPublic(m) {
     deck: countBy(Object.values(S.masks)).map(([id, n]) => ({ id, n })).sort((a, b) => MASKS.indexOf(a.id) - MASKS.indexOf(b.id)),
     claim: S.claim ? { by: S.claim.by, mask: S.claim.mask, answered: Object.keys(S.claim.answers) } : null,
     power: S.power ? { user: S.power.user, mask: S.power.mask } : null,
+    look: S.look ? { pid: S.look.pid, kind: S.look.kind } : null,
     prevClaim: S.prevClaim,
     target: m.config.target, harvestTarget: m.config.harvestOn ? m.config.harvest : 0, penalty: m.config.penalty, diary: !!m.config.diary,
     where: S.where,
@@ -554,6 +586,9 @@ export function carnivalAction(m, p) {
     case 'K_POWER':
       if (S.power.user !== p.id) return { type: 'kwatch', power: true };
       return { type: 'kpower', mask: S.power.mask, targets: powerTargets(m, p.id, S.power.mask), masks: S.inPlay, two: ['ORACLE', 'WITCH'].includes(S.power.mask), real: S.power.mask === 'WITCH' };
+    case 'K_LOOK':
+      if (S.look?.pid !== p.id) return { type: 'kwatch', look: true };
+      return { type: 'klook', kind: S.look.kind, looks: S.look.seats };
     default: return { type: 'none' };
   }
 }

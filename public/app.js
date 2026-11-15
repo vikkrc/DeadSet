@@ -280,7 +280,6 @@ function detectMoments(v) {
     sharedFrom(l, start);
   }
   if (v.mode === 'coffins' && v.me && !v.me.moderator) out.push(...lanternMoments(freshPriv, name));
-  if (v.mode === 'carnival' && v.me && !v.me.moderator) out.push(...lookMoments(freshPriv, v));
   // Side Missions: the owner learns at once (personal, queued behind any shared scene).
   if (v.mode === 'missions' && v.me && !v.me.moderator) for (const x of freshPriv.filter((e) => e.kind === 'side' && e.state)) out.push({ type: 'mside', side: x.side, state: x.state, sound: x.state === 'done' ? 'approve' : 'unpick', tapOnly: true });
   function entryMoments(l) {
@@ -616,7 +615,9 @@ function render() {
   document.body.classList.toggle('mode-carnival', v?.mode === 'carnival' && ['room', 'board'].includes(S.route?.name));
   document.body.classList.toggle('mode-coffins', v?.mode === 'coffins' && ['room', 'board'].includes(S.route?.name));
   document.body.classList.toggle('mode-missions', v?.mode === 'missions' && ['room', 'board'].includes(S.route?.name));
-  if (onBoard() && v && S.board.audio && v.table?.score !== false) { score.setTheme(v.table?.scoreTheme ?? 'classic'); score.play(moodFor(v)); score.tension(tenseFor(v)); } else score.stop();
+  // The score plays on the TV board, and on any phone whose owner switched it on (hamburger menu).
+  const phoneMusic = !onBoard() && phoneMusicOn() && S.route?.name === 'room' && v && v.table?.score !== false;
+  if (phoneMusic || (onBoard() && v && S.board.audio && v.table?.score !== false)) { score.setTheme(v.table?.scoreTheme ?? 'classic'); score.play(moodFor(v)); score.tension(tenseFor(v)); } else score.stop();
   document.body.classList.toggle('has-sheet', !!S.ui.sheet && (S.route?.name === 'room' || S.ui.sheet === 'lang' || S.ui.sheet === 'avatar'));
   ambient(night ? 'night' : null);
   morph(app, view());
@@ -706,7 +707,7 @@ const STEP_EN = {
   DAY_DEFENSE: 'Defence', DAY_VOTING: 'Secret ballot', DAY_RESOLVING: 'Final act', NIGHT_DREAM_SWAP: 'Nightfall', NIGHT_ACTIONS: 'Night actions', ENDED: 'Match over',
   M_REVEAL: 'Role reveal', M_LOTTERY: 'The first leader', M_PROPOSE: 'The proposal', M_VOTE: 'Team vote', M_MISSION: 'On the mission', M_RESULT: 'The reveal',
   M_NIGHT: 'Night interlude', M_LAST_STAND: 'The Last Stand', M_RECKONING: 'The Reckoning',
-  K_UNMASK: 'The unmasking', K_LOTTERY: 'The first dancer', K_TURN: 'Swap, peek or claim', K_CHALLENGE: 'Challenges', K_POWER: 'A power',
+  K_UNMASK: 'The unmasking', K_LOTTERY: 'The first dancer', K_TURN: 'Swap, peek or claim', K_CHALLENGE: 'Challenges', K_POWER: 'A power', K_LOOK: 'A look',
   C_LOTTERY: 'The first player', C_BURY: 'The burial', C_TURN: 'Bury or challenge', C_BID: 'The bidding', C_WAGER: 'Ghost wagers', C_DIG: 'The dig', C_LOSE: 'A coffin is lost',
   X_REVEAL: 'The crystal ball', X_LOTTERY: 'The first speaker', X_CLUES: 'One word each', X_DISCUSS: 'Talk it over', X_VOTE: 'Name the Demon', X_GUESS: 'The last guess',
 };
@@ -1130,7 +1131,7 @@ function sheet(v) {
   let body = '';
   if (s === 'record') {
     title = th('Room {code}', { code: '%CODE%' }).replace('%CODE%', `<span class="code-txt">${esc(v.code)}</span>`);
-    body = `${hostBox()}${langRow(v)}${v.me?.moderator ? '' : tutorialToggle()}<div>${recordBlock(v)}</div>
+    body = `${hostBox()}${langRow(v)}${phoneMusicToggle()}${v.me?.moderator ? '' : tutorialToggle()}<div>${recordBlock(v)}</div>
       <div class="row"><a class="btn btn-sm btn-ghost" href="/guide" data-link>${t('How to play')}</a><button class="btn btn-sm btn-ghost" data-act="leave">${glyph('out')} ${t('Leave this device')}</button></div>
       ${holdBtn('backHome', t('Hold to go back to the start'), 'btn-sm btn-wide', { key: 'backhome' })}`;
   } else if (s === 'avatar') {
@@ -1482,7 +1483,7 @@ function setupForm(v) {
   if (preset.carnival) {
     return `<div class="stack" style="gap:18px"><details class="more" data-key="d-ktable" open><summary>${t('Table & timers')}</summary><div>
       <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
-      <div class="grid2">${timer('kTurn', 'Each turn')}${timer('kChallenge', 'Challenges')}${timer('kPower', 'Power picks')}</div>
+      <div class="grid2">${timer('kTurn', 'Each turn')}${timer('kChallenge', 'Challenges')}${timer('kPower', 'Power picks')}${timer('kLook', 'Looking at a mask')}</div>
     </div></details></div>`;
   }
   if (preset.coffins) {
@@ -1957,6 +1958,11 @@ const TIPS_KEY = 'deadset:tutorial';
 const TIPS_SEEN = 'deadset:tips-seen';
 const tipsOn = () => localStorage.getItem(TIPS_KEY) === '1';
 const tipsSeen = () => { try { return new Set(JSON.parse(localStorage.getItem(TIPS_SEEN) || '[]')); } catch { return new Set(); } };
+const MUSIC_KEY = 'deadset:phoneMusic';
+function phoneMusicOn() { try { return localStorage.getItem(MUSIC_KEY) === '1'; } catch { return false; } }
+function phoneMusicToggle() {
+  return `<label class="check" data-key="pmusic"><input type="checkbox" data-act="phoneMusicToggle" ${phoneMusicOn() ? 'checked' : ''}><span><b>${t('Music on this phone')}</b><small>${t('Play the table\'s score here too, in the host\'s chosen style. Off by default.')}</small></span></label>`;
+}
 function tutorialToggle() {
   return `<label class="check" data-key="tut"><input type="checkbox" data-act="tutorialToggle" ${tipsOn() ? 'checked' : ''}><span><b>${t('First-game tips')}</b><small>${t('Short hints walk you through each step of your first game.')}</small></span></label>`;
 }
@@ -2371,6 +2377,12 @@ const ACT = {
     render();
   },
   tutorialOff() { localStorage.setItem(TIPS_KEY, '0'); render(); },
+  phoneMusicToggle(el) {
+    const on = el.type === 'checkbox' ? el.checked : !phoneMusicOn();
+    try { localStorage.setItem(MUSIC_KEY, on ? '1' : '0'); } catch { /* private mode */ }
+    if (on) { sound.unlock(); if (!sound.on) sound.toggle(); }
+    render();
+  },
   coachDone(el) { const seen = tipsSeen(); seen.add(el.dataset.id); localStorage.setItem(TIPS_SEEN, JSON.stringify([...seen])); render(); },
   recap() { S.ui.recap = { i: 0, play: false }; uiSound('whoosh'); render(); },
   recapClose() { clearInterval(S.recapTimer); S.ui.recap = null; render(); },
@@ -2502,6 +2514,8 @@ document.addEventListener('change', (e) => {
     const k = el.dataset.id;
     send('host.settings', { x: { [k]: el.type === 'checkbox' ? el.checked : ['demons', 'rounds'].includes(k) ? Number(el.value) : el.value } });
   }
+  // Mode setups whose handlers live in their own modules (Coffins, Carnival).
+  if (['cSet', 'kSet'].includes(el.dataset.actChange)) ACT[el.dataset.actChange]?.(el);
   if (el.dataset.actChange === 'tieBreak') send('host.settings', { tieBreak: el.checked ? 'coin' : 'none' });
   if (el.dataset.actChange === 'assign') send('host.assign', { playerId: el.dataset.pid, roleId: el.value || null });
 });

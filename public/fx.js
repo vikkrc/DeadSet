@@ -304,6 +304,15 @@ const MOODS = {
   mCandle: { root: 65.4, scale: [0, 2, 4, 7, 9], chord: [1, 1.25, 1.5, 2], cutoff: 520, wind: 0.02, gain: 0.5, crackle: 1.4, shimmer: 0.005, motif: { voice: 'box', every: [8, 13], len: [3, 5], beat: 0.95, oct: 5 } },
   mStand: { root: 55, scale: [0, 1, 3, 5, 7, 8, 10], chord: [1, 1.19, 1.5, 2], cutoff: 560, wind: 0.03, gain: 0.58, choir: 0.018, drum: { bpm: 96, pattern: [1, 0, 1, 0, 1, 1, 0, 1], pitch: 62, gain: 0.24 }, swell: [6, 10] },
   mReckon: { root: 51.9, scale: [0, 1, 4, 5, 7, 8], chord: [1, 1.06, 1.5, 2], cutoff: 420, wind: 0.05, gain: 0.6, choir: 0.035, heart: 48, swell: [5, 9], motif: { voice: 'bell', every: [4, 6], len: [1, 1], beat: 1, oct: 2 } },
+  // Dead Set: Carnival. A masked ball, so every mood is in three (meter: 3), a waltz in every style.
+  //   kUnmask    – the unmasking: a slow, ceremonial waltz of bells and voices
+  //   kBall      – the dance: an oom-pah-pah under a music-box melody
+  //   kPower     – a power used: darker, the waltz half-lit
+  //   kChallenge – "Is that your mask?": the waltz runs on over a ticking heart
+  kUnmask: { root: 73.4, scale: [0, 2, 3, 5, 7, 8, 11], chord: [1, 1.19, 1.5, 2], cutoff: 560, wind: 0.015, gain: 0.52, meter: 3, choir: 0.012, pluck: { bpm: 96, pattern: [1, 0, 1, 0, 1, 0], notes: [0, 5, 3, 7] }, motif: { voice: 'bell', every: [6, 9], len: [3, 3], beat: 0.62, oct: 3 } },
+  kBall: { root: 87.3, scale: [0, 2, 3, 5, 7, 8, 11], chord: [1, 1.19, 1.5], cutoff: 760, wind: 0.008, gain: 0.46, meter: 3, pluck: { bpm: 132, pattern: [1, 0, 1, 0, 1, 0], notes: [0, 5, 7, 3] }, drum: { bpm: 132, pattern: [1, 0, 0, 0, 0, 0], pitch: 64, gain: 0.12 }, motif: { voice: 'box', every: [5, 9], len: [3, 6], beat: 0.45, oct: 4 } },
+  kPower: { root: 65.4, scale: [0, 1, 3, 5, 7, 8, 11], chord: [1, 1.19, 1.41], cutoff: 520, wind: 0.02, gain: 0.5, meter: 3, pluck: { bpm: 108, pattern: [1, 0, 1, 0, 1, 0], notes: [0, 1, 5, 7] }, swell: [7, 11], motif: { voice: 'bell', every: [6, 10], len: [2, 3], beat: 0.55, oct: 3 } },
+  kChallenge: { root: 82.4, scale: [0, 1, 3, 5, 7, 8, 11], chord: [1, 1.19, 1.5], cutoff: 620, wind: 0.01, gain: 0.5, meter: 3, heart: 84, tick: 120, pluck: { bpm: 150, pattern: [1, 0, 1, 0, 1, 0], notes: [0, 0, 7, 1] }, motif: { voice: 'box', every: [4, 7], len: [3, 3], beat: 0.4, oct: 4 } },
   // Overlay mixed on top of any mood when the table is down to its last few.
   tension: { root: 110, scale: [0, 1], chord: [], cutoff: 3000, wind: 0, gain: 0.5, shimmer: 0.012, heart: 104 },
 };

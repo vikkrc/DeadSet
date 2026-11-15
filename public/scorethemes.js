@@ -15,6 +15,8 @@ const ENERGY = {
   lobby: 0, ceremony: 0, morning: 0, night: 0, mGather: 0, mCandle: 0, endLovers: 0, endDraw: 0, endLiving: 1,
   discussion: 1, defense: 1, mCamp: 1, endDeath: 1, endCult: 1,
   vote: 2, resolving: 2, bloodmoon: 2, mVote: 2, mMission: 2, mStand: 2, mReckon: 2, endRipper: 2, endJester: 2,
+  // Carnival: a masked ball, every style in three
+  kUnmask: 0, kBall: 1, kPower: 1, kChallenge: 2,
 };
 
 const rnd = (lo, hi) => lo + Math.random() * (hi - lo);
@@ -164,11 +166,12 @@ const THEMES = {
     const prog = pick([[0, 5, 3, 4], [0, 3, 5, 4], [0, 6, 5, 4], [0, 2, 3, 4]]);
     const stops = dark ? [[1, 1], [2, 0.35]] : [[1, 1], [2, 0.5], [3, 0.22], [4, 0.16]];
     let bar = 0;
+    const per = m.meter ?? 4; // the Carnival's waltz: a chorale in three
     clock((i) => beat, (i, t) => {
-      const b = i % 4;
+      const b = i % per;
       if (b === 0) {
         const ch = chordOn(m.scale, prog[bar % prog.length]);
-        const len = beat * 4 + 0.15;
+        const len = beat * per + 0.15;
         ch.forEach((n, k) => stops.forEach(([h, g]) => osc(a, { f: hz(root * 2, n + (k === 0 ? 12 : 0)) * h, t, dur: len, attack: 0.09, release: 0.7, gain: 0.03 * g, dest: voice, vib: 5, vibRate: 6 })));
         osc(a, { f: hz(root, ch[0]) / 2, t, dur: len, attack: 0.2, release: 1, gain: 0.11, dest: voice });
         osc(a, { f: hz(root, ch[0]), t, dur: len, type: 'triangle', attack: 0.2, release: 1, gain: 0.03, dest: voice });
@@ -199,12 +202,14 @@ const THEMES = {
     const order = energy === 0 ? 'up' : energy === 1 ? 'updown' : 'rand';
     let ch = chordOn(m.scale, prog[0]);
     const padTop = dark ? m.cutoff * 1.6 : m.cutoff * 2.4;
+    const W = m.meter === 3; // twelve sixteenths a bar for the Carnival's waltz
+    const S = W ? 12 : 16;
     clock(() => s16, (i, t) => {
-      const st = i % 16;
-      const bar = Math.floor(i / 16);
+      const st = i % S;
+      const bar = Math.floor(i / S);
       if (st === 0 && bar % 2 === 0) {
         ch = chordOn(m.scale, prog[(bar / 2) % prog.length]);
-        const len = s16 * 32;
+        const len = s16 * S * 2;
         ch.forEach((n) => [-12, 0, 11].forEach((d) => osc(a, { f: hz(root * 2, n), t, dur: len, type: 'sawtooth', detune: d, attack: 0.9, release: 1.4, gain: energy === 0 ? 0.024 : 0.014, dest: out, filter: { freq: 300, to: padTop, time: len * 0.5, q: 0.9 } })));
       }
       // arpeggio: chord tones over two octaves
@@ -215,9 +220,9 @@ const THEMES = {
       if (energy === 0) { if (st === 0) osc(a, { f: hz(root, ch[0]), t, dur: s16 * 14, type: 'sawtooth', attack: 0.3, release: 0.6, gain: 0.05, dest: out, filter: { freq: 260, q: 2 } }); }
       else if (st % 2 === 0) osc(a, { f: hz(root, ch[0] + (st % 4 === 2 && energy === 2 ? 12 : 0)), t, dur: s16 * 1.4, type: 'sawtooth', attack: 0.004, release: 0.08, gain: 0.07, dest: out, filter: { freq: 900, to: 160, time: s16 * 1.6, q: 6 } });
       // drum machine
-      const kick = energy === 2 ? st % 4 === 0 : energy === 1 && (st === 0 || st === 8);
+      const kick = W ? st === 0 && energy >= 1 : energy === 2 ? st % 4 === 0 : energy === 1 && (st === 0 || st === 8);
       if (kick) osc(a, { f: 46, glide: 150, t, dur: 0.12, attack: 0.002, release: 0.25, gain: 0.32, dest: out });
-      if (energy >= 1 && (st === 4 || st === 12)) { hiss(a, { t, dur: 0.18, gain: 0.08, freq: 1800, q: 0.7, dest: out }); osc(a, { f: 190, t, dur: 0.02, release: 0.1, gain: 0.05, dest: out }); }
+      if (energy >= 1 && (W ? st === 4 || st === 8 : st === 4 || st === 12)) { hiss(a, { t, dur: 0.18, gain: 0.08, freq: 1800, q: 0.7, dest: out }); osc(a, { f: 190, t, dur: 0.02, release: 0.1, gain: 0.05, dest: out }); }
       if (energy >= 1 && st % 2 === 0) hiss(a, { t, dur: st === 14 && energy === 2 ? 0.16 : 0.03, gain: 0.025, type: 'highpass', freq: 7000, dest: out });
     });
   },
@@ -304,10 +309,17 @@ const THEMES = {
     const e8 = 60 / bpm / 2;
     const twang = (f, t, gain = 0.05, dur = 0.25) => osc(a, { f, glide: f * 0.985, t, dur, type: 'sawtooth', attack: 0.003, release: 0.9, gain, dest: out, vib: 9, vibRate: 5, vibDelay: 0.25, filter: { freq: 2800, to: 650, time: 0.5, q: 2 } });
     const prog = pick([[0, 3, 4, 0], [0, 6, 5, 4], [0, 5, 3, 4]]);
+    const W = m.meter === 3; // boom-chick-chick for the Carnival
     clock(() => e8, (i, t) => {
-      const st = i % 8; const bar = Math.floor(i / 8);
+      const st = i % (W ? 6 : 8); const bar = Math.floor(i / (W ? 6 : 8));
       const ch = chordOn(m.scale, prog[bar % 4]);
       const strum = (g) => ch.forEach((n, k) => twang(hz(root * 4, n), t + k * 0.018, g, 0.12));
+      if (W && energy > 0) {
+        if (st === 0) twang(hz(root * 2, ch[0] + (bar % 2 ? 7 : 0)), t, 0.07);
+        if (st === 2 || st === 4) strum(0.022);
+        if (st % 2 === 0) { hiss(a, { t, dur: 0.03, gain: st === 0 ? 0.05 : 0.03, freq: 1900, q: 7, dest: out }); osc(a, { f: 880, t, dur: 0.005, release: 0.04, gain: 0.015, dest: out }); }
+        return;
+      }
       if (energy === 0) {
         if (st === 0 && bar % 2 === 0) { ch.forEach((n, k) => twang(hz(root * 2, n + (k ? 12 : 0)), t + k * 0.06, 0.05, 1.6)); }
       } else {
@@ -344,10 +356,11 @@ const THEMES = {
     const s16 = 60 / bpm / 4;
     const lead = pulse(a, 0.25); const thin = pulse(a, 0.125);
     const prog = pick([[0, 5, 3, 4], [0, 3, 4, 4], [0, 6, 5, 4]]);
-    const tune = () => Array.from({ length: 16 }, (_, k) => (k % 4 === 0 || Math.random() < [0.25, 0.45, 0.6][energy] ? Math.floor(rnd(0, m.scale.length * 2)) : null));
+    const S = m.meter === 3 ? 12 : 16; // the Carnival's waltz in twelve sixteenths
+    const tune = () => Array.from({ length: S }, (_, k) => (k % 4 === 0 || Math.random() < [0.25, 0.45, 0.6][energy] ? Math.floor(rnd(0, m.scale.length * 2)) : null));
     let A = tune(); let B = tune();
     clock(() => s16, (i, t) => {
-      const st = i % 16; const bar = Math.floor(i / 16);
+      const st = i % S; const bar = Math.floor(i / S);
       const ch = chordOn(m.scale, prog[bar % 4]);
       if (bar % 4 === 0 && st === 0 && bar % 8 === 0) { A = tune(); B = tune(); }
       // lead: A A B A, the last bar of each A resolving to the root
@@ -355,7 +368,7 @@ const THEMES = {
       const deg = bars[bar % 4][st];
       const rest = energy === 0 && Math.floor(bar / 4) % 2 === 1;
       if (deg !== null && !rest) {
-        const n = bar % 4 === 3 && st >= 12 ? ch[0] + 12 : step(m.scale, deg);
+        const n = bar % 4 === 3 && st >= S - 4 ? ch[0] + 12 : step(m.scale, deg);
         osc(a, { f: hz(root * 4, n), t, dur: s16 * (st % 4 === 0 ? 1.8 : 0.8), wave: lead, attack: 0.002, release: 0.04, gain: 0.03, dest: out, vib: 18, vibRate: 7, vibDelay: 0.12 });
       }
       // arpeggio: the chord as a fast ripple
@@ -363,8 +376,8 @@ const THEMES = {
       // triangle bass
       if (st % 2 === 0) osc(a, { f: hz(root, ch[0] + (st % 4 === 2 ? 12 : 0)), t, dur: s16 * 1.6, type: 'triangle', attack: 0.002, release: 0.03, gain: 0.11, dest: out });
       // noise drums
-      if (energy >= 1 && st % 8 === 0) osc(a, { f: 45, glide: 180, t, dur: 0.06, type: 'triangle', release: 0.08, gain: 0.25, dest: out });
-      if (energy >= 1 && st % 8 === 4) hiss(a, { t, dur: 0.09, gain: 0.07, type: 'highpass', freq: 1800, dest: out });
+      if (energy >= 1 && (S === 12 ? st === 0 : st % 8 === 0)) osc(a, { f: 45, glide: 180, t, dur: 0.06, type: 'triangle', release: 0.08, gain: 0.25, dest: out });
+      if (energy >= 1 && (S === 12 ? st === 4 || st === 8 : st % 8 === 4)) hiss(a, { t, dur: 0.09, gain: 0.07, type: 'highpass', freq: 1800, dest: out });
       if (energy === 2 && st % 2 === 1) hiss(a, { t, dur: 0.015, gain: 0.03, type: 'highpass', freq: 8000, dest: out });
     });
   },

@@ -94,6 +94,12 @@ test('swap and pretend look the same to everyone; only a real swap moves the mas
 test('peek: only you see your mask; everyone knows you looked', () => {
   const t = setup(6, { masks: SIX });
   t.cmd('Ada', 'k.peek');
+  assert.equal(t.m.phase, 'K_LOOK', 'the game waits while Ada looks');
+  assert.deepEqual(playerView(t.m, 'p0').action.looks, [{ seat: 'p0', mask: 'DEATH' }]);
+  assert.equal(playerView(t.m, 'p1').action.type, 'kwatch');
+  assert.throws(() => t.cmd('Bo', 'k.done'), /closed/);
+  t.cmd('Ada', 'k.done');
+  assert.equal(t.m.K.turn, 'p1');
   const mine = playerView(t.m, 'p0').private.find((e) => e.peek);
   assert.equal(mine.mask, 'DEATH');
   assert.ok(!playerView(t.m, 'p1').private.some((e) => e.mask));
@@ -176,6 +182,8 @@ test('the Mentalist reads in private; the Oracle\'s targets are public, the resu
   t.cmd('Ada', 'k.claim', { mask: 'MENTALIST' });
   t.answer([]);
   t.cmd('Ada', 'k.power', { target: 'p4' });
+  assert.equal(t.m.phase, 'K_LOOK');
+  t.cmd('Ada', 'k.done');
   const pub = publicView(t.m).log.filter((l) => l.ev === 'k-power').at(-1);
   assert.equal(pub.target, undefined);
   assert.equal(pub.seats, undefined);
@@ -184,6 +192,8 @@ test('the Mentalist reads in private; the Oracle\'s targets are public, the resu
   t.cmd('Bo', 'k.claim', { mask: 'ORACLE' });
   t.answer([]);
   t.cmd('Bo', 'k.power', { targets: ['p0', 'p5'] });
+  assert.deepEqual(playerView(t.m, 'p1').action.looks.map((x) => x.mask), ['DEATH', 'GAMBLER']);
+  t.advance();
   const o = publicView(t.m).log.filter((l) => l.ev === 'k-power').at(-1);
   assert.deepEqual(o.seats, ['p0', 'p5']);
   assert.deepEqual(playerView(t.m, 'p1').private.slice(-2).map((e) => e.mask), ['DEATH', 'GAMBLER']);
@@ -200,6 +210,7 @@ test('the Witch swaps or pretends in secret; the Double Agent swaps for real and
   t.cmd('Bo', 'k.claim', { mask: 'DOUBLE_AGENT' });
   t.answer([]);
   t.cmd('Bo', 'k.power', { target: 'p2' });
+  t.cmd('Bo', 'k.done');
   assert.equal(t.m.K.masks.p1, 'CONSPIRATOR');
   assert.equal(t.m.K.masks.p2, 'DOUBLE_AGENT');
   assert.equal(playerView(t.m, 'p1').private.at(-1).mask, 'CONSPIRATOR');
@@ -283,7 +294,9 @@ test('timeouts: a turn peeks (or pretends during the dance), challenges pass, po
   assert.equal(t.m.K.masks.p0, 'DEATH');
   for (const id of Object.keys(t.m.K.forced)) t.m.K.forced[id] = 0;
   t.advance();
+  assert.equal(t.m.phase, 'K_LOOK', 'a timed-out turn peeks, and the game waits for the look');
   assert.ok(playerView(t.m, 'p1').private.some((e) => e.peek));
+  t.advance();
   t.cmd('Cy', 'k.claim', { mask: 'DEATH' });
   t.advance();
   assert.equal(t.m.phase, 'K_POWER');
@@ -294,12 +307,14 @@ test('timeouts: a turn peeks (or pretends during the dance), challenges pass, po
 test('the ball diary (notes) is off by default: only the latest sightings are kept', () => {
   const t = setup(6, { masks: SIX });
   t.cmd('Ada', 'k.peek');
+  t.cmd('Ada', 'k.done');
   assert.ok(playerView(t.m, 'p0').private.some((e) => e.peek));
   for (const nm of ['Bo', 'Cy', 'Di', 'Ed', 'Fay']) t.cmd(nm, 'k.swap', { target: 'p0', real: false });
   t.cmd('Ada', 'k.swap', { target: 'p1', real: false });
   assert.ok(!playerView(t.m, 'p0').private.some((e) => e.peek), 'forgotten');
   const d = setup(6, { masks: SIX, k: { diary: true } });
   d.cmd('Ada', 'k.peek');
+  d.cmd('Ada', 'k.done');
   for (const nm of ['Bo', 'Cy', 'Di', 'Ed', 'Fay']) d.cmd(nm, 'k.swap', { target: 'p0', real: false });
   d.cmd('Ada', 'k.swap', { target: 'p1', real: false });
   assert.ok(playerView(d.m, 'p0').private.some((e) => e.peek), 'kept in the diary');

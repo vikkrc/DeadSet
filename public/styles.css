@@ -3632,3 +3632,38 @@ body.is-board .m-kintro .krunes .kr { height: 34px; } body.is-board .m-kintro .k
 .kcard:not(.back) .arc-art::before { background: radial-gradient(circle, rgba(241, 228, 200, 0.14) 0.9px, transparent 1.4px) 0 0 / 5px 5px, linear-gradient(180deg, color-mix(in srgb, var(--mk, #3b3027) 55%, #120a08), color-mix(in srgb, var(--mk, #3b3027) 88%, #120a08)); }
 .kcard:not(.back) .arc-art .emblem { padding: 9% 0 0; color: #f6ead0; --paper: color-mix(in srgb, var(--mk, #3b3027) 70%, #120a08); }
 .kcard.thumb:not(.back) .arc-art .emblem { padding: 0; }
+/* Carnival: the look, on the looker's phone only */
+.k-look { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 18px auto; text-align: center; }
+.kl-cards { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px; }
+.kl-c { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; animation: kFlipIn 0.7s var(--ease) both; }
+.kl-c + .kl-c { animation-delay: 0.35s; }
+.kl-c .kcard.big { font-size: 15px; }
+.kl-c figcaption b { display: block; font: 600 30px/1 var(--black); padding-bottom: 0.1em; color: var(--bone); }
+.kl-c figcaption small { font: 600 12px/1.2 var(--text); letter-spacing: 0.22em; text-transform: uppercase; color: var(--ash); }
+.kl-cards:has(.kl-c + .kl-c) .kcard.big { font-size: 11px; }
+.kl-cards:has(.kl-c + .kl-c) figcaption b { font-size: 22px; }
+/* Carnival: the custom mask editor */
+.k-medit { margin: 6px 0 10px; padding: 18px 18px 8px; border: 1px solid var(--gilt-2); border-image: var(--frame) 32 / 22px stretch; }
+.kme-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.kme-head b { font: 500 18px/1.2 var(--bit); font-variant-numeric: tabular-nums lining-nums; }
+.kme-head.ok b { color: var(--gilt-hi); } .kme-head.bad b { color: var(--blood-ink); }
+.kme-list { list-style: none; padding: 0; margin: 8px 0 0; display: grid; }
+.kme-row { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 8px 0; border-top: 1px solid var(--iron); opacity: 0.62; transition: opacity 0.2s; }
+.kme-row.on { opacity: 1; }
+.kme-row .kcard.thumb { font-size: 6px; }
+.kme-name { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.kme-name b { font: 600 20px/1 var(--black); padding-bottom: 0.08em; color: var(--bone); }
+.kme-row.req .kme-name b { color: var(--blood-ink); }
+.kme-req { font: 600 10px/1 var(--text); letter-spacing: 0.22em; text-transform: uppercase; color: var(--blood-ink); }
+.kme-step { display: flex; align-items: center; gap: 8px; }
+.kme-step em { min-width: 3.2em; text-align: center; font: 500 20px/1 var(--bit); font-style: normal; color: var(--bone); font-variant-numeric: tabular-nums lining-nums; }
+.kme-step em small { font-size: 13px; color: var(--ash); }
+.kme-row.req .kme-step em { color: var(--blood-ink); }
+.kme-btn { min-width: 44px; height: 44px; border: 1px solid var(--gilt-2); background: var(--ink-2); color: var(--gilt-hi); font: 600 15px/1 var(--bit); cursor: pointer; border-radius: 2px; }
+.kme-btn:disabled { opacity: 0.28; cursor: default; }
+.kme-btn:not(:disabled):active { transform: scale(0.94); }
+/* Carnival coin: Death's skull for heads, the Dead Set monogram for tails */
+.k-coin { display: grid; place-items: center; }
+.k-coin .kc-skull { display: grid; place-items: center; width: 62%; height: 62%; color: var(--sepia); --paper: transparent; }
+.k-coin .kc-skull svg { width: 100%; height: 100%; filter: url(#ds-pencil); }
+.k-coin .kc-ds { display: grid; place-items: center; width: 64%; aspect-ratio: 1; border-radius: 50%; border: 1.5px solid var(--sepia); box-shadow: 0 0 0 3px transparent, 0 0 0 4px var(--sepia-2); font: 700 34px/1 var(--mark); color: var(--rubric); letter-spacing: -0.02em; }
