@@ -25,6 +25,13 @@ const roleName = (id) => roleF(id, 'name');
 export const MASKS = ['DEATH', 'CONSPIRATOR', 'DIPLOMAT', 'MAGISTRATE', 'GAMBLER', 'RIPPER', 'BARD', 'GUARDIAN', 'MENTALIST', 'ORACLE', 'WITCH', 'DOUBLE_AGENT', 'MIMIC', 'JESTER', 'SCAPEGOAT', 'INNOCENT'];
 const EMB = { DOUBLE_AGENT: 'double' };
 const embOf = (id) => EMB[id] ?? id.toLowerCase();
+/** Each mask's own ink: muted, of a similar weight, so cards read at a glance (and none outshines another). */
+export const MASK_INK = {
+  DEATH: '#9c1c22', CONSPIRATOR: '#6a2f86', DIPLOMAT: '#2f7a62', MAGISTRATE: '#34508f', GAMBLER: '#b37a1c', RIPPER: '#7a1838',
+  BARD: '#c0602a', GUARDIAN: '#2c6aa0', MENTALIST: '#7656b0', ORACLE: '#1c8088', WITCH: '#467a2a', DOUBLE_AGENT: '#5b5f66',
+  MIMIC: '#a03f86', JESTER: '#a8902a', SCAPEGOAT: '#85603a', INNOCENT: '#6f8796',
+};
+const ink = (id) => (MASK_INK[id] ? `--mk:${MASK_INK[id]}` : '');
 /** What each mask does when claimed (CARNIVAL.md §4). */
 export const POWER = {
   DEATH: 'Take 2 Souls from a player of your choice. They count toward your Harvest.',
@@ -96,7 +103,7 @@ export function maskCard(id, { back = false, cls = '', act = '', sel = false, ke
   const tag = act ? 'button' : 'span';
   const attrs = `${act ? `data-act="${act}" data-id="${id}" aria-pressed="${sel}"` : ''} ${key ? `data-key="${key}"` : ''}`;
   if (back || !id) return `<${tag} class="arc back kcard ${cls}" ${attrs} aria-label="${esc(t('A mask, face down'))}"><span class="sig">DS</span>${badge}</${tag}>`;
-  return `<${tag} class="arc kcard ${id === 'DEATH' ? 'rubric' : ''} ${sel ? 'sel' : ''} ${cls}" ${attrs} aria-label="${esc(roleName(id))}">
+  return `<${tag} class="arc kcard ${id === 'DEATH' ? 'rubric' : ''} ${sel ? 'sel' : ''} ${cls}" style="${ink(id)}" ${attrs} aria-label="${esc(roleName(id))}">
     <span class="arc-num">${esc(roleNumber({ id }, t))}</span>${cardArt(embOf(id))}<span class="nm">${esc(roleName(id))}</span>${badge}</${tag}>`;
 }
 
@@ -121,13 +128,13 @@ export function ballroom(v, { pick = null, open = false, center = '', marks = {}
       K.turn === s.id && ['K_TURN', 'K_CHALLENGE', 'K_POWER'].includes(v.phase) ? 'speaking' : '', p && p.connected === false ? 'away' : '', pos[i].inner ? 'inner' : ''].filter(Boolean).join(' ');
     const face = open && s.mask;
     // Face up (the unmasking, the end): the medallion becomes the mask, its name beneath.
-    const inner = face ? `<span class="k-face ${s.mask === 'DEATH' ? 'rubric' : ''}">${emblem(embOf(s.mask))}</span>`
+    const inner = face ? `<span class="k-face ${s.mask === 'DEATH' ? 'rubric' : ''}" style="${ink(s.mask)}">${emblem(embOf(s.mask))}</span>`
       : s.chair ? `<span class="k-chair">${emblem('s_chair')}</span>` : p?.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc((p?.name ?? '?').slice(0, 1))}</span>`;
     const badges = [];
     if (!s.chair) badges.push(`<b class="bdg k-soul" data-key="ks-${s.souls}" title="${esc(t('Souls'))}">${s.souls}</b>`);
     if (s.shield) badges.push(`<b class="bdg k-shield" data-key="ksh">${ico('shield')}</b>`);
     if (marks[s.id]) badges.push(`<b class="bdg b-mark" data-key="mark">${marks[s.id]}</b>`);
-    const mask = face ? `<span class="k-maskname" data-key="kmn-${s.mask}">${esc(roleName(s.mask))}</span>` : `<span class="kmask" data-key="km-x">${maskCard(null)}</span>`;
+    const mask = face ? `<span class="k-maskname" style="${ink(s.mask)}" data-key="kmn-${s.mask}">${esc(roleName(s.mask))}</span>` : `<span class="kmask" data-key="km-x">${maskCard(null)}</span>`;
     const label = `${pname(v, s.id)}${sel.has(s.id) ? `, ${t('selected')}` : ''}`;
     return `<button type="button" class="${cls}" data-key="tok-${s.id}" style="left:${x}%;top:${y}%" ${selectable ? `data-act="${pick.act}" data-id="${s.id}"` : 'tabindex="-1"'} aria-pressed="${sel.has(s.id)}" aria-label="${esc(label)}">
       <span class="tok-disc">${inner}${badges.join('')}</span>${face ? '' : mask}<span class="tok-name">${esc(s.chair ? t('Empty chair') : p?.name ?? '?')}</span>${face ? mask : ''}</button>`;
@@ -331,7 +338,12 @@ export function masksSheet(v) {
 // ── Moments ────────────────────────────────────────────────────────────────
 export function carnivalMoment(l, v, fresh, { notify, name: nm, sound }) {
   switch (l.ev) {
-    case 'k-unmask': return null;
+    case 'k-unmask': {
+      // The ceremony: every seat's mask, one at a time, with what it does; then the whole table.
+      const order = l.order ?? Object.keys(l.masks ?? {});
+      return order.map((id, i) => ({ type: 'kintro', seat: id, name: pname(v, id), chair: isChair(id), av: v.players.find((p) => p.id === id)?.avatar ?? null,
+        mask: l.masks[id], i: i + 1, n: order.length, sound: i === 0 ? 'unfold' : 'flip' }));
+    }
     case 'k-lottery': {
       const order = l.order.map((id) => ({ id, name: nm(id), av: v.players.find((p) => p.id === id)?.avatar ?? null }));
       return { type: 'mlottery', order, leader: l.leader, leaderName: nm(l.leader), idx: l.order.indexOf(l.leader), spins: l.spins ?? 2, sound: null,
@@ -352,11 +364,17 @@ export function carnivalMoment(l, v, fresh, { notify, name: nm, sound }) {
 export function lookMoments(freshPriv, v) {
   return freshPriv.filter((x) => x.kind === 'look' && x.mask).map((x) => ({ type: 'klook', mask: x.mask, whose: x.seat === v.me?.id ? null : pname(v, x.seat), tapOnly: true, sound: null }));
 }
-export const K_MOMENT_TIME = { kswap: 2600, kclaim: 2400, kreveal: 6000, kpower: 3400, klook: 4200 };
+export const K_MOMENT_TIME = { kintro: 2600, kswap: 2600, kclaim: 2400, kreveal: 6000, kpower: 3400, klook: 4200 };
 
 export function carnivalMomentHtml(m, h) {
   const { letters } = h;
   switch (m.type) {
+    case 'kintro':
+      return `<span class="kicker">${esc(t('The unmasking'))} · ${esc(t('{i} of {n}', { i: m.i, n: m.n }))}</span>
+        <div class="ki-who"><span class="ki-med">${m.chair ? emblem('s_chair') : m.av ? avatarSvg(m.av, 'ki-av') : `<b>${esc(m.name.slice(0, 1))}</b>`}</span><b class="ki-name">${esc(m.name)}</b></div>
+        <div class="k-claimcard ki-card">${maskCard(m.mask, { cls: 'big' })}</div>
+        <h1 class="m-title" style="${ink(m.mask)}">${letters(roleName(m.mask))}</h1>
+        ${runes(m.mask)}<p class="m-sub ki-pow">${esc(t(POWER[m.mask]))}</p>`;
     case 'kswap':
       return `<span class="kicker">${esc(m.witch ? t('The Witch\'s hands') : t('A dance under the cloak'))}</span><h1 class="m-title">${letters(m.witch ? `${m.a} · ${m.b}` : `${m.by} · ${m.b}`)}</h1>
         <div class="k-dance" aria-hidden="true"><span class="kd a">${maskCard(null)}</span><span class="kd b">${maskCard(null)}</span><span class="k-cloak"></span></div>

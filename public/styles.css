@@ -3234,8 +3234,8 @@ button.ccard:active { transform: scale(.96); }
 .c-candles { display: inline-flex; gap: 5px; }
 .c-candles i { position: relative; width: 6px; height: 13px; border-radius: 2px 2px 1px 1px; background: #cfc7b2; opacity: .35; }
 .c-candles i.lit { opacity: 1; }
-.c-candles i.lit::before { content: ''; position: absolute; left: 50%; top: -8px; width: 6px; height: 8px; transform: translateX(-50%); border-radius: 50% 50% 40% 40%; background: radial-gradient(circle at 50% 70%, #fff3c4, #f2a64a 60%, transparent 70%); animation: flicker 1.6s ease-in-out infinite; }
-@keyframes flicker { 50% { transform: translateX(-50%) scale(.85, 1.1); opacity: .85; } }
+.c-candles i.lit::before { content: ''; position: absolute; left: 50%; top: -8px; width: 6px; height: 8px; transform: translateX(-50%); border-radius: 50% 50% 40% 40%; background: radial-gradient(circle at 50% 70%, #fff3c4, #f2a64a 60%, transparent 70%); animation: cFlame 1.6s ease-in-out infinite; }
+@keyframes cFlame { 50% { transform: translateX(-50%) scale(.85, 1.1); opacity: .85; } }
 
 /* A coffin lying in its plot */
 .cslab { position: relative; display: block; width: 72%; max-width: 76px; aspect-ratio: 100 / 34; animation: cLower .5s var(--ease) both; animation-delay: calc(var(--i) * .05s); }
@@ -3587,3 +3587,48 @@ body.is-board .k-reveal .c-stamp { font-size: 22px; }
 .k-tvref.two .krunes.sm .kr { height: 18px; } .k-tvref.two .krunes.sm .kr > svg, .k-tvref.two .krunes.sm .kr .kr-em { width: 12px; height: 12px; } .k-tvref.two .krunes.sm .kr b { font-size: 11px; }
 .k-tvref.two .krunes { gap: 3px; }
 .kball.big .k-maskname { font-size: calc(var(--tok) * 0.4); max-width: 160%; }
+
+/* ── Sheets: the frame lies over the page, so scrolled content slides under it ── */
+.sheet { border-image: none; border-color: transparent; }
+.sheet::after { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 6; border: 1px solid var(--gilt-2); border-image: var(--frame) 32 / 28px stretch; }
+.sheet-body { -webkit-mask: linear-gradient(180deg, transparent 0, #000 14px, #000 calc(100% - 30px), transparent 100%); mask: linear-gradient(180deg, transparent 0, #000 14px, #000 calc(100% - 30px), transparent 100%); padding-top: 10px; }
+
+/* ── Carnival: each mask carries its own ink, so cards read at a glance ── */
+.kcard:not(.back) {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--mk, #5a4632) 34%, transparent), color-mix(in srgb, var(--mk, #5a4632) 12%, transparent) 46%, color-mix(in srgb, var(--mk, #5a4632) 26%, transparent)), var(--vellum-stain), var(--vellum);
+  background-size: 100% 100%, 100% 100%, auto;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--mk, #77633f) 70%, #000), 0 1.8em 3em -1.4em #000, inset 0 0 2em rgba(84, 54, 18, 0.2);
+}
+.kcard:not(.back) .arc-art { background: color-mix(in srgb, var(--mk, #1d1510) 78%, #000); }
+.kcard:not(.back) .arc-art .emblem { color: color-mix(in srgb, var(--mk) 18%, var(--vellum)); --paper: color-mix(in srgb, var(--mk, #1d1510) 78%, #000); }
+.kcard:not(.back) .arc-num, .kcard:not(.back) .nm { color: color-mix(in srgb, var(--mk) 70%, #1d1510); }
+/* small cards: the emblem fills the card, no numeral or name to squint at */
+.kcard.thumb { padding: 0.7em 0.55em; }
+.kcard.thumb .arc-num { display: none; }
+.kcard.thumb .arc-art { width: 100%; flex: 1; }
+.kcard.thumb .arc-art .emblem { padding: 6% 0 0; }
+/* masks shown at the table: a struck medallion in the mask's ink, the emblem in pencil outline */
+.k-face { background: radial-gradient(circle at 50% 38%, color-mix(in srgb, var(--mk, #3b3027) 62%, #0c0a09), color-mix(in srgb, var(--mk, #3b3027) 34%, #0c0a09) 72%); color: #f1e4c8; --paper: color-mix(in srgb, var(--mk, #3b3027) 50%, #0c0a09);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--mk) 50%, #ecd28f), inset 0 0 14px rgba(0, 0, 0, 0.55); }
+.k-face svg { width: 74%; height: 74%; filter: url(#ds-pencil); stroke-width: 2.4; }
+.k-face svg [fill="currentColor"] { fill: none; stroke: currentColor; stroke-width: 1.8; }
+.k-face.rubric { color: #f6d2c8; }
+.k-maskname { color: color-mix(in srgb, var(--mk, #ecd28f) 35%, #f1e4c8); }
+/* The unmasking ceremony: seat, mask, power */
+.ki-who { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 10px 0 2px; }
+.ki-med { width: 54px; height: 54px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; border: 1.5px solid var(--gilt); background: var(--ink-2); color: var(--ash); --paper: var(--ink-2); box-shadow: 0 0 0 4px var(--ink), 0 0 0 5px var(--gilt-2); }
+.ki-med svg { width: 100%; height: 100%; }
+.ki-med b { font: 600 24px var(--text); color: var(--bone); }
+.ki-name { font: 600 14px/1.2 var(--text); letter-spacing: 0.24em; text-transform: uppercase; color: var(--bone); }
+.ki-card .kcard.big { font-size: 15px; animation: kDeal 0.7s var(--ease) both, kFlipIn 0.7s var(--ease) both; }
+.m-kintro .m-title { color: color-mix(in srgb, var(--mk, #f1e4c8) 30%, #f1e4c8); }
+.m-kintro .krunes { justify-content: center; margin-top: 4px; }
+.ki-pow { max-width: 26rem; margin-left: auto; margin-right: auto; }
+body.is-board .ki-med { width: 84px; height: 84px; }
+body.is-board .ki-name { font-size: 20px; }
+body.is-board .ki-card .kcard.big { font-size: 20px; }
+body.is-board .m-kintro .krunes .kr { height: 34px; } body.is-board .m-kintro .krunes .kr > svg, body.is-board .m-kintro .krunes .kr .kr-em { width: 24px; height: 24px; } body.is-board .m-kintro .krunes .kr b { font-size: 18px; }
+/* Carnival cards: the arch is a window of the mask's ink, the engraving drawn light and large inside it */
+.kcard:not(.back) .arc-art::before { background: radial-gradient(circle, rgba(241, 228, 200, 0.14) 0.9px, transparent 1.4px) 0 0 / 5px 5px, linear-gradient(180deg, color-mix(in srgb, var(--mk, #3b3027) 55%, #120a08), color-mix(in srgb, var(--mk, #3b3027) 88%, #120a08)); }
+.kcard:not(.back) .arc-art .emblem { padding: 9% 0 0; color: #f6ead0; --paper: color-mix(in srgb, var(--mk, #3b3027) 70%, #120a08); }
+.kcard.thumb:not(.back) .arc-art .emblem { padding: 0; }

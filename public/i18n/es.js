@@ -1979,5 +1979,6 @@ export default {
     "{n} masks: {c} sit on empty chairs.": "{n} máscaras: {c} están en sillas vacías.",
     "−{n} Soul": "−{n} Alma",
     "Turn {n}": "Turno {n}",
+    "{i} of {n}": "{i} de {n}",
   },
 };

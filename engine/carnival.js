@@ -178,7 +178,7 @@ export function startCarnival(m, rng, now) {
     belief: {}, timeline: [], liar: {}, eye: {}, winners: null, where: rng.int(15, 'kwhere'),
   };
   for (const s of seats) believeAll(m, s);
-  pub(m, 'The ball begins. For a moment, every mask is shown.', 'phase', { ev: 'k-unmask', masks: { ...m.K.masks } });
+  pub(m, 'The ball begins. For a moment, every mask is shown.', 'phase', { ev: 'k-unmask', masks: { ...m.K.masks }, order: seats });
   enter(m, 'K_UNMASK', now, K_UNMASK_SECONDS);
 }
 

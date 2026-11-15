@@ -527,7 +527,7 @@ function momentHtml(m) {
     }
     case 'xball': case 'xvotes': case 'xguess': body = exorcismMomentHtml(m, { letters, onBoard, V }); break;
     case 'cdig': case 'cresult': case 'crise': case 'clantern': body = coffinsMomentHtml(m, { letters, onBoard, V }); break;
-    case 'kswap': case 'kclaim': case 'kreveal': case 'kpower': case 'klook': body = carnivalMomentHtml(m, { letters, onBoard, V }); break;
+    case 'kintro': case 'kswap': case 'kclaim': case 'kreveal': case 'kpower': case 'klook': body = carnivalMomentHtml(m, { letters, onBoard, V }); break;
     case 'gift': body = giftHtml(m.idx, { t, th, esc, product: m.product }); break;
     case 'mside': case 'mlottery': case 'mlantern': case 'mintro': case 'mcandle': case 'mcard': case 'mvotes': case 'mreveal': case 'mnamed': case 'munmask': case 'mreckon': body = missionMomentHtml(m, { letters, avatarSvg, onBoard }); break;
     case 'death':

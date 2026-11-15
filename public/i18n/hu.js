@@ -1979,5 +1979,6 @@ export default {
     "{n} masks: {c} sit on empty chairs.": "{n} maszk: {c} üres széken ül.",
     "−{n} Soul": "−{n} Lélek",
     "Turn {n}": "{n}. kör",
+    "{i} of {n}": "{i}/{n}",
   },
 };
