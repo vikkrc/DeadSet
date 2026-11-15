@@ -1998,5 +1998,7 @@ export default {
     "{a} reads the masks…": "{a} liest die Masken…",
     "{n} of {m} seats": "{n} von {m} Plätzen",
     "in hand": "auf der Hand",
+    "Leave or learn": "Verlassen oder lernen",
+    "This device": "Dieses Gerät",
   },
 };

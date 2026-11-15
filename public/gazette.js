@@ -134,7 +134,7 @@ export function gazetteHtml(v, h, { masthead = true, limit = 40 } = {}) {
     return `<span class="ev ${c.cls ?? ''}">${c.icon ? glyph(c.icon) : ''}${esc(c.text)}</span>`;
   };
   return `<div class="gazette">
-    ${masthead ? `<div class="mast"><h3>${th('The Dead Set <i>Gazette</i>')}</h3><div><span>${esc(v.scenario ? w.place : t('Unknown parts'))}</span><span>${esc(edLabel)}</span><span>${th('{a} of {b} alive', { a: alive, b: v.players.length })}</span></div></div>` : ''}
+    ${masthead ? `<div class="mast"><h3>${th('The Dead Set <i>Gazette</i>')}</h3><div><span>${esc(v.scenario ? w.place : t('Unknown parts'))}</span><span>${esc(edLabel)}</span>${v.mode === 'missions' ? '' : `<span>${th('{a} of {b} alive', { a: alive, b: v.players.length })}</span>`}</div></div>` : ''}
     ${eds.length ? eds.map((e, i) => `<article class="edition ${i === 0 && v.phase !== 'ENDED' ? 'today' : ''}" data-key="ed-${esc(e.key)}">
       <div class="when"><b>${e.kind === 'end' || e.kind === 'finale' ? '·' : roman(e.num)}</b><span>${esc(when(e))}</span></div>
       <div><h4 class="${e.tone}">${esc(e.title)}</h4><div class="events">${e.chips.map(chip).join('')}</div></div>

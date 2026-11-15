@@ -1998,5 +1998,7 @@ export default {
     "{a} reads the masks…": "{a} čte masky…",
     "{n} of {m} seats": "{n} z {m} míst",
     "in hand": "v ruce",
+    "Leave or learn": "Odchod a návod",
+    "This device": "Toto zařízení",
   },
 };

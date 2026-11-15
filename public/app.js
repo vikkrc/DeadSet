@@ -1131,9 +1131,10 @@ function sheet(v) {
   let body = '';
   if (s === 'record') {
     title = th('Room {code}', { code: '%CODE%' }).replace('%CODE%', `<span class="code-txt">${esc(v.code)}</span>`);
-    body = `${hostBox()}${langRow(v)}${phoneMusicToggle()}${v.me?.moderator ? '' : tutorialToggle()}<div>${recordBlock(v)}</div>
-      <div class="row"><a class="btn btn-sm btn-ghost" href="/guide" data-link>${t('How to play')}</a><button class="btn btn-sm btn-ghost" data-act="leave">${glyph('out')} ${t('Leave this device')}</button></div>
-      ${holdBtn('backHome', t('Hold to go back to the start'), 'btn-sm btn-wide', { key: 'backhome' })}`;
+    body = `${hostBox()}<section class="menu-sec" data-key="msec-device"><div class="rule">${t('This device')}</div>${langRow(v)}${phoneMusicToggle()}${v.me?.moderator ? '' : tutorialToggle()}</section>
+      <section class="menu-sec" data-key="msec-record">${recordBlock(v)}</section>
+      <section class="menu-sec menu-actions" data-key="msec-actions"><div class="rule">${t('Leave or learn')}</div><div class="menu-links"><a class="btn btn-sm btn-ghost" href="/guide" data-link>${t('How to play')}</a><button class="btn btn-sm btn-ghost" data-act="leave">${glyph('out')} ${t('Leave this device')}</button></div>
+      ${holdBtn('backHome', t('Hold to go back to the start'), 'btn-sm btn-wide', { key: 'backhome' })}</section>`;
   } else if (s === 'avatar') {
     title = t('Your portrait');
     body = avatarEditor();
@@ -1199,9 +1200,12 @@ function sheet(v) {
 }
 
 /** Public record: the Gazette by default, a plain list when toggled. */
+/** The Gazette is printed only where the game runs one: Classic and Missions, once the match is under way. */
+const usesGazette = (v) => ['classic', 'missions'].includes(v?.mode) && v?.phase !== 'LOBBY';
 function recordBlock(v) {
-  return `<div class="row between rec-head"><span class="kicker">${t('Public record')}</span><button class="chip" data-act="recordMode">${t(S.ui.recordList ? 'Gazette view' : 'List view')}</button></div>
-    ${S.ui.recordList ? feed(v.log) : gazetteHtml(v, H)}`;
+  const gz = usesGazette(v);
+  return `<div class="rec-head" data-key="rechead"><span class="kicker">${t('Public record')}</span>${gz ? `<button class="chip" data-act="recordMode">${t(S.ui.recordList ? 'Gazette view' : 'List view')}</button>` : ''}</div>
+    ${gz && !S.ui.recordList ? gazetteHtml(v, H) : feed(v.log)}`;
 }
 
 /** "We are …, in …, trying to …" in the player's language. */
@@ -1961,10 +1965,10 @@ const tipsSeen = () => { try { return new Set(JSON.parse(localStorage.getItem(TI
 const MUSIC_KEY = 'deadset:phoneMusic';
 function phoneMusicOn() { try { return localStorage.getItem(MUSIC_KEY) === '1'; } catch { return false; } }
 function phoneMusicToggle() {
-  return `<label class="check" data-key="pmusic"><input type="checkbox" data-act="phoneMusicToggle" ${phoneMusicOn() ? 'checked' : ''}><span><b>${t('Music on this phone')}</b><small>${t('Play the table\'s score here too, in the host\'s chosen style. Off by default.')}</small></span></label>`;
+  return `<label class="toggle-row" data-key="pmusic"><span><b>${t('Music on this phone')}</b><small>${t('Play the table\'s score here too, in the host\'s chosen style. Off by default.')}</small></span><input type="checkbox" class="switch" data-act="phoneMusicToggle" ${phoneMusicOn() ? 'checked' : ''}></label>`;
 }
 function tutorialToggle() {
-  return `<label class="check" data-key="tut"><input type="checkbox" data-act="tutorialToggle" ${tipsOn() ? 'checked' : ''}><span><b>${t('First-game tips')}</b><small>${t('Short hints walk you through each step of your first game.')}</small></span></label>`;
+  return `<label class="toggle-row" data-key="tut"><span><b>${t('First-game tips')}</b><small>${t('Short hints walk you through each step of your first game.')}</small></span><input type="checkbox" class="switch" data-act="tutorialToggle" ${tipsOn() ? 'checked' : ''}></label>`;
 }
 const TUTORIAL = {
   lobbyHost: ['You are the host', 'Share the code, the link or the QR. Standard is the best mode for a first game. When everyone is ready, hold Start.'],

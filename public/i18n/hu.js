@@ -1998,5 +1998,7 @@ export default {
     "{a} reads the masks…": "{a} maszkokat olvas…",
     "{n} of {m} seats": "{n}/{m} hely",
     "in hand": "a kézben",
+    "Leave or learn": "Kilépés és súgó",
+    "This device": "Ez az eszköz",
   },
 };
