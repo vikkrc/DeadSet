@@ -5,6 +5,7 @@ import { seatLayout } from './layout.js';
 import { backdropHtml } from './backdrops.js';
 import { exorcismBoard, lobbyOrb } from './exorcism.js';
 import { coffinsBoard, coffinCard } from './coffins.js';
+import { carnivalBoard } from './carnival.js';
 import { cardArt, roleEmblemId } from './cards.js';
 import { missionBoardStage, missionBoardRing, gridHtml, hunchArrowsSvg, hunchLegend } from './missions.js';
 
@@ -49,6 +50,10 @@ export function moodFor(v) {
     case 'M_NIGHT': return 'mCandle';
     case 'M_LAST_STAND': return 'mStand';
     case 'M_RECKONING': return 'mReckon';
+    case 'K_UNMASK': case 'K_LOTTERY': return 'mGather';
+    case 'K_TURN': return 'discussion';
+    case 'K_CHALLENGE': return 'mVote';
+    case 'K_POWER': return 'mMission';
     case 'C_LOTTERY': case 'C_BURY': return 'mGather';
     case 'C_TURN': return 'mCamp';
     case 'C_BID': return 'mVote';
@@ -70,7 +75,7 @@ export function moodFor(v) {
 }
 
 /** The last few alive: the score adds a tension layer. */
-export const tenseFor = (v) => v.mode === 'coffins' ? v.phase === 'C_DIG' : !['LOBBY', 'ENDED'].includes(v.phase) && v.players.filter((p) => p.alive).length <= Math.max(3, Math.ceil(v.players.length * 0.3));
+export const tenseFor = (v) => v.mode === 'carnival' ? v.phase === 'K_CHALLENGE' : v.mode === 'coffins' ? v.phase === 'C_DIG' : !['LOBBY', 'ENDED'].includes(v.phase) && v.players.filter((p) => p.alive).length <= Math.max(3, Math.ceil(v.players.length * 0.3));
 
 const RULE_GLYPH = {
   FOG_OF_WAR: 'veil', CURSED_SILENCE: 'psycho', MAJORITY_RULE: 'magistrate', PARANOIA: 'mentalist', VENGEFUL_GHOSTS: 'death',
@@ -129,14 +134,15 @@ export function boardScreen(v, h) {
           ${classic ? `<span class="kicker">${t('Rule cards')}</span>
           <div class="deckrow">${ruleCards}</div>` : ''}
           ${v.mode === 'coffins' ? `<div class="c-lobbyhand">${Array.from({ length: s.c?.coffins ?? 4 }, (_, i) => coffinCard(i === (s.c?.coffins ?? 4) - 1 ? 'C' : 'G')).join('')}</div><p class="small muted">${th('Each player: {g} Gold and one Curse.', { g: (s.c?.coffins ?? 4) - 1 })}</p>` : ''}
-          ${v.mode === 'exorcism' || v.mode === 'coffins' ? '' : `<span class="kicker">${t('Story')}</span>`}
-          ${v.mode === 'exorcism' || v.mode === 'coffins' ? '' : `<p class="scenario">${s.scenario.mode === 'manual' && s.scenario.who ? esc(`${scen('WHO', s.scenario.who)} · ${scen('WHERE', s.scenario.where)} · ${scen('WHY', s.scenario.why)}`) : t('Dealt when the match begins.')}</p>`}
+          ${['exorcism', 'coffins', 'carnival'].includes(v.mode) ? '' : `<span class="kicker">${t('Story')}</span>`}
+          ${['exorcism', 'coffins', 'carnival'].includes(v.mode) ? '' : `<p class="scenario">${s.scenario.mode === 'manual' && s.scenario.who ? esc(`${scen('WHO', s.scenario.who)} · ${scen('WHERE', s.scenario.where)} · ${scen('WHY', s.scenario.why)}`) : t('Dealt when the match begins.')}</p>`}
         </section>
       </div></main>`;
   }
 
   if (v.mode === 'exorcism' && v.exorcism) return exorcismBoard(v, { header, ring });
   if (v.mode === 'coffins' && v.coffins) return coffinsBoard(v, { header });
+  if (v.mode === 'carnival' && v.carnival) return carnivalBoard(v, { header });
 
   // ── 1 · Living table + 2 · sky + 6 · threads + 17 · plaques ────────────
   const players = [...v.players].sort((a, b) => a.seat - b.seat);

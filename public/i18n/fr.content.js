@@ -3,6 +3,7 @@ export default {
   and: 'et',
   numbers: ['aucun', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix'],
   roles: {
+    K_GUEST: { name: "Invité masqué", when: "Toujours", summary: "Danse, jette un œil et revendique des masques pour amasser des Âmes. 13 Âmes gagnent.", detail: "Ton masque est une carte de rôle que tu as vue une fois. Échange ou fais semblant pour le cacher ; jette un œil pour le connaître ; revendique un masque pour user de son pouvoir. Qui croit qu'il est à lui peut te défier." },
     C_DIGGER: { name: "Fossoyeur", when: "Toujours", summary: "Enterre tes cercueils, annonce combien tu peux en ouvrir, et creuse. Deux fouilles propres gagnent.", detail: "Ta Malédiction est ton bluff : enterre-la pour que les autres tombent dessus. Si tu remportes l'enchère, tu ouvres d'abord ta propre tombe." },
     X_LIVING: { name: "Vivant", when: "Toujours", summary: "Tu vois le mot de passe dans la boule de cristal. Donne un mot qui prouve que tu le connais, sans le livrer au Démon.", detail: "Trop évident, et le Démon apprend le mot de passe. Trop obscur, et la table te soupçonne. Puis désignez le Démon." },
     X_DEMON: { name: "Démon", when: "Toujours", summary: "Tu ne vois que la catégorie. Fonds-toi dans la masse : dis un mot comme si tu connaissais le mot de passe.", detail: "Écoute les autres et perce le mot de passe. Si la table désigne quelqu'un d'autre, tu gagnes. Si on te démasque, un bon essai gagne quand même." },
@@ -123,6 +124,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Fantômes vengeurs', text: 'Chaque joueur éliminé peut déposer un bulletin fantôme de poids 1 par jour.', enforcement: 'Les fantômes ne peuvent pas nommer, utiliser de pouvoirs ni influencer la Règle de la majorité.' },
   },
   presets: {
+    carnival: { name: "Dead Set : Carnaval", blurb: "Un bal masqué de bluff et de mémoire. Chacun porte une carte de rôle en guise de masque, mélangée jusqu'à ce que nul n'en soit sûr. Revendique des masques et amasse des Âmes ; 13 gagnent." },
     coffins: { name: "Dead Set : Cercueils", blurb: "Un jeu de bluff rapide. Enterre de l'or et une malédiction, annonce combien de cercueils tu peux ouvrir, puis creuse. Deux fouilles propres gagnent." },
     exorcism: { name: "Dead Set : Exorcisme", blurb: "Un jeu de mots et de bluff. Tout le monde voit le mot de passe dans la boule de cristal, sauf le Démon. Un mot chacun, puis démasquez le Démon." },
     missions: { name: "Dead Set : Missions", blurb: "Équipes, votes et sabotage. Personne ne meurt : menez des missions, lisez les votes, et trouvez la Mort avant qu'elle ne trouve le Médium." },
@@ -150,6 +152,17 @@ export default {
     'La Mort a voté avec la ville. Évidemment.',
   ],
   guide: {
+    carnivalH: "Dead Set : Carnaval",
+    carnival: `<p>Un bal masqué de bluff et de mémoire pour 4 à 12 joueurs, à choisir dans le salon. Chaque masque est une carte de rôle familière.</p>
+<ol>
+<li><b>Le démasquage.</b> Chacun reçoit un masque (à 4–5 joueurs, les masques en trop vont sur des chaises vides). Pendant dix secondes, tous les masques sont montrés sur la TV et sur chaque téléphone. Retiens-les ; puis ils se retournent face cachée.</li>
+<li><b>Ton tour : un des trois.</b> <i>Échanger ou feindre</i> : choisis un autre masque et maintiens Échanger ou Feindre. Les deux boutons se ressemblent et personne, pas même l'autre joueur, ne sait lequel tu as choisi. <i>Jeter un œil</i> : regarde ton propre masque un instant ; tout le monde voit que tu as regardé. <i>Revendiquer</i> : nomme un masque et use de son pouvoir.</li>
+<li><b>Les défis.</b> Quand quelqu'un revendique, chaque autre téléphone demande : <i>Est-ce ton masque ?</i> Si personne ne défie, la revendication tient : le pouvoir fonctionne, quoi qu'il porte vraiment. Si quelqu'un défie, le revendicateur et les défieurs lèvent leur masque : celui qui le porte vraiment use du pouvoir, les autres révélés paient une Âme à l'Offrande.</li>
+<li><b>La danse d'ouverture.</b> Le premier tour de chaque joueur (deux, si l'hôte le veut) doit être Échanger ou feindre.</li>
+<li><b>Victoire</b> avec une bourse pleine (13 Âmes), avec la moisson de la Mort (6 Âmes fauchées par des revendications de la Mort) ou, dès que quelqu'un tombe à 0, en étant le plus riche.</li>
+</ol>
+<p>Touche <b>Masques au bal</b> à tout moment : chaque masque en jeu avec son pouvoir, écrit en toutes lettres et dessiné en une ligne de signes (la pièce pour les Âmes, le cadeau pour l'Offrande, la faux pour la Moisson, un œil pour un regard, des flèches croisées pour un échange). <b>Le journal du bal</b> (notes) est désactivé par défaut : ce que tu as vu, tu le gardes en tête. L'hôte peut l'activer dans le salon.</p>
+<p>Les scores se cumulent d'une partie à l'autre : le vainqueur +3, les autres +1 par Âme au-delà de 6.</p>`,
     coffinsH: "Dead Set : Cercueils",
     coffins: `<p>Un jeu de bluff rapide pour 3 à 10 joueurs, à choisir dans le salon. Chacun tient 3 cercueils d'Or et une Malédiction (4 et une avec l'option longue).</p>
 <ol>

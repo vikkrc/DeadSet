@@ -133,7 +133,7 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 | Beta | Mode | Status |
 |---|---|---|
 | 3 | **Coffins** | Built (COFFINS.md); full visual redesign pending, to the design codex, with owner-made assets |
-| 4 | **Carnival** | Rules drafted (CARNIVAL.md) |
+| 4 | **Carnival** | Built (CARNIVAL.md) |
 | 5 | **Midnight** | Pitch |
 | 6 | **Séance** | Rules drafted (SEANCE.md), decisions pending |
 | 7 | **Doppelgänger** | Pitch |

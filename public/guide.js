@@ -98,6 +98,17 @@ export const GUIDE_EN = {
 <li><b>One last guess.</b> A caught Demon gets one guess at the password, from the 4×4 word grid or typed. Right, and the Demon still wins.</li>
 </ol>
 <p>The round ends back in the same lobby with the same settings, and the scores carry on: Living +1 for a win, Demons +2.</p>`,
+  carnivalH: 'Dead Set: Carnival',
+  carnival: `<p>A masked ball of bluff and memory for 4–12 players, chosen in the lobby. Every mask is a familiar role card.</p>
+<ol>
+<li><b>The unmasking.</b> Everyone is dealt a mask (at 4–5 players, the spare masks sit on empty chairs). For ten seconds every mask is shown on the TV and every phone. Remember them; then they turn face down.</li>
+<li><b>Your turn: one of three.</b> <i>Swap or pretend</i>: pick another mask and hold Swap or Pretend. The two buttons look the same and nobody, not even the other player, learns which you chose. <i>Peek</i>: look at your own mask for a moment; everyone sees that you looked. <i>Claim</i>: name a mask and use its power.</li>
+<li><b>Challenges.</b> When someone claims, every other phone asks <i>Is that your mask?</i> If nobody challenges, the claim stands: the power works whatever the claimant really wears. If anyone challenges, the claimant and the challengers lift their masks: whoever truly wears it uses the power, everyone else revealed pays a Soul into the Offering.</li>
+<li><b>The opening dance.</b> Each player's first turn (two, if the host chooses) must be Swap or pretend.</li>
+<li><b>Win</b> with a full purse (13 Souls), with Death's harvest (6 Souls reaped by Death claims), or, the moment someone is ruined at 0, by being the richest.</li>
+</ol>
+<p>Tap <b>Masks at the ball</b> at any time: every mask in play with its power, written out and drawn as a line of signs (the coin for Souls, the gift for the Offering, the scythe for the Harvest, an eye for a look, crossed arrows for a swap). <b>The ball diary</b> (Notes) is off by default: you keep what you saw in your head. The host can switch it on in the lobby.</p>
+<p>Scores carry over between games: the winner +3, everyone else +1 for each Soul above 6.</p>`,
   coffinsH: 'Dead Set: Coffins',
   coffins: `<p>A quick bluffing game for 3–10 players, chosen in the lobby. Everyone holds 3 Gold coffins and one Curse (4 and one with the longer option).</p>
 <ol>
@@ -133,7 +144,7 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   return `<div class="guide">
   <header class="phase-head"><span class="kicker">${G.kicker}</span><h1>${G.title}</h1>
     <p class="scenario">${G.intro}</p></header>
-  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}<a class="tag" href="#g11">${G.sidesH}</a><a class="tag" href="#g12">${G.missionsH}</a><a class="tag" href="#g13">${G.exorcismH}</a><a class="tag" href="#g14">${G.coffinsH}</a></nav>
+  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}<a class="tag" href="#g11">${G.sidesH}</a><a class="tag" href="#g12">${G.missionsH}</a><a class="tag" href="#g13">${G.exorcismH}</a><a class="tag" href="#g14">${G.coffinsH}</a><a class="tag" href="#g15">${G.carnivalH}</a></nav>
   <section id="g0"><h2>${G.basicsH}</h2>${G.basics}</section>
   <section id="g1"><h2>${G.roundH}</h2>${G.round}</section>
   <section id="g2"><h2>${G.winH}</h2>${G.win}</section>
@@ -162,5 +173,6 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
     <h3>${G.missionCardsH}</h3>${(c?.missionCards ?? []).map((x) => `<div class="entry">${glyph('mission')}<div><h4>${esc(mcardF(x.id, 'name'))}</h4><p>${esc(mcardF(x.id, 'text'))}</p></div></div>`).join('')}</section>
   <section id="g13"><h2>${G.exorcismH}</h2>${G.exorcism}${roles.filter((r) => r.set === 'exorcism').map(entry).join('')}</section>
   <section id="g14"><h2>${G.coffinsH}</h2>${G.coffins}${roles.filter((r) => r.set === 'coffins').map(entry).join('')}</section>
+  <section id="g15"><h2>${G.carnivalH}</h2>${G.carnival}</section>
   </div>`;
 }

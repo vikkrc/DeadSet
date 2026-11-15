@@ -3,6 +3,7 @@ export default {
   and: 'y',
   numbers: ['ningún', 'un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'],
   roles: {
+    K_GUEST: { name: "Invitado enmascarado", when: "Siempre", summary: "Baila, echa un vistazo y reclama máscaras para reunir Almas. 13 Almas ganan.", detail: "Tu máscara es una carta de rol que viste una vez. Cambia o finge para esconderla; echa un vistazo para conocerla; reclama una máscara para usar su poder. Quien crea que es suya puede desafiarte." },
     C_DIGGER: { name: "Sepulturero", when: "Siempre", summary: "Entierra tus ataúdes, apuesta cuántos puedes abrir y cava. Dos excavaciones limpias ganan.", detail: "Tu Maldición es tu farol: entiérrala para que otros tropiecen con ella. Si ganas la puja, abres primero tu propia tumba." },
     X_LIVING: { name: "Vivo", when: "Siempre", summary: "Ves la contraseña en la bola de cristal. Di una palabra que demuestre que la sabes, sin dársela al Demonio.", detail: "Demasiado obvia, y el Demonio descubre la contraseña. Demasiado rebuscada, y la mesa sospecha de ti. Luego nombrad al Demonio." },
     X_DEMON: { name: "Demonio", when: "Siempre", summary: "Solo ves la categoría. Pasa desapercibido: di una palabra como si conocieras la contraseña.", detail: "Escucha a los demás y descifra la contraseña. Si la mesa nombra a otro, ganas. Si te descubren, un intento acertado gana igualmente." },
@@ -123,6 +124,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Fantasmas vengativos', text: 'Cada jugador eliminado puede emitir una papeleta fantasma de peso 1 por día.', enforcement: 'Los fantasmas no pueden nominar, usar poderes ni influir en la Regla de mayoría.' },
   },
   presets: {
+    carnival: { name: "Dead Set: Carnaval", blurb: "Un baile de máscaras de faroles y memoria. Cada uno lleva una carta de rol como máscara, barajada hasta que nadie está seguro. Reclama máscaras y reúne Almas; 13 ganan." },
     coffins: { name: "Dead Set: Ataúdes", blurb: "Un juego de faroles rápido. Entierra oro y una maldición, puja cuántos ataúdes puedes abrir y luego cava. Dos excavaciones limpias ganan." },
     exorcism: { name: "Dead Set: Exorcismo", blurb: "Un juego de palabras y faroles. Todos ven la contraseña en la bola de cristal, menos el Demonio. Una palabra cada uno y luego desenmascarad al Demonio." },
     missions: { name: "Dead Set: Misiones", blurb: "Equipos, votos y sabotaje. Nadie muere: dirigid misiones, leed los votos y encontrad a la Muerte antes de que ella encuentre al Médium." },
@@ -150,6 +152,17 @@ export default {
     'La Muerte votó con el pueblo. Cómo no.',
   ],
   guide: {
+    carnivalH: "Dead Set: Carnaval",
+    carnival: `<p>Un baile de máscaras de faroles y memoria para 4–12 jugadores, que se elige en la sala. Cada máscara es una carta de rol conocida.</p>
+<ol>
+<li><b>El desenmascaramiento.</b> Cada uno recibe una máscara (con 4–5 jugadores, las sobrantes van a sillas vacías). Durante diez segundos todas las máscaras se ven en la TV y en cada móvil. Recuérdalas; luego se ponen boca abajo.</li>
+<li><b>Tu turno: una de tres.</b> <i>Cambiar o fingir</i>: elige otra máscara y mantén Cambiar o Fingir. Los dos botones son iguales y nadie, ni siquiera el otro jugador, sabe cuál elegiste. <i>Echar un vistazo</i>: mira tu propia máscara un instante; todos ven que miraste. <i>Reclamar</i>: nombra una máscara y usa su poder.</li>
+<li><b>Desafíos.</b> Cuando alguien reclama, cada otro móvil pregunta: <i>¿Es tu máscara?</i> Si nadie desafía, la reclamación vale: el poder funciona, lleve lo que lleve. Si alguien desafía, quien reclama y quienes desafían se quitan la máscara: quien de verdad la lleva usa el poder, los demás revelados pagan un Alma a la Ofrenda.</li>
+<li><b>La danza de apertura.</b> El primer turno de cada jugador (dos, si el anfitrión quiere) debe ser Cambiar o fingir.</li>
+<li><b>Gana</b> con la bolsa llena (13 Almas), con la cosecha de la Muerte (6 Almas segadas reclamando la Muerte) o, en cuanto alguien cae a 0, siendo el más rico.</li>
+</ol>
+<p>Toca <b>Máscaras en el baile</b> cuando quieras: cada máscara en juego con su poder, escrito y dibujado como una línea de signos (la moneda para las Almas, el regalo para la Ofrenda, la guadaña para la Cosecha, un ojo para una mirada, flechas cruzadas para un cambio). <b>El diario del baile</b> (notas) está desactivado por defecto: lo que viste, lo guardas en la cabeza. El anfitrión puede activarlo en la sala.</p>
+<p>Los puntos se acumulan entre partidas: el ganador +3, los demás +1 por cada Alma por encima de 6.</p>`,
     coffinsH: "Dead Set: Ataúdes",
     coffins: `<p>Un juego de faroles rápido para 3–10 jugadores, que se elige en la sala. Cada cual tiene 3 ataúdes de Oro y una Maldición (4 y una con la opción larga).</p>
 <ol>

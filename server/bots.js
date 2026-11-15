@@ -5,6 +5,7 @@ import { categoryById } from '../engine/words.js';
 import { playerView } from '../engine/views.js';
 import { AVATAR_PARTS } from '../engine/content.js';
 import { randomTeam } from '../engine/missions.js';
+import { carnivalBelief } from '../engine/carnival.js';
 
 export const BOT_NAMES = ['Ash', 'Bram', 'Cass', 'Dorian', 'Edda', 'Finch', 'Greer', 'Hollis', 'Isolde', 'Jem', 'Kestrel', 'Lark',
   'Mabel', 'Nell', 'Orrin', 'Perpetua', 'Quill', 'Rook', 'Silas', 'Tamsin', 'Ursa', 'Vesper', 'Wren', 'Yarrow', 'Zeke'];
@@ -42,7 +43,7 @@ export function botDecide(m, botId, rng) {
       if (a.type === 'swap' && a.snatcher && a.choice == null && a.targets?.length && chance(rng, 0.5)) return { cmd: { type: 'dream.swap', payload: { target: pick(rng, a.targets) } } };
       return null;
     case 'NIGHT_ACTIONS': return nightMove(m, v, rng);
-    default: return m.X ? exorcismMove(m, v, rng) : m.C ? coffinsMove(m, v, rng) : m.M ? missionMove(m, v, rng) : null;
+    default: return m.X ? exorcismMove(m, v, rng) : m.K ? carnivalMove(m, v, rng) : m.C ? coffinsMove(m, v, rng) : m.M ? missionMove(m, v, rng) : null;
   }
 }
 
@@ -79,6 +80,47 @@ function exorcismMove(m, v, rng) {
 // early, so it gets dug), bid what they believe is safe (their own buried gold
 // plus a share of the table) and sometimes bluff a raise, dig the plots of
 // players who passed rather than those who bid high, and wager like the dice.
+// Carnival: a belief table per bot (where each mask probably is). Claim when sure, bluff a little, challenge when it is probably yours.
+const K_VALUE = { CONSPIRATOR: 5, DEATH: 3, MAGISTRATE: 4, DIPLOMAT: 4, RIPPER: 3, GAMBLER: 3, JESTER: 2, GUARDIAN: 2, BARD: 2, SCAPEGOAT: 2, MIMIC: 2, INNOCENT: 1, MENTALIST: 1, ORACLE: 1, WITCH: 1, DOUBLE_AGENT: 1 };
+function carnivalMove(m, v, rng) {
+  const a = v.action || {};
+  const me = v.me.id;
+  const B = carnivalBelief(m, me);
+  const mine = B[me] ?? { mask: null, p: 0 };
+  const K = v.carnival;
+  const value = (mask) => (mask === 'MAGISTRATE' ? (K.offering >= 2 ? 4 : 1) : K_VALUE[mask] ?? 1);
+  const richest = (ids) => [...ids].sort((x, y) => (K.seats.find((s) => s.id === y)?.souls ?? 0) - (K.seats.find((s) => s.id === x)?.souls ?? 0))[0];
+  switch (a.type) {
+    case 'kturn': {
+      if (a.forced > 0) return { cmd: { type: 'k.swap', payload: { target: pick(rng, a.targets), real: chance(rng, 0.5) } } };
+      if (mine.p >= 0.7 && value(mine.mask) >= 2 && chance(rng, 0.85)) return { cmd: { type: 'k.claim', payload: { mask: mine.mask } } };
+      if (chance(rng, 0.1)) { const strong = a.masks.filter((x) => value(x) >= 4); if (strong.length) return { cmd: { type: 'k.claim', payload: { mask: pick(rng, strong) } } }; }
+      if (mine.p < 0.6 && chance(rng, 0.6)) return { cmd: { type: 'k.peek', payload: {} } };
+      if (mine.p >= 0.7 && value(mine.mask) < 2) return { cmd: { type: 'k.swap', payload: { target: pick(rng, a.targets), real: true } } };
+      return { cmd: { type: 'k.swap', payload: { target: pick(rng, a.targets), real: chance(rng, 0.5) } } };
+    }
+    case 'kanswer':
+      if (a.answer) return null;
+      return { cmd: { type: 'k.answer', payload: { mine: mine.mask === a.mask && mine.p >= (a.mask === 'DEATH' ? 0.3 : 0.55) } } };
+    case 'kpower': {
+      const players = a.targets.filter((id) => !id.startsWith('chair'));
+      switch (a.mask) {
+        case 'DEATH': case 'SCAPEGOAT': return { cmd: { type: 'k.power', payload: { target: richest(players) } } };
+        case 'JESTER': {
+          const sure = players.map((id) => ({ id, b: B[id] })).filter((x) => x.b?.mask).sort((x, y) => y.b.p - x.b.p)[0];
+          return { cmd: { type: 'k.power', payload: { target: sure?.id ?? pick(rng, players), mask: sure?.b.mask ?? pick(rng, a.masks) } } };
+        }
+        case 'ORACLE': case 'WITCH': {
+          const x = pick(rng, a.targets); let y = pick(rng, a.targets); while (y === x) y = pick(rng, a.targets);
+          return { cmd: { type: 'k.power', payload: { targets: [x, y], real: chance(rng, 0.5) } } };
+        }
+        default: return { cmd: { type: 'k.power', payload: { target: pick(rng, a.targets) } } };
+      }
+    }
+    default: return null;
+  }
+}
+
 function coffinsMove(m, v, rng) {
   const a = v.action || {};
   const c = v.me.c || {};

@@ -3,6 +3,7 @@ export default {
   and: 'és',
   numbers: ['nulla', 'egy', 'két', 'három', 'négy', 'öt', 'hat', 'hét', 'nyolc', 'kilenc', 'tíz'],
   roles: {
+    K_GUEST: { name: "Álarcos vendég", when: "Mindig", summary: "Táncolj, pillants be és állíts maszkokat, hogy Lelkeket gyűjts. 13 Lélek győz.", detail: "A maszkod egy szerepkártya, amit egyszer láttál. Cserélj vagy színlelj, hogy elrejtsd; pillants be, hogy megtudd; állíts egy maszkot, hogy használd a képességét. Aki azt hiszi, hogy az övé, kihívhat." },
     C_DIGGER: { name: "Sírásó", when: "Mindig", summary: "Temesd el a koporsóidat, licitálj, hányat tudsz kinyitni, és áss. Két tiszta ásás győz.", detail: "Az Átkod a blöfföd: temesd el, hogy mások belebotoljanak. Ha te nyered a licitet, a saját sírodat nyitod ki először." },
     X_LIVING: { name: "Élő", when: "Mindig", summary: "A kristálygömbben látod a jelszót. Mondj egy szót, ami bizonyítja, hogy tudod, de ne add a Démon kezébe.", detail: "Ha túl nyilvánvaló, a Démon megtudja a jelszót. Ha túl homályos, az asztal téged gyanúsít. Aztán nevezzétek meg a Démont." },
     X_DEMON: { name: "Démon", when: "Mindig", summary: "Csak a kategóriát látod. Olvadj be: mondj olyan szót, mintha tudnád a jelszót.", detail: "Figyeld a többieket, és fejtsd meg a jelszót. Ha az asztal mást nevez meg, nyersz. Ha elkapnak, egy jó tipp még így is győzelem." },
@@ -123,6 +124,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Bosszúálló szellemek', text: 'Minden kiesett játékos naponta egy 1 súlyú szellemszavazatot adhat le.', enforcement: 'A szellemek nem jelölhetnek, nem használhatnak képességet, és nem befolyásolják a Többségi szabályt.' },
   },
   presets: {
+    carnival: { name: "Dead Set: Karnevál", blurb: "Álarcosbál blöffel és emlékezettel. Mindenki egy szerepkártyát visel maszkként, addig keverve, míg senki sem biztos benne. Állíts maszkokat, gyűjts Lelkeket; 13 győz." },
     coffins: { name: "Dead Set: Koporsók", blurb: "Gyors blöffjáték. Temess el aranyat és egy átkot, licitálj, hány koporsót tudsz kinyitni, aztán áss. Két tiszta ásás győz." },
     exorcism: { name: "Dead Set: Ördögűzés", blurb: "Blöffölős szójáték. A kristálygömbben mindenki látja a jelszót, kivéve a Démont. Mindenki egy szót mond, aztán leleplezitek a Démont." },
     missions: { name: "Dead Set: Küldetések", blurb: "Csapatok, szavazások és szabotázs. Senki sem hal meg: vezessetek küldetéseket, olvassátok a szavazatokat, és találjátok meg a Halált, mielőtt ő a Médiumot." },
@@ -150,6 +152,17 @@ export default {
     'A Halál a várossal szavazott. Hát persze.',
   ],
   guide: {
+    carnivalH: "Dead Set: Karnevál",
+    carnival: `<p>Álarcosbál blöffel és emlékezettel 4–12 játékosnak, a lobbiban választható. Minden maszk egy ismerős szerepkártya.</p>
+<ol>
+<li><b>A leleplezés.</b> Mindenki kap egy maszkot (4–5 játékosnál a fölösleges maszkok üres székekre kerülnek). Tíz másodpercig minden maszk látszik a tévén és minden telefonon. Jegyezd meg őket; aztán lefordulnak.</li>
+<li><b>A köröd: a három közül egy.</b> <i>Csere vagy színlelés</i>: válassz egy másik maszkot, és tartsd nyomva a Csere vagy a Színlelés gombot. A kettő egyforma, és senki, még a másik játékos sem tudja meg, melyiket választottad. <i>Bepillantás</i>: egy pillanatra megnézed a saját maszkod; mindenki látja, hogy belenéztél. <i>Állítás</i>: megnevezel egy maszkot, és használod a képességét.</li>
+<li><b>Kihívások.</b> Ha valaki állít, minden más telefon megkérdezi: <i>Ez a te maszkod?</i> Ha senki sem hív ki, az állítás áll: a képesség működik, bármit visel is valójában. Ha valaki kihív, az állító és a kihívók leveszik a maszkjukat: aki tényleg viseli, használja a képességet, a többi lelepleződött egy Lelket fizet a Perselybe.</li>
+<li><b>A nyitótánc.</b> Mindenki első köre (ha a házigazda úgy dönt, az első kettő) csak Csere vagy színlelés lehet.</li>
+<li><b>Győzelem</b> teli erszénnyel (13 Lélek), a Halál aratásával (6 Lélek Halál-állításokkal learatva), vagy abban a pillanatban, amikor valaki 0-ra fogy, a leggazdagabbként.</li>
+</ol>
+<p>Bármikor koppints a <b>Maszkok a bálban</b> gombra: minden játékban lévő maszk a képességével, leírva és jelek sorával is (érme a Lelkeknek, ajándék a Perselynek, kasza az Aratásnak, szem a betekintésnek, keresztezett nyilak a cserének). <b>A bálnapló</b> (jegyzetek) alapból ki van kapcsolva: amit láttál, fejben tartod. A házigazda a lobbiban bekapcsolhatja.</p>
+<p>A pontok játékról játékra öröklődnek: a győztes +3, mindenki más +1 minden 6 fölötti Lélekért.</p>`,
     coffinsH: "Dead Set: Koporsók",
     coffins: `<p>Gyors blöffjáték 3–10 játékosnak, a lobbiban választható. Mindenkinél 3 Arany koporsó és egy Átok van (a hosszabb változatban 4 és egy).</p>
 <ol>

@@ -1,6 +1,6 @@
 # Dead Set: Carnival — rules and game spec (DRAFT)
 
-**Status: design draft for Beta 4, main decisions taken 2026-11-12 (§10). Nothing here is built.**
+**Status: built for Beta 4 (2026-11-15).** Bot simulations (150 games per size): about 20 turns at 4 players, 28 at 6, 33 at 8, 43 at 12; Death's harvest wins about one game in four at 6 players, the full purse most of the rest. The ball diary is the "Notes" switch in the lobby (off by default).
 
 A bluffing and memory game for **4–12 players**, about 25 minutes, chosen in the lobby next to the other modes. One phone each, plus the TV board as the ballroom.
 

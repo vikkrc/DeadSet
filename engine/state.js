@@ -54,6 +54,7 @@ export function stamp(m) {
   if (m.M && m.phase.startsWith('M_')) return m.phase === 'M_REVEAL' ? 'Night 0' : m.phase === 'M_LAST_STAND' || m.phase === 'M_RECKONING' ? 'Finale' : `Mission ${m.M.mission + 1}`;
   if (isNightPhase(m.phase) || m.phase === 'NIGHT_RESOLVING') return `Night ${m.nightNumber}`;
   if (m.C && m.phase.startsWith('C_')) return `Round ${m.C.round}`;
+  if (m.K && m.phase.startsWith('K_')) return `Turn ${m.K.turnNo}`;
   if (m.phase === 'ENDED') return 'End';
   return `Day ${m.dayNumber}`;
 }

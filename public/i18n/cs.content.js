@@ -3,6 +3,7 @@ export default {
   and: 'a',
   numbers: ['žádný', 'jeden', 'dva', 'tři', 'čtyři', 'pět', 'šest', 'sedm', 'osm', 'devět', 'deset'],
   roles: {
+    K_GUEST: { name: "Maskovaný host", when: "Vždy", summary: "Tancuj, nahlížej a hlas masky, abys sbíral Duše. 13 Duší vyhrává.", detail: "Tvoje maska je karta postavy, kterou jsi jednou viděl. Vyměň nebo předstírej, abys ji skryl; nahlédni, abys ji poznal; ohlas masku, abys použil její schopnost. Kdo si myslí, že je jeho, tě může vyzvat." },
     C_DIGGER: { name: "Hrobník", when: "Vždy", summary: "Zakopej své rakve, řekni, kolik jich dokážeš otevřít, a kopej. Dvě čisté vykopávky vyhrávají.", detail: "Tvoje Kletba je tvůj blaf: zakopej ji, ať na ni narazí ostatní. Když vyhraješ dražbu, otevíráš nejdřív vlastní hrob." },
     X_LIVING: { name: "Živý", when: "Vždy", summary: "V křišťálové kouli vidíš heslo. Řekni slovo, které dokáže, že ho znáš, ale nedej ho Démonovi.", detail: "Příliš jasné, a Démon heslo zjistí. Příliš nejasné, a stůl podezírá tebe. Pak označte Démona." },
     X_DEMON: { name: "Démon", when: "Vždy", summary: "Vidíš jen kategorii. Splyň s ostatními: řekni slovo, jako bys heslo znal.", detail: "Poslouchej ostatní a rozlušti heslo. Když stůl označí někoho jiného, vyhráváš. Když tě chytí, jeden správný pokus stejně vyhraje." },
@@ -123,6 +124,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Mstiví duchové', text: 'Každý vyřazený hráč může každý den odevzdat jeden hlas ducha s váhou 1.', enforcement: 'Duchové nemohou nominovat, používat schopnosti ani ovlivnit Pravidlo většiny.' },
   },
   presets: {
+    carnival: { name: "Dead Set: Karneval", blurb: "Maškarní ples blafování a paměti. Každý nosí kartu postavy jako masku, míchanou, dokud si nikdo není jistý. Hlas masky a sbírej Duše; 13 vyhrává." },
     coffins: { name: "Dead Set: Rakve", blurb: "Rychlá blafovací hra. Zakopej zlato a jednu kletbu, nabídni, kolik rakví dokážeš otevřít, a kopej. Dvě čisté vykopávky vyhrávají." },
     exorcism: { name: "Dead Set: Exorcismus", blurb: "Slovní hra plná blafování. V křišťálové kouli všichni vidí heslo, kromě Démona. Každý jedno slovo, pak odhalte Démona." },
     missions: { name: "Dead Set: Mise", blurb: "Týmy, hlasování a sabotáž. Nikdo neumírá: veďte mise, čtěte hlasy a najděte Smrt dřív, než ona najde Médium." },
@@ -150,6 +152,17 @@ export default {
     'Smrt hlasovala s městem. Samozřejmě.',
   ],
   guide: {
+    carnivalH: "Dead Set: Karneval",
+    carnival: `<p>Maškarní ples blafování a paměti pro 4–12 hráčů, volitelný v lobby. Každá maska je známá karta postavy.</p>
+<ol>
+<li><b>Odhalení.</b> Každý dostane masku (při 4–5 hráčích sedí přebytečné masky na prázdných židlích). Deset vteřin jsou všechny masky vidět na TV i na každém telefonu. Zapamatuj si je; pak se otočí lícem dolů.</li>
+<li><b>Tvůj tah: jedno ze tří.</b> <i>Výměna, nebo předstírání</i>: vyber jinou masku a podrž Vyměnit, nebo Předstírat. Tlačítka vypadají stejně a nikdo, ani druhý hráč, se nedozví, co jsi zvolil. <i>Nahlédnutí</i>: na chvíli se podíváš na svou masku; všichni vidí, že ses podíval. <i>Ohlášení</i>: pojmenuj masku a použij její schopnost.</li>
+<li><b>Výzvy.</b> Když někdo ohlásí masku, každý jiný telefon se zeptá: <i>Je to tvoje maska?</i> Když nikdo nevyzve, ohlášení platí: schopnost funguje, ať ohlašovatel nosí cokoli. Když někdo vyzve, ohlašovatel a vyzyvatelé odhalí masky: kdo ji opravdu nosí, použije schopnost, ostatní odhalení zaplatí Duši do Oběti.</li>
+<li><b>Úvodní tanec.</b> První tah každého hráče (dva, pokud hostitel chce) musí být Výměna, nebo předstírání.</li>
+<li><b>Vyhraje</b> plný měšec (13 Duší), žeň Smrti (6 Duší sklizených ohlášeními Smrti), nebo, jakmile někdo klesne na 0, nejbohatší.</li>
+</ol>
+<p>Kdykoli ťukni na <b>Masky na plese</b>: každá maska ve hře se schopností, napsanou i nakreslenou jako řada znaků (mince pro Duše, dar pro Oběť, kosa pro Žeň, oko pro pohled, zkřížené šipky pro výměnu). <b>Deník plesu</b> (poznámky) je ve výchozím stavu vypnutý: co jsi viděl, nosíš v hlavě. Hostitel ho může v lobby zapnout.</p>
+<p>Body se přenášejí mezi hrami: vítěz +3, ostatní +1 za každou Duši nad 6.</p>`,
     coffinsH: "Dead Set: Rakve",
     coffins: `<p>Rychlá blafovací hra pro 3–10 hráčů, volitelná v lobby. Každý má 3 Zlaté rakve a jednu Kletbu (v delší verzi 4 a jednu).</p>
 <ol>

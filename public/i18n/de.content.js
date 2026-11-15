@@ -3,6 +3,7 @@ export default {
   and: 'und',
   numbers: ['kein', 'ein', 'zwei', 'drei', 'vier', 'fünf', 'sechs', 'sieben', 'acht', 'neun', 'zehn'],
   roles: {
+    K_GUEST: { name: "Maskierter Gast", when: "Immer", summary: "Tanze, spähe und beanspruche Masken, um Seelen zu sammeln. 13 Seelen gewinnen.", detail: "Deine Maske ist eine Rollenkarte, die du einmal gesehen hast. Tausche oder täusche, um sie zu verbergen; späh, um sie zu kennen; beanspruche eine Maske, um ihre Kraft zu nutzen. Wer glaubt, sie sei seine, kann dich herausfordern." },
     C_DIGGER: { name: "Totengräber", when: "Immer", summary: "Vergrabe deine Särge, biete, wie viele du öffnen kannst, und grabe. Zwei saubere Grabungen gewinnen.", detail: "Dein Fluch ist dein Bluff: Vergrabe ihn, damit andere darüber stolpern. Gewinnst du das Bieten, öffnest du zuerst dein eigenes Grab." },
     X_LIVING: { name: "Lebend", when: "Immer", summary: "In der Kristallkugel siehst du das Passwort. Sag ein Wort, das beweist, dass du es kennst, ohne es dem Dämon zu verraten.", detail: "Zu offensichtlich, und der Dämon kennt das Passwort. Zu rätselhaft, und der Tisch verdächtigt dich. Dann benennt den Dämon." },
     X_DEMON: { name: "Dämon", when: "Immer", summary: "Du siehst nur die Kategorie. Fall nicht auf: Sag ein Wort, als würdest du das Passwort kennen.", detail: "Hör den anderen zu und knack das Passwort. Benennt der Tisch jemand anderen, gewinnst du. Wirst du entlarvt, gewinnt ein richtiger Tipp trotzdem." },
@@ -123,6 +124,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Rachsüchtige Geister', text: 'Jeder ausgeschiedene Spieler darf pro Tag eine Geisterstimme mit Gewicht 1 abgeben.', enforcement: 'Geister können nicht nominieren, keine Fähigkeiten nutzen und die Mehrheitsregel nicht beeinflussen.' },
   },
   presets: {
+    carnival: { name: "Dead Set: Karneval", blurb: "Ein Maskenball aus Bluff und Gedächtnis. Jeder trägt eine Rollenkarte als Maske, gemischt, bis niemand mehr sicher ist. Beanspruche Masken und sammle Seelen; 13 gewinnen." },
     coffins: { name: "Dead Set: Särge", blurb: "Ein schnelles Bluffspiel. Vergrabe Gold und einen Fluch, biete, wie viele Särge du öffnen kannst, dann grabe. Zwei saubere Grabungen gewinnen." },
     exorcism: { name: "Dead Set: Exorzismus", blurb: "Ein Wortspiel voller Bluff. In der Kristallkugel sehen alle das Passwort, nur der Dämon nicht. Jeder ein Wort, dann wird der Dämon benannt." },
     missions: { name: "Dead Set: Missionen", blurb: "Teams, Abstimmungen und Sabotage. Niemand stirbt: Führt Missionen an, lest die Stimmen und findet den Tod, bevor er das Medium findet." },
@@ -150,6 +152,17 @@ export default {
     'Der Tod stimmte mit der Stadt. Natürlich.',
   ],
   guide: {
+    carnivalH: "Dead Set: Karneval",
+    carnival: `<p>Ein Maskenball aus Bluff und Gedächtnis für 4–12 Spieler, in der Lobby wählbar. Jede Maske ist eine bekannte Rollenkarte.</p>
+<ol>
+<li><b>Die Demaskierung.</b> Jeder erhält eine Maske (bei 4–5 Spielern sitzen die übrigen Masken auf leeren Stühlen). Zehn Sekunden lang ist jede Maske auf dem TV und jedem Handy zu sehen. Merk sie dir; dann werden sie verdeckt.</li>
+<li><b>Dein Zug: eins von dreien.</b> <i>Tauschen oder täuschen</i>: wähle eine andere Maske und halte Tauschen oder Täuschen. Beide Knöpfe sehen gleich aus, und niemand, nicht einmal der andere Spieler, erfährt, was du gewählt hast. <i>Spähen</i>: Sieh kurz deine eigene Maske an; alle sehen, dass du geschaut hast. <i>Beanspruchen</i>: Nenne eine Maske und nutze ihre Kraft.</li>
+<li><b>Herausforderungen.</b> Beansprucht jemand eine Maske, fragt jedes andere Handy: <i>Ist das deine Maske?</i> Fordert niemand heraus, gilt der Anspruch: die Kraft wirkt, was auch immer der Spieler wirklich trägt. Fordert jemand heraus, heben Anspruchsteller und Herausforderer ihre Masken: Wer sie wirklich trägt, nutzt die Kraft, alle anderen Aufgedeckten zahlen eine Seele in die Opfergabe.</li>
+<li><b>Der Eröffnungstanz.</b> Der erste Zug jedes Spielers (zwei, wenn der Host es will) muss Tauschen oder täuschen sein.</li>
+<li><b>Sieg</b> mit vollem Beutel (13 Seelen), mit der Ernte des Todes (6 Seelen, geerntet durch Ansprüche auf den Tod) oder, sobald jemand auf 0 fällt, als Reichste(r).</li>
+</ol>
+<p>Tippe jederzeit auf <b>Masken auf dem Ball</b>: jede Maske im Spiel mit ihrer Kraft, ausgeschrieben und als Reihe von Zeichen (Münze für Seelen, Geschenk für die Opfergabe, Sense für die Ernte, Auge für einen Blick, gekreuzte Pfeile für einen Tausch). <b>Das Balltagebuch</b> (Notizen) ist standardmäßig aus: Was du gesehen hast, behältst du im Kopf. Der Host kann es in der Lobby einschalten.</p>
+<p>Punkte werden zwischen Spielen übernommen: der Sieger +3, alle anderen +1 für jede Seele über 6.</p>`,
     coffinsH: "Dead Set: Särge",
     coffins: `<p>Ein schnelles Bluffspiel für 3–10 Spieler, in der Lobby wählbar. Jeder hält 3 Goldsärge und einen Fluch (4 und einen mit der längeren Option).</p>
 <ol>

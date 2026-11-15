@@ -472,6 +472,12 @@ Object.assign(ROLES, {
     summary: 'Bury your coffins, bid how many you can open, and dig. Two clean digs win.',
     detail: 'Your Curse is your bluff: bury it to make others stumble on it. If you win the bid, you open your own grave first.' },
 });
+ROLES.K_GUEST = { id: 'K_GUEST', name: 'Masked Guest', set: 'carnival', alignment: 'INDEPENDENT', glyph: 'veiled', when: 'Always',
+  summary: 'Dance, peek and claim masks to gather Souls. 13 Souls win.',
+  detail: 'Your mask is a role card you saw once. Swap or pretend to hide it, peek to learn it, claim a mask to use its power. If others think the mask is theirs, they can challenge you.' };
+PRESETS.carnival = { id: 'carnival', name: 'Dead Set: Carnival', min: 4, max: 12, pool: [], dreams: false,
+  rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, carnival: true,
+  blurb: 'A masked ball of bluff and memory. Everyone wears a role card as a mask, shuffled until nobody is sure. Claim masks to gather Souls; 13 wins.' };
 PRESETS.coffins = { id: 'coffins', name: 'Dead Set: Coffins', min: 3, max: 10, pool: [], dreams: false,
   rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, coffins: true,
   blurb: 'A quick bluffing game. Bury gold and one curse, bid how many coffins you can open, then dig. Two clean digs win.' };
@@ -481,8 +487,9 @@ export const MODES = {
   missions: { id: 'missions', roleSets: ['missions'], rules: false, dreams: false },
   exorcism: { id: 'exorcism', roleSets: ['exorcism'], rules: false, dreams: false },
   coffins: { id: 'coffins', roleSets: ['coffins'], rules: false, dreams: false },
+  carnival: { id: 'carnival', roleSets: ['carnival'], rules: false, dreams: false },
 };
 /** The mode a preset belongs to. */
-export const modeOf = (presetId) => (PRESETS[presetId]?.missions ? 'missions' : PRESETS[presetId]?.exorcism ? 'exorcism' : PRESETS[presetId]?.coffins ? 'coffins' : 'classic');
+export const modeOf = (presetId) => (PRESETS[presetId]?.missions ? 'missions' : PRESETS[presetId]?.exorcism ? 'exorcism' : PRESETS[presetId]?.coffins ? 'coffins' : PRESETS[presetId]?.carnival ? 'carnival' : 'classic');
 /** Can this role be dealt in this mode? */
 export const roleInMode = (roleId, mode) => !!ROLES[roleId] && MODES[mode].roleSets.includes(ROLES[roleId].set);

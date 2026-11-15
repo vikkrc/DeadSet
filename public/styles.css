@@ -3385,3 +3385,205 @@ button.cstone.sel .cs-head { border-color: var(--gilt-hi); box-shadow: 0 0 0 2px
 body.is-board .m-cresult .c-opened .ccard { width: 96px; }
 body.is-board .c-stamp { font-size: 30px; }
 .cyard.big .cstone { max-width: 260px; justify-self: center; width: 100%; }
+
+/* ══ Carnival (Beta 4): the masked ball, in the Codex language ═════════════
+   Wine-dark ground, the same gilt; masks are arcana cards (lattice backs face
+   down), the table is the astrolabe, status is a vellum slip, holds are wax. */
+body.mode-carnival, body.mode-carnival[data-time='night'] {
+  --ink: #0d080a; --ink-2: #160d10; --ink-3: #231418; --iron: #3d2a2c;
+  --glow: rgba(176, 58, 92, 0.14);
+}
+
+/* The mask card: an arcana card, sized by font-size (every inner size is em). */
+.kcard { width: 6.2em; aspect-ratio: 11 / 18; padding: 1.05em 0.75em 0.9em; gap: 0.32em; font-size: 9px; flex: none; }
+.kcard .arc-num { font-size: 0.86em; }
+.kcard .nm { font-size: 1.55em; line-height: 1; text-align: center; overflow-wrap: anywhere; hyphens: auto; }
+.kcard.thumb { font-size: 6.4px; }
+.kcard.thumb .nm { display: none; }
+.kcard.big { font-size: 17px; }
+.kcard.back .sig { width: 2.6em; height: 2.6em; font-size: 1.5em; }
+button.kcard { cursor: pointer; border: 0; font-family: inherit; transition: transform 0.25s var(--ease), box-shadow 0.25s; }
+button.kcard:active { transform: scale(0.96); }
+.kcard.sel { transform: translateY(-0.6em); box-shadow: 0 0 0 2px var(--gilt-hi), 0 0 2.4em rgba(236, 210, 143, 0.35), 0 1.8em 3em -1.4em #000; }
+
+/* The runes: a power as a line of pictograms. */
+.krunes { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; color: var(--gilt); }
+.kr { position: relative; display: inline-flex; align-items: center; gap: 2px; height: 26px; padding: 0 6px 0 4px; border: 1px solid var(--gilt-2); border-radius: 2px; background: var(--ink-2); font-style: normal; }
+.kr > svg { width: 18px; height: 18px; flex: none; }
+.kr .kr-em { width: 20px; height: 20px; --paper: var(--ink-2); }
+.kr b { font: 600 14px/1 var(--bit); color: var(--bone); font-variant-numeric: tabular-nums lining-nums; }
+.kr.k-offering, .kr.k-harvest { color: var(--blood-ink); border-color: rgba(228, 93, 80, 0.45); }
+.kr.k-hid { color: var(--ash); border-style: dashed; }
+.kr-sep { display: inline-flex; width: 16px; height: 16px; color: var(--ash); font-style: normal; }
+.kr-sep svg { width: 100%; height: 100%; }
+.krunes.sm .kr { height: 21px; padding: 0 4px 0 3px; }
+.krunes.sm .kr > svg, .krunes.sm .kr .kr-em { width: 15px; height: 15px; }
+.krunes.sm .kr b { font-size: 12px; }
+
+/* The ballroom: medallions, each with its mask tucked at the lower right. */
+.kball .tok { overflow: visible; }
+.kseat .kmask { position: absolute; left: calc(50% + var(--tok) * 0.18); top: calc(var(--tok) * 0.34); font-size: calc(var(--tok) * 0.058); transform: rotate(9deg); transition: transform 0.4s var(--ease); pointer-events: none; z-index: 2; }
+.kseat .kmask .kcard { box-shadow: 0 0 0 1px var(--gilt-2), 0 0.6em 1.2em -0.3em #000; }
+.kseat .kmask.open { transform: rotate(0deg) scale(1.25); animation: kUnmask 0.6s var(--ease) both; }
+.kseat .kmask.open .kcard { font-size: 1em; }
+.kseat .kmask.open .nm { display: none; }
+@keyframes kUnmask { from { transform: rotateY(90deg); } }
+.kseat.chair .tok-disc { border-style: dashed; background: transparent; }
+.k-chair { display: grid; place-items: center; width: 70%; height: 70%; margin: auto; color: var(--ash); }
+.k-chair svg { width: 100%; height: 100%; --paper: var(--ink); }
+.kseat.chair .tok-name { color: var(--ash); font-style: italic; }
+.bdg.k-soul { left: -6%; right: auto; bottom: -4%; top: auto; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 11px; display: grid; place-items: center;
+  background: var(--ink); border: 1px solid var(--gilt); color: var(--gilt-hi); font: 600 12px/1 var(--bit); font-variant-numeric: tabular-nums lining-nums; }
+.bdg.k-shield { left: -8%; top: -6%; right: auto; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); border: 1px solid var(--gilt); color: var(--gilt-hi); }
+.bdg.k-shield svg { width: 15px; height: 15px; }
+.kball .tok.speaking .tok-disc { box-shadow: 0 0 0 2px var(--gilt), 0 0 26px rgba(236, 210, 143, 0.35); }
+
+/* The collection plate in the middle. */
+.k-plate { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.k-plate .kp-em { width: 38px; height: 38px; color: var(--gilt); --paper: var(--ink-2); }
+.k-plate .kp-em svg { width: 100%; height: 100%; }
+.k-plate .kp-n { font: 500 30px/1.05 var(--bit); color: var(--bone); font-variant-numeric: tabular-nums lining-nums; animation: cPop 0.4s var(--ease) both; }
+.k-plate .kp-l { font: 600 9px/1.2 var(--text); letter-spacing: 0.24em; text-transform: uppercase; color: var(--ash); }
+.k-plate .c-clock { margin-top: 2px; font: 500 13px/1 var(--bit); color: var(--gilt); }
+
+/* The slip: what is happening, on vellum when it is yours. */
+.k-slip { margin: 10px auto 6px; max-width: 30rem; text-align: center; }
+.k-slip h2 { font: 600 30px/1.02 var(--black); margin: 6px 0 4px; color: var(--bone); padding-bottom: 0.08em; }
+.k-slip p { margin: 0; font: italic 400 16px/1.35 var(--text); color: var(--bone-2); }
+.k-slip.me { position: relative; padding: 16px 22px 18px; color: var(--sepia); background: var(--vellum-stain), var(--vellum); background-size: 100% 100%, auto; border-radius: 3px; box-shadow: 0 1.4em 2.4em -1.4em #000, inset 0 0 2em rgba(84, 54, 18, 0.24); }
+.k-slip.me::before { content: ''; position: absolute; inset: 6px; pointer-events: none; border: 1px solid var(--sepia-2); border-image: var(--frame-ink) 32 / 18px stretch; }
+.k-slip.me .kicker { color: var(--rubric); }
+.k-slip.me h2 { color: var(--sepia); text-shadow: 0.035em 0.025em 0 rgba(142, 27, 31, 0.35); }
+.k-slip.me p { color: var(--sepia-2); }
+.kseg { margin: 10px auto 2px; max-width: 30rem; }
+.kseg button { min-height: 44px; }
+
+/* Your purse */
+.k-purse { display: flex; justify-content: center; gap: 22px; margin: 4px 0 8px; }
+.k-purse .kp { display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto; column-gap: 8px; align-items: center; }
+.k-purse .kp i { grid-row: 1 / 3; width: 34px; height: 34px; color: var(--gilt); --paper: var(--ink); }
+.k-purse .kp i svg { width: 100%; height: 100%; }
+.k-purse .kp b { font: 500 26px/1.1 var(--bit); color: var(--bone); font-variant-numeric: tabular-nums lining-nums; }
+.k-purse .kp small { font: 600 9.5px/1.3 var(--text); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ash); }
+.k-purse .kp.harvest i { color: var(--blood-ink); }
+.k-purse .kp.shield { grid-template-rows: auto; } .k-purse .kp.shield i { grid-row: auto; }
+
+/* Choosing a mask to claim */
+.k-claimgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 16px 10px; margin: 12px 0 8px; justify-items: center; }
+.kcg-cell { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.kcg-cell .kcard { font-size: 10px; }
+
+/* The challenge prompt */
+.k-claim { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 8px auto 10px; text-align: center; }
+.k-claim h2 { font: 600 30px/1.02 var(--black); margin: 4px 0 0; padding-bottom: 0.08em; }
+.k-claim .kcard.big { font-size: 13px; animation: kDeal 0.6s var(--ease) both; }
+@keyframes kDeal { from { opacity: 0; transform: translateY(18px) rotate(-4deg); } }
+.btn.k-twin { flex: 1 1 0; }
+
+/* Reference sheet */
+.k-ref .k-reflist { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 10px; }
+.k-reflist li { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--iron); }
+.k-reflist li b { display: block; font: 600 22px/1 var(--black); padding-bottom: 0.1em; margin-bottom: 5px; }
+.k-reflist li b small { font: 500 14px var(--bit); color: var(--ash); }
+.k-reflist li p { margin: 5px 0 0; font: italic 400 15px/1.3 var(--text); color: var(--bone-2); }
+.k-reflist .kcard.thumb { font-size: 7px; }
+.k-legend { list-style: none; padding: 0; margin: 8px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px 14px; }
+.k-legend li { display: flex; align-items: center; gap: 8px; font: 400 14px/1.2 var(--text); color: var(--bone-2); }
+.k-legend .kr { color: var(--gilt); }
+
+/* Lobby */
+.k-lobbydeck { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 10px 0; }
+.kld-c { position: relative; padding: 0; border: 0; background: none; cursor: pointer; }
+.kld-c .kcard.thumb { font-size: 7.4px; }
+.kld-c:nth-child(odd) .kcard { transform: rotate(-3deg); } .kld-c:nth-child(even) .kcard { transform: rotate(2.5deg); }
+.kld-c > b { position: absolute; right: -6px; bottom: -6px; font: 600 12px/1 var(--bit); color: var(--gilt-hi); background: var(--ink); border: 1px solid var(--gilt-2); border-radius: 9px; padding: 3px 5px; }
+
+/* Moments */
+.k-dance { position: relative; width: 220px; height: 150px; margin: 18px auto 8px; }
+.k-dance .kd { position: absolute; top: 10px; font-size: 13px; }
+.k-dance .kd.a { left: 14px; animation: kCrossA 2.2s var(--ease) both; }
+.k-dance .kd.b { right: 14px; animation: kCrossB 2.2s var(--ease) both; }
+.k-dance .k-cloak { position: absolute; left: 50%; top: 50%; width: 170px; height: 120px; margin: -60px 0 0 -85px; border-radius: 50% 50% 46% 46% / 60% 60% 40% 40%;
+  background: radial-gradient(ellipse at 50% 30%, #3a1420, #120609 70%); box-shadow: 0 0 0 1px var(--gilt-2), 0 0 40px rgba(122, 28, 52, 0.6); opacity: 0; animation: kCloak 2.2s ease-in-out both; }
+@keyframes kCrossA { 0% { transform: translate(0, 0) rotate(-6deg); } 40% { transform: translate(52px, -6px) rotate(0); } 60% { transform: translate(52px, -6px) rotate(0); } 100% { transform: translate(110px, 0) rotate(6deg); } }
+@keyframes kCrossB { 0% { transform: translate(0, 0) rotate(6deg); } 40% { transform: translate(-52px, 6px) rotate(0); } 60% { transform: translate(-52px, 6px) rotate(0); } 100% { transform: translate(-110px, 0) rotate(-6deg); } }
+@keyframes kCloak { 0%, 25% { opacity: 0; transform: scale(0.8); } 38%, 66% { opacity: 1; transform: scale(1); } 80%, 100% { opacity: 0; transform: scale(1.06); } }
+.k-claimcard { margin: 14px 0 6px; display: flex; justify-content: center; }
+.k-claimcard .kcard.big { font-size: 15px; animation: kDeal 0.7s var(--ease) both; }
+.m-kclaim .krunes, .m-kpower .krunes { justify-content: center; margin-top: 8px; }
+.k-reveal { list-style: none; padding: 0; margin: 18px auto 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 22px 18px; max-width: 46rem; }
+.k-reveal li { display: flex; flex-direction: column; align-items: center; gap: 8px; animation: kFlipIn 0.6s var(--ease) both; animation-delay: var(--d); }
+.k-reveal .kr-card .kcard { font-size: 11px; }
+.k-reveal li b { font: 600 11px/1.2 var(--text); letter-spacing: 0.22em; text-transform: uppercase; color: var(--bone-2); }
+.k-reveal .stamp { font-size: 12px; animation: none; transform: rotate(-7deg); }
+.k-reveal li.false .kr-card { filter: saturate(0.7) brightness(0.85); }
+@keyframes kFlipIn { from { opacity: 0; transform: perspective(600px) rotateY(90deg); } }
+.m-art.k-sting { width: 150px; height: 150px; color: var(--gilt); --paper: transparent; animation: kSting 1.1s var(--ease) both; }
+.m-art.k-sting svg { width: 100%; height: 100%; }
+@keyframes kSting { 0% { opacity: 0; transform: scale(0.6) rotate(-12deg); } 60% { opacity: 1; transform: scale(1.06) rotate(2deg); } 100% { transform: none; } }
+
+/* End */
+.k-awards { display: grid; gap: 4px; margin: 10px 0; }
+.k-timeline { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.k-timeline li { display: grid; grid-template-columns: 30px 1fr; gap: 8px; align-items: baseline; font: 400 15px/1.35 var(--text); color: var(--bone-2); }
+.k-timeline .seat { font: 500 13px var(--bit); color: var(--ash); text-align: right; }
+.k-timeline .tag { margin-left: 4px; }
+
+/* TV: the ballroom left, the ledger and the masks right */
+.kboard .k-cols { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 30px; padding: 0 40px 24px; position: relative; z-index: 1; min-height: 0; }
+.kboard .k-main { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; }
+.kboard .kball .ring { width: min(100%, 66vh); }
+.kboard .b-now { text-align: center; margin-top: 8px; }
+.kboard .k-side { display: flex; flex-direction: column; gap: 16px; min-height: 0; overflow: hidden; }
+.k-ledger { padding: 22px 24px 18px; }
+.k-ledger ul { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 7px; }
+.k-ledger li { display: grid; grid-template-columns: 7.5em 1fr auto; gap: 10px; align-items: center; }
+.k-ledger li b { font: 600 12px/1.2 var(--text); letter-spacing: 0.16em; text-transform: uppercase; color: var(--bone-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.k-ledger li.now b { color: var(--gilt-hi); }
+.k-pips { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
+.k-pips i { width: 9px; height: 9px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, var(--gilt-hi), var(--gilt-2)); }
+.k-pips em { margin-left: 6px; font: 500 16px/1 var(--bit); font-style: normal; color: var(--bone); font-variant-numeric: tabular-nums lining-nums; }
+.k-harv { display: flex; gap: 2px; }
+.k-harv i { width: 16px; height: 16px; color: var(--iron); }
+.k-harv i.on { color: var(--blood-ink); }
+.k-harv svg { width: 100%; height: 100%; }
+.k-tvref ul { list-style: none; padding: 0; margin: 8px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+.k-tvref li { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: center; }
+.k-tvref .kcard.thumb { font-size: 4.6px; }
+.k-tvref li > b { display: block; font: 600 16px/1 var(--black); color: var(--bone); margin-bottom: 4px; padding-bottom: 0.08em; }
+@media (prefers-reduced-motion: reduce) { .k-dance .kd, .k-dance .k-cloak, .kseat .kmask.open, .k-reveal li, .m-art.k-sting { animation: none !important; } .k-dance .k-cloak { opacity: 0.85; } }
+/* Carnival fixes: tucked backs sized from the medallion; face-up seats show the mask itself */
+.kseat .kmask { font-size: calc(var(--tok) * 0.07); }
+.kseat .kmask .kcard { font-size: 1em; }
+.kseat .kmask .kcard .sig { font-size: 1.3em; }
+.k-face { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; color: var(--sepia); --paper: var(--vellum);
+  background: var(--vellum-stain), var(--vellum); background-size: 100% 100%, auto; animation: kUnmask 0.6s var(--ease) both; }
+.k-face svg { width: 78%; height: 78%; stroke-width: 2.2; }
+.k-face.rubric { color: var(--rubric); }
+.k-maskname { margin-top: 1px; max-width: 130%; font: 600 13px/1 var(--black); color: var(--gilt-hi); white-space: nowrap; padding-bottom: 0.1em; text-shadow: 0 1px 6px #000; }
+.kball.open .tok-name { margin-top: 5px; }
+.kball.big .k-maskname { font-size: 24px; }
+.kboard .kball .ring { width: min(100%, 60vh); }
+.kboard .b-now { margin-top: 26px; }
+.k-tvref ul { grid-template-columns: 1fr; gap: 6px; }
+.k-tvref li { grid-template-columns: auto auto 1fr; gap: 10px; }
+.k-tvref li > b { margin: 0; min-width: 7.5em; }
+.kboard .k-side { overflow: auto; }
+.kcard.noname .nm { display: none; }
+.kcard.noname { gap: 0.5em; padding-bottom: 1.2em; }
+.kcard .nm { overflow-wrap: normal; }
+.kcg-n { font: 600 17px/1 var(--black); color: var(--bone); text-align: center; padding-bottom: 0.1em; }
+.kcg-cell .kcard { font-size: 9.5px; }
+.kcg-cell .krunes { justify-content: center; }
+.kr-mask { font: 600 19px/1 var(--black); font-style: normal; color: var(--bone); padding-bottom: 0.08em; }
+body.is-board .kr-mask { font-size: 26px; }
+body.is-board .k-reveal .kr-card .kcard { font-size: 15px; }
+.k-reveal .c-stamp { font-size: 16px; }
+body.is-board .k-reveal .c-stamp { font-size: 22px; }
+.k-tvref.two ul { grid-template-columns: 1fr 1fr; gap: 10px 14px; }
+.k-tvref.two li { grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 8px; row-gap: 3px; align-items: center; }
+.k-tvref.two li .kcard { grid-row: 1 / 3; font-size: 4px; }
+.k-tvref.two li > b { min-width: 0; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.k-tvref.two .krunes.sm .kr { height: 18px; } .k-tvref.two .krunes.sm .kr > svg, .k-tvref.two .krunes.sm .kr .kr-em { width: 12px; height: 12px; } .k-tvref.two .krunes.sm .kr b { font-size: 11px; }
+.k-tvref.two .krunes { gap: 3px; }
+.kball.big .k-maskname { font-size: calc(var(--tok) * 0.4); max-width: 160%; }

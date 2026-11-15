@@ -38,6 +38,11 @@ export function sceneMs(type, d = {}) {
     case 'xball': return 7000;
     case 'xvotes': return 5600;
     case 'xguess': return 6200;
+    // Carnival
+    case 'kswap': return 2600;
+    case 'kclaim': return 2400;
+    case 'kreveal': return 2600 + Math.min(d.n ?? 0, 12) * 700 + 1600;
+    case 'kpower': return d.coin ? 4800 : 3400;
     // Coffins
     case 'cdig': return 2800;
     case 'cresult': return 3800 + Math.min(d.n ?? 0, 12) * 600;
@@ -66,7 +71,11 @@ export function scenesFor(l, batch = [], ctx = {}) {
     case 'coinflip': return [['coin']];
     case 'heartbreak': case 'shot': case 'exchange': return [['death']];
     case 'scapegoat': return has('tally') ? [] : [['death']];
-    case 'm-lottery': case 'x-lottery': case 'c-lottery': return [['mlottery']];
+    case 'm-lottery': case 'x-lottery': case 'c-lottery': case 'k-lottery': return [['mlottery']];
+    case 'k-swap': return [['kswap']];
+    case 'k-claim': return [['kclaim']];
+    case 'k-reveal': return [['kreveal', { n: Object.keys(l.reveal ?? {}).length }]];
+    case 'k-power': return [['kpower', { coin: l.coin ?? null }]];
     case 'c-dig': return [['cdig']];
     case 'c-result': return [['cresult', { n: l.opened?.length ?? 0 }]];
     case 'c-rise': return [['crise']];
