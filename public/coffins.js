@@ -9,47 +9,29 @@ import { emblem } from './emblems.js';
 import { t, th } from './i18n.js';
 import { avatarSvg } from './avatar.js';
 import { backdropHtml } from './backdrops.js';
+import { cardArt } from './cards.js';
+import { seatLayout } from './layout.js';
 
 export const isCoffinsPhase = (ph) => typeof ph === 'string' && ph.startsWith('C_');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const name = (v, id) => v.players.find((p) => p.id === id)?.name ?? t('Someone');
 const player = (v, id) => v.players.find((p) => p.id === id);
 
-// ── Art ────────────────────────────────────────────────────────────────────
-/** The red wax seal: the curse. Scalloped rim, a cracked heart pressed in. */
-function sealSvg(cls = '') {
-  const pts = [];
-  const n = 14;
-  for (let i = 0; i < n * 2; i++) {
-    const a = (i / (n * 2)) * Math.PI * 2;
-    const r = i % 2 ? 40 : 46;
-    pts.push(`${(50 + r * Math.cos(a)).toFixed(1)} ${(50 + r * Math.sin(a)).toFixed(1)}`);
-  }
-  return `<svg class="c-seal ${cls}" viewBox="0 0 100 100" aria-hidden="true"><path d="M${pts.join('L')}Z" fill="#9b2328" stroke="#5e1014" stroke-width="2"/>
-    <circle cx="50" cy="50" r="31" fill="none" stroke="#c9474c" stroke-width="2.4"/>
-    <path d="M50 70C34 58 28 50 28 42a11 11 0 0 1 22-3 11 11 0 0 1 22 3c0 8-6 16-22 28z" fill="#7a171c" stroke="#d76a6e" stroke-width="2"/>
-    <path d="M50 40l-5 9 7 5-6 12" fill="none" stroke="#e9b3a5" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-}
-/** A face: Gold (the coin), Curse (the seal) or the Death coffin. */
-export function faceArt(f) {
-  if (f === 'C') return sealSvg();
-  if (f === 'D') return emblem('death', { cls: 'c-face-em' });
-  return emblem('coin', { cls: 'c-face-em' });
-}
+// ── Art: the coffins are arcana cards ─────────────────────────────────────
+// Every face is the same vellum (Codex §1.3): Gold in sepia, the Curse and the
+// Death coffin in rubric red, so a glance across the table reads nothing.
+const FACE_EMB = { G: 'coin', C: 'curse', D: 'death' };
 const FACE_EN = { G: 'Gold', C: 'Cursed', D: 'The Death coffin' };
+const FACE_SHORT = { G: 'Gold', C: 'Cursed', D: 'Death' };
 export const faceName = (f) => t(FACE_EN[f] ?? 'Gold');
+export const faceArt = (f) => emblem(FACE_EMB[f] ?? 'coin', { cls: 'c-face-em' });
 
-/** An upright coffin card (your hand). `f` null draws the closed lid. */
+/** A coffin card: face up (Gold, Cursed, Death) or the lattice back. */
 export function coffinCard(f, { cls = '', act = '', id = '', sel = false, label = '', key = '', badge = '' } = {}) {
-  const tag = act ? 'button' : 'div';
-  return `<${tag} class="ccard ${f ? `f-${f}` : 'back'} ${sel ? 'sel' : ''} ${cls}" ${act ? `data-act="${act}" data-id="${esc(id)}" aria-pressed="${sel}"` : ''} ${key ? `data-key="${key}"` : ''} aria-label="${esc(label || (f ? faceName(f) : t('A coffin')))}">
-    <svg class="cc-wood" viewBox="0 0 60 100" aria-hidden="true"><path class="cc-box" d="M18 2h24l15 24-10 72H13L3 26z"/><path class="cc-lid" d="M20 7h20l12 20-9 66H17L8 27z"/>${f ? '' : '<path class="cc-cross" d="M30 30v34M21 41h18"/>'}<circle class="cc-nail" cx="13" cy="28" r="1.4"/><circle class="cc-nail" cx="47" cy="28" r="1.4"/><circle class="cc-nail" cx="20" cy="88" r="1.4"/><circle class="cc-nail" cx="40" cy="88" r="1.4"/></svg>
-    ${f ? `<span class="cc-face">${faceArt(f)}</span>` : ''}${badge}</${tag}>`;
-}
-
-/** A coffin lying in a plot: closed, or opened with its face showing. */
-function slab(f, i, fresh = false) {
-  return `<i class="cslab ${f ? `open f-${f}` : ''} ${fresh ? 'fresh' : ''}" style="--i:${i}" data-key="sl-${i}-${f || 'x'}"><svg viewBox="0 0 100 34" aria-hidden="true"><path class="cs-box" d="M2 12L20 2h76v30H20L2 22z"/><path class="cs-lid" d="M7 13L22 6h70v22H22L7 21z"/></svg>${f ? `<span class="cs-face">${faceArt(f)}</span>` : ''}</i>`;
+  const tag = act ? 'button' : 'span';
+  const attrs = `${act ? `data-act="${act}" data-id="${esc(id)}" aria-pressed="${sel}"` : ''} ${key ? `data-key="${key}"` : ''} aria-label="${esc(label || (f ? faceName(f) : t('A coffin')))}"`;
+  if (!f) return `<${tag} class="arc back coff ${sel ? 'sel' : ''} ${cls}" ${attrs}><span class="sig">DS</span>${badge}</${tag}>`;
+  return `<${tag} class="arc coff f-${f} ${f !== 'G' ? 'rubric' : ''} ${sel ? 'sel' : ''} ${cls}" ${attrs}>${cardArt(FACE_EMB[f])}<span class="nm">${esc(t(FACE_SHORT[f]))}</span>${badge}</${tag}>`;
 }
 
 const RELIC_GLYPH = { LANTERN: 'lantern', KEY: 'key', WARD: 'ward' };
@@ -59,69 +41,80 @@ const RELIC_WHEN = {
   KEY: 'When you dig: open another player\'s top coffin before your own.',
   WARD: 'When you hit a curse or the Death coffin: nothing is lost. Used by itself.',
 };
-const relicArt = (id) => (id === 'KEY' ? emblem('key', { cls: 'glyph' }) : glyph(RELIC_GLYPH[id] ?? 'scroll'));
+const relicArt = (id) => emblem(RELIC_GLYPH[id] ?? 'ward', { cls: 'glyph' });
 export const relicName = (id) => t(RELIC_EN[id] ?? id);
 
-// ── The graveyard: one headstone per player ───────────────────────────────
 function candles(n, of) {
   return `<span class="c-candles" aria-label="${esc(th('{n} of {m} candles', { n, m: of }))}">${Array.from({ length: of }, (_, i) => `<i class="${i < n ? 'lit' : ''}"></i>`).join('')}</span>`;
 }
+/** Clean digs as gilt lozenges (the Codex beads). */
 function winMarks(w, of) {
   return `<span class="c-wins" aria-label="${esc(th('{n} of {m} clean digs', { n: w, m: of }))}">${Array.from({ length: of }, (_, i) => `<i class="${i < w ? 'on' : ''}"></i>`).join('')}</span>`;
 }
 
-/** One headstone. `pick` makes it a button; `big` is the TV size. */
-function stone(v, plot, { pick = null, sel = false, big = false, reveal = false } = {}) {
-  const C = v.coffins;
-  const p = player(v, plot.id);
-  const meId = v.me?.id;
-  const bidder = C.bid?.by === plot.id && ['C_BID', 'C_WAGER', 'C_DIG', 'C_LOSE'].includes(v.phase);
-  const passed = v.phase === 'C_BID' && C.passed?.includes(plot.id);
-  const now = (v.phase === 'C_TURN' || v.phase === 'C_BID') && C.turn === plot.id;
-  const digger = C.digger === plot.id && ['C_WAGER', 'C_DIG', 'C_LOSE'].includes(v.phase);
-  const cls = ['cstone', plot.id === meId ? 'me' : '', plot.out ? 'out' : '', plot.risen ? 'risen' : '', now ? 'now' : '', digger ? 'digger' : '',
-    passed ? 'passed' : '', bidder ? 'bidder' : '', plot.wins ? 'gilt' : '', pick ? 'can' : '', sel ? 'sel' : '', p?.connected === false ? 'away' : ''].filter(Boolean).join(' ');
-  // The stack, top first: opened coffins (this dig) show their faces.
-  const st = reveal && plot.stack ? [...plot.stack].reverse() : null;
-  const n = st ? st.length : plot.buried;
-  const opened = plot.opened ?? [];
-  const slabs = Array.from({ length: n }, (_, i) => slab(st ? st[i] : opened[i] ?? null, i, !st && i === opened.length - 1 && v.phase === 'C_DIG')).join('');
-  const med = p?.avatar ? avatarSvg(p.avatar, 'cs-av') : `<b class="cs-ini">${esc((p?.name ?? '?')[0])}</b>`;
-  const tagLine = plot.out
-    ? (C.wagersOn ? candles(plot.candles, C.rise) : `<small class="cs-tag">${t('Out')}</small>`)
-    : `<small class="cs-tag">${plot.inHand ? th('{n} in hand', { n: plot.inHand }) : t('Hand empty')}</small>`;
-  const badge = bidder ? `<b class="cs-bid" data-key="bid-${C.bid.n}">${C.bid.n}</b>` : passed ? `<b class="cs-pass">${t('Pass')}</b>` : '';
-  const relic = plot.relicUsed ? `<span class="cs-relic" title="${esc(relicName(plot.relicUsed))}">${relicArt(plot.relicUsed)}</span>` : '';
-  const tag = pick ? 'button' : 'div';
-  return `<${tag} class="${cls} ${big ? 'big' : ''}" ${pick ? `data-act="${pick}" data-id="${plot.id}" aria-pressed="${sel}"` : ''} data-key="cs-${plot.id}" aria-label="${esc(p?.name ?? '')}">
-    <span class="cs-head">${plot.out ? `<span class="cs-crack" aria-hidden="true"></span>` : ''}<span class="cs-med">${med}${plot.risen ? `<i class="cs-rev">${glyph('necro')}</i>` : ''}${plot.out && C.wagersOn ? `<i class="cs-shade">${glyph('shade')}</i>` : ''}</span>
-      <b class="cs-name">${esc(p?.name ?? '?')}</b>${winMarks(plot.wins, C.toWin)}${relic}${badge}</span>
-    <span class="cs-plot" style="--n:${n}">${slabs || `<i class="cs-empty">${plot.out ? '' : t('nothing buried')}</i>`}</span>
-    <span class="cs-foot">${tagLine}</span>
-  </${tag}>`;
-}
-
-/** Every grave in seat order. `pick(plot)` returns the act for tappable ones. */
+// ── The churchyard: the astrolabe table, a grave at every seat ────────────
+/**
+ * Medallions around the table; beside each one, its buried coffins (lattice
+ * backs, opened ones turned face up). `pick(plot)` makes a seat tappable.
+ */
 export function graveyard(v, { pick = () => null, selected = null, big = false, reveal = false } = {}) {
   const C = v.coffins;
   if (!C) return '';
-  return `<div class="cyard ${big ? 'big' : ''} n${Math.min(C.plots.length, 10)}" data-key="cyard">${C.plots.map((pl) => stone(v, pl, { pick: pick(pl), sel: selected === pl.id, big, reveal })).join('')}</div>`;
+  const plots = C.plots;
+  const { pos, tok, dense } = seatLayout(plots.length);
+  const meId = v.me?.id;
+  const live = ['C_WAGER', 'C_DIG', 'C_LOSE'].includes(v.phase);
+  const seats = plots.map((pl, i) => {
+    const p = player(v, pl.id);
+    const act = pick(pl);
+    const bidder = C.bid?.by === pl.id && ['C_BID', 'C_WAGER', 'C_DIG', 'C_LOSE'].includes(v.phase);
+    const passed = v.phase === 'C_BID' && C.passed?.includes(pl.id);
+    const now = (v.phase === 'C_TURN' || v.phase === 'C_BID') && C.turn === pl.id;
+    const digger = C.digger === pl.id && live;
+    const cls = ['tok', 'cseat', pl.id === meId ? 'me' : '', pl.out ? 'dead ghost' : '', pl.risen ? 'risen' : '', now ? 'speaking' : '', digger ? 'accused' : '',
+      passed ? 'passed' : '', act ? 'can' : '', selected === pl.id ? 'sel' : '', p?.connected === false ? 'away' : '', pos[i].inner ? 'inner' : ''].filter(Boolean).join(' ');
+    // The stack beside the medallion, top first: opened coffins (this dig) face up.
+    const st = reveal && pl.stack ? [...pl.stack].reverse() : null;
+    const n = st ? st.length : pl.buried;
+    const opened = pl.opened ?? [];
+    const shown = Math.min(n, 5);
+    const stack = n ? `<span class="cplot" style="--n:${shown}" data-key="cp-${n}-${opened.length}">${Array.from({ length: shown }, (_, k) => {
+      const f = st ? st[k] : opened[k] ?? null;
+      return `<i style="--k:${k}" class="${f ? 'open' : ''} ${!st && f && k === opened.length - 1 && v.phase === 'C_DIG' ? 'fresh' : ''}">${coffinCard(f)}</i>`;
+    }).join('')}${n > 5 ? `<b class="cp-more">+${n - 5}</b>` : ''}</span>` : '';
+    const badges = [];
+    if (!pl.out) badges.push(`<b class="bdg c-hand" title="${esc(t('in hand'))}">${pl.inHand}</b>`);
+    if (bidder) badges.push(`<b class="bdg c-bid" data-key="cb-${C.bid.n}">${C.bid.n}</b>`);
+    if (pl.risen) badges.push(`<b class="bdg c-rev">${emblem('necro')}</b>`);
+    if (pl.relicUsed) badges.push(`<b class="bdg c-relic" title="${esc(relicName(pl.relicUsed))}">${relicArt(pl.relicUsed)}</b>`);
+    const inner = p?.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc((p?.name ?? '?').slice(0, 1))}</span>`;
+    const under = pl.out ? (C.wagersOn ? candles(pl.candles, C.rise) : '') : winMarks(pl.wins, C.toWin);
+    const tag = act ? 'button' : 'div';
+    return `<${tag} class="${cls}" data-key="tok-${pl.id}" style="left:${pos[i].x.toFixed(2)}%;top:${pos[i].y.toFixed(2)}%" ${act ? `data-act="${act}" data-id="${pl.id}"` : ''} aria-pressed="${selected === pl.id}" aria-label="${esc(p?.name ?? '')}">
+      <span class="tok-disc">${inner}${badges.join('')}</span>${stack}<span class="tok-name">${esc(p?.name ?? '?')}${passed ? ` · ${esc(t('Pass'))}` : ''}</span>${under}</${tag}>`;
+  }).join('');
+  const orbit = dense ? 0 : (50 - Math.hypot(pos[0].x - 50, pos[0].y - 50)).toFixed(2);
+  return `<div class="ring-wrap cyard2 ${big ? 'big' : ''}" data-key="ring-wrap"><div class="ring ${dense ? 'dense' : ''} ${tok < 44 ? 'small-tok' : ''} ${plots.some((pl) => pick(pl)) ? 'picking' : ''}" style="--tok:${tok}px;--orbit:${orbit}%" data-key="ring">
+    <svg class="ring-fuse off" viewBox="0 0 100 100" data-ringfuse aria-hidden="true"><circle class="track" cx="50" cy="50" r="49"/><circle class="burn" cx="50" cy="50" r="49" pathLength="100"/></svg>
+    <div class="ring-table" aria-hidden="true"></div>
+    ${seats}
+    <div class="ring-center" data-key="center">${centre(v)}</div>
+  </div></div>`;
 }
 
-// ── The bell tower: the current bid ────────────────────────────────────────
-function tower(v, big = false) {
+/** The centre of the table: what is buried, the bid, or the dig. */
+function centre(v) {
   const C = v.coffins;
+  const digging = ['C_WAGER', 'C_DIG', 'C_LOSE'].includes(v.phase);
   const bid = C.bid?.n ?? 0;
-  const by = C.bid?.by;
-  const digging = v.phase === 'C_DIG' || v.phase === 'C_WAGER';
-  const opened = C.opened?.length ?? 0;
-  const inner = digging
-    ? `<span class="kicker">${t('Opened')}</span><b class="ct-n">${opened}<small>/${C.target}</small></b><small>${esc(name(v, C.digger))}</small>`
-    : bid ? `<span class="kicker">${t('The bid')}</span><b class="ct-n" data-key="ctn-${bid}">${bid}</b><small>${esc(name(v, by))}</small>`
-      : `<span class="kicker">${t('Buried')}</span><b class="ct-n">${C.total}</b><small>${t('in the ground')}</small>`;
-  return `<div class="ctower ${big ? 'big' : ''} ${digging ? 'dig' : ''}" data-key="ctower"><svg class="ct-bell" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4v4M10 28c2-4 2-8 2-12a8 8 0 0 1 16 0c0 4 0 8 2 12zM8 28h24M17 31a3 3 0 0 0 6 0"/></svg>${inner}
-    ${!digging && bid ? `<span class="ct-of">${th('of {n} buried', { n: C.total })}</span>` : ''}</div>`;
+  const [label, num, sub] = digging ? [t('Opened'), `${C.opened?.length ?? 0}<small>/${C.target}</small>`, esc(name(v, C.digger))]
+    : bid ? [t('The bid'), String(bid), `${esc(name(v, C.bid.by))} · ${th('of {n} buried', { n: C.total })}`]
+      : [t('Buried'), String(C.total), t('in the ground')];
+  return `<div class="c-centre ${digging ? 'dig' : ''}" data-key="ccentre"><span class="cc-em">${emblem(digging ? 'undertaker' : 'headstone')}</span>
+    <span class="cc-l">${label}</span><b class="cc-n" data-key="ccn-${num}">${num}</b><span class="cc-s">${sub}</span><span class="c-clock clock" data-clock></span></div>`;
 }
+/** Kept for callers: the bid now lives in the centre of the table. */
+const tower = () => '';
 
 // ── Phone: main screen ─────────────────────────────────────────────────────
 /** Your coffins: the hand along the bottom; buried ones sit in the ground. */
@@ -490,6 +483,12 @@ export function coffinsBoard(v, h) {
   return `<main class="board2 cboard ${ended ? 'is-ended' : ''} ${backdrop ? 'has-backdrop' : ''}" data-key="board-c">${backdrop}${header}
     <div class="c-cols">
       <section class="c-main">${graveyard(v, { big: true, reveal: ended })}<p class="b-now ${['C_DIG', 'C_LOSE'].includes(v.phase) ? 'blood' : ''}" data-key="cnow">${now}</p></section>
-      <aside class="c-side">${tower(v, true)}<p class="c-goal" data-key="cgoal">${th(C.toWin === 1 ? 'One clean dig wins.' : '{n} clean digs win.', { n: C.toWin })}<br><span class="small muted">${t('Or be the last one with coffins.')}</span></p>${legend}${scoreboard(v)}</aside>
+      <aside class="c-side">
+        <div class="c-ledger fr" data-key="cledger"><span class="kicker">${th(C.toWin === 1 ? 'One clean dig wins.' : '{n} clean digs win.', { n: C.toWin })}</span>
+          <ul>${C.plots.map((pl) => `<li class="${pl.out ? 'out' : ''} ${C.turn === pl.id && ['C_TURN', 'C_BID'].includes(v.phase) ? 'now' : ''}" data-key="cl-${pl.id}"><b>${esc(name(v, pl.id))}</b>
+            ${pl.out ? (C.wagersOn ? candles(pl.candles, C.rise) : `<small>${t('Out')}</small>`) : `<span class="cl-coffins" aria-label="${esc(th('{n} in hand', { n: pl.held }))}">${Array.from({ length: pl.held }, () => `<i>${emblem('undertaker')}</i>`).join('')}</span>`}
+            ${winMarks(pl.wins, C.toWin)}</li>`).join('')}</ul>
+          <p class="small muted">${t('Or be the last one with coffins.')}</p></div>
+        ${legend}${scoreboard(v)}</aside>
     </div></main>`;
 }

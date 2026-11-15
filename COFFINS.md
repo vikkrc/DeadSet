@@ -2,7 +2,7 @@
 
 **Status: built for Beta 3 (2026-11-12).** Bot simulations (300 games per table size) gave about 8 rounds at 3 players, 12 at 5, 21 at 8 and 26 at 10; every game ended by digs or the last one standing.
 
-> **Design rework pending (noted 2026-11-12).** The rules and engine stand, but the current visual design of Coffins (phone and TV) is a placeholder and will be redone from scratch, for usability and to match the design codex (`design/codex/DESIGN-GUIDE.md`): Dead Set's elegant, ornamental, dark gothic and mystical hand-drawn witchy look. The owner will create most of the assets and give exact guidance on how to implement them. Don't polish the current Coffins UI further until then.
+> **Redesigned to the Codex (2026-11-15).** Moonlit silver tokens (the Codex Night theme), coffins as arcana cards (vellum faces with the coin, the new curse seal or Death in a dark arch; the lattice back face down), the graveyard as the astrolabe table with each grave tucked beside its medallion and the bid in the centre, vellum action slips in the ink frame, wax holds and double-ruled stamps. New reusable emblems: `curse` and `headstone` (public/emblems.js, design/codex/art, design/codex/ico). Further art direction from the owner is still welcome.
 
 A quick bluffing game for **3–10 players**, about 10 minutes, chosen in the lobby next to the other modes. One phone each, plus the TV board as the graveyard.
 

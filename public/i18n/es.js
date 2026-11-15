@@ -1997,5 +1997,6 @@ export default {
     "{a} lifts their mask…": "{a} mira bajo su máscara…",
     "{a} reads the masks…": "{a} lee las máscaras…",
     "{n} of {m} seats": "{n} de {m} asientos",
+    "in hand": "en la mano",
   },
 };

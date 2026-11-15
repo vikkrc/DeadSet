@@ -1997,5 +1997,6 @@ export default {
     "{a} lifts their mask…": "{a} nahlíží pod masku…",
     "{a} reads the masks…": "{a} čte masky…",
     "{n} of {m} seats": "{n} z {m} míst",
+    "in hand": "v ruce",
   },
 };

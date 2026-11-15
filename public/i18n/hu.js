@@ -1997,5 +1997,6 @@ export default {
     "{a} lifts their mask…": "{a} belepillant a maszkjába…",
     "{a} reads the masks…": "{a} maszkokat olvas…",
     "{n} of {m} seats": "{n}/{m} hely",
+    "in hand": "a kézben",
   },
 };

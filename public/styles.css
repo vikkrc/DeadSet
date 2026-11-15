@@ -3177,215 +3177,6 @@ body:has(#app > .recap) #app > :not(.recap):not(.moment):not(.toasts):not(.conn)
 .recap-nav .btn::before, .recap-nav .btn::after { display: none; }
 body:has(#app > .recap) .fx-canvas, body:has(#app > .recap) .fx-layer { display: none; } /* the replay is read in peace */
 
-/* ══ Coffins (Beta 3): the graveyard ══════════════════════════════════════ */
-body.mode-coffins, body.mode-coffins[data-time='night'] {
-  --ink: #0a0c0c; --ink-2: #111515; --ink-3: #1b2120; --iron: #33403d;
-  --bone: #e1e2d8; --bone-2: #b6b9aa; --ash: #858a7c;
-  --glow: rgba(150, 175, 160, 0.10);
-}
-/* Coffin cards: the same dark wood and the same brightness for every face. */
-.ccard { position: relative; display: inline-grid; place-items: center; width: 64px; aspect-ratio: 60 / 100; padding: 0; border: 0; background: none; color: inherit; flex: none; transition: transform .25s var(--ease), filter .25s; }
-.ccard .cc-wood { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.cc-box { fill: #3a2819; stroke: #1b120b; stroke-width: 1.5; }
-.cc-lid { fill: #4a3322; stroke: rgba(201, 163, 90, .55); stroke-width: 1; }
-.cc-cross { stroke: rgba(201, 163, 90, .7); stroke-width: 2.4; stroke-linecap: round; fill: none; }
-.cc-nail { fill: rgba(201, 163, 90, .8); }
-.cc-face { position: relative; width: 62%; aspect-ratio: 1; display: grid; place-items: center; margin-top: -8%; }
-.cc-face > svg, .cc-face .emblem, .cc-face .c-face-em { width: 100%; height: 100%; }
-.ccard.f-G .cc-face { color: var(--gilt); filter: drop-shadow(0 0 4px rgba(236, 210, 143, .35)); }
-.ccard.f-C .cc-face { filter: drop-shadow(0 0 4px rgba(236, 210, 143, .35)); }
-.ccard.f-D .cc-face { color: var(--bone); filter: drop-shadow(0 0 4px rgba(236, 210, 143, .35)); }
-.c-seal { width: 100%; height: 100%; }
-button.ccard { cursor: pointer; }
-button.ccard:active { transform: scale(.96); }
-.ccard.sel { transform: translateY(-10px); }
-.ccard.sel .cc-lid { stroke: var(--gilt-hi); stroke-width: 2.2; }
-.ccard.sel::after { content: ''; position: absolute; inset: -6px; border-radius: 10px; box-shadow: 0 0 0 1px var(--gilt), 0 0 18px var(--glow); pointer-events: none; }
-.ccard.buried { filter: saturate(.5) brightness(.62); transform: scale(.86); }
-.cc-buried { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); white-space: nowrap; font: italic 12px/1 var(--text); color: var(--ash); }
-
-.chand { margin: 14px 0 6px; }
-.ch-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; padding: 16px 4px 22px; }
-.chand.picking .ch-row button.ccard:not(.sel) { animation: cBob 2.4s ease-in-out infinite; animation-delay: calc(var(--i, 0) * .2s); }
-@keyframes cBob { 50% { transform: translateY(-3px); } }
-
-/* Headstones */
-.cyard { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px 8px; margin: 10px 0; align-items: end; }
-.cstone { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0; border: 0; background: none; color: inherit; font: inherit; min-width: 0; }
-.cs-head { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 12px 6px 8px; background: linear-gradient(180deg, #3a403d, #262b29 70%, #1d2220); border: 1px solid #4d5551; border-bottom-color: #151918; border-radius: 48px 48px 6px 6px; box-shadow: inset 0 2px 0 rgba(255, 255, 255, .06), 0 6px 14px rgba(0, 0, 0, .45); transition: box-shadow .3s, border-color .3s; }
-.cs-med { position: relative; width: 46px; height: 46px; border-radius: 50%; overflow: visible; display: grid; place-items: center; background: var(--ink-2); border: 1.5px solid #6c7570; }
-.cs-med .cs-av, .cs-med svg.cs-av { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; }
-.cs-ini { font: 600 20px/1 var(--text); color: var(--bone-2); }
-.cs-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 600 14px/1.1 var(--text); color: var(--bone); }
-.c-wins { display: flex; gap: 4px; }
-.c-wins i { width: 8px; height: 8px; transform: rotate(45deg); border: 1px solid var(--gilt-2); }
-.c-wins i.on { background: var(--gilt); border-color: var(--gilt-hi); box-shadow: 0 0 6px var(--gilt); }
-.cs-bid, .cs-pass { position: absolute; top: -8px; right: -4px; min-width: 26px; height: 26px; padding: 0 6px; border-radius: 13px; display: grid; place-items: center; font: 700 15px/1 var(--text); }
-.cs-bid { background: var(--blood); color: var(--bone); border: 1px solid var(--blood-ink); box-shadow: 0 0 10px rgba(156, 28, 34, .6); animation: cPop .4s var(--ease) both; }
-.cs-pass { background: var(--ink-3); color: var(--ash); border: 1px solid var(--iron); font: italic 12px/1 var(--text); }
-.cs-relic { position: absolute; top: 6px; left: 6px; width: 18px; height: 18px; color: var(--gilt); opacity: .8; }
-.cs-relic svg { width: 100%; height: 100%; }
-.cs-rev, .cs-shade { position: absolute; right: -8px; bottom: -6px; width: 22px; height: 22px; border-radius: 50%; background: var(--ink); border: 1px solid var(--gilt-2); display: grid; place-items: center; color: var(--gilt); }
-.cs-rev svg, .cs-shade svg { width: 16px; height: 16px; }
-.cs-plot { display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 18px; width: 100%; }
-.cs-empty { font: italic 11px/1 var(--text); color: var(--ash-2); padding-top: 4px; }
-.cs-foot { min-height: 16px; }
-.cs-tag { font: italic 12px/1 var(--text); color: var(--ash); }
-.c-candles { display: inline-flex; gap: 5px; }
-.c-candles i { position: relative; width: 6px; height: 13px; border-radius: 2px 2px 1px 1px; background: #cfc7b2; opacity: .35; }
-.c-candles i.lit { opacity: 1; }
-.c-candles i.lit::before { content: ''; position: absolute; left: 50%; top: -8px; width: 6px; height: 8px; transform: translateX(-50%); border-radius: 50% 50% 40% 40%; background: radial-gradient(circle at 50% 70%, #fff3c4, #f2a64a 60%, transparent 70%); animation: cFlame 1.6s ease-in-out infinite; }
-@keyframes cFlame { 50% { transform: translateX(-50%) scale(.85, 1.1); opacity: .85; } }
-
-/* A coffin lying in its plot */
-.cslab { position: relative; display: block; width: 72%; max-width: 76px; aspect-ratio: 100 / 34; animation: cLower .5s var(--ease) both; animation-delay: calc(var(--i) * .05s); }
-.cslab svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.cs-box { fill: #33241a; stroke: #150e08; stroke-width: 1.4; }
-.cs-lid { fill: #432e1f; stroke: rgba(201, 163, 90, .45); stroke-width: 1; }
-.cslab.open .cs-lid { fill: #1a120c; stroke: rgba(201, 163, 90, .25); }
-.cs-face { position: absolute; left: 50%; top: 50%; width: 30%; aspect-ratio: 1; transform: translate(-40%, -50%); display: grid; place-items: center; color: var(--gilt); }
-.cs-face > svg { width: 100%; height: 100%; }
-.cslab.f-D .cs-face { color: var(--bone); }
-.cslab.fresh { animation: cLidOff .7s var(--ease) both; }
-.cslab.fresh.f-G::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; background: radial-gradient(circle, rgba(236, 210, 143, .55), transparent 65%); animation: fadeOut 1.4s ease-out both; pointer-events: none; }
-.cslab.fresh.f-C::after, .cslab.fresh.f-D::after { content: ''; position: absolute; inset: -8px; background: radial-gradient(circle, rgba(156, 28, 34, .7), transparent 65%); animation: fadeOut 1.6s ease-out both; pointer-events: none; }
-@keyframes cLower { from { transform: translateY(-10px); opacity: 0; } }
-@keyframes cLidOff { 0% { transform: rotate(0); } 30% { transform: rotate(-6deg) translateY(-3px); } 100% { transform: none; } }
-@keyframes fadeOut { to { opacity: 0; } }
-
-/* States */
-.cstone.me .cs-head { border-color: var(--gilt-2); }
-.cstone.me .cs-name { color: var(--gilt-hi); }
-.cstone.now .cs-head { border-color: var(--gilt); box-shadow: 0 0 0 1px var(--gilt), 0 0 22px var(--glow), 0 6px 14px rgba(0, 0, 0, .45); }
-.cstone.digger .cs-head { border-color: var(--blood-ink); box-shadow: 0 0 0 1px var(--blood), 0 0 24px rgba(156, 28, 34, .45); }
-.cstone.gilt .cs-head { background: linear-gradient(180deg, #4d4632, #2e2a1e 70%, #22201a); }
-.cstone.passed { opacity: .55; }
-.cstone.out .cs-head { background: linear-gradient(180deg, #252a28, #1a1e1d); filter: grayscale(.8); }
-.cstone.out .cs-med { opacity: .55; }
-.cs-crack { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(115deg, transparent 47%, rgba(0, 0, 0, .8) 48%, rgba(0, 0, 0, .8) 49%, transparent 50%), linear-gradient(65deg, transparent 58%, rgba(0, 0, 0, .7) 59%, transparent 60%); }
-.cstone.risen .cs-med { border-color: var(--gilt); }
-.cstone.away { opacity: .6; }
-button.cstone { cursor: pointer; }
-button.cstone.can .cs-head { border-color: var(--gilt); animation: cCan 1.8s ease-in-out infinite; }
-button.cstone.sel .cs-head { border-color: var(--gilt-hi); box-shadow: 0 0 0 2px var(--gilt-hi), 0 0 26px var(--glow); }
-@keyframes cCan { 50% { box-shadow: 0 0 0 1px var(--gilt-2), 0 0 16px var(--glow); } }
-
-/* The bell tower */
-.ctower { position: relative; margin: 8px auto; width: max-content; min-width: 132px; padding: 10px 18px 10px; display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; background: linear-gradient(180deg, var(--ink-3), var(--ink-2)); border: 1px solid var(--iron); border-radius: 60px 60px 8px 8px; }
-.ct-bell { width: 26px; height: 26px; fill: none; stroke: var(--gilt); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transform-origin: 50% 10%; }
-.ctower .ct-n { font: 600 44px/1 var(--text); color: var(--bone); animation: cPop .45s var(--ease) both; }
-.ctower .ct-n small { font-size: 22px; color: var(--ash); }
-.ctower > small { font: italic 14px/1.2 var(--text); color: var(--bone-2); }
-.ct-of { font: italic 12px/1 var(--text); color: var(--ash); }
-.ctower.dig { border-color: var(--blood); }
-.ctower.dig .ct-bell { stroke: var(--blood-ink); animation: cRing 1.2s ease-in-out infinite; }
-@keyframes cRing { 25% { transform: rotate(14deg); } 75% { transform: rotate(-14deg); } }
-
-/* Turn panel, stepper, wager */
-.cturn { text-align: center; margin: 10px auto; max-width: 30rem; }
-.cturn h2 { font-family: var(--serif, serif); font-size: 28px; margin: 4px 0 6px; }
-.cturn.me h2 { color: var(--gilt); }
-.cturn.demon h2 { color: var(--blood-ink); }
-.cchal { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 10px 0; }
-.cstep { display: flex; align-items: center; gap: 16px; }
-.cs-btn { width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--gilt-2); background: var(--ink-2); color: var(--gilt); font: 600 28px/1 var(--text); cursor: pointer; }
-.cs-btn:disabled { opacity: .3; cursor: default; }
-.cs-val { display: flex; flex-direction: column; align-items: center; min-width: 84px; }
-.cs-val b { font: 600 52px/1 var(--text); color: var(--bone); animation: cPop .3s var(--ease) both; }
-.cs-val small { font: italic 13px/1.2 var(--text); color: var(--ash); }
-.cwager { display: flex; justify-content: center; gap: 14px; margin: 14px 0 4px; }
-.cw-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 18px 10px; border-radius: 12px; border: 1px solid var(--iron); background: var(--ink-2); color: inherit; font: inherit; cursor: pointer; }
-.cw-btn .ccard { width: 54px; }
-.cw-btn small { color: var(--ash); font-style: italic; }
-.cw-btn.on { border-color: var(--gilt); box-shadow: 0 0 0 1px var(--gilt), 0 0 18px var(--glow); }
-.cstarter { text-align: center; margin: 8px 0; }
-.cstarter .chips-row { justify-content: center; }
-.c-goal { margin: 2px 0 8px; }
-.c-ghostnote { display: flex; align-items: center; gap: 8px; justify-content: center; color: var(--bone-2); font-style: italic; }
-.c-ghostnote .glyph { width: 22px; height: 22px; color: var(--gilt); }
-.crelic { display: flex; align-items: center; gap: 10px; margin: 10px 0; padding: 10px 12px; border: 1px solid var(--iron); border-radius: 10px; background: var(--ink-2); }
-.crelic.used { opacity: .5; }
-.crelic > span:nth-child(2) { flex: 1; min-width: 0; }
-.crelic b { display: block; } .crelic small { color: var(--ash); }
-.cr-art { width: 34px; height: 34px; color: var(--gilt); flex: none; }
-.cr-art svg { width: 100%; height: 100%; }
-.c-lobbyhand { display: flex; justify-content: center; gap: 10px; margin: 10px 0 6px; }
-.c-lobbyhand .ccard { width: 48px; }
-.c-lobbyhand .ccard:nth-child(odd) { transform: rotate(-4deg); } .c-lobbyhand .ccard:nth-child(even) { transform: rotate(3deg); }
-
-/* Moments */
-.m-cresult .c-opened { list-style: none; padding: 0; margin: 16px auto 6px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 34rem; }
-.c-opened li { animation: cFlipIn .55s var(--ease) both; animation-delay: var(--d); }
-.c-opened .ccard { width: 58px; }
-.c-opened li.f-C .ccard, .c-opened li.f-D .ccard { filter: drop-shadow(0 0 12px rgba(156, 28, 34, .8)); }
-.c-opened li.f-G .ccard { filter: drop-shadow(0 0 10px rgba(236, 210, 143, .4)); }
-@keyframes cFlipIn { from { transform: perspective(500px) rotateY(90deg) translateY(10px); opacity: 0; } }
-.c-verdict { animation: fadeIn .5s var(--ease) both; animation-delay: var(--d); }
-.c-verdict.gold .m-title { color: var(--gilt-hi); }
-.c-verdict.grim .m-title { color: var(--blood-ink); }
-.c-verdict .result-stamp { margin: 8px auto; }
-.c-lantern-card { display: flex; justify-content: center; margin: 10px 0; }
-.c-lantern-card .ccard { width: 80px; }
-.c-rise-candles { display: flex; justify-content: center; margin: 12px 0; }
-.c-rise-candles .c-candles { gap: 14px; }
-.c-rise-candles .c-candles i { width: 10px; height: 26px; }
-.c-rise-candles .c-candles i.lit::before { width: 10px; height: 14px; top: -14px; }
-.c-rise-candles .c-candles i:nth-child(1) { animation: fadeIn .4s .4s both; } .c-rise-candles .c-candles i:nth-child(2) { animation: fadeIn .4s .9s both; } .c-rise-candles .c-candles i:nth-child(3) { animation: fadeIn .4s 1.4s both; }
-.m-art.c-spade, .m-art.c-rise { color: var(--gilt); }
-
-/* End */
-.c-award { display: flex; align-items: center; gap: 10px; justify-content: center; margin: 12px 0; }
-.c-award .glyph { width: 30px; height: 30px; color: var(--gilt); }
-.c-award b { display: block; } .c-award small { color: var(--ash); }
-.c-graph { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 6px; }
-.c-graph li { display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; align-items: end; }
-.cg-r { font: 600 13px/1 var(--text); color: var(--ash); }
-.cg-bars { display: flex; gap: 3px; align-items: flex-end; height: 34px; border-bottom: 1px solid var(--iron); }
-.cg-bars i { position: relative; flex: 0 1 22px; height: max(6px, var(--h)); background: var(--gilt-2); border-radius: 2px 2px 0 0; }
-.cg-bars i.bluff { background: var(--blood); }
-.cg-bars i b { position: absolute; top: -13px; left: 0; right: 0; text-align: center; font: 600 10px/1 var(--text); color: var(--bone-2); }
-.c-graph small { font-style: italic; } .c-graph small.ok { color: var(--gilt); } .c-graph small.bad { color: var(--blood-ink); }
-
-/* TV: the graveyard */
-.cboard .c-cols { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 28px; padding: 8px 36px 28px; position: relative; z-index: 1; }
-.cboard .c-main { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
-.cboard .c-side { display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
-.cyard.big { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 26px 22px; }
-.cyard.big.n3, .cyard.big.n4 { grid-template-columns: repeat(var(--cols, 4), minmax(0, 220px)); justify-content: center; }
-.cyard.big.n3 { --cols: 3; }
-.cyard.big.n6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.cyard.big.n7, .cyard.big.n8 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.cyard.big .cs-head { padding: 18px 10px 12px; }
-.cyard.big .cs-med { width: 74px; height: 74px; }
-.cyard.big .cs-name { font-size: 20px; }
-.cyard.big .c-wins i { width: 11px; height: 11px; }
-.cyard.big .cslab { max-width: 112px; }
-.cyard.big .cs-tag { font-size: 15px; }
-.cyard.big .cs-bid, .cyard.big .cs-pass { min-width: 36px; height: 36px; border-radius: 18px; font-size: 20px; }
-.cboard .ctower.big { min-width: 200px; padding: 16px 26px; }
-.cboard .ctower.big .ct-n { font-size: 84px; }
-.cboard .ctower.big .ct-bell { width: 40px; height: 40px; }
-.cboard .c-goal { text-align: center; font: 600 18px/1.3 var(--text); }
-.c-legend { display: flex; justify-content: center; gap: 16px; }
-.c-legend > span { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.c-legend .ccard { width: 42px; }
-.c-legend small { color: var(--ash); font-style: italic; }
-.cboard .b-now { text-align: center; margin-top: 18px; }
-@media (max-width: 380px) { .cyard { grid-template-columns: repeat(3, minmax(0, 1fr)); } .ccard { width: 56px; } }
-@keyframes cPop { from { opacity: 0; transform: scale(1.7); } }
-/* Coffins: the compact bell tower on phones, the result stamp */
-.ctower:not(.big) { flex-direction: row; gap: 10px; border-radius: 30px; padding: 6px 18px; min-width: 0; }
-.ctower:not(.big) .ct-bell { width: 20px; height: 20px; }
-.ctower:not(.big) .ct-n { font-size: 30px; }
-.ctower:not(.big) .ct-n small { font-size: 16px; }
-.ctower:not(.big) .ct-of { display: none; }
-.c-stamp { display: inline-block; margin: 10px auto 6px; padding: 6px 16px; border: 2px solid currentColor; border-radius: 4px; font: 600 20px/1.1 var(--text); letter-spacing: .04em; transform: rotate(-3deg); animation: cPop .4s var(--ease) both; animation-delay: calc(var(--d, 0s) + .3s); }
-.c-stamp.win { color: var(--gilt-hi); }
-.c-stamp.loss { color: var(--blood-ink); }
-body.is-board .m-cresult .c-opened .ccard { width: 96px; }
-body.is-board .c-stamp { font-size: 30px; }
-.cyard.big .cstone { max-width: 260px; justify-self: center; width: 100%; }
-
 /* ══ Carnival (Beta 4): the masked ball, in the Codex language ═════════════
    Wine-dark ground, the same gilt; masks are arcana cards (lattice backs face
    down), the table is the astrolabe, status is a vellum slip, holds are wax. */
@@ -3667,3 +3458,172 @@ body.is-board .m-kintro .krunes .kr { height: 34px; } body.is-board .m-kintro .k
 .k-coin .kc-skull { display: grid; place-items: center; width: 62%; height: 62%; color: var(--sepia); --paper: transparent; }
 .k-coin .kc-skull svg { width: 100%; height: 100%; filter: url(#ds-pencil); }
 .k-coin .kc-ds { display: grid; place-items: center; width: 64%; aspect-ratio: 1; border-radius: 50%; border: 1.5px solid var(--sepia); box-shadow: 0 0 0 3px transparent, 0 0 0 4px var(--sepia-2); font: 700 34px/1 var(--mark); color: var(--rubric); letter-spacing: -0.02em; }
+
+/* ══ Coffins (Beta 3), in the Codex: a churchyard by moonlight ════════════
+   Night tokens (silver line-work on blue-black ink); coffins are arcana cards
+   (vellum faces, the lattice back); the graveyard is the astrolabe table. */
+@keyframes cPop { from { opacity: 0; transform: scale(1.7); } }
+@keyframes cFlame { 50% { transform: translateX(-50%) scale(.85, 1.1); opacity: .85; } }
+body.mode-coffins, body.mode-coffins[data-time='night'] {
+  --ink: #06080d; --ink-2: #0c1018; --ink-3: #151b26; --iron: #2b3344;
+  --bone: #dbe1ec; --bone-2: #aab4c6; --ash: #8590a5;
+  --gilt: #b9c4d8; --gilt-2: #5d6a82; --gilt-hi: #e6ecf6; --glow: rgba(150, 175, 220, 0.12);
+  --frame: var(--frame-silver);
+}
+
+/* The coffin card: an arcana card sized by font-size */
+.coff { width: 6.2em; aspect-ratio: 11 / 18; padding: 1em 0.7em 0.85em; gap: 0.35em; font-size: 9px; flex: none; justify-content: flex-start; }
+.coff .arc-art { flex: 1; width: 92%; }
+.coff .arc-art .emblem { padding: 12% 2% 0; }
+.coff .nm { font-size: 1.55em; line-height: 1; }
+.coff.back .sig { width: 2.6em; height: 2.6em; font-size: 1.4em; }
+button.coff { border: 0; cursor: pointer; font-family: inherit; transition: transform 0.25s var(--ease), box-shadow 0.25s; }
+button.coff:active { transform: scale(0.96); }
+.coff.sel { transform: translateY(-0.7em); box-shadow: 0 0 0 2px var(--gilt-hi), 0 0 2.4em var(--glow), 0 1.8em 3em -1.4em #000; }
+.coff.buried { opacity: 0.55; transform: scale(0.88); }
+
+/* Your coffins */
+.chand { margin: 12px 0 6px; }
+.ch-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; padding: 14px 4px 24px; }
+.ch-row .coff { font-size: 10px; }
+.ch-row > .coff { position: relative; }
+.cc-buried { position: absolute; bottom: -2.2em; left: 50%; transform: translateX(-50%); white-space: nowrap; font: italic 400 1.25em/1 var(--text); color: var(--ash); }
+
+/* The churchyard: medallions with their graves tucked alongside */
+.cyard2 .tok { overflow: visible; }
+.cseat .cplot { position: absolute; left: calc(50% + var(--tok) * 0.16); top: calc(var(--tok) * 0.08); width: calc(var(--tok) * 0.44); height: calc(var(--tok) * 0.86); pointer-events: none; z-index: 2; }
+.cplot > i { position: absolute; left: 0; top: calc(var(--k) * var(--tok) * 0.075); font-size: calc(var(--tok) * 0.068); transform: rotate(calc(6deg + var(--k) * -2deg)); font-style: normal; }
+.cplot > i .coff { font-size: 1em; box-shadow: 0 0 0 1px var(--gilt-2), 0 0.5em 1em -0.3em #000; }
+.cplot > i.open .coff { transform: rotate(-4deg) translateX(0.6em); }
+.cplot > i.open .coff .nm { display: none; }
+.cplot > i.fresh .coff { animation: kFlipIn 0.6s var(--ease) both; box-shadow: 0 0 0 1px var(--gilt-hi), 0 0 1.6em var(--glow); }
+.cp-more { position: absolute; right: -4px; bottom: -6px; font: 600 11px/1 var(--bit); color: var(--gilt-hi); background: var(--ink); border: 1px solid var(--gilt-2); border-radius: 8px; padding: 2px 4px; }
+.bdg.c-hand { left: -6%; right: auto; bottom: -4%; top: auto; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 11px; display: grid; place-items: center; background: var(--ink); border: 1px solid var(--gilt); color: var(--gilt-hi); font: 600 12px/1 var(--bit); font-variant-numeric: tabular-nums lining-nums; }
+.bdg.c-bid { right: -8%; top: -8%; left: auto; min-width: 26px; height: 26px; border-radius: 47% 53% 50% 48% / 52% 46% 54% 48%; display: grid; place-items: center; padding: 0 5px;
+  background: radial-gradient(circle at 38% 32%, #b23a3f, var(--wax) 70%); color: #f6e3d4; font: 600 14px/1 var(--bit); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6), inset 0 -2px 3px rgba(0, 0, 0, 0.35); animation: cPop 0.4s var(--ease) both; }
+.bdg.c-rev, .bdg.c-relic { left: -8%; top: -6%; right: auto; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); border: 1px solid var(--gilt-2); color: var(--gilt-hi); }
+.bdg.c-rev svg, .bdg.c-relic svg { width: 16px; height: 16px; --paper: var(--ink); }
+.cseat.passed { opacity: 0.55; }
+.cseat .tok-name { margin-top: 5px; }
+.c-wins { display: flex; justify-content: center; gap: 4px; margin-top: 3px; }
+.c-wins i { width: 7px; height: 7px; transform: rotate(45deg); border: 1px solid var(--gilt-2); }
+.c-wins i.on { background: var(--gilt-hi); border-color: var(--gilt-hi); box-shadow: 0 0 6px var(--glow); }
+.c-candles { display: inline-flex; gap: 5px; margin-top: 4px; }
+.c-candles i { position: relative; width: 5px; height: 11px; border-radius: 2px 2px 1px 1px; background: #c9d2e2; opacity: 0.3; }
+.c-candles i.lit { opacity: 1; }
+.c-candles i.lit::before { content: ''; position: absolute; left: 50%; top: -7px; width: 5px; height: 7px; transform: translateX(-50%); border-radius: 50% 50% 40% 40%; background: radial-gradient(circle at 50% 70%, #fff6d8, #f2b54a 60%, transparent 72%); animation: cFlame 1.6s ease-in-out infinite; }
+
+/* The centre of the table */
+.c-centre { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.c-centre .cc-em { width: 32px; height: 32px; color: var(--gilt); --paper: var(--ink-2); }
+.c-centre .cc-em svg { width: 100%; height: 100%; filter: url(#ds-pencil); }
+.c-centre .cc-l { font: 600 9px/1.2 var(--text); letter-spacing: 0.24em; text-transform: uppercase; color: var(--ash); }
+.c-centre .cc-n { font: 500 34px/1.05 var(--bit); color: var(--bone); font-variant-numeric: tabular-nums lining-nums; animation: cPop 0.4s var(--ease) both; }
+.c-centre .cc-n small { font-size: 0.5em; color: var(--ash); }
+.c-centre .cc-s { font: italic 400 12px/1.2 var(--text); color: var(--bone-2); max-width: 12em; text-align: center; }
+.c-centre .c-clock { font: 500 12px/1 var(--bit); color: var(--gilt); margin-top: 2px; }
+.c-centre.dig .cc-em, .c-centre.dig .cc-n { color: var(--blood-ink); }
+
+/* Status: an ink slip; your own action on vellum in the ink frame */
+.cturn { margin: 10px auto 6px; max-width: 30rem; text-align: center; }
+.cturn h2 { font: 600 30px/1.02 var(--black); margin: 6px 0 4px; padding-bottom: 0.08em; color: var(--bone); }
+.cturn p { margin: 0; font: italic 400 16px/1.35 var(--text); color: var(--bone-2); }
+.cturn.me { position: relative; padding: 16px 22px 18px; background: var(--vellum-stain), var(--vellum); background-size: 100% 100%, auto; border-radius: 3px; box-shadow: 0 1.4em 2.4em -1.4em #000, inset 0 0 2em rgba(84, 54, 18, 0.24); }
+.cturn.me::before { content: ''; position: absolute; inset: 6px; pointer-events: none; border: 1px solid var(--sepia-2); border-image: var(--frame-ink) 32 / 18px stretch; }
+.cturn.me .kicker { color: var(--rubric); }
+.cturn.me h2 { color: var(--sepia); text-shadow: 0.035em 0.025em 0 rgba(142, 27, 31, 0.35); }
+.cturn.me p { color: var(--sepia-2); }
+.cturn.me .cwager .cw-btn { background: rgba(29, 21, 16, 0.06); border-color: var(--sepia-2); color: var(--sepia); }
+.cturn.me .cwager .cw-btn small { color: var(--sepia-2); }
+.cturn.me .cwager .cw-btn.on { border-color: var(--rubric); box-shadow: 0 0 0 1px var(--rubric); }
+
+/* The bid: two engraved plaques around a plain Garamond figure */
+.cchal { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 12px 0; }
+.cstep { display: flex; align-items: center; gap: 18px; }
+.cs-btn { width: 52px; height: 52px; border: 1px solid var(--gilt-2); outline: 1px solid var(--gilt-2); outline-offset: -5px; background: var(--ink-2); color: var(--gilt-hi); font: 500 26px/1 var(--bit); cursor: pointer; }
+.cs-btn:disabled { opacity: 0.3; cursor: default; }
+.cs-val { display: flex; flex-direction: column; align-items: center; min-width: 90px; }
+.cs-val b { font: 500 56px/1.05 var(--bit); color: var(--bone); font-variant-numeric: tabular-nums lining-nums; animation: cPop 0.3s var(--ease) both; }
+.cs-val small { font: 600 10px/1.3 var(--text); letter-spacing: 0.22em; text-transform: uppercase; color: var(--ash); }
+
+/* Ghost wager, starter, relic */
+.cwager { display: flex; justify-content: center; gap: 14px; margin: 14px 0 4px; }
+.cw-btn { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 16px 10px; border: 1px solid var(--iron); background: var(--ink-2); color: inherit; font: inherit; cursor: pointer; }
+.cw-btn .coff { font-size: 8px; }
+.cw-btn b { font: 600 20px/1 var(--black); }
+.cw-btn small { font-style: italic; color: var(--ash); }
+.cw-btn.on { border-color: var(--gilt); box-shadow: 0 0 0 1px var(--gilt), 0 0 18px var(--glow); }
+.cstarter { text-align: center; margin: 10px 0; }
+.cstarter .chips-row { justify-content: center; }
+.c-goal { margin: 2px 0 8px; }
+.c-ghostnote { display: flex; align-items: center; gap: 8px; justify-content: center; color: var(--bone-2); font-style: italic; }
+.c-ghostnote .glyph { width: 22px; height: 22px; color: var(--gilt); }
+.crelic { display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center; margin: 12px 0; padding: 18px 20px; border: 1px solid var(--gilt-2); border-image: var(--frame) 32 / 22px stretch; }
+.crelic.used { opacity: 0.5; }
+.crelic b { display: block; font: 600 20px/1.05 var(--black); padding-bottom: 0.1em; }
+.crelic small { font: italic 400 14px/1.3 var(--text); color: var(--bone-2); }
+.cr-art { width: 44px; height: 44px; color: var(--gilt); --paper: var(--ink); }
+.cr-art svg { width: 100%; height: 100%; filter: url(#ds-pencil); }
+.c-lobbyhand { display: flex; justify-content: center; gap: 10px; margin: 10px 0 6px; }
+.c-lobbyhand .coff { font-size: 7px; }
+.c-lobbyhand .coff:nth-child(odd) { transform: rotate(-4deg); } .c-lobbyhand .coff:nth-child(even) { transform: rotate(3deg); }
+
+/* Moments */
+.m-cresult .c-opened { list-style: none; padding: 0; margin: 16px auto 6px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; max-width: 36rem; }
+.c-opened li { animation: kFlipIn 0.6s var(--ease) both; animation-delay: var(--d); }
+.c-opened .coff { font-size: 9px; }
+body.is-board .c-opened .coff { font-size: 14px; }
+.c-verdict { animation: fadeIn 0.5s var(--ease) both; animation-delay: var(--d); }
+.c-verdict.gold .m-title { color: var(--gilt-hi); }
+.c-verdict.grim .m-title { color: var(--blood-ink); }
+.c-stamp { display: inline-block; margin: 10px auto 6px; padding: 6px 14px 4px; border: 3px double currentColor; font: 600 22px/1.1 var(--black); transform: rotate(-7deg); animation: cPop 0.4s var(--ease) both; animation-delay: calc(var(--d, 0s) + 0.3s); }
+.c-stamp.win { color: var(--gilt-hi); } .c-stamp.loss { color: var(--blood-ink); }
+body.is-board .c-stamp { font-size: 32px; }
+.c-lantern-card { display: flex; justify-content: center; margin: 10px 0; }
+.c-lantern-card .coff { font-size: 13px; }
+.c-rise-candles { display: flex; justify-content: center; margin: 12px 0; }
+.c-rise-candles .c-candles { gap: 14px; }
+.c-rise-candles .c-candles i { width: 10px; height: 26px; }
+.c-rise-candles .c-candles i.lit::before { width: 10px; height: 14px; top: -14px; }
+
+/* End */
+.c-award { display: flex; align-items: center; gap: 10px; justify-content: center; margin: 12px 0; }
+.c-award .glyph { width: 30px; height: 30px; color: var(--gilt); }
+.c-award b { display: block; font: 600 20px/1 var(--black); padding-bottom: 0.1em; } .c-award small { color: var(--ash); font-style: italic; }
+.c-graph { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 8px; }
+.c-graph li { display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; align-items: end; }
+.cg-r { font: 500 13px/1 var(--bit); color: var(--ash); }
+.cg-bars { display: flex; gap: 4px; align-items: flex-end; height: 34px; border-bottom: 1px solid var(--gilt-2); }
+.cg-bars i { position: relative; flex: 0 1 18px; height: max(6px, var(--h)); background: linear-gradient(var(--gilt), var(--gilt-2)); }
+.cg-bars i.bluff { background: linear-gradient(var(--blood-ink), var(--blood)); }
+.cg-bars i b { position: absolute; top: -13px; left: 0; right: 0; text-align: center; font: 500 10px/1 var(--bit); color: var(--bone-2); }
+.c-graph small { font-style: italic; } .c-graph small.ok { color: var(--gilt-hi); } .c-graph small.bad { color: var(--blood-ink); }
+
+/* TV: the churchyard left, the ledger right */
+.cboard .c-cols { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 30px; padding: 0 40px 24px; position: relative; z-index: 1; }
+.cboard .c-main { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; }
+.cboard .cyard2 .ring { width: min(100%, 62vh); }
+.cboard .b-now { text-align: center; margin-top: 24px; }
+.cboard .c-side { display: flex; flex-direction: column; gap: 16px; }
+.cyard2.big .c-centre .cc-em { width: 54px; height: 54px; }
+.cyard2.big .c-centre .cc-n { font-size: 64px; }
+.cyard2.big .c-centre .cc-l { font-size: 12px; } .cyard2.big .c-centre .cc-s { font-size: 16px; }
+.c-ledger { padding: 22px 24px 16px; }
+.c-ledger ul { list-style: none; padding: 0; margin: 10px 0 8px; display: grid; gap: 8px; }
+.c-ledger li { display: grid; grid-template-columns: 7em 1fr auto; gap: 10px; align-items: center; }
+.c-ledger li b { font: 600 12px/1.2 var(--text); letter-spacing: 0.16em; text-transform: uppercase; color: var(--bone-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.c-ledger li.now b { color: var(--gilt-hi); }
+.c-ledger li.out b { color: var(--ash); text-decoration: line-through; }
+.cl-coffins { display: flex; gap: 2px; }
+.cl-coffins i { width: 16px; height: 16px; color: var(--gilt); --paper: var(--ink); }
+.cl-coffins svg { width: 100%; height: 100%; }
+.c-ledger .c-wins { margin: 0; }
+.c-legend { display: flex; justify-content: center; gap: 18px; }
+.c-legend > span { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.c-legend .coff { font-size: 7px; }
+.c-legend small { color: var(--ash); font-style: italic; }
+@media (prefers-reduced-motion: reduce) { .cplot > i.fresh .coff, .c-opened li { animation: none !important; } }
+/* Coffin cards: a dark arch with the engraving drawn light, identical for every face (only the title ink differs) */
+.coff:not(.back) .arc-art::before { background: radial-gradient(circle, rgba(241, 228, 200, 0.12) 0.9px, transparent 1.4px) 0 0 / 5px 5px, linear-gradient(180deg, #2a2019, #120c08); }
+.coff:not(.back) .arc-art .emblem { padding: 8% 0 0; color: #efe1c2; --paper: #1d1510; }
+.cl-coffins i { width: 20px; height: 20px; }
