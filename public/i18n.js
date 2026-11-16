@@ -78,9 +78,12 @@ export function missionStoryLine(sc, k) {
   const w = (EN.scenario.WHY || []).indexOf(sc.why);
   const p = (EN.scenario.WHERE || []).indexOf(sc.where);
   const T = D?.missionStory;
-  const step = w >= 0 ? (T?.steps?.[w]?.[k] ?? S.steps[w]?.[k]) : (T?.genericSteps?.[k] ?? S.genericSteps[k]);
-  const scene = p >= 0 ? (T?.scenes?.[p]?.[k] ?? S.scenes[p]?.[k]) : (T?.genericScenes?.[k] ?? S.genericScenes[k]);
-  return { step, scene, preset: w >= 0 && p >= 0 };
+  // Cards newer than the Missions story (and host-written ones) use the generic lines.
+  const hasW = w >= 0 && S.steps[w];
+  const hasP = p >= 0 && S.scenes[p];
+  const step = hasW ? (T?.steps?.[w]?.[k] ?? S.steps[w]?.[k]) : (T?.genericSteps?.[k] ?? S.genericSteps[k]);
+  const scene = hasP ? (T?.scenes?.[p]?.[k] ?? S.scenes[p]?.[k]) : (T?.genericScenes?.[k] ?? S.genericScenes[k]);
+  return { step, scene, preset: !!(hasW && hasP) };
 }
 export function product(english) {
   const i = EN.products.indexOf(english);

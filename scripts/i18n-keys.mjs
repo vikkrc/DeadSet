@@ -90,7 +90,7 @@ for (const m of read('engine/coffins.js').matchAll(/export const C_ADVANCE_LABEL
 // Midnight: card powers, explainer steps, step titles and advance labels.
 for (const m of read('public/midnight.js').matchAll(/const (?:steps|KIND_TITLE) = [\[{]([\s\S]*?)[\]}];|export const NPOWER = \{([\s\S]*?)\};/g)) for (const x of (m[1] ?? m[2]).matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/\s|^[A-Z][a-z]/.test(s)) keys.add(s); }
 // Séance: row names, questions, steps, difficulty notes, role texts, verdict titles.
-for (const m of read('public/seance.js').matchAll(/const (?:ROW_LABEL|ROW_Q|ROW_NAME|steps|DIFF_SUB) = [\[{]([\s\S]*?)[\]}];|export const seanceTitle = \(result\) => \(\{([\s\S]*?)\}|const text = \{([\s\S]*?)\}\[/g)) for (const x of (m[1] ?? m[2] ?? m[3]).matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/\s|^[A-Z][a-z]/.test(s)) keys.add(s); }
+for (const m of read('public/seance.js').matchAll(/const (?:ROW_LABEL|ROW_Q|ROW_NAME|steps|DIFF_SUB) = [\[{]([\s\S]*?)[\]}];|export const seanceTitle = \(result\) => \(\{([\s\S]*?)\}|const (?:text|how|special) = \{([\s\S]*?)\}\[/g)) for (const x of (m[1] ?? m[2] ?? m[3]).matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/\s|^[A-Z][a-z]/.test(s)) keys.add(s); }
 for (const m of read('engine/seance.js').matchAll(/export const S_ADVANCE_LABEL = \{([\s\S]*?)\};/g)) for (const x of m[1].matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/\s/.test(s)) keys.add(s); }
 for (const m of read('engine/midnight.js').matchAll(/export const N_ADVANCE_LABEL = \{([\s\S]*?)\};/g)) for (const x of m[1].matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/\s/.test(s)) keys.add(s); }
 // Carnival: powers, the legend, explainer steps and advance labels.

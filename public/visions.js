@@ -68,13 +68,35 @@ export const STORY_TAGS = {
   WHO: [['time', 'science', 'travel'], ['science', 'travel', 'escape'], ['magic', 'nature'], ['death', 'royalty', 'knowledge'], ['science', 'danger'],
     ['secrecy', 'faith', 'magic'], ['travel', 'escape'], ['science', 'knowledge'], ['home', 'faith', 'food'], ['show', 'secrecy'],
     ['show', 'chance', 'fire'], ['water', 'night', 'cold'], ['food', 'crime'], ['royalty', 'escape', 'money'], ['night', 'death', 'time'],
-    ['water', 'danger'], ['love', 'food'], ['science', 'night', 'cold'], ['show', 'secrecy', 'love'], ['faith', 'secrecy', 'knowledge']],
+    ['water', 'danger'], ['love', 'food'], ['science', 'night', 'cold'], ['show', 'secrecy', 'love'], ['faith', 'secrecy', 'knowledge'],
+    ['nature', 'night'], ['time', 'science'], ['crime', 'water', 'money'], ['show', 'love'], ['death', 'crime', 'secrecy'], ['royalty', 'danger'],
+    ['water', 'food'], ['magic', 'science'], ['money', 'secrecy'], ['travel', 'time'], ['magic', 'chance'], ['travel', 'cold', 'nature'],
+    ['fire', 'night'], ['show', 'secrecy'], ['nature', 'knowledge'], ['death', 'home'], ['chance', 'money', 'crime'], ['nature', 'danger', 'crime'],
+    ['fire', 'show'], ['magic', 'danger', 'show']],
   WHERE: [['water', 'travel', 'danger'], ['show', 'chance'], ['escape', 'danger', 'home'], ['home', 'death'], ['cold', 'nature'],
     ['water', 'night', 'cold'], ['science', 'escape'], ['travel', 'night', 'cold'], ['water', 'faith'], ['nature', 'science'],
-    ['travel', 'water', 'money', 'fire'], ['faith', 'knowledge'], ['food', 'night', 'nature'], ['show', 'secrecy'], ['time', 'science', 'knowledge']],
+    ['travel', 'water', 'money', 'fire'], ['faith', 'knowledge'], ['food', 'night', 'nature'], ['show', 'secrecy'], ['time', 'science', 'knowledge'],
+    ['water', 'home', 'death'], ['show', 'fire', 'money'], ['death', 'night', 'nature'], ['science', 'night', 'knowledge'], ['royalty', 'show', 'love'],
+    ['cold', 'water', 'danger'], ['show', 'travel', 'chance'], ['knowledge', 'water', 'secrecy'], ['magic', 'home', 'nature'], ['royalty', 'death', 'secrecy'],
+    ['water', 'crime', 'money'], ['money', 'night', 'food'], ['fire', 'nature', 'danger'], ['cold', 'science', 'death'], ['show', 'secrecy', 'magic']],
   WHY: [['money', 'secrecy'], ['escape', 'time'], ['magic', 'faith', 'fire'], ['crime', 'death'], ['danger', 'time'],
     ['magic', 'death'], ['chance', 'money'], ['royalty', 'danger'], ['travel', 'home'], ['secrecy', 'crime'],
-    ['night', 'danger'], ['crime', 'faith'], ['night', 'magic', 'home'], ['knowledge', 'secrecy'], ['secrecy', 'crime']],
+    ['night', 'danger'], ['crime', 'faith'], ['night', 'magic', 'home'], ['knowledge', 'secrecy'], ['secrecy', 'crime'],
+    ['money', 'crime'], ['love'], ['crime', 'secrecy'], ['royalty', 'crime', 'money'], ['crime', 'secrecy', 'death'], ['money', 'home', 'death'],
+    ['death', 'love', 'danger'], ['chance', 'show', 'money'], ['crime', 'faith'], ['love', 'escape', 'night'], ['death', 'secrecy', 'time'],
+    ['science', 'death'], ['magic', 'death', 'faith'], ['royalty', 'danger'], ['show', 'time', 'knowledge']],
+};
+
+/** The pencil icon on each WHO / WHY card (WHERE cards carry their backdrop etching). Index-aligned. */
+export const STORY_ICONS = {
+  WHO: ['p_watch', 'v_planet', 'scapegoat', 'shade', 'psycho', 'cult', 'p_compass', 'premonition', 's_neighbours', 'double',
+    'jester', 'lantern', 's_humble', 'grand', 'nightshift', 'v_wave', 'lovers', 's_late', 'maskedvote', 'believer',
+    'v_tree', 'v_gear', 's_steady', 'bard', 'necro', 'bodyguard', 'v_fish', 'p_perfume', 'coin', 'v_train',
+    'oracle', 'regular', 'p_candle', 'mimic', 'v_bird', 'undertaker', 'p_cards', 'vigilante', 'stray', 'v_snake'],
+  WHY: ['p_box', 'patience', 'medium', 'trail', 'terrorist', 'curse', 'gambler', 'guardian', 'sleepwalk', 'conspirator',
+    's_early', 'succeed', 'bell', 'p_letter', 'paralysis',
+    'magistrate', 's_heart', 'smoke', 'key', 'witness', 'diplomat', 'sabotage', 's_first', 'ward', 'whore',
+    'reaper', 'angel', 'veiled', 'steadfast', 'p_photo'],
 };
 
 /** How well a vision fits a card: shared tags. */
