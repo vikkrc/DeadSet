@@ -40,7 +40,8 @@ export function activeRuleNotes(v) {
 export function moodFor(v) {
   switch (v.phase) {
     case 'LOBBY': return 'lobby';
-    case 'ENDED': return { DEMON: 'endDeath', DEATH: 'endDeath', NON_DEATH: 'endLiving', JESTER: 'endJester', LOVERS: 'endLovers', CULT: 'endCult', RIPPER: 'endRipper' }[v.winner] ?? 'endDraw';
+    case 'ENDED': if (v.winner === 'MIDNIGHT') { const sd = v.midnight?.winners?.sides ?? []; return sd.includes('JESTER') ? 'endJester' : sd.includes('LIVING') ? 'endLiving' : sd.includes('DEATH') ? 'endDeath' : 'endDraw'; }
+      return { DEMON: 'endDeath', DEATH: 'endDeath', NON_DEATH: 'endLiving', JESTER: 'endJester', LOVERS: 'endLovers', CULT: 'endCult', RIPPER: 'endRipper' }[v.winner] ?? 'endDraw';
     case 'NIGHT_0_REVEAL': return 'ceremony';
     case 'NIGHT_DREAM_SWAP': case 'NIGHT_ACTIONS': case 'NIGHT_RESOLVING': return v.bloodMoon ? 'bloodmoon' : 'night';
     case 'M_REVEAL': return 'mGather';
@@ -51,9 +52,10 @@ export function moodFor(v) {
     case 'M_NIGHT': return 'mCandle';
     case 'M_LAST_STAND': return 'mStand';
     case 'M_RECKONING': return 'mReckon';
-    case 'N_DEAL': case 'N_NIGHT': return 'night';
-    case 'N_DAY': return 'discussion';
-    case 'N_VOTE': return 'vote';
+    case 'N_DEAL': return 'nDeal';
+    case 'N_NIGHT': return 'nNight';
+    case 'N_DAY': return 'nDay';
+    case 'N_VOTE': return 'nVote';
     case 'K_UNMASK': case 'K_LOTTERY': return 'kUnmask';
     case 'K_TURN': return 'kBall';
     case 'K_CHALLENGE': return 'kChallenge';

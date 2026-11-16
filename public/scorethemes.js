@@ -17,6 +17,8 @@ const ENERGY = {
   vote: 2, resolving: 2, bloodmoon: 2, mVote: 2, mMission: 2, mStand: 2, mReckon: 2, endRipper: 2, endJester: 2,
   // Carnival: a masked ball, every style in three
   kUnmask: 0, kBall: 1, kPower: 1, kChallenge: 2,
+  // Midnight: one night tightening to the vote
+  nDeal: 0, nNight: 1, nDay: 1, nVote: 2,
 };
 
 const rnd = (lo, hi) => lo + Math.random() * (hi - lo);

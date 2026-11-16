@@ -313,6 +313,15 @@ const MOODS = {
   kBall: { root: 87.3, scale: [0, 2, 3, 5, 7, 8, 11], chord: [1, 1.19, 1.5], cutoff: 760, wind: 0.008, gain: 0.46, meter: 3, pluck: { bpm: 132, pattern: [1, 0, 1, 0, 1, 0], notes: [0, 5, 7, 3] }, drum: { bpm: 132, pattern: [1, 0, 0, 0, 0, 0], pitch: 64, gain: 0.12 }, motif: { voice: 'box', every: [5, 9], len: [3, 6], beat: 0.45, oct: 4 } },
   kPower: { root: 65.4, scale: [0, 1, 3, 5, 7, 8, 11], chord: [1, 1.19, 1.41], cutoff: 520, wind: 0.02, gain: 0.5, meter: 3, pluck: { bpm: 108, pattern: [1, 0, 1, 0, 1, 0], notes: [0, 1, 5, 7] }, swell: [7, 11], motif: { voice: 'bell', every: [6, 10], len: [2, 3], beat: 0.55, oct: 3 } },
   kChallenge: { root: 82.4, scale: [0, 1, 3, 5, 7, 8, 11], chord: [1, 1.19, 1.5], cutoff: 620, wind: 0.01, gain: 0.5, meter: 3, heart: 84, tick: 120, pluck: { bpm: 150, pattern: [1, 0, 1, 0, 1, 0], notes: [0, 0, 7, 1] }, motif: { voice: 'box', every: [4, 7], len: [3, 3], beat: 0.4, oct: 4 } },
+  // Dead Set: Midnight. One night, one clock: every mood ticks, and the night tightens to the vote.
+  //   nDeal  – midnight strikes: a tolling bell over a low drone and a slow clock
+  //   nNight – the night steps: the clock in the dark, a held breath, a slow heart
+  //   nDay   – dawn and the argument: a restless tritone ostinato over a quicker clock
+  //   nVote  – the pointing: the clock races, a heavy drum and a pounding heart
+  nDeal: { root: 49, scale: [0, 1, 3, 6, 7], chord: [1, 1.06, 1.5, 2], cutoff: 340, wind: 0.04, gain: 0.56, tick: 60, choir: 0.012, swell: [9, 14], motif: { voice: 'bell', every: [7, 11], len: [1, 2], beat: 1.6, oct: 2 } },
+  nNight: { root: 46.2, scale: [0, 1, 3, 6, 7, 8], chord: [1, 1.06, 1.5], cutoff: 300, wind: 0.05, gain: 0.58, tick: 60, heart: 50, shimmer: 0.005, swell: [6, 10], motif: { voice: 'box', every: [10, 16], len: [2, 3], beat: 1.2, oct: 5 } },
+  nDay: { root: 58.3, scale: [0, 1, 3, 5, 6, 8, 10], chord: [1, 1.19, 1.41], cutoff: 540, wind: 0.02, gain: 0.5, tick: 90, heart: 64, pluck: { bpm: 90, pattern: [1, 0, 0, 1, 0, 0, 1, 0], notes: [0, 1, 6, 3] }, motif: { voice: 'bell', every: [8, 13], len: [2, 3], beat: 0.8, oct: 3 } },
+  nVote: { root: 61.7, scale: [0, 1, 4, 5, 6, 8, 11], chord: [1, 1.06, 1.41], cutoff: 620, wind: 0.015, gain: 0.52, tick: 132, heart: 96, drum: { bpm: 132, pattern: [1, 0, 0, 0, 1, 0, 0, 0], pitch: 54, gain: 0.2 }, swell: [4, 7], motif: { voice: 'box', every: [5, 8], len: [2, 3], beat: 0.38, oct: 4 } },
   // Overlay mixed on top of any mood when the table is down to its last few.
   tension: { root: 110, scale: [0, 1], chord: [], cutoff: 3000, wind: 0, gain: 0.5, shimmer: 0.012, heart: 104 },
 };

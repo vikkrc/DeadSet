@@ -3750,3 +3750,40 @@ body.mode-midnight.mn-night {
 .ne-list li { grid-template-columns: minmax(0, 1fr) auto auto; }
 .ne-t small { text-align: center; max-width: 70px; }
 .ne-table { flex-wrap: wrap; }
+
+/* ─ Midnight: icon medallions for lists, an aligned end ledger ─ */
+.nic { display: inline-grid; place-items: center; flex: none; width: 40px; height: 40px; border: 1px solid var(--gilt-2); border-radius: 50%; background: var(--ink-2); color: var(--bone); font-style: normal; box-shadow: inset 0 0 0 3px var(--ink-2), inset 0 0 0 4px rgba(201, 168, 106, 0.25); --paper: var(--ink-2); }
+.nic svg { width: 76%; height: 76%; }
+.nic.side-death { color: var(--blood-ink); border-color: rgba(228, 93, 80, 0.55); }
+.nic.side-jester { color: var(--gilt-hi); }
+.k-reflist li > .nic { width: 46px; height: 46px; }
+.n-tvref .nic { width: 44px; height: 44px; }
+.n-tvref ul { gap: 10px 14px; }
+.n-tvref li { gap: 12px; }
+.n-tvref b small { font: 500 14px var(--bit); color: var(--ash); }
+.nt-list li { grid-template-columns: 36px 1fr; }
+.nt-list .nic { width: 36px; height: 36px; }
+
+.ne-list li { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'who tags' 'cards cards'; gap: 10px 12px; align-items: start; padding: 14px 0; }
+.ne-who { grid-area: who; min-width: 0; }
+.ne-who small { display: block; line-height: 1.3; }
+.ne-who .ne-n { font-style: normal; font: 500 13px var(--bit); color: var(--bone-2); }
+.ne-tags { grid-area: tags; flex-direction: row; }
+.ne-cards { grid-area: cards; display: grid; grid-template-columns: 84px 20px 84px; justify-content: start; align-items: start; gap: 8px; }
+.ne-cards figure { width: 84px; gap: 5px; }
+.ne-cards .ncard { font-size: 7.4px; }
+.ne-cards i { align-self: center; margin-top: -18px; justify-self: center; }
+.ne-cards figcaption, .ne-t figcaption { max-width: 84px; white-space: normal; overflow: visible; line-height: 1.05; min-height: 2.1em; overflow-wrap: anywhere; hyphens: auto; }
+.ne-table { display: block; }
+.ne-table > div { display: grid; grid-template-columns: repeat(3, 84px); gap: 8px; margin-top: 10px; }
+.ne-t { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.ne-t .ncard { font-size: 7.4px; }
+.ne-t figcaption { font: 600 13px/1.05 var(--black); color: var(--bone); text-align: center; padding-bottom: 0.1em; }
+.ne-t figcaption small { display: block; font: 500 11px var(--bit); color: var(--ash); margin-bottom: 2px; }
+/* wide screens (the TV, tablets): one line per player, every column aligned */
+@media (min-width: 720px) {
+  .ne-list li { grid-template-columns: minmax(0, 1fr) 216px 110px; grid-template-areas: 'who cards tags'; align-items: center; }
+  .ne-tags { justify-content: flex-end; }
+}
+.nboard .ne-list li { grid-template-columns: minmax(0, 1fr) 216px 110px; grid-template-areas: 'who cards tags'; align-items: center; }
+.nboard .ne-tags { justify-content: flex-end; }

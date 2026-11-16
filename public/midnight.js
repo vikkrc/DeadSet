@@ -26,6 +26,8 @@ export const N_CARDS = ['MIMIC', 'DEATH', 'CONSPIRATOR', 'N_TWIN', 'MENTALIST', 
 const EMB = { DOUBLE_AGENT: 'double', N_TWIN: 'twins', N_INSOMNIAC: 'insomnia' };
 const embOf = (id) => EMB[id] ?? id.toLowerCase();
 const LIMIT = { DEATH: 2, N_TWIN: 2, INNOCENT: 4 };
+// A role as a pencil-outline emblem in a gilt medallion: lists read better as icons than as tiny cards.
+const nicon = (id, cls = '') => `<i class="nic side-${SIDE(id)} ${cls}" aria-hidden="true">${emblem(embOf(id))}</i>`;
 /** What each card does in Midnight (MIDNIGHT.md §2). */
 export const NPOWER = {
   MIMIC: 'Look at another player\'s card and become that role. An action role acts at once; Death, the Conspirator or a Twin wakes with them later.',
@@ -223,7 +225,7 @@ export function cardsSheet(v) {
   const order = ['MIMIC', 'DEATH', 'CONSPIRATOR', 'N_TWIN', 'MENTALIST', 'DOUBLE_AGENT', 'WITCH', 'GAMBLER', 'N_INSOMNIAC'];
   let k = 0;
   return `<div class="k-ref" data-key="nref"><p class="small muted">${t('One card per player and three on the table. Cards that wake are listed in the order the night calls them.')}</p>
-    <ul class="k-reflist">${deck.map(({ id, n }) => `<li data-key="nr-${id}">${ncard(id, { cls: 'thumb' })}<div><b>${order.includes(id) ? `<small class="nr-ord">${ROMAN[++k] ?? ++k}.</small> ` : ''}${esc(rname(id))}${n > 1 ? ` <small>×${n}</small>` : ''}</b><p>${esc(t(NPOWER[id] ?? ''))}</p></div></li>`).join('')}</ul></div>`;
+    <ul class="k-reflist">${deck.map(({ id, n }) => `<li data-key="nr-${id}">${nicon(id)}<div><b>${order.includes(id) ? `<small class="nr-ord">${ROMAN[++k] ?? ++k}.</small> ` : ''}${esc(rname(id))}${n > 1 ? ` <small>×${n}</small>` : ''}</b><p>${esc(t(NPOWER[id] ?? ''))}</p></div></li>`).join('')}</ul></div>`;
 }
 
 // ── Scenes ─────────────────────────────────────────────────────────────────
@@ -322,12 +324,13 @@ export function midnightEndHtml(v) {
   const back = v.deadline ? `<p class="center-text small muted">${t('Back to the lobby in')} <b class="clock" data-clock></b></p>` : '';
   const died = new Set(N.died ?? []);
   const winners = new Set(N.winners?.players ?? []);
+  const fig = (id, shown = id) => `<figure>${ncard(id, { cls: 'thumb' })}<figcaption>${esc(rname(shown))}</figcaption></figure>`;
   const rows = v.players.map((p) => `<li class="${died.has(p.id) ? 'died' : ''} ${winners.has(p.id) ? 'won' : ''}" data-key="ne-${p.id}">
-    <span class="ne-who"><b>${esc(p.name)}</b><small>${N.votes?.[p.id] ? th('pointed at {name}', { name: pname(v, N.votes[p.id]) }) : t('did not point')}${N.tally?.[p.id] ? ` · ${th(N.tally[p.id] === 1 ? '{n} vote' : '{n} votes', { n: N.tally[p.id] })}` : ''}</small></span>
-    <span class="ne-cards"><figure>${ncard(N.dealt[p.id], { cls: 'thumb' })}<figcaption>${esc(rname(N.dealt[p.id]))}</figcaption></figure><i>${glyph('down')}</i><figure>${ncard(N.cards[p.id], { cls: 'thumb' })}<figcaption>${esc(rname(N.cards[p.id] === 'MIMIC' && N.mimicAs ? N.mimicAs : N.cards[p.id]))}</figcaption></figure></span>
+    <span class="ne-who"><b>${esc(p.name)}</b><small>${N.votes?.[p.id] ? th('pointed at {name}', { name: pname(v, N.votes[p.id]) }) : t('did not point')}</small>${N.tally?.[p.id] ? `<small class="ne-n">${th(N.tally[p.id] === 1 ? '{n} vote' : '{n} votes', { n: N.tally[p.id] })}</small>` : ''}</span>
+    <span class="ne-cards">${fig(N.dealt[p.id])}<i>${glyph('down')}</i>${fig(N.cards[p.id], N.cards[p.id] === 'MIMIC' && N.mimicAs ? N.mimicAs : N.cards[p.id])}</span>
     <span class="ne-tags">${died.has(p.id) ? `<span class="tag blood">${t('Dead')}</span>` : ''}${winners.has(p.id) ? `<span class="tag solid">${t('Won')}</span>` : ''}</span></li>`).join('');
-  const table = TABLE.map((c, i) => `<span class="ne-t">${ncard(N.cards[c], { cls: 'thumb' })}<small>${ROMAN[i + 1]} · ${esc(rname(N.cards[c]))}</small></span>`).join('');
-  const night = (N.timeline ?? []).map((e) => `<li><span class="nt-card">${ncard(e.step === 'MIMIC' ? 'MIMIC' : e.step, { cls: 'thumb' })}</span><span>${STEP_LINE[e.kind]?.(v, e) ?? ''}</span></li>`).join('');
+  const table = TABLE.map((c, i) => `<figure class="ne-t">${ncard(N.cards[c], { cls: 'thumb' })}<figcaption><small>${ROMAN[i + 1]}</small>${esc(rname(N.cards[c]))}</figcaption></figure>`).join('');
+  const night = (N.timeline ?? []).map((e) => `<li>${nicon(e.step)}<span>${STEP_LINE[e.kind]?.(v, e) ?? ''}</span></li>`).join('');
   return `${back}
     <section data-key="neall"><div class="rule">${t('Every card: dealt, and at dawn')}</div><ul class="ne-list">${rows}</ul>
       <div class="ne-table"><span class="kicker">${t('On the table at dawn')}</span><div>${table}</div></div></section>
@@ -354,7 +357,7 @@ export function midnightBoard(v, h) {
     const now = v.phase === 'N_DAY' ? t('Dawn. Who are you now? Talk it over.') : v.phase === 'N_VOTE' ? th('Point at one player · {done}/{total}', v.progress ?? { done: 0, total: 0 }) : '';
     main = `${ring ? ring(v, { center: '', marks }) : ''}<p class="b-now">${now}</p>`;
   }
-  const deck = `<div class="n-tvref fr"><span class="kicker">${t('Cards in play')}</span><ul>${N.deck.map(({ id, n }) => `<li>${ncard(id, { cls: 'thumb' })}<b>${esc(rname(id))}${n > 1 ? ` ×${n}` : ''}</b></li>`).join('')}</ul></div>`;
+  const deck = `<div class="n-tvref fr"><span class="kicker">${t('Cards in play')}</span><ul>${N.deck.map(({ id, n }) => `<li>${nicon(id)}<b>${esc(rname(id))}${n > 1 ? ` <small>×${n}</small>` : ''}</b></li>`).join('')}</ul></div>`;
   return `<main class="board2 nboard ${['N_DEAL', 'N_NIGHT'].includes(v.phase) ? 'is-night' : ''} ${ended ? 'is-ended' : ''}" data-key="board-n">${header}
     <div class="k-cols"><section class="k-main">${ended ? midnightEndHtml(v) : main}</section><aside class="k-side">${deck}${scoreboard(v)}</aside></div></main>`;
 }
