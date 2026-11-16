@@ -3,6 +3,8 @@ export default {
   and: 'und',
   numbers: ['kein', 'ein', 'zwei', 'drei', 'vier', 'fünf', 'sechs', 'sieben', 'acht', 'neun', 'zehn'],
   roles: {
+    G_UNDERTAKER: { name: "Totengräber", when: "Immer", summary: "Du hast das Grabregister. Gib deiner Bande ein Wort und eine Zahl.", detail: "Nur du und der andere Totengräber wisst, was unter jedem Stein liegt. Dein Wort soll so viele Gräber deiner Bande verbinden und weit weg vom Grab des Todes führen." },
+    G_DIGGER: { name: "Grabräuber", when: "Immer", summary: "Lies das Zeichen deines Totengräbers und grab die Reliquien deiner Bande aus.", detail: "Beratet euch, dann stimm auf dem Handy für ein Grab. Eure Reliquie: weitergraben. Ein leeres Grab oder eine Reliquie der anderen Bande: Der Zug geht weiter. Das Grab des Todes: Eure Bande verliert." },
     S_GHOST: { name: "Geist", when: "Immer", summary: "Du wurdest ermordet. Du weißt wer, wo und warum, und kannst nicht sprechen.", detail: "Schick jedem Leser eine Vision zu seiner Reihe. Mit einem kalten Fleck vereist du eine Vision, die nicht von dir ist." },
     S_MEDIUM: { name: "Medium", when: "Immer", summary: "Lies die Visionen und entzünde Kerzen auf die Wahrheit.", detail: "Jede Runde liest du eine Reihe: wer, wo oder warum. Löst alle drei, bevor die Kerzen herunterbrennen, dann nennt den Täuscher." },
     S_DECEIVER: { name: "Täuscher", when: "Immer", summary: "Ein zweiter Geist in einem lebenden Körper. Du kennst die Wahrheit, und du lügst.", detail: "Du siehst genau aus wie ein Medium. Ein paarmal pro Spiel tauschst du die Vision des Geistes für einen anderen Leser gegen deine eigene. Du gewinnst, wenn die Kerzen herunterbrennen oder der Tisch den falschen Spieler nennt." },
@@ -160,6 +162,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Rachsüchtige Geister', text: 'Jeder ausgeschiedene Spieler darf pro Tag eine Geisterstimme mit Gewicht 1 abgeben.', enforcement: 'Geister können nicht nominieren, keine Fähigkeiten nutzen und die Mehrheitsregel nicht beeinflussen.' },
   },
   presets: {
+    graverobbers: { name: "Dead Set: Grabräuber", blurb: "Zwei Grabräuberbanden, Mond und Sonne, durchwühlen einen Friedhof aus Wörtern oder Symbolen nach den Reliquien ihrer Gottheit. Nur die Totengräber wissen, was darunter liegt. Ein Grab gehört dem Tod." },
     seance: { name: "Dead Set: Séance", blurb: "Ein stummer, ermordeter Geist schickt Visionen; die Medien lesen daraus wer, wo und warum. Ein Täuscher unter ihnen tauscht Visionen gegen Lügen." },
     midnight: { name: "Dead Set: Mitternacht", blurb: "Eine Nacht, eine Abstimmung. Karten wechseln im Dunkeln die Hände; im Morgengrauen bist du, was vor dir liegt. Finde den Tod, oder sei er." },
     carnival: { name: "Dead Set: Karneval", blurb: "Ein Maskenball aus Bluff und Gedächtnis. Jeder trägt eine Rollenkarte als Maske, gemischt, bis niemand mehr sicher ist. Beanspruche Masken und sammle Seelen; 13 gewinnen." },
@@ -190,6 +193,15 @@ export default {
     'Der Tod stimmte mit der Stadt. Natürlich.',
   ],
   guide: {
+    graveH: "Dead Set: Grabräuber",
+    grave: `<p>Ein Teamspiel mit Wörtern (oder Symbolen) für 4–12 Spieler, etwa 15 Minuten. Zwei Grabräuberbanden, der <b>Mond</b> und die <b>Sonne</b>, graben einen Friedhof aus 25 Grabsteinen nach den Reliquien um, die ihre Gottheit beschwören. Die Bande, die den Münzwurf gewinnt, hat 9 Reliquien in der Erde, die andere 8; 7 Gräber sind leer, und eines gehört dem <b>Tod</b>.</p>
+<ol>
+<li><b>Die Totengräber.</b> Einer pro Bande. Nur sie sehen das Grabregister: was unter jedem Stein liegt.</li>
+<li><b>Das Zeichen.</b> In seinem Zug gibt der Totengräber ein Wort und eine Zahl: <i>„Ozean · 3“</i>. Das Wort darf nicht auf dem Brett stehen. Danach sagt er nichts mehr.</li>
+<li><b>Das Graben.</b> Die Grabräuber beraten sich und stimmen auf ihren Handys ab. Die meisten Stimmen graben; bei Gleichstand entscheidet die Münze. Eure Reliquie: weitergraben, bis zur Zahl. Ein leeres Grab oder eine Reliquie der anderen Bande (jetzt gehört sie ihnen): Der Zug geht weiter. Das Grab des Todes: Eure Bande verliert sofort.</li>
+<li><b>Aufhören.</b> Die Bande kann abstimmen aufzuhören. Hört sie vor der Zahl auf, behält sie einen Bonusgrabgang für den nächsten Zug (er stapelt sich nicht).</li>
+</ol>
+<p>Die Bande, deren Reliquien zuerst alle ausgegraben sind, gewinnt. Auf dem Handy wechselst du zwischen <b>Steinen</b> (Wörter oder Symbole) und <b>Karte</b> (das Brett auf einen Blick). In der Lobby: Wörter oder Symbole, berühmte Namen an oder aus, Banden und Totengräber zufällig oder gewählt, getippte oder gesprochene Zeichen.</p>`,
     seanceH: "Dead Set: Séance",
     seance: `<p>Ein kooperatives Mordrätsel mit Verräter. 4–10 Spieler, etwa 30 Minuten. Ein Spieler ist der <b>Geist</b>: Er weiß, wer ihn getötet hat, wo und warum, und kann nicht sprechen. Alle anderen sind Leser.</p>
 <ol>

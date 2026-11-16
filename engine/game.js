@@ -19,6 +19,7 @@ import { startCoffins, coffinsCommand, coffinsAdvance, isCoffinsPhase } from './
 import { startCarnival, carnivalCommand, carnivalAdvance, isCarnivalPhase } from './carnival.js';
 import { startMidnight, midnightCommand, midnightAdvance, isMidnightPhase } from './midnight.js';
 import { startSeance, seanceCommand, seanceAdvance, isSeancePhase } from './seance.js';
+import { startGrave, graveCommand, graveAdvance, isGravePhase } from './graverobbers.js';
 
 export { GameError };
 
@@ -40,7 +41,7 @@ export function newMatch({ id, code, hostId, moderated = false }) {
     scenario: null, activeRules: [], config: null,
     publicLog: [], privateLog: {}, chats: {},
     day: null, night: null, pendingStatuses: [], gamblerBets: [],
-    winner: null, endReason: null, manualRoles: {}, hostTransferVotes: [], M: null, X: null, C: null, K: null, N: null, S: null,
+    winner: null, endReason: null, manualRoles: {}, hostTransferVotes: [], M: null, X: null, C: null, K: null, N: null, S: null, G: null,
   };
 }
 
@@ -136,9 +137,11 @@ export function startMatch(m, rng, now, { forceRoles = null, forceWord = null } 
   if (PRESETS[m.settings.preset]?.coffins) { m.K = null; m.N = null; m.S = null; startCoffins(m, rng, now, { forceRoles }); return; }
   if (PRESETS[m.settings.preset]?.carnival) { m.N = null; m.S = null; startCarnival(m, rng, now); return; }
   if (PRESETS[m.settings.preset]?.midnight) { m.S = null; startMidnight(m, rng, now); return; }
-  if (PRESETS[m.settings.preset]?.seance) { startSeance(m, rng, now); return; }
+  if (PRESETS[m.settings.preset]?.seance) { m.G = null; startSeance(m, rng, now); return; }
+  if (PRESETS[m.settings.preset]?.graverobbers) { m.S = null; m.N = null; startGrave(m, rng, now); return; }
   m.N = null;
   m.S = null;
+  m.G = null;
   m.C = null;
   m.K = null;
   m.X = null;
@@ -617,8 +620,9 @@ export function hostAdvance(m, rng, now, { skipAll = false } = {}) {
   if (isCarnivalPhase(m.phase)) { carnivalAdvance(m, rng, now); return; }
   if (isMidnightPhase(m.phase)) { midnightAdvance(m, rng, now); return; }
   if (isSeancePhase(m.phase)) { seanceAdvance(m, rng, now); return; }
+  if (isGravePhase(m.phase)) { graveAdvance(m, rng, now); return; }
   // Exorcism: the end screen returns the table to the same lobby (settings and scores kept).
-  if (m.phase === 'ENDED' && ['exorcism', 'coffins', 'carnival', 'midnight', 'seance'].includes(m.config?.mode)) { rematch(m, { ready: true }); return; }
+  if (m.phase === 'ENDED' && ['exorcism', 'coffins', 'carnival', 'midnight', 'seance', 'graverobbers'].includes(m.config?.mode)) { rematch(m, { ready: true }); return; }
   switch (m.phase) {
     case 'NIGHT_0_REVEAL': pub(m, 'Night 0 ends.', 'phase'); beginDay(m, now); break;
     case 'DAY_PREP': closeMorning(m, now); break;
@@ -664,6 +668,8 @@ export function rematch(m, { ready = false } = {}) {
   const nMatch = m.nMatch;
   const sScores = m.sScores;
   const sMatch = m.sMatch;
+  const gScores = m.gScores;
+  const gMatch = m.gMatch;
   const fresh = newMatch({ id: m.id, code: m.code, hostId: m.hostId, moderated: m.moderated });
   Object.assign(m, { ...fresh, settings: m.settings, stateVersion: m.stateVersion + 1, phaseSeq: m.phaseSeq + 1 });
   m.phaseId = `LOBBY:${m.phaseSeq}`;
@@ -676,6 +682,8 @@ export function rematch(m, { ready = false } = {}) {
   if (nMatch) m.nMatch = nMatch;
   if (sScores) m.sScores = sScores;
   if (sMatch) m.sMatch = sMatch;
+  if (gScores) m.gScores = gScores;
+  if (gMatch) m.gMatch = gMatch;
   for (const k of keep) {
     const p = addPlayer(m, k);
     p.connected = k.connected;
@@ -700,6 +708,11 @@ export function playerCommand(m, actorId, cmd, rng, now) {
   if (type.startsWith('n.')) {
     if (!m.N || !isMidnightPhase(m.phase)) throw new GameError('That window has closed.', 'STALE');
     midnightCommand(m, p, type, payload, rng, now);
+    return;
+  }
+  if (type.startsWith('g.')) {
+    if (!m.G || !isGravePhase(m.phase)) throw new GameError('That window has closed.', 'STALE');
+    graveCommand(m, p, type, payload, rng, now);
     return;
   }
   if (type.startsWith('s.')) {
@@ -928,7 +941,7 @@ export function chatChannels(m, p) {
   if (!p || m.phase === 'LOBBY' || m.phase === 'ENDED') return out;
   const remote = m.settings.transport === 'remote';
   const muted = p.statuses.some((s) => s.type === 'MUTE');
-  const inDay = isDayPhase(m.phase) || (isMissionPhase(m.phase) && !['M_REVEAL', 'M_NIGHT'].includes(m.phase)) || isExorcismPhase(m.phase) || isCoffinsPhase(m.phase) || isCarnivalPhase(m.phase) || m.phase === 'N_DAY' || m.phase === 'N_VOTE' || (isSeancePhase(m.phase) && m.phase !== 'S_INTRO');
+  const inDay = isDayPhase(m.phase) || (isMissionPhase(m.phase) && !['M_REVEAL', 'M_NIGHT'].includes(m.phase)) || isExorcismPhase(m.phase) || isCoffinsPhase(m.phase) || isCarnivalPhase(m.phase) || m.phase === 'N_DAY' || m.phase === 'N_VOTE' || (isSeancePhase(m.phase) && m.phase !== 'S_INTRO') || (isGravePhase(m.phase) && m.phase !== 'G_INTRO');
   if (remote && inDay) {
     if (hasRule(m, 'FOG_OF_WAR')) {
       const seats = [...m.players].sort((a, b) => a.seat - b.seat);

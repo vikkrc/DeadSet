@@ -533,6 +533,15 @@ ROLES.S_MEDIUM = { id: 'S_MEDIUM', name: 'Medium', set: 'seance', alignment: 'NO
 ROLES.S_DECEIVER = { id: 'S_DECEIVER', name: 'Deceiver', set: 'seance', alignment: 'DEATH', glyph: 'charlatan', when: 'Always',
   summary: 'A second spirit in a living body. You know the truth, and you lie.',
   detail: 'You look exactly like a Medium. A few times a game, swap the Ghost\'s vision to another Medium for one of your own. You win if the candles burn out, or if the table names the wrong player.' };
+ROLES.G_UNDERTAKER = { id: 'G_UNDERTAKER', name: 'Undertaker', set: 'graverobbers', alignment: 'INDEPENDENT', glyph: 'undertaker', when: 'Always',
+  summary: 'You hold the burial register. Give your crew one word and one number.',
+  detail: 'Only you and the other Undertaker know what lies under every stone. Your word should link that many of your crew\'s graves, and lead nowhere near Death\'s.' };
+ROLES.G_DIGGER = { id: 'G_DIGGER', name: 'Gravedigger', set: 'graverobbers', alignment: 'INDEPENDENT', glyph: 'undertaker', when: 'Always',
+  summary: 'Read your Undertaker\'s sign and dig up your crew\'s relics.',
+  detail: 'Talk it over, then vote for a grave on your phone. Your relic: dig on. An empty grave or the other crew\'s relic: the turn passes. Death\'s grave: your crew loses.' };
+PRESETS.graverobbers = { id: 'graverobbers', name: 'Dead Set: Graverobbers', min: 4, max: 12, pool: [], dreams: false,
+  rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, graverobbers: true,
+  blurb: 'Two crews of grave robbers, the Moon and the Sun, dig a cemetery of words or icons for their deity\'s relics. Only the Undertakers know what lies beneath. One grave is Death\'s.' };
 PRESETS.seance = { id: 'seance', name: 'Dead Set: Séance', min: 4, max: 10, pool: [], dreams: false,
   rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, seance: true,
   blurb: 'A murdered Ghost who cannot speak sends visions; the Mediums read them to find who, where and why. A Deceiver among them swaps visions for lies.' };
@@ -551,8 +560,9 @@ export const MODES = {
   carnival: { id: 'carnival', roleSets: ['carnival'], rules: false, dreams: false },
   midnight: { id: 'midnight', roleSets: ['midnight'], rules: false, dreams: false },
   seance: { id: 'seance', roleSets: ['seance'], rules: false, dreams: false },
+  graverobbers: { id: 'graverobbers', roleSets: ['graverobbers'], rules: false, dreams: false },
 };
 /** The mode a preset belongs to. */
-export const modeOf = (presetId) => (PRESETS[presetId]?.missions ? 'missions' : PRESETS[presetId]?.exorcism ? 'exorcism' : PRESETS[presetId]?.coffins ? 'coffins' : PRESETS[presetId]?.carnival ? 'carnival' : PRESETS[presetId]?.midnight ? 'midnight' : PRESETS[presetId]?.seance ? 'seance' : 'classic');
+export const modeOf = (presetId) => (PRESETS[presetId]?.missions ? 'missions' : PRESETS[presetId]?.exorcism ? 'exorcism' : PRESETS[presetId]?.coffins ? 'coffins' : PRESETS[presetId]?.carnival ? 'carnival' : PRESETS[presetId]?.midnight ? 'midnight' : PRESETS[presetId]?.seance ? 'seance' : PRESETS[presetId]?.graverobbers ? 'graverobbers' : 'classic');
 /** Can this role be dealt in this mode? */
 export const roleInMode = (roleId, mode) => !!ROLES[roleId] && MODES[mode].roleSets.includes(ROLES[roleId].set);

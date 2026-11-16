@@ -1,6 +1,6 @@
 # Dead Set: Graverobbers — rules and game spec (DRAFT)
 
-**Status: design draft for Beta 7 (added 2026-11-17). Nothing here is built.** A team word-association game, a cousin of Codenames, played with **words** or with **icons**. Open points are marked *Decide* with a recommendation.
+**Status: built for Beta 7 (2026-11-17).** The recommendations of §11 were taken: no 0 or unlimited signs, Undertakers see the votes live, no 3-player variant yet, a 45 s timer per vote. A team word-association game, a cousin of Codenames, played with **words** or with **icons**. Open points are marked *Decide* with a recommendation.
 
 Midnight in an old cemetery. Two crews of grave robbers serve two rival deities, the **Moon** (the Blue crew) and the **Sun** (the Gold crew). Somewhere under the 25 headstones lie the relics each deity needs to be summoned. Only each crew's **Undertaker** has the burial register and knows which grave holds what. The Undertaker may give one word and one number; the crew digs. One grave belongs to **Death**: open it and your crew is finished.
 
@@ -44,6 +44,7 @@ Midnight in an old cemetery. Two crews of grave robbers serve two rival deities,
    - **The most-voted grave is dug up.**
    - **A tie** between graves is settled by a coin flip (the existing coin scene, with a Sun and a Moon on its faces).
    - If **Stop digging** wins the vote, the crew passes (see 4).
+   - **As built:** a unanimous vote digs at once; a split vote stays open, so diggers can change their minds, until the timer runs out or the host closes it.
    - A crew with one digger: their vote decides alone.
 3. **What the grave holds** (a shared scene on the TV and every phone: the spade bites, the lid creaks, the light spills out):
    - **Your relic:** it rises into your crew's altar. If digs remain, the crew votes again. With no digs left, the turn passes.
@@ -89,7 +90,7 @@ Midnight in an old cemetery. Two crews of grave robbers serve two rival deities,
 ## 7. Content
 
 - **Words:** Exorcism's pool has 340 words in 17 categories, in 7 languages. Graverobbers draws without categories. The proper-noun categories (celebrities, cartoons, video games, game heroes, movies, heroes, landmarks) are **off by default**, and a lobby switch adds them.
-  - **Target: at least 600 common words per language.** Add new categories for Exorcism too, which benefits both modes: Tools, Body, Weather, Music, Sea, Castle, Kitchen, Professions II, Fabrics and colours, Night and magic, Science, Sports, Buildings, Plants.
+  - **Built:** 14 new common categories of 20 words in all 7 languages (Tools, The body, The sky, Music, The sea, The castle, The kitchen, Science, Play and sport, Buildings, Plants, Magic, Colours and cloth, Crime), so 480 common words per language (620 with famous names). Exorcism draws them too. Target for later: 600+ common words.
   - **Prefer words with two meanings** (*Bark, Crane, Organ, Seal, Bat, Pitch, Key, Spring*), because they make the best signs.
 - **Icons:** the current emblem library, about 120 pencil drawings (roles, Dreams, mission cards, parcels, side missions, Séance motifs). Leave out near-duplicates (the shields, the check and cross marks) and the role emblems that only make sense with their names. The icon pool grows with every future emblem.
 - **Language:** word mode deals the words in the table's language. Icons are language-free.
@@ -99,7 +100,7 @@ Midnight in an old cemetery. Two crews of grave robbers serve two rival deities,
 | Character / thing | Art |
 |---|---|
 | The Undertaker (captain) | the **Undertaker** |
-| The diggers | the Coffins **Gravedigger** |
+| The diggers | the Coffins **Gravedigger** (where a language uses the same word for the Undertaker card, the diggers are called grave robbers) |
 | The Moon crew / the Sun crew | the **Moon** and **Sun** emblems |
 | Death's grave | **Death** |
 | An empty grave | the **Headstone**, plus a moth (Séance motif) |

@@ -3,6 +3,8 @@ export default {
   and: 'y',
   numbers: ['ningún', 'un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'],
   roles: {
+    G_UNDERTAKER: { name: "Enterrador", when: "Siempre", summary: "Tienes el registro de sepulturas. Da a tu cuadrilla una palabra y un número.", detail: "Solo tú y el otro Enterrador sabéis qué yace bajo cada piedra. Tu palabra debe unir tantas tumbas de tu cuadrilla y llevar lejos de la tumba de la Muerte." },
+    G_DIGGER: { name: "Saqueador", when: "Siempre", summary: "Lee la señal de tu Enterrador y desentierra las reliquias de tu cuadrilla.", detail: "Habladlo y vota por una tumba en tu móvil. Vuestra reliquia: seguid cavando. Una tumba vacía o una reliquia de la otra cuadrilla: el turno pasa. La tumba de la Muerte: vuestra cuadrilla pierde." },
     S_GHOST: { name: "Fantasma", when: "Siempre", summary: "Te asesinaron. Sabes quién, dónde y por qué, y no puedes hablar.", detail: "Envía a cada lector una visión para su fila. Con una mancha fría, escarcha una visión que no es tuya." },
     S_MEDIUM: { name: "Médium", when: "Siempre", summary: "Lee las visiones y enciende velas sobre la verdad.", detail: "Cada ronda lees una fila: quién, dónde o por qué. Resolved las tres antes de que se consuman las velas y luego nombrad al Impostor." },
     S_DECEIVER: { name: "Impostor", when: "Siempre", summary: "Un segundo espíritu en un cuerpo vivo. Conoces la verdad, y mientes.", detail: "Pareces exactamente un Médium. Unas pocas veces por partida, cambias la visión del Fantasma de otro lector por una tuya. Ganas si se consumen las velas o si la mesa nombra al jugador equivocado." },
@@ -160,6 +162,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Fantasmas vengativos', text: 'Cada jugador eliminado puede emitir una papeleta fantasma de peso 1 por día.', enforcement: 'Los fantasmas no pueden nominar, usar poderes ni influir en la Regla de mayoría.' },
   },
   presets: {
+    graverobbers: { name: "Dead Set: Saqueadores de tumbas", blurb: "Dos cuadrillas de saqueadores, la Luna y el Sol, excavan un cementerio de palabras o iconos en busca de las reliquias de su deidad. Solo los enterradores saben qué hay debajo. Una tumba es de la Muerte." },
     seance: { name: "Dead Set: Sesión", blurb: "Un Fantasma asesinado y mudo envía visiones; los Médiums leen en ellas quién, dónde y por qué. Un Impostor entre ellos cambia visiones por mentiras." },
     midnight: { name: "Dead Set: Medianoche", blurb: "Una noche, una votación. Las cartas cambian de manos en la oscuridad; al amanecer eres lo que tienes delante. Encuentra a la Muerte, o sé ella." },
     carnival: { name: "Dead Set: Carnaval", blurb: "Un baile de máscaras de faroles y memoria. Cada uno lleva una carta de rol como máscara, barajada hasta que nadie está seguro. Reclama máscaras y reúne Almas; 13 ganan." },
@@ -190,6 +193,15 @@ export default {
     'La Muerte votó con el pueblo. Cómo no.',
   ],
   guide: {
+    graveH: "Dead Set: Saqueadores de tumbas",
+    grave: `<p>Un juego por equipos con palabras (o iconos) para 4 a 12 jugadores, unos 15 minutos. Dos cuadrillas de saqueadores, la <b>Luna</b> y el <b>Sol</b>, excavan un cementerio de 25 lápidas en busca de las reliquias que invocarán a su deidad. La cuadrilla que gana a cara o cruz tiene 9 reliquias bajo tierra, la otra 8; 7 tumbas están vacías y una es de la <b>Muerte</b>.</p>
+<ol>
+<li><b>Los Enterradores.</b> Uno por cuadrilla. Solo ellos ven el registro de sepulturas: qué yace bajo cada piedra.</li>
+<li><b>La señal.</b> En su turno, el Enterrador da una palabra y un número: <i>«Océano · 3»</i>. La palabra no puede estar en el tablero. Después no dice nada más.</li>
+<li><b>La excavación.</b> Los saqueadores lo hablan y votan en sus móviles. Los más votos cavan; en caso de empate decide la moneda. Vuestra reliquia: seguid cavando, hasta el número. Una tumba vacía, o una reliquia de la otra cuadrilla (ahora es suya): el turno pasa. La tumba de la Muerte: vuestra cuadrilla pierde al instante.</li>
+<li><b>Parar.</b> La cuadrilla puede votar parar. Si para antes de llegar al número, guarda una excavación extra para el turno siguiente (no se acumula).</li>
+</ol>
+<p>Gana la primera cuadrilla con todas sus reliquias desenterradas. En el móvil cambias entre <b>Lápidas</b> (palabras o iconos) y <b>Mapa</b> (el tablero de un vistazo). En el vestíbulo: palabras o iconos, nombres famosos sí o no, cuadrillas y enterradores al azar o elegidos, señales escritas o habladas.</p>`,
     seanceH: "Dead Set: Sesión",
     seance: `<p>Un misterio de asesinato cooperativo con un traidor. De 4 a 10 jugadores, unos 30 minutos. Un jugador es el <b>Fantasma</b>: sabe quién lo mató, dónde y por qué, y no puede hablar. Todos los demás son lectores.</p>
 <ol>

@@ -7,6 +7,7 @@ import { AVATAR_PARTS } from '../engine/content.js';
 import { randomTeam } from '../engine/missions.js';
 import { carnivalBelief } from '../engine/carnival.js';
 import { fit, VISIONS } from '../engine/seancecontent.js';
+import { tileKeys, keySign, signKey, signProblem } from '../engine/graverobbers.js';
 
 export const BOT_NAMES = ['Ash', 'Bram', 'Cass', 'Dorian', 'Edda', 'Finch', 'Greer', 'Hollis', 'Isolde', 'Jem', 'Kestrel', 'Lark',
   'Mabel', 'Nell', 'Orrin', 'Perpetua', 'Quill', 'Rook', 'Silas', 'Tamsin', 'Ursa', 'Vesper', 'Wren', 'Yarrow', 'Zeke'];
@@ -44,7 +45,7 @@ export function botDecide(m, botId, rng) {
       if (a.type === 'swap' && a.snatcher && a.choice == null && a.targets?.length && chance(rng, 0.5)) return { cmd: { type: 'dream.swap', payload: { target: pick(rng, a.targets) } } };
       return null;
     case 'NIGHT_ACTIONS': return nightMove(m, v, rng);
-    default: return m.X ? exorcismMove(m, v, rng) : m.S ? seanceMove(m, v, rng) : m.N ? midnightMove(m, v, rng) : m.K ? carnivalMove(m, v, rng) : m.C ? coffinsMove(m, v, rng) : m.M ? missionMove(m, v, rng) : null;
+    default: return m.X ? exorcismMove(m, v, rng) : m.G ? graveMove(m, v, rng) : m.S ? seanceMove(m, v, rng) : m.N ? midnightMove(m, v, rng) : m.K ? carnivalMove(m, v, rng) : m.C ? coffinsMove(m, v, rng) : m.M ? missionMove(m, v, rng) : null;
   }
 }
 
@@ -81,6 +82,37 @@ function exorcismMove(m, v, rng) {
 // early, so it gets dug), bid what they believe is safe (their own buried gold
 // plus a share of the table) and sometimes bluff a raise, dig the plots of
 // players who passed rather than those who bid high, and wager like the dice.
+// Graverobbers: an Undertaker bot names the group (category, or an icon's concept tag) holding most of its crew's
+// closed graves and none near Death; digger bots vote for closed graves in that group, and stop when none is left.
+function graveMove(m, v, rng) {
+  const a = v.action || {};
+  const G = m.G;
+  switch (a.type) {
+    case 'gintro': return a.done ? null : { cmd: { type: 'g.ack', payload: {} } };
+    case 'gsign': {
+      if (!chance(rng, 0.5)) return null;
+      const crew = G.turn;
+      const count = {};
+      const bad = new Set(G.tiles.filter((t) => !t.open && t.k === 'D').flatMap(tileKeys));
+      for (const t of G.tiles) if (!t.open && t.k === crew) for (const k of tileKeys(t)) if (!bad.has(k)) count[k] = (count[k] || 0) + 1;
+      const ranked = Object.keys(count).sort((x, y) => count[y] - count[x]);
+      for (const k of ranked) {
+        const word = keySign(k);
+        if (!a.typed || !signProblem(m, word)) return { cmd: { type: 'g.sign', payload: { word, n: Math.min(3, count[k]) } } };
+      }
+      return { cmd: { type: 'g.sign', payload: { word: 'beyond', n: 1 } } };
+    }
+    case 'gvote': {
+      if (a.choice != null || !chance(rng, 0.45)) return null;
+      const key = signKey(G.sign?.word ?? '');
+      const hits = G.tiles.map((t, i) => ({ t, i })).filter(({ t }) => !t.open && tileKeys(t).includes(key));
+      if (!hits.length) return { cmd: { type: 'g.vote', payload: { tile: G.used > 0 || chance(rng, 0.5) ? 'stop' : G.tiles.findIndex((t) => !t.open) } } };
+      return { cmd: { type: 'g.vote', payload: { tile: hits[0].i } } };
+    }
+    default: return null;
+  }
+}
+
 // Séance: the Ghost sends the vision that fits the truth best and the rest of the row least,
 // and frosts a vision it did not send; Mediums light the card their row's visions fit best;
 // the Deceiver swaps in a vision that fits a near miss, and lights plausibly wrong.

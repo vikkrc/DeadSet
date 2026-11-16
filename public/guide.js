@@ -116,6 +116,15 @@ export const GUIDE_EN = {
 <li><b>Candles.</b> Each reader lights a candle on a card in their row, or holds it. The card with the most candles is put to the spirit. Right: the row is solved. Wrong: the card is struck. Every round burns a candle of the séance clock.</li>
 </ol>
 <p>From five players a <b>Deceiver</b> hides among the readers. It knows the truth and, a few times a game, swaps another reader's vision for a lie. Solve all three rows before the candles burn out, then name the Deceiver: right is a full victory, wrong a hollow one that the Deceiver shares. If the clock burns out, the Deceiver wins (with one row left, everyone first gets a <b>last breath</b>). The end screen replays every round: the true visions, the swaps and the candles.</p>`,
+  graveH: 'Dead Set: Graverobbers',
+  grave: `<p>A team game of words (or icons) for 4–12 players, about 15 minutes. Two crews of grave robbers, the <b>Moon</b> and the <b>Sun</b>, dig a cemetery of 25 headstones for the relics that will summon their deity. The crew that wins the coin flip has 9 relics in the ground, the other 8; 7 graves are empty, and one is <b>Death's</b>.</p>
+<ol>
+<li><b>The Undertakers.</b> One per crew. Only they see the burial register: what lies under every stone.</li>
+<li><b>The sign.</b> On their turn, the Undertaker gives one word and one number: <i>“Ocean · 3”</i>. The word may not be on the board. Then they say nothing more.</li>
+<li><b>The dig.</b> The diggers talk it over and vote on their phones. The most votes digs; a tie goes to the coin. Your relic: dig on, up to the number. An empty grave, or the other crew's relic (it is theirs now): the turn passes. Death's grave: your crew loses at once.</li>
+<li><b>Stopping.</b> The crew may vote to stop. Stopping before the number is reached keeps one bonus dig for next turn (it never stacks).</li>
+</ol>
+<p>The first crew whose relics are all dug up wins. Switch the phone between <b>Stones</b> (words or icons) and <b>Map</b> (the board at a glance). In the lobby: words or icons, famous names on or off, crews and Undertakers random or chosen, typed or spoken signs.</p>`,
   carnivalH: 'Dead Set: Carnival',
   carnival: `<p>A masked ball of bluff and memory for 4–12 players, chosen in the lobby. Every mask is a familiar role card.</p>
 <ol>
@@ -162,7 +171,7 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   return `<div class="guide">
   <header class="phase-head"><span class="kicker">${G.kicker}</span><h1>${G.title}</h1>
     <p class="scenario">${G.intro}</p></header>
-  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}<a class="tag" href="#g11">${G.sidesH}</a><a class="tag" href="#g12">${G.missionsH}</a><a class="tag" href="#g13">${G.exorcismH}</a><a class="tag" href="#g14">${G.coffinsH}</a><a class="tag" href="#g15">${G.carnivalH}</a><a class="tag" href="#g16">${G.midnightH}</a><a class="tag" href="#g17">${G.seanceH}</a></nav>
+  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}<a class="tag" href="#g11">${G.sidesH}</a><a class="tag" href="#g12">${G.missionsH}</a><a class="tag" href="#g13">${G.exorcismH}</a><a class="tag" href="#g14">${G.coffinsH}</a><a class="tag" href="#g15">${G.carnivalH}</a><a class="tag" href="#g16">${G.midnightH}</a><a class="tag" href="#g17">${G.seanceH}</a><a class="tag" href="#g18">${G.graveH}</a></nav>
   <section id="g0"><h2>${G.basicsH}</h2>${G.basics}</section>
   <section id="g1"><h2>${G.roundH}</h2>${G.round}</section>
   <section id="g2"><h2>${G.winH}</h2>${G.win}</section>
@@ -194,5 +203,6 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   <section id="g15"><h2>${G.carnivalH}</h2>${G.carnival}</section>
   <section id="g16"><h2>${G.midnightH}</h2>${G.midnight}</section>
   <section id="g17"><h2>${G.seanceH}</h2>${G.seance}</section>
+  <section id="g18"><h2>${G.graveH}</h2>${G.grave}</section>
   </div>`;
 }

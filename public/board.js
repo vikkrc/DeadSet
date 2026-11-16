@@ -8,6 +8,7 @@ import { coffinsBoard, coffinCard } from './coffins.js';
 import { carnivalBoard } from './carnival.js';
 import { midnightBoard } from './midnight.js';
 import { seanceBoard } from './seance.js';
+import { graveBoard } from './graverobbers.js';
 import { cardArt, roleEmblemId } from './cards.js';
 import { missionBoardStage, missionBoardRing, gridHtml, hunchArrowsSvg, hunchLegend } from './missions.js';
 
@@ -41,7 +42,8 @@ export function activeRuleNotes(v) {
 export function moodFor(v) {
   switch (v.phase) {
     case 'LOBBY': return 'lobby';
-    case 'ENDED': if (v.winner === 'SEANCE') return { full: 'endLiving', hollow: 'endDraw', deceiver: 'endDeath', lost: 'endDraw' }[v.seance?.result] ?? 'endDraw';
+    case 'ENDED': if (v.winner === 'GRAVEROBBERS') return v.graverobbers?.cause === 'death' ? 'endDeath' : 'endLiving';
+      if (v.winner === 'SEANCE') return { full: 'endLiving', hollow: 'endDraw', deceiver: 'endDeath', lost: 'endDraw' }[v.seance?.result] ?? 'endDraw';
       if (v.winner === 'MIDNIGHT') { const sd = v.midnight?.winners?.sides ?? []; return sd.includes('JESTER') ? 'endJester' : sd.includes('LIVING') ? 'endLiving' : sd.includes('DEATH') ? 'endDeath' : 'endDraw'; }
       return { DEMON: 'endDeath', DEATH: 'endDeath', NON_DEATH: 'endLiving', JESTER: 'endJester', LOVERS: 'endLovers', CULT: 'endCult', RIPPER: 'endRipper' }[v.winner] ?? 'endDraw';
     case 'NIGHT_0_REVEAL': return 'ceremony';
@@ -54,6 +56,9 @@ export function moodFor(v) {
     case 'M_NIGHT': return 'mCandle';
     case 'M_LAST_STAND': return 'mStand';
     case 'M_RECKONING': return 'mReckon';
+    case 'G_INTRO': return 'gYard';
+    case 'G_SIGN': return 'gSign';
+    case 'G_DIG': return 'gDig';
     case 'S_INTRO': return 'sGather';
     case 'S_VISION': return 'sReach';
     case 'S_DISCUSS': return 'sTalk';
@@ -149,8 +154,8 @@ export function boardScreen(v, h) {
           ${classic ? `<span class="kicker">${t('Rule cards')}</span>
           <div class="deckrow">${ruleCards}</div>` : ''}
           ${v.mode === 'coffins' ? `<div class="c-lobbyhand">${Array.from({ length: s.c?.coffins ?? 4 }, (_, i) => coffinCard(i === (s.c?.coffins ?? 4) - 1 ? 'C' : 'G')).join('')}</div><p class="small muted">${th('Each player: {g} Gold and one Curse.', { g: (s.c?.coffins ?? 4) - 1 })}</p>` : ''}
-          ${['exorcism', 'coffins', 'carnival', 'midnight', 'seance'].includes(v.mode) ? '' : `<span class="kicker">${t('Story')}</span>`}
-          ${['exorcism', 'coffins', 'carnival', 'midnight', 'seance'].includes(v.mode) ? '' : `<p class="scenario">${s.scenario.mode === 'manual' && s.scenario.who ? esc(`${scen('WHO', s.scenario.who)} · ${scen('WHERE', s.scenario.where)} · ${scen('WHY', s.scenario.why)}`) : t('Dealt when the match begins.')}</p>`}
+          ${['exorcism', 'coffins', 'carnival', 'midnight', 'seance', 'graverobbers'].includes(v.mode) ? '' : `<span class="kicker">${t('Story')}</span>`}
+          ${['exorcism', 'coffins', 'carnival', 'midnight', 'seance', 'graverobbers'].includes(v.mode) ? '' : `<p class="scenario">${s.scenario.mode === 'manual' && s.scenario.who ? esc(`${scen('WHO', s.scenario.who)} · ${scen('WHERE', s.scenario.where)} · ${scen('WHY', s.scenario.why)}`) : t('Dealt when the match begins.')}</p>`}
         </section>
       </div></main>`;
   }
@@ -160,6 +165,7 @@ export function boardScreen(v, h) {
   if (v.mode === 'carnival' && v.carnival) return carnivalBoard(v, { header });
   if (v.mode === 'midnight' && v.midnight) return midnightBoard(v, { header, ring });
   if (v.mode === 'seance' && v.seance) return seanceBoard(v, { header });
+  if (v.mode === 'graverobbers' && v.graverobbers) return graveBoard(v, { header });
 
   // ── 1 · Living table + 2 · sky + 6 · threads + 17 · plaques ────────────
   const players = [...v.players].sort((a, b) => a.seat - b.seat);

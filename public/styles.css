@@ -4212,3 +4212,204 @@ button.vcard { cursor: zoom-in; }
   .srow-cards { gap: 8px; }
   .srow-cards .scard { aspect-ratio: 11 / 13.6; }
 }
+
+/* ═══ Dead Set: Graverobbers ═════════════════════════════════════════════
+   A cemetery at midnight. Headstones of cold stone; the Moon crew in lapis,
+   the Sun crew in gilt; empty graves dark earth; Death's grave black. */
+:root { --lapis: #8db4ef; --lapis-2: #2f548f; --lapis-ink: #b9d2f7; --stone: #6b6d74; --stone-2: #3c3e45; --earth: #2a2017; }
+.c-B { --crew: var(--lapis); --crew-2: var(--lapis-2); }
+.c-G { --crew: var(--gilt-hi); --crew-2: #7a5a22; }
+
+/* the stones */
+.g-yard { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; margin: 8px 0; }
+.g-stone { position: relative; aspect-ratio: 4 / 5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 16% 5% 10%; min-width: 0;
+  border: 0; border-radius: 48% 48% 5px 5px / 34% 34% 5px 5px; color: #17181c; font: inherit; cursor: default;
+  background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.16), transparent 60%), linear-gradient(180deg, var(--stone), var(--stone-2));
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.18), inset 0 -10px 14px rgba(0, 0, 0, 0.35), 0 6px 10px -4px #000; transition: transform 0.25s var(--ease), box-shadow 0.25s, filter 0.3s; }
+.g-stone::before { content: ''; position: absolute; inset: 5% 9% auto; height: 14%; border-radius: 50% 50% 0 0; border: 1px solid rgba(0, 0, 0, 0.35); border-bottom: 0; opacity: 0.7; }
+.g-stone::after { content: ''; position: absolute; left: -6%; right: -6%; bottom: -5px; height: 8px; border-radius: 50%; background: radial-gradient(ellipse, rgba(20, 14, 8, 0.85), transparent 70%); z-index: -1; }
+button.g-stone { cursor: pointer; }
+button.g-stone:active { transform: scale(0.96); }
+.gs-word { max-width: 100%; text-align: center; font: 700 clamp(7.5px, 2.15vw, 12px)/1.05 var(--text); letter-spacing: 0.04em; text-transform: uppercase; color: #1d1e23; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.28); overflow-wrap: anywhere; hyphens: auto; }
+.gs-word.small { font-size: clamp(6px, 1.6vw, 9px); color: currentColor; opacity: 0.85; text-shadow: none; }
+.gs-icon { display: grid; place-items: center; width: 78%; }
+.gs-icon .emblem { width: 100%; height: auto; color: #1b1c21; --paper: #5a5c63; stroke-width: 2.6; filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.25)); }
+.g-stone.sel { transform: translateY(-4px); box-shadow: 0 0 0 2px var(--gilt-hi), 0 0 22px var(--glow), 0 8px 14px -4px #000; }
+.g-turn-B .g-stone.sel, .c-B .g-stone.sel { box-shadow: 0 0 0 2px var(--lapis), 0 0 22px rgba(141, 180, 239, 0.5), 0 8px 14px -4px #000; }
+.gs-votes { position: absolute; left: 0; right: 0; bottom: 3px; display: flex; justify-content: center; flex-wrap: wrap; gap: 1px; }
+.g-disc { width: 24px; height: 24px; border-radius: 50%; overflow: hidden; display: inline-grid; place-items: center; flex: none; background: var(--ink-2); border: 1px solid var(--gilt-2); }
+.g-disc svg { width: 100%; height: 100%; }
+.g-disc b { font: 600 11px var(--text); color: var(--bone); }
+.g-disc.xs { width: 16px; height: 16px; }
+.g-disc.xs b { font-size: 8px; }
+.g-disc.sm { width: 28px; height: 28px; }
+
+/* the burial register (Undertakers): bands on the closed stones */
+.g-stone.reg.k-B { box-shadow: inset 0 0 0 3px var(--lapis), inset 0 -10px 14px rgba(0, 0, 0, 0.3), 0 6px 10px -4px #000; background: radial-gradient(circle at 50% 30%, rgba(141, 180, 239, 0.4), transparent 65%), linear-gradient(180deg, #5f6c84, #333c4e); }
+.g-stone.reg.k-G { box-shadow: inset 0 0 0 3px var(--gilt-hi), inset 0 -10px 14px rgba(0, 0, 0, 0.3), 0 6px 10px -4px #000; background: radial-gradient(circle at 50% 30%, rgba(233, 194, 122, 0.4), transparent 65%), linear-gradient(180deg, #7a6c52, #43392a); }
+.g-stone.reg.k-N { opacity: 0.62; }
+.g-stone.reg.k-D { background: linear-gradient(180deg, #2a2626, #090707); box-shadow: inset 0 0 0 3px #8e1b1f, 0 6px 10px -4px #000; }
+.g-stone.reg.k-D .gs-word { color: #d8c7c3; text-shadow: none; }
+.g-stone.reg.k-D .gs-icon .emblem { color: #d8c7c3; --paper: #1a1515; }
+.gs-skull { position: absolute; top: 6%; right: 8%; width: 26%; color: #e45d50; }
+.gs-skull .emblem { width: 100%; height: auto; --paper: #0f0b0b; }
+
+/* open graves */
+.g-stone.open { cursor: default; color: var(--bone); }
+.gs-open { display: grid; place-items: center; width: 70%; position: relative; }
+.gs-open > .emblem { width: 100%; height: auto; }
+.gs-sig { position: absolute; right: -14%; top: -14%; width: 40%; font-style: normal; }
+.gs-sig .emblem { width: 100%; height: auto; }
+.g-stone.open.k-B { background: radial-gradient(circle at 50% 45%, rgba(141, 180, 239, 0.55), rgba(20, 30, 52, 0.95) 70%), #10182a; box-shadow: inset 0 0 0 2px var(--lapis), 0 0 16px rgba(141, 180, 239, 0.35); color: var(--lapis-ink); --paper: #16223a; }
+.g-stone.open.k-G { background: radial-gradient(circle at 50% 45%, rgba(233, 194, 122, 0.55), rgba(48, 34, 12, 0.95) 70%), #2a1d0a; box-shadow: inset 0 0 0 2px var(--gilt-hi), 0 0 16px rgba(233, 194, 122, 0.35); color: #f6dfa8; --paper: #2f210d; }
+.g-stone.open.k-N { background: radial-gradient(circle at 50% 60%, #3a2c1f, var(--earth) 70%); box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.7); color: #a8957b; --paper: var(--earth); }
+.g-stone.open.k-D { background: radial-gradient(circle at 50% 50%, #3b0c0e, #050303 70%); box-shadow: inset 0 0 0 2px #8e1b1f, 0 0 20px rgba(200, 30, 30, 0.45); color: #f1e4c8; --paper: #050303; }
+.g-stone.open .emblem { --paper: inherit; }
+.g-stone.gift::before { border-color: currentColor; border-style: dashed; }
+
+/* map view: the board at a glance */
+.g-yard.map { gap: 5px; }
+.g-yard.map .g-stone { aspect-ratio: 1; padding: 10%; }
+.g-yard.map .g-stone::before { display: none; }
+.g-yard.map .gs-open { width: 60%; }
+
+/* altars, the sign, the bar */
+.g-altar { display: flex; align-items: center; gap: 6px; color: var(--crew); }
+.ga-sig { width: 30px; height: 30px; flex: none; display: grid; place-items: center; }
+.ga-sig .emblem { width: 100%; height: 100%; --paper: var(--ink); }
+.ga-beads { display: flex; flex-wrap: wrap; gap: 3px; max-width: 70px; }
+.ga-beads i { width: 7px; height: 7px; transform: rotate(45deg); border: 1px solid var(--crew-2); }
+.ga-beads i.on { background: var(--crew); border-color: var(--crew); box-shadow: 0 0 6px var(--crew); }
+.g-altar > b { font: 600 15px/1 var(--bit); color: var(--crew); }
+.g-altar > b small { font-size: 11px; opacity: 0.7; }
+.ga-bonus { width: 18px; height: 18px; color: var(--crew); }
+.ga-bonus svg { width: 100%; height: 100%; }
+.g-altar.turn .ga-sig { filter: drop-shadow(0 0 8px var(--crew)); animation: gPulse 2.4s ease-in-out infinite; }
+@keyframes gPulse { 50% { transform: scale(1.08); } }
+.g-bar { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin: 2px 0 6px; padding: 7px 10px; border: 1px solid var(--iron); border-radius: 4px; background: var(--ink-2); }
+.g-bar .g-altar.sm .ga-beads { max-width: 52px; }
+.gb-you { flex: 1; text-align: center; font: italic 400 13.5px/1.15 var(--text); color: var(--bone-2); }
+.g-bar.c-B .gb-you { color: var(--lapis); }
+.g-bar.c-G .gb-you { color: var(--gilt-hi); }
+.g-sign { display: flex; align-items: center; gap: 10px; margin: 6px 0; padding: 8px 12px; border: 1px solid var(--crew); border-radius: 4px; background: linear-gradient(90deg, color-mix(in srgb, var(--crew) 14%, var(--ink-2)), var(--ink-2)); }
+.gsn-sig { width: 30px; height: 30px; color: var(--crew); flex: none; }
+.gsn-sig .emblem { width: 100%; height: 100%; --paper: var(--ink-2); }
+.gsn-word { flex: 1; min-width: 0; font: 600 24px/1 var(--black); color: var(--bone); padding-bottom: 0.08em; overflow-wrap: anywhere; }
+.gsn-n { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--crew); color: var(--ink); font: 700 18px/1 var(--bit); }
+.gsn-digs { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.gsn-digs > i { display: none; }
+.gsn-digs { flex-direction: row; flex-wrap: wrap; justify-content: flex-end; max-width: 92px; }
+.gsn-digs i { display: inline-block; width: 9px; height: 13px; border-radius: 4px 4px 1px 1px; border: 1px solid var(--crew); background: var(--crew); }
+.gsn-digs i.used { background: transparent; opacity: 0.5; }
+.gsn-digs i.bonus { border-style: dashed; }
+.gsn-digs small { width: 100%; text-align: right; font: italic 400 11.5px var(--text); color: var(--bone-2); }
+.g-tools { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 2px 0; }
+.g-view { width: auto; }
+.g-view button { min-height: 32px; padding: 4px 12px; }
+
+/* the Undertaker's composer */
+.g-composer { display: grid; gap: 8px; margin: 4px 0 8px; }
+.g-input { text-align: center; font: 600 22px/1.2 var(--black); letter-spacing: 0.02em; }
+.g-nums { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 4px; }
+.g-num { aspect-ratio: 1; border: 1px solid var(--iron); border-radius: 50%; background: var(--ink-2); color: var(--bone-2); font: 700 15px/1 var(--bit); cursor: pointer; }
+.g-num.on { background: var(--gilt-hi); color: var(--ink); border-color: var(--gilt-hi); box-shadow: 0 0 12px var(--glow); }
+
+/* the crews */
+.g-crews, .g-crewedit { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 8px 0; }
+.g-crews section, .g-crewedit section { padding: 10px; border: 1px solid var(--crew-2); border-radius: 4px; background: color-mix(in srgb, var(--crew) 6%, var(--ink-2)); }
+.g-crews section.mine { border-color: var(--crew); box-shadow: 0 0 0 2px color-mix(in srgb, var(--crew) 25%, transparent); }
+.g-crews header, .g-crewedit header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; color: var(--crew); }
+.g-crews header .emblem, .g-crewedit header .emblem { width: 26px; height: 26px; --paper: var(--ink-2); }
+.g-crews header b, .g-crewedit header b { font: 600 18px/1 var(--black); padding-bottom: 0.08em; }
+.g-crews header small { font: italic 400 12px var(--text); color: var(--bone-2); }
+.g-crews ul, .g-crewedit ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+.g-crews li, .g-crewedit li { display: flex; align-items: center; gap: 6px; font: 600 11px/1.2 var(--text); letter-spacing: 0.1em; text-transform: uppercase; color: var(--bone); }
+.g-crews li em, .gt-crew li em { margin-left: auto; font: italic 400 11px var(--text); letter-spacing: 0; text-transform: none; color: var(--crew); }
+.g-crewedit li .btn { margin-left: auto; min-height: 28px; padding: 0 6px; color: var(--bone-2); }
+.g-crewedit li .btn svg { width: 16px; height: 16px; }
+.g-crewedit select { margin-top: 8px; width: 100%; }
+.g-lobbyart { display: flex; justify-content: center; gap: 12px; margin: 10px 0 14px; }
+.g-lobbyart .arc { width: 6.2em; aspect-ratio: 11 / 18; padding: 1em 0.7em 0.85em; gap: 0.32em; font-size: 8px; }
+.g-lobbyart .arc .nm { font-size: 1.5em; }
+.g-lobbyart .arc.c-B .arc-art .emblem { color: var(--lapis-2); }
+
+/* scenes */
+.g-coin-scene { perspective: 600px; margin-bottom: 14px; }
+.g-coin { position: relative; width: 120px; height: 120px; transform-style: preserve-3d; animation: gCoinB 2.6s cubic-bezier(.2,.7,.2,1) both; }
+.g-coin.flip-G { animation-name: gCoinG; }
+.g-coin.spin { animation: gCoinSpin 2.8s cubic-bezier(.2,.7,.2,1) both; }
+.g-coin .f { position: absolute; inset: 0; border-radius: 50%; display: grid; place-items: center; backface-visibility: hidden; border: 3px solid var(--gilt-hi); background: radial-gradient(circle at 35% 30%, #4a3a1c, #120d06); }
+.g-coin .f.B { background: radial-gradient(circle at 35% 30%, #34507f, #0b1222); border-color: var(--lapis); color: var(--lapis-ink); }
+.g-coin .f.G { transform: rotateY(180deg); color: var(--gilt-hi); }
+.g-coin .f .emblem { width: 64%; height: auto; --paper: transparent; }
+@keyframes gCoinB { from { transform: rotateY(0) translateY(0); } 50% { transform: rotateY(1080deg) translateY(-40px); } to { transform: rotateY(1800deg); } }
+@keyframes gCoinG { from { transform: rotateY(0) translateY(0); } 50% { transform: rotateY(1080deg) translateY(-40px); } to { transform: rotateY(1980deg); } }
+@keyframes gCoinSpin { from { transform: rotateY(0); } to { transform: rotateY(1440deg); } }
+.m-title.c-B, .g-signword.c-B { color: var(--lapis-ink); }
+.m-title.c-G, .g-signword.c-G { color: #f6dfa8; }
+.m-title.c-D { color: var(--blood-ink); }
+.g-signword { font-size: clamp(44px, 12vw, 96px); display: inline-flex; align-items: center; gap: 0.3em; }
+.g-signn { display: inline-grid; place-items: center; width: 1.05em; height: 1.05em; border-radius: 50%; font: 700 0.62em/1 var(--bit); background: currentColor; }
+.g-signn { color: var(--ink); background: var(--gilt-hi); }
+.g-signword.c-B .g-signn { background: var(--lapis); }
+.m-art.g-sig { color: var(--crew); }
+.g-dig-scene { position: relative; width: 140px; height: 175px; margin-bottom: 12px; }
+.g-stone.big { position: absolute; inset: 0; width: 140px; height: 175px; aspect-ratio: auto; }
+.g-stone.big .gs-word { font-size: 17px; }
+.g-stone.big .gs-icon { width: 70%; }
+.g-stone.lift { animation: gLift 1.4s var(--ease) both; z-index: 2; }
+.g-stone.reveal { animation: fadeIn 0.6s 0.9s both; }
+@keyframes gLift { 0% { transform: none; } 30% { transform: translateY(-6px) rotate(-2deg); } 100% { transform: translateY(-120%) rotate(-14deg); opacity: 0; } }
+.g-dig-scene.k-D .g-stone.reveal { animation: fadeIn 0.6s 0.9s both, cShake 0.5s 1.3s both; }
+
+/* end */
+.g-yard.end .gs-word { font-size: clamp(6.5px, 1.9vw, 10px); }
+.ge-list { list-style: none; padding: 0; margin: 6px 0; display: grid; gap: 6px; }
+.ge-list li { display: grid; grid-template-columns: 26px minmax(0, 1fr); grid-template-areas: 'sig sign' 'sig digs'; gap: 2px 8px; padding: 6px 0; border-top: 1px solid var(--iron); }
+.ge-sig { grid-area: sig; width: 24px; height: 24px; color: var(--crew); }
+.ge-sig .emblem { width: 100%; height: 100%; --paper: var(--ink); }
+.ge-sign b { font: 600 16px/1.1 var(--black); color: var(--bone); }
+.ge-sign small { margin-left: 8px; font: italic 400 12px var(--text); color: var(--ash); }
+.ge-digs { grid-area: digs; display: flex; flex-wrap: wrap; gap: 4px; }
+.ge-digs i, .ge-digs em { display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 10px; font: 600 10px/1.4 var(--text); letter-spacing: 0.08em; text-transform: uppercase; font-style: normal; border: 1px solid var(--iron); color: var(--bone-2); }
+.ge-digs i .emblem { width: 14px; height: 14px; --paper: var(--ink); }
+.ge-digs i.k-B { border-color: var(--lapis); color: var(--lapis); }
+.ge-digs i.k-G { border-color: var(--gilt-hi); color: var(--gilt-hi); }
+.ge-digs i.k-D { border-color: #8e1b1f; color: var(--blood-ink); }
+
+/* TV */
+.gboard .gt-cols { position: relative; z-index: 1; display: grid; grid-template-columns: 250px minmax(0, 1fr) 250px; gap: 26px; padding: 0 36px 20px; align-items: start; }
+.gt-main { min-width: 0; display: flex; flex-direction: column; align-items: center; }
+.gt-banner { width: 100%; max-width: 900px; padding: 8px 18px; border: 1px solid var(--crew-2); border-radius: 4px; background: rgba(12, 10, 9, 0.7); text-align: center; }
+.gt-banner b { display: block; font: 600 26px/1 var(--black); color: var(--bone); padding-bottom: 0.08em; }
+.gt-banner span { font: italic 400 16px var(--text); color: var(--bone-2); }
+.gboard .g-sign { width: 100%; max-width: 900px; }
+.gboard .gsn-word { font-size: 34px; }
+.g-yard.tv { width: min(100%, 64vh * 1.25, 900px); gap: 10px; }
+.g-yard.tv .gs-word { font-size: clamp(10px, 1.15vw, 18px); }
+.g-yard.tv .g-disc.xs { width: 22px; height: 22px; }
+.gt-crew { padding: 16px; border: 1px solid var(--crew-2); border-radius: 4px; background: rgba(12, 10, 9, 0.7); }
+.gt-crew.turn { border-color: var(--crew); box-shadow: 0 0 0 2px color-mix(in srgb, var(--crew) 25%, transparent), 0 0 30px color-mix(in srgb, var(--crew) 20%, transparent); }
+.gt-crew .g-altar { justify-content: center; }
+.gt-crew .ga-sig { width: 64px; height: 64px; }
+.gt-crew .ga-beads { max-width: 96px; }
+.gt-crew .ga-beads i { width: 10px; height: 10px; }
+.gt-crew .g-altar > b { font-size: 22px; }
+.gt-name { display: block; margin: 10px 0 8px; text-align: center; font: 600 24px/1 var(--black); color: var(--crew); padding-bottom: 0.08em; }
+.gt-crew ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.gt-crew li { display: flex; align-items: center; gap: 8px; font: 600 12px/1.2 var(--text); letter-spacing: 0.12em; text-transform: uppercase; color: var(--bone); }
+.gboard.is-ended .gt-main { max-height: calc(100vh - 110px); overflow: hidden; }
+.g-stone { aspect-ratio: 1 / 1.1; }
+.gs-word { color: #121317; font-size: clamp(8px, 2.3vw, 12.5px); }
+.g-yard.tv { width: min(100%, 800px); }
+.g-yard.tv .g-stone { aspect-ratio: 6 / 5; padding: 12% 5% 8%; }
+.g-yard.tv .gs-icon { width: 52%; }
+.g-yard.tv .gs-open { width: 46%; }
+.gboard .g-sign { padding: 6px 12px; margin: 6px 0; }
+.gt-banner { padding: 6px 18px; }
+.gt-banner b { font-size: 24px; }
+.g-signword { display: flex; flex-wrap: nowrap; white-space: nowrap; justify-content: center; align-items: center; gap: 0.25em; font-size: clamp(38px, 10vw, 92px); max-width: 94vw; }
+.g-signn { font-size: 0.5em; width: 1.7em; height: 1.7em; flex: none; }
+.g-dig-scene .g-stone.open { opacity: 1; }
+/* the TV grid always fits the screen's height */
+.g-yard.tv { width: min(100%, 860px, calc((100vh - 300px) * 1.2 + 40px)); }

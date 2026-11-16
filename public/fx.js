@@ -333,6 +333,13 @@ const MOODS = {
   sTalk: { root: 65.4, scale: [0, 2, 3, 5, 7, 8, 11], chord: [1, 1.19, 1.5], cutoff: 600, wind: 0.012, gain: 0.48, pluck: { bpm: 76, pattern: [1, 0, 0, 1, 0, 1, 0, 0], notes: [0, 3, 7, 8] }, shimmer: 0.004, motif: { voice: 'bell', every: [9, 14], len: [2, 3], beat: 0.8, oct: 3 } },
   sCandle: { root: 58.3, scale: [0, 1, 3, 6, 7, 8], chord: [1, 1.06, 1.5], cutoff: 480, wind: 0.02, gain: 0.52, heart: 64, tick: 76, swell: [6, 10], motif: { voice: 'box', every: [7, 11], len: [2, 3], beat: 0.7, oct: 4 } },
   sName: { root: 51.9, scale: [0, 1, 4, 5, 7, 8], chord: [1, 1.06, 1.5, 2], cutoff: 440, wind: 0.04, gain: 0.58, choir: 0.03, heart: 56, swell: [5, 9], motif: { voice: 'bell', every: [4, 6], len: [1, 1], beat: 1, oct: 2 } },
+  // Dead Set: Graverobbers. A cemetery at midnight: spades in the earth, owls, two rival hymns.
+  //   gYard – the crews gather among the stones: wind, a far bell, a slow box tune
+  //   gSign – the Undertaker thinks: a held drone and a clock, nothing to give it away
+  //   gDig  – the crew digs: a spade-beat drum under a quick, sly ostinato
+  gYard: { root: 55, scale: [0, 2, 3, 7, 8, 10], chord: [1, 1.5, 2], cutoff: 420, wind: 0.05, gain: 0.55, shimmer: 0.004, motif: { voice: 'bell', every: [9, 14], len: [1, 2], beat: 1.4, oct: 2 } },
+  gSign: { root: 61.7, scale: [0, 2, 3, 5, 7, 8], chord: [1, 1.19, 1.5], cutoff: 480, wind: 0.025, gain: 0.5, tick: 60, motif: { voice: 'box', every: [8, 12], len: [2, 3], beat: 0.9, oct: 4 } },
+  gDig: { root: 65.4, scale: [0, 1, 3, 5, 7, 8, 10], chord: [1, 1.19, 1.5], cutoff: 640, wind: 0.015, gain: 0.5, pluck: { bpm: 104, pattern: [1, 0, 1, 1, 0, 1, 0, 0], notes: [0, 3, 7, 5] }, drum: { bpm: 104, pattern: [1, 0, 0, 0, 1, 0, 0, 0], pitch: 58, gain: 0.16 }, heart: 72, motif: { voice: 'bell', every: [7, 11], len: [2, 3], beat: 0.6, oct: 3 } },
   // Overlay mixed on top of any mood when the table is down to its last few.
   tension: { root: 110, scale: [0, 1], chord: [], cutoff: 3000, wind: 0, gain: 0.5, shimmer: 0.012, heart: 104 },
 };

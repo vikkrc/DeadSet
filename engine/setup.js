@@ -4,6 +4,7 @@ import { C_DEFAULTS, applyCoffinsPatch, validateCoffins } from './coffins.js';
 import { K_DEFAULTS, applyCarnivalPatch, validateCarnival } from './carnival.js';
 import { N_DEFAULTS, applyMidnightPatch, validateMidnight } from './midnight.js';
 import { S_DEFAULTS, applySeancePatch, validateSeance } from './seance.js';
+import { G_DEFAULTS, applyGravePatch, validateGrave } from './graverobbers.js';
 import {
   ROLES, PRESETS, RULE_CARDS, RULE_IDS, COPY_SENSITIVE, SCENARIO, MIN_PLAYERS, ABS_MAX_PLAYERS, LANGS,
   DREAM_WEIGHTS, DREAM_WEIGHT_MAX, SMALL_TABLE, STANDARD_EXTENDED, FULL_EXTENDED,
@@ -49,7 +50,8 @@ export function defaultSettings() {
       cBury: 20, cTurn: 30, cBid: 20, cDig: 15, cWager: 10,
       kTurn: 45, kChallenge: 12, kPower: 20, kLook: 12,
       nDeal: 15, nStep: 10, nDay: 300, nVote: 30,
-      sIntro: 20, sVision: 90, sDiscuss: 180, sCandle: 45, sName: 60 },
+      sIntro: 20, sVision: 90, sDiscuss: 180, sCandle: 45, sName: 60,
+      gIntro: 20, gSign: 90, gVote: 45 },
     transport: 'in-person',
     revealOnDeath: false,
     endReveal: true,
@@ -88,6 +90,8 @@ export function defaultSettings() {
     n: { ...N_DEFAULTS, pool: [] },
     // Séance mode
     s: { ...S_DEFAULTS },
+    // Graverobbers mode
+    g: { ...G_DEFAULTS, crew: {}, cap: {} },
   };
 }
 
@@ -101,7 +105,7 @@ export function applySettingsPatch(settings, patch = {}) {
   const s = structuredClone(settings);
   // Switching modes (Classic / Missions / Exorcism): each mode keeps its own
   // last preset and options, so going there and back loses nothing.
-  if (patch.mode && ['classic', 'missions', 'exorcism', 'coffins', 'carnival', 'midnight', 'seance'].includes(patch.mode) && patch.mode !== modeOf(s.preset)) {
+  if (patch.mode && ['classic', 'missions', 'exorcism', 'coffins', 'carnival', 'midnight', 'seance', 'graverobbers'].includes(patch.mode) && patch.mode !== modeOf(s.preset)) {
     const from = modeOf(s.preset);
     s.memory = { ...(s.memory || {}) };
     s.memory[from] = { preset: s.preset, dreams: s.dreams, doomsday: s.doomsday, rules: structuredClone(s.rules) };
@@ -188,6 +192,7 @@ export function applySettingsPatch(settings, patch = {}) {
   if (patch.k) applyCarnivalPatch(s, patch.k);
   if (patch.n) applyMidnightPatch(s, patch.n);
   if (patch.s) applySeancePatch(s, patch.s);
+  if (patch.g) applyGravePatch(s, patch.g);
   if (typeof patch.twins === 'boolean') s.twins = patch.twins;
   if (typeof patch.sideMissions === 'boolean') s.sideMissions = patch.sideMissions;
   if (patch.missionCards !== undefined) s.missionCards = clampInt(patch.missionCards, 0, 2, 1);
@@ -290,6 +295,7 @@ export function validateSetup(n, settings, players = []) {
   if (PRESETS[settings.preset]?.carnival) return validateCarnival(n, settings);
   if (PRESETS[settings.preset]?.midnight) return validateMidnight(n, settings);
   if (PRESETS[settings.preset]?.seance) return validateSeance(n, settings, players);
+  if (PRESETS[settings.preset]?.graverobbers) return validateGrave(n, settings, players);
   const errors = [];
   const warnings = [];
   const preset = PRESETS[settings.preset];

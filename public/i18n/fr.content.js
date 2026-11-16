@@ -3,6 +3,8 @@ export default {
   and: 'et',
   numbers: ['aucun', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix'],
   roles: {
+    G_UNDERTAKER: { name: "Croque-mort", when: "Toujours", summary: "Tu tiens le registre des sépultures. Donne à ta bande un mot et un nombre.", detail: "Seuls toi et l’autre Croque-mort savez ce qui repose sous chaque pierre. Ton mot doit relier autant de tombes de ta bande, et mener loin de la tombe de la Mort." },
+    G_DIGGER: { name: "Fossoyeur", when: "Toujours", summary: "Lis le signe de ton Croque-mort et déterre les reliques de ta bande.", detail: "Discutez, puis vote pour une tombe sur ton téléphone. Votre relique : creusez encore. Une tombe vide ou une relique de l’autre bande : le tour passe. La tombe de la Mort : votre bande perd." },
     S_GHOST: { name: "Fantôme", when: "Toujours", summary: "On t’a assassiné. Tu sais qui, où et pourquoi, et tu ne peux pas parler.", detail: "Envoie à chaque lecteur une vision pour sa rangée. D’une tache froide, givre une vision qui n’est pas la tienne." },
     S_MEDIUM: { name: "Médium", when: "Toujours", summary: "Lis les visions et allume des bougies sur la vérité.", detail: "À chaque manche tu lis une rangée : qui, où ou pourquoi. Résolvez les trois avant que les bougies ne s’éteignent, puis nommez l’Imposteur." },
     S_DECEIVER: { name: "Imposteur", when: "Toujours", summary: "Un second esprit dans un corps vivant. Tu connais la vérité, et tu mens.", detail: "Tu ressembles en tout point à un Médium. Quelques fois par partie, tu échanges la vision du Fantôme d’un autre lecteur contre une des tiennes. Tu gagnes si les bougies s’éteignent, ou si la table nomme le mauvais joueur." },
@@ -160,6 +162,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Fantômes vengeurs', text: 'Chaque joueur éliminé peut déposer un bulletin fantôme de poids 1 par jour.', enforcement: 'Les fantômes ne peuvent pas nommer, utiliser de pouvoirs ni influencer la Règle de la majorité.' },
   },
   presets: {
+    graverobbers: { name: "Dead Set : Pilleurs de tombes", blurb: "Deux bandes de pilleurs, la Lune et le Soleil, fouillent un cimetière de mots ou d’icônes pour les reliques de leur divinité. Seuls les croque-morts savent ce qui gît dessous. Une tombe appartient à la Mort." },
     seance: { name: "Dead Set : Séance", blurb: "Un Fantôme assassiné et muet envoie des visions ; les Médiums y lisent qui, où et pourquoi. Un Imposteur parmi eux remplace des visions par des mensonges." },
     midnight: { name: "Dead Set : Minuit", blurb: "Une nuit, un vote. Les cartes changent de mains dans le noir ; à l’aube, tu es ce qui est posé devant toi. Trouve la Mort, ou sois-la." },
     carnival: { name: "Dead Set : Carnaval", blurb: "Un bal masqué de bluff et de mémoire. Chacun porte une carte de rôle en guise de masque, mélangée jusqu'à ce que nul n'en soit sûr. Revendique des masques et amasse des Âmes ; 13 gagnent." },
@@ -190,6 +193,15 @@ export default {
     'La Mort a voté avec la ville. Évidemment.',
   ],
   guide: {
+    graveH: "Dead Set : Pilleurs de tombes",
+    grave: `<p>Un jeu d’équipe avec des mots (ou des icônes) pour 4 à 12 joueurs, environ 15 minutes. Deux bandes de pilleurs, la <b>Lune</b> et le <b>Soleil</b>, fouillent un cimetière de 25 pierres tombales pour trouver les reliques qui invoqueront leur divinité. La bande qui gagne le tirage à pile ou face a 9 reliques en terre, l’autre 8 ; 7 tombes sont vides, et une appartient à la <b>Mort</b>.</p>
+<ol>
+<li><b>Les Croque-morts.</b> Un par bande. Eux seuls voient le registre des sépultures : ce qui repose sous chaque pierre.</li>
+<li><b>Le signe.</b> À son tour, le Croque-mort donne un mot et un nombre : <i>« Océan · 3 »</i>. Le mot ne peut pas être sur le plateau. Ensuite, il ne dit plus rien.</li>
+<li><b>La fouille.</b> Les fossoyeurs discutent et votent sur leurs téléphones. Le plus de voix creuse ; en cas d’égalité, la pièce décide. Votre relique : creusez encore, jusqu’au nombre. Une tombe vide, ou une relique de l’autre bande (désormais à eux) : le tour passe. La tombe de la Mort : votre bande perd aussitôt.</li>
+<li><b>S’arrêter.</b> La bande peut voter pour s’arrêter. Si elle s’arrête avant d’atteindre le nombre, elle garde une fouille bonus pour le tour suivant (elle ne se cumule pas).</li>
+</ol>
+<p>La première bande dont toutes les reliques sont déterrées gagne. Sur le téléphone, passe des <b>Pierres</b> (mots ou icônes) à la <b>Carte</b> (le plateau d’un coup d’œil). Dans le salon : mots ou icônes, noms célèbres ou non, bandes et croque-morts au hasard ou choisis, signes tapés ou dits.</p>`,
     seanceH: "Dead Set : Séance",
     seance: `<p>Un mystère de meurtre coopératif avec un traître. 4 à 10 joueurs, environ 30 minutes. Un joueur est le <b>Fantôme</b> : il sait qui l’a tué, où et pourquoi, et ne peut pas parler. Tous les autres sont des lecteurs.</p>
 <ol>

@@ -147,7 +147,7 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 | 4 | **Carnival** | Built (CARNIVAL.md) |
 | 5 | **Midnight** | Built (MIDNIGHT.md) |
 | 6 | **Séance** | Built (SEANCE.md) |
-| 7 | **Graverobbers** | Next. Rules drafted (GRAVEROBBERS.md) |
+| 7 | **Graverobbers** | Built (GRAVEROBBERS.md) |
 | 8 | **Mimic** | Pitch |
 | 9 | **Council** | Pitch |
 | 10 | **Lifeboat** | Pitch |
@@ -303,7 +303,7 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 
 ## Beta 7: Dead Set: Graverobbers (a cousin of Codenames, with words or icons)
 
-**Status: next to build. Rules drafted** (see GRAVEROBBERS.md); a few decisions marked there.
+**Status: built** (see GRAVEROBBERS.md).
 
 **The pitch:** midnight in an old cemetery. Two crews of grave robbers, the Blue crew of the **Moon** and the Gold crew of the **Sun**, race to dig up the relics that will summon their deity. Only each crew's **Undertaker** knows which grave holds what, and may give one word and one number. One grave belongs to **Death**.
 

@@ -3,6 +3,8 @@ export default {
   and: 'a',
   numbers: ['žádný', 'jeden', 'dva', 'tři', 'čtyři', 'pět', 'šest', 'sedm', 'osm', 'devět', 'deset'],
   roles: {
+    G_UNDERTAKER: { name: "Hrobník", when: "Vždy", summary: "Máš pohřební rejstřík. Dej své partě jedno slovo a jedno číslo.", detail: "Jen ty a druhý Hrobník víte, co leží pod každým kamenem. Tvé slovo má spojit tolik hrobů tvé party a vést daleko od hrobu Smrti." },
+    G_DIGGER: { name: "Kopáč hrobů", when: "Vždy", summary: "Čti Hrobníkovo znamení a vykopávej relikvie své party.", detail: "Domluvte se a pak hlasuj pro hrob na telefonu. Vaše relikvie: kopejte dál. Prázdný hrob nebo relikvie druhé party: tah přechází. Hrob Smrti: vaše parta prohrává." },
     S_GHOST: { name: "Duch", when: "Vždy", summary: "Zavraždili tě. Víš kdo, kde a proč, ale nemůžeš mluvit.", detail: "Pošli každému čtenáři vizi k jeho řadě. Studeným místem zamraz vizi, která není tvoje." },
     S_MEDIUM: { name: "Médium", when: "Vždy", summary: "Čti vize a zapal svíčky na pravdu.", detail: "Každé kolo čteš jednu řadu: kdo, kde nebo proč. Vyřešte všechny tři, než svíčky dohoří, a pak jmenujte Lháře." },
     S_DECEIVER: { name: "Lhář", when: "Vždy", summary: "Druhý duch v živém těle. Znáš pravdu a lžeš.", detail: "Vypadáš přesně jako Médium. Několikrát za hru vyměníš vizi Ducha jinému čtenáři za svou. Vyhraješ, pokud svíčky dohoří, nebo pokud stůl jmenuje špatného hráče." },
@@ -160,6 +162,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Mstiví duchové', text: 'Každý vyřazený hráč může každý den odevzdat jeden hlas ducha s váhou 1.', enforcement: 'Duchové nemohou nominovat, používat schopnosti ani ovlivnit Pravidlo většiny.' },
   },
   presets: {
+    graverobbers: { name: "Dead Set: Vykradači hrobů", blurb: "Dvě party vykradačů hrobů, Měsíc a Slunce, překopávají hřbitov slov nebo ikon pro relikvie svého božstva. Co leží pod zemí, vědí jen Hrobníci. Jeden hrob patří Smrti." },
     seance: { name: "Dead Set: Seance", blurb: "Němý zavražděný Duch posílá vize; Média z nich luští kdo, kde a proč. Lhář mezi nimi vyměňuje vize za lži." },
     midnight: { name: "Dead Set: Půlnoc", blurb: "Jedna noc, jedno hlasování. Karty ve tmě mění majitele; za úsvitu jsi tím, co leží před tebou. Najdi Smrt, nebo jí buď." },
     carnival: { name: "Dead Set: Karneval", blurb: "Maškarní ples blafování a paměti. Každý nosí kartu postavy jako masku, míchanou, dokud si nikdo není jistý. Hlas masky a sbírej Duše; 13 vyhrává." },
@@ -190,6 +193,15 @@ export default {
     'Smrt hlasovala s městem. Samozřejmě.',
   ],
   guide: {
+    graveH: "Dead Set: Vykradači hrobů",
+    grave: `<p>Týmová hra se slovy (nebo ikonami) pro 4–12 hráčů, asi 15 minut. Dvě party vykradačů hrobů, <b>Měsíc</b> a <b>Slunce</b>, překopávají hřbitov s 25 náhrobky a hledají relikvie, které přivolají jejich božstvo. Parta, která vyhraje hod mincí, má v zemi 9 relikvií, druhá 8; 7 hrobů je prázdných a jeden patří <b>Smrti</b>.</p>
+<ol>
+<li><b>Hrobníci.</b> Jeden na partu. Jen oni vidí pohřební rejstřík: co leží pod každým kamenem.</li>
+<li><b>Znamení.</b> Ve svém tahu dá Hrobník jedno slovo a jedno číslo: <i>„Oceán · 3“</i>. Slovo nesmí být na desce. Pak už neřekne nic.</li>
+<li><b>Kopání.</b> Kopáči se poradí a hlasují na telefonech. Rozhoduje nejvíc hlasů; při remíze mince. Vaše relikvie: kopejte dál, až do čísla. Prázdný hrob nebo relikvie druhé party (teď je jejich): tah přechází. Hrob Smrti: vaše parta okamžitě prohrává.</li>
+<li><b>Zastavení.</b> Parta může odhlasovat, že přestane. Přestane-li před dosažením čísla, nechá si jedno kopání navíc na příští tah (nesčítá se).</li>
+</ol>
+<p>Vyhrává parta, jejíž relikvie jsou vykopány jako první. Na telefonu přepínáš mezi <b>Kameny</b> (slova nebo ikony) a <b>Mapou</b> (deska na první pohled). V předsálí: slova nebo ikony, slavná jména zapnutá či vypnutá, party a Hrobníci náhodně nebo vybraní, psaná nebo vyslovená znamení.</p>`,
     seanceH: "Dead Set: Seance",
     seance: `<p>Kooperativní vražedná záhada se zrádcem. 4–10 hráčů, asi 30 minut. Jeden hráč je <b>Duch</b>: ví, kdo ho zabil, kde a proč, a nemůže mluvit. Všichni ostatní jsou čtenáři.</p>
 <ol>

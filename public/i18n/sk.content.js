@@ -3,6 +3,8 @@ export default {
   and: 'a',
   numbers: ['žiadny', 'jeden', 'dvaja', 'traja', 'štyria', 'piati', 'šiesti', 'siedmi', 'ôsmi', 'deviati', 'desiati'],
   roles: {
+    G_UNDERTAKER: { name: "Hrobár", when: "Vždy", summary: "Máš pohrebný register. Daj svojej partii jedno slovo a jedno číslo.", detail: "Len ty a druhý Hrobár viete, čo leží pod každým kameňom. Tvoje slovo má spojiť toľko hrobov tvojej partie a viesť ďaleko od hrobu Smrti." },
+    G_DIGGER: { name: "Kopáč hrobov", when: "Vždy", summary: "Čítaj Hrobárovo znamenie a vykopávaj relikvie svojej partie.", detail: "Dohodnite sa a potom hlasuj za hrob na telefóne. Vaša relikvia: kopte ďalej. Prázdny hrob alebo relikvia druhej partie: ťah prechádza. Hrob Smrti: vaša partia prehráva." },
     S_GHOST: { name: "Duch", when: "Vždy", summary: "Zavraždili ťa. Vieš kto, kde a prečo, ale nemôžeš hovoriť.", detail: "Pošli každému čitateľovi víziu k jeho radu. Studeným miestom zamraz víziu, ktorá nie je tvoja." },
     S_MEDIUM: { name: "Médium", when: "Vždy", summary: "Čítaj vízie a zapáľ sviečky na pravdu.", detail: "Každé kolo čítaš jeden rad: kto, kde alebo prečo. Rozlúštite všetky tri, kým sviečky dohoria, a potom pomenujte Klamára." },
     S_DECEIVER: { name: "Klamár", when: "Vždy", summary: "Druhý duch v živom tele. Poznáš pravdu a klameš.", detail: "Vyzeráš presne ako Médium. Niekoľkokrát za hru vymeníš víziu Ducha inému čitateľovi za svoju. Vyhráš, ak sviečky dohoria, alebo ak stôl pomenuje nesprávneho hráča." },
@@ -160,6 +162,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Pomstychtiví duchovia', text: 'Každý vyradený hráč môže každý deň odovzdať jeden hlas ducha s váhou 1.', enforcement: 'Duchovia nemôžu nominovať, používať schopnosti ani ovplyvniť Pravidlo väčšiny.' },
   },
   presets: {
+    graverobbers: { name: "Dead Set: Vykrádači hrobov", blurb: "Dve partie vykrádačov hrobov, Mesiac a Slnko, prekopávajú cintorín slov alebo ikon pre relikvie svojho božstva. Čo leží pod zemou, vedia len Hrobári. Jeden hrob patrí Smrti." },
     seance: { name: "Dead Set: Seansa", blurb: "Nemý zavraždený Duch posiela vízie; Médiá z nich lúštia kto, kde a prečo. Klamár medzi nimi vymieňa vízie za lži." },
     midnight: { name: "Dead Set: Polnoc", blurb: "Jedna noc, jedno hlasovanie. Karty v tme menia majiteľov; za úsvitu si tým, čo leží pred tebou. Nájdi Smrť, alebo ňou buď." },
     carnival: { name: "Dead Set: Karneval", blurb: "Maškarný bál blafovania a pamäti. Každý nosí kartu postavy ako masku, miešanú, kým si nikto nie je istý. Hlás masky a zbieraj Duše; 13 vyhráva." },
@@ -190,6 +193,15 @@ export default {
     'Smrť hlasovala s mestom. Samozrejme.',
   ],
   guide: {
+    graveH: "Dead Set: Vykrádači hrobov",
+    grave: `<p>Tímová hra so slovami (alebo ikonami) pre 4–12 hráčov, asi 15 minút. Dve partie vykrádačov hrobov, <b>Mesiac</b> a <b>Slnko</b>, prekopávajú cintorín s 25 náhrobkami a hľadajú relikvie, ktoré privolajú ich božstvo. Partia, ktorá vyhrá hod mincou, má v zemi 9 relikvií, druhá 8; 7 hrobov je prázdnych a jeden patrí <b>Smrti</b>.</p>
+<ol>
+<li><b>Hrobári.</b> Jeden na partiu. Len oni vidia pohrebný register: čo leží pod každým kameňom.</li>
+<li><b>Znamenie.</b> Vo svojom ťahu dá Hrobár jedno slovo a jedno číslo: <i>„Oceán · 3“</i>. Slovo nesmie byť na doske. Potom už nepovie nič.</li>
+<li><b>Kopanie.</b> Kopáči sa poradia a hlasujú na telefónoch. Rozhoduje najviac hlasov; pri remíze minca. Vaša relikvia: kopte ďalej, až do čísla. Prázdny hrob alebo relikvia druhej partie (teraz je ich): ťah prechádza. Hrob Smrti: vaša partia okamžite prehráva.</li>
+<li><b>Zastavenie.</b> Partia môže odhlasovať, že prestane. Ak prestane pred dosiahnutím čísla, nechá si jedno kopanie navyše na budúci ťah (nesčítava sa).</li>
+</ol>
+<p>Vyhráva partia, ktorej relikvie sú vykopané ako prvé. Na telefóne prepínaš medzi <b>Kameňmi</b> (slová alebo ikony) a <b>Mapou</b> (doska na prvý pohľad). V predsieni: slová alebo ikony, slávne mená zapnuté či vypnuté, partie a Hrobári náhodne alebo vybraní, písané alebo vyslovené znamenia.</p>`,
     seanceH: "Dead Set: Seansa",
     seance: `<p>Kooperatívna vražedná záhada so zradcom. 4–10 hráčov, asi 30 minút. Jeden hráč je <b>Duch</b>: vie, kto ho zabil, kde a prečo, a nemôže hovoriť. Všetci ostatní sú čitatelia.</p>
 <ol>

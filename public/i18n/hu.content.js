@@ -3,6 +3,8 @@ export default {
   and: 'és',
   numbers: ['nulla', 'egy', 'két', 'három', 'négy', 'öt', 'hat', 'hét', 'nyolc', 'kilenc', 'tíz'],
   roles: {
+    G_UNDERTAKER: { name: "Sírásó", when: "Mindig", summary: "Nálad van a temetési lajstrom. Adj a csapatodnak egy szót és egy számot.", detail: "Csak te és a másik Sírásó tudjátok, mi fekszik minden kő alatt. A szavad annyi sírt kössön össze a csapatodéból, és vezessen messze a Halál sírjától." },
+    G_DIGGER: { name: "Sírrabló", when: "Mindig", summary: "Olvasd a Sírásó jelét, és ásd ki a csapatod ereklyéit.", detail: "Beszéljétek meg, aztán szavazz egy sírra a telefonodon. A ti ereklyétek: áss tovább. Üres sír vagy a másik csapat ereklyéje: a kör továbbmegy. A Halál sírja: a csapatod veszít." },
     S_GHOST: { name: "Szellem", when: "Mindig", summary: "Meggyilkoltak. Tudod, ki, hol és miért, de nem beszélhetsz.", detail: "Küldj minden olvasónak egy látomást a sorához. Egy hideg folttal jegeld be a látomást, ami nem a tiéd." },
     S_MEDIUM: { name: "Médium", when: "Mindig", summary: "Olvasd a látomásokat, és gyújts gyertyát az igazságra.", detail: "Minden körben egy sort olvasol: ki, hol vagy miért. Fejtsd meg mindhármat, mielőtt a gyertyák leégnek, aztán nevezd meg a Csalót." },
     S_DECEIVER: { name: "Csaló", when: "Mindig", summary: "Egy második szellem egy élő testben. Tudod az igazságot, és hazudsz.", detail: "Pontosan úgy nézel ki, mint egy Médium. Egy játékban néhányszor kicserélheted a Szellem látomását egy másik olvasónál a sajátodra. Nyersz, ha a gyertyák leégnek, vagy ha az asztal rossz játékost nevez meg." },
@@ -160,6 +162,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Bosszúálló szellemek', text: 'Minden kiesett játékos naponta egy 1 súlyú szellemszavazatot adhat le.', enforcement: 'A szellemek nem jelölhetnek, nem használhatnak képességet, és nem befolyásolják a Többségi szabályt.' },
   },
   presets: {
+    graverobbers: { name: "Dead Set: Sírrablók", blurb: "Két sírrabló csapat, a Hold és a Nap, szavakból vagy ikonokból álló temetőt ás fel istenük ereklyéiért. Csak a Sírásók tudják, mi van alattuk. Az egyik sír a Halálé." },
     seance: { name: "Dead Set: Szeánsz", blurb: "Egy néma, meggyilkolt Szellem látomásokat küld; a Médiumok ezekből fejtik meg, ki, hol és miért. Köztük egy Csaló a látomásokat hazugságra cseréli." },
     midnight: { name: "Dead Set: Éjfél", blurb: "Egy éjszaka, egy szavazás. A kártyák a sötétben cserélnek gazdát; hajnalban az vagy, ami előtted fekszik. Találj egy Halált, vagy légy az." },
     carnival: { name: "Dead Set: Karnevál", blurb: "Álarcosbál blöffel és emlékezettel. Mindenki egy szerepkártyát visel maszkként, addig keverve, míg senki sem biztos benne. Állíts maszkokat, gyűjts Lelkeket; 13 győz." },
@@ -190,6 +193,15 @@ export default {
     'A Halál a várossal szavazott. Hát persze.',
   ],
   guide: {
+    graveH: "Dead Set: Sírrablók",
+    grave: `<p>Csapatjáték szavakkal (vagy ikonokkal) 4–12 játékosnak, kb. 15 perc. Két sírrabló csapat, a <b>Hold</b> és a <b>Nap</b>, egy 25 sírkőből álló temetőt ás fel az ereklyékért, amelyekkel megidézhetik istenüket. Az érmefeldobást nyerő csapatnak 9 ereklyéje van a földben, a másiknak 8; 7 sír üres, egy pedig a <b>Halálé</b>.</p>
+<ol>
+<li><b>A Sírásók.</b> Csapatonként egy. Csak ők látják a temetési lajstromot: mi fekszik minden kő alatt.</li>
+<li><b>A jel.</b> A saját körében a Sírásó egy szót és egy számot ad: <i>„Óceán · 3”</i>. A szó nem lehet a táblán. Utána egy szót sem szól.</li>
+<li><b>Az ásás.</b> A sírrablók megbeszélik, és a telefonjukon szavaznak. A legtöbb szavazat dönt; döntetlennél az érme. A ti ereklyétek: áshattok tovább, a számig. Üres sír, vagy a másik csapat ereklyéje (most már az övék): a kör továbbmegy. A Halál sírja: a csapatod azonnal veszít.</li>
+<li><b>Megállás.</b> A csapat megszavazhatja, hogy abbahagyja. Ha a szám elérése előtt áll meg, a következő körre kap egy bónusz ásást (nem halmozódik).</li>
+</ol>
+<p>Az a csapat nyer, amelyiknek előbb kerül elő minden ereklyéje. A telefonon válthatsz <b>Kövek</b> (szavak vagy ikonok) és <b>Térkép</b> (a tábla egy pillantásra) között. Az előtérben: szavak vagy ikonok, híres nevek be vagy ki, csapatok és Sírásók véletlenszerűen vagy választva, gépelt vagy kimondott jelek.</p>`,
     seanceH: "Dead Set: Szeánsz",
     seance: `<p>Kooperatív gyilkossági rejtély egy árulóval. 4–10 játékos, kb. 30 perc. Az egyik játékos a <b>Szellem</b>: tudja, ki ölte meg, hol és miért, de nem beszélhet. Mindenki más olvasó.</p>
 <ol>
