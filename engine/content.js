@@ -418,7 +418,7 @@ PRESETS.missions = { id: 'missions', name: 'Dead Set: Missions', min: MISSION_MI
   rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, missions: true,
   blurb: 'Teams, votes and sabotage. Nobody dies: lead missions, read the votes, and find Death before it finds the Medium.' };
 
-/** Missions: the story drives the five missions. Index-aligned with SCENARIO.WHY / SCENARIO.WHERE.
+/** Missions: the story drives the five missions. Index-aligned with SCENARIO.WHY / SCENARIO.WHERE (all 30 of each).
  *  steps[w][k] = what mission k+1 is for; scenes[p][k] = what the place throws at you on mission k+1. */
 export const MISSION_STORY = {
   steps: [
@@ -437,6 +437,21 @@ export const MISSION_STORY = {
     ['Ring the old bell', 'Find who sang the lullaby', 'Brew the bitter coffee', 'Wake the mayor', 'Break the spell'],
     ['Find the first page', 'Decipher the symbols', 'Find the missing key', 'Read between the lines', 'Read the last word'],
     ['Burn the diary', 'Silence the parrot', 'Bribe the witness', 'Lose the detective', 'Take it to the grave'],
+    ['Find the old ledger', 'Track down the lender', 'Gather what is owed', 'Meet at the crossroads', 'Pay in full'],
+    ['Find the old love letters', 'Learn where they went', 'Win over their friends', 'Arrange a chance meeting', 'Say it at last'],
+    ['Count what was left behind', 'Wipe the fingerprints', 'Burn the receipts', 'Hide the weapon', 'Leave no trace'],
+    ['Case the treasury', 'Bribe a guard', 'Cut the glass', 'Swap the crown', 'Walk out smiling'],
+    ['Find the witness', 'Learn what they saw', 'Cut the telephone wire', 'Lure them away', 'Keep them quiet until dawn'],
+    ['Find the will', 'Prove who you are', 'Outlast the other heirs', 'Open the family vault', 'Claim what is yours'],
+    ['Visit his grave', 'Learn who betrayed him', 'Find their hideout', 'Turn their friends', 'Settle the score'],
+    ['Enter the contest', 'Pass the first round', 'Outwit the favourite', 'Survive the final trial', 'Lift the prize'],
+    ['Read the verdict', 'Find the true alibi', 'Track the real culprit', 'Persuade the judge', 'Open the cell door'],
+    ['Pack in secret', 'Steal the carriage keys', 'Slip past the father', 'Reach the chapel', 'Say yes before sunrise'],
+    ['Dig up the old box', 'Read what it says', 'Find who else knows', 'Burn the last copy', 'Bury it deeper'],
+    ['Study the symptoms', 'Find the rare herb', 'Brew the remedy', 'Test it on yourself', 'Save the patient'],
+    ['Light the black candles', 'Speak its name', 'Open the circle', 'Ask the question', 'Send it back'],
+    ['Find the rightful seal', 'Rally the old guard', 'Storm the gates', 'Face the usurper', 'Take the throne'],
+    ['Find the lost sketches', 'Mix the forbidden pigment', 'Paint through the night', 'Hide it from the critics', 'Sign the canvas'],
   ],
   scenes: [
     ['The ballroom is tilting, but the band refuses to stop playing.', 'Seawater is ankle-deep in the captain\'s cabin, and rising.', 'The lifeboats have been counted twice. There are not enough.', 'In the flooded engine room, something is still ticking.', 'The deck is nearly vertical now. Hold on to something. Anything.'],
@@ -454,6 +469,21 @@ export const MISSION_STORY = {
     ['The harvest moon hangs so low you could bite it.', 'The cellar barrels are ageing something that is not wine.', 'The scarecrow was facing the other way a minute ago.', 'The tasting room smells of plums, smoke and bad decisions.', 'The grapes turned black overnight. They are listening.'],
     ['Stage 9 is lit and rolling. Nobody is behind the camera.', 'The props department is missing exactly one real knife.', 'On the backlot, a cardboard town casts real shadows.', 'The director\'s chair has your name on it, spelled wrong.', 'The final reel is in the projector. Roll it and see how it ends.'],
     ['Every clock in the hall shows a different time, and all of them are late.', 'The chess-playing automaton demands a rematch.', 'A mechanical bird sings the alarm, and the alarm sings back.', 'The great orrery has started spinning on its own.', 'Midnight strikes, and every exhibit turns its head.'],
+    ['The church spire is the only way across.', 'Lanterns glow in windows under the water.', 'A rowing boat drifts past with nobody at the oars.', 'The village bell rings from below the surface.', 'The water is rising, and the houses are filling with voices.'],
+    ['The orchestra is tuning up. There are no musicians.', 'Box five is always reserved. Tonight it is occupied.', 'The chandelier sways, though there is no draught.', 'The prima donna hits a note that cracks the mirrors.', 'The curtain rises on the final act. You are in it.'],
+    ['The gate creaks open before you touch it.', 'A fresh grave, and the stone bears your initials.', 'The crows are counting you.', 'Somebody has been tending these graves. Nightly.', 'The ground sighs, and the earth begins to move.'],
+    ['The telescope is already pointed at something.', 'The star charts show one star too many.', 'The dome will not close, and the moon looks in.', 'The astronomer\'s notes end with: it is coming closer.', 'An eclipse begins, twelve years too early.'],
+    ['The orchestra plays a waltz nobody knows the steps to.', 'Every dancer wears a mask, and none of them has a face.', 'The champagne never runs out. That is the problem.', 'The mirrors show the ball as it was a century ago.', 'The music stops. Everyone turns to look at you.'],
+    ['The ice is clear enough to see faces underneath.', 'Skate marks circle a hole that was not there before.', 'The fishing huts are empty, their lines still taut.', 'A crack runs towards you, slow and deliberate.', 'Under your feet, something knocks to be let out.'],
+    ['The big top goes up in the night, and nobody raised it.', 'The fortune teller already knows your names.', 'The lion\'s cage is open. The lion is missing.', 'The ringmaster announces an act you never agreed to.', 'The circus packs up around you. You are part of the show now.'],
+    ['The books are dry, though the water is waist-deep.', 'A catalogue card lists a book about you.', 'The librarian shushes you from under the surface.', 'The pages turn by themselves in the current.', 'The deepest shelf holds the only copy. The water is rising.'],
+    ['The gingerbread smells delicious. That is how it gets you.', 'The cauldron is bubbling, and nobody has lit the fire.', 'The black cat shows you the way. Do not trust it.', 'The jars on the shelf are labelled with your names.', 'The witch comes home early.'],
+    ['The kings lie in a row. One coffin is open.', 'The torches light themselves as you pass.', 'An inscription warns: only royal blood may pass.', 'The queen\'s effigy has turned its head.', 'The stone door grinds shut behind you.'],
+    ['A lantern signals from the cliffs. Nobody answers it.', 'The cave is full of crates, each marked with a skull.', 'The tide is coming in faster than the charts say.', 'Revenue men on the beach, and a smuggler in your group.', 'The last boat leaves at midnight, with or without you.'],
+    ['The stalls open at midnight and sell what you have lost.', 'A merchant offers you a bargain. The price is a memory.', 'The coins in your pocket have turned to leaves.', 'Somebody is selling a map to the place you are going.', 'At first light the whole market will vanish. Hurry.'],
+    ['The sails turn, though the wind has died.', 'Smoke pours from the mill, but nothing burns away.', 'The miller is still grinding flour inside the fire.', 'The ladder is the only way up, and it is smouldering.', 'The great wheel collapses in a shower of sparks.'],
+    ['The patients are all asleep, and all smiling.', 'The doctor\'s files are written in your handwriting.', 'The cable car only goes down.', 'Room 9 is cold, even with the radiator glowing.', 'An avalanche seals the road. Nobody is leaving now.'],
+    ['Every turn shows you a version of yourself, slightly worse.', 'One reflection is a moment late.', 'Someone in the mirrors wears a mask of your face.', 'The exit sign points in every direction.', 'The mirrors crack, and your reflections step out.'],
   ],
   genericSteps: ['The first step', 'Deeper in', 'The point of no return', 'The hardest part', 'The end of the road'],
   genericScenes: ['The expedition sets out. Nobody looks back.', 'The path narrows, and so does trust.', 'Halfway there. Someone is counting the steps.', 'The air grows colder with every choice.', 'The last stretch. Whatever waits here has waited for you.'],

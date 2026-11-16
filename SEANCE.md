@@ -191,7 +191,7 @@ Bots read visions by their concept tags and name the Deceiver crudely (by wrong 
 
 ## 12. The story pool and the screens (rework, 2026-11-17)
 
-- **Story cards: 40 WHO / 30 WHERE / 30 WHY**, translated, tagged. Every WHO and WHY card carries its own pencil icon (`STORY_ICONS` in `public/visions.js`), and every WHERE card its backdrop etching (15 new etchings in `public/backdrops.js`). New cards also appear in Classic and Missions (Missions uses its generic story lines for them).
+- **Story cards: 40 WHO / 30 WHERE / 30 WHY**, translated, tagged. Every WHO and WHY card carries its own pencil icon (`STORY_ICONS` in `public/visions.js`), and every WHERE card its backdrop etching (15 new etchings in `public/backdrops.js`). New cards also appear in Classic and Missions, with their own Missions story lines (mission steps for every WHY card, scenes for every WHERE card), in all six languages.
 - **No window on Séance cards:** the arch that cropped the art is gone; motifs and icons sit on the vellum, bigger.
 - **One screen per step on every phone:** a status bar (round, the three steps, the clock, your row), one line of what to do now, then the cards.
   - The Ghost goes reader by reader: the reader's row with the truth in red, the hand, Send. It moves to the next reader by itself.
