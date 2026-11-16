@@ -485,6 +485,18 @@ ROLES.N_INSOMNIAC = { id: 'N_INSOMNIAC', name: 'Insomniac', set: 'midnight', ali
 PRESETS.midnight = { id: 'midnight', name: 'Dead Set: Midnight', min: 4, max: 12, pool: [], dreams: false,
   rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, midnight: true,
   blurb: 'One night, one vote. Cards change hands in the dark; at dawn you are what lies in front of you. Find a Death, or be one.' };
+ROLES.S_GHOST = { id: 'S_GHOST', name: 'Ghost', set: 'seance', alignment: 'NON_DEATH', glyph: 'shade', when: 'Always',
+  summary: 'You were murdered. You know who, where and why, and you cannot speak.',
+  detail: 'Send each Medium a vision for their row. Frost a vision with a cold spot to say: this one is not mine.' };
+ROLES.S_MEDIUM = { id: 'S_MEDIUM', name: 'Medium', set: 'seance', alignment: 'NON_DEATH', glyph: 'medium', when: 'Always',
+  summary: 'Read the visions and light candles on the truth.',
+  detail: 'Each round you read one row: who, where or why. Solve all three before the candles burn out, then name the Deceiver.' };
+ROLES.S_DECEIVER = { id: 'S_DECEIVER', name: 'Deceiver', set: 'seance', alignment: 'DEATH', glyph: 'charlatan', when: 'Always',
+  summary: 'A second spirit in a living body. You know the truth, and you lie.',
+  detail: 'You look exactly like a Medium. A few times a game, swap the Ghost\'s vision to another Medium for one of your own. You win if the candles burn out, or if the table names the wrong player.' };
+PRESETS.seance = { id: 'seance', name: 'Dead Set: Séance', min: 4, max: 10, pool: [], dreams: false,
+  rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, seance: true,
+  blurb: 'A murdered Ghost who cannot speak sends visions; the Mediums read them to find who, where and why. A Deceiver among them swaps visions for lies.' };
 PRESETS.carnival = { id: 'carnival', name: 'Dead Set: Carnival', min: 4, max: 12, pool: [], dreams: false,
   rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, carnival: true,
   blurb: 'A masked ball of bluff and memory. Everyone wears a role card as a mask, shuffled until nobody is sure. Claim masks to gather Souls; 13 wins.' };
@@ -499,8 +511,9 @@ export const MODES = {
   coffins: { id: 'coffins', roleSets: ['coffins'], rules: false, dreams: false },
   carnival: { id: 'carnival', roleSets: ['carnival'], rules: false, dreams: false },
   midnight: { id: 'midnight', roleSets: ['midnight'], rules: false, dreams: false },
+  seance: { id: 'seance', roleSets: ['seance'], rules: false, dreams: false },
 };
 /** The mode a preset belongs to. */
-export const modeOf = (presetId) => (PRESETS[presetId]?.missions ? 'missions' : PRESETS[presetId]?.exorcism ? 'exorcism' : PRESETS[presetId]?.coffins ? 'coffins' : PRESETS[presetId]?.carnival ? 'carnival' : PRESETS[presetId]?.midnight ? 'midnight' : 'classic');
+export const modeOf = (presetId) => (PRESETS[presetId]?.missions ? 'missions' : PRESETS[presetId]?.exorcism ? 'exorcism' : PRESETS[presetId]?.coffins ? 'coffins' : PRESETS[presetId]?.carnival ? 'carnival' : PRESETS[presetId]?.midnight ? 'midnight' : PRESETS[presetId]?.seance ? 'seance' : 'classic');
 /** Can this role be dealt in this mode? */
 export const roleInMode = (roleId, mode) => !!ROLES[roleId] && MODES[mode].roleSets.includes(ROLES[roleId].set);

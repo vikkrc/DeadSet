@@ -3,6 +3,9 @@ export default {
   and: 'und',
   numbers: ['kein', 'ein', 'zwei', 'drei', 'vier', 'fünf', 'sechs', 'sieben', 'acht', 'neun', 'zehn'],
   roles: {
+    S_GHOST: { name: "Geist", when: "Immer", summary: "Du wurdest ermordet. Du weißt wer, wo und warum, und kannst nicht sprechen.", detail: "Schick jedem Leser eine Vision zu seiner Reihe. Mit einem kalten Fleck vereist du eine Vision, die nicht von dir ist." },
+    S_MEDIUM: { name: "Medium", when: "Immer", summary: "Lies die Visionen und entzünde Kerzen auf die Wahrheit.", detail: "Jede Runde liest du eine Reihe: wer, wo oder warum. Löst alle drei, bevor die Kerzen herunterbrennen, dann nennt den Täuscher." },
+    S_DECEIVER: { name: "Täuscher", when: "Immer", summary: "Ein zweiter Geist in einem lebenden Körper. Du kennst die Wahrheit, und du lügst.", detail: "Du siehst genau aus wie ein Medium. Ein paarmal pro Spiel tauschst du die Vision des Geistes für einen anderen Leser gegen deine eigene. Du gewinnst, wenn die Kerzen herunterbrennen oder der Tisch den falschen Spieler nennt." },
     N_SLEEPER: { name: "Schläfer", when: "Immer", summary: "Eine Nacht, eine Abstimmung. Deine Karte kann den Besitzer wechseln, während du schläfst.", detail: "Sieh dir deine Karte einmal an, handle, wenn dein Handy dich weckt, dann streitet und zeigt. Du bist die Karte, die im Morgengrauen vor dir liegt." },
     N_TWIN: { name: "Zwilling", when: "Nachts", summary: "Du wachst mit deinem Zwilling auf, und ihr seht euch.", detail: "Die Zwillinge kommen als Paar. Ist dein Zwilling nicht am Tisch, liegt die zweite Karte in der Mitte." },
     N_INSOMNIAC: { name: "Schlaflose", when: "Nachts, zuletzt", summary: "Du wachst zuletzt auf und siehst deine eigene Karte an.", detail: "Du siehst, ob dir jemand in der Nacht die Karte genommen hat, und was du im Morgengrauen bist." },
@@ -127,6 +130,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Rachsüchtige Geister', text: 'Jeder ausgeschiedene Spieler darf pro Tag eine Geisterstimme mit Gewicht 1 abgeben.', enforcement: 'Geister können nicht nominieren, keine Fähigkeiten nutzen und die Mehrheitsregel nicht beeinflussen.' },
   },
   presets: {
+    seance: { name: "Dead Set: Séance", blurb: "Ein stummer, ermordeter Geist schickt Visionen; die Medien lesen daraus wer, wo und warum. Ein Täuscher unter ihnen tauscht Visionen gegen Lügen." },
     midnight: { name: "Dead Set: Mitternacht", blurb: "Eine Nacht, eine Abstimmung. Karten wechseln im Dunkeln die Hände; im Morgengrauen bist du, was vor dir liegt. Finde den Tod, oder sei er." },
     carnival: { name: "Dead Set: Karneval", blurb: "Ein Maskenball aus Bluff und Gedächtnis. Jeder trägt eine Rollenkarte als Maske, gemischt, bis niemand mehr sicher ist. Beanspruche Masken und sammle Seelen; 13 gewinnen." },
     coffins: { name: "Dead Set: Särge", blurb: "Ein schnelles Bluffspiel. Vergrabe Gold und einen Fluch, biete, wie viele Särge du öffnen kannst, dann grabe. Zwei saubere Grabungen gewinnen." },
@@ -156,6 +160,15 @@ export default {
     'Der Tod stimmte mit der Stadt. Natürlich.',
   ],
   guide: {
+    seanceH: "Dead Set: Séance",
+    seance: `<p>Ein kooperatives Mordrätsel mit Verräter. 4–10 Spieler, etwa 30 Minuten. Ein Spieler ist der <b>Geist</b>: Er weiß, wer ihn getötet hat, wo und warum, und kann nicht sprechen. Alle anderen sind Leser.</p>
+<ol>
+<li><b>Das Brett.</b> Drei Reihen Geschichtskarten: wer, wo und warum. In jeder Reihe ist eine Karte die Wahrheit.</li>
+<li><b>Visionen.</b> Jede Runde bekommt jeder Leser eine Reihe, und der Geist schickt ihm eine wortlose Vision dazu: zwei oder drei gezeichnete Motive auf einer Karte.</li>
+<li><b>Diskussion.</b> Die Visionen werden für alle aufgedeckt. Beschreibt sie, streitet, überzeugt. Der Geist schweigt, kann aber eine Vision mit einem <b>kalten Fleck</b> vereisen: Die ist nicht von mir.</li>
+<li><b>Kerzen.</b> Jeder Leser entzündet eine Kerze auf einer Karte seiner Reihe oder hält sie zurück. Die Karte mit den meisten Kerzen wird dem Geist vorgelegt. Richtig: Die Reihe ist gelöst. Falsch: Die Karte wird gestrichen. Jede Runde brennt eine Kerze der Séance-Uhr herunter.</li>
+</ol>
+<p>Ab fünf Spielern versteckt sich ein <b>Täuscher</b> unter den Lesern. Er kennt die Wahrheit und tauscht ein paarmal pro Spiel die Vision eines anderen Lesers gegen eine Lüge. Löst alle drei Reihen, bevor die Kerzen herunterbrennen, und nennt dann den Täuscher: richtig ist ein voller Sieg, falsch ein hohler, den sich der Täuscher teilt. Brennt die Uhr herunter, gewinnt der Täuscher (bleibt eine Reihe offen, kommt zuerst der <b>letzte Atemzug</b>). Der Endbildschirm spielt jede Runde nach: die wahren Visionen, die Tausche und die Kerzen.</p>`,
     midnightH: "Dead Set: Mitternacht",
     midnight: `<p>Eine Nacht, eine Abstimmung, keine zweite Chance. 4–12 Spieler, etwa 10 Minuten. Das Deck hat eine Karte pro Spieler und drei weitere verdeckt auf dem Tisch.</p>
 <ol>

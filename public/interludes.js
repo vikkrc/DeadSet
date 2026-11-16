@@ -41,6 +41,13 @@ export function sceneMs(type, d = {}) {
     // Midnight
     case 'nfall': return 3200;
     case 'ndawn': return 3600;
+    // Séance
+    case 'svisions': return 3600 + Math.min(d.n ?? 0, 10) * 450;
+    case 'scold': return 2600;
+    case 'sverdict': return 2200 + (d.n ?? 0) * 2400;
+    case 'slast': return 3200;
+    case 'sname': return 3000;
+    case 'snamed': return 5600;
     // Carnival
     case 'kintro': return 3400;
     case 'kswap': return 3400;
@@ -75,7 +82,13 @@ export function scenesFor(l, batch = [], ctx = {}) {
     case 'coinflip': return [['coin']];
     case 'heartbreak': case 'shot': case 'exchange': return [['death']];
     case 'scapegoat': return has('tally') ? [] : [['death']];
-    case 'm-lottery': case 'x-lottery': case 'c-lottery': case 'k-lottery': return [['mlottery']];
+    case 'm-lottery': case 'x-lottery': case 'c-lottery': case 'k-lottery': case 's-lottery': return [['mlottery']];
+    case 's-visions': return [['svisions', { n: l.count ?? 0 }]];
+    case 's-cold': return [['scold']];
+    case 's-verdict': return [['sverdict', { n: l.rows?.length ?? 0 }]];
+    case 's-last': return [['slast']];
+    case 's-naming': return [['sname']];
+    case 's-named': return [['snamed']];
     case 'n-night': return [['nfall']];
     case 'n-dawn': return [['ndawn']];
     case 'k-unmask': return (l.order ?? Object.keys(l.masks ?? {})).map(() => ['kintro']);

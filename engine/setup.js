@@ -3,6 +3,7 @@ import { X_DEFAULTS, applyExorcismPatch, validateExorcism } from './exorcism.js'
 import { C_DEFAULTS, applyCoffinsPatch, validateCoffins } from './coffins.js';
 import { K_DEFAULTS, applyCarnivalPatch, validateCarnival } from './carnival.js';
 import { N_DEFAULTS, applyMidnightPatch, validateMidnight } from './midnight.js';
+import { S_DEFAULTS, applySeancePatch, validateSeance } from './seance.js';
 import {
   ROLES, PRESETS, RULE_CARDS, RULE_IDS, COPY_SENSITIVE, SCENARIO, MIN_PLAYERS, ABS_MAX_PLAYERS, LANGS,
   DREAM_WEIGHTS, DREAM_WEIGHT_MAX, SMALL_TABLE, STANDARD_EXTENDED, FULL_EXTENDED,
@@ -47,7 +48,8 @@ export function defaultSettings() {
       xClue: 30, xDiscuss: 90, xVote: 45, xGuess: 45,
       cBury: 20, cTurn: 30, cBid: 20, cDig: 15, cWager: 10,
       kTurn: 45, kChallenge: 12, kPower: 20, kLook: 12,
-      nDeal: 15, nStep: 10, nDay: 300, nVote: 30 },
+      nDeal: 15, nStep: 10, nDay: 300, nVote: 30,
+      sIntro: 20, sVision: 90, sDiscuss: 180, sCandle: 45, sName: 60 },
     transport: 'in-person',
     revealOnDeath: false,
     endReveal: true,
@@ -84,6 +86,8 @@ export function defaultSettings() {
     k: { ...K_DEFAULTS, pool: [] },
     // Midnight mode
     n: { ...N_DEFAULTS, pool: [] },
+    // Séance mode
+    s: { ...S_DEFAULTS },
   };
 }
 
@@ -97,7 +101,7 @@ export function applySettingsPatch(settings, patch = {}) {
   const s = structuredClone(settings);
   // Switching modes (Classic / Missions / Exorcism): each mode keeps its own
   // last preset and options, so going there and back loses nothing.
-  if (patch.mode && ['classic', 'missions', 'exorcism', 'coffins', 'carnival', 'midnight'].includes(patch.mode) && patch.mode !== modeOf(s.preset)) {
+  if (patch.mode && ['classic', 'missions', 'exorcism', 'coffins', 'carnival', 'midnight', 'seance'].includes(patch.mode) && patch.mode !== modeOf(s.preset)) {
     const from = modeOf(s.preset);
     s.memory = { ...(s.memory || {}) };
     s.memory[from] = { preset: s.preset, dreams: s.dreams, doomsday: s.doomsday, rules: structuredClone(s.rules) };
@@ -183,6 +187,7 @@ export function applySettingsPatch(settings, patch = {}) {
   if (patch.c) applyCoffinsPatch(s, patch.c);
   if (patch.k) applyCarnivalPatch(s, patch.k);
   if (patch.n) applyMidnightPatch(s, patch.n);
+  if (patch.s) applySeancePatch(s, patch.s);
   if (typeof patch.twins === 'boolean') s.twins = patch.twins;
   if (typeof patch.sideMissions === 'boolean') s.sideMissions = patch.sideMissions;
   if (patch.missionCards !== undefined) s.missionCards = clampInt(patch.missionCards, 0, 2, 1);
@@ -278,12 +283,13 @@ export function suggestSetups(n, seed = 0) {
  * Validate a setup for N seated players. Returns errors (blocking) and
  * warnings (shown, not blocking) plus a public description of the deck.
  */
-export function validateSetup(n, settings) {
+export function validateSetup(n, settings, players = []) {
   if (PRESETS[settings.preset]?.missions) return validateMissions(n, settings);
   if (PRESETS[settings.preset]?.exorcism) return validateExorcism(n, settings);
   if (PRESETS[settings.preset]?.coffins) return validateCoffins(n, settings);
   if (PRESETS[settings.preset]?.carnival) return validateCarnival(n, settings);
   if (PRESETS[settings.preset]?.midnight) return validateMidnight(n, settings);
+  if (PRESETS[settings.preset]?.seance) return validateSeance(n, settings, players);
   const errors = [];
   const warnings = [];
   const preset = PRESETS[settings.preset];

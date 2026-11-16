@@ -1,6 +1,6 @@
-# Dead Set: Séance — rules and game spec (DRAFT)
+# Dead Set: Séance — rules and game spec
 
-**Status: design draft for Beta 6 (moved back on 2026-11-12: it needs the most new art). Nothing here is built. Decisions pending (§10).**
+**Status: built for Beta 6 (2026-11-16).** The decisions of §10 are settled below, and §3 changed after balance simulations (a wrong verdict no longer burns an extra candle). The vision etchings are generated from a motif library (§8); the larger story-card pool is still to come.
 
 A co-operative deduction game with a hidden traitor, for **4–10 players**, chosen in the lobby next to Classic, Missions and Exorcism. One phone each, plus the TV board, which matters more here than in any other mode.
 
@@ -39,10 +39,10 @@ Before the game, the server draws a board for the TV from the story cards: **thr
 
 - The TV shows **seven candles** around the séance table: 11 pm to dawn.
 - Every round burns one candle.
-- **Every wrong verdict burns one more.**
+- A wrong verdict strikes the card from its row but **burns nothing extra**. (The draft burned one more candle per miss; in bot simulations that let the Deceiver win about 80% of games at six players.)
 - When the last candle goes out, the séance is over (§6).
 
-This is how the game stops brute force. Guessing does give information, because a wrong card is struck from its row, but every miss costs time.
+Brute force is held back by the clock itself: a row can only be guessed once a round, and every round burns a candle.
 
 ## 4. A round
 
@@ -74,16 +74,15 @@ This is how the game stops brute force. Guessing does give information, because 
 
 | Setting | Options (default first) |
 |---|---|
-| Difficulty | **Standard** (6 cards per row, 1 vision each, 7 candles), Gentle (5 per row, 2 visions each, 8 candles), Grim (8 per row, 1 vision each, 6 candles) |
+| Difficulty | **Standard** (6 cards per row, 1 vision each, 7 candles), Gentle (5 per row, 2 visions each, 8 candles), Grim (8 per row, 1 vision each, 7 candles) |
 | Deceivers | **One** (from 5 players; off at 4), none, two (from 9 players) |
 | Deceivers know each other | **On** (two Deceivers only) |
 | The Deceiver's swaps | **3 per game**, 2, 4 |
 | The Ghost's cold spots | **3 per game**, 2, 4 |
 | Last breath (§6) | **On**, off |
-| Ghost | **Drawn by lot**, chosen by the host, the trusted moderator |
-| Rounds per match | **1**, 2, 3 (scores carry over, as in Exorcism) |
+| Ghost | **Drawn by lot**, chosen by the host |
+| Games per match | **1**, 2, 3 (scores carry over, as in Exorcism) |
 | Timers | Visions 90 s, discussion 180 s, candles 45 s, naming 60 s |
-| Story cards | The usual WHO / WHERE / WHY switches; the host can exclude cards |
 
 Everything is validated per mode, following the Beta 0 rule: no Classic roles, rules or Dreams appear here.
 
@@ -138,12 +137,12 @@ Everything is validated per mode, following the Beta 0 rule: no Classic roles, r
 - **Vision cards: 84 at launch.**
   - Language-free, dream-like etchings in the established pencil and emblem style.
   - Two or three motifs collide on each one: *a key inside a birdcage; stairs that end in water; a clock with a moth on the hand; a crown on a dinner plate*.
-  - Drawn as SVG compositions from a motif library (about 60 motifs) with composition rules, plus hand-curated favourites.
-  - Each vision carries **4–6 concept tags** (water, money, faith, night, royalty, travel, fire, secrecy…).
+  - **Built:** 84 hand-curated compositions (`public/visions.js`) from about 100 pencil motifs: the existing emblem library plus 16 new motifs (wave, ship, fish, bird, birdcage, stairs, tree, snake, moth, planet, gear, film reel, grapes, palm, snowflake, train). Four layouts: one motif inside another, a small one across a large one, a diagonal pair, a small one above a large one; every fourth vision adds a third accent.
+  - Each motif carries two concept tags; a vision carries its motifs' tags (about 3–5, from 23: water, money, faith, night, royalty, travel, fire, secrecy, death, time…).
 - **More story cards.** 20 WHO / 15 WHERE / 15 WHY repeat quickly on a 6-card board. The target is **40 / 30 / 30**:
   - 15 new WHERE cards each need a backdrop etching (and later room content for Doppelgänger);
   - all of it translated into the six languages;
-  - every WHO, WHERE and WHY card tagged with the same concept vocabulary as the visions.
+  - every WHO, WHERE and WHY card tagged with the same concept vocabulary as the visions (**done** for the current 20 / 15 / 15).
 - **Tags** drive three things: near-miss boards, bot play, and a "vision fits" sanity check when generating content.
 
 ## 9. Cast (reused art)
@@ -169,10 +168,28 @@ Everything is validated per mode, following the Beta 0 rule: no Classic roles, r
 
 Bot simulations set the balance: the clock length, the swap count and the cold-spot count per difficulty, so the full victory lands at about 50–60% on Standard.
 
-## 10. To decide
+## 10. Decisions (settled for the build)
 
-1. **Visions to each Medium, or visions to the whole row?** The roadmap says *to each player*, and so does this draft. Personal visions make each reader matter.
-2. **Should the Ghost also see the first impressions?** That would give it a way to steer. The draft says **no**, to keep the Ghost honest.
-3. **Can the Deceiver swap a vision sent to itself?** The draft says **no**: it can only swap other players' visions.
-4. **Does a wrong verdict strike the card?** The draft says **yes**, plus the extra burned candle. An alternative: the card stays and only the candle burns.
-5. **Should the clock length scale with the number of rows still open?** That would make two-row endgames less punishing.
+1. **Visions go to each reader**, one each (two on Gentle), for that reader's row.
+2. **The Ghost does not see the first impressions.** It sees what it sent and, from the reveal on, what every reader shows, so it can spot a swap.
+3. **The Deceiver cannot swap a vision sent to itself**, only another reader's. Two Deceivers cannot swap the same reader's vision in one round.
+4. **A wrong verdict strikes the card**, and burns no extra candle (see §3).
+5. **The clock does not scale** with the open rows; the last breath (§6) softens the endgame.
+6. **Candles turn public after each verdict**: who lit which card is part of the case against the Deceiver at the Naming.
+7. **The Naming**: every reader names one player (two with two Deceivers); a tie at the cut-off names nobody there, which counts as a wrong naming.
+8. **The Ghost is muted** in the remote chat too.
+
+## 11. Balance (bot simulations, Standard)
+
+| Players | Full victory | Hollow | Deceiver | Lost (no Deceiver) |
+|---|---|---|---|---|
+| 4 | 77% | | | 23% |
+| 6 | 30% | 57% | 13% | |
+| 9 | 41% | 57% | 2% | |
+
+Bots read visions by their concept tags and name the Deceiver crudely (by wrong candles), so hollow victories are over-represented; human tables should name better. Grim at six players: about 47% Deceiver wins.
+
+## 12. Still to come
+
+- The larger story-card pool (40 WHO / 30 WHERE / 30 WHY with backdrops), translated.
+- Hand-drawn vision art to replace or extend the generated motif compositions.

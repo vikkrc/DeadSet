@@ -322,6 +322,17 @@ const MOODS = {
   nNight: { root: 46.2, scale: [0, 1, 3, 6, 7, 8], chord: [1, 1.06, 1.5], cutoff: 300, wind: 0.05, gain: 0.58, tick: 60, heart: 50, shimmer: 0.005, swell: [6, 10], motif: { voice: 'box', every: [10, 16], len: [2, 3], beat: 1.2, oct: 5 } },
   nDay: { root: 58.3, scale: [0, 1, 3, 5, 6, 8, 10], chord: [1, 1.19, 1.41], cutoff: 540, wind: 0.02, gain: 0.5, tick: 90, heart: 64, pluck: { bpm: 90, pattern: [1, 0, 0, 1, 0, 0, 1, 0], notes: [0, 1, 6, 3] }, motif: { voice: 'bell', every: [8, 13], len: [2, 3], beat: 0.8, oct: 3 } },
   nVote: { root: 61.7, scale: [0, 1, 4, 5, 6, 8, 11], chord: [1, 1.06, 1.41], cutoff: 620, wind: 0.015, gain: 0.52, tick: 132, heart: 96, drum: { bpm: 132, pattern: [1, 0, 0, 0, 1, 0, 0, 0], pitch: 54, gain: 0.2 }, swell: [4, 7], motif: { voice: 'box', every: [5, 8], len: [2, 3], beat: 0.38, oct: 4 } },
+  // Dead Set: Séance. A dark parlour: a glass harmonica, a held choir, a table that knocks.
+  //   sGather – the circle forms: a low drone, a far choir, a bell for the dead
+  //   sReach  – visions on their way: shimmering glass and a slow music box, dream-like
+  //   sTalk   – the argument: a patient ostinato in a minor key, the Ghost listening
+  //   sCandle – the candles: a heartbeat under a clock, the room holding its breath
+  //   sName   – the naming: a tolling bell and voices
+  sGather: { root: 55, scale: [0, 2, 3, 7, 8], chord: [1, 1.19, 1.5, 2], cutoff: 420, wind: 0.035, gain: 0.56, choir: 0.022, swell: [8, 13], motif: { voice: 'bell', every: [8, 12], len: [1, 2], beat: 1.5, oct: 2 } },
+  sReach: { root: 61.7, scale: [0, 2, 3, 6, 7, 9], chord: [1, 1.5, 2, 3], cutoff: 520, wind: 0.02, gain: 0.52, shimmer: 0.01, choir: 0.012, motif: { voice: 'box', every: [6, 10], len: [3, 5], beat: 0.9, oct: 5 } },
+  sTalk: { root: 65.4, scale: [0, 2, 3, 5, 7, 8, 11], chord: [1, 1.19, 1.5], cutoff: 600, wind: 0.012, gain: 0.48, pluck: { bpm: 76, pattern: [1, 0, 0, 1, 0, 1, 0, 0], notes: [0, 3, 7, 8] }, shimmer: 0.004, motif: { voice: 'bell', every: [9, 14], len: [2, 3], beat: 0.8, oct: 3 } },
+  sCandle: { root: 58.3, scale: [0, 1, 3, 6, 7, 8], chord: [1, 1.06, 1.5], cutoff: 480, wind: 0.02, gain: 0.52, heart: 64, tick: 76, swell: [6, 10], motif: { voice: 'box', every: [7, 11], len: [2, 3], beat: 0.7, oct: 4 } },
+  sName: { root: 51.9, scale: [0, 1, 4, 5, 7, 8], chord: [1, 1.06, 1.5, 2], cutoff: 440, wind: 0.04, gain: 0.58, choir: 0.03, heart: 56, swell: [5, 9], motif: { voice: 'bell', every: [4, 6], len: [1, 1], beat: 1, oct: 2 } },
   // Overlay mixed on top of any mood when the table is down to its last few.
   tension: { root: 110, scale: [0, 1], chord: [], cutoff: 3000, wind: 0, gain: 0.5, shimmer: 0.012, heart: 104 },
 };

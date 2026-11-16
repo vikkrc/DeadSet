@@ -6,6 +6,7 @@ import { playerView } from '../engine/views.js';
 import { AVATAR_PARTS } from '../engine/content.js';
 import { randomTeam } from '../engine/missions.js';
 import { carnivalBelief } from '../engine/carnival.js';
+import { fit, VISIONS } from '../engine/seancecontent.js';
 
 export const BOT_NAMES = ['Ash', 'Bram', 'Cass', 'Dorian', 'Edda', 'Finch', 'Greer', 'Hollis', 'Isolde', 'Jem', 'Kestrel', 'Lark',
   'Mabel', 'Nell', 'Orrin', 'Perpetua', 'Quill', 'Rook', 'Silas', 'Tamsin', 'Ursa', 'Vesper', 'Wren', 'Yarrow', 'Zeke'];
@@ -43,7 +44,7 @@ export function botDecide(m, botId, rng) {
       if (a.type === 'swap' && a.snatcher && a.choice == null && a.targets?.length && chance(rng, 0.5)) return { cmd: { type: 'dream.swap', payload: { target: pick(rng, a.targets) } } };
       return null;
     case 'NIGHT_ACTIONS': return nightMove(m, v, rng);
-    default: return m.X ? exorcismMove(m, v, rng) : m.N ? midnightMove(m, v, rng) : m.K ? carnivalMove(m, v, rng) : m.C ? coffinsMove(m, v, rng) : m.M ? missionMove(m, v, rng) : null;
+    default: return m.X ? exorcismMove(m, v, rng) : m.S ? seanceMove(m, v, rng) : m.N ? midnightMove(m, v, rng) : m.K ? carnivalMove(m, v, rng) : m.C ? coffinsMove(m, v, rng) : m.M ? missionMove(m, v, rng) : null;
   }
 }
 
@@ -80,6 +81,67 @@ function exorcismMove(m, v, rng) {
 // early, so it gets dug), bid what they believe is safe (their own buried gold
 // plus a share of the table) and sometimes bluff a raise, dig the plots of
 // players who passed rather than those who bid high, and wager like the dice.
+// Séance: the Ghost sends the vision that fits the truth best and the rest of the row least,
+// and frosts a vision it did not send; Mediums light the card their row's visions fit best;
+// the Deceiver swaps in a vision that fits a near miss, and lights plausibly wrong.
+function seanceMove(m, v, rng) {
+  const a = v.action || {};
+  const me = v.me.id;
+  const S = v.seance;
+  const s = v.me.s ?? {};
+  const open = (row) => S.board[row].filter((c) => !S.struck[row].includes(c));
+  const best = (scores) => { const top = Math.max(...Object.values(scores)); const ids = Object.keys(scores).filter((k) => scores[k] === top); return Number(pick(rng, ids)); };
+  switch (a.type) {
+    case 'sintro': return a.done ? null : { cmd: { type: 's.ack', payload: {} } };
+    case 'ssend': {
+      const to = Object.keys(S.assign).find((id) => (s.sent?.[id]?.length ?? 0) < S.perMedium);
+      if (!to || !s.hand?.length || !chance(rng, 0.5)) return null;
+      const row = S.assign[to];
+      const others = open(row).filter((c) => c !== s.truth[row]);
+      const score = (vid) => fit(vid, row, s.truth[row]) * 2 - Math.max(0, ...others.map((c) => fit(vid, row, c)));
+      const vision = [...s.hand].sort((x, y) => score(y) - score(x))[0];
+      return { cmd: { type: 's.send', payload: { target: to, vision } } };
+    }
+    case 'simpress': {
+      if (s.impression != null || !chance(rng, 0.4)) return null;
+      if (s.role === 'DECEIVER' && !s.swap && s.swapsLeft > 0 && chance(rng, 0.7)) {
+        const targets = Object.keys(S.assign).filter((id) => id !== me);
+        const t = pick(rng, targets);
+        const row = S.assign[t];
+        const near = open(row).filter((c) => c !== s.truth[row]);
+        const score = (vid) => Math.max(0, ...near.map((c) => fit(vid, row, c))) * 2 - fit(vid, row, s.truth[row]);
+        const vision = [...s.dhand].sort((x, y) => score(y) - score(x))[0];
+        if (vision != null) return { cmd: { type: 's.swap', payload: { target: t, vision } } };
+      }
+      return { cmd: { type: 's.impress', payload: { card: pick(rng, open(a.row)) } } };
+    }
+    case 'scold': {
+      if (!S.cold || !chance(rng, 0.3)) return null;
+      const t = Object.keys(S.shown ?? {}).find((id) => !S.frosted.includes(id) && S.shown[id].some((x) => !(s.sent?.[id] ?? []).includes(x)));
+      return t ? { cmd: { type: 's.cold', payload: { target: t } } } : null;
+    }
+    case 'slight': {
+      if (s.lit != null || !chance(rng, 0.4)) return null;
+      const row = a.row;
+      const cands = open(row);
+      const visions = Object.entries(S.shown ?? {}).filter(([id]) => S.assign[id] === row && !S.frosted.includes(id)).flatMap(([, vs]) => vs);
+      const scores = Object.fromEntries(cands.map((c) => [c, visions.reduce((n, vid) => n + fit(vid, row, c), 0) + rng.int(100) / 1000]));
+      if (s.role === 'DECEIVER' && chance(rng, 0.6)) { delete scores[s.truth[row]]; if (!Object.keys(scores).length) return { cmd: { type: 's.light', payload: { card: 'abstain' } } }; }
+      return { cmd: { type: 's.light', payload: { card: best(scores) } } };
+    }
+    case 'sname': {
+      if (s.named || !chance(rng, 0.5)) return null;
+      // Suspicion: candles lit on cards that turned out wrong.
+      const sus = Object.fromEntries(a.targets.map((id) => [id, rng.int(100) / 1000]));
+      for (const r of S.past ?? []) for (const [id, c] of Object.entries(r.lit ?? {})) if (id in sus && c !== 'abstain' && S.solved[r.assign[id]] != null && Number(c) !== S.solved[r.assign[id]]) sus[id] += 1;
+      if (s.role === 'DECEIVER') for (const f of [me, ...(s.fellows ?? [])]) delete sus[f];
+      const ranked = Object.keys(sus).sort((x, y) => sus[y] - sus[x]);
+      return { cmd: { type: 's.name', payload: { targets: ranked.slice(0, a.count) } } };
+    }
+    default: return null;
+  }
+}
+
 // Midnight: act at random within the role; by day, Death points at someone it knows is not Death.
 function midnightMove(m, v, rng) {
   const a = v.action || {};

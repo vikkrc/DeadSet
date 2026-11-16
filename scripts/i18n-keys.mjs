@@ -44,7 +44,7 @@ function strings(src) {
 }
 
 // Client: every string literal inside a t( / th( / tm( / tmh( call (balanced parens).
-for (const f of ['public/app.js', 'public/board.js', 'public/gazette.js', 'public/guide.js', 'public/gifts.js', 'public/missions.js', 'public/exorcism.js', 'public/coffins.js', 'public/carnival.js', 'public/midnight.js']) {
+for (const f of ['public/app.js', 'public/board.js', 'public/gazette.js', 'public/guide.js', 'public/gifts.js', 'public/missions.js', 'public/exorcism.js', 'public/coffins.js', 'public/carnival.js', 'public/midnight.js', 'public/seance.js']) {
   const src = read(f);
   const re = /\b(?:t|th)\(/g;
   let m;
@@ -89,6 +89,9 @@ for (const m of read('public/coffins.js').matchAll(/const (?:steps|FACE_EN|RELIC
 for (const m of read('engine/coffins.js').matchAll(/export const C_ADVANCE_LABEL = \{([\s\S]*?)\};/g)) for (const x of m[1].matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/\s/.test(s)) keys.add(s); }
 // Midnight: card powers, explainer steps, step titles and advance labels.
 for (const m of read('public/midnight.js').matchAll(/const (?:steps|KIND_TITLE) = [\[{]([\s\S]*?)[\]}];|export const NPOWER = \{([\s\S]*?)\};/g)) for (const x of (m[1] ?? m[2]).matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/\s|^[A-Z][a-z]/.test(s)) keys.add(s); }
+// Séance: row names, questions, steps, difficulty notes, role texts, verdict titles.
+for (const m of read('public/seance.js').matchAll(/const (?:ROW_LABEL|ROW_Q|ROW_NAME|steps|DIFF_SUB) = [\[{]([\s\S]*?)[\]}];|export const seanceTitle = \(result\) => \(\{([\s\S]*?)\}|const text = \{([\s\S]*?)\}\[/g)) for (const x of (m[1] ?? m[2] ?? m[3]).matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/\s|^[A-Z][a-z]/.test(s)) keys.add(s); }
+for (const m of read('engine/seance.js').matchAll(/export const S_ADVANCE_LABEL = \{([\s\S]*?)\};/g)) for (const x of m[1].matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/\s/.test(s)) keys.add(s); }
 for (const m of read('engine/midnight.js').matchAll(/export const N_ADVANCE_LABEL = \{([\s\S]*?)\};/g)) for (const x of m[1].matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/\s/.test(s)) keys.add(s); }
 // Carnival: powers, the legend, explainer steps and advance labels.
 for (const m of read('public/carnival.js').matchAll(/const (?:steps|LEGEND) = \[([\s\S]*?)\];|export const POWER = \{([\s\S]*?)\};/g)) for (const x of (m[1] ?? m[2]).matchAll(lit)) { const s = unq(x[1] ?? x[2]); if (/\s|^[A-Z][a-z]/.test(s)) keys.add(s); }
@@ -104,13 +107,13 @@ for (const m of read('public/gifts.js').matchAll(/const QUIP = \[([\s\S]*?)\];/g
 
 // Engine: message templates (strings shaped like sentences or containing {params}).
 for (const m of read('engine/content.js').matchAll(/verb: '([^']+)'/g)) keys.add(m[1]);
-for (const f of ['engine/missions.js', 'engine/exorcism.js', 'engine/coffins.js', 'engine/carnival.js', 'engine/midnight.js', 'engine/game.js', 'engine/night.js', 'engine/day.js', 'engine/setup.js', 'engine/views.js', 'engine/victory.js', 'engine/state.js', 'server/rooms.js', 'server/index.js']) {
+for (const f of ['engine/missions.js', 'engine/exorcism.js', 'engine/coffins.js', 'engine/carnival.js', 'engine/midnight.js', 'engine/seance.js', 'engine/game.js', 'engine/night.js', 'engine/day.js', 'engine/setup.js', 'engine/views.js', 'engine/victory.js', 'engine/state.js', 'server/rooms.js', 'server/index.js']) {
   for (const s of strings(read(f))) {
     if (/\{\w+\}/.test(s) || (/^[A-Z]/.test(s) && /\s/.test(s) && !/^[A-Z_]+$/.test(s))) keys.add(s);
-    else if (/^(ready|asleep|ballots recorded|have seen their role|are ready|have spoken|ready to vote|votes in|Table|Lobby|End)$/.test(s)) keys.add(s);
+    else if (/^(ready|asleep|ballots recorded|have seen their role|are ready|have spoken|ready to vote|votes in|candles lit|Table|Lobby|End)$/.test(s)) keys.add(s);
   }
 }
-const SKIP = new Set(['', 'JESTER', 'mine', 'DOUBLE_AGENT', 'GAMBLER', 'WITCH', 'N_DEAL', 'N_NIGHT', 'copy', 'DEMON', 'F', 'MASKED_VOTE', 'REGULAR', 'missions', 'stand', 'coin', 'DEATH', 'INDEPENDENT', 'ABSTAIN', 'Dead Set', 'Payload too large', 'Invalid JSON', 'Method not allowed', 'Could not restore rooms:']);
+const SKIP = new Set(['', 'host', 'standard', 'lot', 'JESTER', 'mine', 'DOUBLE_AGENT', 'GAMBLER', 'WITCH', 'N_DEAL', 'N_NIGHT', 'copy', 'DEMON', 'F', 'MASKED_VOTE', 'REGULAR', 'missions', 'stand', 'coin', 'DEATH', 'INDEPENDENT', 'ABSTAIN', 'Dead Set', 'Payload too large', 'Invalid JSON', 'Method not allowed', 'Could not restore rooms:']);
 const list = [...keys].filter((k) => !SKIP.has(k) && !k.startsWith('deadline')).sort();
 const lang = process.argv[2];
 if (lang) {

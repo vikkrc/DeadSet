@@ -55,6 +55,7 @@ export function stamp(m) {
   if (isNightPhase(m.phase) || m.phase === 'NIGHT_RESOLVING') return `Night ${m.nightNumber}`;
   if (m.C && m.phase.startsWith('C_')) return `Round ${m.C.round}`;
   if (m.K && m.phase.startsWith('K_')) return `Turn ${m.K.turnNo}`;
+  if (m.S && m.phase.startsWith('S_')) return m.S.round ? `Round ${m.S.round}` : 'Lobby';
   if (m.N && m.phase.startsWith('N_')) return m.phase === 'N_DEAL' || m.phase === 'N_NIGHT' ? 'Night' : 'Day';
   if (m.phase === 'ENDED') return 'End';
   return `Day ${m.dayNumber}`;

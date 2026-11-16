@@ -135,7 +135,7 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 | 3 | **Coffins** | Built (COFFINS.md); redesigned to the Codex |
 | 4 | **Carnival** | Built (CARNIVAL.md) |
 | 5 | **Midnight** | Built (MIDNIGHT.md) |
-| 6 | **Séance** | Rules drafted (SEANCE.md), decisions pending |
+| 6 | **Séance** | Built (SEANCE.md) |
 | 7 | **Doppelgänger** | Pitch |
 | 8 | **Council** | Pitch |
 | 9 | **Lifeboat** | Pitch |
@@ -260,7 +260,7 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 
 ## Beta 6: Dead Set: Séance (a hidden-traitor co-op, a cousin of Mysterium)
 
-**Status: rules drafted** (see SEANCE.md); decisions pending.
+**Status: built** (see SEANCE.md). The 84 visions are generated from a pencil motif library; the larger story-card pool is still to come.
 
 **The pitch:** someone was murdered. Their ghost wants to help you, but the ghost can't speak, and a second spirit is lying.
 

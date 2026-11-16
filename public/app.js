@@ -9,6 +9,7 @@ import { seatLayout } from './layout.js';
 import { sceneMs, scenesFor } from './interludes.js';
 import { cardArt, roleEmblemId, roleNumber } from './cards.js';
 import { emblem } from './emblems.js';
+import { isSeancePhase, seanceMain, seanceDock, seanceActs, seanceMoment, seanceMomentHtml, S_MOMENT_TIME, seanceEndHtml, seanceLobbyDeck, boardSheet as seanceSheet, SEANCE_QUIET, seanceTitle } from './seance.js';
 import { isMidnightPhase, midnightMain, midnightDock, midnightActs, midnightMoment, midnightMomentHtml, N_MOMENT_TIME, midnightEndHtml, midnightLobbyDeck, cardsSheet, MIDNIGHT_QUIET } from './midnight.js';
 import { isCarnivalPhase, carnivalMain, carnivalDock, carnivalActs, carnivalMoment, carnivalMomentHtml, lookMoments, K_MOMENT_TIME, carnivalEndHtml, carnivalLobbyDeck, masksSheet, CARNIVAL_QUIET } from './carnival.js';
 import { isCoffinsPhase, coffinsMain, coffinsDock, coffinsActs, coffinsMoment, coffinsMomentHtml, lanternMoments, C_MOMENT_TIME, coffinsEndHtml, coffinsLobbyDeck, COFFINS_QUIET } from './coffins.js';
@@ -284,6 +285,7 @@ function detectMoments(v) {
   // Side Missions: the owner learns at once (personal, queued behind any shared scene).
   if (v.mode === 'missions' && v.me && !v.me.moderator) for (const x of freshPriv.filter((e) => e.kind === 'side' && e.state)) out.push({ type: 'mside', side: x.side, state: x.state, sound: x.state === 'done' ? 'approve' : 'unpick', tapOnly: true });
   function entryMoments(l) {
+    if (v.mode === 'seance' && l.ev?.startsWith('s-')) { const mm = seanceMoment(l, v, fresh, { notify, name }); if (mm) out.push(...[].concat(mm)); return; }
     if (v.mode === 'midnight' && l.ev?.startsWith('n-')) { const mm = midnightMoment(l, v, fresh, { notify, name }); if (mm) out.push(...[].concat(mm)); return; }
     if (v.mode === 'carnival' && l.ev?.startsWith('k-')) { const mm = carnivalMoment(l, v, fresh, { notify, name, sound: pubSound }); if (mm) out.push(...[].concat(mm)); return; }
     if (v.mode === 'coffins' && l.ev?.startsWith('c-')) { const mm = coffinsMoment(l, v, fresh, { notify, name, sound: pubSound }); if (mm) out.push(...[].concat(mm)); return; }
@@ -342,7 +344,7 @@ function detectMoments(v) {
       case 'shot': out.push({ type: 'death', sound: 'shot', title: 'A shot rings out', names: (l.victims ?? []).map(name), sub: l.victims?.length ? 'Nobody saw who pulled the trigger.' : 'The bullet found no one.' }); break;
       case 'final-act': out.push({ type: 'call', kicker: ruleF('EQUAL_EXCHANGE', 'name'), title: 'A final act', sub: 'The condemned may take one more with them.', sound: 'knock' }); break;
       case 'exchange': out.push({ type: 'death', title: 'An equal exchange', names: (l.victims ?? []).map(name), sub: 'The condemned did not go alone.' }); break;
-      case 'end': out.push({ type: 'end', winner: l.winner, reason: l.reason, who: l.pid ? name(l.pid) : '', whos: (l.pids ?? []).map(name), sides: l.sides, tapOnly: true }); break;
+      case 'end': out.push({ type: 'end', winner: l.winner, reason: l.reason, who: l.pid ? name(l.pid) : '', whos: (l.pids ?? []).map(name), sides: l.sides, result: l.result, tapOnly: true }); break;
       case 'discussion': notify(t('Day {n} · the floor is open', { n: roman(v.dayNumber) })); break;
       case 'defense': notify(t('Defence: each nominee speaks in turn')); pubSound('spot'); break;
       case 'novote': notify(t('Nobody was nominated. No vote today.')); break;
@@ -367,9 +369,9 @@ function detectMoments(v) {
 const sceneData = (m) => ({ coin: m.coin ?? null, rules: m.rules?.length ?? 0, dead: (m.killed?.length ?? 0) + (m.expired?.length ?? 0), n: m.cards ? m.cards.length : m.count ?? 0 });
 
 const MOMENT_SOUND = { night0: 'night', day1: 'dawn', nightfall: 'night', dawn: 'dawn', tally: 'knock', death: 'death', revive: 'revive', bloodmoon: 'bloodmoon' };
-const END_THEME = { MIDNIGHT: 'winLiving', CARNIVAL: 'winJester', COFFINS: 'winLiving', DEMON: 'winDeath', DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester', LOVERS: 'winLovers', CULT: 'winCult', RIPPER: 'winRipper' };
+const END_THEME = { SEANCE: 'winLiving', MIDNIGHT: 'winLiving', CARNIVAL: 'winJester', COFFINS: 'winLiving', DEMON: 'winDeath', DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester', LOVERS: 'winLovers', CULT: 'winCult', RIPPER: 'winRipper' };
 const MOMENT_TIME = { end: 9000, private: 6000, gift: 5600, mside: 5200, coin: 5200, night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 5200, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
-const momentTime = (m) => (m.type === 'mreveal' ? revealTime(m) : N_MOMENT_TIME[m.type] ? N_MOMENT_TIME[m.type] : K_MOMENT_TIME[m.type] ? K_MOMENT_TIME[m.type] : C_MOMENT_TIME[m.type] ? C_MOMENT_TIME[m.type] : X_MOMENT_TIME[m.type] ? X_MOMENT_TIME[m.type] : MISSION_MOMENT_TIME[m.type] ? MISSION_MOMENT_TIME[m.type] : !onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : (MOMENT_TIME[m.type] ?? 6000) + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
+const momentTime = (m) => (m.type === 'mreveal' ? revealTime(m) : S_MOMENT_TIME[m.type] ? S_MOMENT_TIME[m.type] : N_MOMENT_TIME[m.type] ? N_MOMENT_TIME[m.type] : K_MOMENT_TIME[m.type] ? K_MOMENT_TIME[m.type] : C_MOMENT_TIME[m.type] ? C_MOMENT_TIME[m.type] : X_MOMENT_TIME[m.type] ? X_MOMENT_TIME[m.type] : MISSION_MOMENT_TIME[m.type] ? MISSION_MOMENT_TIME[m.type] : !onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : (MOMENT_TIME[m.type] ?? 6000) + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
 
 function nextMoment() {
   clearTimeout(S.momentTimer);
@@ -439,7 +441,7 @@ function verdictMedal(id, nm) {
   const inner = p?.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="vm-ini">${esc([...(nm ?? '?')][0] ?? '?')}</span>`;
   return `<span class="v-medal" aria-hidden="true"><span class="v-disc">${inner}</span></span>`;
 }
-const WIN_GLYPH = { MIDNIGHT: 'moon', CARNIVAL: 'veiled', COFFINS: 'undertaker', DEMON: 'death', DEATH: 'death', JESTER: 'jester', NON_DEATH: 'innocent', LOVERS: 'heart', CULT: 'cult', RIPPER: 'ripper' };
+const WIN_GLYPH = { SEANCE: 'shade', MIDNIGHT: 'moon', CARNIVAL: 'veiled', COFFINS: 'undertaker', DEMON: 'death', DEATH: 'death', JESTER: 'jester', NON_DEATH: 'innocent', LOVERS: 'heart', CULT: 'cult', RIPPER: 'ripper' };
 const WIN_CLASS = { NON_DEATH: 'living', LOVERS: 'lovers', CULT: 'cult', RIPPER: 'ripper' };
 
 /** Midnight's verdict, from the winning sides. */
@@ -454,6 +456,7 @@ function didIWin(v, winner) {
   if (winner === 'COFFINS') return v.coffins?.winner === me.id;
   if (winner === 'CARNIVAL') return !!v.carnival?.winners?.includes(me.id);
   if (winner === 'MIDNIGHT') return !!v.midnight?.winners?.players?.includes(me.id);
+  if (winner === 'SEANCE') return !!v.seance?.winners?.includes(me.id);
   if (winner === 'JESTER') return v.jesterId === me.id;
   if (winner === 'LOVERS') return !!me.lover;
   if (winner === 'RIPPER') return me.alignment === 'RIPPER';
@@ -536,6 +539,7 @@ function momentHtml(m) {
     case 'xball': case 'xvotes': case 'xguess': body = exorcismMomentHtml(m, { letters, onBoard, V }); break;
     case 'cdig': case 'cresult': case 'crise': case 'clantern': body = coffinsMomentHtml(m, { letters, onBoard, V }); break;
     case 'nfall': case 'ndawn': body = midnightMomentHtml(m, { letters, onBoard, V }); break;
+    case 'svisions': case 'scold': case 'sverdict': case 'slast': case 'sname': case 'snamed': body = seanceMomentHtml(m, { letters, onBoard, V }); break;
     case 'kintro': case 'kswap': case 'kclaim': case 'kreveal': case 'kpower': case 'klook': body = carnivalMomentHtml(m, { letters, onBoard, V }); break;
     case 'gift': body = giftHtml(m.idx, { t, th, esc, product: m.product }); break;
     case 'mside': case 'mlottery': case 'mlantern': case 'mintro': case 'mcandle': case 'mcard': case 'mvotes': case 'mreveal': case 'mnamed': case 'munmask': case 'mreckon': body = missionMomentHtml(m, { letters, avatarSvg, onBoard }); break;
@@ -543,7 +547,7 @@ function momentHtml(m) {
       body = `<div class="m-art">${glyph(m.art || 'dagger')}</div><h1 class="m-title">${letters(t(m.title))}</h1>${m.names.length ? `<ul class="victims">${names(m.names)}</ul>` : ''}<p class="m-sub">${tmh(m.sub)}</p>`;
       break;
     case 'end': {
-      const title = m.winner === 'MIDNIGHT' ? t(midnightTitle(m.sides)) : m.winner === 'CARNIVAL' ? t('{names} wins', { names: m.whos ?? [] }) : m.winner === 'COFFINS' ? th('{a} wins', { a: m.who ?? '' }) : t({ DEMON: 'The Demon wins', DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[m.winner] ?? 'The end');
+      const title = m.winner === 'SEANCE' ? t(seanceTitle(m.result)) : m.winner === 'MIDNIGHT' ? t(midnightTitle(m.sides)) : m.winner === 'CARNIVAL' ? t('{names} wins', { names: m.whos ?? [] }) : m.winner === 'COFFINS' ? th('{a} wins', { a: m.who ?? '' }) : t({ DEMON: 'The Demon wins', DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[m.winner] ?? 'The end');
       const won = didIWin(V(), m.winner);
       body = `<div class="m-art">${glyph(WIN_GLYPH[m.winner] ?? 'scroll')}</div>
         <span class="kicker">${t('The verdict')}</span><h1 class="m-title ${m.winner === 'DEATH' ? 'blood' : ''}">${letters(title)}</h1><p class="m-sub">${tmh(m.reason)}</p>
@@ -622,6 +626,7 @@ function render() {
   document.body.classList.toggle('is-dead', ghost);
   document.body.classList.toggle('is-board', onBoard());
   document.body.classList.toggle('mode-exorcism', v?.mode === 'exorcism' && ['room', 'board'].includes(S.route?.name));
+  document.body.classList.toggle('mode-seance', v?.mode === 'seance' && ['room', 'board'].includes(S.route?.name));
   document.body.classList.toggle('mode-midnight', v?.mode === 'midnight' && ['room', 'board'].includes(S.route?.name));
   document.body.classList.toggle('mn-night', v?.mode === 'midnight' && ['N_DEAL', 'N_NIGHT'].includes(v?.phase) && ['room', 'board'].includes(S.route?.name));
   document.body.classList.toggle('mode-carnival', v?.mode === 'carnival' && ['room', 'board'].includes(S.route?.name));
@@ -707,6 +712,7 @@ function phaseWord(v) {
   if (v.phase === 'ENDED') return { word: t('The End'), num: '', night: false };
   if (v.phase === 'NIGHT_0_REVEAL') return { word: t('Night'), num: '0', night: true };
   if (v.phase === 'M_REVEAL') return { word: t('Missions'), num: '', night: true };
+  if (isSeancePhase(v.phase)) return { word: t('The séance'), num: v.seance?.round ? roman(v.seance.round) : '', night: true };
   if (isMidnightPhase(v.phase)) return { word: t(['N_DEAL', 'N_NIGHT'].includes(v.phase) ? 'Midnight' : 'Dawn'), num: '', night: ['N_DEAL', 'N_NIGHT'].includes(v.phase) };
   if (isCarnivalPhase(v.phase)) return { word: t('The Ball'), num: v.carnival?.turnNo ? roman(v.carnival.turnNo) : '', night: false };
   if (isCoffinsPhase(v.phase)) return { word: t('Round'), num: roman(v.coffins?.round ?? 1), night: false };
@@ -721,6 +727,7 @@ const STEP_EN = {
   M_REVEAL: 'Role reveal', M_LOTTERY: 'The first leader', M_PROPOSE: 'The proposal', M_VOTE: 'Team vote', M_MISSION: 'On the mission', M_RESULT: 'The reveal',
   M_NIGHT: 'Night interlude', M_LAST_STAND: 'The Last Stand', M_RECKONING: 'The Reckoning',
   N_DEAL: 'Your card', N_NIGHT: 'The night', N_DAY: 'Discussion', N_VOTE: 'The vote',
+  S_INTRO: 'The Ghost', S_VISION: 'Visions', S_DISCUSS: 'Discussion', S_CANDLE: 'Candles', S_LAST: 'The last breath', S_NAMING: 'The naming',
   K_UNMASK: 'The unmasking', K_LOTTERY: 'The first dancer', K_TURN: 'Swap, peek or claim', K_CHALLENGE: 'Challenges', K_POWER: 'A power', K_LOOK: 'A look',
   C_LOTTERY: 'The first player', C_BURY: 'The burial', C_TURN: 'Bury or challenge', C_BID: 'The bidding', C_WAGER: 'Ghost wagers', C_DIG: 'The dig', C_LOSE: 'A coffin is lost',
   X_REVEAL: 'The crystal ball', X_LOTTERY: 'The first speaker', X_CLUES: 'One word each', X_DISCUSS: 'Talk it over', X_VOTE: 'Name the Demon', X_GUESS: 'The last guess',
@@ -976,7 +983,7 @@ function pickContexts(v) {
   if (!a || !me || me.moderator) return [];
   if (isMissionPhase(v.phase)) return missionPicks(v, S);
   if (isExorcismPhase(v.phase)) return exorcismPicks(v, S);
-  if (isCoffinsPhase(v.phase) || isCarnivalPhase(v.phase) || isMidnightPhase(v.phase)) return [];
+  if (isCoffinsPhase(v.phase) || isCarnivalPhase(v.phase) || isMidnightPhase(v.phase) || isSeancePhase(v.phase)) return [];
   const out = [];
   switch (v.phase) {
     case 'DAY_PREP':
@@ -1054,7 +1061,7 @@ function roomScreen() {
     </aside>`;
   const top = `<header class="topbar" data-key="top">
       <span class="tb-emblem">${isNight(v.phase) ? glyph('moon') : glyph('sun')}</span>
-      <div class="phase-mini"><strong class="${pw.night ? 'night' : ''}">${esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</strong><span>${esc(stepOf(v))}${v.phase === 'LOBBY' ? ` · ${t('{n} seated', { n: v.players.length })}` : ['missions', 'exorcism', 'carnival', 'midnight'].includes(v.mode) ? '' : ` · ${t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}`}</span></div>
+      <div class="phase-mini"><strong class="${pw.night ? 'night' : ''}">${esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</strong><span>${esc(stepOf(v))}${v.phase === 'LOBBY' ? ` · ${t('{n} seated', { n: v.players.length })}` : ['missions', 'exorcism', 'carnival', 'midnight', 'seance'].includes(v.mode) ? '' : ` · ${t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}`}</span></div>
       <span class="clock" data-clock></span>
       <button class="btn btn-ghost icon-btn" data-act="sound" aria-label="${esc(t(sound.on ? 'Mute sounds' : 'Turn sounds on'))}">${glyph(sound.on ? 'bell' : 'bellOff')}</button>
       <button class="btn btn-ghost icon-btn" data-act="sheet" data-id="record" aria-label="${esc(t('Open match record'))}">${glyph('menu')}</button>
@@ -1133,6 +1140,7 @@ function mainFor(v, me) {
       if (isCoffinsPhase(v.phase)) return coffinsMain(v, me, MH);
       if (isCarnivalPhase(v.phase)) return carnivalMain(v, me, MH);
       if (isMidnightPhase(v.phase)) return midnightMain(v, me, MH);
+      if (isSeancePhase(v.phase)) return seanceMain(v, me, MH);
       return isNight(v.phase) ? nightMain(v, me) : dayMain(v, me);
   }
 }
@@ -1179,6 +1187,9 @@ function sheet(v) {
   } else if (s === 'role' && me?.role) {
     title = t('My role');
     body = `${roleCardHtml(me.role, { align: me.alignment, flipKey: 'sheet', flipped: true })}${roleNotes(me)}`;
+  } else if (s === 'sboard') {
+    title = t('The board');
+    body = seanceSheet(v);
   } else if (s === 'ncards') {
     title = t('Cards in play');
     body = cardsSheet(v);
@@ -1348,6 +1359,7 @@ function lobbyDeck(v, isHost) {
   if (v.mode === 'coffins') return coffinsLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
   if (v.mode === 'carnival') return carnivalLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
   if (v.mode === 'midnight') return midnightLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
+  if (v.mode === 'seance') return seanceLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
   const s = v.settings;
   const deck = v.setup?.publicDeck;
   const preset = v.presets.find((p) => p.id === s.preset);
@@ -1475,6 +1487,7 @@ function modeChooser(v, isHost) {
       ${card('coffins', 'undertaker', presetF('coffins', 'name'), t('A quick bluffing game: bury gold, hide your curse, bid and dig. 3–10 players.'))}
       ${card('midnight', 'moon', presetF('midnight', 'name'), t('One night, one vote: cards change hands in the dark. 4–12 players.'))}
       ${card('carnival', 'veiled', presetF('carnival', 'name'), t('A masked ball of bluff and memory: swap masks, claim powers, gather Souls. 4–12 players.'))}
+      ${card('seance', 'shade', presetF('seance', 'name'), t('A silent Ghost sends visions; find who, where and why, and the Deceiver. 4–10 players.'))}
     </div>
   </section>`;
 }
@@ -1504,6 +1517,12 @@ function setupForm(v) {
   const timer = (key, label) => `<label class="field"><span>${t(label)}</span><select class="input" data-set="timers.${key}">
       ${OPTS.map((n) => `<option value="${n}" ${tm8[key] === n ? 'selected' : ''}>${n === 0 ? t('Untimed') : n < 60 ? t('{n} s', { n }) : t('{n} min', { n: n / 60 })}</option>`).join('')}
       ${OPTS.includes(tm8[key]) ? '' : `<option selected value="${tm8[key]}">${t('{n} s', { n: tm8[key] })}</option>`}</select></label>`;
+  if (preset.seance) {
+    return `<div class="stack" style="gap:18px"><details class="more" data-key="d-stable" open><summary>${t('Table & timers')}</summary><div>
+      <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
+      <div class="grid2">${timer('sIntro', 'Looking at your role')}${timer('sVision', 'Visions')}${timer('sDiscuss', 'Discussion')}${timer('sCandle', 'Candles')}${timer('sName', 'The naming')}</div>
+    </div></details></div>`;
+  }
   if (preset.midnight) {
     return `<div class="stack" style="gap:18px"><details class="more" data-key="d-ntable" open><summary>${t('Table & timers')}</summary><div>
       <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
@@ -1529,7 +1548,7 @@ function setupForm(v) {
     </div></details></div>`;
   }
   return `<div class="stack" style="gap:18px">
-    ${preset.missions ? '' : `<div class="carousel" data-key="presets">${v.presets.filter((p) => !p.missions && !p.exorcism && !p.coffins && !p.carnival && !p.midnight).map((p) => `<button class="preset" data-act="preset" data-id="${p.id}" aria-pressed="${s.preset === p.id}" data-key="pr-${p.id}"><b>${esc(presetF(p.id, 'name'))}</b>${p.recommended ? `<span class="tag solid">${t('Best first game')}</span>` : ''}<small>${esc(presetF(p.id, 'blurb'))}</small><span class="kicker">${t('{a}–{b} players', { a: p.min, b: p.max })}</span></button>`).join('')}</div>`}
+    ${preset.missions ? '' : `<div class="carousel" data-key="presets">${v.presets.filter((p) => !p.missions && !p.exorcism && !p.coffins && !p.carnival && !p.midnight && !p.seance).map((p) => `<button class="preset" data-act="preset" data-id="${p.id}" aria-pressed="${s.preset === p.id}" data-key="pr-${p.id}"><b>${esc(presetF(p.id, 'name'))}</b>${p.recommended ? `<span class="tag solid">${t('Best first game')}</span>` : ''}<small>${esc(presetF(p.id, 'blurb'))}</small><span class="kicker">${t('{a}–{b} players', { a: p.min, b: p.max })}</span></button>`).join('')}</div>`}
 
     ${preset.custom ? `<details class="more" data-key="d-custom" open><summary>${t('Custom deck')}</summary><div>
       <label class="check"><input type="checkbox" data-set-bool="dreams" ${s.dreams ? 'checked' : ''}><span><b>${t('Dreams')}</b><small>${t('Everyone draws a Dream card each night.')}</small></span></label>
@@ -1932,9 +1951,9 @@ function deathRoom(v, me, D) {
 
 // ── End ────────────────────────────────────────────────────────────────────
 function endMain(v, me) {
-  const title = v.winner === 'MIDNIGHT' ? t(midnightTitle(v.midnight?.winners?.sides)) : v.winner === 'CARNIVAL' ? t('{names} wins.', { names: (v.carnival?.winners ?? []).map((id) => v.players.find((p) => p.id === id)?.name ?? '') }) : v.winner === 'COFFINS' ? t('{a} wins.', { a: v.players.find((p) => p.id === v.coffins?.winner)?.name ?? '' }) : t({ DEMON: 'The Demon wins.', DEATH: 'Death wins.', NON_DEATH: 'The living win.', JESTER: 'The Jester wins.', DRAW: 'A draw.', ABORTED: 'Abandoned.', LOVERS: 'The Lovers win.', CULT: 'The Cult wins.', RIPPER: 'The Ripper wins.' }[v.winner] ?? 'The End');
+  const title = v.winner === 'SEANCE' ? t(seanceTitle(v.seance?.result)) : v.winner === 'MIDNIGHT' ? t(midnightTitle(v.midnight?.winners?.sides)) : v.winner === 'CARNIVAL' ? t('{names} wins.', { names: (v.carnival?.winners ?? []).map((id) => v.players.find((p) => p.id === id)?.name ?? '') }) : v.winner === 'COFFINS' ? t('{a} wins.', { a: v.players.find((p) => p.id === v.coffins?.winner)?.name ?? '' }) : t({ DEMON: 'The Demon wins.', DEATH: 'Death wins.', NON_DEATH: 'The living win.', JESTER: 'The Jester wins.', DRAW: 'A draw.', ABORTED: 'Abandoned.', LOVERS: 'The Lovers win.', CULT: 'The Cult wins.', RIPPER: 'The Ripper wins.' }[v.winner] ?? 'The End');
   const won = didIWin(v, v.winner);
-  const revealed = !['coffins', 'carnival', 'midnight'].includes(v.mode) && v.players.some((p) => p.role);
+  const revealed = !['coffins', 'carnival', 'midnight', 'seance'].includes(v.mode) && v.players.some((p) => p.role);
   const everySecret = () => `<section data-key="reveal"><div class="rule">${t('Every secret')}</div>${revealed ? `<ul class="ledger">${v.players.map((p, i) => `<li class="${p.alive ? '' : 'dead'} ${p.id === me?.id ? 'me' : ''}" style="--i:${i}" data-key="rv-${p.id}">
       <span class="seat">${p.role ? glyph(p.role.glyph) : ''}</span>
       <span class="who"><b>${esc(p.name)}</b><small>${p.role ? esc(roleF(p.role.id, 'name')) : '—'}${p.originalRole ? ` ${th('(was {role})', { role: p.originalRole.id })}` : ''} · ${p.alive ? t('alive') : `† ${esc(stamp(p.diedAt))}`}</small></span>
@@ -1949,7 +1968,8 @@ function endMain(v, me) {
     ${v.mode === 'coffins' ? coffinsEndHtml(v) : ''}
     ${v.mode === 'carnival' ? carnivalEndHtml(v) : ''}
     ${v.mode === 'midnight' ? midnightEndHtml(v) : ''}
-    ${['coffins', 'carnival', 'midnight'].includes(v.mode) ? '' : everySecret()}
+    ${v.mode === 'seance' ? seanceEndHtml(v) : ''}
+    ${['coffins', 'carnival', 'midnight', 'seance'].includes(v.mode) ? '' : everySecret()}
     ${me && !me.moderator ? `<details class="more" data-key="endnotes"><summary>${t('My notes')}</summary><div>${feed([...(v.private || [])].reverse(), 'feed-private')}</div></details>` : ''}
     <details class="more" data-key="endrec"><summary>${t('Public record')}</summary><div>${recordBlock(v)}</div></details>
     <div class="row center" data-key="endbtns">${v.recap ? `<button class="btn" data-act="recap">${glyph('scroll')} ${t('View recap')}</button>` : ''}</div>`;
@@ -2182,6 +2202,7 @@ function dock(v) {
         if (isCoffinsPhase(v.phase)) parts.push(...coffinsDock(v, { S, btn, holdBtn, rawName }));
         if (isCarnivalPhase(v.phase)) parts.push(...carnivalDock(v, { S, btn, holdBtn, rawName }));
         if (isMidnightPhase(v.phase)) parts.push(...midnightDock(v, { S, btn, holdBtn, rawName }));
+        if (isSeancePhase(v.phase)) parts.push(...seanceDock(v, { S, btn, holdBtn, rawName }));
         break;
     }
   }
@@ -2450,11 +2471,12 @@ Object.assign(ACT, exorcismActs({ S, V, send: (...a) => send(...a), render: () =
   },
 });
 Object.assign(ACT, midnightActs({ S, V, send: (...a) => send(...a), render: () => render(), burstAt, sound, haptic }));
+Object.assign(ACT, seanceActs({ S, V, send: (...a) => send(...a), render: () => render(), haptic, notify: (x) => notify(x) }));
 Object.assign(ACT, carnivalActs({ S, V, send: (...a) => send(...a), render: () => render(), burstAt, sound, haptic }));
 Object.assign(ACT, coffinsActs({ S, V, send: (...a) => send(...a), render: () => render(), burstAt, sound, haptic }));
 Object.assign(ACT, missionActs({ S, V, send: (...a) => send(...a), render: () => render(), picked, burstAt, sound, haptic }));
 
-const QUIET = new Set([...MIDNIGHT_QUIET, ...CARNIVAL_QUIET, ...COFFINS_QUIET, 'xPickVote', 'xPickGuess', 'xFlip', 'xPeek', 'xGrid', 'mPickLantern', 'mPickTeam', 'mPickWard', 'mPickHunch', 'mPickCandle', 'mPickWitness', 'mPickHaunt', 'mPickAccuse', 'mPickReckon', 'mPickCard', 'avPart', 'avRandom', 'codeTap', 'boardScore', 'boardMute', 'pickNominate', 'pickVote', 'pickRetaliate', 'pickSwap', 'pickTarget', 'pickOption', 'pickNightmare', 'pickConspire', 'pickDeath', 'shoot', 'sound', 'pickUseOption', 'momentNext']);
+const QUIET = new Set([...SEANCE_QUIET, ...MIDNIGHT_QUIET, ...CARNIVAL_QUIET, ...COFFINS_QUIET, 'xPickVote', 'xPickGuess', 'xFlip', 'xPeek', 'xGrid', 'mPickLantern', 'mPickTeam', 'mPickWard', 'mPickHunch', 'mPickCandle', 'mPickWitness', 'mPickHaunt', 'mPickAccuse', 'mPickReckon', 'mPickCard', 'avPart', 'avRandom', 'codeTap', 'boardScore', 'boardMute', 'pickNominate', 'pickVote', 'pickRetaliate', 'pickSwap', 'pickTarget', 'pickOption', 'pickNightmare', 'pickConspire', 'pickDeath', 'shoot', 'sound', 'pickUseOption', 'momentNext']);
 document.addEventListener('click', (e) => {
   const link = e.target.closest('a[data-link]');
   if (link && link.origin === location.origin && !e.metaKey && !e.ctrlKey) { e.preventDefault(); go(link.pathname); return; }
@@ -2548,7 +2570,7 @@ document.addEventListener('change', (e) => {
     send('host.settings', { x: { [k]: el.type === 'checkbox' ? el.checked : ['demons', 'rounds'].includes(k) ? Number(el.value) : el.value } });
   }
   // Mode setups whose handlers live in their own modules (Coffins, Carnival).
-  if (['cSet', 'kSet', 'nSet'].includes(el.dataset.actChange)) ACT[el.dataset.actChange]?.(el);
+  if (['cSet', 'kSet', 'nSet', 'sSet'].includes(el.dataset.actChange)) ACT[el.dataset.actChange]?.(el);
   if (el.dataset.actChange === 'tieBreak') send('host.settings', { tieBreak: el.checked ? 'coin' : 'none' });
   if (el.dataset.actChange === 'assign') send('host.assign', { playerId: el.dataset.pid, roleId: el.value || null });
 });

@@ -107,6 +107,15 @@ export const GUIDE_EN = {
 <li><b>One vote.</b> Everyone points at once. The most voted die if they have two votes or more (ties all die). If the Vigilante dies, the player they pointed at dies too.</li>
 </ol>
 <p>The Living win if a Death dies (or, with no Death among the players, if nobody dies). Death and the Conspirator win if no Death dies. The Jester wins alone by being voted out. Tap <b>Cards in play</b> for every card's night action. The end screen shows every card as dealt and at dawn, and replays the whole night.</p>`,
+  seanceH: 'Dead Set: Séance',
+  seance: `<p>A co-operative murder mystery with a traitor. 4–10 players, about 30 minutes. One player is the <b>Ghost</b>: it knows who killed it, where and why, and it cannot speak. Everyone else is a reader.</p>
+<ol>
+<li><b>The board.</b> Three rows of story cards: who, where and why. One card in each row is the truth.</li>
+<li><b>Visions.</b> Each round every reader is given one row, and the Ghost sends each reader a wordless vision for it: two or three etched motifs on a card.</li>
+<li><b>Discussion.</b> The visions turn face up for everyone. Describe them, argue, persuade. The Ghost stays silent, but may frost a vision with a <b>cold spot</b>: this one is not mine.</li>
+<li><b>Candles.</b> Each reader lights a candle on a card in their row, or holds it. The card with the most candles is put to the spirit. Right: the row is solved. Wrong: the card is struck. Every round burns a candle of the séance clock.</li>
+</ol>
+<p>From five players a <b>Deceiver</b> hides among the readers. It knows the truth and, a few times a game, swaps another reader's vision for a lie. Solve all three rows before the candles burn out, then name the Deceiver: right is a full victory, wrong a hollow one that the Deceiver shares. If the clock burns out, the Deceiver wins (with one row left, everyone first gets a <b>last breath</b>). The end screen replays every round: the true visions, the swaps and the candles.</p>`,
   carnivalH: 'Dead Set: Carnival',
   carnival: `<p>A masked ball of bluff and memory for 4–12 players, chosen in the lobby. Every mask is a familiar role card.</p>
 <ol>
@@ -153,7 +162,7 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   return `<div class="guide">
   <header class="phase-head"><span class="kicker">${G.kicker}</span><h1>${G.title}</h1>
     <p class="scenario">${G.intro}</p></header>
-  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}<a class="tag" href="#g11">${G.sidesH}</a><a class="tag" href="#g12">${G.missionsH}</a><a class="tag" href="#g13">${G.exorcismH}</a><a class="tag" href="#g14">${G.coffinsH}</a><a class="tag" href="#g15">${G.carnivalH}</a><a class="tag" href="#g16">${G.midnightH}</a></nav>
+  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}<a class="tag" href="#g11">${G.sidesH}</a><a class="tag" href="#g12">${G.missionsH}</a><a class="tag" href="#g13">${G.exorcismH}</a><a class="tag" href="#g14">${G.coffinsH}</a><a class="tag" href="#g15">${G.carnivalH}</a><a class="tag" href="#g16">${G.midnightH}</a><a class="tag" href="#g17">${G.seanceH}</a></nav>
   <section id="g0"><h2>${G.basicsH}</h2>${G.basics}</section>
   <section id="g1"><h2>${G.roundH}</h2>${G.round}</section>
   <section id="g2"><h2>${G.winH}</h2>${G.win}</section>
@@ -184,5 +193,6 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   <section id="g14"><h2>${G.coffinsH}</h2>${G.coffins}${roles.filter((r) => r.set === 'coffins').map(entry).join('')}</section>
   <section id="g15"><h2>${G.carnivalH}</h2>${G.carnival}</section>
   <section id="g16"><h2>${G.midnightH}</h2>${G.midnight}</section>
+  <section id="g17"><h2>${G.seanceH}</h2>${G.seance}</section>
   </div>`;
 }

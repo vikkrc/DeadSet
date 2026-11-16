@@ -19,6 +19,8 @@ const ENERGY = {
   kUnmask: 0, kBall: 1, kPower: 1, kChallenge: 2,
   // Midnight: one night tightening to the vote
   nDeal: 0, nNight: 1, nDay: 1, nVote: 2,
+  // Séance: a parlour slowly tightening
+  sGather: 0, sReach: 0, sTalk: 1, sCandle: 2, sName: 2,
 };
 
 const rnd = (lo, hi) => lo + Math.random() * (hi - lo);

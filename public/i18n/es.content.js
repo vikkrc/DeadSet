@@ -3,6 +3,9 @@ export default {
   and: 'y',
   numbers: ['ningún', 'un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'],
   roles: {
+    S_GHOST: { name: "Fantasma", when: "Siempre", summary: "Te asesinaron. Sabes quién, dónde y por qué, y no puedes hablar.", detail: "Envía a cada lector una visión para su fila. Con una mancha fría, escarcha una visión que no es tuya." },
+    S_MEDIUM: { name: "Médium", when: "Siempre", summary: "Lee las visiones y enciende velas sobre la verdad.", detail: "Cada ronda lees una fila: quién, dónde o por qué. Resolved las tres antes de que se consuman las velas y luego nombrad al Impostor." },
+    S_DECEIVER: { name: "Impostor", when: "Siempre", summary: "Un segundo espíritu en un cuerpo vivo. Conoces la verdad, y mientes.", detail: "Pareces exactamente un Médium. Unas pocas veces por partida, cambias la visión del Fantasma de otro lector por una tuya. Ganas si se consumen las velas o si la mesa nombra al jugador equivocado." },
     N_SLEEPER: { name: "Durmiente", when: "Siempre", summary: "Una noche, una votación. Tu carta puede cambiar de manos mientras duermes.", detail: "Mira tu carta una vez, actúa cuando tu móvil te despierte, luego discutid y señalad. Eres la carta que tienes delante al amanecer." },
     N_TWIN: { name: "Gemelo", when: "De noche", summary: "Te despiertas con tu gemelo y os veis.", detail: "Los Gemelos van en pareja. Si tu gemelo no está en la mesa, la otra carta está en el centro." },
     N_INSOMNIAC: { name: "Insomne", when: "De noche, el último", summary: "Te despiertas el último y miras tu propia carta.", detail: "Ves si alguien te quitó la carta durante la noche, y qué eres al amanecer." },
@@ -127,6 +130,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Fantasmas vengativos', text: 'Cada jugador eliminado puede emitir una papeleta fantasma de peso 1 por día.', enforcement: 'Los fantasmas no pueden nominar, usar poderes ni influir en la Regla de mayoría.' },
   },
   presets: {
+    seance: { name: "Dead Set: Sesión", blurb: "Un Fantasma asesinado y mudo envía visiones; los Médiums leen en ellas quién, dónde y por qué. Un Impostor entre ellos cambia visiones por mentiras." },
     midnight: { name: "Dead Set: Medianoche", blurb: "Una noche, una votación. Las cartas cambian de manos en la oscuridad; al amanecer eres lo que tienes delante. Encuentra a la Muerte, o sé ella." },
     carnival: { name: "Dead Set: Carnaval", blurb: "Un baile de máscaras de faroles y memoria. Cada uno lleva una carta de rol como máscara, barajada hasta que nadie está seguro. Reclama máscaras y reúne Almas; 13 ganan." },
     coffins: { name: "Dead Set: Ataúdes", blurb: "Un juego de faroles rápido. Entierra oro y una maldición, puja cuántos ataúdes puedes abrir y luego cava. Dos excavaciones limpias ganan." },
@@ -156,6 +160,15 @@ export default {
     'La Muerte votó con el pueblo. Cómo no.',
   ],
   guide: {
+    seanceH: "Dead Set: Sesión",
+    seance: `<p>Un misterio de asesinato cooperativo con un traidor. De 4 a 10 jugadores, unos 30 minutos. Un jugador es el <b>Fantasma</b>: sabe quién lo mató, dónde y por qué, y no puede hablar. Todos los demás son lectores.</p>
+<ol>
+<li><b>El tablero.</b> Tres filas de cartas de historia: quién, dónde y por qué. En cada fila, una carta es la verdad.</li>
+<li><b>Visiones.</b> Cada ronda, cada lector recibe una fila, y el Fantasma le envía una visión sin palabras: dos o tres motivos grabados en una carta.</li>
+<li><b>Discusión.</b> Las visiones se revelan a todos. Describidlas, discutid, convenced. El Fantasma calla, pero puede escarchar una visión con una <b>mancha fría</b>: esta no es mía.</li>
+<li><b>Velas.</b> Cada lector enciende una vela sobre una carta de su fila, o la guarda. La carta con más velas se presenta al espíritu. Acierto: la fila queda resuelta. Error: la carta se tacha. Cada ronda consume una vela del reloj de la sesión.</li>
+</ol>
+<p>Desde cinco jugadores, un <b>Impostor</b> se esconde entre los lectores. Conoce la verdad y, unas pocas veces por partida, cambia la visión de otro lector por una mentira. Resolved las tres filas antes de que se consuman las velas y nombrad al Impostor: si acertáis, victoria completa; si no, una victoria hueca que el Impostor comparte. Si el reloj se consume, gana el Impostor (si queda una fila, antes llega el <b>último aliento</b>). La pantalla final repite cada ronda: las visiones verdaderas, los cambios y las velas.</p>`,
     midnightH: "Dead Set: Medianoche",
     midnight: `<p>Una noche, una votación, sin segundas oportunidades. De 4 a 12 jugadores, unos 10 minutos. El mazo tiene una carta por jugador y tres más boca abajo en la mesa.</p>
 <ol>

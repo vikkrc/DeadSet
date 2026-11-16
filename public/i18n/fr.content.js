@@ -3,6 +3,9 @@ export default {
   and: 'et',
   numbers: ['aucun', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix'],
   roles: {
+    S_GHOST: { name: "Fantôme", when: "Toujours", summary: "On t’a assassiné. Tu sais qui, où et pourquoi, et tu ne peux pas parler.", detail: "Envoie à chaque lecteur une vision pour sa rangée. D’une tache froide, givre une vision qui n’est pas la tienne." },
+    S_MEDIUM: { name: "Médium", when: "Toujours", summary: "Lis les visions et allume des bougies sur la vérité.", detail: "À chaque manche tu lis une rangée : qui, où ou pourquoi. Résolvez les trois avant que les bougies ne s’éteignent, puis nommez l’Imposteur." },
+    S_DECEIVER: { name: "Imposteur", when: "Toujours", summary: "Un second esprit dans un corps vivant. Tu connais la vérité, et tu mens.", detail: "Tu ressembles en tout point à un Médium. Quelques fois par partie, tu échanges la vision du Fantôme d’un autre lecteur contre une des tiennes. Tu gagnes si les bougies s’éteignent, ou si la table nomme le mauvais joueur." },
     N_SLEEPER: { name: "Dormeur", when: "Toujours", summary: "Une nuit, un vote. Ta carte peut changer de mains pendant ton sommeil.", detail: "Regarde ta carte une fois, agis quand ton téléphone te réveille, puis débattez et désignez. Tu es la carte posée devant toi à l’aube." },
     N_TWIN: { name: "Jumeau", when: "La nuit", summary: "Tu te réveilles avec ton jumeau et vous vous voyez.", detail: "Les Jumeaux vont par paire. Si ton jumeau n’est pas à la table, l’autre carte est au centre." },
     N_INSOMNIAC: { name: "Insomniaque", when: "La nuit, en dernier", summary: "Tu te réveilles en dernier et regardes ta propre carte.", detail: "Tu vois si quelqu’un t’a pris ta carte pendant la nuit, et ce que tu es à l’aube." },
@@ -127,6 +130,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Fantômes vengeurs', text: 'Chaque joueur éliminé peut déposer un bulletin fantôme de poids 1 par jour.', enforcement: 'Les fantômes ne peuvent pas nommer, utiliser de pouvoirs ni influencer la Règle de la majorité.' },
   },
   presets: {
+    seance: { name: "Dead Set : Séance", blurb: "Un Fantôme assassiné et muet envoie des visions ; les Médiums y lisent qui, où et pourquoi. Un Imposteur parmi eux remplace des visions par des mensonges." },
     midnight: { name: "Dead Set : Minuit", blurb: "Une nuit, un vote. Les cartes changent de mains dans le noir ; à l’aube, tu es ce qui est posé devant toi. Trouve la Mort, ou sois-la." },
     carnival: { name: "Dead Set : Carnaval", blurb: "Un bal masqué de bluff et de mémoire. Chacun porte une carte de rôle en guise de masque, mélangée jusqu'à ce que nul n'en soit sûr. Revendique des masques et amasse des Âmes ; 13 gagnent." },
     coffins: { name: "Dead Set : Cercueils", blurb: "Un jeu de bluff rapide. Enterre de l'or et une malédiction, annonce combien de cercueils tu peux ouvrir, puis creuse. Deux fouilles propres gagnent." },
@@ -156,6 +160,15 @@ export default {
     'La Mort a voté avec la ville. Évidemment.',
   ],
   guide: {
+    seanceH: "Dead Set : Séance",
+    seance: `<p>Un mystère de meurtre coopératif avec un traître. 4 à 10 joueurs, environ 30 minutes. Un joueur est le <b>Fantôme</b> : il sait qui l’a tué, où et pourquoi, et ne peut pas parler. Tous les autres sont des lecteurs.</p>
+<ol>
+<li><b>Le plateau.</b> Trois rangées de cartes d’histoire : qui, où et pourquoi. Dans chaque rangée, une carte est la vérité.</li>
+<li><b>Visions.</b> À chaque manche, chaque lecteur reçoit une rangée, et le Fantôme lui envoie une vision sans mots : deux ou trois motifs gravés sur une carte.</li>
+<li><b>Discussion.</b> Les visions se révèlent à tous. Décrivez-les, débattez, convainquez. Le Fantôme se tait, mais peut givrer une vision d’une <b>tache froide</b> : celle-ci n’est pas de moi.</li>
+<li><b>Bougies.</b> Chaque lecteur allume une bougie sur une carte de sa rangée, ou la garde. La carte qui a le plus de bougies est soumise à l’esprit. Juste : la rangée est résolue. Faux : la carte est barrée. Chaque manche consume une bougie de l’horloge de la séance.</li>
+</ol>
+<p>À partir de cinq joueurs, un <b>Imposteur</b> se cache parmi les lecteurs. Il connaît la vérité et, quelques fois par partie, remplace la vision d’un autre lecteur par un mensonge. Résolvez les trois rangées avant que les bougies ne s’éteignent, puis nommez l’Imposteur : juste, c’est une victoire complète ; faux, une victoire creuse que l’Imposteur partage. Si l’horloge s’éteint, l’Imposteur gagne (s’il reste une rangée, il y a d’abord un <b>dernier souffle</b>). L’écran de fin rejoue chaque manche : les vraies visions, les échanges et les bougies.</p>`,
     midnightH: "Dead Set : Minuit",
     midnight: `<p>Une nuit, un vote, pas de seconde chance. 4 à 12 joueurs, environ 10 minutes. Le paquet contient une carte par joueur et trois de plus face cachée sur la table.</p>
 <ol>

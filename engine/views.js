@@ -9,6 +9,7 @@ import { setupReport, nominees, chatChannels, ballotWeight } from './game.js';
 import { exorcismPublic, exorcismAction, exorcismProgress, exorcismSecrets, xKnowledge, isExorcismPhase, X_ADVANCE_LABEL, X_REDRAW_PHASES } from './exorcism.js';
 import { coffinsPublic, coffinsAction, coffinsProgress, coffinsSecrets, coffinsMe, isCoffinsPhase, C_ADVANCE_LABEL } from './coffins.js';
 import { midnightPublic, midnightAction, midnightProgress, midnightSecrets, midnightMe, isMidnightPhase, N_ADVANCE_LABEL } from './midnight.js';
+import { seancePublic, seanceAction, seanceProgress, seanceSecrets, seanceMe, isSeancePhase, S_ADVANCE_LABEL } from './seance.js';
 import { carnivalPublic, carnivalAction, carnivalProgress, carnivalSecrets, carnivalMe, carnivalPrivate, isCarnivalPhase, K_ADVANCE_LABEL } from './carnival.js';
 import { missionPublic, missionAction, missionMe, missionSecrets, isMissionPhase, MISSION_ADVANCE_LABEL } from './missions.js';
 
@@ -23,6 +24,7 @@ function progress(m) {
   if (isCoffinsPhase(m.phase)) return coffinsProgress(m);
   if (isCarnivalPhase(m.phase)) return carnivalProgress(m);
   if (isMidnightPhase(m.phase)) return midnightProgress(m);
+  if (isSeancePhase(m.phase)) return seanceProgress(m);
   const N = m.night;
   switch (m.phase) {
     case 'LOBBY': return { label: 'ready', done: m.players.filter((p) => p.ready).length, total: m.players.length };
@@ -57,6 +59,7 @@ const ADVANCE_LABEL = {
   ...C_ADVANCE_LABEL,
   ...K_ADVANCE_LABEL,
   ...N_ADVANCE_LABEL,
+  ...S_ADVANCE_LABEL,
 };
 
 export function publicView(m, now = Date.now()) {
@@ -100,6 +103,9 @@ export function publicView(m, now = Date.now()) {
   if (m.N && m.phase !== 'LOBBY') v.midnight = midnightPublic(m);
   if (m.nScores && Object.keys(m.nScores).length) v.nScores = m.nScores;
   if (m.phase === 'LOBBY' && m.nMatch) v.nMatch = m.nMatch;
+  if (m.S && m.phase !== 'LOBBY') v.seance = seancePublic(m);
+  if (m.sScores && Object.keys(m.sScores).length) v.sScores = m.sScores;
+  if (m.phase === 'LOBBY' && m.sMatch) v.sMatch = m.sMatch;
   if (m.xScores && Object.keys(m.xScores).length) v.xScores = m.xScores;
   // The end-of-game recap reveals every action, so it follows the role reveal.
   if (revealAll && m.history?.length) v.recap = m.history;
@@ -118,7 +124,7 @@ export function publicView(m, now = Date.now()) {
   if (m.phase === 'LOBBY') {
     v.settings = m.settings;
     v.setup = setupReport(m);
-    v.presets = Object.values(PRESETS).map((p) => ({ id: p.id, name: p.name, blurb: p.blurb, min: p.min, max: p.max, rulesMin: p.rulesMin, rulesMax: p.rulesMax, ruleIds: p.ruleIds, recommended: !!p.recommended, custom: !!p.custom, missions: !!p.missions, exorcism: !!p.exorcism, coffins: !!p.coffins, carnival: !!p.carnival, midnight: !!p.midnight, pool: p.pool }));
+    v.presets = Object.values(PRESETS).map((p) => ({ id: p.id, name: p.name, blurb: p.blurb, min: p.min, max: p.max, rulesMin: p.rulesMin, rulesMax: p.rulesMax, ruleIds: p.ruleIds, recommended: !!p.recommended, custom: !!p.custom, missions: !!p.missions, exorcism: !!p.exorcism, coffins: !!p.coffins, carnival: !!p.carnival, midnight: !!p.midnight, seance: !!p.seance, pool: p.pool }));
   }
   return v;
 }
@@ -158,6 +164,7 @@ export function playerView(m, pid, now = Date.now()) {
   if (m.C && started) me.c = coffinsMe(m, p);
   if (m.K && started) me.k = carnivalMe(m, p);
   if (m.N && started) me.n = midnightMe(m, p);
+  if (m.S && started) me.s = seanceMe(m, p);
   if (started && p.lover) me.lover = { id: p.lover, name: nameOf(m, p.lover), alive: !!byId(m, p.lover)?.alive };
   if (started && p.alignment === 'CULT') me.cultmates = m.players.filter((x) => x.alignment === 'CULT' && x.id !== p.id).map((x) => ({ id: x.id, name: x.name, alive: x.alive }));
   // Death teammates: only for currently active (or about-to-be-active) members.
@@ -190,6 +197,7 @@ function actionFor(m, p) {
   if (isCoffinsPhase(m.phase)) return coffinsAction(m, p);
   if (isCarnivalPhase(m.phase)) return carnivalAction(m, p);
   if (isMidnightPhase(m.phase)) return midnightAction(m, p);
+  if (isSeancePhase(m.phase)) return seanceAction(m, p);
   const N = m.night;
   const d = m.day;
   switch (m.phase) {
@@ -298,6 +306,7 @@ export function moderatorView(m, now = Date.now()) {
   if (m.C && m.phase !== 'LOBBY') v.cSecrets = coffinsSecrets(m);
   if (m.K && m.phase !== 'LOBBY') v.kSecrets = carnivalSecrets(m);
   if (m.N && m.phase !== 'LOBBY') v.nSecrets = midnightSecrets(m);
+  if (m.S && m.phase !== 'LOBBY') v.sSecrets = seanceSecrets(m);
   if (N?.death) v.deathTeam = { members: N.death.members, capacity: N.death.capacity, proposals: N.death.proposals, confirmed: N.death.confirmed };
   v.private = [];
   v.action = { type: 'moderator' };

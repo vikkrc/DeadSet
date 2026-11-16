@@ -69,6 +69,8 @@ export function scen(kind, english) {
   const i = (EN.scenario[kind] || []).indexOf(english);
   return i >= 0 ? (D?.scenario?.[kind]?.[i] ?? english) : english;
 }
+/** The built-in scenario card at index i, translated. */
+export const scenAt = (kind, i) => D?.scenario?.[kind]?.[i] ?? EN.scenario?.[kind]?.[i] ?? '';
 /** Missions story lines for mission k (0–4), from the WHY / WHERE cards in play. Null for host-written cards. */
 export function missionStoryLine(sc, k) {
   const S = EN.missionStory;

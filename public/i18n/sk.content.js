@@ -3,6 +3,9 @@ export default {
   and: 'a',
   numbers: ['žiadny', 'jeden', 'dvaja', 'traja', 'štyria', 'piati', 'šiesti', 'siedmi', 'ôsmi', 'deviati', 'desiati'],
   roles: {
+    S_GHOST: { name: "Duch", when: "Vždy", summary: "Zavraždili ťa. Vieš kto, kde a prečo, ale nemôžeš hovoriť.", detail: "Pošli každému čitateľovi víziu k jeho radu. Studeným miestom zamraz víziu, ktorá nie je tvoja." },
+    S_MEDIUM: { name: "Médium", when: "Vždy", summary: "Čítaj vízie a zapáľ sviečky na pravdu.", detail: "Každé kolo čítaš jeden rad: kto, kde alebo prečo. Rozlúštite všetky tri, kým sviečky dohoria, a potom pomenujte Klamára." },
+    S_DECEIVER: { name: "Klamár", when: "Vždy", summary: "Druhý duch v živom tele. Poznáš pravdu a klameš.", detail: "Vyzeráš presne ako Médium. Niekoľkokrát za hru vymeníš víziu Ducha inému čitateľovi za svoju. Vyhráš, ak sviečky dohoria, alebo ak stôl pomenuje nesprávneho hráča." },
     N_SLEEPER: { name: "Spáč", when: "Vždy", summary: "Jedna noc, jedno hlasovanie. Tvoja karta môže zmeniť majiteľa, kým spíš.", detail: "Raz si pozri kartu, konaj, keď ťa telefón zobudí, potom sa hádaj a ukáž. Si tou kartou, ktorá pred tebou leží za úsvitu." },
     N_TWIN: { name: "Dvojča", when: "V noci", summary: "Zobudíš sa so svojím dvojčaťom a uvidíte sa.", detail: "Dvojčatá chodia v páre. Ak tvoje dvojča nie je medzi hráčmi, druhá karta leží na stole." },
     N_INSOMNIAC: { name: "Nespavec", when: "V noci, posledný", summary: "Zobudíš sa posledný a pozrieš si vlastnú kartu.", detail: "Uvidíš, či ti v noci niekto vzal kartu, a čím si za úsvitu." },
@@ -127,6 +130,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Pomstychtiví duchovia', text: 'Každý vyradený hráč môže každý deň odovzdať jeden hlas ducha s váhou 1.', enforcement: 'Duchovia nemôžu nominovať, používať schopnosti ani ovplyvniť Pravidlo väčšiny.' },
   },
   presets: {
+    seance: { name: "Dead Set: Seansa", blurb: "Nemý zavraždený Duch posiela vízie; Médiá z nich lúštia kto, kde a prečo. Klamár medzi nimi vymieňa vízie za lži." },
     midnight: { name: "Dead Set: Polnoc", blurb: "Jedna noc, jedno hlasovanie. Karty v tme menia majiteľov; za úsvitu si tým, čo leží pred tebou. Nájdi Smrť, alebo ňou buď." },
     carnival: { name: "Dead Set: Karneval", blurb: "Maškarný bál blafovania a pamäti. Každý nosí kartu postavy ako masku, miešanú, kým si nikto nie je istý. Hlás masky a zbieraj Duše; 13 vyhráva." },
     coffins: { name: "Dead Set: Rakvy", blurb: "Rýchla blafovacia hra. Zakop zlato a jednu kliatbu, ponúkni, koľko rakiev dokážeš otvoriť, a kopaj. Dve čisté vykopávky vyhrávajú." },
@@ -156,6 +160,15 @@ export default {
     'Smrť hlasovala s mestom. Samozrejme.',
   ],
   guide: {
+    seanceH: "Dead Set: Seansa",
+    seance: `<p>Kooperatívna vražedná záhada so zradcom. 4–10 hráčov, asi 30 minút. Jeden hráč je <b>Duch</b>: vie, kto ho zabil, kde a prečo, a nemôže hovoriť. Všetci ostatní sú čitatelia.</p>
+<ol>
+<li><b>Stôl.</b> Tri rady príbehových kariet: kto, kde a prečo. V každom rade je jedna karta pravda.</li>
+<li><b>Vízie.</b> Každé kolo dostane každý čitateľ jeden rad a Duch mu k nemu pošle víziu bez slov: dva-tri kreslené motívy na karte.</li>
+<li><b>Diskusia.</b> Vízie sa otočia pre všetkých. Opíšte ich, hádajte sa, presviedčajte. Duch mlčí, ale môže víziu zamraziť <b>studeným miestom</b>: táto nie je moja.</li>
+<li><b>Sviečky.</b> Každý čitateľ zapáli sviečku na karte vo svojom rade, alebo ju podrží. Karta s najviac sviečkami ide pred ducha. Správne: rad je vyriešený. Nesprávne: karta sa preškrtne. Každé kolo spáli jednu sviečku hodín seansy.</li>
+</ol>
+<p>Od piatich hráčov sa medzi čitateľmi skrýva <b>Klamár</b>. Pozná pravdu a niekoľkokrát za hru vymení víziu iného čitateľa za lož. Vyriešte všetky tri rady, kým sviečky dohoria, a pomenujte Klamára: správne je úplné víťazstvo, nesprávne prázdne, o ktoré sa delí aj Klamár. Ak hodiny dohoria, vyhrá Klamár (ak zostane jeden rad, najprv príde <b>posledný výdych</b>). Záverečná obrazovka prehrá každé kolo: pravé vízie, výmeny a sviečky.</p>`,
     midnightH: "Dead Set: Polnoc",
     midnight: `<p>Jedna noc, jedno hlasovanie, žiadna druhá šanca. 4–12 hráčov, asi 10 minút. V balíčku je jedna karta na hráča a tri ďalšie lícom nadol na stole.</p>
 <ol>

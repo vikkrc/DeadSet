@@ -3,6 +3,9 @@ export default {
   and: 'a',
   numbers: ['žádný', 'jeden', 'dva', 'tři', 'čtyři', 'pět', 'šest', 'sedm', 'osm', 'devět', 'deset'],
   roles: {
+    S_GHOST: { name: "Duch", when: "Vždy", summary: "Zavraždili tě. Víš kdo, kde a proč, ale nemůžeš mluvit.", detail: "Pošli každému čtenáři vizi k jeho řadě. Studeným místem zamraz vizi, která není tvoje." },
+    S_MEDIUM: { name: "Médium", when: "Vždy", summary: "Čti vize a zapal svíčky na pravdu.", detail: "Každé kolo čteš jednu řadu: kdo, kde nebo proč. Vyřešte všechny tři, než svíčky dohoří, a pak jmenujte Lháře." },
+    S_DECEIVER: { name: "Lhář", when: "Vždy", summary: "Druhý duch v živém těle. Znáš pravdu a lžeš.", detail: "Vypadáš přesně jako Médium. Několikrát za hru vyměníš vizi Ducha jinému čtenáři za svou. Vyhraješ, pokud svíčky dohoří, nebo pokud stůl jmenuje špatného hráče." },
     N_SLEEPER: { name: "Spáč", when: "Vždy", summary: "Jedna noc, jedno hlasování. Tvoje karta může změnit majitele, zatímco spíš.", detail: "Jednou se podívej na kartu, jednej, když tě telefon vzbudí, pak se hádej a ukaž. Jsi tou kartou, která před tebou leží za úsvitu." },
     N_TWIN: { name: "Dvojče", when: "V noci", summary: "Probudíš se se svým dvojčetem a uvidíte se.", detail: "Dvojčata chodí v páru. Pokud tvé dvojče není mezi hráči, druhá karta leží na stole." },
     N_INSOMNIAC: { name: "Nespavec", when: "V noci, poslední", summary: "Probudíš se poslední a podíváš se na vlastní kartu.", detail: "Uvidíš, jestli ti v noci někdo vzal kartu, a čím jsi za úsvitu." },
@@ -127,6 +130,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Mstiví duchové', text: 'Každý vyřazený hráč může každý den odevzdat jeden hlas ducha s váhou 1.', enforcement: 'Duchové nemohou nominovat, používat schopnosti ani ovlivnit Pravidlo většiny.' },
   },
   presets: {
+    seance: { name: "Dead Set: Seance", blurb: "Němý zavražděný Duch posílá vize; Média z nich luští kdo, kde a proč. Lhář mezi nimi vyměňuje vize za lži." },
     midnight: { name: "Dead Set: Půlnoc", blurb: "Jedna noc, jedno hlasování. Karty ve tmě mění majitele; za úsvitu jsi tím, co leží před tebou. Najdi Smrt, nebo jí buď." },
     carnival: { name: "Dead Set: Karneval", blurb: "Maškarní ples blafování a paměti. Každý nosí kartu postavy jako masku, míchanou, dokud si nikdo není jistý. Hlas masky a sbírej Duše; 13 vyhrává." },
     coffins: { name: "Dead Set: Rakve", blurb: "Rychlá blafovací hra. Zakopej zlato a jednu kletbu, nabídni, kolik rakví dokážeš otevřít, a kopej. Dvě čisté vykopávky vyhrávají." },
@@ -156,6 +160,15 @@ export default {
     'Smrt hlasovala s městem. Samozřejmě.',
   ],
   guide: {
+    seanceH: "Dead Set: Seance",
+    seance: `<p>Kooperativní vražedná záhada se zrádcem. 4–10 hráčů, asi 30 minut. Jeden hráč je <b>Duch</b>: ví, kdo ho zabil, kde a proč, a nemůže mluvit. Všichni ostatní jsou čtenáři.</p>
+<ol>
+<li><b>Stůl.</b> Tři řady příběhových karet: kdo, kde a proč. V každé řadě je jedna karta pravda.</li>
+<li><b>Vize.</b> Každé kolo dostane každý čtenář jednu řadu a Duch mu k ní pošle vizi beze slov: dva až tři kreslené motivy na kartě.</li>
+<li><b>Diskuse.</b> Vize se otočí pro všechny. Popište je, hádejte se, přesvědčujte. Duch mlčí, ale může vizi zamrazit <b>studeným místem</b>: tahle není moje.</li>
+<li><b>Svíčky.</b> Každý čtenář zapálí svíčku na kartě ve své řadě, nebo ji podrží. Karta s nejvíce svíčkami jde před ducha. Správně: řada je vyřešená. Špatně: karta se škrtne. Každé kolo spálí jednu svíčku hodin seance.</li>
+</ol>
+<p>Od pěti hráčů se mezi čtenáři skrývá <b>Lhář</b>. Zná pravdu a několikrát za hru vymění vizi jiného čtenáře za lež. Vyřešte všechny tři řady, než svíčky dohoří, a jmenujte Lháře: správně je úplné vítězství, špatně prázdné, o které se dělí i Lhář. Pokud hodiny dohoří, vyhraje Lhář (zbude-li jedna řada, nejdřív přijde <b>poslední výdech</b>). Závěrečná obrazovka přehraje každé kolo: pravé vize, výměny a svíčky.</p>`,
     midnightH: "Dead Set: Půlnoc",
     midnight: `<p>Jedna noc, jedno hlasování, žádná druhá šance. 4–12 hráčů, asi 10 minut. V balíčku je jedna karta na hráče a tři další lícem dolů na stole.</p>
 <ol>

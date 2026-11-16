@@ -3,6 +3,9 @@ export default {
   and: 'és',
   numbers: ['nulla', 'egy', 'két', 'három', 'négy', 'öt', 'hat', 'hét', 'nyolc', 'kilenc', 'tíz'],
   roles: {
+    S_GHOST: { name: "Szellem", when: "Mindig", summary: "Meggyilkoltak. Tudod, ki, hol és miért, de nem beszélhetsz.", detail: "Küldj minden olvasónak egy látomást a sorához. Egy hideg folttal jegeld be a látomást, ami nem a tiéd." },
+    S_MEDIUM: { name: "Médium", when: "Mindig", summary: "Olvasd a látomásokat, és gyújts gyertyát az igazságra.", detail: "Minden körben egy sort olvasol: ki, hol vagy miért. Fejtsd meg mindhármat, mielőtt a gyertyák leégnek, aztán nevezd meg a Csalót." },
+    S_DECEIVER: { name: "Csaló", when: "Mindig", summary: "Egy második szellem egy élő testben. Tudod az igazságot, és hazudsz.", detail: "Pontosan úgy nézel ki, mint egy Médium. Egy játékban néhányszor kicserélheted a Szellem látomását egy másik olvasónál a sajátodra. Nyersz, ha a gyertyák leégnek, vagy ha az asztal rossz játékost nevez meg." },
     N_SLEEPER: { name: "Alvó", when: "Mindig", summary: "Egy éjszaka, egy szavazás. A kártyád gazdát cserélhet, amíg alszol.", detail: "Egyszer nézd meg a kártyád, cselekedj, ha a telefon felébreszt, aztán vitázz és mutass. Az vagy, ami hajnalban előtted fekszik." },
     N_TWIN: { name: "Iker", when: "Éjjel", summary: "Az ikreddel ébredsz, és látjátok egymást.", detail: "Az Ikrek párban járnak. Ha az ikred nincs a játékosok között, a másik kártya az asztalon fekszik." },
     N_INSOMNIAC: { name: "Álmatlan", when: "Éjjel, utolsóként", summary: "Utolsóként ébredsz, és megnézed a saját kártyádat.", detail: "Látod, elvitte-e valaki a kártyádat az éjjel, és mi vagy hajnalban." },
@@ -127,6 +130,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Bosszúálló szellemek', text: 'Minden kiesett játékos naponta egy 1 súlyú szellemszavazatot adhat le.', enforcement: 'A szellemek nem jelölhetnek, nem használhatnak képességet, és nem befolyásolják a Többségi szabályt.' },
   },
   presets: {
+    seance: { name: "Dead Set: Szeánsz", blurb: "Egy néma, meggyilkolt Szellem látomásokat küld; a Médiumok ezekből fejtik meg, ki, hol és miért. Köztük egy Csaló a látomásokat hazugságra cseréli." },
     midnight: { name: "Dead Set: Éjfél", blurb: "Egy éjszaka, egy szavazás. A kártyák a sötétben cserélnek gazdát; hajnalban az vagy, ami előtted fekszik. Találj egy Halált, vagy légy az." },
     carnival: { name: "Dead Set: Karnevál", blurb: "Álarcosbál blöffel és emlékezettel. Mindenki egy szerepkártyát visel maszkként, addig keverve, míg senki sem biztos benne. Állíts maszkokat, gyűjts Lelkeket; 13 győz." },
     coffins: { name: "Dead Set: Koporsók", blurb: "Gyors blöffjáték. Temess el aranyat és egy átkot, licitálj, hány koporsót tudsz kinyitni, aztán áss. Két tiszta ásás győz." },
@@ -156,6 +160,15 @@ export default {
     'A Halál a várossal szavazott. Hát persze.',
   ],
   guide: {
+    seanceH: "Dead Set: Szeánsz",
+    seance: `<p>Kooperatív gyilkossági rejtély egy árulóval. 4–10 játékos, kb. 30 perc. Az egyik játékos a <b>Szellem</b>: tudja, ki ölte meg, hol és miért, de nem beszélhet. Mindenki más olvasó.</p>
+<ol>
+<li><b>A tábla.</b> Három sor történetkártya: ki, hol és miért. Minden sorban egy kártya az igazság.</li>
+<li><b>Látomások.</b> Minden körben minden olvasó kap egy sort, és a Szellem mindegyiküknek küld hozzá egy szótlan látomást: két-három rajzolt motívumot egy kártyán.</li>
+<li><b>Vita.</b> A látomások mindenki számára felfordulnak. Írjátok le őket, vitatkozzatok, győzködjetek. A Szellem hallgat, de egy <b>hideg folttal</b> bejegelhet egy látomást: ez nem az enyém.</li>
+<li><b>Gyertyák.</b> Minden olvasó gyertyát gyújt egy kártyán a sorában, vagy visszatartja. A legtöbb gyertyát kapott kártyát a szellem elé teszik. Ha igaz, a sor megfejtve. Ha nem, a kártyát kihúzzák. Minden kör leéget egy gyertyát a szeánsz órájából.</li>
+</ol>
+<p>Öt játékostól egy <b>Csaló</b> rejtőzik az olvasók között. Tudja az igazságot, és egy játékban néhányszor egy másik olvasó látomását hazugságra cseréli. Fejtsétek meg mindhárom sort, mielőtt a gyertyák leégnek, aztán nevezzétek meg a Csalót: ha jól, teljes győzelem; ha rosszul, üres győzelem, amin a Csaló is osztozik. Ha az óra leég, a Csaló nyer (ha egy sor maradt, előbb jön az <b>utolsó lehelet</b>). A végképernyő minden kört visszajátszik: az igazi látomásokat, a cseréket és a gyertyákat.</p>`,
     midnightH: "Dead Set: Éjfél",
     midnight: `<p>Egy éjszaka, egy szavazás, nincs második esély. 4–12 játékos, kb. 10 perc. A pakliban játékosonként egy kártya van, plusz három lefordítva az asztalon.</p>
 <ol>
