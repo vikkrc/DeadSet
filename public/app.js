@@ -1498,7 +1498,7 @@ function modeChooser(v, isHost) {
     [t('Signs & Riddles'), t('Someone knows the secret and may only hint. Read the signs.'), [
       card('exorcism', 'oracle', presetF('exorcism', 'name'), t('A word game of bluff: one word each, then name the Demon. 3–12 players.')),
       card('seance', 'shade', presetF('seance', 'name'), t('A silent Ghost sends visions; find who, where and why, and the Deceiver. 4–10 players.')),
-      card('graverobbers', 'undertaker', presetF('graverobbers', 'name'), t('Two crews dig a cemetery of words or icons; one word and a number from the Undertaker. 4–12 players.'))]],
+      card('graverobbers', 'headstone', presetF('graverobbers', 'name'), t('Two crews dig a cemetery of words or icons; one word and a number from the Undertaker. 4–12 players.'))]],
     [t('Bluff & Wager'), t('Bury, bid and dare. A quick game of nerve.'), [
       card('coffins', 'undertaker', presetF('coffins', 'name'), t('A quick bluffing game: bury gold, hide your curse, bid and dig. 3–10 players.'))]],
   ];
