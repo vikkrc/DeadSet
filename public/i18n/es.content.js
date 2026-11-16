@@ -3,6 +3,9 @@ export default {
   and: 'y',
   numbers: ['ningún', 'un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'],
   roles: {
+    N_SLEEPER: { name: "Durmiente", when: "Siempre", summary: "Una noche, una votación. Tu carta puede cambiar de manos mientras duermes.", detail: "Mira tu carta una vez, actúa cuando tu móvil te despierte, luego discutid y señalad. Eres la carta que tienes delante al amanecer." },
+    N_TWIN: { name: "Gemelo", when: "De noche", summary: "Te despiertas con tu gemelo y os veis.", detail: "Los Gemelos van en pareja. Si tu gemelo no está en la mesa, la otra carta está en el centro." },
+    N_INSOMNIAC: { name: "Insomne", when: "De noche, el último", summary: "Te despiertas el último y miras tu propia carta.", detail: "Ves si alguien te quitó la carta durante la noche, y qué eres al amanecer." },
     K_GUEST: { name: "Invitado enmascarado", when: "Siempre", summary: "Baila, echa un vistazo y reclama máscaras para reunir Almas. 13 Almas ganan.", detail: "Tu máscara es una carta de rol que viste una vez. Cambia o finge para esconderla; echa un vistazo para conocerla; reclama una máscara para usar su poder. Quien crea que es suya puede desafiarte." },
     C_DIGGER: { name: "Sepulturero", when: "Siempre", summary: "Entierra tus ataúdes, apuesta cuántos puedes abrir y cava. Dos excavaciones limpias ganan.", detail: "Tu Maldición es tu farol: entiérrala para que otros tropiecen con ella. Si ganas la puja, abres primero tu propia tumba." },
     X_LIVING: { name: "Vivo", when: "Siempre", summary: "Ves la contraseña en la bola de cristal. Di una palabra que demuestre que la sabes, sin dársela al Demonio.", detail: "Demasiado obvia, y el Demonio descubre la contraseña. Demasiado rebuscada, y la mesa sospecha de ti. Luego nombrad al Demonio." },
@@ -124,6 +127,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Fantasmas vengativos', text: 'Cada jugador eliminado puede emitir una papeleta fantasma de peso 1 por día.', enforcement: 'Los fantasmas no pueden nominar, usar poderes ni influir en la Regla de mayoría.' },
   },
   presets: {
+    midnight: { name: "Dead Set: Medianoche", blurb: "Una noche, una votación. Las cartas cambian de manos en la oscuridad; al amanecer eres lo que tienes delante. Encuentra a la Muerte, o sé ella." },
     carnival: { name: "Dead Set: Carnaval", blurb: "Un baile de máscaras de faroles y memoria. Cada uno lleva una carta de rol como máscara, barajada hasta que nadie está seguro. Reclama máscaras y reúne Almas; 13 ganan." },
     coffins: { name: "Dead Set: Ataúdes", blurb: "Un juego de faroles rápido. Entierra oro y una maldición, puja cuántos ataúdes puedes abrir y luego cava. Dos excavaciones limpias ganan." },
     exorcism: { name: "Dead Set: Exorcismo", blurb: "Un juego de palabras y faroles. Todos ven la contraseña en la bola de cristal, menos el Demonio. Una palabra cada uno y luego desenmascarad al Demonio." },
@@ -152,6 +156,15 @@ export default {
     'La Muerte votó con el pueblo. Cómo no.',
   ],
   guide: {
+    midnightH: "Dead Set: Medianoche",
+    midnight: `<p>Una noche, una votación, sin segundas oportunidades. De 4 a 12 jugadores, unos 10 minutos. El mazo tiene una carta por jugador y tres más boca abajo en la mesa.</p>
+<ol>
+<li><b>Una mirada.</b> Cada uno mira su propia carta una vez.</li>
+<li><b>Una noche.</b> Los móviles despiertan los roles por turno: Imitador, La Muerte, Conspirador, Gemelos, Mentalista, Agente doble, Bruja, Apostador, Insomne. Cada paso dura lo mismo y ocurre aunque su carta esté en la mesa, para que la noche no delate nada. Las cartas se miran e intercambian en la oscuridad.</li>
+<li><b>Una discusión.</b> Al amanecer eres la carta que tienes delante, no la que te repartieron. Habladlo.</li>
+<li><b>Una votación.</b> Todos señalan a la vez. El más votado muere si tiene al menos dos votos (en caso de empate, todos). Si muere el Justiciero, muere también a quien señaló.</li>
+</ol>
+<p>Los Vivos ganan si muere una Muerte (o, si ningún jugador es la Muerte, si nadie muere). La Muerte y el Conspirador ganan si no muere ninguna Muerte. El Bufón gana solo si lo eliminan. <b>Cartas en juego</b> muestra el paso nocturno de cada carta. Al final veréis cada carta, repartida y al amanecer, y toda la noche como relato.</p>`,
     carnivalH: "Dead Set: Carnaval",
     carnival: `<p>Un baile de máscaras de faroles y memoria para 4–12 jugadores, que se elige en la sala. Cada máscara es una carta de rol conocida.</p>
 <ol>

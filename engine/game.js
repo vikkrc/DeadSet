@@ -17,6 +17,7 @@ import { startMissions, missionCommand, missionAdvance, isMissionPhase } from '.
 import { startExorcism, exorcismCommand, exorcismAdvance, isExorcismPhase } from './exorcism.js';
 import { startCoffins, coffinsCommand, coffinsAdvance, isCoffinsPhase } from './coffins.js';
 import { startCarnival, carnivalCommand, carnivalAdvance, isCarnivalPhase } from './carnival.js';
+import { startMidnight, midnightCommand, midnightAdvance, isMidnightPhase } from './midnight.js';
 
 export { GameError };
 
@@ -38,7 +39,7 @@ export function newMatch({ id, code, hostId, moderated = false }) {
     scenario: null, activeRules: [], config: null,
     publicLog: [], privateLog: {}, chats: {},
     day: null, night: null, pendingStatuses: [], gamblerBets: [],
-    winner: null, endReason: null, manualRoles: {}, hostTransferVotes: [], M: null, X: null, C: null, K: null,
+    winner: null, endReason: null, manualRoles: {}, hostTransferVotes: [], M: null, X: null, C: null, K: null, N: null,
   };
 }
 
@@ -129,10 +130,12 @@ export function startMatch(m, rng, now, { forceRoles = null, forceWord = null } 
   if (!report.ok) throw new GameError(report.errors[0]);
   if (!forceRoles && report.notReady) throw new GameError('Everyone must tap Ready first.');
   const n = m.players.length;
-  if (PRESETS[m.settings.preset]?.missions) { m.C = null; m.K = null; startMissions(m, rng, now, { forceRoles }); return; }
-  if (PRESETS[m.settings.preset]?.exorcism) { m.C = null; m.K = null; startExorcism(m, rng, now, { forceRoles, forceWord }); return; }
-  if (PRESETS[m.settings.preset]?.coffins) { m.K = null; startCoffins(m, rng, now, { forceRoles }); return; }
-  if (PRESETS[m.settings.preset]?.carnival) { startCarnival(m, rng, now); return; }
+  if (PRESETS[m.settings.preset]?.missions) { m.C = null; m.K = null; m.N = null; startMissions(m, rng, now, { forceRoles }); return; }
+  if (PRESETS[m.settings.preset]?.exorcism) { m.C = null; m.K = null; m.N = null; startExorcism(m, rng, now, { forceRoles, forceWord }); return; }
+  if (PRESETS[m.settings.preset]?.coffins) { m.K = null; m.N = null; startCoffins(m, rng, now, { forceRoles }); return; }
+  if (PRESETS[m.settings.preset]?.carnival) { m.N = null; startCarnival(m, rng, now); return; }
+  if (PRESETS[m.settings.preset]?.midnight) { startMidnight(m, rng, now); return; }
+  m.N = null;
   m.C = null;
   m.K = null;
   m.X = null;
@@ -609,8 +612,9 @@ export function hostAdvance(m, rng, now, { skipAll = false } = {}) {
   if (isExorcismPhase(m.phase)) { exorcismAdvance(m, rng, now); return; }
   if (isCoffinsPhase(m.phase)) { coffinsAdvance(m, rng, now); return; }
   if (isCarnivalPhase(m.phase)) { carnivalAdvance(m, rng, now); return; }
+  if (isMidnightPhase(m.phase)) { midnightAdvance(m, rng, now); return; }
   // Exorcism: the end screen returns the table to the same lobby (settings and scores kept).
-  if (m.phase === 'ENDED' && ['exorcism', 'coffins', 'carnival'].includes(m.config?.mode)) { rematch(m, { ready: true }); return; }
+  if (m.phase === 'ENDED' && ['exorcism', 'coffins', 'carnival', 'midnight'].includes(m.config?.mode)) { rematch(m, { ready: true }); return; }
   switch (m.phase) {
     case 'NIGHT_0_REVEAL': pub(m, 'Night 0 ends.', 'phase'); beginDay(m, now); break;
     case 'DAY_PREP': closeMorning(m, now); break;
@@ -652,6 +656,8 @@ export function rematch(m, { ready = false } = {}) {
   const cMatch = m.cMatch;
   const kScores = m.kScores;
   const kMatch = m.kMatch;
+  const nScores = m.nScores;
+  const nMatch = m.nMatch;
   const fresh = newMatch({ id: m.id, code: m.code, hostId: m.hostId, moderated: m.moderated });
   Object.assign(m, { ...fresh, settings: m.settings, stateVersion: m.stateVersion + 1, phaseSeq: m.phaseSeq + 1 });
   m.phaseId = `LOBBY:${m.phaseSeq}`;
@@ -660,6 +666,8 @@ export function rematch(m, { ready = false } = {}) {
   if (cMatch) m.cMatch = cMatch;
   if (kScores) m.kScores = kScores;
   if (kMatch) m.kMatch = kMatch;
+  if (nScores) m.nScores = nScores;
+  if (nMatch) m.nMatch = nMatch;
   for (const k of keep) {
     const p = addPlayer(m, k);
     p.connected = k.connected;
@@ -679,6 +687,11 @@ export function playerCommand(m, actorId, cmd, rng, now) {
   if (type.startsWith('x.')) {
     if (!m.X || !isExorcismPhase(m.phase)) throw new GameError('That window has closed.', 'STALE');
     exorcismCommand(m, p, type, payload, rng, now);
+    return;
+  }
+  if (type.startsWith('n.')) {
+    if (!m.N || !isMidnightPhase(m.phase)) throw new GameError('That window has closed.', 'STALE');
+    midnightCommand(m, p, type, payload, rng, now);
     return;
   }
   if (type.startsWith('k.')) {
@@ -902,7 +915,7 @@ export function chatChannels(m, p) {
   if (!p || m.phase === 'LOBBY' || m.phase === 'ENDED') return out;
   const remote = m.settings.transport === 'remote';
   const muted = p.statuses.some((s) => s.type === 'MUTE');
-  const inDay = isDayPhase(m.phase) || (isMissionPhase(m.phase) && !['M_REVEAL', 'M_NIGHT'].includes(m.phase)) || isExorcismPhase(m.phase) || isCoffinsPhase(m.phase) || isCarnivalPhase(m.phase);
+  const inDay = isDayPhase(m.phase) || (isMissionPhase(m.phase) && !['M_REVEAL', 'M_NIGHT'].includes(m.phase)) || isExorcismPhase(m.phase) || isCoffinsPhase(m.phase) || isCarnivalPhase(m.phase) || m.phase === 'N_DAY' || m.phase === 'N_VOTE';
   if (remote && inDay) {
     if (hasRule(m, 'FOG_OF_WAR')) {
       const seats = [...m.players].sort((a, b) => a.seat - b.seat);

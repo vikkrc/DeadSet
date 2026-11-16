@@ -3,6 +3,9 @@ export default {
   and: 'et',
   numbers: ['aucun', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix'],
   roles: {
+    N_SLEEPER: { name: "Dormeur", when: "Toujours", summary: "Une nuit, un vote. Ta carte peut changer de mains pendant ton sommeil.", detail: "Regarde ta carte une fois, agis quand ton téléphone te réveille, puis débattez et désignez. Tu es la carte posée devant toi à l’aube." },
+    N_TWIN: { name: "Jumeau", when: "La nuit", summary: "Tu te réveilles avec ton jumeau et vous vous voyez.", detail: "Les Jumeaux vont par paire. Si ton jumeau n’est pas à la table, l’autre carte est au centre." },
+    N_INSOMNIAC: { name: "Insomniaque", when: "La nuit, en dernier", summary: "Tu te réveilles en dernier et regardes ta propre carte.", detail: "Tu vois si quelqu’un t’a pris ta carte pendant la nuit, et ce que tu es à l’aube." },
     K_GUEST: { name: "Invité masqué", when: "Toujours", summary: "Danse, jette un œil et revendique des masques pour amasser des Âmes. 13 Âmes gagnent.", detail: "Ton masque est une carte de rôle que tu as vue une fois. Échange ou fais semblant pour le cacher ; jette un œil pour le connaître ; revendique un masque pour user de son pouvoir. Qui croit qu'il est à lui peut te défier." },
     C_DIGGER: { name: "Fossoyeur", when: "Toujours", summary: "Enterre tes cercueils, annonce combien tu peux en ouvrir, et creuse. Deux fouilles propres gagnent.", detail: "Ta Malédiction est ton bluff : enterre-la pour que les autres tombent dessus. Si tu remportes l'enchère, tu ouvres d'abord ta propre tombe." },
     X_LIVING: { name: "Vivant", when: "Toujours", summary: "Tu vois le mot de passe dans la boule de cristal. Donne un mot qui prouve que tu le connais, sans le livrer au Démon.", detail: "Trop évident, et le Démon apprend le mot de passe. Trop obscur, et la table te soupçonne. Puis désignez le Démon." },
@@ -124,6 +127,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Fantômes vengeurs', text: 'Chaque joueur éliminé peut déposer un bulletin fantôme de poids 1 par jour.', enforcement: 'Les fantômes ne peuvent pas nommer, utiliser de pouvoirs ni influencer la Règle de la majorité.' },
   },
   presets: {
+    midnight: { name: "Dead Set : Minuit", blurb: "Une nuit, un vote. Les cartes changent de mains dans le noir ; à l’aube, tu es ce qui est posé devant toi. Trouve la Mort, ou sois-la." },
     carnival: { name: "Dead Set : Carnaval", blurb: "Un bal masqué de bluff et de mémoire. Chacun porte une carte de rôle en guise de masque, mélangée jusqu'à ce que nul n'en soit sûr. Revendique des masques et amasse des Âmes ; 13 gagnent." },
     coffins: { name: "Dead Set : Cercueils", blurb: "Un jeu de bluff rapide. Enterre de l'or et une malédiction, annonce combien de cercueils tu peux ouvrir, puis creuse. Deux fouilles propres gagnent." },
     exorcism: { name: "Dead Set : Exorcisme", blurb: "Un jeu de mots et de bluff. Tout le monde voit le mot de passe dans la boule de cristal, sauf le Démon. Un mot chacun, puis démasquez le Démon." },
@@ -152,6 +156,15 @@ export default {
     'La Mort a voté avec la ville. Évidemment.',
   ],
   guide: {
+    midnightH: "Dead Set : Minuit",
+    midnight: `<p>Une nuit, un vote, pas de seconde chance. 4 à 12 joueurs, environ 10 minutes. Le paquet contient une carte par joueur et trois de plus face cachée sur la table.</p>
+<ol>
+<li><b>Un regard.</b> Chacun regarde sa propre carte une fois.</li>
+<li><b>Une nuit.</b> Les téléphones réveillent les rôles tour à tour : Imitateur, La Mort, Conspirateur, Jumeaux, Mentaliste, Agent double, Sorcière, Parieur, Insomniaque. Chaque étape dure le même temps et a lieu même si sa carte est sur la table, pour que la nuit ne trahisse rien. Les cartes sont regardées et échangées dans le noir.</li>
+<li><b>Un débat.</b> À l’aube, tu es la carte posée devant toi, pas celle qu’on t’a distribuée. Discutez-en.</li>
+<li><b>Un vote.</b> Tout le monde désigne en même temps. Le plus désigné meurt s’il a au moins deux voix (en cas d’égalité, tous). Si le Justicier meurt, celui qu’il a désigné meurt aussi.</li>
+</ol>
+<p>Les Vivants gagnent si une Mort meurt (ou, si aucun joueur n’est la Mort, si personne ne meurt). La Mort et le Conspirateur gagnent si aucune Mort ne meurt. Le Bouffon gagne seul s’il est éliminé. <b>Cartes en jeu</b> montre l’étape de nuit de chaque carte. À la fin, vous voyez chaque carte, distribuée et à l’aube, et toute la nuit en récit.</p>`,
     carnivalH: "Dead Set : Carnaval",
     carnival: `<p>Un bal masqué de bluff et de mémoire pour 4 à 12 joueurs, à choisir dans le salon. Chaque masque est une carte de rôle familière.</p>
 <ol>

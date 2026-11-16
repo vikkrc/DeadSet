@@ -98,6 +98,15 @@ export const GUIDE_EN = {
 <li><b>One last guess.</b> A caught Demon gets one guess at the password, from the 4×4 word grid or typed. Right, and the Demon still wins.</li>
 </ol>
 <p>The round ends back in the same lobby with the same settings, and the scores carry on: Living +1 for a win, Demons +2.</p>`,
+  midnightH: 'Dead Set: Midnight',
+  midnight: `<p>One night, one vote, no second chances. 4–12 players, about 10 minutes. The deck holds one card per player plus three face down on the table.</p>
+<ol>
+<li><b>One look.</b> Everyone sees their own card once.</li>
+<li><b>One night.</b> The phones wake each role in turn: Mimic, Death, Conspirator, Twins, Mentalist, Double Agent, Witch, Gambler, Insomniac. Every step lasts the same time, and runs even if its card lies on the table, so the night gives nothing away. Cards are looked at and swapped in the dark.</li>
+<li><b>One argument.</b> At dawn you are whatever card is in front of you, not what you were dealt. Talk it over.</li>
+<li><b>One vote.</b> Everyone points at once. The most voted die if they have two votes or more (ties all die). If the Vigilante dies, the player they pointed at dies too.</li>
+</ol>
+<p>The Living win if a Death dies (or, with no Death among the players, if nobody dies). Death and the Conspirator win if no Death dies. The Jester wins alone by being voted out. Tap <b>Cards in play</b> for every card's night action. The end screen shows every card as dealt and at dawn, and replays the whole night.</p>`,
   carnivalH: 'Dead Set: Carnival',
   carnival: `<p>A masked ball of bluff and memory for 4–12 players, chosen in the lobby. Every mask is a familiar role card.</p>
 <ol>
@@ -144,7 +153,7 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   return `<div class="guide">
   <header class="phase-head"><span class="kicker">${G.kicker}</span><h1>${G.title}</h1>
     <p class="scenario">${G.intro}</p></header>
-  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}<a class="tag" href="#g11">${G.sidesH}</a><a class="tag" href="#g12">${G.missionsH}</a><a class="tag" href="#g13">${G.exorcismH}</a><a class="tag" href="#g14">${G.coffinsH}</a><a class="tag" href="#g15">${G.carnivalH}</a></nav>
+  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}<a class="tag" href="#g11">${G.sidesH}</a><a class="tag" href="#g12">${G.missionsH}</a><a class="tag" href="#g13">${G.exorcismH}</a><a class="tag" href="#g14">${G.coffinsH}</a><a class="tag" href="#g15">${G.carnivalH}</a><a class="tag" href="#g16">${G.midnightH}</a></nav>
   <section id="g0"><h2>${G.basicsH}</h2>${G.basics}</section>
   <section id="g1"><h2>${G.roundH}</h2>${G.round}</section>
   <section id="g2"><h2>${G.winH}</h2>${G.win}</section>
@@ -174,5 +183,6 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   <section id="g13"><h2>${G.exorcismH}</h2>${G.exorcism}${roles.filter((r) => r.set === 'exorcism').map(entry).join('')}</section>
   <section id="g14"><h2>${G.coffinsH}</h2>${G.coffins}${roles.filter((r) => r.set === 'coffins').map(entry).join('')}</section>
   <section id="g15"><h2>${G.carnivalH}</h2>${G.carnival}</section>
+  <section id="g16"><h2>${G.midnightH}</h2>${G.midnight}</section>
   </div>`;
 }

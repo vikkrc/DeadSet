@@ -6,6 +6,7 @@ import { backdropHtml } from './backdrops.js';
 import { exorcismBoard, lobbyOrb } from './exorcism.js';
 import { coffinsBoard, coffinCard } from './coffins.js';
 import { carnivalBoard } from './carnival.js';
+import { midnightBoard } from './midnight.js';
 import { cardArt, roleEmblemId } from './cards.js';
 import { missionBoardStage, missionBoardRing, gridHtml, hunchArrowsSvg, hunchLegend } from './missions.js';
 
@@ -50,6 +51,9 @@ export function moodFor(v) {
     case 'M_NIGHT': return 'mCandle';
     case 'M_LAST_STAND': return 'mStand';
     case 'M_RECKONING': return 'mReckon';
+    case 'N_DEAL': case 'N_NIGHT': return 'night';
+    case 'N_DAY': return 'discussion';
+    case 'N_VOTE': return 'vote';
     case 'K_UNMASK': case 'K_LOTTERY': return 'kUnmask';
     case 'K_TURN': return 'kBall';
     case 'K_CHALLENGE': return 'kChallenge';
@@ -134,8 +138,8 @@ export function boardScreen(v, h) {
           ${classic ? `<span class="kicker">${t('Rule cards')}</span>
           <div class="deckrow">${ruleCards}</div>` : ''}
           ${v.mode === 'coffins' ? `<div class="c-lobbyhand">${Array.from({ length: s.c?.coffins ?? 4 }, (_, i) => coffinCard(i === (s.c?.coffins ?? 4) - 1 ? 'C' : 'G')).join('')}</div><p class="small muted">${th('Each player: {g} Gold and one Curse.', { g: (s.c?.coffins ?? 4) - 1 })}</p>` : ''}
-          ${['exorcism', 'coffins', 'carnival'].includes(v.mode) ? '' : `<span class="kicker">${t('Story')}</span>`}
-          ${['exorcism', 'coffins', 'carnival'].includes(v.mode) ? '' : `<p class="scenario">${s.scenario.mode === 'manual' && s.scenario.who ? esc(`${scen('WHO', s.scenario.who)} · ${scen('WHERE', s.scenario.where)} · ${scen('WHY', s.scenario.why)}`) : t('Dealt when the match begins.')}</p>`}
+          ${['exorcism', 'coffins', 'carnival', 'midnight'].includes(v.mode) ? '' : `<span class="kicker">${t('Story')}</span>`}
+          ${['exorcism', 'coffins', 'carnival', 'midnight'].includes(v.mode) ? '' : `<p class="scenario">${s.scenario.mode === 'manual' && s.scenario.who ? esc(`${scen('WHO', s.scenario.who)} · ${scen('WHERE', s.scenario.where)} · ${scen('WHY', s.scenario.why)}`) : t('Dealt when the match begins.')}</p>`}
         </section>
       </div></main>`;
   }
@@ -143,6 +147,7 @@ export function boardScreen(v, h) {
   if (v.mode === 'exorcism' && v.exorcism) return exorcismBoard(v, { header, ring });
   if (v.mode === 'coffins' && v.coffins) return coffinsBoard(v, { header });
   if (v.mode === 'carnival' && v.carnival) return carnivalBoard(v, { header });
+  if (v.mode === 'midnight' && v.midnight) return midnightBoard(v, { header, ring });
 
   // ── 1 · Living table + 2 · sky + 6 · threads + 17 · plaques ────────────
   const players = [...v.players].sort((a, b) => a.seat - b.seat);

@@ -3,6 +3,9 @@ export default {
   and: 'és',
   numbers: ['nulla', 'egy', 'két', 'három', 'négy', 'öt', 'hat', 'hét', 'nyolc', 'kilenc', 'tíz'],
   roles: {
+    N_SLEEPER: { name: "Alvó", when: "Mindig", summary: "Egy éjszaka, egy szavazás. A kártyád gazdát cserélhet, amíg alszol.", detail: "Egyszer nézd meg a kártyád, cselekedj, ha a telefon felébreszt, aztán vitázz és mutass. Az vagy, ami hajnalban előtted fekszik." },
+    N_TWIN: { name: "Iker", when: "Éjjel", summary: "Az ikreddel ébredsz, és látjátok egymást.", detail: "Az Ikrek párban járnak. Ha az ikred nincs a játékosok között, a másik kártya az asztalon fekszik." },
+    N_INSOMNIAC: { name: "Álmatlan", when: "Éjjel, utolsóként", summary: "Utolsóként ébredsz, és megnézed a saját kártyádat.", detail: "Látod, elvitte-e valaki a kártyádat az éjjel, és mi vagy hajnalban." },
     K_GUEST: { name: "Álarcos vendég", when: "Mindig", summary: "Táncolj, pillants be és állíts maszkokat, hogy Lelkeket gyűjts. 13 Lélek győz.", detail: "A maszkod egy szerepkártya, amit egyszer láttál. Cserélj vagy színlelj, hogy elrejtsd; pillants be, hogy megtudd; állíts egy maszkot, hogy használd a képességét. Aki azt hiszi, hogy az övé, kihívhat." },
     C_DIGGER: { name: "Sírásó", when: "Mindig", summary: "Temesd el a koporsóidat, licitálj, hányat tudsz kinyitni, és áss. Két tiszta ásás győz.", detail: "Az Átkod a blöfföd: temesd el, hogy mások belebotoljanak. Ha te nyered a licitet, a saját sírodat nyitod ki először." },
     X_LIVING: { name: "Élő", when: "Mindig", summary: "A kristálygömbben látod a jelszót. Mondj egy szót, ami bizonyítja, hogy tudod, de ne add a Démon kezébe.", detail: "Ha túl nyilvánvaló, a Démon megtudja a jelszót. Ha túl homályos, az asztal téged gyanúsít. Aztán nevezzétek meg a Démont." },
@@ -124,6 +127,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Bosszúálló szellemek', text: 'Minden kiesett játékos naponta egy 1 súlyú szellemszavazatot adhat le.', enforcement: 'A szellemek nem jelölhetnek, nem használhatnak képességet, és nem befolyásolják a Többségi szabályt.' },
   },
   presets: {
+    midnight: { name: "Dead Set: Éjfél", blurb: "Egy éjszaka, egy szavazás. A kártyák a sötétben cserélnek gazdát; hajnalban az vagy, ami előtted fekszik. Találj egy Halált, vagy légy az." },
     carnival: { name: "Dead Set: Karnevál", blurb: "Álarcosbál blöffel és emlékezettel. Mindenki egy szerepkártyát visel maszkként, addig keverve, míg senki sem biztos benne. Állíts maszkokat, gyűjts Lelkeket; 13 győz." },
     coffins: { name: "Dead Set: Koporsók", blurb: "Gyors blöffjáték. Temess el aranyat és egy átkot, licitálj, hány koporsót tudsz kinyitni, aztán áss. Két tiszta ásás győz." },
     exorcism: { name: "Dead Set: Ördögűzés", blurb: "Blöffölős szójáték. A kristálygömbben mindenki látja a jelszót, kivéve a Démont. Mindenki egy szót mond, aztán leleplezitek a Démont." },
@@ -152,6 +156,15 @@ export default {
     'A Halál a várossal szavazott. Hát persze.',
   ],
   guide: {
+    midnightH: "Dead Set: Éjfél",
+    midnight: `<p>Egy éjszaka, egy szavazás, nincs második esély. 4–12 játékos, kb. 10 perc. A pakliban játékosonként egy kártya van, plusz három lefordítva az asztalon.</p>
+<ol>
+<li><b>Egy pillantás.</b> Mindenki egyszer megnézi a saját kártyáját.</li>
+<li><b>Egy éjszaka.</b> A telefonok sorban felébresztik a szerepeket: Utánzó, Halál, Összeesküvő, Ikrek, Mentalista, Kettős ügynök, Boszorkány, Szerencsejátékos, Álmatlan. Minden lépés ugyanannyi ideig tart, és akkor is lefut, ha a kártyája az asztalon fekszik, így az éjszaka semmit sem árul el. A kártyákat sötétben nézik meg és cserélik.</li>
+<li><b>Egy vita.</b> Hajnalban az vagy, ami előtted fekszik, nem amit kaptál. Beszéljétek meg.</li>
+<li><b>Egy szavazás.</b> Mindenki egyszerre mutat. A legtöbb szavazatot kapók meghalnak, ha legalább két szavazatuk van (holtversenyben mind). Ha az Önbíráskodó meghal, akire mutatott, szintén meghal.</li>
+</ol>
+<p>Az Élők nyernek, ha egy Halál meghal (vagy ha egyik játékos sem Halál, és senki sem hal meg). A Halál és az Összeesküvő nyer, ha egy Halál sem hal meg. A Bolond egyedül nyer, ha kiszavazzák. A <b>Kártyák a játékban</b> gomb megmutatja minden kártya éjszakai lépését. A végén minden kártya látszik, ahogy kiosztották és ahogy hajnalban állt, és az egész éjszaka visszajátszható.</p>`,
     carnivalH: "Dead Set: Karnevál",
     carnival: `<p>Álarcosbál blöffel és emlékezettel 4–12 játékosnak, a lobbiban választható. Minden maszk egy ismerős szerepkártya.</p>
 <ol>

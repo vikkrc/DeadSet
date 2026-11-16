@@ -43,7 +43,7 @@ export function botDecide(m, botId, rng) {
       if (a.type === 'swap' && a.snatcher && a.choice == null && a.targets?.length && chance(rng, 0.5)) return { cmd: { type: 'dream.swap', payload: { target: pick(rng, a.targets) } } };
       return null;
     case 'NIGHT_ACTIONS': return nightMove(m, v, rng);
-    default: return m.X ? exorcismMove(m, v, rng) : m.K ? carnivalMove(m, v, rng) : m.C ? coffinsMove(m, v, rng) : m.M ? missionMove(m, v, rng) : null;
+    default: return m.X ? exorcismMove(m, v, rng) : m.N ? midnightMove(m, v, rng) : m.K ? carnivalMove(m, v, rng) : m.C ? coffinsMove(m, v, rng) : m.M ? missionMove(m, v, rng) : null;
   }
 }
 
@@ -80,6 +80,33 @@ function exorcismMove(m, v, rng) {
 // early, so it gets dug), bid what they believe is safe (their own buried gold
 // plus a share of the table) and sometimes bluff a raise, dig the plots of
 // players who passed rather than those who bid high, and wager like the dice.
+// Midnight: act at random within the role; by day, Death points at someone it knows is not Death.
+function midnightMove(m, v, rng) {
+  const a = v.action || {};
+  const me = v.me.id;
+  switch (a.type) {
+    case 'ndeal': return a.done ? null : { cmd: { type: 'n.ack', payload: {} } };
+    case 'nstep': {
+      if (!chance(rng, 0.35)) return null; // act some time during the step
+      switch (a.kind) {
+        case 'copy': case 'DOUBLE_AGENT': return { cmd: { type: 'n.act', payload: { target: pick(rng, a.targets) } } };
+        case 'lonePeek': case 'GAMBLER': return { cmd: { type: 'n.act', payload: { table: pick(rng, a.tables) } } };
+        case 'MENTALIST': return chance(rng, 0.6) ? { cmd: { type: 'n.act', payload: { target: pick(rng, a.targets) } } } : { cmd: { type: 'n.act', payload: { tables: a.tables.slice(0, 2) } } };
+        case 'WITCH': { const x = pick(rng, a.targets); const y = pick(rng, a.targets.filter((t) => t !== x)); return { cmd: { type: 'n.act', payload: { targets: [x, y] } } }; }
+        default: return null;
+      }
+    }
+    case 'nvote': {
+      if (a.choice) return null;
+      const deaths = new Set((v.me.n?.seen ?? []).flatMap((e) => (e.cards ?? []).filter((c) => c.role === 'DEATH').map((c) => c.seat)));
+      const iAmDeath = v.me.n?.dealt === 'DEATH';
+      const pool = iAmDeath ? a.targets.filter((t) => !deaths.has(t)) : a.targets.filter((t) => !(v.me.n?.seen ?? []).some((e) => e.step === 'N_TWIN' && e.cards.some((c) => c.seat === t)));
+      return { cmd: { type: 'n.vote', payload: { target: pick(rng, pool.length ? pool : a.targets) } } };
+    }
+    default: return null;
+  }
+}
+
 // Carnival: a belief table per bot (where each mask probably is). Claim when sure, bluff a little, challenge when it is probably yours.
 const K_VALUE = { CONSPIRATOR: 5, DEATH: 3, MAGISTRATE: 4, DIPLOMAT: 4, RIPPER: 3, GAMBLER: 3, JESTER: 2, GUARDIAN: 2, BARD: 2, SCAPEGOAT: 2, MIMIC: 2, INNOCENT: 1, MENTALIST: 1, ORACLE: 1, WITCH: 1, DOUBLE_AGENT: 1 };
 function carnivalMove(m, v, rng) {

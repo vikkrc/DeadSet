@@ -3638,3 +3638,115 @@ body.is-board .c-stamp { font-size: 32px; }
 .menu-links { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin-bottom: 12px; }
 .menu-actions .btn-wide { margin-bottom: 8px; }
 .sheet-body { padding-bottom: 40px; }
+
+/* ══ Midnight (Beta 5): one night, one vote ════════════════════════════════
+   The deal and the night in the Codex night tokens (silver on blue-black);
+   the day in the usual gilt. Cards are arcana cards; the night screen is still. */
+body.mode-midnight.mn-night {
+  --ink: #06080d; --ink-2: #0c1018; --ink-3: #151b26; --iron: #2b3344;
+  --bone: #dbe1ec; --bone-2: #aab4c6; --ash: #8590a5;
+  --gilt: #b9c4d8; --gilt-2: #5d6a82; --gilt-hi: #e6ecf6; --glow: rgba(120, 150, 210, 0.12);
+  --frame: var(--frame-silver);
+}
+.ncard { width: 6.2em; aspect-ratio: 11 / 18; padding: 1.05em 0.75em 0.9em; gap: 0.32em; font-size: 9px; flex: none; }
+.ncard .arc-num { font-size: 0.86em; }
+.ncard .nm { font-size: 1.5em; line-height: 1; text-align: center; overflow-wrap: normal; }
+.ncard.big { font-size: 16px; }
+.ncard.thumb { font-size: 6.4px; padding: 0.7em 0.55em; }
+.ncard.thumb .arc-num, .ncard.thumb .nm { display: none; }
+.ncard.thumb .arc-art { width: 100%; flex: 1; }
+.ncard.back .sig { width: 2.6em; height: 2.6em; font-size: 1.5em; }
+/* the same dark arch on every face; Death's side only changes the title ink */
+.ncard:not(.back) .arc-art::before { background: radial-gradient(circle, rgba(241, 228, 200, 0.12) 0.9px, transparent 1.4px) 0 0 / 5px 5px, linear-gradient(180deg, #232a3a, #0d1119); }
+.ncard:not(.back) .arc-art .emblem { padding: 8% 0 0; color: #eef0f6; --paper: #151b26; }
+.ncard.thumb:not(.back) .arc-art .emblem { padding: 0; }
+
+/* The deal */
+.ndeal { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 8px 0; }
+.nflip { padding: 0; border: 0; background: none; cursor: pointer; }
+.nflip .ncard { animation: kFlipIn 0.55s var(--ease) both; }
+.npow { max-width: 28rem; margin: 6px auto; text-align: center; font: italic 400 16px/1.4 var(--text); color: var(--bone-2); }
+
+/* The night: the same still frame on every phone */
+.nstep { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; margin: 10px 0 4px; }
+.nstep h2 { font: 600 30px/1.02 var(--black); margin: 4px 0 0; padding-bottom: 0.08em; }
+.nstep .ncard.big { font-size: 12px; }
+.nact { min-height: 210px; margin: 8px auto 6px; max-width: 30rem; text-align: center; }
+.nact h3 { font: 600 22px/1.05 var(--black); margin: 4px 0 10px; padding-bottom: 0.08em; }
+.npick { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 12px 8px; justify-items: center; margin: 6px 0; }
+.nseat { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; min-width: 64px; }
+.ns-disc { width: 56px; height: 56px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: var(--ink-2); border: 1.5px solid var(--gilt-2); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--iron); }
+.ns-disc svg { width: 100%; height: 100%; }
+.ns-disc b { font: 600 22px var(--text); color: var(--bone); }
+.ns-name { font: 600 10.5px/1.15 var(--text); letter-spacing: 0.16em; text-transform: uppercase; color: var(--bone-2); max-width: 78px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nseat.sel .ns-disc { border-color: var(--gilt-hi); box-shadow: 0 0 0 3px var(--ink), 0 0 0 5px var(--gilt), 0 0 22px var(--glow); }
+.nseat.sel .ns-name { color: var(--gilt-hi); }
+.ntable { display: flex; justify-content: center; gap: 14px; margin: 12px 0 4px; }
+.ntc { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0; border: 0; background: none; color: var(--ash); cursor: pointer; font: 500 13px var(--bit); }
+.ntc .ncard { font-size: 7.5px; transition: transform 0.2s var(--ease); }
+.ntc.sel .ncard { transform: translateY(-6px); box-shadow: 0 0 0 2px var(--gilt-hi), 0 0 18px var(--glow); }
+.ntc.sel { color: var(--gilt-hi); }
+.nreport { position: relative; margin: 12px auto; max-width: 30rem; padding: 16px 20px 14px; color: var(--sepia); background: var(--vellum-stain), var(--vellum); background-size: 100% 100%, auto; border-radius: 3px; box-shadow: 0 1.2em 2em -1.2em #000; }
+.nreport::before { content: ''; position: absolute; inset: 6px; pointer-events: none; border: 1px solid var(--sepia-2); border-image: var(--frame-ink) 32 / 16px stretch; }
+.nreport .kicker { color: var(--rubric); }
+.nr-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; text-align: left; }
+.nr-row p { margin: 0; font: italic 400 15px/1.35 var(--text); color: var(--sepia); }
+.nr-cards { display: flex; gap: 4px; flex: none; }
+.nr-cards .ncard { font-size: 5px; }
+.nclock { font: 500 34px/1 var(--bit); color: var(--bone); margin: 4px 0; }
+.ndealt { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 8px 0; }
+.ndealt .ncard { font-size: 5px; }
+.ndealt b { font: 600 18px/1 var(--black); }
+.nr-ord { font: 500 13px var(--bit); color: var(--ash); }
+.kme-req.soft { color: var(--ash); }
+
+/* End: every card, dealt → dawn; the whole night */
+.ne-list { list-style: none; padding: 0; margin: 8px 0; display: grid; }
+.ne-list li { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--iron); }
+.ne-list li.died .ne-who b { color: var(--blood-ink); text-decoration: line-through; }
+.ne-who b { display: block; font: 600 13px/1.2 var(--text); letter-spacing: 0.18em; text-transform: uppercase; }
+.ne-who small { font-style: italic; color: var(--ash); }
+.ne-cards { display: flex; align-items: center; gap: 6px; }
+.ne-cards .ncard { font-size: 5.6px; }
+.ne-cards i { width: 14px; height: 14px; color: var(--ash); transform: rotate(-90deg); display: grid; }
+.ne-tags { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+.ne-table { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--iron); }
+.ne-table > div { display: flex; gap: 10px; }
+.ne-t { display: flex; flex-direction: column; align-items: center; gap: 2px; font: 500 12px var(--bit); color: var(--ash); }
+.ne-t .ncard { font-size: 5.6px; }
+.nt-list { list-style: none; padding: 0; margin: 6px 0; display: grid; gap: 8px; }
+.nt-list li { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; font: 400 15px/1.35 var(--text); color: var(--bone-2); }
+.nt-list .ncard { font-size: 4.8px; }
+
+/* Scenes */
+.m-art.nm-moon, .m-art.nm-sun { color: var(--gilt); }
+
+/* TV */
+.nboard .nb-centre { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+.nboard .nb-centre h2 { font: 600 52px/1.02 var(--black); margin: 0; padding-bottom: 0.1em; }
+.nb-moon { width: 90px; height: 90px; color: var(--gilt); --paper: var(--ink); }
+.nb-moon svg { width: 100%; height: 100%; filter: url(#ds-pencil); }
+.nb-card .ncard.big { font-size: 20px; }
+.nb-backs { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; max-width: 900px; }
+.nb-backs .ncard { font-size: 9px; }
+.nb-steps { list-style: none; padding: 0; margin: 4px 0 0; display: flex; gap: 10px; }
+.nb-steps li { width: 34px; height: 34px; color: var(--ash); opacity: 0.45; --paper: var(--ink); }
+.nb-steps li.past { opacity: 0.25; }
+.nb-steps li.now { color: var(--gilt-hi); opacity: 1; }
+.nb-steps svg { width: 100%; height: 100%; }
+.n-tvref { padding: 20px 22px 14px; }
+.n-tvref ul { list-style: none; padding: 0; margin: 8px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+.n-tvref li { display: flex; align-items: center; gap: 8px; }
+.n-tvref .ncard { font-size: 4.4px; }
+.n-tvref b { font: 600 16px/1 var(--black); padding-bottom: 0.08em; }
+.nboard.is-ended .k-main { overflow: auto; justify-content: flex-start; max-height: calc(100vh - 120px); }
+.nboard .k-cols { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 30px; padding: 0 40px 24px; position: relative; z-index: 1; }
+.nboard .k-main { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; }
+.nboard .k-side { display: flex; flex-direction: column; gap: 16px; }
+.nboard .ring { width: min(100%, 62vh); }
+.n-tvref ul { grid-template-columns: 1fr; gap: 6px; }
+.ne-cards figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; width: 64px; }
+.ne-cards figcaption { font: 600 13px/1 var(--black); color: var(--bone); text-align: center; padding-bottom: 0.1em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 64px; }
+.ne-list li { grid-template-columns: minmax(0, 1fr) auto auto; }
+.ne-t small { text-align: center; max-width: 70px; }
+.ne-table { flex-wrap: wrap; }

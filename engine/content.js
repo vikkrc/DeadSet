@@ -475,6 +475,16 @@ Object.assign(ROLES, {
 ROLES.K_GUEST = { id: 'K_GUEST', name: 'Masked Guest', set: 'carnival', alignment: 'INDEPENDENT', glyph: 'veiled', when: 'Always',
   summary: 'Dance, peek and claim masks to gather Souls. 13 Souls win.',
   detail: 'Your mask is a role card you saw once. Swap or pretend to hide it, peek to learn it, claim a mask to use its power. If others think the mask is theirs, they can challenge you.' };
+ROLES.N_SLEEPER = { id: 'N_SLEEPER', name: 'Sleeper', set: 'midnight', alignment: 'INDEPENDENT', glyph: 'moon', when: 'Always',
+  summary: 'One night, one vote. Your card may change hands while you sleep.',
+  detail: 'Look at your card once, act when your phone wakes you, then argue and point. You are whatever card is in front of you at dawn.' };
+ROLES.N_TWIN = { id: 'N_TWIN', name: 'Twin', set: 'midnight', alignment: 'NON_DEATH', glyph: 'twins', when: 'Night',
+  summary: 'Wake with your twin and see each other.', detail: 'The Twins come as a pair. If your twin is not at the table, the other card lies in the middle.' };
+ROLES.N_INSOMNIAC = { id: 'N_INSOMNIAC', name: 'Insomniac', set: 'midnight', alignment: 'NON_DEATH', glyph: 'insomnia', when: 'Night, last',
+  summary: 'Wake last and look at your own card.', detail: 'You see whether anyone took your card during the night, and what you are at dawn.' };
+PRESETS.midnight = { id: 'midnight', name: 'Dead Set: Midnight', min: 4, max: 12, pool: [], dreams: false,
+  rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, midnight: true,
+  blurb: 'One night, one vote. Cards change hands in the dark; at dawn you are what lies in front of you. Find a Death, or be one.' };
 PRESETS.carnival = { id: 'carnival', name: 'Dead Set: Carnival', min: 4, max: 12, pool: [], dreams: false,
   rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, carnival: true,
   blurb: 'A masked ball of bluff and memory. Everyone wears a role card as a mask, shuffled until nobody is sure. Claim masks to gather Souls; 13 wins.' };
@@ -488,8 +498,9 @@ export const MODES = {
   exorcism: { id: 'exorcism', roleSets: ['exorcism'], rules: false, dreams: false },
   coffins: { id: 'coffins', roleSets: ['coffins'], rules: false, dreams: false },
   carnival: { id: 'carnival', roleSets: ['carnival'], rules: false, dreams: false },
+  midnight: { id: 'midnight', roleSets: ['midnight'], rules: false, dreams: false },
 };
 /** The mode a preset belongs to. */
-export const modeOf = (presetId) => (PRESETS[presetId]?.missions ? 'missions' : PRESETS[presetId]?.exorcism ? 'exorcism' : PRESETS[presetId]?.coffins ? 'coffins' : PRESETS[presetId]?.carnival ? 'carnival' : 'classic');
+export const modeOf = (presetId) => (PRESETS[presetId]?.missions ? 'missions' : PRESETS[presetId]?.exorcism ? 'exorcism' : PRESETS[presetId]?.coffins ? 'coffins' : PRESETS[presetId]?.carnival ? 'carnival' : PRESETS[presetId]?.midnight ? 'midnight' : 'classic');
 /** Can this role be dealt in this mode? */
 export const roleInMode = (roleId, mode) => !!ROLES[roleId] && MODES[mode].roleSets.includes(ROLES[roleId].set);

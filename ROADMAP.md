@@ -134,7 +134,7 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 |---|---|---|
 | 3 | **Coffins** | Built (COFFINS.md); redesigned to the Codex |
 | 4 | **Carnival** | Built (CARNIVAL.md) |
-| 5 | **Midnight** | Pitch |
+| 5 | **Midnight** | Built (MIDNIGHT.md) |
 | 6 | **Séance** | Rules drafted (SEANCE.md), decisions pending |
 | 7 | **Doppelgänger** | Pitch |
 | 8 | **Council** | Pitch |
@@ -226,6 +226,8 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 ## Beta 5: Dead Set: Midnight (a cousin of One Night Ultimate Werewolf)
 
 **The pitch:** one night, one vote, no second chances.
+
+**Status:** built. The full rules, wake order, table cards, winners and recommended decks are in MIDNIGHT.md.
 
 - **Night:** every role acts once, in a fixed order, guided by the phones. Cards change hands secretly, so by morning you may not be what you were dealt.
 - **Day:** five minutes of argument, then everyone points at once. If a player who is Death by morning is the most voted, the Living win.

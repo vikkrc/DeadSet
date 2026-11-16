@@ -3,6 +3,9 @@ export default {
   and: 'a',
   numbers: ['žiadny', 'jeden', 'dvaja', 'traja', 'štyria', 'piati', 'šiesti', 'siedmi', 'ôsmi', 'deviati', 'desiati'],
   roles: {
+    N_SLEEPER: { name: "Spáč", when: "Vždy", summary: "Jedna noc, jedno hlasovanie. Tvoja karta môže zmeniť majiteľa, kým spíš.", detail: "Raz si pozri kartu, konaj, keď ťa telefón zobudí, potom sa hádaj a ukáž. Si tou kartou, ktorá pred tebou leží za úsvitu." },
+    N_TWIN: { name: "Dvojča", when: "V noci", summary: "Zobudíš sa so svojím dvojčaťom a uvidíte sa.", detail: "Dvojčatá chodia v páre. Ak tvoje dvojča nie je medzi hráčmi, druhá karta leží na stole." },
+    N_INSOMNIAC: { name: "Nespavec", when: "V noci, posledný", summary: "Zobudíš sa posledný a pozrieš si vlastnú kartu.", detail: "Uvidíš, či ti v noci niekto vzal kartu, a čím si za úsvitu." },
     K_GUEST: { name: "Maskovaný hosť", when: "Vždy", summary: "Tancuj, nazeraj a hlás masky, aby si zbieral Duše. 13 Duší vyhráva.", detail: "Tvoja maska je karta postavy, ktorú si raz videl. Vymeň alebo predstieraj, aby si ju skryl; nazri, aby si ju spoznal; ohlás masku, aby si použil jej schopnosť. Kto si myslí, že je jeho, ťa môže vyzvať." },
     C_DIGGER: { name: "Hrobár", when: "Vždy", summary: "Zakop svoje rakvy, povedz, koľko ich dokážeš otvoriť, a kopaj. Dve čisté vykopávky vyhrávajú.", detail: "Tvoja Kliatba je tvoj blaf: zakop ju, nech na ňu narazia iní. Ak vyhráš dražbu, otváraš najprv vlastný hrob." },
     X_LIVING: { name: "Živý", when: "Vždy", summary: "V krištáľovej guli vidíš heslo. Povedz slovo, ktoré dokáže, že ho poznáš, ale nedaj ho Démonovi.", detail: "Príliš jasné, a Démon heslo zistí. Príliš nejasné, a stôl podozrieva teba. Potom označte Démona." },
@@ -124,6 +127,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Pomstychtiví duchovia', text: 'Každý vyradený hráč môže každý deň odovzdať jeden hlas ducha s váhou 1.', enforcement: 'Duchovia nemôžu nominovať, používať schopnosti ani ovplyvniť Pravidlo väčšiny.' },
   },
   presets: {
+    midnight: { name: "Dead Set: Polnoc", blurb: "Jedna noc, jedno hlasovanie. Karty v tme menia majiteľov; za úsvitu si tým, čo leží pred tebou. Nájdi Smrť, alebo ňou buď." },
     carnival: { name: "Dead Set: Karneval", blurb: "Maškarný bál blafovania a pamäti. Každý nosí kartu postavy ako masku, miešanú, kým si nikto nie je istý. Hlás masky a zbieraj Duše; 13 vyhráva." },
     coffins: { name: "Dead Set: Rakvy", blurb: "Rýchla blafovacia hra. Zakop zlato a jednu kliatbu, ponúkni, koľko rakiev dokážeš otvoriť, a kopaj. Dve čisté vykopávky vyhrávajú." },
     exorcism: { name: "Dead Set: Exorcizmus", blurb: "Slovná hra plná blafovania. V krištáľovej guli všetci vidia heslo, okrem Démona. Každý jedno slovo, potom odhaľte Démona." },
@@ -152,6 +156,15 @@ export default {
     'Smrť hlasovala s mestom. Samozrejme.',
   ],
   guide: {
+    midnightH: "Dead Set: Polnoc",
+    midnight: `<p>Jedna noc, jedno hlasovanie, žiadna druhá šanca. 4–12 hráčov, asi 10 minút. V balíčku je jedna karta na hráča a tri ďalšie lícom nadol na stole.</p>
+<ol>
+<li><b>Jeden pohľad.</b> Každý si raz pozrie vlastnú kartu.</li>
+<li><b>Jedna noc.</b> Telefóny postupne budia postavy: Napodobňovač, Smrť, Sprisahanec, Dvojčatá, Mentalista, Dvojitý agent, Čarodejnica, Hazardný hráč, Nespavec. Každý krok trvá rovnako dlho a beží, aj keď jeho karta leží na stole, takže noc nič neprezradí. Karty sa v tme prezerajú a vymieňajú.</li>
+<li><b>Jedna hádka.</b> Za úsvitu si tou kartou, ktorá leží pred tebou, nie tou, ktorú si dostal. Prediskutujte to.</li>
+<li><b>Jedno hlasovanie.</b> Všetci ukážu naraz. Kto má najviac hlasov, zomiera, ak má aspoň dva (pri remíze všetci). Ak zomrie Mstiteľ, zomiera aj ten, na koho ukázal.</li>
+</ol>
+<p>Živí vyhrajú, ak zomrie nejaká Smrť (alebo ak žiadny hráč nie je Smrť a nikto nezomrie). Smrť a Sprisahanec vyhrajú, ak žiadna Smrť nezomrie. Šašo vyhrá sám, ak ho vyhlasujú. <b>Karty v hre</b> ukážu nočný krok každej karty. Na konci uvidíte každú kartu, ako bola rozdaná aj za úsvitu, a celú noc ako záznam.</p>`,
     carnivalH: "Dead Set: Karneval",
     carnival: `<p>Maškarný bál blafovania a pamäti pre 4–12 hráčov, voliteľný v lobby. Každá maska je známa karta postavy.</p>
 <ol>

@@ -3,6 +3,9 @@ export default {
   and: 'und',
   numbers: ['kein', 'ein', 'zwei', 'drei', 'vier', 'fünf', 'sechs', 'sieben', 'acht', 'neun', 'zehn'],
   roles: {
+    N_SLEEPER: { name: "Schläfer", when: "Immer", summary: "Eine Nacht, eine Abstimmung. Deine Karte kann den Besitzer wechseln, während du schläfst.", detail: "Sieh dir deine Karte einmal an, handle, wenn dein Handy dich weckt, dann streitet und zeigt. Du bist die Karte, die im Morgengrauen vor dir liegt." },
+    N_TWIN: { name: "Zwilling", when: "Nachts", summary: "Du wachst mit deinem Zwilling auf, und ihr seht euch.", detail: "Die Zwillinge kommen als Paar. Ist dein Zwilling nicht am Tisch, liegt die zweite Karte in der Mitte." },
+    N_INSOMNIAC: { name: "Schlaflose", when: "Nachts, zuletzt", summary: "Du wachst zuletzt auf und siehst deine eigene Karte an.", detail: "Du siehst, ob dir jemand in der Nacht die Karte genommen hat, und was du im Morgengrauen bist." },
     K_GUEST: { name: "Maskierter Gast", when: "Immer", summary: "Tanze, spähe und beanspruche Masken, um Seelen zu sammeln. 13 Seelen gewinnen.", detail: "Deine Maske ist eine Rollenkarte, die du einmal gesehen hast. Tausche oder täusche, um sie zu verbergen; späh, um sie zu kennen; beanspruche eine Maske, um ihre Kraft zu nutzen. Wer glaubt, sie sei seine, kann dich herausfordern." },
     C_DIGGER: { name: "Totengräber", when: "Immer", summary: "Vergrabe deine Särge, biete, wie viele du öffnen kannst, und grabe. Zwei saubere Grabungen gewinnen.", detail: "Dein Fluch ist dein Bluff: Vergrabe ihn, damit andere darüber stolpern. Gewinnst du das Bieten, öffnest du zuerst dein eigenes Grab." },
     X_LIVING: { name: "Lebend", when: "Immer", summary: "In der Kristallkugel siehst du das Passwort. Sag ein Wort, das beweist, dass du es kennst, ohne es dem Dämon zu verraten.", detail: "Zu offensichtlich, und der Dämon kennt das Passwort. Zu rätselhaft, und der Tisch verdächtigt dich. Dann benennt den Dämon." },
@@ -124,6 +127,7 @@ export default {
     VENGEFUL_GHOSTS: { name: 'Rachsüchtige Geister', text: 'Jeder ausgeschiedene Spieler darf pro Tag eine Geisterstimme mit Gewicht 1 abgeben.', enforcement: 'Geister können nicht nominieren, keine Fähigkeiten nutzen und die Mehrheitsregel nicht beeinflussen.' },
   },
   presets: {
+    midnight: { name: "Dead Set: Mitternacht", blurb: "Eine Nacht, eine Abstimmung. Karten wechseln im Dunkeln die Hände; im Morgengrauen bist du, was vor dir liegt. Finde den Tod, oder sei er." },
     carnival: { name: "Dead Set: Karneval", blurb: "Ein Maskenball aus Bluff und Gedächtnis. Jeder trägt eine Rollenkarte als Maske, gemischt, bis niemand mehr sicher ist. Beanspruche Masken und sammle Seelen; 13 gewinnen." },
     coffins: { name: "Dead Set: Särge", blurb: "Ein schnelles Bluffspiel. Vergrabe Gold und einen Fluch, biete, wie viele Särge du öffnen kannst, dann grabe. Zwei saubere Grabungen gewinnen." },
     exorcism: { name: "Dead Set: Exorzismus", blurb: "Ein Wortspiel voller Bluff. In der Kristallkugel sehen alle das Passwort, nur der Dämon nicht. Jeder ein Wort, dann wird der Dämon benannt." },
@@ -152,6 +156,15 @@ export default {
     'Der Tod stimmte mit der Stadt. Natürlich.',
   ],
   guide: {
+    midnightH: "Dead Set: Mitternacht",
+    midnight: `<p>Eine Nacht, eine Abstimmung, keine zweite Chance. 4–12 Spieler, etwa 10 Minuten. Das Deck hat eine Karte pro Spieler und drei weitere verdeckt auf dem Tisch.</p>
+<ol>
+<li><b>Ein Blick.</b> Alle sehen ihre eigene Karte einmal an.</li>
+<li><b>Eine Nacht.</b> Die Handys wecken die Rollen der Reihe nach: Nachahmer, Tod, Verschwörer, Zwillinge, Mentalist, Doppelagent, Hexe, Spieler, Schlaflose. Jeder Schritt dauert gleich lang und läuft auch, wenn seine Karte auf dem Tisch liegt, damit die Nacht nichts verrät. Karten werden im Dunkeln angesehen und getauscht.</li>
+<li><b>Ein Streit.</b> Im Morgengrauen bist du die Karte, die vor dir liegt, nicht die, die du bekommen hast. Redet darüber.</li>
+<li><b>Eine Abstimmung.</b> Alle zeigen gleichzeitig. Wer die meisten Stimmen hat, stirbt, wenn es mindestens zwei sind (bei Gleichstand alle). Stirbt der Rächer, stirbt auch, auf wen er gezeigt hat.</li>
+</ol>
+<p>Die Lebenden gewinnen, wenn ein Tod stirbt (oder, wenn kein Spieler der Tod ist, wenn niemand stirbt). Tod und Verschwörer gewinnen, wenn kein Tod stirbt. Der Narr gewinnt allein, wenn er abgewählt wird. <b>Karten im Spiel</b> zeigt den Nachtschritt jeder Karte. Am Ende seht ihr jede Karte, wie sie ausgeteilt wurde und im Morgengrauen, und die ganze Nacht als Protokoll.</p>`,
     carnivalH: "Dead Set: Karneval",
     carnival: `<p>Ein Maskenball aus Bluff und Gedächtnis für 4–12 Spieler, in der Lobby wählbar. Jede Maske ist eine bekannte Rollenkarte.</p>
 <ol>
