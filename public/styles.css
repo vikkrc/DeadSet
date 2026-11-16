@@ -4011,3 +4011,45 @@ button.scard { cursor: pointer; border: 0; transition: transform 0.2s var(--ease
 .se-round summary { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 0; }
 .se-sum { display: inline-flex; flex-wrap: wrap; gap: 6px; text-transform: none; letter-spacing: 0; }
 .se-rounds { gap: 4px; }
+
+/* ── Coffins: readable stacks, a real turn of the card, crisp faces ── */
+/* the stack fans out, and a count sits on it from two coffins up */
+.cplot > i { top: calc(var(--k) * var(--tok) * 0.1); left: calc(var(--k) * var(--tok) * 0.035); transform: rotate(calc(8deg + var(--k) * -4deg)); }
+.cp-n { position: absolute; z-index: 6; left: calc(var(--tok) * 0.2); top: calc(var(--tok) * -0.12); min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px; display: grid; place-items: center;
+  background: var(--vellum); color: var(--sepia); font: 600 12px/1 var(--bit); font-variant-numeric: tabular-nums lining-nums; box-shadow: 0 0 0 1px var(--gilt), 0 2px 5px rgba(0, 0, 0, 0.6); }
+/* the bid seal sits above the stack, never under it */
+.cseat .tok-disc { z-index: 3; }
+.bdg.c-bid { z-index: 5; left: -10%; right: auto; top: -10%; }
+.bdg.c-rev, .bdg.c-relic { left: -16%; top: 34%; }
+/* faces: Gold on vellum, Cursed in blood, Death in black */
+.coff.f-C { background: var(--vellum-stain), radial-gradient(120% 90% at 50% 18%, #f0c3b2, #c46a5a 78%); background-size: 100% 100%, auto; box-shadow: 0 0 0 1px #8e1b1f, 0 1.8em 3em -1.4em #000, inset 0 0 2em rgba(120, 10, 10, 0.35); }
+.coff.f-C:not(.back) .arc-art::before { background: radial-gradient(circle, rgba(255, 210, 200, 0.14) 0.9px, transparent 1.4px) 0 0 / 5px 5px, linear-gradient(180deg, #7a1418, #2c0507); }
+.coff.f-C:not(.back) .arc-art .emblem { color: #ffd9cc; --paper: #4a0b0e; }
+.coff.f-C .nm { color: #6d0f12; }
+.coff.f-D { background: radial-gradient(120% 90% at 50% 18%, #2a2626, #060505 72%); box-shadow: 0 0 0 1px var(--gilt-2), 0 1.8em 3em -1.4em #000; }
+.coff.f-D:not(.back) .arc-art::before { background: radial-gradient(circle, rgba(241, 228, 200, 0.08) 0.9px, transparent 1.4px) 0 0 / 5px 5px, linear-gradient(180deg, #000, #000); }
+.coff.f-D:not(.back) .arc-art .emblem { color: #f1e4c8; --paper: #000; }
+.coff.f-D .nm { color: #f1e4c8; }
+/* crisp: no wobble filter or 3D layer on cards that turn over (WebKit rasterises those at 1x) */
+.cplot .arc-art .emblem, .c-opened .arc-art .emblem, .c-lantern-card .arc-art .emblem { filter: none; }
+@keyframes kFlipIn { from { opacity: 0; transform: scaleX(0.02); } to { opacity: 1; transform: none; } }
+/* turning a buried coffin: it lifts, turns and settles; Gold flashes, a curse bleeds, Death goes dark */
+.cplot > i.fresh .coff { animation: cTurn 0.9s var(--ease) both; }
+@keyframes cTurn { 0% { transform: translateY(0) scaleX(1); } 35% { transform: translateY(-1.4em) scaleX(0.02); } 70% { transform: translateY(-1.4em) scaleX(1.08); } 100% { transform: rotate(-4deg) translateX(0.6em); } }
+.coff::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; z-index: 3; }
+.cplot > i.fresh.f-G .coff::after, .c-opened li.f-G .coff::after { background: linear-gradient(115deg, transparent 30%, rgba(255, 236, 170, 0.85) 48%, transparent 66%) -150% 0 / 250% 100% no-repeat; box-shadow: 0 0 2.2em 0.4em rgba(255, 200, 90, 0.75); animation: cGleam 1.3s ease-out both; animation-delay: var(--gd, 0.6s); }
+.cplot > i.fresh.f-C .coff::after, .c-opened li.f-C .coff::after { background: radial-gradient(circle, rgba(220, 30, 30, 0.55), transparent 70%); box-shadow: 0 0 2em 0.4em rgba(200, 20, 20, 0.7); animation: cBleed 1.2s ease-out both; animation-delay: var(--gd, 0.6s); }
+.cplot > i.fresh.f-D .coff::after, .c-opened li.f-D .coff::after { background: rgba(0, 0, 0, 0.7); box-shadow: 0 0 2.6em 0.8em rgba(0, 0, 0, 0.9); animation: cBleed 1.4s ease-out both; animation-delay: var(--gd, 0.6s); }
+.c-opened li { --gd: calc(var(--d) + 0.55s); }
+@keyframes cGleam { 0% { opacity: 0; background-position: -150% 0; } 25% { opacity: 1; } 100% { opacity: 0; background-position: 150% 0; } }
+@keyframes cBleed { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
+.c-opened li.f-C .coff, .c-opened li.f-D .coff { animation: cShake 0.5s ease-in-out both; animation-delay: calc(var(--d) + 0.6s); }
+@keyframes cShake { 0%, 100% { transform: none; } 20% { transform: translateX(-4px) rotate(-2deg); } 40% { transform: translateX(4px) rotate(2deg); } 60% { transform: translateX(-3px); } 80% { transform: translateX(2px); } }
+@media (prefers-reduced-motion: reduce) { .coff::after, .c-opened li .coff { animation: none !important; } }
+/* game modes, grouped by family */
+.mode-family { margin: 14px 0 6px; }
+.mode-family:first-of-type { margin-top: 4px; }
+.mf-head { display: flex; flex-direction: column; gap: 2px; margin: 0 0 8px; padding-left: 10px; border-left: 2px solid var(--gilt-2); }
+.mf-head .kicker { color: var(--gilt-hi); }
+.mf-head small { font: italic 400 14px/1.3 var(--text); color: var(--bone-2); }
+.mode-family .mode-cards { grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); }

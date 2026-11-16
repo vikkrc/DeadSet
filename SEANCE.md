@@ -140,7 +140,7 @@ Everything is validated per mode, following the Beta 0 rule: no Classic roles, r
   - **Built:** 84 hand-curated compositions (`public/visions.js`) from about 100 pencil motifs: the existing emblem library plus 16 new motifs (wave, ship, fish, bird, birdcage, stairs, tree, snake, moth, planet, gear, film reel, grapes, palm, snowflake, train). Four layouts: one motif inside another, a small one across a large one, a diagonal pair, a small one above a large one; every fourth vision adds a third accent.
   - Each motif carries two concept tags; a vision carries its motifs' tags (about 3–5, from 23: water, money, faith, night, royalty, travel, fire, secrecy, death, time…).
 - **More story cards.** 20 WHO / 15 WHERE / 15 WHY repeat quickly on a 6-card board. The target is **40 / 30 / 30**:
-  - 15 new WHERE cards each need a backdrop etching (and later room content for Doppelgänger);
+  - 15 new WHERE cards each need a backdrop etching (and later room content for Mimic);
   - all of it translated into the six languages;
   - every WHO, WHERE and WHY card tagged with the same concept vocabulary as the visions (**done** for the current 20 / 15 / 15).
 - **Tags** drive three things: near-miss boards, bot play, and a "vision fits" sanity check when generating content.

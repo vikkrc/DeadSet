@@ -126,6 +126,17 @@ Other Missions ideas kept for later:
 
 ---
 
+## Mode families (the lobby groups modes by core mechanic)
+
+| Family | Modes | Core mechanic |
+|---|---|---|
+| **Hidden Allegiances** | Classic Dead Set, Missions | Secret sides; a town hunts its killers over days and votes |
+| **Changing Hands** | Carnival, Midnight | Role cards change owners in secret; memory and bluff |
+| **Signs & Riddles** | Exorcism, Séance, Mimic (Beta 7) | One side knows the secret and may only hint |
+| **Bluff & Wager** | Coffins | Bury, bid and dare: a quick game of nerve |
+
+New modes join a family (or open a new one) when they are pitched.
+
 ## Order of the next betas (reordered 2026-11-12)
 
 Séance needs by far the most new art (84 vision cards, more story cards and backdrops), so it moves back. The lighter modes come first:
@@ -136,7 +147,7 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 | 4 | **Carnival** | Built (CARNIVAL.md) |
 | 5 | **Midnight** | Built (MIDNIGHT.md) |
 | 6 | **Séance** | Built (SEANCE.md) |
-| 7 | **Doppelgänger** | Pitch |
+| 7 | **Mimic** | Pitch |
 | 8 | **Council** | Pitch |
 | 9 | **Lifeboat** | Pitch |
 | 10 | **To be decided:** a new big game | — |
@@ -289,26 +300,26 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 
 ---
 
-## Beta 7: Dead Set: Doppelgänger (a cousin of Spyfall)
+## Beta 7: Dead Set: Mimic (a cousin of Spyfall; formerly Doppelgänger)
 
 **The pitch:** everyone at the table knows where you are, except the thing wearing a friend's face.
 
-- **Setup:** every phone shows the same WHERE card plus a personal role there. The **Doppelgänger** sees only static.
-- **Play:** players take turns asking anyone a question. Answers must convince the others you've been there, without being specific enough for the Doppelgänger to work it out.
-- **Win:** at any moment one player can call a vote. Catch the Doppelgänger and the Living win. Accuse a Living player, or let the Doppelgänger guess the location, and it wins.
+- **Setup:** every phone shows the same WHERE card plus a personal role there. The **Mimic** sees only static.
+- **Play:** players take turns asking anyone a question. Answers must convince the others you've been there, without being specific enough for the Mimic to work it out.
+- **Win:** at any moment one player can call a vote. Catch the Mimic and the Living win. Accuse a Living player, or let the Mimic guess the location, and it wins.
 - **TV:** the location's backdrop blurred, sharpening as time runs out.
 - **Players and length:** 4–12, about 8 minutes.
 - **Spice it up:**
-  - two Doppelgängers at big tables;
+  - two Mimics at big tables;
   - a location that shifts halfway through;
   - roles with tiny secret instructions;
-  - a Witness who knows who the Doppelgänger is but must stay hidden.
+  - a Witness who knows who the Mimic is but must stay hidden.
 
 **Cast (reused):**
 
 | Character | Art |
 |---|---|
-| The Doppelgänger | the **Mimic** |
+| The Mimic | the **Mimic** |
 | The Witness | the **Witness** mission card |
 | Location roles | the existing **WHO** cards, cast as the people found at each WHERE (on the Night Train: the *Night-Shift Nurses*, the *Exiled Royals*, the *Lost Tourists*…) |
 | The location | the backdrop and story card |

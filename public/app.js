@@ -1061,7 +1061,7 @@ function roomScreen() {
     </aside>`;
   const top = `<header class="topbar" data-key="top">
       <span class="tb-emblem">${isNight(v.phase) ? glyph('moon') : glyph('sun')}</span>
-      <div class="phase-mini"><strong class="${pw.night ? 'night' : ''}">${esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</strong><span>${esc(stepOf(v))}${v.phase === 'LOBBY' ? ` · ${t('{n} seated', { n: v.players.length })}` : ['missions', 'exorcism', 'carnival', 'midnight', 'seance'].includes(v.mode) ? '' : ` · ${t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}`}</span></div>
+      <div class="phase-mini"><strong class="${pw.night ? 'night' : ''}">${esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</strong><span>${esc(stepOf(v))}${v.phase === 'LOBBY' ? ` · ${t('{n} seated', { n: v.players.length })}` : ['missions', 'exorcism', 'carnival', 'midnight', 'seance', 'coffins'].includes(v.mode) ? '' : ` · ${t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}`}</span></div>
       <span class="clock" data-clock></span>
       <button class="btn btn-ghost icon-btn" data-act="sound" aria-label="${esc(t(sound.on ? 'Mute sounds' : 'Turn sounds on'))}">${glyph(sound.on ? 'bell' : 'bellOff')}</button>
       <button class="btn btn-ghost icon-btn" data-act="sheet" data-id="record" aria-label="${esc(t('Open match record'))}">${glyph('menu')}</button>
@@ -1478,17 +1478,23 @@ function modeChooser(v, isHost) {
       ? `<button class="mode-card ${on ? 'on' : ''}" data-act="gameMode" data-mode="${mode}" aria-pressed="${on}" data-key="mode-${mode}">${inner}</button>`
       : `<div class="mode-card ${on ? 'on' : 'off'}" data-key="mode-${mode}">${inner}</div>`;
   };
+  // Modes grouped by their core mechanic (room to grow: new modes join a family).
+  const families = [
+    [t('Hidden Allegiances'), t('Secret sides, a town that must find its killers.'), [
+      card('classic', 'death', t('Classic Dead Set'), t('Hidden roles, night kills, Dreams and Rule cards. 5–25 players.')),
+      card('missions', 'mission', presetF('missions', 'name'), t('Teams, votes and sabotage. Nobody dies. 5–12 players.'))]],
+    [t('Changing Hands'), t('Role cards change owners while nobody is looking. Trust your memory.'), [
+      card('carnival', 'veiled', presetF('carnival', 'name'), t('A masked ball of bluff and memory: swap masks, claim powers, gather Souls. 4–12 players.')),
+      card('midnight', 'moon', presetF('midnight', 'name'), t('One night, one vote: cards change hands in the dark. 4–12 players.'))]],
+    [t('Signs & Riddles'), t('Someone knows the secret and may only hint. Read the signs.'), [
+      card('exorcism', 'oracle', presetF('exorcism', 'name'), t('A word game of bluff: one word each, then name the Demon. 3–12 players.')),
+      card('seance', 'shade', presetF('seance', 'name'), t('A silent Ghost sends visions; find who, where and why, and the Deceiver. 4–10 players.'))]],
+    [t('Bluff & Wager'), t('Bury, bid and dare. A quick game of nerve.'), [
+      card('coffins', 'undertaker', presetF('coffins', 'name'), t('A quick bluffing game: bury gold, hide your curse, bid and dig. 3–10 players.'))]],
+  ];
   return `<section class="mode-pick" data-key="modepick">
     <div class="rule">${t('Game mode')}</div>
-    <div class="mode-cards">
-      ${card('classic', 'death', t('Classic Dead Set'), t('Hidden roles, night kills, Dreams and Rule cards. 5–25 players.'))}
-      ${card('missions', 'mission', presetF('missions', 'name'), t('Teams, votes and sabotage. Nobody dies. 5–12 players.'))}
-      ${card('exorcism', 'veiled', presetF('exorcism', 'name'), t('A word game of bluff: one word each, then name the Demon. 3–12 players.'))}
-      ${card('coffins', 'undertaker', presetF('coffins', 'name'), t('A quick bluffing game: bury gold, hide your curse, bid and dig. 3–10 players.'))}
-      ${card('midnight', 'moon', presetF('midnight', 'name'), t('One night, one vote: cards change hands in the dark. 4–12 players.'))}
-      ${card('carnival', 'veiled', presetF('carnival', 'name'), t('A masked ball of bluff and memory: swap masks, claim powers, gather Souls. 4–12 players.'))}
-      ${card('seance', 'shade', presetF('seance', 'name'), t('A silent Ghost sends visions; find who, where and why, and the Deceiver. 4–10 players.'))}
-    </div>
+    ${families.map(([title, sub, cards], i) => `<div class="mode-family" data-key="mf-${i}"><div class="mf-head"><span class="kicker">${title}</span><small>${sub}</small></div><div class="mode-cards">${cards.join('')}</div></div>`).join('')}
   </section>`;
 }
 

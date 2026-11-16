@@ -31,7 +31,7 @@ export function coffinCard(f, { cls = '', act = '', id = '', sel = false, label 
   const tag = act ? 'button' : 'span';
   const attrs = `${act ? `data-act="${act}" data-id="${esc(id)}" aria-pressed="${sel}"` : ''} ${key ? `data-key="${key}"` : ''} aria-label="${esc(label || (f ? faceName(f) : t('A coffin')))}"`;
   if (!f) return `<${tag} class="arc back coff ${sel ? 'sel' : ''} ${cls}" ${attrs}><span class="sig">DS</span>${badge}</${tag}>`;
-  return `<${tag} class="arc coff f-${f} ${f !== 'G' ? 'rubric' : ''} ${sel ? 'sel' : ''} ${cls}" ${attrs}>${cardArt(FACE_EMB[f])}<span class="nm">${esc(t(FACE_SHORT[f]))}</span>${badge}</${tag}>`;
+  return `<${tag} class="arc coff f-${f} ${f === 'C' ? 'rubric' : f === 'D' ? 'noir' : ''} ${sel ? 'sel' : ''} ${cls}" ${attrs}>${cardArt(FACE_EMB[f])}<span class="nm">${esc(t(FACE_SHORT[f]))}</span>${badge}</${tag}>`;
 }
 
 const RELIC_GLYPH = { LANTERN: 'lantern', KEY: 'key', WARD: 'ward' };
@@ -80,8 +80,8 @@ export function graveyard(v, { pick = () => null, selected = null, big = false, 
     const shown = Math.min(n, 5);
     const stack = n ? `<span class="cplot" style="--n:${shown}" data-key="cp-${n}-${opened.length}">${Array.from({ length: shown }, (_, k) => {
       const f = st ? st[k] : opened[k] ?? null;
-      return `<i style="--k:${k}" class="${f ? 'open' : ''} ${!st && f && k === opened.length - 1 && v.phase === 'C_DIG' ? 'fresh' : ''}">${coffinCard(f)}</i>`;
-    }).join('')}${n > 5 ? `<b class="cp-more">+${n - 5}</b>` : ''}</span>` : '';
+      return `<i style="--k:${k}" class="${f ? `open f-${f}` : ''} ${!st && f && k === opened.length - 1 && v.phase === 'C_DIG' ? 'fresh' : ''}">${coffinCard(f)}</i>`;
+    }).join('')}${n > 1 ? `<b class="cp-n" aria-label="${esc(th('{n} buried', { n }))}">${n}</b>` : ''}</span>` : '';
     const badges = [];
     if (!pl.out) badges.push(`<b class="bdg c-hand" title="${esc(t('in hand'))}">${pl.inHand}</b>`);
     if (bidder) badges.push(`<b class="bdg c-bid" data-key="cb-${C.bid.n}">${C.bid.n}</b>`);
