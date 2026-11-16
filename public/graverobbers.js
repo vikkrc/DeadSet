@@ -253,6 +253,36 @@ export function scoreboard(v) {
     <p class="small muted">${t('Every winner +1.')}</p></section>`;
 }
 
+/**
+ * Who sits with which crew in the lobby, as the engine will deal them: by seat (the first half
+ * of the table is the Moon), or chosen (players without a crew fill the smaller one). Random → null.
+ */
+export function lobbyCrews(v) {
+  const s = v.settings?.g ?? {};
+  const mode = s.crews ?? 'seats';
+  const out = {};
+  if (mode === 'seats') {
+    const bySeat = [...v.players].sort((a, b) => a.seat - b.seat);
+    const half = Math.ceil(bySeat.length / 2);
+    bySeat.forEach((p, i) => { out[p.id] = i < half ? 'B' : 'G'; });
+  } else if (mode === 'chosen') {
+    const n = { B: 0, G: 0 };
+    for (const p of v.players) if (s.crew?.[p.id] === 'B' || s.crew?.[p.id] === 'G') { out[p.id] = s.crew[p.id]; n[s.crew[p.id]]++; }
+    for (const p of v.players) if (!out[p.id]) { const c = n.B <= n.G ? 'B' : 'G'; out[p.id] = c; n[c]++; }
+  } else return null;
+  return out;
+}
+
+/** The middle of the lobby table: how many sit with the Moon and with the Sun. */
+export function graveLobbyCenter(v) {
+  const map = lobbyCrews(v);
+  const prog = v.progress;
+  const ready = `<span class="c-sub">${t('{n}/{total} ready', { n: prog.done, total: prog.total })}</span>`;
+  if (!map) return `<span class="c-big">${v.players.length}</span><span class="c-sub">${t('Crews are dealt at the start.')}</span>`;
+  const count = (c) => Object.values(map).filter((x) => x === c).length;
+  return `<span class="g-ccrews">${['B', 'G'].map((c) => `<span class="c-${c}">${emblem(CREW_EMB[c])}<b>${count(c)}</b></span>`).join('')}</span>${ready}`;
+}
+
 export function graveLobbyDeck(v, isHost, h) {
   const s = v.settings.g ?? {};
   const n = v.players.length;
@@ -260,13 +290,11 @@ export function graveLobbyDeck(v, isHost, h) {
   const sel = (key, value, opts) => `<select class="input lang-select" data-act-change="gSet" data-id="${key}">${opts.map(([x, l]) => `<option value="${x}" ${String(value) === String(x) ? 'selected' : ''}>${l}</option>`).join('')}</select>`;
   const sw = (key, on) => `<input type="checkbox" class="switch" data-act-change="gSet" data-id="${key}" ${on ? 'checked' : ''}>`;
   const TILES = [['words', t('Words')], ['icons', t('Icons')]];
-  const crews = s.crews === 'chosen';
-  // Chosen crews: players without a crew fill the smaller one, as the engine does.
-  const chosen = { B: [], G: [] };
-  if (crews) {
-    for (const p of v.players) if (s.crew?.[p.id] === 'B' || s.crew?.[p.id] === 'G') chosen[s.crew[p.id]].push(p.id);
-    for (const p of v.players) if (!(s.crew?.[p.id] === 'B' || s.crew?.[p.id] === 'G')) chosen[chosen.B.length <= chosen.G.length ? 'B' : 'G'].push(p.id);
-  }
+  const CREW_MODES = [['seats', t('By seat')], ['random', t('Random')], ['chosen', t('Chosen')]];
+  const mode = s.crews ?? 'seats';
+  const crews = mode === 'chosen';
+  const map = lobbyCrews(v) ?? {};
+  const chosen = { B: v.players.filter((p) => map[p.id] === 'B').map((p) => p.id), G: v.players.filter((p) => map[p.id] === 'G').map((p) => p.id) };
   const editor = crews ? `<div class="g-crewedit" data-key="gcrewedit">${['B', 'G'].map((c) => `<section class="c-${c}"><header>${emblem(CREW_EMB[c])}<b>${t(CREW_NAME[c])}</b></header>
       <ul>${chosen[c].map((id) => `<li>${disc(v, id, 'xs')}<span>${pname(v, id)}</span>${isHost ? `<button class="btn btn-ghost btn-sm" data-act="gCrew" data-id="${id}" data-crew="${other(c)}">${glyph(c === 'B' ? 'sun' : 'moon')}</button>` : ''}</li>`).join('')}</ul>
       ${s.captains === 'chosen' && isHost ? `<select class="input lang-select" data-act-change="gCap" data-crew="${c}"><option value="">${t('Undertaker: random')}</option>${chosen[c].map((id) => `<option value="${id}" ${s.cap?.[c] === id ? 'selected' : ''}>${pname(v, id)}</option>`).join('')}</select>` : ''}</section>`).join('')}</div>` : '';
@@ -277,7 +305,7 @@ export function graveLobbyDeck(v, isHost, h) {
     <div class="g-lobbyart" data-key="glart"><span class="arc c-B">${cardArt('moon')}<span class="nm">${t('The Moon')}</span></span><span class="arc">${cardArt('undertaker')}<span class="nm">${esc(roleF('G_UNDERTAKER', 'name'))}</span></span><span class="arc c-G">${cardArt('sun')}<span class="nm">${t('The Sun')}</span></span></div>
     ${row(t('Graves show'), t('Words in the table\'s language, or pencil icons.'), sel('tiles', s.tiles ?? 'words', TILES), TILES.find((x) => x[0] === (s.tiles ?? 'words'))[1])}
     ${(s.tiles ?? 'words') === 'words' ? row(t('Famous names'), t('Add films, heroes, celebrities and landmarks to the words.'), sw('famous', !!s.famous), t(s.famous ? 'On' : 'Off')) : ''}
-    ${row(t('Crews'), t('Dealt at random, or chosen here.'), sel('crews', s.crews ?? 'random', [['random', t('Random')], ['chosen', t('Chosen')]]), t(crews ? 'Chosen' : 'Random'))}
+    ${row(t('Crews'), t('By seat: one half of the table against the other. Move players around the table to change crews.'), sel('crews', mode, CREW_MODES), CREW_MODES.find((x) => x[0] === mode)?.[1] ?? '')}
     ${row(t('Undertakers'), t('Rotating gives everyone a turn across a match.'), sel('captains', s.captains ?? 'rotate', [['rotate', t('Rotating')], ['random', t('Random')], ['chosen', t('Chosen')]]), t({ rotate: 'Rotating', random: 'Random', chosen: 'Chosen' }[s.captains ?? 'rotate']))}
     ${editor}
     ${row(t('Signs'), t('Typed: the word appears on every screen. Spoken: said aloud, the number tapped.'), sel('signs', s.signs ?? 'typed', [['typed', t('Typed')], ['spoken', t('Spoken')]]), t(s.signs === 'spoken' ? 'Spoken' : 'Typed'))}

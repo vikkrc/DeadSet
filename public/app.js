@@ -9,7 +9,7 @@ import { seatLayout } from './layout.js';
 import { sceneMs, scenesFor } from './interludes.js';
 import { cardArt, roleEmblemId, roleNumber } from './cards.js';
 import { emblem } from './emblems.js';
-import { isGravePhase, graveMain, graveDock, graveActs, graveMoment, graveMomentHtml, G_MOMENT_TIME, graveEndHtml, graveLobbyDeck, GRAVE_QUIET, graveTitle } from './graverobbers.js';
+import { isGravePhase, graveMain, graveDock, graveActs, graveMoment, graveMomentHtml, G_MOMENT_TIME, graveEndHtml, graveLobbyDeck, GRAVE_QUIET, graveTitle, lobbyCrews, graveLobbyCenter } from './graverobbers.js';
 import { isSeancePhase, seanceMain, seanceDock, seanceActs, seanceMoment, seanceMomentHtml, S_MOMENT_TIME, seanceEndHtml, seanceLobbyDeck, boardSheet as seanceSheet, SEANCE_QUIET, seanceTitle } from './seance.js';
 import { isMidnightPhase, midnightMain, midnightDock, midnightActs, midnightMoment, midnightMomentHtml, N_MOMENT_TIME, midnightEndHtml, midnightLobbyDeck, cardsSheet, MIDNIGHT_QUIET } from './midnight.js';
 import { isCarnivalPhase, carnivalMain, carnivalDock, carnivalActs, carnivalMoment, carnivalMomentHtml, lookMoments, K_MOMENT_TIME, carnivalEndHtml, carnivalLobbyDeck, masksSheet, CARNIVAL_QUIET } from './carnival.js';
@@ -903,7 +903,7 @@ function langChip() {
  * Seats drawn around a table in seating order. When `pick` is set, the
  * selectable seats become buttons: tapping a seat is how you target anyone.
  */
-function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = {}, lobby = false, crack = false, extra = '', orb = '' } = {}) {
+function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = {}, lobby = false, crack = false, extra = '', orb = '', crews = null } = {}) {
   const players = [...v.players].sort((a, b) => a.seat - b.seat);
   const n = Math.max(players.length, slots);
   const { pos, tok, dense } = seatLayout(n);
@@ -931,6 +931,7 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
       me?.seesDeath?.some((x) => x.id === p.id) || me?.candleSeen?.some((x) => x.id === p.id && x.death) ? 'known-death' : '',
       me?.candleSeen?.some((x) => x.id === p.id && !x.death) || me?.twin?.id === p.id ? 'known-living' : '',
       me?.candles?.some((x) => x.id === p.id) ? 'known-candle' : '',
+      crews?.[p.id] ? `crew c-${crews[p.id]}` : '',
     ].filter(Boolean).join(' ');
     const badges = [];
     if (ni >= 0) badges.push(`<b class="bdg b-nom" data-key="nom">${roman(ni + 1)}</b>`);
@@ -938,6 +939,7 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     if (p.revived) badges.push(`<b class="bdg b-rev" data-key="rev">${glyph('necro')}</b>`);
     if (p.id === v.hostId && v.phase === 'LOBBY') badges.push('<b class="bdg b-host" data-key="host"></b>');
     if (lobby && p.ready) badges.push(`<b class="bdg b-ok" data-key="ok">${glyph('check')}</b>`);
+    if (crews?.[p.id]) badges.push(`<b class="bdg b-crew" data-key="crew-${crews[p.id]}">${glyph(crews[p.id] === 'B' ? 'moon' : 'sun')}</b>`);
     if (marks[p.id]) badges.push(`<b class="bdg b-mark" data-key="mark">${marks[p.id]}</b>`);
     if (pick?.stamp === p.id) badges.push(`<b class="bdg b-stamp" data-key="stamp-${p.id}">${glyph('check')}</b>`);
     const inner = reveal && p.role ? glyph(p.role.glyph) : p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${initials(p.name)}</span>`;
@@ -1285,8 +1287,8 @@ function lobbyMain(v, me) {
         <a class="btn btn-sm btn-ghost" href="/board/${esc(v.code)}" target="_blank" rel="noopener">${esc(t('TV board ↗').replace('↗', '').trim())} ${glyph('out')}</a>
       </div>
     </section>
-    ${ring(v, { pick, slots: Math.max(5, v.players.length), lobby: true, center: centerFor(v), orb: v.mode === 'exorcism' ? lobbyOrb() : '' })}
-    ${isHost ? `<p class="small muted center-text" data-key="seathint">${t('Tap a seat to move or remove a player.')}</p>` : ''}
+    ${ring(v, { pick, slots: Math.max(5, v.players.length), lobby: true, center: v.mode === 'graverobbers' ? graveLobbyCenter(v) : centerFor(v), orb: v.mode === 'exorcism' ? lobbyOrb() : '', crews: v.mode === 'graverobbers' ? lobbyCrews(v) : null })}
+    ${isHost ? `<p class="small muted center-text" data-key="seathint">${t('Tap a seat to move or remove a player.')}${v.mode === 'graverobbers' && (v.settings.g?.crews ?? 'seats') === 'seats' ? ` ${t('Moving a player across the table changes their crew.')}` : ''}</p>` : ''}
     ${me && !me.moderator ? portraitRow(v.players.find((p) => p.id === me.id)?.avatar) : ''}
     ${isHost && S.ui.botsPanel ? botsPanel(v) : ''}
     ${modeChooser(v, isHost)}

@@ -26,7 +26,7 @@ const ICON_SKIP = new Set(['approve', 'reject', 's_lone', 's_lost', 's_nays', 's
   's_first', 's_restless', 's_crowd', 'ward', 'bodyguard', 'regular', 'extra', 'living', 'demon', 'succeed', 'sabotage']);
 export const ICON_POOL = Object.keys(EMBLEMS).filter((id) => !ICON_SKIP.has(id));
 
-export const G_DEFAULTS = { tiles: 'words', famous: false, crews: 'random', captains: 'rotate', signs: 'typed', games: 1, crew: {}, cap: {} };
+export const G_DEFAULTS = { tiles: 'words', famous: false, crews: 'seats', captains: 'rotate', signs: 'typed', games: 1, crew: {}, cap: {} };
 export const G_TIMER_DEFAULTS = { gIntro: 20, gSign: 90, gVote: 45 };
 
 let RNG = null;
@@ -52,7 +52,7 @@ export function applyGravePatch(s, patch) {
   const k = gSettings(s);
   if (['words', 'icons'].includes(patch.tiles)) k.tiles = patch.tiles;
   if (typeof patch.famous === 'boolean') k.famous = patch.famous;
-  if (['random', 'chosen'].includes(patch.crews)) k.crews = patch.crews;
+  if (['seats', 'random', 'chosen'].includes(patch.crews)) k.crews = patch.crews;
   if (['rotate', 'random', 'chosen'].includes(patch.captains)) k.captains = patch.captains;
   if (['typed', 'spoken'].includes(patch.signs)) k.signs = patch.signs;
   if ([1, 3, 5].includes(Number(patch.games))) k.games = Number(patch.games);
@@ -77,6 +77,11 @@ export function crewsFor(players, settings, rng = null) {
   if (k.crews === 'chosen') {
     for (const id of ids) if (CREWS.includes(k.crew[id])) out[k.crew[id]].push(id);
     for (const id of ids) if (!CREWS.includes(k.crew[id])) out[out.B.length <= out.G.length ? 'B' : 'G'].push(id);
+  } else if (k.crews === 'seats') {
+    // Crews follow the table: the first half of the seats digs for the Moon, the rest for the Sun.
+    const bySeat = [...players].sort((a, b) => (a.seat ?? 0) - (b.seat ?? 0));
+    const half = Math.ceil(bySeat.length / 2);
+    bySeat.forEach((p, i) => out[i < half ? 'B' : 'G'].push(p.id));
   } else {
     const order = rng ? (() => { const a = [...ids]; for (let i = a.length - 1; i > 0; i--) { const j = rng.int(i + 1, 'gcrew'); [a[i], a[j]] = [a[j], a[i]]; } return a; })() : ids;
     order.forEach((id, i) => out[i % 2 ? 'G' : 'B'].push(id));

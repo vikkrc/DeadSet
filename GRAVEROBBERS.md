@@ -11,7 +11,7 @@ Midnight in an old cemetery. Two crews of grave robbers serve two rival deities,
 - **4–12 players**, two crews: **Blue** (the Moon) and **Gold** (the Sun). Each crew needs at least two players: an Undertaker and one digger.
 - **The Undertaker** (the existing *Undertaker* card): the crew's captain for this game. They see the **burial register**: every grave colour-coded.
 - **The diggers:** everyone else on the crew. They see only the headstones.
-- **Setup:** crews are *random* (default) or *chosen* in the lobby (tap a player to move them between Blue and Gold). Undertakers are *random*, *rotating* (default for matches: a different Undertaker every game) or *chosen*.
+- **Setup:** crews are *by seat* (default: the first half of the table digs for the Moon, the rest for the Sun; the lobby table shows each seat's crew, and moving a player around the table changes their crew), *random*, or *chosen* in the lobby (tap a player to move them between Blue and Gold). Undertakers are *random*, *rotating* (default for matches: a different Undertaker every game) or *chosen*.
 - Uneven numbers are fine (5 v 4, for example).
 - *Decide:* at 3 players, a co-op variant (one Undertaker, two diggers, against the clock). **Recommendation: not at launch.**
 
@@ -124,7 +124,7 @@ Midnight in an old cemetery. Two crews of grave robbers serve two rival deities,
 |---|---|
 | Graves show | **Words**, Icons |
 | Famous names in the word pool | **Off**, on |
-| Crews | **Random**, chosen |
+| Crews | **By seat**, random, chosen |
 | Undertakers | **Rotating**, random, chosen |
 | Signs | **Typed**, spoken |
 | Games per match | **1**, 3, 5 |

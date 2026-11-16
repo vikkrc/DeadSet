@@ -4413,3 +4413,14 @@ button.g-stone:active { transform: scale(0.96); }
 .g-dig-scene .g-stone.open { opacity: 1; }
 /* the TV grid always fits the screen's height */
 .g-yard.tv { width: min(100%, 860px, calc((100vh - 300px) * 1.2 + 40px)); }
+
+/* Graverobbers lobby: each seat wears its crew (by seat or chosen). */
+.tok.crew .tok-disc { border-color: var(--crew); box-shadow: 0 0 0 2px var(--crew), 0 0 16px color-mix(in srgb, var(--crew) 45%, transparent); }
+.tok.crew .tok-name { color: color-mix(in srgb, var(--crew) 70%, var(--bone)); }
+.b-crew { top: -6px; left: -6px; border-radius: 50%; min-width: 20px; height: 20px; padding: 0; background: var(--crew-2); border-color: var(--crew); color: var(--crew); }
+.b-crew .glyph { font-size: 12px; }
+.tok.c-B .b-crew { color: var(--lapis-ink); }
+.g-ccrews { display: flex; gap: 12px; align-items: center; justify-content: center; }
+.g-ccrews > span { display: flex; align-items: center; gap: 4px; color: var(--crew); }
+.g-ccrews .emblem { width: 26px; height: 26px; }
+.g-ccrews b { font: 600 24px/1 var(--bit); }

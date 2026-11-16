@@ -8,7 +8,7 @@ import { coffinsBoard, coffinCard } from './coffins.js';
 import { carnivalBoard } from './carnival.js';
 import { midnightBoard } from './midnight.js';
 import { seanceBoard } from './seance.js';
-import { graveBoard } from './graverobbers.js';
+import { graveBoard, lobbyCrews, graveLobbyCenter } from './graverobbers.js';
 import { cardArt, roleEmblemId } from './cards.js';
 import { missionBoardStage, missionBoardRing, gridHtml, hunchArrowsSvg, hunchLegend } from './missions.js';
 
@@ -146,7 +146,7 @@ export function boardScreen(v, h) {
           <div class="code-tiles big">${codeTiles(v.code)}</div>
           <span class="small muted">${esc(location.host)}</span>
         </section>
-        <section class="b-table">${ring(v, { center: centerFor(v), lobby: true, slots: Math.max(5, v.players.length), orb: v.mode === 'exorcism' ? lobbyOrb() : '' })}</section>
+        <section class="b-table">${ring(v, { center: v.mode === 'graverobbers' ? graveLobbyCenter(v) : centerFor(v), lobby: true, slots: Math.max(5, v.players.length), orb: v.mode === 'exorcism' ? lobbyOrb() : '', crews: v.mode === 'graverobbers' ? lobbyCrews(v) : null })}</section>
         <section class="b-deck">
           <span class="kicker">${t('Tonight\'s deck')} · ${esc(presetF(s.preset, 'name'))}</span>
           <div class="deckrow">${deckHtml}</div>

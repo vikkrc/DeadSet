@@ -197,3 +197,18 @@ test('bots play whole games in words and icons, at 4 and 10 players', () => {
     assert.ok(m.G.winner);
   }
 });
+
+test('crews by seat (the default): the first half of the table is the Moon; moving a seat changes crew', async () => {
+  const { moveSeat } = await import('../engine/game.js');
+  const { crewsFor } = await import('../engine/graverobbers.js');
+  const m = newMatch({ id: 'g', code: 'G', hostId: 'p0' });
+  for (let i = 0; i < 5; i++) addPlayer(m, { id: `p${i}`, name: NAMES[i] });
+  updateSettings(m, { mode: 'graverobbers' });
+  assert.equal(m.settings.g?.crews ?? 'seats', 'seats');
+  assert.deepEqual(crewsFor(m.players, m.settings), { B: ['p0', 'p1', 'p2'], G: ['p3', 'p4'] });
+  moveSeat(m, 'p2', 1); // p2 moves past p3
+  assert.deepEqual(crewsFor(m.players, m.settings), { B: ['p0', 'p1', 'p3'], G: ['p2', 'p4'] });
+  m.players.forEach((p) => { p.ready = true; });
+  startMatch(m, seededRng(2), 1e6);
+  assert.deepEqual(m.G.crews, { B: ['p0', 'p1', 'p3'], G: ['p2', 'p4'] });
+});
