@@ -132,12 +132,12 @@ Other Missions ideas kept for later:
 |---|---|---|
 | **Hidden Allegiances** | Classic Dead Set, Missions | Secret sides; a town hunts its killers over days and votes |
 | **Changing Hands** | Carnival, Midnight | Role cards change owners in secret; memory and bluff |
-| **Signs & Riddles** | Exorcism, Séance, Mimic (Beta 7) | One side knows the secret and may only hint |
+| **Signs & Riddles** | Exorcism, Séance, Graverobbers (Beta 7), Mimic (Beta 8) | One side knows the secret and may only hint |
 | **Bluff & Wager** | Coffins | Bury, bid and dare: a quick game of nerve |
 
 New modes join a family (or open a new one) when they are pitched.
 
-## Order of the next betas (reordered 2026-11-12)
+## Order of the next betas (reordered 2026-11-12; Graverobbers inserted as Beta 7 on 2026-11-17)
 
 Séance needs by far the most new art (84 vision cards, more story cards and backdrops), so it moves back. The lighter modes come first:
 
@@ -147,10 +147,11 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 | 4 | **Carnival** | Built (CARNIVAL.md) |
 | 5 | **Midnight** | Built (MIDNIGHT.md) |
 | 6 | **Séance** | Built (SEANCE.md) |
-| 7 | **Mimic** | Pitch |
-| 8 | **Council** | Pitch |
-| 9 | **Lifeboat** | Pitch |
-| 10 | **To be decided:** a new big game | — |
+| 7 | **Graverobbers** | Next. Rules drafted (GRAVEROBBERS.md) |
+| 8 | **Mimic** | Pitch |
+| 9 | **Council** | Pitch |
+| 10 | **Lifeboat** | Pitch |
+| 11 | **To be decided:** a new big game | — |
 
 **Reuse first.** Every mode casts its characters from the existing Dead Set roles, emblems and cards wherever the role fits, so most art is already drawn and the brand stays one family. Each mode below lists its cast and which existing design it reuses. Anything marked **new** needs fresh art.
 
@@ -300,7 +301,46 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 
 ---
 
-## Beta 7: Dead Set: Mimic (a cousin of Spyfall; formerly Doppelgänger)
+## Beta 7: Dead Set: Graverobbers (a cousin of Codenames, with words or icons)
+
+**Status: next to build. Rules drafted** (see GRAVEROBBERS.md); a few decisions marked there.
+
+**The pitch:** midnight in an old cemetery. Two crews of grave robbers, the Blue crew of the **Moon** and the Gold crew of the **Sun**, race to dig up the relics that will summon their deity. Only each crew's **Undertaker** knows which grave holds what, and may give one word and one number. One grave belongs to **Death**.
+
+- **Board:** 25 graves in a 5×5 grid, each with a **word** or an **icon** on its headstone (set in the lobby). The starting crew (coin flip) has 9 relics, the other 8; 7 graves are empty; 1 is Death's.
+- **The Undertaker** (captain, the existing *Undertaker* card) sees the burial register: every grave colour-coded. They type (or say) one word and tap a number: *"Ocean · 3"*.
+- **The diggers** talk it over and each vote for a grave on their phone, or vote to stop. The most votes digs it up; a tie is settled by the coin (Sun / Moon faces).
+  - **Their relic:** keep digging while digs remain.
+  - **An empty grave:** the turn ends.
+  - **The other crew's relic:** it is theirs, and so is the turn.
+  - **Death's grave:** instant loss.
+- **Stopping early** earns one bonus dig next turn (it never stacks).
+- **Win:** all your relics dug up first.
+- **Crews and Undertakers:** chosen in setup or random. Undertakers rotate between games in a match.
+- **TV:** the cemetery at night, headstones engraved with the words or carved with the icons, open graves showing what they held, two altars whose sigils fill as relics are found, the sign in large type, and the diggers' votes appearing on the stones live.
+- **Phones:** the same 5×5 grid, filling the screen, with a switch between *Stones* (words or icons on the tiles) and *Map* (plain tiles, colour and state at a glance). Tap to vote. The Undertaker's grid shows the burial register and a sign composer.
+- **Players and length:** 4–12, about 15 minutes. Team play, loud and quick.
+
+**Content:**
+- **Words:** drawn at random with no categories, from Exorcism's pool (340 words in 17 categories, 7 languages). It grows to at least 600 common words per language, with new categories that Exorcism also gains. Famous-name categories are off by default.
+- **Icons:** the current emblem library (about 120 pencil drawings).
+
+**Cast (reused):**
+
+| Character / thing | Art |
+|---|---|
+| The Undertaker (captain) | the **Undertaker** |
+| The diggers | the Coffins **Gravedigger** |
+| The two deities | the **Moon** and **Sun** emblems |
+| Death's grave | **Death** |
+| Relics | the **parcel** emblems, in the crew colour |
+| The cemetery | the *Forgotten Graveyard* backdrop |
+
+**New art (small):** the headstone tile in four states, the two altars, a lapis-blue ink beside the gilt.
+
+---
+
+## Beta 8: Dead Set: Mimic (a cousin of Spyfall; formerly Doppelgänger)
 
 **The pitch:** everyone at the table knows where you are, except the thing wearing a friend's face.
 
@@ -329,7 +369,7 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 
 ---
 
-## Beta 8: Dead Set: Council (a cousin of Secret Hitler)
+## Beta 9: Dead Set: Council (a cousin of Secret Hitler)
 
 **The pitch:** the town is governed by decrees, and Death is quietly writing them.
 
@@ -363,7 +403,7 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 
 ---
 
-## Beta 9: Dead Set: Lifeboat (survival with a traitor)
+## Beta 10: Dead Set: Lifeboat (survival with a traitor)
 
 **The pitch:** the ship is gone. Twelve days to land, too few rations, and someone aboard wants nobody to make it.
 
@@ -391,7 +431,7 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 
 ---
 
-## Beta 10: the big final game update before release
+## Beta 11: the big final game update before release
 
 **To be decided:** a new big game, either one of the parked modes below or something new worthy of the last big update before the first full version. The same reuse-first rule applies.
 
