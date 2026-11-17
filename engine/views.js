@@ -10,6 +10,7 @@ import { exorcismPublic, exorcismAction, exorcismProgress, exorcismSecrets, xKno
 import { coffinsPublic, coffinsAction, coffinsProgress, coffinsSecrets, coffinsMe, isCoffinsPhase, C_ADVANCE_LABEL } from './coffins.js';
 import { midnightPublic, midnightAction, midnightProgress, midnightSecrets, midnightMe, isMidnightPhase, N_ADVANCE_LABEL } from './midnight.js';
 import { gravePublic, graveAction, graveProgress, graveSecrets, graveMe, isGravePhase, G_ADVANCE_LABEL } from './graverobbers.js';
+import { mimicPublic, mimicAction, mimicProgress, mimicSecrets, mimicMe, isMimicPhase, Q_ADVANCE_LABEL } from './mimic.js';
 import { seancePublic, seanceAction, seanceProgress, seanceSecrets, seanceMe, isSeancePhase, S_ADVANCE_LABEL } from './seance.js';
 import { carnivalPublic, carnivalAction, carnivalProgress, carnivalSecrets, carnivalMe, carnivalPrivate, isCarnivalPhase, K_ADVANCE_LABEL } from './carnival.js';
 import { missionPublic, missionAction, missionMe, missionSecrets, isMissionPhase, MISSION_ADVANCE_LABEL } from './missions.js';
@@ -27,6 +28,7 @@ function progress(m) {
   if (isMidnightPhase(m.phase)) return midnightProgress(m);
   if (isSeancePhase(m.phase)) return seanceProgress(m);
   if (isGravePhase(m.phase)) return graveProgress(m);
+  if (isMimicPhase(m.phase)) return mimicProgress(m);
   const N = m.night;
   switch (m.phase) {
     case 'LOBBY': return { label: 'ready', done: m.players.filter((p) => p.ready).length, total: m.players.length };
@@ -63,6 +65,7 @@ const ADVANCE_LABEL = {
   ...N_ADVANCE_LABEL,
   ...S_ADVANCE_LABEL,
   ...G_ADVANCE_LABEL,
+  ...Q_ADVANCE_LABEL,
 };
 
 export function publicView(m, now = Date.now()) {
@@ -112,6 +115,9 @@ export function publicView(m, now = Date.now()) {
   if (m.G && m.phase !== 'LOBBY') v.graverobbers = gravePublic(m);
   if (m.gScores && Object.keys(m.gScores).length) v.gScores = m.gScores;
   if (m.phase === 'LOBBY' && m.gMatch) v.gMatch = m.gMatch;
+  if (m.Q && m.phase !== 'LOBBY') v.mimic = mimicPublic(m);
+  if (m.qScores && Object.keys(m.qScores).length) v.qScores = m.qScores;
+  if (m.phase === 'LOBBY' && m.qMatch) v.qMatch = m.qMatch;
   if (m.xScores && Object.keys(m.xScores).length) v.xScores = m.xScores;
   // The end-of-game recap reveals every action, so it follows the role reveal.
   if (revealAll && m.history?.length) v.recap = m.history;
@@ -130,7 +136,7 @@ export function publicView(m, now = Date.now()) {
   if (m.phase === 'LOBBY') {
     v.settings = m.settings;
     v.setup = setupReport(m);
-    v.presets = Object.values(PRESETS).map((p) => ({ id: p.id, name: p.name, blurb: p.blurb, min: p.min, max: p.max, rulesMin: p.rulesMin, rulesMax: p.rulesMax, ruleIds: p.ruleIds, recommended: !!p.recommended, custom: !!p.custom, missions: !!p.missions, exorcism: !!p.exorcism, coffins: !!p.coffins, carnival: !!p.carnival, midnight: !!p.midnight, seance: !!p.seance, graverobbers: !!p.graverobbers, pool: p.pool }));
+    v.presets = Object.values(PRESETS).map((p) => ({ id: p.id, name: p.name, blurb: p.blurb, min: p.min, max: p.max, rulesMin: p.rulesMin, rulesMax: p.rulesMax, ruleIds: p.ruleIds, recommended: !!p.recommended, custom: !!p.custom, missions: !!p.missions, exorcism: !!p.exorcism, coffins: !!p.coffins, carnival: !!p.carnival, midnight: !!p.midnight, seance: !!p.seance, graverobbers: !!p.graverobbers, mimic: !!p.mimic, pool: p.pool }));
   }
   return v;
 }
@@ -172,6 +178,7 @@ export function playerView(m, pid, now = Date.now()) {
   if (m.N && started) me.n = midnightMe(m, p);
   if (m.S && started) me.s = seanceMe(m, p);
   if (m.G && started) me.g = graveMe(m, p);
+  if (m.Q && started) me.q = mimicMe(m, p);
   if (started && p.lover) me.lover = { id: p.lover, name: nameOf(m, p.lover), alive: !!byId(m, p.lover)?.alive };
   if (started && p.alignment === 'CULT') me.cultmates = m.players.filter((x) => x.alignment === 'CULT' && x.id !== p.id).map((x) => ({ id: x.id, name: x.name, alive: x.alive }));
   // Death teammates: only for currently active (or about-to-be-active) members.
@@ -206,6 +213,7 @@ function actionFor(m, p) {
   if (isMidnightPhase(m.phase)) return midnightAction(m, p);
   if (isSeancePhase(m.phase)) return seanceAction(m, p);
   if (isGravePhase(m.phase)) return graveAction(m, p);
+  if (isMimicPhase(m.phase)) return mimicAction(m, p);
   const N = m.night;
   const d = m.day;
   switch (m.phase) {
@@ -316,6 +324,7 @@ export function moderatorView(m, now = Date.now()) {
   if (m.N && m.phase !== 'LOBBY') v.nSecrets = midnightSecrets(m);
   if (m.S && m.phase !== 'LOBBY') v.sSecrets = seanceSecrets(m);
   if (m.G && m.phase !== 'LOBBY') v.gSecrets = graveSecrets(m);
+  if (m.Q && m.phase !== 'LOBBY') v.qSecrets = mimicSecrets(m);
   if (N?.death) v.deathTeam = { members: N.death.members, capacity: N.death.capacity, proposals: N.death.proposals, confirmed: N.death.confirmed };
   v.private = [];
   v.action = { type: 'moderator' };

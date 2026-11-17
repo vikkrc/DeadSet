@@ -45,7 +45,7 @@ export function botDecide(m, botId, rng) {
       if (a.type === 'swap' && a.snatcher && a.choice == null && a.targets?.length && chance(rng, 0.5)) return { cmd: { type: 'dream.swap', payload: { target: pick(rng, a.targets) } } };
       return null;
     case 'NIGHT_ACTIONS': return nightMove(m, v, rng);
-    default: return m.X ? exorcismMove(m, v, rng) : m.G ? graveMove(m, v, rng) : m.S ? seanceMove(m, v, rng) : m.N ? midnightMove(m, v, rng) : m.K ? carnivalMove(m, v, rng) : m.C ? coffinsMove(m, v, rng) : m.M ? missionMove(m, v, rng) : null;
+    default: return m.Q && m.phase?.startsWith('Q_') ? mimicMove(m, v, rng) : m.X ? exorcismMove(m, v, rng) : m.G ? graveMove(m, v, rng) : m.S ? seanceMove(m, v, rng) : m.N ? midnightMove(m, v, rng) : m.K ? carnivalMove(m, v, rng) : m.C ? coffinsMove(m, v, rng) : m.M ? missionMove(m, v, rng) : null;
   }
 }
 
@@ -82,6 +82,33 @@ function exorcismMove(m, v, rng) {
 // early, so it gets dug), bid what they believe is safe (their own buried gold
 // plus a share of the table) and sometimes bluff a raise, dig the plots of
 // players who passed rather than those who bid high, and wager like the dice.
+// Mimic: bots ask random players, accuse now and then once a few questions have gone round, and vote at random (a Mimic bot always
+// agrees to convict someone else). A Mimic bot unmasks late with a random guess. For pacing tests, not strategy.
+function mimicMove(m, v, rng) {
+  const a = v.action || {};
+  const Q = m.Q;
+  const me = v.me?.id;
+  const others = m.players.filter((p) => p.id !== me).map((p) => p.id);
+  switch (a.type) {
+    case 'qintro': return a.done ? null : { cmd: { type: 'q.ack', payload: {} } };
+    case 'qask': {
+      if (me === Q.mimic && Q.askCount > 6 && chance(rng, 0.04)) return { cmd: { type: 'q.unmask', payload: {} } };
+      if (a.canAccuse && Q.askCount > 8 && chance(rng, 0.05)) return { cmd: { type: 'q.accuse', payload: { target: pick(rng, others) } } };
+      if (!a.asker || !chance(rng, 0.5)) return null;
+      const to = others.filter((id) => id !== a.lastAsker);
+      return { cmd: { type: 'q.ask', payload: { to: pick(rng, to.length ? to : others) } } };
+    }
+    case 'qvote': {
+      if (a.choice != null || !chance(rng, 0.6)) return null;
+      const yes = me === Q.mimic ? Q.accusation?.target !== me : chance(rng, 0.5);
+      return { cmd: { type: 'q.vote', payload: { yes } } };
+    }
+    case 'qguess': return chance(rng, 0.5) ? { cmd: { type: 'q.guess', payload: { loc: pick(rng, Q.board) } } } : null;
+    case 'qfinal': return a.choice || !chance(rng, 0.5) ? null : { cmd: { type: 'q.final', payload: { target: pick(rng, others) } } };
+    default: return null;
+  }
+}
+
 // Graverobbers: an Undertaker bot names the group (category, or an icon's concept tag) holding most of its crew's
 // closed graves and none near Death; digger bots vote for closed graves in that group, and stop when none is left.
 function graveMove(m, v, rng) {

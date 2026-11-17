@@ -5,6 +5,8 @@ export default {
   roles: {
     G_UNDERTAKER: { name: "Croque-mort", when: "Toujours", summary: "Tu tiens le registre des sépultures. Donne à ta bande un mot et un nombre.", detail: "Seuls toi et l’autre Croque-mort savez ce qui repose sous chaque pierre. Ton mot doit relier autant de tombes de ta bande, et mener loin de la tombe de la Mort." },
     G_DIGGER: { name: "Fossoyeur", when: "Toujours", summary: "Lis le signe de ton Croque-mort et déterre les reliques de ta bande.", detail: "Discutez, puis vote pour une tombe sur ton téléphone. Votre relique : creusez encore. Une tombe vide ou une relique de l’autre bande : le tour passe. La tombe de la Mort : votre bande perd." },
+    Q_MIMIC: { name: "Imitateur", when: "Toujours", summary: "Tu portes le visage d’un ami. Tu ne sais pas où tu es.", detail: "Tous les autres partagent un même lieu. Écoute les questions, réponds comme si tu y étais, et devine le lieu. Démasque-toi à tout moment et nomme-le pour gagner ; un Imitateur condamné a encore un dernier essai." },
+    Q_LIVING: { name: "Vivant", when: "Toujours", summary: "Tu connais le lieu. Prouve-le sans le trahir.", detail: "Pose et réponds à des questions sur le lieu : assez précis pour montrer que tu y es, assez vague pour que l’Imitateur ne le devine pas. Accuse une fois par partie ; seule une table unanime condamne." },
     S_GHOST: { name: "Fantôme", when: "Toujours", summary: "On t’a assassiné. Tu sais qui, où et pourquoi, et tu ne peux pas parler.", detail: "Envoie à chaque lecteur une vision pour sa rangée. D’une tache froide, givre une vision qui n’est pas la tienne." },
     S_MEDIUM: { name: "Médium", when: "Toujours", summary: "Lis les visions et allume des bougies sur la vérité.", detail: "À chaque manche tu lis une rangée : qui, où ou pourquoi. Résolvez les trois avant que les bougies ne s’éteignent, puis nommez l’Imposteur." },
     S_DECEIVER: { name: "Imposteur", when: "Toujours", summary: "Un second esprit dans un corps vivant. Tu connais la vérité, et tu mens.", detail: "Tu ressembles en tout point à un Médium. Quelques fois par partie, tu échanges la vision du Fantôme d’un autre lecteur contre une des tiennes. Tu gagnes si les bougies s’éteignent, ou si la table nomme le mauvais joueur." },
@@ -163,6 +165,7 @@ export default {
   },
   presets: {
     graverobbers: { name: "Dead Set : Pilleurs de tombes", blurb: "Deux bandes de pilleurs, la Lune et le Soleil, fouillent un cimetière de mots ou d’icônes pour les reliques de leur divinité. Seuls les croque-morts savent ce qui gît dessous. Une tombe appartient à la Mort." },
+    mimic: { name: "Dead Set : Imitateur", blurb: "Tout le monde sait où vous êtes, sauf la chose qui porte le visage d’un ami. Demandez, répondez, accusez ; l’Imitateur tend l’oreille pour trouver le lieu." },
     seance: { name: "Dead Set : Séance", blurb: "Un Fantôme assassiné et muet envoie des visions ; les Médiums y lisent qui, où et pourquoi. Un Imposteur parmi eux remplace des visions par des mensonges." },
     midnight: { name: "Dead Set : Minuit", blurb: "Une nuit, un vote. Les cartes changent de mains dans le noir ; à l’aube, tu es ce qui est posé devant toi. Trouve la Mort, ou sois-la." },
     carnival: { name: "Dead Set : Carnaval", blurb: "Un bal masqué de bluff et de mémoire. Chacun porte une carte de rôle en guise de masque, mélangée jusqu'à ce que nul n'en soit sûr. Revendique des masques et amasse des Âmes ; 13 gagnent." },
@@ -193,6 +196,15 @@ export default {
     'La Mort a voté avec la ville. Évidemment.',
   ],
   guide: {
+    mimicH: "Dead Set : Imitateur",
+    mimic: `<p>Un jeu de questions pour 4 à 12 joueurs, environ 8 minutes par partie. Tout le monde partage un même <b>lieu</b> (une carte d’histoire) et y tient un <b>personnage</b>, sauf l’<b>Imitateur</b>, qui ne voit que de la neige et le tableau des lieux possibles.</p>
+<ol>
+<li><b>Questions.</b> Qui tient la lanterne pose à voix haute une question sur le lieu à n’importe qui, puis touche la personne interrogée ; la lanterne passe à elle. Ne réinterroge jamais la personne qui vient de t’interroger.</li>
+<li><b>Accuser.</b> Une fois par partie chacun. L’horloge s’arrête et tous les autres votent ; seule une table unanime condamne. Si un Vivant est condamné, l’Imitateur gagne.</li>
+<li><b>L’Imitateur</b> peut se démasquer à tout moment et nommer le lieu : juste, il gagne ; faux, les Vivants gagnent. Un Imitateur démasqué a encore un dernier essai.</li>
+<li><b>Le temps est écoulé :</b> chacun désigne un suspect. Le plus désigné est condamné ; en cas d’égalité, l’Imitateur s’échappe.</li>
+</ol>
+<p>Barre des lieux sur ton propre téléphone en écoutant : tes notes sont privées. Scores : les Vivants +1 chacun (celui qui a démasqué l’Imitateur +1 de plus) ; l’Imitateur +2, ou +3 s’il nomme le lieu.</p>`,
     graveH: "Dead Set : Pilleurs de tombes",
     grave: `<p>Un jeu d’équipe avec des mots (ou des icônes) pour 4 à 12 joueurs, environ 15 minutes. Deux bandes de pilleurs, la <b>Lune</b> et le <b>Soleil</b>, fouillent un cimetière de 25 pierres tombales pour trouver les reliques qui invoqueront leur divinité. La bande qui gagne le tirage à pile ou face a 9 reliques en terre, l’autre 8 ; 7 tombes sont vides, et une appartient à la <b>Mort</b>.</p>
 <ol>

@@ -42,6 +42,12 @@ export function sceneMs(type, d = {}) {
     case 'nfall': return 3200;
     case 'ndawn': return 3600;
     // Graverobbers
+    case 'qstart': return 5200;
+    case 'qaccuse': return 3400;
+    case 'qverdict': return 4400;
+    case 'qunmask': return 3400;
+    case 'qguess': return 4800;
+    case 'qtime': return 3200;
     case 'gstart': return 5600;
     case 'gsign': return 3000;
     case 'gcoin': return 3600;
@@ -88,6 +94,12 @@ export function scenesFor(l, batch = [], ctx = {}) {
     case 'heartbreak': case 'shot': case 'exchange': return [['death']];
     case 'scapegoat': return has('tally') ? [] : [['death']];
     case 'm-lottery': case 'x-lottery': case 'c-lottery': case 'k-lottery': case 's-lottery': return [['mlottery']];
+    case 'q-start': return [['qstart']];
+    case 'q-accuse': return [['qaccuse']];
+    case 'q-verdict': return [['qverdict']];
+    case 'q-unmask': return [['qunmask']];
+    case 'q-guess': return [['qguess']];
+    case 'q-time': return [['qtime']];
     case 'g-start': return [['gstart']];
     case 'g-sign': return [['gsign']];
     case 'g-dig': return l.coin ? [['gcoin'], ['gdig']] : [['gdig']];

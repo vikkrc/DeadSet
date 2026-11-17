@@ -5,6 +5,8 @@ export default {
   roles: {
     G_UNDERTAKER: { name: "Enterrador", when: "Siempre", summary: "Tienes el registro de sepulturas. Da a tu cuadrilla una palabra y un número.", detail: "Solo tú y el otro Enterrador sabéis qué yace bajo cada piedra. Tu palabra debe unir tantas tumbas de tu cuadrilla y llevar lejos de la tumba de la Muerte." },
     G_DIGGER: { name: "Saqueador", when: "Siempre", summary: "Lee la señal de tu Enterrador y desentierra las reliquias de tu cuadrilla.", detail: "Habladlo y vota por una tumba en tu móvil. Vuestra reliquia: seguid cavando. Una tumba vacía o una reliquia de la otra cuadrilla: el turno pasa. La tumba de la Muerte: vuestra cuadrilla pierde." },
+    Q_MIMIC: { name: "Imitador", when: "Siempre", summary: "Llevas la cara de un amigo. No sabes dónde estás.", detail: "Todos los demás comparten un lugar. Escucha las preguntas, responde como si pertenecieras allí y averigua el lugar. Desenmascárate cuando quieras y nómbralo para ganar; un Imitador condenado aún tiene un último intento." },
+    Q_LIVING: { name: "Vivo", when: "Siempre", summary: "Conoces el lugar. Demuéstralo sin delatarlo.", detail: "Pregunta y responde sobre el lugar: con la precisión justa para demostrar que estuviste allí y la vaguedad justa para que el Imitador no lo adivine. Acusa una vez por partida; solo una mesa unánime condena." },
     S_GHOST: { name: "Fantasma", when: "Siempre", summary: "Te asesinaron. Sabes quién, dónde y por qué, y no puedes hablar.", detail: "Envía a cada lector una visión para su fila. Con una mancha fría, escarcha una visión que no es tuya." },
     S_MEDIUM: { name: "Médium", when: "Siempre", summary: "Lee las visiones y enciende velas sobre la verdad.", detail: "Cada ronda lees una fila: quién, dónde o por qué. Resolved las tres antes de que se consuman las velas y luego nombrad al Impostor." },
     S_DECEIVER: { name: "Impostor", when: "Siempre", summary: "Un segundo espíritu en un cuerpo vivo. Conoces la verdad, y mientes.", detail: "Pareces exactamente un Médium. Unas pocas veces por partida, cambias la visión del Fantasma de otro lector por una tuya. Ganas si se consumen las velas o si la mesa nombra al jugador equivocado." },
@@ -163,6 +165,7 @@ export default {
   },
   presets: {
     graverobbers: { name: "Dead Set: Saqueadores de tumbas", blurb: "Dos cuadrillas de saqueadores, la Luna y el Sol, excavan un cementerio de palabras o iconos en busca de las reliquias de su deidad. Solo los enterradores saben qué hay debajo. Una tumba es de la Muerte." },
+    mimic: { name: "Dead Set: Imitador", blurb: "Todos saben dónde estáis, salvo la cosa que lleva la cara de un amigo. Pregunta, responde, acusa; el Imitador escucha para dar con el lugar." },
     seance: { name: "Dead Set: Sesión", blurb: "Un Fantasma asesinado y mudo envía visiones; los Médiums leen en ellas quién, dónde y por qué. Un Impostor entre ellos cambia visiones por mentiras." },
     midnight: { name: "Dead Set: Medianoche", blurb: "Una noche, una votación. Las cartas cambian de manos en la oscuridad; al amanecer eres lo que tienes delante. Encuentra a la Muerte, o sé ella." },
     carnival: { name: "Dead Set: Carnaval", blurb: "Un baile de máscaras de faroles y memoria. Cada uno lleva una carta de rol como máscara, barajada hasta que nadie está seguro. Reclama máscaras y reúne Almas; 13 ganan." },
@@ -193,6 +196,15 @@ export default {
     'La Muerte votó con el pueblo. Cómo no.',
   ],
   guide: {
+    mimicH: "Dead Set: Imitador",
+    mimic: `<p>Un juego de preguntas para 4–12 jugadores, unos 8 minutos por partida. Todos comparten un <b>lugar</b> (una carta de historia) y tienen allí un <b>personaje</b>, salvo el <b>Imitador</b>, que solo ve estática y el tablero de lugares posibles.</p>
+<ol>
+<li><b>Preguntas.</b> Quien tiene el farol pregunta en voz alta a cualquiera sobre el lugar y toca a quien preguntó; el farol pasa a esa persona. Nunca devuelvas la pregunta a quien acaba de preguntarte.</li>
+<li><b>Acusar.</b> Una vez por partida cada uno. El reloj se detiene y todos los demás votan; solo una mesa unánime condena. Si condenan a un Vivo, gana el Imitador.</li>
+<li><b>El Imitador</b> puede desenmascararse cuando quiera y nombrar el lugar: si acierta, gana; si falla, ganan los Vivos. Un Imitador atrapado aún tiene un último intento.</li>
+<li><b>Se acabó el tiempo:</b> todos señalan a un sospechoso. Quien tenga más votos es condenado; con empate, el Imitador se escabulle.</li>
+</ol>
+<p>Tacha lugares en tu propio teléfono mientras escuchas: tus notas son privadas. Puntos: los Vivos +1 cada uno (quien atrapó al Imitador, +1 más); el Imitador +2, o +3 por nombrar el lugar.</p>`,
     graveH: "Dead Set: Saqueadores de tumbas",
     grave: `<p>Un juego por equipos con palabras (o iconos) para 4 a 12 jugadores, unos 15 minutos. Dos cuadrillas de saqueadores, la <b>Luna</b> y el <b>Sol</b>, excavan un cementerio de 25 lápidas en busca de las reliquias que invocarán a su deidad. La cuadrilla que gana a cara o cruz tiene 9 reliquias bajo tierra, la otra 8; 7 tumbas están vacías y una es de la <b>Muerte</b>.</p>
 <ol>

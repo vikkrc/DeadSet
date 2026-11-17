@@ -44,7 +44,7 @@ function strings(src) {
 }
 
 // Client: every string literal inside a t( / th( / tm( / tmh( call (balanced parens).
-for (const f of ['public/app.js', 'public/board.js', 'public/gazette.js', 'public/guide.js', 'public/gifts.js', 'public/missions.js', 'public/exorcism.js', 'public/coffins.js', 'public/carnival.js', 'public/midnight.js', 'public/seance.js', 'public/graverobbers.js']) {
+for (const f of ['public/app.js', 'public/board.js', 'public/gazette.js', 'public/guide.js', 'public/gifts.js', 'public/missions.js', 'public/exorcism.js', 'public/coffins.js', 'public/carnival.js', 'public/midnight.js', 'public/seance.js', 'public/graverobbers.js', 'public/mimic.js']) {
   const src = read(f);
   const re = /\b(?:t|th)\(/g;
   let m;
@@ -109,7 +109,7 @@ for (const m of read('public/gifts.js').matchAll(/const QUIP = \[([\s\S]*?)\];/g
 
 // Engine: message templates (strings shaped like sentences or containing {params}).
 for (const m of read('engine/content.js').matchAll(/verb: '([^']+)'/g)) keys.add(m[1]);
-for (const f of ['engine/missions.js', 'engine/exorcism.js', 'engine/coffins.js', 'engine/carnival.js', 'engine/midnight.js', 'engine/seance.js', 'engine/graverobbers.js', 'engine/game.js', 'engine/night.js', 'engine/day.js', 'engine/setup.js', 'engine/views.js', 'engine/victory.js', 'engine/state.js', 'server/rooms.js', 'server/index.js']) {
+for (const f of ['engine/missions.js', 'engine/exorcism.js', 'engine/coffins.js', 'engine/carnival.js', 'engine/midnight.js', 'engine/seance.js', 'engine/graverobbers.js', 'engine/mimic.js', 'engine/game.js', 'engine/night.js', 'engine/day.js', 'engine/setup.js', 'engine/views.js', 'engine/victory.js', 'engine/state.js', 'server/rooms.js', 'server/index.js']) {
   for (const s of strings(read(f))) {
     if (/\{\w+\}/.test(s) || (/^[A-Z]/.test(s) && /\s/.test(s) && !/^[A-Z_]+$/.test(s))) keys.add(s);
     else if (/^(ready|asleep|ballots recorded|have seen their role|are ready|have spoken|ready to vote|votes in|candles lit|Table|Lobby|End)$/.test(s)) keys.add(s);

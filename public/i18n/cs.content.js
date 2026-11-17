@@ -5,6 +5,8 @@ export default {
   roles: {
     G_UNDERTAKER: { name: "Hrobník", when: "Vždy", summary: "Máš pohřební rejstřík. Dej své partě jedno slovo a jedno číslo.", detail: "Jen ty a druhý Hrobník víte, co leží pod každým kamenem. Tvé slovo má spojit tolik hrobů tvé party a vést daleko od hrobu Smrti." },
     G_DIGGER: { name: "Kopáč hrobů", when: "Vždy", summary: "Čti Hrobníkovo znamení a vykopávej relikvie své party.", detail: "Domluvte se a pak hlasuj pro hrob na telefonu. Vaše relikvie: kopejte dál. Prázdný hrob nebo relikvie druhé party: tah přechází. Hrob Smrti: vaše parta prohrává." },
+    Q_MIMIC: { name: "Napodobitel", when: "Vždy", summary: "Nosíš tvář přítele. Nevíš, kde jsi.", detail: "Všichni ostatní jsou na jednom místě. Poslouchej otázky, odpovídej, jako bys tam patřil, a zjisti místo. Kdykoli se můžeš odhalit a pojmenovat ho, abys vyhrál; odsouzený Napodobitel má ještě poslední tip." },
+    Q_LIVING: { name: "Živý", when: "Vždy", summary: "Znáš místo. Dokaž to, ale neprozraď ho.", detail: "Ptej se a odpovídej o místě: dost přesně, aby bylo jasné, že jsi tam byl, a dost mlhavě, aby to Napodobitel neuhodl. Jednou za hru můžeš obvinit; odsuzuje jen jednomyslný stůl." },
     S_GHOST: { name: "Duch", when: "Vždy", summary: "Zavraždili tě. Víš kdo, kde a proč, ale nemůžeš mluvit.", detail: "Pošli každému čtenáři vizi k jeho řadě. Studeným místem zamraz vizi, která není tvoje." },
     S_MEDIUM: { name: "Médium", when: "Vždy", summary: "Čti vize a zapal svíčky na pravdu.", detail: "Každé kolo čteš jednu řadu: kdo, kde nebo proč. Vyřešte všechny tři, než svíčky dohoří, a pak jmenujte Lháře." },
     S_DECEIVER: { name: "Lhář", when: "Vždy", summary: "Druhý duch v živém těle. Znáš pravdu a lžeš.", detail: "Vypadáš přesně jako Médium. Několikrát za hru vyměníš vizi Ducha jinému čtenáři za svou. Vyhraješ, pokud svíčky dohoří, nebo pokud stůl jmenuje špatného hráče." },
@@ -163,6 +165,7 @@ export default {
   },
   presets: {
     graverobbers: { name: "Dead Set: Vykradači hrobů", blurb: "Dvě party vykradačů hrobů, Měsíc a Slunce, překopávají hřbitov slov nebo ikon pro relikvie svého božstva. Co leží pod zemí, vědí jen Hrobníci. Jeden hrob patří Smrti." },
+    mimic: { name: "Dead Set: Napodobitel", blurb: "Všichni vědí, kde jste, kromě toho, kdo nosí tvář přítele. Ptej se, odpovídej, obviňuj; Napodobitel naslouchá, kde to je." },
     seance: { name: "Dead Set: Seance", blurb: "Němý zavražděný Duch posílá vize; Média z nich luští kdo, kde a proč. Lhář mezi nimi vyměňuje vize za lži." },
     midnight: { name: "Dead Set: Půlnoc", blurb: "Jedna noc, jedno hlasování. Karty ve tmě mění majitele; za úsvitu jsi tím, co leží před tebou. Najdi Smrt, nebo jí buď." },
     carnival: { name: "Dead Set: Karneval", blurb: "Maškarní ples blafování a paměti. Každý nosí kartu postavy jako masku, míchanou, dokud si nikdo není jistý. Hlas masky a sbírej Duše; 13 vyhrává." },
@@ -193,6 +196,15 @@ export default {
     'Smrt hlasovala s městem. Samozřejmě.',
   ],
   guide: {
+    mimicH: "Dead Set: Napodobitel",
+    mimic: `<p>Hra otázek pro 4–12 hráčů, asi 8 minut na hru. Všichni jsou na jednom <b>místě</b> (karta příběhu) a mají tam <b>postavu</b>, kromě <b>Napodobitele</b>, který vidí jen šum a tabuli možných míst.</p>
+<ol>
+<li><b>Otázky.</b> Kdo drží lucernu, nahlas se zeptá kohokoli na místo a ťukne na toho, koho se ptal; lucerna přejde k němu. Nesmíš se zeptat zpátky toho, kdo se právě ptal tebe.</li>
+<li><b>Obvinění.</b> Každý jednou za hru. Hodiny se zastaví a všichni ostatní hlasují; odsuzuje jen jednomyslný stůl. Pokud odsoudí Živého, vyhrává Napodobitel.</li>
+<li><b>Napodobitel</b> se může kdykoli odhalit a pojmenovat místo: má-li pravdu, vyhrává; jinak vyhrávají Živí. Chycený Napodobitel má ještě poslední tip.</li>
+<li><b>Čas vypršel:</b> všichni ukážou na jednoho podezřelého. Kdo má nejvíc hlasů, je odsouzen; při remíze Napodobitel zmizí.</li>
+</ol>
+<p>Během poslouchání si škrtej místa na vlastním telefonu: poznámky jsou soukromé. Body: Živí po +1 (kdo chytil Napodobitele, ještě +1); Napodobitel +2, za pojmenování místa +3.</p>`,
     graveH: "Dead Set: Vykradači hrobů",
     grave: `<p>Týmová hra se slovy (nebo ikonami) pro 4–12 hráčů, asi 15 minut. Dvě party vykradačů hrobů, <b>Měsíc</b> a <b>Slunce</b>, překopávají hřbitov s 25 náhrobky a hledají relikvie, které přivolají jejich božstvo. Parta, která vyhraje hod mincí, má v zemi 9 relikvií, druhá 8; 7 hrobů je prázdných a jeden patří <b>Smrti</b>.</p>
 <ol>

@@ -116,6 +116,15 @@ export const GUIDE_EN = {
 <li><b>Candles.</b> Each reader lights a candle on a card in their row, or holds it. The card with the most candles is put to the spirit. Right: the row is solved. Wrong: the card is struck. Every round burns a candle of the séance clock.</li>
 </ol>
 <p>From five players a <b>Deceiver</b> hides among the readers. It knows the truth and, a few times a game, swaps another reader's vision for a lie. Solve all three rows before the candles burn out, then name the Deceiver: right is a full victory, wrong a hollow one that the Deceiver shares. If the clock burns out, the Deceiver wins (with one row left, everyone first gets a <b>last breath</b>). The end screen replays every round: the true visions, the swaps and the candles.</p>`,
+  mimicH: 'Dead Set: Mimic',
+  mimic: `<p>A question game for 4–12 players, about 8 minutes a game. Everyone shares one <b>place</b> (a story card) and holds a <b>character</b> there, except the <b>Mimic</b>, who sees only static and the board of possible places.</p>
+<ol>
+<li><b>Questions.</b> Whoever holds the lantern asks anyone a question about the place, aloud, then taps who they asked; the lantern passes to them. Never ask back the player who just asked you.</li>
+<li><b>Accuse.</b> Once per game each. The clock stops and everyone else votes; only a unanimous table convicts. Convict a Living player and the Mimic wins.</li>
+<li><b>The Mimic</b> may unmask at any moment and name the place: right, it wins; wrong, the Living win. A caught Mimic gets one last guess.</li>
+<li><b>Time's up:</b> everyone points at one suspect. The most votes is convicted; a tie lets the Mimic slip away.</li>
+</ol>
+<p>Strike out places on your own phone as you listen: your notes are private. Scores: the Living +1 each (the accuser who caught the Mimic +1 more); the Mimic +2, or +3 for naming the place.</p>`,
   graveH: 'Dead Set: Graverobbers',
   grave: `<p>A team game of words (or icons) for 4–12 players, about 15 minutes. Two crews of grave robbers, the <b>Moon</b> and the <b>Sun</b>, dig a cemetery of 25 headstones for the relics that will summon their deity. The crew that wins the coin flip has 9 relics in the ground, the other 8; 7 graves are empty, and one is <b>Death's</b>.</p>
 <ol>
@@ -171,7 +180,7 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   return `<div class="guide">
   <header class="phase-head"><span class="kicker">${G.kicker}</span><h1>${G.title}</h1>
     <p class="scenario">${G.intro}</p></header>
-  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}<a class="tag" href="#g11">${G.sidesH}</a><a class="tag" href="#g12">${G.missionsH}</a><a class="tag" href="#g13">${G.exorcismH}</a><a class="tag" href="#g14">${G.coffinsH}</a><a class="tag" href="#g15">${G.carnivalH}</a><a class="tag" href="#g16">${G.midnightH}</a><a class="tag" href="#g17">${G.seanceH}</a><a class="tag" href="#g18">${G.graveH}</a></nav>
+  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}<a class="tag" href="#g11">${G.sidesH}</a><a class="tag" href="#g12">${G.missionsH}</a><a class="tag" href="#g13">${G.exorcismH}</a><a class="tag" href="#g14">${G.coffinsH}</a><a class="tag" href="#g15">${G.carnivalH}</a><a class="tag" href="#g16">${G.midnightH}</a><a class="tag" href="#g17">${G.seanceH}</a><a class="tag" href="#g18">${G.graveH}</a><a class="tag" href="#g19">${G.mimicH}</a></nav>
   <section id="g0"><h2>${G.basicsH}</h2>${G.basics}</section>
   <section id="g1"><h2>${G.roundH}</h2>${G.round}</section>
   <section id="g2"><h2>${G.winH}</h2>${G.win}</section>
@@ -204,5 +213,6 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   <section id="g16"><h2>${G.midnightH}</h2>${G.midnight}</section>
   <section id="g17"><h2>${G.seanceH}</h2>${G.seance}</section>
   <section id="g18"><h2>${G.graveH}</h2>${G.grave}</section>
+  <section id="g19"><h2>${G.mimicH}</h2>${G.mimic}${roles.filter((r) => r.set === 'mimic').map(entry).join('')}</section>
   </div>`;
 }

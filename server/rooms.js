@@ -8,6 +8,7 @@ import {
   hostAdvance, onDeadline, extendDeadline, abortMatch, rematch, normaliseName, GameError,
 } from '../engine/game.js';
 import { playerView, publicView, moderatorView } from '../engine/views.js';
+import { mimicBoardHint } from '../engine/mimic.js';
 import { secureRng } from '../engine/rng.js';
 import { ROLES, PRESETS, LANGS, modeOf, roleInMode } from '../engine/content.js';
 import { byId, pub } from '../engine/state.js';
@@ -144,7 +145,7 @@ export class RoomManager {
       case 'host.extend': extendDeadline(m, Math.max(10, Math.min(300, Number(payload.seconds) || 30)), now); break;
       case 'host.end': abortMatch(m, now); break;
       case 'host.xredraw': if (!m.X) throw new GameError('Nothing to redraw.'); redrawExorcism(m, this.rng, now); break;
-      case 'host.rematch': { const x = ['exorcism', 'coffins', 'carnival', 'midnight', 'seance', 'graverobbers'].includes(m.config?.mode); rematch(m, { ready: x }); m.players.forEach((p) => { p.ready = x || p.bot || p.id === m.hostId; p.connected = this.isConnected(room, p.id); }); break; }
+      case 'host.rematch': { const x = ['exorcism', 'coffins', 'carnival', 'midnight', 'seance', 'graverobbers', 'mimic'].includes(m.config?.mode); rematch(m, { ready: x }); m.players.forEach((p) => { p.ready = x || p.bot || p.id === m.hostId; p.connected = this.isConnected(room, p.id); }); break; }
       case 'host.kick': {
         if (payload.playerId === pid) throw new GameError('You cannot remove yourself.');
         removePlayer(m, payload.playerId);
@@ -275,7 +276,7 @@ export class RoomManager {
   viewFor(room, client) {
     const m = room.match;
     const now = this.clock();
-    if (client.board) return { ...publicView(m, now), boardAudio: this.boardAudio(room) };
+    if (client.board) { const hint = mimicBoardHint(m); return { ...publicView(m, now), boardAudio: this.boardAudio(room), ...(hint ? { mimicHint: hint } : {}) }; }
     if (m.moderated && client.pid === m.moderatorId) {
       const v = moderatorView(m, now);
       v.moderatorName = room.moderatorName;

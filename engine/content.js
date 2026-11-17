@@ -552,6 +552,16 @@ PRESETS.coffins = { id: 'coffins', name: 'Dead Set: Coffins', min: 3, max: 10, p
   rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, coffins: true,
   blurb: 'A quick bluffing game. Bury gold and one curse, bid how many coffins you can open, then dig. Two clean digs win.' };
 
+ROLES.Q_MIMIC = { id: 'Q_MIMIC', name: 'Mimic', set: 'mimic', alignment: 'DEATH', glyph: 'mimic', when: 'Always',
+  summary: 'You wear a friend\'s face. You do not know where you are.',
+  detail: 'Everyone else shares one place. Listen to the questions, answer like you belong, and work out the place. Unmask at any moment and name it to win; a convicted Mimic gets one last guess.' };
+ROLES.Q_LIVING = { id: 'Q_LIVING', name: 'Living', set: 'mimic', alignment: 'NON_DEATH', glyph: 'innocent', when: 'Always',
+  summary: 'You know the place. Prove it without giving it away.',
+  detail: 'Ask and answer questions about the place: precise enough to show you have been there, vague enough that the Mimic cannot work it out. Accuse once per game; only a unanimous table convicts.' };
+PRESETS.mimic = { id: 'mimic', name: 'Dead Set: Mimic', min: 4, max: 12, pool: [], dreams: false,
+  rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, mimic: true,
+  blurb: 'Everyone knows where you are, except the thing wearing a friend\'s face. Ask, answer, accuse; the Mimic listens for the place.' };
+
 export const MODES = {
   classic: { id: 'classic', roleSets: ['core', 'standard', 'full', 'side'], rules: true, dreams: true },
   missions: { id: 'missions', roleSets: ['missions'], rules: false, dreams: false },
@@ -561,8 +571,9 @@ export const MODES = {
   midnight: { id: 'midnight', roleSets: ['midnight'], rules: false, dreams: false },
   seance: { id: 'seance', roleSets: ['seance'], rules: false, dreams: false },
   graverobbers: { id: 'graverobbers', roleSets: ['graverobbers'], rules: false, dreams: false },
+  mimic: { id: 'mimic', roleSets: ['mimic'], rules: false, dreams: false },
 };
 /** The mode a preset belongs to. */
-export const modeOf = (presetId) => (PRESETS[presetId]?.missions ? 'missions' : PRESETS[presetId]?.exorcism ? 'exorcism' : PRESETS[presetId]?.coffins ? 'coffins' : PRESETS[presetId]?.carnival ? 'carnival' : PRESETS[presetId]?.midnight ? 'midnight' : PRESETS[presetId]?.seance ? 'seance' : PRESETS[presetId]?.graverobbers ? 'graverobbers' : 'classic');
+export const modeOf = (presetId) => (PRESETS[presetId]?.missions ? 'missions' : PRESETS[presetId]?.exorcism ? 'exorcism' : PRESETS[presetId]?.coffins ? 'coffins' : PRESETS[presetId]?.carnival ? 'carnival' : PRESETS[presetId]?.midnight ? 'midnight' : PRESETS[presetId]?.seance ? 'seance' : PRESETS[presetId]?.graverobbers ? 'graverobbers' : PRESETS[presetId]?.mimic ? 'mimic' : 'classic');
 /** Can this role be dealt in this mode? */
 export const roleInMode = (roleId, mode) => !!ROLES[roleId] && MODES[mode].roleSets.includes(ROLES[roleId].set);

@@ -340,6 +340,15 @@ const MOODS = {
   gYard: { root: 55, scale: [0, 2, 3, 7, 8, 10], chord: [1, 1.5, 2], cutoff: 420, wind: 0.05, gain: 0.55, shimmer: 0.004, motif: { voice: 'bell', every: [9, 14], len: [1, 2], beat: 1.4, oct: 2 } },
   gSign: { root: 61.7, scale: [0, 2, 3, 5, 7, 8], chord: [1, 1.19, 1.5], cutoff: 480, wind: 0.025, gain: 0.5, tick: 60, motif: { voice: 'box', every: [8, 12], len: [2, 3], beat: 0.9, oct: 4 } },
   gDig: { root: 65.4, scale: [0, 1, 3, 5, 7, 8, 10], chord: [1, 1.19, 1.5], cutoff: 640, wind: 0.015, gain: 0.5, pluck: { bpm: 104, pattern: [1, 0, 1, 1, 0, 1, 0, 0], notes: [0, 3, 7, 5] }, drum: { bpm: 104, pattern: [1, 0, 0, 0, 1, 0, 0, 0], pitch: 58, gain: 0.16 }, heart: 72, motif: { voice: 'bell', every: [7, 11], len: [2, 3], beat: 0.6, oct: 3 } },
+  // Dead Set: Mimic. A familiar room where something is wrong: a parlour waltz slightly out of true.
+  //   qDeal   – the cards: a music box, a held breath
+  //   qAsk    – the questions: a sly, walking pizzicato, a clock in the next room
+  //   qAccuse – an accusation: the drone tightens, a heartbeat, a bell
+  //   qFinal  – time's up: the drum and the box together, faster
+  qDeal: { root: 58.3, scale: [0, 2, 3, 7, 8], chord: [1, 1.5, 2], cutoff: 460, wind: 0.025, gain: 0.52, shimmer: 0.006, motif: { voice: 'box', every: [7, 11], len: [3, 4], beat: 0.8, oct: 5 } },
+  qAsk: { root: 61.7, scale: [0, 2, 3, 5, 7, 8, 11], chord: [1, 1.19, 1.5], cutoff: 620, wind: 0.012, gain: 0.48, tick: 66, pluck: { bpm: 92, pattern: [1, 0, 1, 0, 0, 1, 0, 1], notes: [0, 3, 7, 11] }, motif: { voice: 'box', every: [9, 14], len: [2, 4], beat: 0.7, oct: 4 } },
+  qAccuse: { root: 55, scale: [0, 1, 3, 6, 7, 8], chord: [1, 1.06, 1.5], cutoff: 500, wind: 0.02, gain: 0.54, heart: 80, swell: [5, 8], motif: { voice: 'bell', every: [5, 8], len: [1, 2], beat: 1, oct: 2 } },
+  qFinal: { root: 51.9, scale: [0, 1, 3, 5, 7, 8], chord: [1, 1.19, 1.5], cutoff: 560, wind: 0.02, gain: 0.54, heart: 96, drum: { bpm: 112, pattern: [1, 0, 0, 1, 1, 0, 0, 0], pitch: 54, gain: 0.15 }, motif: { voice: 'box', every: [5, 8], len: [2, 3], beat: 0.5, oct: 4 } },
   // Overlay mixed on top of any mood when the table is down to its last few.
   tension: { root: 110, scale: [0, 1], chord: [], cutoff: 3000, wind: 0, gain: 0.5, shimmer: 0.012, heart: 104 },
 };

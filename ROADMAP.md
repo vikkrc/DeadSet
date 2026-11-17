@@ -132,7 +132,7 @@ Other Missions ideas kept for later:
 |---|---|---|
 | **Hidden Allegiances** | Classic Dead Set, Missions | Secret sides; a town hunts its killers over days and votes |
 | **Changing Hands** | Carnival, Midnight | Role cards change owners in secret; memory and bluff |
-| **Signs & Riddles** | Exorcism, Séance, Graverobbers (Beta 7), Mimic (Beta 8) | One side knows the secret and may only hint |
+| **Signs & Riddles** | Exorcism, Séance, Graverobbers, Mimic | One side knows the secret and may only hint |
 | **Bluff & Wager** | Coffins | Bury, bid and dare: a quick game of nerve |
 
 New modes join a family (or open a new one) when they are pitched. The twelve modes parked from the 2026-11-17 spec (below) suggest four more: **Reading the Room** (The Omen, The Mirror), **Quiet Hands** (The Vigil, The Vault), **Bargains & Betrayals** (Inheritance, The Pact) and **Tall Tales** (The Gazette, Confessions). The Ritual joins Hidden Allegiances; Treasure Hunters, The Black Market and Standoff join Bluff & Wager.
@@ -148,7 +148,7 @@ Séance needed by far the most new art, so it moved back behind the lighter mode
 | 5 | **Midnight** | | Built (MIDNIGHT.md) |
 | 6 | **Séance** | | Built (SEANCE.md) |
 | 7 | **Graverobbers** | | Built (GRAVEROBBERS.md); three crews added |
-| 8 | **Mimic** | No new art, 8 minutes, nearly designed; reuses Exorcism's rounds and the WHERE cards | In progress (MIMIC.md) |
+| 8 | **Mimic** | No new art, 8 minutes, nearly designed; reuses Exorcism's rounds and the WHERE cards | Built (MIMIC.md) |
 | 9 | **The Omen + The Mirror** | Opens *Reading the Room*. Both are sealed simultaneous ballots with scored rounds: build a reusable kit (sealed ballot, round loop, score ledger, synced reveal) that half the later modes use | Full spec |
 | 10 | **The Pact + Standoff** | Pairs and targets around the table: arrows between seats, simultaneous reveals | Full spec |
 | 11 | **Treasure Hunters + The Vigil** | The first push-your-luck game and the first fully co-operative one; quick, very different moods | Full spec |
@@ -354,6 +354,8 @@ Séance needed by far the most new art, so it moved back behind the lighter mode
 ---
 
 ## Beta 8: Dead Set: Mimic (a cousin of Spyfall; formerly Doppelgänger)
+
+**Status: built** (see MIMIC.md). As built: a lantern passes with each question; one accusation each per game, convicted only by a unanimous table; the Mimic may unmask and name the place at any time, and a caught Mimic gets a last guess; time's up ends in a final vote. The sharpening TV backdrop is a trust option, off by default. Two Mimics, a shifting place, secret instructions and the Witness stay for later.
 
 **The pitch:** everyone at the table knows where you are, except the thing wearing a friend's face.
 

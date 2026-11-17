@@ -23,6 +23,8 @@ const ENERGY = {
   sGather: 0, sReach: 0, sTalk: 1, sCandle: 2, sName: 2,
   // Graverobbers: quiet among the stones, then the dig
   gYard: 0, gSign: 1, gDig: 2,
+  // Mimic: a familiar room, slightly wrong
+  qDeal: 0, qAsk: 1, qAccuse: 2, qFinal: 2,
 };
 
 const rnd = (lo, hi) => lo + Math.random() * (hi - lo);

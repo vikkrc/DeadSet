@@ -5,6 +5,8 @@ export default {
   roles: {
     G_UNDERTAKER: { name: "Totengräber", when: "Immer", summary: "Du hast das Grabregister. Gib deiner Bande ein Wort und eine Zahl.", detail: "Nur du und der andere Totengräber wisst, was unter jedem Stein liegt. Dein Wort soll so viele Gräber deiner Bande verbinden und weit weg vom Grab des Todes führen." },
     G_DIGGER: { name: "Grabräuber", when: "Immer", summary: "Lies das Zeichen deines Totengräbers und grab die Reliquien deiner Bande aus.", detail: "Beratet euch, dann stimm auf dem Handy für ein Grab. Eure Reliquie: weitergraben. Ein leeres Grab oder eine Reliquie der anderen Bande: Der Zug geht weiter. Das Grab des Todes: Eure Bande verliert." },
+    Q_MIMIC: { name: "Nachahmer", when: "Immer", summary: "Du trägst das Gesicht eines Freundes. Du weißt nicht, wo du bist.", detail: "Alle anderen sind am selben Ort. Hör den Fragen zu, antworte, als gehörtest du dazu, und finde den Ort heraus. Enttarne dich jederzeit und nenne ihn, um zu gewinnen; ein verurteilter Nachahmer hat noch einen letzten Tipp." },
+    Q_LIVING: { name: "Lebender", when: "Immer", summary: "Du kennst den Ort. Beweise es, ohne ihn zu verraten.", detail: "Stell und beantworte Fragen zum Ort: genau genug, um zu zeigen, dass du dort warst, vage genug, dass der Nachahmer ihn nicht errät. Beschuldige einmal pro Spiel; nur ein einstimmiger Tisch verurteilt." },
     S_GHOST: { name: "Geist", when: "Immer", summary: "Du wurdest ermordet. Du weißt wer, wo und warum, und kannst nicht sprechen.", detail: "Schick jedem Leser eine Vision zu seiner Reihe. Mit einem kalten Fleck vereist du eine Vision, die nicht von dir ist." },
     S_MEDIUM: { name: "Medium", when: "Immer", summary: "Lies die Visionen und entzünde Kerzen auf die Wahrheit.", detail: "Jede Runde liest du eine Reihe: wer, wo oder warum. Löst alle drei, bevor die Kerzen herunterbrennen, dann nennt den Täuscher." },
     S_DECEIVER: { name: "Täuscher", when: "Immer", summary: "Ein zweiter Geist in einem lebenden Körper. Du kennst die Wahrheit, und du lügst.", detail: "Du siehst genau aus wie ein Medium. Ein paarmal pro Spiel tauschst du die Vision des Geistes für einen anderen Leser gegen deine eigene. Du gewinnst, wenn die Kerzen herunterbrennen oder der Tisch den falschen Spieler nennt." },
@@ -163,6 +165,7 @@ export default {
   },
   presets: {
     graverobbers: { name: "Dead Set: Grabräuber", blurb: "Zwei Grabräuberbanden, Mond und Sonne, durchwühlen einen Friedhof aus Wörtern oder Symbolen nach den Reliquien ihrer Gottheit. Nur die Totengräber wissen, was darunter liegt. Ein Grab gehört dem Tod." },
+    mimic: { name: "Dead Set: Nachahmer", blurb: "Alle wissen, wo ihr seid, außer dem Ding mit dem Gesicht eines Freundes. Fragen, antworten, beschuldigen; der Nachahmer lauscht nach dem Ort." },
     seance: { name: "Dead Set: Séance", blurb: "Ein stummer, ermordeter Geist schickt Visionen; die Medien lesen daraus wer, wo und warum. Ein Täuscher unter ihnen tauscht Visionen gegen Lügen." },
     midnight: { name: "Dead Set: Mitternacht", blurb: "Eine Nacht, eine Abstimmung. Karten wechseln im Dunkeln die Hände; im Morgengrauen bist du, was vor dir liegt. Finde den Tod, oder sei er." },
     carnival: { name: "Dead Set: Karneval", blurb: "Ein Maskenball aus Bluff und Gedächtnis. Jeder trägt eine Rollenkarte als Maske, gemischt, bis niemand mehr sicher ist. Beanspruche Masken und sammle Seelen; 13 gewinnen." },
@@ -193,6 +196,15 @@ export default {
     'Der Tod stimmte mit der Stadt. Natürlich.',
   ],
   guide: {
+    mimicH: "Dead Set: Nachahmer",
+    mimic: `<p>Ein Fragespiel für 4–12 Spieler, etwa 8 Minuten pro Spiel. Alle teilen einen <b>Ort</b> (eine Story-Karte) und haben dort eine <b>Figur</b>, außer dem <b>Nachahmer</b>, der nur Rauschen und das Brett der möglichen Orte sieht.</p>
+<ol>
+<li><b>Fragen.</b> Wer die Laterne hält, fragt laut irgendwen nach dem Ort und tippt dann auf die gefragte Person; die Laterne geht an sie. Frag nie die Person zurück, die dich gerade gefragt hat.</li>
+<li><b>Beschuldigen.</b> Jede Person einmal pro Spiel. Die Uhr steht still, alle anderen stimmen ab; nur ein einstimmiger Tisch verurteilt. Wird ein Lebender verurteilt, gewinnt der Nachahmer.</li>
+<li><b>Der Nachahmer</b> kann sich jederzeit enttarnen und den Ort nennen: richtig, er gewinnt; falsch, die Lebenden gewinnen. Ein ertappter Nachahmer hat noch einen letzten Tipp.</li>
+<li><b>Die Zeit ist um:</b> Alle zeigen auf eine verdächtige Person. Die meisten Stimmen werden verurteilt; bei Gleichstand entwischt der Nachahmer.</li>
+</ol>
+<p>Streiche beim Zuhören Orte auf deinem eigenen Handy durch: Deine Notizen sind privat. Punkte: Lebende je +1 (wer den Nachahmer ertappt hat, +1 mehr); der Nachahmer +2, oder +3 für das Nennen des Ortes.</p>`,
     graveH: "Dead Set: Grabräuber",
     grave: `<p>Ein Teamspiel mit Wörtern (oder Symbolen) für 4–12 Spieler, etwa 15 Minuten. Zwei Grabräuberbanden, der <b>Mond</b> und die <b>Sonne</b>, graben einen Friedhof aus 25 Grabsteinen nach den Reliquien um, die ihre Gottheit beschwören. Die Bande, die den Münzwurf gewinnt, hat 9 Reliquien in der Erde, die andere 8; 7 Gräber sind leer, und eines gehört dem <b>Tod</b>.</p>
 <ol>

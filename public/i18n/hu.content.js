@@ -5,6 +5,8 @@ export default {
   roles: {
     G_UNDERTAKER: { name: "Sírásó", when: "Mindig", summary: "Nálad van a temetési lajstrom. Adj a csapatodnak egy szót és egy számot.", detail: "Csak te és a másik Sírásó tudjátok, mi fekszik minden kő alatt. A szavad annyi sírt kössön össze a csapatodéból, és vezessen messze a Halál sírjától." },
     G_DIGGER: { name: "Sírrabló", when: "Mindig", summary: "Olvasd a Sírásó jelét, és ásd ki a csapatod ereklyéit.", detail: "Beszéljétek meg, aztán szavazz egy sírra a telefonodon. A ti ereklyétek: áss tovább. Üres sír vagy a másik csapat ereklyéje: a kör továbbmegy. A Halál sírja: a csapatod veszít." },
+    Q_MIMIC: { name: "Utánzó", when: "Mindig", summary: "Egy barátod arcát viseled. Nem tudod, hol vagy.", detail: "Mindenki más ugyanazon a helyen van. Figyeld a kérdéseket, válaszolj úgy, mintha odatartoznál, és jöjj rá a helyre. Bármikor leleplezheted magad és megnevezheted, hogy nyerj; az elítélt Utánzónak még jár egy utolsó tipp." },
+    Q_LIVING: { name: "Élő", when: "Mindig", summary: "Tudod a helyet. Bizonyítsd, de ne áruld el.", detail: "Kérdezz és válaszolj a helyről: elég pontosan, hogy kiderüljön, jártál ott, de elég homályosan, hogy az Utánzó ne jöjjön rá. Játékonként egyszer vádolhatsz; csak az egyhangú asztal ítél el." },
     S_GHOST: { name: "Szellem", when: "Mindig", summary: "Meggyilkoltak. Tudod, ki, hol és miért, de nem beszélhetsz.", detail: "Küldj minden olvasónak egy látomást a sorához. Egy hideg folttal jegeld be a látomást, ami nem a tiéd." },
     S_MEDIUM: { name: "Médium", when: "Mindig", summary: "Olvasd a látomásokat, és gyújts gyertyát az igazságra.", detail: "Minden körben egy sort olvasol: ki, hol vagy miért. Fejtsd meg mindhármat, mielőtt a gyertyák leégnek, aztán nevezd meg a Csalót." },
     S_DECEIVER: { name: "Csaló", when: "Mindig", summary: "Egy második szellem egy élő testben. Tudod az igazságot, és hazudsz.", detail: "Pontosan úgy nézel ki, mint egy Médium. Egy játékban néhányszor kicserélheted a Szellem látomását egy másik olvasónál a sajátodra. Nyersz, ha a gyertyák leégnek, vagy ha az asztal rossz játékost nevez meg." },
@@ -163,6 +165,7 @@ export default {
   },
   presets: {
     graverobbers: { name: "Dead Set: Sírrablók", blurb: "Két sírrabló csapat, a Hold és a Nap, szavakból vagy ikonokból álló temetőt ás fel istenük ereklyéiért. Csak a Sírásók tudják, mi van alattuk. Az egyik sír a Halálé." },
+    mimic: { name: "Dead Set: Utánzó", blurb: "Mindenki tudja, hol vagytok, kivéve azt, aki egy barátod arcát viseli. Kérdezz, válaszolj, vádolj; az Utánzó a helyre fülel." },
     seance: { name: "Dead Set: Szeánsz", blurb: "Egy néma, meggyilkolt Szellem látomásokat küld; a Médiumok ezekből fejtik meg, ki, hol és miért. Köztük egy Csaló a látomásokat hazugságra cseréli." },
     midnight: { name: "Dead Set: Éjfél", blurb: "Egy éjszaka, egy szavazás. A kártyák a sötétben cserélnek gazdát; hajnalban az vagy, ami előtted fekszik. Találj egy Halált, vagy légy az." },
     carnival: { name: "Dead Set: Karnevál", blurb: "Álarcosbál blöffel és emlékezettel. Mindenki egy szerepkártyát visel maszkként, addig keverve, míg senki sem biztos benne. Állíts maszkokat, gyűjts Lelkeket; 13 győz." },
@@ -193,6 +196,15 @@ export default {
     'A Halál a várossal szavazott. Hát persze.',
   ],
   guide: {
+    mimicH: "Dead Set: Utánzó",
+    mimic: `<p>Kérdezős játék 4–12 játékosnak, játékonként kb. 8 perc. Mindenki ugyanazon a <b>helyen</b> van (egy történetkártya), és ott egy <b>szereplő</b>, kivéve az <b>Utánzót</b>, aki csak zajt és a lehetséges helyek tábláját látja.</p>
+<ol>
+<li><b>Kérdések.</b> Akinél a lámpás van, hangosan kérdez bárkit a helyről, aztán rákoppint, akit kérdezett; a lámpás hozzá kerül. Azt, aki épp téged kérdezett, nem kérdezheted vissza.</li>
+<li><b>Vád.</b> Játékonként egyszer mindenkinek. Az óra megáll, és mindenki más szavaz; csak az egyhangú asztal ítél el. Ha egy Élőt ítéltek el, az Utánzó nyer.</li>
+<li><b>Az Utánzó</b> bármikor leleplezheti magát és megnevezheti a helyet: ha talál, nyer; ha nem, az Élők nyernek. Az elkapott Utánzónak még egy utolsó tipp jár.</li>
+<li><b>Lejárt az idő:</b> mindenki rámutat egy gyanúsítottra. A legtöbb szavazatot kapót elítélik; döntetlennél az Utánzó elillan.</li>
+</ol>
+<p>Hallgatás közben húzd ki a helyeket a saját telefonodon: a jegyzeteid titkosak. Pontok: az Élők +1 (aki elkapta az Utánzót, +1 még); az Utánzó +2, a hely megnevezéséért +3.</p>`,
     graveH: "Dead Set: Sírrablók",
     grave: `<p>Csapatjáték szavakkal (vagy ikonokkal) 4–12 játékosnak, kb. 15 perc. Két sírrabló csapat, a <b>Hold</b> és a <b>Nap</b>, egy 25 sírkőből álló temetőt ás fel az ereklyékért, amelyekkel megidézhetik istenüket. Az érmefeldobást nyerő csapatnak 9 ereklyéje van a földben, a másiknak 8; 7 sír üres, egy pedig a <b>Halálé</b>.</p>
 <ol>
