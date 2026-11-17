@@ -135,7 +135,7 @@ Other Missions ideas kept for later:
 | **Signs & Riddles** | Exorcism, Séance, Graverobbers (Beta 7), Mimic (Beta 8) | One side knows the secret and may only hint |
 | **Bluff & Wager** | Coffins | Bury, bid and dare: a quick game of nerve |
 
-New modes join a family (or open a new one) when they are pitched.
+New modes join a family (or open a new one) when they are pitched. The twelve modes parked from the 2026-11-17 spec (below) suggest four more: **Reading the Room** (The Omen, The Mirror), **Quiet Hands** (The Vigil, The Vault), **Bargains & Betrayals** (Inheritance, The Pact) and **Tall Tales** (The Gazette, Confessions). The Ritual joins Hidden Allegiances; Treasure Hunters, The Black Market and Standoff join Bluff & Wager.
 
 ## Order of the next betas (reordered 2026-11-12; Graverobbers inserted as Beta 7 on 2026-11-17)
 
@@ -316,7 +316,8 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
   - **Death's grave:** instant loss.
 - **Stopping early** earns one bonus dig next turn (it never stacks).
 - **Win:** all your relics dug up first.
-- **Crews and Undertakers:** chosen in setup or random. Undertakers rotate between games in a match.
+- **Crews and Undertakers:** by seat (default: the lobby table shows each crew's part of the table, and moving a player changes their crew), random, or chosen. Undertakers rotate between games in a match.
+- **Three crews (option, 6–12 players):** the **Stars** (amethyst) join the Moon and the Sun. The table is cut into thirds; 7 relics for the first crew, 6 for each of the others, 5 empty graves. Death's grave puts the crew that opens it out, and the others dig on.
 - **TV:** the cemetery at night, headstones engraved with the words or carved with the icons, open graves showing what they held, two altars whose sigils fill as relics are found, the sign in large type, and the diggers' votes appearing on the stones live.
 - **Phones:** the same 5×5 grid, filling the screen, with a switch between *Stones* (words or icons on the tiles) and *Map* (plain tiles, colour and state at a glance). Tap to vote. The Undertaker's grid shows the burial register and a sign composer.
 - **Players and length:** 4–12, about 15 minutes. Team play, loud and quick.
@@ -491,3 +492,103 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 - **The Turn:** after a random omen, the house chooses a traitor, or a secret traitor reveals themself. Each side gets different rules on their phone, and the rest is a race.
 - **Haunts:** themed to the backdrops.
 - **Players and length:** 3–8, about 45 minutes. The most cinematic mode, and the biggest build.
+
+---
+
+### Later: twelve modes from the implementation spec (added 2026-11-17)
+
+The full rules, state machines, scoring, edge cases and test matrices are in **design/TWELVE-MODES-SPEC.md**. These are parked ideas, not scheduled betas. When one is picked up: one mode at a time, pure engine and privacy tests first, then phones, TV, bots, translations and docs, following the newest mode's pattern (Graverobbers). Two names need care: the trivia game uses `gazette_game` (the existing `public/gazette.js` is the recap newspaper), and **Treasure Hunters** shares no code with Graverobbers.
+
+Suggested build order from the spec: (1) The Omen, The Mirror, The Pact; (2) Inheritance, Confessions, Standoff; (3) Treasure Hunters, The Gazette, The Black Market; (4) The Vigil, The Ritual, The Vault.
+
+#### Dead Set: The Gazette (creative trivia and bluffing)
+**The pitch:** the Gazette prints impossible-sounding facts. One Editor knows the real answer; everyone else invents a convincing fake.
+- **A round:** the question appears; non-Editors type a fake answer; the real answer and the fakes are shown as identical anonymous options; everyone votes for the truth (never their own fake).
+- **Scoring:** +2 for finding the truth; +1 to a fake's author for every vote it fools; the Editor +2 if fewer than half the voters found the truth.
+- **Every player is Editor once.** Missing or duplicate fakes become unattributed fallback answers from the question bank.
+- **Content:** at least 30 vetted questions per language, each with aliases and three fallback fakes. Never invented at runtime.
+- **Players and length:** 4–10, 15–30 minutes. Family: Tall Tales.
+
+#### Dead Set: The Omen (simultaneous prediction)
+**The pitch:** an occult wheel points to Life, Death or Rebirth. Everyone can secretly turn it; guess where it will stop.
+- **Each round:** a public starting point; every player secretly predicts the finish and may turn the wheel one step either way (spending one of 5 Influence).
+- **Resolution:** the sum of all turns moves the wheel; a correct prediction scores +3. Seven rounds; unused Influence is +1 each at the end.
+- **TV:** an astrolabe wheel that turns once by the net total, with a ledger of who pushed which way.
+- **Players and length:** 4–12, 10–15 minutes. Family: Reading the Room.
+
+#### Dead Set: The Vigil (silent co-operative ordering)
+**The pitch:** a midnight vigil. Light the numbered candles on the altar in rising order, without a word.
+- **Three levels:** everyone holds secret numbers from 1 to 100 (1, 2, 2 cards at 4–6 players; 1, 1, 2 at 7–10).
+- **Play** any candle at any moment. Every lower number still in someone's hand is lost and adds one Discord mark. Too many marks (4–6 by table size) and the vigil fails.
+- **The Bell,** once per level, shows the lowest number still unplayed. Each level has a silence limit.
+- **No turns, no talking, no traitor:** a calm co-operative contrast to the deduction modes.
+- **Players and length:** 4–10, 10–20 minutes. Family: Quiet Hands.
+
+#### Dead Set: The Vault (co-operative logic puzzles)
+**The pitch:** three sealed chambers, each with a four-digit lock. Everyone holds part of the evidence.
+- **Clues** are true statements about the code ("the second digit is even", "digits one and three sum to 9"), split among the players. Together they fit exactly one code; nobody can solve it alone.
+- **The Locksmith** (rotating) enters the agreed code. Three wrong guesses on a chamber, or the timer running out, and the vault stays shut for good.
+- **Content:** 30+ curated chambers, each checked by a solver over all 9,000 codes.
+- **End:** every clue shown with a walkthrough of the deduction.
+- **Players and length:** 4–10, 15–25 minutes. Family: Quiet Hands.
+
+#### Dead Set: The Mirror (social prediction)
+**The pitch:** the haunted mirror doesn't show you: it shows what your friends think you'll do.
+- **Eight dilemmas,** each with three plausible answers. Everyone answers for themself and predicts the answer of one assigned player (the targets rotate so everyone reads everyone).
+- **Scoring:** +2 for every correct prediction. Your own answer scores nothing, so surprising your reader is fair play.
+- **Content:** at least 40 dilemmas per language.
+- **Players and length:** 4–12, 15–20 minutes. Family: Reading the Room.
+
+#### Dead Set: Inheritance (negotiation and votes)
+**The pitch:** a contested estate. Each player is Executor once and writes the will; the others accept it or tear it up.
+- **The will:** the Executor splits an estate (12, 16 or 20 coins by table size) among any players, themself included.
+- **The vote:** a strict majority of the other players must accept. Otherwise nobody is paid, and every non-Executor gets one consolation coin.
+- **Deals and threats** are spoken and never enforced. The wealthiest player wins.
+- **Players and length:** 4–12, 20–30 minutes. Family: Bargains & Betrayals.
+
+#### Dead Set: Treasure Hunters (push your luck)
+**The pitch:** the crew descends into haunted ruins together. Grab your share and run, or risk one more step.
+- **Five expeditions.** Cards are revealed one by one: treasure piles up on the floor; the first Wraith, Collapse or Curse is a warning, the second of the same kind collapses the expedition and the floor is lost.
+- **After each card,** everyone still inside secretly chooses Continue or Leave. Leavers split the floor; a lone leaver earns a +2 relic bonus.
+- **At most six reveals;** whoever is still inside then shares what is left.
+- **Players and length:** 4–12, 15–20 minutes. Family: Bluff & Wager. (Not related to Graverobbers.)
+
+#### Dead Set: The Ritual (co-operative runes with a hidden Cultist)
+**The pitch:** complete three rituals before three fail. One of you serves the other side.
+- **Each round:** a public recipe of three runes; everyone holds two secret runes. The rotating Conductor picks three ritualists, who each offer one rune at once.
+- **The Cultist** can lie about their hand, offer a wrong rune, or once per game corrupt their rune into any other.
+- **Fair deal:** the server always deals so that some trio of the Living could complete the ritual.
+- **Win:** three successes for the Living, three failures for the Cultist. No elimination, no final accusation.
+- **Players and length:** 5–10, 20–30 minutes. Family: Hidden Allegiances.
+
+#### Dead Set: Confessions (two truths and a lie)
+**The pitch:** one player sits in the confessional with three statements. Exactly one is a lie.
+- **Each player confesses once,** either Personal (they write three statements and mark the lie) or Fictional (a pre-written character case). A timeout falls back to a Fictional case.
+- **Interrogation:** the table questions the Confessor, then votes for the lie.
+- **Scoring:** +2 for each investigator who finds the lie; the Confessor +1 per wrong vote (up to +3).
+- **Care:** never ask for sensitive or real criminal disclosures; at least 60 Fictional cases per language.
+- **Players and length:** 4–10, 15–30 minutes. Family: Tall Tales.
+
+#### Dead Set: The Black Market (auctions and counterfeits)
+**The pitch:** relics change hands in the dark, and some of them are fakes.
+- **The Seller** secretly picks a genuine relic (worth 4–6) or a counterfeit (worth −4) and pitches it, true or not.
+- **Sealed bids** of 0–3 coins; the high bidder may spend one of two Audit seals to expose it. A caught fake cancels the sale and costs the Seller 2.
+- **Two market cycles** (everyone sells twice); hidden values are revealed only at the end. Score: coins + relic values + reputation.
+- **Players and length:** 3–9, 20–30 minutes. Family: Bluff & Wager.
+
+#### Dead Set: Standoff (simultaneous threats)
+**The pitch:** five confrontations in a lawless room. Everyone aims at someone, and most shots are blanks.
+- **Each player** holds 2 live and 3 blank cursed rounds, and spends one per round on a chosen target.
+- **The aim is revealed** (not the rounds); each target chooses once: Stand or Duck.
+- **Scoring:** standing against a live shot costs 2; standing against blanks earns 2; ducking costs 1. Shooters score by how their target guessed.
+- **Nobody dies or is removed.** Symbolic, supernatural duelling art; no realistic weapons.
+- **Players and length:** 4–12, 10–15 minutes. Family: Bluff & Wager.
+
+#### Dead Set: The Pact (trust and betrayal)
+**The pitch:** at the witching hour two people swear a pact, and each decides whether to keep it.
+- **Each round,** players are paired (round-robin; one bye at odd tables, worth +2). Pairs talk, then each secretly chooses Honour or Betray.
+- **Payoffs:** both honour 3/3; betray an honourer 5/0; both betray 1/1.
+- **Oaths:** each player has 2. If both partners stake one, a betrayer pays 2 points to their partner.
+- **Public history** of honoured and broken pacts gives every choice consequences.
+- **Players and length:** 4–12, 15–25 minutes. Family: Bargains & Betrayals.
+
