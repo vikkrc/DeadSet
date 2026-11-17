@@ -406,6 +406,22 @@ export function missionMoment(l, v, fresh, { notify, name: nm, ...h }) {
   }
 }
 
+/**
+ * The lottery pointer for Coffins: a gravedigger's shovel drawn in pencil, its whole length the hand of the
+ * wheel. The T-grip sits on the hub, the shaft is the needle, the pointed blade picks the seat.
+ */
+const SHOVEL = `<svg class="lot-shovel" viewBox="0 0 40 200" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+  <g filter="url(#ds-pencil)">
+    <path d="M20 2C33 14 37.5 32 35.5 50L28 60H12L4.5 50C2.5 32 7 14 20 2Z" fill="var(--paper, #15110e)" stroke-width="2.8"/>
+    <path d="M20 2C33 14 37.5 32 35.5 50L28 60H20Z" fill="currentColor" fill-opacity=".28" stroke="none"/>
+    <path d="M12 22c4 2.4 12 2.4 16 0M9.5 33c5 2.8 16 2.8 21 0M9 44c5.5 2.8 16.5 2.8 22 0" stroke-width="1.2" opacity=".6"/>
+    <path d="M15.5 60h9v12h-9z" fill="var(--paper, #15110e)" stroke-width="2.2"/>
+    <path d="M20 72v106" stroke-width="5"/>
+    <path d="M17.6 74v102" stroke-width="1" opacity=".55"/>
+    <path d="M9 178.5h22a3 3 0 0 1 0 7H9a3 3 0 0 1 0-7z" fill="var(--paper, #15110e)" stroke-width="2.2"/>
+    <circle cx="20" cy="194" r="3.2" fill="currentColor" stroke="none"/>
+  </g></svg>`;
+
 export const MISSION_MOMENT_TIME = { mside: 5200, mlottery: 8600, mlantern: 3600, mintro: 9000, mcandle: 5200, mcard: 4200, mvotes: 5400, mnamed: 5200, munmask: 5200, mreckon: 6200 };
 export const revealTime = (m) => 2600 + (m.cards ? m.cards.length : m.count) * 1150 + 2600;
 
@@ -421,7 +437,7 @@ export function missionMomentHtml(m, h) {
       }).join('');
       const turn = m.spins * 360 + (m.idx / n) * 360;
       return `<span class="kicker">${esc(m.kickerText ?? t('Before the first mission'))}</span><h1 class="m-title">${letters(m.titleText ?? t('Who carries the lantern?'))}</h1>
-        <div class="lot-wheel" style="--turn:${turn}deg"><ul>${seats}</ul><div class="lot-hand" aria-hidden="true"><i></i>${glyph('lantern')}</div></div>
+        <div class="lot-wheel" style="--turn:${turn}deg"><ul>${seats}</ul>${m.pointer === 'shovel' ? `<div class="lot-hand shovel" aria-hidden="true">${SHOVEL}</div>` : `<div class="lot-hand" aria-hidden="true"><i></i>${glyph('lantern')}</div>`}</div>
         <div class="lot-result"><span class="kicker">${esc(m.resultText ?? t('The first Mission Leader'))}</span><b>${esc(m.leaderName)}</b></div>`;
     }
     case 'mlantern':

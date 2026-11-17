@@ -73,15 +73,21 @@ export function graveyard(v, { pick = () => null, selected = null, big = false, 
     const digger = C.digger === pl.id && live;
     const cls = ['tok', 'cseat', pl.id === meId ? 'me' : '', pl.out ? 'dead ghost' : '', pl.risen ? 'risen' : '', now ? 'speaking' : '', digger ? 'accused' : '',
       passed ? 'passed' : '', act ? 'can' : '', selected === pl.id ? 'sel' : '', p?.connected === false ? 'away' : '', pos[i].inner ? 'inner' : ''].filter(Boolean).join(' ');
-    // The stack beside the medallion, top first: opened coffins (this dig) face up.
-    const st = reveal && pl.stack ? [...pl.stack].reverse() : null;
+    // The grave's coffins fan out above the medallion in burial order: the first buried at the back left,
+    // the newest (the top) at the front right. A dig turns them face up from the top, one by one.
+    const st = reveal && pl.stack ? pl.stack : null; // bottom first, at the end
     const n = st ? st.length : pl.buried;
-    const opened = pl.opened ?? [];
-    const shown = Math.min(n, 5);
-    const stack = n ? `<span class="cplot" style="--n:${shown}" data-key="cp-${n}-${opened.length}">${Array.from({ length: shown }, (_, k) => {
-      const f = st ? st[k] : opened[k] ?? null;
-      return `<i style="--k:${k}" class="${f ? `open f-${f}` : ''} ${!st && f && k === opened.length - 1 && v.phase === 'C_DIG' ? 'fresh' : ''}">${coffinCard(f)}</i>`;
-    }).join('')}${n > 1 ? `<b class="cp-n" aria-label="${esc(th('{n} buried', { n }))}">${n}</b>` : ''}</span>` : '';
+    const opened = pl.opened ?? []; // this dig, top first
+    const shown = Math.min(n, 6);
+    const skip = n - shown; // the deepest coffins beyond six are only counted
+    const step = shown <= 3 ? 2.6 : (7.8 / (shown - 1)).toFixed(2);
+    const stack = n ? `<span class="cfan" style="--n:${shown};--st:${step}em" data-key="cf-${n}">${Array.from({ length: shown }, (_, k) => {
+      const j = k + skip; // position from the bottom
+      const fromTop = n - 1 - j;
+      const f = st ? st[j] : opened[fromTop] ?? null;
+      const fresh = !st && f && fromTop === opened.length - 1 && v.phase === 'C_DIG';
+      return `<i style="--k:${k}" class="${f ? `open f-${f}` : ''} ${fresh ? 'fresh' : ''}" data-key="cfc-${j}-${f ?? 'x'}">${coffinCard(f)}<b class="cf-o">${j + 1}</b></i>`;
+    }).join('')}${skip ? `<b class="cp-n" aria-label="${esc(th('{n} buried', { n }))}">+${skip}</b>` : ''}</span>` : '';
     const badges = [];
     if (!pl.out) badges.push(`<b class="bdg c-hand" title="${esc(t('in hand'))}">${pl.inHand}</b>`);
     if (bidder) badges.push(`<b class="bdg c-bid" data-key="cb-${C.bid.n}">${C.bid.n}</b>`);
@@ -318,7 +324,7 @@ export function coffinsMoment(l, v, fresh, { notify, name: nm, sound }) {
   switch (l.ev) {
     case 'c-lottery': {
       const order = l.order.map((id) => ({ id, name: nm(id), av: v.players.find((p) => p.id === id)?.avatar ?? null }));
-      return { type: 'mlottery', order, leader: l.leader, leaderName: nm(l.leader), idx: l.order.indexOf(l.leader), spins: l.spins ?? 2, sound: null,
+      return { type: 'mlottery', pointer: 'shovel', order, leader: l.leader, leaderName: nm(l.leader), idx: l.order.indexOf(l.leader), spins: l.spins ?? 2, sound: null,
         kickerText: t('Before the first burial'), titleText: t('Who plays first?'), resultText: t('The first to play') };
     }
     case 'c-round': if (l.n > 1) notify(t('Round {n} · {a} starts', { n: l.n, a: nm(l.first) })); return null;

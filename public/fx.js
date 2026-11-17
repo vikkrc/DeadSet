@@ -359,6 +359,11 @@ const MOODS = {
   //   wSeal – sealing the ballots: the waltz stops, a heartbeat and a clock
   wTalk: { root: 58.3, scale: [0, 2, 4, 5, 7, 9], chord: [1, 1.26, 1.5], cutoff: 600, wind: 0.01, gain: 0.48, pluck: { bpm: 84, pattern: [1, 0, 0, 1, 0, 0], notes: [0, 4, 7] }, shimmer: 0.006, motif: { voice: 'box', every: [8, 12], len: [3, 4], beat: 0.7, oct: 5 } },
   wSeal: { root: 55, scale: [0, 1, 3, 7, 8], chord: [1, 1.06, 1.5], cutoff: 500, wind: 0.02, gain: 0.52, heart: 76, tick: 72, motif: { voice: 'bell', every: [6, 9], len: [1, 2], beat: 1, oct: 3 } },
+  // Lobby themes for the modes that borrow other modes' moods in play.
+  //   xLobby – Exorcism: a crystal ball hums, a slow choir under it
+  //   cLobby – Coffins: a churchyard at dusk, a spade knock and a lazy box tune
+  xLobby: { root: 58.3, scale: [0, 2, 3, 6, 7, 9], chord: [1, 1.5, 2], cutoff: 520, wind: 0.02, gain: 0.5, choir: 0.02, shimmer: 0.008, motif: { voice: 'bell', every: [9, 13], len: [2, 3], beat: 1.1, oct: 3 } },
+  cLobby: { root: 65.4, scale: [0, 2, 3, 5, 7, 8, 10], chord: [1, 1.19, 1.5], cutoff: 560, wind: 0.03, gain: 0.5, pluck: { bpm: 72, pattern: [1, 0, 0, 0, 1, 0, 0, 0], notes: [0, 7, 3] }, motif: { voice: 'box', every: [8, 12], len: [3, 4], beat: 0.8, oct: 4 } },
   // Overlay mixed on top of any mood when the table is down to its last few.
   tension: { root: 110, scale: [0, 1], chord: [], cutoff: 3000, wind: 0, gain: 0.5, shimmer: 0.012, heart: 104 },
 };

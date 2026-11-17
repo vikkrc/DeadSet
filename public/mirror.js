@@ -12,13 +12,30 @@ import { esc, rawName, pname, disc, doNow, seatArrows, scoreLedger, explainer, w
 export const isMirrorPhase = (ph) => typeof ph === 'string' && ph.startsWith('W_');
 const LETTERS = ['A', t('B'), t('C')];
 
-/** The dilemma card: the prompt and its three answers. `mark` lights answers: { A: 'mine' | 'pred' | 'count' … }. */
-export function dilemmaCard(id, { size = '', counts = null, picks = {} } = {}) {
+/**
+ * The dilemma card: a haunted mirror. Dark silvered glass in a gilt arch, the prompt in the glass, the three
+ * answers as plaques. At the reveal each plaque carries the portraits of everyone who chose it (`who`).
+ */
+export function dilemmaCard(id, { size = '', counts = null, picks = {}, who = null, v = null, auto = {} } = {}) {
   const d = dilemmaText(dilemmaById(id));
-  return `<article class="w-card ${size}" data-key="wcard-${id}-${size}"><span class="w-glass" aria-hidden="true">${emblem('maskedvote')}</span>
+  const row = (c, i) => {
+    const x = LETTERS[i];
+    const ids = who?.[x] ?? [];
+    const faces = who ? `<span class="w-faces">${ids.map((pid) => `<span class="w-face ${auto[pid] ? 'auto' : ''}" title="${esc(rawName(v, pid))}">${disc(v, pid, 'xs')}</span>`).join('')}</span>` : '';
+    return `<li class="${(picks[x] ?? []).join(' ')} ${who && !ids.length ? 'empty' : ''}"><b class="w-l">${x}</b><span class="w-a">${esc(c)}</span>${faces}${counts && !who ? `<em>${counts[x] ?? 0}</em>` : who ? `<em>${ids.length}</em>` : ''}</li>`;
+  };
+  return `<article class="w-card ${size}" data-key="wcard-${id}-${size}">
+    <span class="w-crest" aria-hidden="true">${emblem('maskedvote')}</span><span class="w-sheen" aria-hidden="true"></span>
     <p class="w-prompt">${esc(d.prompt)}</p>
-    <ol class="w-choices">${d.choices.map((c, i) => `<li class="${(picks[LETTERS[i]] ?? []).join(' ')}"><b>${LETTERS[i]}</b><span>${esc(c)}</span>${counts ? `<em>${counts[LETTERS[i]] ?? 0}</em>` : ''}</li>`).join('')}</ol></article>`;
+    <ol class="w-choices">${d.choices.map(row).join('')}</ol></article>`;
 }
+
+/** Who chose what, from a round's answers: { A: [ids], B: [...], C: [...] } in seat order. */
+const chosenBy = (v, answers) => {
+  const out = { A: [], B: [], C: [] };
+  for (const p of [...v.players].sort((a, b) => a.seat - b.seat)) if (answers?.[p.id]) out[answers[p.id]].push(p.id);
+  return out;
+};
 
 /** You and the player you read, face to face in the glass. */
 function facing(v, me, target) {
@@ -55,7 +72,7 @@ export function mirrorMain(v, me, h) {
     }
     case 'W_REVEAL': {
       const L = W.last;
-      stage = `${round}${dilemmaCard(L.dilemma, { counts: counts(L.answers), picks: myPicks(L, me?.id) })}${revealList(v, L, me?.id)}`;
+      stage = `${round}${dilemmaCard(L.dilemma, { who: chosenBy(v, L.answers), v, auto: L.auto, picks: myPicks(L, me?.id) })}${myReading(v, L, me?.id)}${readingsGrid(v, L, me?.id)}`;
       break;
     }
     default: break;
@@ -72,18 +89,29 @@ function myPicks(L, id) {
   return p;
 }
 
-/** Each reader: their answer, and their reading of their target, right or wrong. */
-function revealList(v, L, me) {
+/** Your own reading this round, spelled out: what you predicted, what they chose. */
+function myReading(v, L, me) {
+  if (!me || !L.targets[me]) return '';
+  const tg = L.targets[me];
+  const pred = L.preds[me];
+  const hit = pred && pred === L.answers[tg];
+  return `<section class="w-mine ${hit ? 'hit' : pred ? 'miss' : 'none'}" data-key="wmine">
+    <span class="w-mine-who">${disc(v, tg, 'lg')}</span>
+    <span class="w-mine-txt"><small>${esc(th('You read {a}', { a: rawName(v, tg) }))}</small>
+      <b>${pred ? esc(th('You said {x}; they chose {y}.', { x: pred, y: L.answers[tg] })) : esc(t('You made no prediction.'))}</b></span>
+    <span class="w-mine-res">${hit ? '+2' : glyph(pred ? 'close' : 'scroll')}</span></section>`;
+}
+
+/** Every reading at the table as a tile: reader → target, the call and the truth, right or wrong. */
+function readingsGrid(v, L, me) {
   const ids = [...v.players].sort((a, b) => a.seat - b.seat).map((p) => p.id);
-  const mine = ids.filter((id) => id === me);
-  const rest = ids.filter((id) => id !== me);
-  return `<ul class="w-reads" data-key="wreads">${[...mine, ...rest].map((id) => {
+  return `<section class="w-grid" data-key="wgrid"><div class="rule">${t('Every reading')}</div><ul>${ids.filter((id) => id !== me).map((id) => {
     const tg = L.targets[id];
     const pred = L.preds[id];
     const hit = pred && pred === L.answers[tg];
-    return `<li class="${id === me ? 'me' : ''} ${hit ? 'hit' : pred ? 'miss' : 'none'}">${disc(v, id, 'sm')}<span class="w-who"><b>${pname(v, id)}</b><small>${L.auto[id] ? t('timed out: a random answer') : th('chose {x}', { x: L.answers[id] })}</small></span>
-      <span class="w-read">${pred ? `<i>${pred}</i>` : '<i>—</i>'}→${disc(v, tg, 'xs')}<i class="w-ans">${L.answers[tg]}</i></span>${hit ? '<em class="w-plus">+2</em>' : ''}</li>`;
-  }).join('')}</ul>`;
+    return `<li class="${hit ? 'hit' : pred ? 'miss' : 'none'}">${disc(v, id, 'sm')}<i class="w-arrow">→</i>${disc(v, tg, 'sm')}
+      <span class="w-call"><b>${pred ?? '—'}</b><small>${esc(L.answers[tg])}</small></span><span class="w-names">${esc(rawName(v, id))}<small>${esc(rawName(v, tg))}</small></span></li>`;
+  }).join('')}</ul></section>`;
 }
 
 export function mirrorDock(v, h) {
@@ -183,6 +211,6 @@ export function mirrorBoard(v, h) {
     <div class="wt-cols">
       <section class="wt-table">${ended ? '' : ring(v, { center: `<span class="c-sub">${esc(th('Dilemma {n} of {m}', { n: W.round, m: W.rounds }))}</span>`, extra: seatArrows(v, pairs, `warr-${W.round}-${v.phase}`), marks })}
         ${ended ? '' : `<div class="ot-banner"><b>${esc(title)}</b>${sub ? `<span>${esc(sub)}</span>` : ''}</div>`}</section>
-      <section class="wt-side">${ended ? mirrorEndHtml(v) : `${dilemmaCard(W.dilemma, { size: 'tv', counts: L ? counts(L.answers) : null })}${scoreLedger(v, W.scores, { title: t('The readers'), key: 'wtled' })}`}</section>
+      <section class="wt-side">${ended ? mirrorEndHtml(v) : `${dilemmaCard(W.dilemma, L ? { size: 'tv', who: chosenBy(v, L.answers), v, auto: L.auto } : { size: 'tv' })}${scoreLedger(v, W.scores, { title: t('The readers'), key: 'wtled' })}`}</section>
     </div></main>`;
 }

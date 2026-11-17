@@ -49,7 +49,7 @@ export function scard(row, idx, { cls = '', act = '', sel = false, key = '', sta
   const art = row === 'WHERE' ? `<span class="s-bd" aria-hidden="true">${backdropSvg(idx, 'card')}</span>`
     : `<span class="s-ic" aria-hidden="true">${emblem(STORY_ICONS[row]?.[idx] ?? ROW_EMB[row])}</span>`;
   return `<${tag} class="arc scard row-${row} ${state} ${sel ? 'sel' : ''} ${cls}" ${attrs}>
-    <span class="arc-num">${esc(t(ROW_LABEL[row]))}</span>${art}<span class="nm">${esc(cardName(row, idx))}</span>${state === 'struck' ? '<i class="s-x" aria-hidden="true"></i>' : ''}${state === 'solved' ? `<i class="s-ok" aria-hidden="true">${glyph('check')}</i>` : ''}</${tag}>`;
+    <span class="arc-num">${esc(t(ROW_LABEL[row]))}</span>${art}<span class="nm" style="--nl:${[...cardName(row, idx)].length}">${esc(cardName(row, idx))}</span>${state === 'struck' ? '<i class="s-x" aria-hidden="true"></i>' : ''}${state === 'solved' ? `<i class="s-ok" aria-hidden="true">${glyph('check')}</i>` : ''}</${tag}>`;
 }
 
 /** A role card for the reveal. */

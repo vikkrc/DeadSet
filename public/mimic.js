@@ -378,7 +378,9 @@ export function mimicBoard(v, h) {
   const votes = v.phase === 'Q_VOTE' && A ? `<div class="q-tvvotes">${v.players.filter((p) => p.id !== A.target).map((p) => { const x = Q.votes?.[p.id]; return `<span class="q-v ${x === true ? 'yes' : x === false ? 'no' : ''}">${disc(v, p.id, 'sm')}<i>${x === true ? glyph('check') : x === false ? glyph('close') : '…'}</i></span>`; }).join('')}</div>` : '';
   const center = ended ? '' : `<span class="q-tvclock">${clock}</span>`;
   const shape = { 12: [4, 3], 16: [4, 4], 20: [5, 4], 30: [6, 5] }[Q.board.length] ?? [4, 4];
-  return `<main class="board2 qboard ${ended ? 'is-ended' : ''}" data-key="board-q">${header}
+  // The end on the TV: the reveal, who was who, and the board, side by side and sized to the screen.
+  if (ended) return `<main class="board2 qboard is-ended" data-key="board-q">${header}<div class="qt-end">${mimicEndHtml(v)}</div></main>`;
+  return `<main class="board2 qboard" data-key="board-q">${header}
     <div class="qt-cols">
       <section class="qt-table">${ring(v, { center, orb: hint, extra: ended ? '' : askArrows(v, 5), marks: A && v.phase === 'Q_VOTE' ? { [A.target]: '?' } : {} })}
         ${ended ? '' : `<div class="qt-banner ${['Q_VOTE', 'Q_GUESS', 'Q_FINAL'].includes(v.phase) ? 'blood' : ''}" data-key="qtban"><b>${esc(title)}</b><span>${esc(sub)}</span>${votes}</div>`}</section>

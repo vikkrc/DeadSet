@@ -42,9 +42,12 @@ export function activeRuleNotes(v) {
   return out;
 }
 
+const LOBBY_MOOD = { classic: 'lobby', missions: 'mGather', exorcism: 'xLobby', coffins: 'cLobby', carnival: 'kUnmask', midnight: 'nDeal', seance: 'sGather', graverobbers: 'gYard', mimic: 'qDeal', omen: 'oShow', mirror: 'wTalk' };
+
 export function moodFor(v) {
   switch (v.phase) {
-    case 'LOBBY': return 'lobby';
+    // The lobby plays the chosen mode's own calm theme; switching mode crossfades into it.
+    case 'LOBBY': return LOBBY_MOOD[v.mode] ?? 'lobby';
     case 'ENDED': if (v.winner === 'OMEN' || v.winner === 'MIRROR') return 'endLiving';
       if (v.winner === 'MIMIC') return v.mimic?.result?.side === 'LIVING' ? 'endLiving' : 'endDeath';
       if (v.winner === 'GRAVEROBBERS') return v.graverobbers?.cause === 'death' ? 'endDeath' : 'endLiving';

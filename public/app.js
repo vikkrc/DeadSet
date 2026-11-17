@@ -84,7 +84,8 @@ function tally(n, total) {
 }
 function letters(text) {
   let i = 0;
-  return text.split(' ').map((w) => `<span class="w">${[...w].map((c) => `<span class="l" style="--i:${i++}">${esc(c)}</span>`).join('')}</span>`).join(' ');
+  // Each word knows its length, so a long one shrinks to fit the screen instead of spilling past the edge.
+  return text.split(' ').map((w) => `<span class="w" style="--wl:${[...w].length}">${[...w].map((c) => `<span class="l" style="--i:${i++}">${esc(c)}</span>`).join('')}</span>`).join(' ');
 }
 
 function notify(text, kind = '') {

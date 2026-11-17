@@ -27,6 +27,8 @@ const ENERGY = {
   qDeal: 0, qAsk: 1, qAccuse: 2, qFinal: 2,
   // The Omen and The Mirror
   oShow: 0, oSecret: 1, wTalk: 0, wSeal: 1,
+  // lobby themes
+  xLobby: 0, cLobby: 0,
 };
 
 const rnd = (lo, hi) => lo + Math.random() * (hi - lo);
