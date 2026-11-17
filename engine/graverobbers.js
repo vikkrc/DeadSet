@@ -17,8 +17,23 @@ export const isGravePhase = (ph) => typeof ph === 'string' && ph.startsWith('G_'
 export const G_MIN = 4;
 export const G_MAX = 12;
 export const G_RETURN_SECONDS = 60;
-export const CREWS = ['B', 'G'];
-const other = (c) => (c === 'B' ? 'G' : 'B');
+/** Every crew there can be: the Moon (B), the Sun (G) and, in a three-crew game, the Stars (V). */
+export const CREWS = ['B', 'G', 'V'];
+/** The crews in play for these settings. */
+export const crewIds = (k) => (Number(k?.teams) === 3 ? ['B', 'G', 'V'] : ['B', 'G']);
+/** Three crews: the first to dig hides 7 relics, the others 6, with 5 empty graves (two crews: 9, 8 and 7). */
+export const relicCounts = (n) => (n === 3 ? { first: 7, rest: 6, empty: 5 } : { first: 9, rest: 8, empty: 7 });
+const CREW_LINES = {
+  B: { relicOther: 'A relic of the Moon: it goes to the Moon crew.', relic: 'A relic of the Moon!', win: 'The Moon rises. The Moon crew wins.', first: 'The coin decides: the Moon crew digs first.',
+    cap2: 'You are the Undertaker of the Moon crew. Only you and the other Undertaker see the burial register.', cap3: 'You are the Undertaker of the Moon crew. Only the three Undertakers see the burial register.',
+    dig: 'You dig for the Moon crew. Your Undertaker: {name}.', out: 'The Moon crew opened Death\'s grave and is out of the game.' },
+  G: { relicOther: 'A relic of the Sun: it goes to the Sun crew.', relic: 'A relic of the Sun!', win: 'The Sun rises. The Sun crew wins.', first: 'The coin decides: the Sun crew digs first.',
+    cap2: 'You are the Undertaker of the Sun crew. Only you and the other Undertaker see the burial register.', cap3: 'You are the Undertaker of the Sun crew. Only the three Undertakers see the burial register.',
+    dig: 'You dig for the Sun crew. Your Undertaker: {name}.', out: 'The Sun crew opened Death\'s grave and is out of the game.' },
+  V: { relicOther: 'A relic of the Stars: it goes to the Stars crew.', relic: 'A relic of the Stars!', win: 'The Stars rise. The Stars crew wins.', first: 'The coin decides: the Stars crew digs first.',
+    cap3: 'You are the Undertaker of the Stars crew. Only the three Undertakers see the burial register.',
+    dig: 'You dig for the Stars crew. Your Undertaker: {name}.', out: 'The Stars crew opened Death\'s grave and is out of the game.' },
+};
 /** Proper-noun categories: off by default (famous names make poor signs). */
 export const FAMOUS = ['CARTOONS', 'CELEBS', 'VIDEOGAMES', 'GAMEHEROES', 'MOVIES', 'HEROES', 'LANDMARKS'];
 /** Emblems left out of the icon pool: near-duplicates and marks that only mean something with their names. */
@@ -26,7 +41,7 @@ const ICON_SKIP = new Set(['approve', 'reject', 's_lone', 's_lost', 's_nays', 's
   's_first', 's_restless', 's_crowd', 'ward', 'bodyguard', 'regular', 'extra', 'living', 'demon', 'succeed', 'sabotage']);
 export const ICON_POOL = Object.keys(EMBLEMS).filter((id) => !ICON_SKIP.has(id));
 
-export const G_DEFAULTS = { tiles: 'words', famous: false, crews: 'seats', captains: 'rotate', signs: 'typed', games: 1, crew: {}, cap: {} };
+export const G_DEFAULTS = { tiles: 'words', famous: false, teams: 2, crews: 'seats', captains: 'rotate', signs: 'typed', games: 1, crew: {}, cap: {} };
 export const G_TIMER_DEFAULTS = { gIntro: 20, gSign: 90, gVote: 45 };
 
 let RNG = null;
@@ -52,6 +67,7 @@ export function applyGravePatch(s, patch) {
   const k = gSettings(s);
   if (['words', 'icons'].includes(patch.tiles)) k.tiles = patch.tiles;
   if (typeof patch.famous === 'boolean') k.famous = patch.famous;
+  if ([2, 3].includes(Number(patch.teams))) k.teams = Number(patch.teams);
   if (['seats', 'random', 'chosen'].includes(patch.crews)) k.crews = patch.crews;
   if (['rotate', 'random', 'chosen'].includes(patch.captains)) k.captains = patch.captains;
   if (['typed', 'spoken'].includes(patch.signs)) k.signs = patch.signs;
@@ -73,20 +89,34 @@ export function applyGravePatch(s, patch) {
 export function crewsFor(players, settings, rng = null) {
   const k = gSettings(settings);
   const ids = players.map((p) => p.id);
-  const out = { B: [], G: [] };
+  const list = crewIds(k);
+  const out = Object.fromEntries(list.map((c) => [c, []]));
+  const smallest = () => list.reduce((a, c) => (out[c].length < out[a].length ? c : a), list[0]);
   if (k.crews === 'chosen') {
-    for (const id of ids) if (CREWS.includes(k.crew[id])) out[k.crew[id]].push(id);
-    for (const id of ids) if (!CREWS.includes(k.crew[id])) out[out.B.length <= out.G.length ? 'B' : 'G'].push(id);
+    for (const id of ids) if (list.includes(k.crew[id])) out[k.crew[id]].push(id);
+    for (const id of ids) if (!list.includes(k.crew[id])) out[smallest()].push(id);
   } else if (k.crews === 'seats') {
-    // Crews follow the table: the first half of the seats digs for the Moon, the rest for the Sun.
+    // Crews follow the table: the seats are cut into halves (or thirds), the first part digs for the Moon.
     const bySeat = [...players].sort((a, b) => (a.seat ?? 0) - (b.seat ?? 0));
-    const half = Math.ceil(bySeat.length / 2);
-    bySeat.forEach((p, i) => out[i < half ? 'B' : 'G'].push(p.id));
+    bySeat.forEach((p, i) => out[list[seatCrewIndex(i, bySeat.length, list.length)]].push(p.id));
   } else {
     const order = rng ? (() => { const a = [...ids]; for (let i = a.length - 1; i > 0; i--) { const j = rng.int(i + 1, 'gcrew'); [a[i], a[j]] = [a[j], a[i]]; } return a; })() : ids;
-    order.forEach((id, i) => out[i % 2 ? 'G' : 'B'].push(id));
+    order.forEach((id, i) => out[list[i % list.length]].push(id));
   }
   return out;
+}
+
+/** Which part of the table seat i of n belongs to, with `parts` crews: the earlier parts take the extra seats. */
+export function seatCrewIndex(i, n, parts) {
+  const base = Math.floor(n / parts);
+  const extra = n % parts;
+  let start = 0;
+  for (let c = 0; c < parts; c++) {
+    const size = base + (c < extra ? 1 : 0);
+    if (i < start + size) return c;
+    start += size;
+  }
+  return parts - 1;
 }
 
 export function validateGrave(n, settings, players = []) {
@@ -95,9 +125,10 @@ export function validateGrave(n, settings, players = []) {
   const warnings = [];
   if (n < G_MIN) errors.push(['At least {min} players are needed (currently {n}).', { min: G_MIN, n }]);
   if (n > G_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'Graverobbers', n: G_MAX }]);
+  if (k.teams === 3 && n < 6 && n >= G_MIN) errors.push(['Three crews need at least {min} players (currently {n}).', { min: 6, n }]);
   if (k.crews === 'chosen' && players.length >= G_MIN) {
     const c = crewsFor(players, settings);
-    if (c.B.length < 2 || c.G.length < 2) errors.push('Each crew needs at least two players.');
+    if (Object.values(c).some((x) => x.length < 2)) errors.push('Each crew needs at least two players.');
   }
   return { ok: errors.length === 0, errors, warnings, publicDeck: { exact: {} }, suggestions: [] };
 }
@@ -144,32 +175,38 @@ export function startGrave(m, rng, now) {
   if (m.gMatch.played === 0) m.gScores = {};
   const crews = crewsFor(m.players, m.settings, k.crews === 'random' ? rng : null);
   const order = seatOrder(m);
-  for (const c of CREWS) crews[c].sort((a, b) => order.indexOf(a) - order.indexOf(b));
+  const list = crewIds(k);
+  for (const c of list) crews[c].sort((a, b) => order.indexOf(a) - order.indexOf(b));
   // Undertakers: chosen, random, or rotating through each crew game by game.
   const caps = {};
-  for (const c of CREWS) {
-    const list = crews[c];
-    if (k.captains === 'chosen' && list.includes(k.cap[c])) caps[c] = k.cap[c];
-    else if (k.captains === 'rotate') caps[c] = list[m.gMatch.played % list.length];
-    else caps[c] = list[rng.int(list.length, 'gcap')];
+  for (const c of list) {
+    const ids = crews[c];
+    if (k.captains === 'chosen' && ids.includes(k.cap[c])) caps[c] = k.cap[c];
+    else if (k.captains === 'rotate') caps[c] = ids[m.gMatch.played % ids.length];
+    else caps[c] = ids[rng.int(ids.length, 'gcap')];
   }
-  const first = rng.int(2, 'gfirst') ? 'G' : 'B';
+  const first = list[rng.int(list.length, 'gfirst')];
+  // Turn order: from the first crew on, in the fixed order Moon → Sun → Stars.
+  const fi = list.indexOf(first);
+  const turnOrder = [...list.slice(fi), ...list.slice(0, fi)];
+  const cnt = relicCounts(list.length);
+  const need = Object.fromEntries(list.map((c) => [c, c === first ? cnt.first : cnt.rest]));
   const stones = dealStones(m);
-  const kinds = shuffle([...Array(first === 'B' ? 9 : 8).fill('B'), ...Array(first === 'G' ? 9 : 8).fill('G'), ...Array(7).fill('N'), 'D'], 'gkinds');
+  const kinds = shuffle([...list.flatMap((c) => Array(need[c]).fill(c)), ...Array(cnt.empty).fill('N'), 'D'], 'gkinds');
+  const zero = () => Object.fromEntries(list.map((c) => [c, 0]));
   m.G = {
     tiles: stones.map((s, i) => ({ ...s, k: kinds[i], open: false, by: null })),
-    crews, caps, first, turn: first, turnNo: 0, sign: null, digs: 0, used: 0, bonus: { B: 0, G: 0 }, turnBonus: 0,
-    votes: {}, acks: {}, found: { B: 0, G: 0 }, need: { B: first === 'B' ? 9 : 8, G: first === 'G' ? 9 : 8 },
+    crews, caps, first, order: turnOrder, out: [], turn: first, turnNo: 0, sign: null, digs: 0, used: 0, bonus: zero(), turnBonus: 0,
+    votes: {}, acks: {}, found: zero(), need,
     signs: [], digsLog: [], last: null, winner: null, cause: null,
   };
-  for (const c of CREWS) for (const id of crews[c]) {
+  for (const c of list) for (const id of crews[c]) {
     const p = m.players.find((x) => x.id === id);
     const cap = caps[c] === id;
     Object.assign(p, { roleId: cap ? 'G_UNDERTAKER' : 'G_DIGGER', originalRoleId: cap ? 'G_UNDERTAKER' : 'G_DIGGER', team: c });
-    priv(m, id, cap ? [c === 'B' ? 'You are the Undertaker of the Moon crew. Only you and the other Undertaker see the burial register.' : 'You are the Undertaker of the Sun crew. Only you and the other Undertaker see the burial register.', {}]
-      : [c === 'B' ? 'You dig for the Moon crew. Your Undertaker: {name}.' : 'You dig for the Sun crew. Your Undertaker: {name}.', { name: nameOf(m, caps[c]) }], 'role', { card: cap ? 'G_UNDERTAKER' : 'G_DIGGER', crew: c });
+    priv(m, id, cap ? [CREW_LINES[c][list.length === 3 ? 'cap3' : 'cap2'], {}] : [CREW_LINES[c].dig, { name: nameOf(m, caps[c]) }], 'role', { card: cap ? 'G_UNDERTAKER' : 'G_DIGGER', crew: c });
   }
-  pub(m, [first === 'B' ? 'The coin decides: the Moon crew digs first.' : 'The coin decides: the Sun crew digs first.', {}], 'phase', { ev: 'g-start', first, crews: structuredClone(crews), caps: { ...caps } });
+  pub(m, [CREW_LINES[first].first, {}], 'phase', { ev: 'g-start', first, crews: structuredClone(crews), caps: { ...caps } });
   enter(m, 'G_INTRO', now, T(m, 'gIntro'));
 }
 
@@ -222,8 +259,18 @@ function openVote(m, now) {
 
 function endTurn(m, now) {
   const st = G(m);
-  st.turn = other(st.turn);
+  st.turn = nextCrew(st, st.turn);
   beginTurn(m, now);
+}
+
+/** The next crew still in the game, in turn order. */
+function nextCrew(st, c) {
+  const o = st.order ?? ['B', 'G'];
+  for (let k = 1; k <= o.length; k++) {
+    const x = o[(o.indexOf(c) + k) % o.length];
+    if (!(st.out ?? []).includes(x)) return x;
+  }
+  return c;
 }
 
 /** Close the vote: the most votes digs (a tie goes to the coin), or the crew stops. */
@@ -265,7 +312,12 @@ function dig(m, now, idx, coin, tally) {
   const ev = { ev: 'g-dig', crew, idx, kind, coin, tally, label: t.w ?? t.icon, icon: t.icon ?? null };
   if (kind === 'D') {
     pub(m, ['Death\'s grave is open.', {}], 'phase', ev);
-    return finish(m, now, other(crew), 'death');
+    st.out.push(crew);
+    const left = st.order.filter((c) => !st.out.includes(c));
+    if (left.length === 1) return finish(m, now, left[0], 'death');
+    // Three crews: the crew that opened Death's grave is out; the others dig on.
+    pub(m, [CREW_LINES[crew].out, {}], 'phase', { ev: 'g-out', crew });
+    return endTurn(m, now);
   }
   if (kind === 'N') {
     pub(m, ['An empty grave.', {}], 'phase', ev);
@@ -273,11 +325,11 @@ function dig(m, now, idx, coin, tally) {
   }
   st.found[kind]++;
   if (kind !== crew) {
-    pub(m, [kind === 'B' ? 'A relic of the Moon: it goes to the Moon crew.' : 'A relic of the Sun: it goes to the Sun crew.', {}], 'phase', ev);
-    if (st.found[kind] >= st.need[kind]) return finish(m, now, kind, 'relics');
+    pub(m, [CREW_LINES[kind].relicOther, {}], 'phase', ev);
+    if (st.found[kind] >= st.need[kind] && !st.out.includes(kind)) return finish(m, now, kind, 'relics');
     return endTurn(m, now);
   }
-  pub(m, [kind === 'B' ? 'A relic of the Moon!' : 'A relic of the Sun!', {}], 'phase', ev);
+  pub(m, [CREW_LINES[kind].relic, {}], 'phase', ev);
   if (st.found[kind] >= st.need[kind]) return finish(m, now, kind, 'relics');
   if (st.used >= st.digs) return endTurn(m, now);
   openVote(m, now);
@@ -290,9 +342,9 @@ function finish(m, now, winner, cause) {
   m.winner = 'GRAVEROBBERS';
   const sc = (m.gScores ||= {});
   for (const id of st.crews[winner]) sc[id] = (sc[id] || 0) + 1;
-  for (const id of st.crews[other(winner)]) sc[id] = sc[id] || 0;
+  for (const c of Object.keys(st.crews)) for (const id of st.crews[c]) sc[id] = sc[id] || 0;
   m.gMatch.played++;
-  const label = winner === 'B' ? 'The Moon rises. The Moon crew wins.' : 'The Sun rises. The Sun crew wins.';
+  const label = CREW_LINES[winner].win;
   m.endReason = cause === 'death' ? ['{label} (Death\'s grave was opened.)', { label: [label, {}] }] : [label, {}];
   pub(m, m.endReason, 'end', { ev: 'end', winner: 'GRAVEROBBERS', crew: winner, cause, pids: [...st.crews[winner]], reason: m.endReason });
   enter(m, 'ENDED', now, G_RETURN_SECONDS);
@@ -303,7 +355,7 @@ export function graveCommand(m, p, type, payload, rng, now) {
   RNG = rng;
   const st = G(m);
   const need = (phase) => { if (m.phase !== phase) throw new GameError('That window has closed.', 'STALE'); };
-  const crewOf = (id) => (st.crews.B.includes(id) ? 'B' : st.crews.G.includes(id) ? 'G' : null);
+  const crewOf = (id) => crewOfId(st, id);
   switch (type) {
     case 'g.ack':
       need('G_INTRO');
@@ -361,6 +413,9 @@ export function graveAdvance(m, rng, now) {
 
 export const G_ADVANCE_LABEL = { G_INTRO: 'Open the cemetery', G_SIGN: 'Skip the sign', G_DIG: 'Close the vote' };
 
+/** Which crew a player digs for. */
+export const crewOfId = (st, id) => Object.keys(st.crews).find((c) => st.crews[c].includes(id)) ?? null;
+
 // ── Views ──────────────────────────────────────────────────────────────────
 export function gravePublic(m) {
   const st = G(m);
@@ -369,7 +424,7 @@ export function gravePublic(m) {
   return {
     mode: m.config.tiles, signs: m.config.signs,
     tiles: st.tiles.map((t) => ({ w: t.w ?? null, icon: t.icon ?? null, open: t.open, k: t.open || ended ? t.k : null, by: t.by })),
-    crews: st.crews, caps: st.caps, first: st.first, turn: st.turn, turnNo: st.turnNo, sign: st.sign, digs: st.digs, used: st.used,
+    crews: st.crews, caps: st.caps, first: st.first, order: st.order ?? ['B', 'G'], out: st.out ?? [], turn: st.turn, turnNo: st.turnNo, sign: st.sign, digs: st.digs, used: st.used,
     bonus: st.bonus, turnBonus: st.turnBonus, found: st.found, need: st.need,
     votes: m.phase === 'G_DIG' ? st.votes : {}, acked: m.phase === 'G_INTRO' ? Object.keys(st.acks) : [],
     last: st.last, winner: st.winner, cause: st.cause, history: ended ? { signs: st.signs, digs: st.digsLog } : undefined,
@@ -380,17 +435,17 @@ export function gravePublic(m) {
 export function graveMe(m, p) {
   const st = G(m);
   if (!st) return {};
-  const crew = st.crews.B.includes(p.id) ? 'B' : st.crews.G.includes(p.id) ? 'G' : null;
+  const crew = crewOfId(st, p.id);
   const captain = crew && st.caps[crew] === p.id;
   const out = { crew, captain: !!captain, vote: st.votes[p.id] ?? null };
-  // The burial register: only the two Undertakers.
+  // The burial register: only the Undertakers.
   if (captain) out.register = st.tiles.map((t) => t.k);
   return out;
 }
 
 export function graveAction(m, p) {
   const st = G(m);
-  const crew = st.crews.B.includes(p.id) ? 'B' : st.crews.G.includes(p.id) ? 'G' : null;
+  const crew = crewOfId(st, p.id);
   const cap = crew && st.caps[crew] === p.id;
   switch (m.phase) {
     case 'G_INTRO': return { type: 'gintro', done: !!st.acks[p.id] };

@@ -88,7 +88,7 @@ const EMBLEM_FOR = {
   shield: 'steadfast', crack: 'brittle', crown: 'grand', clue: 'trail', cult: 'cult', ripper: 'ripper',
 };
 const INTERFACE = new Set(['key', 'coin', 'gift', 'bell']);
-const TIME_OF_DAY = new Set(['sun', 'moon']); // drawn in the pencil line of the cards
+const TIME_OF_DAY = new Set(['sun', 'moon', 'star']); // drawn in the pencil line of the cards
 export function glyph(name, cls = '') {
   const em = EMBLEM_FOR[name] ?? (EMBLEMS[name] && !INTERFACE.has(name) ? name : null);
   if (em) return emblem(em, { cls: `glyph ${TIME_OF_DAY.has(name) ? 'tod' : ''} ${cls}` });

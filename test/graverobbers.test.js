@@ -212,3 +212,91 @@ test('crews by seat (the default): the first half of the table is the Moon; movi
   startMatch(m, seededRng(2), 1e6);
   assert.deepEqual(m.G.crews, { B: ['p0', 'p1', 'p3'], G: ['p2', 'p4'] });
 });
+
+/** A three-crew game at n players, crews by seat (thirds); the Moon goes first; the board is fixed. */
+function setup3(n = 6) {
+  const rng = seededRng(4);
+  const m = newMatch({ id: 'g3', code: 'GRAVE3', hostId: 'p0' });
+  for (let i = 0; i < n; i++) addPlayer(m, { id: `p${i}`, name: NAMES[i] });
+  updateSettings(m, { mode: 'graverobbers', g: { teams: 3, captains: 'random' } });
+  m.players.forEach((p) => { p.ready = true; });
+  let now = 1e6;
+  startMatch(m, rng, now);
+  const G = m.G;
+  G.first = 'B'; G.turn = 'B'; G.order = ['B', 'G', 'V']; G.need = { B: 7, G: 6, V: 6 };
+  // Graves 0-6 Moon, 7-12 Sun, 13-18 Stars, 19-23 empty, 24 Death.
+  G.tiles.forEach((t, i) => { t.k = i < 7 ? 'B' : i < 13 ? 'G' : i < 19 ? 'V' : i < 24 ? 'N' : 'D'; });
+  const cmd = (id, type, payload = {}) => playerCommand(m, id, { type, payload, phaseId: m.phaseId }, rng, (now += 10));
+  for (const p of m.players) cmd(p.id, 'g.ack');
+  const diggers = (c) => G.crews[c].filter((id) => id !== G.caps[c]);
+  const sign = (n) => cmd(G.caps[G.turn], 'g.sign', { word: 'zzzq', n });
+  const dig = (tile) => { for (const id of diggers(G.turn)) if (m.phase === 'G_DIG') cmd(id, 'g.vote', { tile }); };
+  return { m, G, sign, dig };
+}
+
+test('three crews: thirds of the table, a 7/6/6 deal with 5 empty graves; needs 6 players', () => {
+  const m = newMatch({ id: 'g', code: 'G', hostId: 'p0' });
+  for (let i = 0; i < 5; i++) addPlayer(m, { id: `p${i}`, name: NAMES[i] });
+  updateSettings(m, { mode: 'graverobbers', g: { teams: 3 } });
+  assert.equal(setupReport(m).ok, false, 'five players are too few for three crews');
+  for (let i = 5; i < 8; i++) addPlayer(m, { id: `p${i}`, name: NAMES[i] });
+  assert.equal(setupReport(m).ok, true);
+  m.players.forEach((p) => { p.ready = true; });
+  startMatch(m, seededRng(9), 1e6);
+  const G = m.G;
+  assert.deepEqual(G.crews, { B: ['p0', 'p1', 'p2'], G: ['p3', 'p4', 'p5'], V: ['p6', 'p7'] });
+  const c = (k) => G.tiles.filter((t) => t.k === k).length;
+  assert.equal(c(G.first), 7);
+  for (const x of ['B', 'G', 'V'].filter((x) => x !== G.first)) assert.equal(c(x), 6);
+  assert.equal(c('N'), 5);
+  assert.equal(c('D'), 1);
+  assert.equal(G.order[0], G.first);
+  for (const x of ['B', 'G', 'V']) assert.ok(playerView(m, G.caps[x]).me.g.register, 'each Undertaker sees the register');
+});
+
+test('three crews: turns go round; Death puts one crew out and the other two dig on', () => {
+  const { m, G, sign, dig } = setup3(6);
+  sign(1); dig(19); // an empty grave
+  assert.equal(G.turn, 'G');
+  sign(1); dig(24); // the Sun opens Death's grave
+  assert.deepEqual(G.out, ['G']);
+  assert.equal(m.phase, 'G_SIGN');
+  assert.equal(G.turn, 'V', 'the Stars are next');
+  sign(1); dig(20);
+  assert.equal(G.turn, 'B', 'the Sun is skipped');
+  sign(1); dig(7); // a Sun relic: it goes to the Sun, who are out
+  assert.equal(G.turn, 'V');
+  assert.equal(m.phase, 'G_SIGN');
+});
+
+test('three crews: a crew with all its relics wins', () => {
+  const { m, G, sign, dig } = setup3(6);
+  sign(7);
+  for (let i = 0; i < 7; i++) dig(i);
+  assert.equal(m.phase, 'ENDED');
+  assert.equal(G.winner, 'B');
+  assert.ok(publicView(m).graverobbers.order.length === 3);
+});
+
+test('bots play whole three-crew games', () => {
+  for (const n of [6, 9, 12]) for (let g = 0; g < 2; g++) {
+    const rng = seededRng(g + n * 7);
+    const m = newMatch({ id: 'b', code: 'B', hostId: 'p0' });
+    for (let i = 0; i < n; i++) addPlayer(m, { id: `p${i}`, name: NAMES[i], bot: true });
+    updateSettings(m, { mode: 'graverobbers', g: { teams: 3, tiles: g ? 'icons' : 'words' } });
+    m.players.forEach((p) => { p.ready = true; });
+    let now = 1e6;
+    startMatch(m, rng, now);
+    for (let guard = 0; m.phase !== 'ENDED' && guard < 5000; guard++) {
+      let acted = false;
+      for (const p of m.players) {
+        const d = botDecide(m, p.id, rng);
+        if (d?.cmd) { try { playerCommand(m, p.id, { ...d.cmd, phaseId: m.phaseId }, rng, (now += 10)); acted = true; } catch { /* stale */ } }
+        if (m.phase === 'ENDED') break;
+      }
+      if (!acted && m.phase !== 'ENDED') hostAdvance(m, rng, (now += 10));
+    }
+    assert.equal(m.phase, 'ENDED', `${n} game ${g}`);
+    assert.ok(['B', 'G', 'V'].includes(m.G.winner));
+  }
+});

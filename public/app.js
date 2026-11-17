@@ -948,9 +948,11 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     seats.push(`<button type="button" class="${cls}" data-key="tok-${p.id}" style="left:${x}%;top:${y}%" ${selectable ? `data-act="${pick.act}" data-id="${p.id}"` : 'tabindex="-1"'} aria-pressed="${isSel}" aria-label="${label}">
       <span class="tok-disc">${sigil(p.id)}${crack && !p.alive ? CRACK : ''}${inner}${badges.join('')}</span><span class="tok-name">${esc(p.name)}</span></button>`);
   }
+  // Crews around the table (Graverobbers lobby): the starburst takes each seat's crew colour in its sector.
+  const crewRays = crews ? crewSectors(pos, n, players, crews) : '';
   // the orbit line runs through the seat centres; small seats drop their bead ring
   const orbitInset = dense ? 0 : (50 - Math.hypot(pos[0].x - 50, pos[0].y - 50)).toFixed(2);
-  return `<div class="ring-wrap" data-key="ring-wrap"><div class="ring ${dense ? 'dense' : ''} ${tok < 44 ? 'small-tok' : ''} ${pick ? 'picking' : ''} ${pick?.tone === 'kill' ? 'kill' : ''} ${orb ? 'orb' : ''}" style="--tok:${tok}px;--orbit:${orbitInset}%" data-key="ring">
+  return `<div class="ring-wrap" data-key="ring-wrap"><div class="ring ${dense ? 'dense' : ''} ${tok < 44 ? 'small-tok' : ''} ${pick ? 'picking' : ''} ${pick?.tone === 'kill' ? 'kill' : ''} ${orb ? 'orb' : ''} ${crewRays ? 'crewed' : ''}" style="--tok:${tok}px;--orbit:${orbitInset}%${crewRays ? `;--crewrays:${crewRays}` : ''}" data-key="ring">
     <svg class="ring-fuse off" viewBox="0 0 100 100" data-ringfuse aria-hidden="true"><circle class="track" cx="50" cy="50" r="49"/><circle class="burn" cx="50" cy="50" r="49" pathLength="100"/></svg>
     <div class="ring-table" aria-hidden="true"></div>
     ${orb ? `<div class="ring-orb" data-key="ring-orb">${orb}</div>` : ''}
@@ -958,6 +960,21 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     ${seats.join('')}
     <div class="ring-center" data-key="center">${center}</div>
   </div></div>`;
+}
+
+const CREW_RAY = { B: 'var(--lapis)', G: 'var(--gilt-hi)', V: 'var(--amethyst)' };
+/**
+ * A conic gradient that gives every seat's sector of the table its crew's colour: each sector runs
+ * halfway to the neighbouring seats on either side. Empty seats keep the plain gilt.
+ */
+function crewSectors(pos, n, players, crews) {
+  if (n < 2) return '';
+  const seats = Array.from({ length: n }, (_, i) => ({ a: (Math.atan2(pos[i].x - 50, 50 - pos[i].y) * 180 / Math.PI + 360) % 360, c: CREW_RAY[crews[players[i]?.id]] ?? 'var(--gilt)' }))
+    .sort((x, y) => x.a - y.a);
+  const mid = (k) => (k < n - 1 ? (seats[k].a + seats[k + 1].a) / 2 : (seats[n - 1].a + seats[0].a + 360) / 2);
+  const from = mid(n - 1) - 360;
+  const stops = seats.map((x, k) => `${x.c} ${(k ? mid(k - 1) - from : 0).toFixed(1)}deg ${(mid(k) - from).toFixed(1)}deg`);
+  return `conic-gradient(from ${from.toFixed(1)}deg, ${stops.join(', ')})`;
 }
 
 function centerFor(v, pick) {

@@ -4424,3 +4424,58 @@ button.g-stone:active { transform: scale(0.96); }
 .g-ccrews > span { display: flex; align-items: center; gap: 4px; color: var(--crew); }
 .g-ccrews .emblem { width: 26px; height: 26px; }
 .g-ccrews b { font: 600 24px/1 var(--bit); }
+
+/* ── Graverobbers: the third crew, the Stars (amethyst) ─────────────────── */
+:root { --amethyst: #c4a2f2; --amethyst-2: #5c3f8f; --amethyst-ink: #e2d0fb; }
+.c-V { --crew: var(--amethyst); --crew-2: var(--amethyst-2); }
+.g-stone.reg.k-V { box-shadow: inset 0 0 0 3px var(--amethyst), inset 0 -10px 14px rgba(0, 0, 0, 0.3), 0 6px 10px -4px #000; background: radial-gradient(circle at 50% 30%, rgba(196, 162, 242, 0.4), transparent 65%), linear-gradient(180deg, #6c5f84, #3a3150); }
+.g-stone.open.k-V { background: radial-gradient(circle at 50% 45%, rgba(196, 162, 242, 0.55), rgba(36, 22, 56, 0.95) 70%), #1e1430; box-shadow: inset 0 0 0 2px var(--amethyst), 0 0 16px rgba(196, 162, 242, 0.35); color: var(--amethyst-ink); --paper: #251a3a; }
+.m-title.c-V, .g-signword.c-V { color: var(--amethyst-ink); }
+.g-signword.c-V .g-signn { background: var(--amethyst); }
+.ge-digs i.k-V { border-color: var(--amethyst); color: var(--amethyst); }
+.g-bar.c-V .gb-you { color: var(--amethyst); }
+.g-lobbyart .arc.c-V .arc-art .emblem { color: var(--amethyst-2); }
+/* a crew that opened Death's grave */
+.g-altar.out { opacity: 0.45; filter: grayscale(0.7); position: relative; }
+.ga-out { position: absolute; left: -4px; top: -6px; width: 18px; height: 18px; color: var(--blood-ink); }
+.ga-out .emblem { width: 100%; height: 100%; --paper: var(--ink); }
+.gt-crew:has(.g-altar.out) { opacity: 0.6; }
+/* three altars in the phone bar: the "you" line above them */
+.g-bar.three { display: grid; grid-template-columns: repeat(3, auto); justify-content: space-between; row-gap: 4px; }
+.g-bar.three .gb-you { grid-column: 1 / -1; text-align: center; }
+.g-bar.three .g-altar.sm .ga-beads { max-width: 46px; }
+.g-crews.three, .g-crewedit.three { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.g-crews.three section, .g-crewedit.three section { padding: 8px 6px; }
+.g-crews.three header b, .g-crewedit.three header b { font-size: 14px; }
+.g-crews.three li, .g-crewedit.three li { font-size: 10px; letter-spacing: 0.04em; gap: 4px; }
+.g-crews.three li > span:not(.g-disc), .g-crewedit.three li > span:not(.g-disc) { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.g-crewedit .g-move { color: var(--crew) !important; }
+.g-crewedit.three li .btn { margin-left: 0; min-height: 24px; min-width: 0; padding: 0 1px; flex: none; }
+.g-crewedit.three li .btn svg { width: 14px; height: 14px; }
+/* TV: the Sun and the Stars share the right-hand column */
+.gt-side { display: grid; gap: 14px; }
+.gt-cols.three .gt-crew { padding: 12px; }
+.gt-cols.three .gt-side .ga-sig { width: 48px; height: 48px; }
+/* the lot for three crews: a light runs round the three sigils, then the first crew's grows */
+.g-draw3 { position: relative; width: 200px; height: 170px; margin: 0 auto 14px; }
+.g-draw3 .gd { position: absolute; left: 50%; top: 55%; width: 64px; height: 64px; margin: -32px; display: grid; place-items: center; border-radius: 50%; border: 2px solid var(--crew-2); color: var(--crew); background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--crew-2) 70%, #000), #0b0a10);
+  transform: rotate(calc(var(--i) * 120deg)) translateY(-54px) rotate(calc(var(--i) * -120deg));
+  animation: gFlick 0.75s calc(var(--i) * 0.25s) 3 ease-in-out both, gDrawLost 0.5s 2.6s ease-out forwards; }
+.g-draw3 .gd.won { animation: gFlick 0.75s calc(var(--i) * 0.25s) 3 ease-in-out both, gDrawWon 0.6s 2.6s cubic-bezier(.3,1.6,.5,1) forwards; }
+.g-draw3 .gd .emblem { width: 64%; height: auto; --paper: transparent; }
+@keyframes gFlick { 0%, 100% { box-shadow: none; border-color: var(--crew-2); } 30% { box-shadow: 0 0 22px var(--crew); border-color: var(--crew); } }
+@keyframes gDrawWon { to { scale: 1.45; border-color: var(--crew); box-shadow: 0 0 30px var(--crew); z-index: 2; } }
+@keyframes gDrawLost { to { opacity: 0.25; scale: 0.8; } }
+
+/* Lobby: the starburst takes each crew's colour in its part of the table. */
+.ring.crewed .ring-table::before {
+  background: var(--crewrays);
+  -webkit-mask: repeating-conic-gradient(#000 0 1.5deg, transparent 1.5deg 9deg), radial-gradient(closest-side, transparent 52%, #000 54%, #000 95%, transparent 96%);
+  -webkit-mask-composite: source-in;
+  mask: repeating-conic-gradient(#000 0 1.5deg, transparent 1.5deg 9deg), radial-gradient(closest-side, transparent 52%, #000 54%, #000 95%, transparent 96%);
+  mask-composite: intersect;
+  opacity: 0.75;
+}
+.ring.crewed .ring-table::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--crewrays); opacity: 0.1; pointer-events: none;
+  -webkit-mask: radial-gradient(closest-side, #000 50%, transparent 97%); mask: radial-gradient(closest-side, #000 50%, transparent 97%); }
+.ring.crewed .ring-center { z-index: 3; }

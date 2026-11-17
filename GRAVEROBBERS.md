@@ -15,6 +15,17 @@ Midnight in an old cemetery. Two crews of grave robbers serve two rival deities,
 - Uneven numbers are fine (5 v 4, for example).
 - *Decide:* at 3 players, a co-op variant (one Undertaker, two diggers, against the clock). **Recommendation: not at launch.**
 
+### Three crews (option)
+
+- **6–12 players**, three crews: the **Moon** (lapis), the **Sun** (gilt) and the **Stars** (amethyst). Each needs an Undertaker and at least one digger.
+- **By seat,** the table is cut into thirds: the first third digs for the Moon, then the Sun, then the Stars (the earlier crews take any extra seat). The lobby table colours each seat, and each crew's part of the starburst, in its crew's colour.
+- **The deal:** a lot picks the crew that digs first. It hides **7 relics**, the other two crews **6 each**, with **5 empty graves** and **1 Death's grave** (7 + 6 + 6 + 5 + 1 = 25).
+- **Turns** go round in the order Moon → Sun → Stars, starting with the first crew.
+- **Another crew's relic** goes to that crew, and the turn passes to the next crew in order.
+- **Death's grave** puts the crew that opens it **out of the game**: its turns are skipped and it cannot win, but its relics stay in the ground (digging one up still ends your turn). When only one crew is left, it wins.
+- **All relics** win at once, as in the two-crew game, unless the crew is already out.
+- Only the three Undertakers see the burial register.
+
 ## 2. The cemetery (the board)
 
 - **25 graves** in a 5×5 grid, each with a **word** or an **icon** on its headstone (the mode is set in the lobby).
@@ -124,6 +135,7 @@ Midnight in an old cemetery. Two crews of grave robbers serve two rival deities,
 |---|---|
 | Graves show | **Words**, Icons |
 | Famous names in the word pool | **Off**, on |
+| Number of crews | **Two**, three (6+ players) |
 | Crews | **By seat**, random, chosen |
 | Undertakers | **Rotating**, random, chosen |
 | Signs | **Typed**, spoken |
