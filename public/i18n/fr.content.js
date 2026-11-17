@@ -5,6 +5,8 @@ export default {
   roles: {
     G_UNDERTAKER: { name: "Croque-mort", when: "Toujours", summary: "Tu tiens le registre des sépultures. Donne à ta bande un mot et un nombre.", detail: "Seuls toi et l’autre Croque-mort savez ce qui repose sous chaque pierre. Ton mot doit relier autant de tombes de ta bande, et mener loin de la tombe de la Mort." },
     G_DIGGER: { name: "Fossoyeur", when: "Toujours", summary: "Lis le signe de ton Croque-mort et déterre les reliques de ta bande.", detail: "Discutez, puis vote pour une tombe sur ton téléphone. Votre relique : creusez encore. Une tombe vide ou une relique de l’autre bande : le tour passe. La tombe de la Mort : votre bande perd." },
+    O_SEER: { name: "Voyant", when: "Toujours", summary: "Prédis où la roue s’arrêtera, et tourne-la quand ça paie.", detail: "À chaque tour, prédis en secret la Vie, la Mort ou la Renaissance, et décide si tu tournes la roue d’un cran (cela coûte une de tes cinq Influences). Tous les tours s’additionnent. Une prédiction juste rapporte 3 ; l’Influence inutilisée vaut 1 chacune à la fin." },
+    W_READER: { name: "Lecteur", when: "Toujours", summary: "Réponds au dilemme pour toi, et prédis un ami.", detail: "À chaque tour, tu réponds à un dilemme imaginaire et tu prédis la réponse de la personne que tu lis. Une prédiction juste rapporte 2 ; ta propre réponse, rien : surprendre ton lecteur est de bonne guerre." },
     Q_MIMIC: { name: "Imitateur", when: "Toujours", summary: "Tu portes le visage d’un ami. Tu ne sais pas où tu es.", detail: "Tous les autres partagent un même lieu. Écoute les questions, réponds comme si tu y étais, et devine le lieu. Démasque-toi à tout moment et nomme-le pour gagner ; un Imitateur condamné a encore un dernier essai." },
     Q_LIVING: { name: "Vivant", when: "Toujours", summary: "Tu connais le lieu. Prouve-le sans le trahir.", detail: "Pose et réponds à des questions sur le lieu : assez précis pour montrer que tu y es, assez vague pour que l’Imitateur ne le devine pas. Accuse une fois par partie ; seule une table unanime condamne." },
     S_GHOST: { name: "Fantôme", when: "Toujours", summary: "On t’a assassiné. Tu sais qui, où et pourquoi, et tu ne peux pas parler.", detail: "Envoie à chaque lecteur une vision pour sa rangée. D’une tache froide, givre une vision qui n’est pas la tienne." },
@@ -165,6 +167,8 @@ export default {
   },
   presets: {
     graverobbers: { name: "Dead Set : Pilleurs de tombes", blurb: "Deux bandes de pilleurs, la Lune et le Soleil, fouillent un cimetière de mots ou d’icônes pour les reliques de leur divinité. Seuls les croque-morts savent ce qui gît dessous. Une tombe appartient à la Mort." },
+    omen: { name: "Dead Set : Le Présage", blurb: "Une roue occulte indique la Vie, la Mort ou la Renaissance. Chacun peut la tourner en secret ; prédis où elle s’arrête." },
+    mirror: { name: "Dead Set : Le Miroir", blurb: "Le miroir hanté montre ce que tes amis pensent que tu ferais. Réponds au dilemme, et lis la personne en face de toi." },
     mimic: { name: "Dead Set : Imitateur", blurb: "Tout le monde sait où vous êtes, sauf la chose qui porte le visage d’un ami. Demandez, répondez, accusez ; l’Imitateur tend l’oreille pour trouver le lieu." },
     seance: { name: "Dead Set : Séance", blurb: "Un Fantôme assassiné et muet envoie des visions ; les Médiums y lisent qui, où et pourquoi. Un Imposteur parmi eux remplace des visions par des mensonges." },
     midnight: { name: "Dead Set : Minuit", blurb: "Une nuit, un vote. Les cartes changent de mains dans le noir ; à l’aube, tu es ce qui est posé devant toi. Trouve la Mort, ou sois-la." },
@@ -195,6 +199,89 @@ export default {
     'Tout le monde s’est réveillé. C’était pire, d’une certaine façon.',
     'La Mort a voté avec la ville. Évidemment.',
   ],
+  // The Mirror: dilemmas by stable id, [prompt, A, B, C] (see public/dilemmas.js).
+  dilemmas: {
+    d001: ["À minuit, un inconnu trempé par l’orage frappe et demande à entrer.", "Le faire entrer", "Parler à travers la porte", "Faire comme si personne n’était là"],
+    d002: ["Tu trouves un journal intime verrouillé dans le grenier de ta nouvelle maison.", "Forcer le cadenas et le lire", "Le rendre aux anciens propriétaires", "Le brûler sans le lire"],
+    d003: ["Une diseuse de bonne aventure propose de te dire le jour de ta mort.", "Écouter", "Refuser poliment", "Demander plutôt pour quelqu’un d’autre"],
+    d004: ["Lors d’un dîner, la lumière s’éteint et un cri retentit.", "Courir vers le cri", "Chercher d’abord une bougie", "Rester parfaitement immobile"],
+    d005: ["Un fantôme propose de hanter qui tu veux pendant une semaine.", "Nommer un rival", "Nommer un ami, pour rire", "Refuser"],
+    d006: ["Tu hérites d’un château en ruine, malédiction familiale comprise.", "Y emménager quand même", "Le vendre aussitôt", "En faire un hôtel"],
+    d007: ["Chaque nuit à trois heures, un corbeau se pose sur ton rebord de fenêtre.", "Le nourrir", "Lui parler", "Tirer les rideaux"],
+    d008: ["Tu peux passer une nuit enfermé dans un célèbre lieu hanté.", "Un cachot de château", "Un asile abandonné", "Un vaisseau fantôme en mer"],
+    d009: ["Ton reflet cligne des yeux un instant après toi.", "Le fixer jusqu’à ce qu’il cède", "Couvrir tous les miroirs", "Lui faire coucou pour voir"],
+    d010: ["Une séance tourne mal et un esprit demande un service.", "L’écouter", "Arrêter la séance aussitôt", "Négocier quelque chose d’abord"],
+    d011: ["Le dernier train est vide, à part un passager silencieux.", "S’asseoir à côté de lui", "S’asseoir le plus loin possible", "Attendre le train suivant"],
+    d012: ["Tu peux emporter un seul objet dans l’au-delà.", "Une photographie", "Un bon livre", "Un jeu de cartes"],
+    d013: ["Une pièce maudite porte chance mais te coûte un souvenir par jour.", "La garder", "La passer à quelqu’un", "La jeter dans la rivière"],
+    d014: ["Tu te perds au crépuscule dans une forêt brumeuse.", "Suivre les lumières au loin", "Grimper à un arbre et attendre", "Rebrousser chemin"],
+    d015: ["À un bal masqué, quelqu’un porte ton visage en guise de masque.", "L’affronter", "Le suivre discrètement", "Échanger les masques et partir"],
+    d016: ["Tu peux apprendre un secret sur chaque personne à cette table.", "Sa pire peur", "Son plus gros mensonge", "Son talent caché"],
+    d017: ["Un chat noir croise ton chemin avant un rendez-vous important.", "Continuer", "Prendre une autre route", "S’arrêter pour le caresser"],
+    d018: ["Ta maison est hantée par un fantôme sympathique mais très bruyant.", "Apprendre à vivre avec", "Appeler un exorciste", "Faire payer les touristes"],
+    d019: ["Tu te réveilles vampire.", "Embrasser la vie nocturne", "Chercher un remède", "Le garder secret et continuer"],
+    d020: ["Une lettre mystérieuse t’invite dans un manoir pour la lecture d’un testament.", "Y aller seul", "Y aller avec un ami", "L’ignorer"],
+    d021: ["Tu es le dernier client éveillé d’une vieille auberge, et l’escalier grince.", "Aller voir", "Fermer ta porte à clé", "Faire semblant de dormir"],
+    d022: ["Une sorcière t’offre une potion.", "Un philtre d’amour", "Un sérum de vérité", "Une potion d’invisibilité"],
+    d023: ["Tu peux vivre dans n’importe quel siècle, sans retour possible.", "Le passé", "Ici et maintenant", "Le futur lointain"],
+    d024: ["Un portrait qui parle offre des conseils en échange de ragots.", "Échanger des ragots", "L’ignorer", "Le retourner contre le mur"],
+    d025: ["Ton groupe est coincé dans un chalet et la nourriture manque demain.", "Mener l’évasion", "Rationner et attendre", "Fouiller la cave"],
+    d026: ["Tu entends ta propre voix t’appeler depuis les bois.", "Répondre", "Marcher vers elle", "Fuir dans l’autre sens"],
+    d027: ["Un génie exauce un vœu, mais la formulation doit être parfaite.", "Souhaiter la richesse", "Souhaiter plus de vœux", "Libérer le génie"],
+    d028: ["Une vieille boîte à musique joue toute seule chaque nuit.", "La remonter toi-même", "Retirer le mécanisme", "L’enregistrer comme preuve"],
+    d029: ["Tu ne peux manger qu’un seul repas pour le reste de ta vie.", "Un grand festin", "Du pain et de la soupe", "Quelque chose de sucré"],
+    d030: ["Tu trouves une carte de ton propre jardin, marquée d’une croix.", "Creuser cette nuit", "Creuser de jour avec des amis", "Laisser ça enterré"],
+    d031: ["Un ami t’avoue être secrètement un loup-garou.", "L’aider à le cacher", "L’enfermer à la pleine lune", "Demander à voir la transformation"],
+    d032: ["Tu peux échanger ta vie un jour avec quelqu’un de cette table.", "Quelqu’un d’intrépide", "Quelqu’un de riche", "Quelqu’un de mystérieux"],
+    d033: ["Le croque-mort propose d’organiser tes funérailles à l’avance, à prix réduit.", "Un grand cortège", "Une cérémonie discrète", "Une fête avec danse"],
+    d034: ["Chez toi, une horloge tourne à l’envers.", "La réparer", "La laisser tranquille", "Essayer de t’en servir"],
+    d035: ["Le cirque est en ville, et un clown te glisse un billet pour un spectacle secret.", "Y aller", "Donner le billet", "Le déchirer"],
+    d036: ["Tu peux parler à une seule espèce animale.", "Les chats", "Les corbeaux", "Les chiens"],
+    d037: ["Une tempête te bloque une nuit dans un phare avec un gardien qui ne dort jamais.", "Rester éveillé à discuter", "Dormir d’un œil", "Braver la tempête"],
+    d038: ["Ton ombre se met à bouger toute seule.", "La suivre", "Rester dans la lumière", "Devenir amis"],
+    d039: ["On t’offre l’immortalité, mais tu ne pourras jamais quitter cette ville.", "Accepter", "Refuser", "Demander une plus grande ville"],
+    d040: ["Un matin, une crypte scellée du cimetière est ouverte.", "Regarder dedans", "Prévenir le curé", "La refermer sans rien dire"],
+    d041: ["Tu peux garder l’un de ces objets pour toujours.", "Une clé qui ouvre toutes les portes", "Une bougie qui ne s’éteint jamais", "Une boussole qui indique la maison"],
+    d042: ["Aux enchères, un tableau maudit part pour presque rien.", "Enchérir", "Prévenir les autres enchérisseurs", "Partir"],
+    d043: ["Le village te demande de garder le pont la nuit où quelque chose le traverse.", "Monter la garde", "Tendre un piège", "Trouver une raison d’être ailleurs"],
+    d044: ["Ton biscuit chinois dit : Ne fais pas confiance à ta voisine de gauche.", "Y croire", "En rire", "Le lui montrer"],
+    d045: ["Tu peux revivre un jour de ta vie.", "Ton plus beau jour", "Un jour pour réparer une erreur", "Un jour ordinaire et paresseux"],
+    d046: ["Un miroir chez un antiquaire te montre dix ans plus vieux.", "L’acheter", "Demander ce qu’il montre", "Partir vite"],
+    d047: ["Un fantôme te protégera toute ta vie.", "Un chevalier", "Une grand-mère", "Un enfant espiègle"],
+    d048: ["L’hôte d’une soirée a verrouillé toutes les portes de l’extérieur.", "Chercher une autre sortie", "Continuer la fête", "Exiger une explication"],
+    d049: ["On ne se souviendra de toi que pour une seule chose.", "Ta gentillesse", "Ton courage", "Ton humour"],
+    d050: ["Un grimoire apparaît sur ton paillasson.", "Essayer un sort", "Le lire sans rien lancer", "L’apporter à une bibliothèque"],
+    d051: ["On t’offre une place sur un navire qui n’est jamais revenu de ses voyages.", "Embarquer", "Rester à terre", "Interroger l’équipage d’abord"],
+    d052: ["Tu découvres ton sosie dans le village voisin.", "Le rencontrer", "L’observer de loin", "Déménager"],
+    d053: ["Au dîner, toutes les bougies deviennent bleues en même temps.", "Continuer à manger", "Les souffler", "Demander à la pièce qui est là"],
+    d054: ["Tu peux arrêter le temps une heure, une seule fois.", "L’utiliser aujourd’hui", "La garder pour une urgence", "Dormir pendant cette heure"],
+    d055: ["Une gargouille de la cathédrale te réclame une devinette.", "Lui en dire une", "Lui en demander une", "Faire semblant de ne pas entendre"],
+    d056: ["Ta chanson préférée passe à tes propres funérailles. Laquelle ?", "Quelque chose de triste", "Quelque chose d’entraînant", "Quelque chose d’inattendu"],
+    d057: ["Tu peux exercer un seul métier dans une ville hantée.", "Croque-mort", "Aubergiste", "Veilleur de nuit"],
+    d058: ["Un ami emprunte ton manteau et le rend avec la lettre d’un inconnu dans la poche.", "Lire la lettre", "La lui rendre", "Chercher l’inconnu"],
+    d059: ["La pleine lune se lève et tous les chiens de la ville se mettent à hurler.", "Fermer les portes à clé", "Sortir voir", "Hurler avec eux"],
+    d060: ["Tu peux renoncer à un sens pour aiguiser les autres.", "Le goût", "L’odorat", "Jamais, aucun"],
+    d061: ["Une calèche sans cocher s’arrête devant toi.", "Monter", "Chercher le cocher", "Passer ton chemin"],
+    d062: ["Tu peux savoir ce qu’une personne pense vraiment de toi.", "Ton meilleur ami", "Ton rival", "Personne, merci"],
+    d063: ["Un épais brouillard tombe et la cloche de la ville sonne treize coups.", "Recompter", "Te cacher à l’intérieur", "Aller au clocher"],
+    d064: ["Tu découvres que ta maison cache une pièce secrète.", "L’ouvrir tout de suite", "Attendre le jour", "La tapisser"],
+    d065: ["Un colporteur vend de la chance en bouteille.", "Acheter une bouteille", "Acheter toute la caisse", "Le chasser de la ville"],
+    d066: ["Tu dois passer un an seul dans un monastère de montagne.", "Une pile de livres", "Un instrument de musique", "Un journal"],
+    d067: ["Tes feuilles de thé dessinent un nom que tu ne connais pas.", "Chercher cette personne", "Boire une autre tasse", "N’en parler à personne"],
+    d068: ["Tu peux assister en invité à n’importe quelle fête de l’histoire.", "Un couronnement royal", "Un bal masqué endiablé", "Un concert légendaire"],
+    d069: ["Un mourant te tend une clé et murmure : Ne l’ouvre jamais.", "L’ouvrir", "La garder pour toujours", "La jeter"],
+    d070: ["La table doit choisir qui explore la crypte en premier.", "Se porter volontaire", "Proposer quelqu’un d’autre", "Proposer de tirer à la courte paille"],
+    d071: ["On t’offre une place à la table de la Mort.", "Accepter poliment", "Apporter un cadeau", "Trouver une excuse"],
+    d072: ["Une vieille photo te montre à une fête il y a cent ans.", "Enquêter", "L’encadrer", "La cacher"],
+    d073: ["Tu peux te changer à volonté en une créature.", "Une chauve-souris", "Un loup", "Un chat"],
+    d074: ["Quelqu’un dépose des fleurs devant ta porte chaque nuit.", "Veiller pour voir qui", "Laisser un mot de remerciement", "Ne plus ouvrir la porte"],
+    d075: ["Un orage coupe le courant pendant un film d’horreur.", "Raconter des histoires de fantômes", "Aller se coucher", "Jouer la fin à la bougie"],
+    d076: ["Tu peux effacer une invention de l’histoire.", "Les réveils", "Les téléphones portables", "Rien, on garde tout"],
+    d077: ["À un carrefour à minuit, un inconnu propose d’accorder ta guitare.", "La lui confier", "Demander le prix d’abord", "Repartir avec ta guitare"],
+    d078: ["Tu peux faire revenir quelqu’un le temps d’une conversation.", "Un proche", "Une personnalité célèbre", "Un ami d’enfance"],
+    d079: ["Une trappe apparaît dans le sol de la cuisine pendant la nuit.", "Descendre", "La clouer", "Jeter une pièce et écouter"],
+    d080: ["La dernière bougie se consume, et un seul d’entre vous peut la tenir.", "La prendre", "L’offrir à quelqu’un d’autre", "La souffler ensemble"],
+  },
   guide: {
     mimicH: "Dead Set : Imitateur",
     mimic: `<p>Un jeu de questions pour 4 à 12 joueurs, environ 8 minutes par partie. Tout le monde partage un même <b>lieu</b> (une carte d’histoire) et y tient un <b>personnage</b>, sauf l’<b>Imitateur</b>, qui ne voit que de la neige et le tableau des lieux possibles.</p>
@@ -205,6 +292,22 @@ export default {
 <li><b>Le temps est écoulé :</b> chacun désigne un suspect. Le plus désigné est condamné ; en cas d’égalité, l’Imitateur s’échappe.</li>
 </ol>
 <p>Barre des lieux sur ton propre téléphone en écoutant : tes notes sont privées. Scores : les Vivants +1 chacun (celui qui a démasqué l’Imitateur +1 de plus) ; l’Imitateur +2, ou +3 s’il nomme le lieu.</p>`,
+    omenH: "Dead Set : Le Présage",
+    omen: `<p>Un jeu de prédiction pour 4 à 12 joueurs, environ 10 minutes. Une roue indique la <b>Vie</b>, la <b>Mort</b> ou la <b>Renaissance</b>, dans cet ordre, en cercle. Sept tours ; chacun a cinq <b>Influences</b>.</p>
+<ol>
+<li><b>La roue</b> montre d’où elle part.</li>
+<li><b>En secret</b>, tu prédis où elle s’arrête, et tu peux la tourner d’un cran dans un sens ou dans l’autre (pour une Influence).</li>
+<li><b>Tous les tours s’additionnent</b>, et la roue bouge une seule fois. Une prédiction juste rapporte 3.</li>
+</ol>
+<p>À la fin, chaque Influence inutilisée vaut un point. Le plus de points gagne ; les égalités se partagent.</p>`,
+    mirrorH: "Dead Set : Le Miroir",
+    mirror: `<p>Un jeu pour lire les autres, de 4 à 12 joueurs, environ 15 minutes. Huit <b>dilemmes</b> imaginaires à trois réponses ; aucune n’est la bonne.</p>
+<ol>
+<li><b>La discussion.</b> Tu vois qui tu lis ce tour-ci. Demande, taquine, brouille les pistes.</li>
+<li><b>Le bulletin scellé.</b> Tu réponds pour toi et tu prédis la réponse de la personne que tu lis.</li>
+<li><b>Le miroir</b> montre tout : une prédiction juste rapporte 2, ta propre réponse rien.</li>
+</ol>
+<p>Les paires tournent à chaque tour : chacun lit tout le monde. Le meilleur lecteur gagne.</p>`,
     graveH: "Dead Set : Pilleurs de tombes",
     grave: `<p>Un jeu d’équipe avec des mots (ou des icônes) pour 4 à 12 joueurs, environ 15 minutes. Deux bandes de pilleurs, la <b>Lune</b> et le <b>Soleil</b>, fouillent un cimetière de 25 pierres tombales pour trouver les reliques qui invoqueront leur divinité. La bande qui gagne le tirage à pile ou face a 9 reliques en terre, l’autre 8 ; 7 tombes sont vides, et une appartient à la <b>Mort</b>.</p>
 <ol>

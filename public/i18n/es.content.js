@@ -5,6 +5,8 @@ export default {
   roles: {
     G_UNDERTAKER: { name: "Enterrador", when: "Siempre", summary: "Tienes el registro de sepulturas. Da a tu cuadrilla una palabra y un número.", detail: "Solo tú y el otro Enterrador sabéis qué yace bajo cada piedra. Tu palabra debe unir tantas tumbas de tu cuadrilla y llevar lejos de la tumba de la Muerte." },
     G_DIGGER: { name: "Saqueador", when: "Siempre", summary: "Lee la señal de tu Enterrador y desentierra las reliquias de tu cuadrilla.", detail: "Habladlo y vota por una tumba en tu móvil. Vuestra reliquia: seguid cavando. Una tumba vacía o una reliquia de la otra cuadrilla: el turno pasa. La tumba de la Muerte: vuestra cuadrilla pierde." },
+    O_SEER: { name: "Vidente", when: "Siempre", summary: "Predice dónde se detiene la rueda, y gírala cuando compense.", detail: "Cada ronda, predice en secreto Vida, Muerte o Renacimiento, y decide si giras la rueda un paso (cuesta una de tus cinco Influencias). Todos los giros se suman. Acertar vale 3; la Influencia sin usar vale 1 cada una al final." },
+    W_READER: { name: "Lector", when: "Siempre", summary: "Responde al dilema por ti, y predice a un amigo.", detail: "Cada ronda respondes a un dilema ficticio y predices la respuesta de quien lees. Acertar vale 2; tu propia respuesta no puntúa, así que sorprender a tu lector es juego limpio." },
     Q_MIMIC: { name: "Imitador", when: "Siempre", summary: "Llevas la cara de un amigo. No sabes dónde estás.", detail: "Todos los demás comparten un lugar. Escucha las preguntas, responde como si pertenecieras allí y averigua el lugar. Desenmascárate cuando quieras y nómbralo para ganar; un Imitador condenado aún tiene un último intento." },
     Q_LIVING: { name: "Vivo", when: "Siempre", summary: "Conoces el lugar. Demuéstralo sin delatarlo.", detail: "Pregunta y responde sobre el lugar: con la precisión justa para demostrar que estuviste allí y la vaguedad justa para que el Imitador no lo adivine. Acusa una vez por partida; solo una mesa unánime condena." },
     S_GHOST: { name: "Fantasma", when: "Siempre", summary: "Te asesinaron. Sabes quién, dónde y por qué, y no puedes hablar.", detail: "Envía a cada lector una visión para su fila. Con una mancha fría, escarcha una visión que no es tuya." },
@@ -165,6 +167,8 @@ export default {
   },
   presets: {
     graverobbers: { name: "Dead Set: Saqueadores de tumbas", blurb: "Dos cuadrillas de saqueadores, la Luna y el Sol, excavan un cementerio de palabras o iconos en busca de las reliquias de su deidad. Solo los enterradores saben qué hay debajo. Una tumba es de la Muerte." },
+    omen: { name: "Dead Set: El Presagio", blurb: "Una rueda oculta señala la Vida, la Muerte o el Renacimiento. Cualquiera puede girarla en secreto; predice dónde se detiene." },
+    mirror: { name: "Dead Set: El Espejo", blurb: "El espejo encantado muestra lo que tus amigos creen que harías. Responde al dilema y lee a quien tienes enfrente." },
     mimic: { name: "Dead Set: Imitador", blurb: "Todos saben dónde estáis, salvo la cosa que lleva la cara de un amigo. Pregunta, responde, acusa; el Imitador escucha para dar con el lugar." },
     seance: { name: "Dead Set: Sesión", blurb: "Un Fantasma asesinado y mudo envía visiones; los Médiums leen en ellas quién, dónde y por qué. Un Impostor entre ellos cambia visiones por mentiras." },
     midnight: { name: "Dead Set: Medianoche", blurb: "Una noche, una votación. Las cartas cambian de manos en la oscuridad; al amanecer eres lo que tienes delante. Encuentra a la Muerte, o sé ella." },
@@ -195,6 +199,89 @@ export default {
     'Todos despertaron. De algún modo, fue peor.',
     'La Muerte votó con el pueblo. Cómo no.',
   ],
+  // The Mirror: dilemmas by stable id, [prompt, A, B, C] (see public/dilemmas.js).
+  dilemmas: {
+    d001: ["A medianoche llama un desconocido, empapado por la tormenta, pidiendo entrar.", "Dejarle pasar", "Hablar a través de la puerta", "Fingir que no hay nadie"],
+    d002: ["Encuentras un diario cerrado con candado en el desván de tu casa nueva.", "Forzar el candado y leerlo", "Devolverlo a los antiguos dueños", "Quemarlo sin leerlo"],
+    d003: ["Una adivina se ofrece a decirte el día de tu muerte.", "Escucharla", "Rechazarlo con educación", "Preguntar por otra persona"],
+    d004: ["En una cena se apagan las luces y suena un grito.", "Correr hacia el grito", "Buscar antes una vela", "Quedarte totalmente quieto"],
+    d005: ["Un fantasma se ofrece a perseguir a quien elijas durante una semana.", "Nombrar a un rival", "Nombrar a un amigo, por diversión", "Rechazar la oferta"],
+    d006: ["Heredas un castillo en ruinas con maldición familiar incluida.", "Mudarte igualmente", "Venderlo enseguida", "Convertirlo en hotel"],
+    d007: ["Un cuervo se posa en tu ventana cada noche a las tres.", "Darle de comer", "Hablarle", "Correr las cortinas"],
+    d008: ["Puedes pasar una noche encerrado en un famoso lugar encantado.", "La mazmorra de un castillo", "Un manicomio abandonado", "Un barco fantasma en alta mar"],
+    d009: ["Tu reflejo parpadea un instante después que tú.", "Sostenerle la mirada", "Tapar todos los espejos", "Saludarlo a ver qué pasa"],
+    d010: ["Una sesión de espiritismo sale mal y un espíritu pide un favor.", "Escucharlo", "Terminar la sesión al instante", "Negociar algo primero"],
+    d011: ["El último tren a casa va vacío salvo por un pasajero silencioso.", "Sentarte a su lado", "Sentarte lo más lejos posible", "Esperar al siguiente tren"],
+    d012: ["Puedes llevarte un objeto al más allá.", "Una fotografía", "Un buen libro", "Una baraja de cartas"],
+    d013: ["Una moneda maldita da suerte, pero te cuesta un recuerdo cada día.", "Quedártela", "Pasársela a otro", "Tirarla al río"],
+    d014: ["Te pierdes al anochecer en un bosque con niebla.", "Seguir las luces lejanas", "Subir a un árbol y esperar", "Volver por donde viniste"],
+    d015: ["En un baile de máscaras, alguien lleva tu cara como máscara.", "Enfrentarte a él", "Seguirlo en silencio", "Cambiar de máscara e irte"],
+    d016: ["Puedes conocer un secreto de cada persona de esta mesa.", "Su peor miedo", "Su mayor mentira", "Su talento oculto"],
+    d017: ["Un gato negro se cruza en tu camino antes de una cita importante.", "Seguir adelante", "Tomar otra calle", "Pararte a acariciarlo"],
+    d018: ["Tu casa está encantada por un fantasma amable pero muy ruidoso.", "Aprender a convivir con él", "Llamar a un exorcista", "Cobrar entrada a los turistas"],
+    d019: ["Te despiertas convertido en vampiro.", "Abrazar la vida nocturna", "Buscar una cura", "Guardar el secreto y seguir"],
+    d020: ["Una carta misteriosa te invita a una mansión para la lectura de un testamento.", "Ir solo", "Ir con un amigo", "Ignorarla"],
+    d021: ["Eres el último huésped despierto en una vieja posada y cruje la escalera.", "Investigar", "Cerrar tu puerta con llave", "Fingir que duermes"],
+    d022: ["Una bruja te regala una poción.", "Poción de amor", "Poción de la verdad", "Poción de invisibilidad"],
+    d023: ["Puedes vivir en cualquier siglo, sin vuelta atrás.", "El pasado", "Aquí y ahora", "El futuro lejano"],
+    d024: ["Un retrato parlante da consejos a cambio de cotilleos.", "Darle cotilleos", "Ignorarlo", "Ponerlo de cara a la pared"],
+    d025: ["Tu grupo está atrapado en una cabaña y mañana se acaba la comida.", "Liderar la huida", "Racionar y esperar", "Registrar el sótano"],
+    d026: ["Oyes tu propia voz llamándote desde el bosque.", "Responder", "Ir hacia ella", "Huir en dirección contraria"],
+    d027: ["Un genio concede un deseo, pero la frase debe ser perfecta.", "Desear riqueza", "Desear más deseos", "Liberar al genio"],
+    d028: ["Una vieja caja de música suena sola cada noche.", "Darle cuerda tú", "Quitarle el mecanismo", "Grabarla como prueba"],
+    d029: ["Solo puedes comer un plato el resto de tu vida.", "Un gran banquete", "Pan y sopa sencillos", "Algo dulce"],
+    d030: ["Encuentras un mapa de tu propio jardín marcado con una X.", "Cavar esta noche", "Cavar de día con amigos", "Dejarlo enterrado"],
+    d031: ["Un amigo te confiesa que es un hombre lobo en secreto.", "Ayudarle a ocultarlo", "Encerrarlo con luna llena", "Pedirle ver la transformación"],
+    d032: ["Puedes cambiar tu vida un día con alguien de esta mesa.", "Alguien sin miedo", "Alguien rico", "Alguien misterioso"],
+    d033: ["El enterrador ofrece planear tu funeral por adelantado, con descuento.", "Un gran cortejo", "Una ceremonia sencilla", "Una fiesta con baile"],
+    d034: ["En tu casa hay un reloj que va hacia atrás.", "Arreglarlo", "Dejarlo estar", "Intentar usarlo"],
+    d035: ["Llega el circo y un payaso te pasa una entrada para un espectáculo secreto.", "Ir", "Regalar la entrada", "Romperla"],
+    d036: ["Puedes hablar con una especie animal.", "Los gatos", "Los cuervos", "Los perros"],
+    d037: ["Una tormenta te encierra una noche en un faro con un farero que nunca duerme.", "Quedarte charlando", "Dormir con un ojo abierto", "Desafiar la tormenta"],
+    d038: ["Tu sombra empieza a moverse sola.", "Seguirla", "Quedarte en la luz", "Hacerte su amigo"],
+    d039: ["Te ofrecen la inmortalidad, pero nunca podrás salir de este pueblo.", "Aceptar", "Rechazar", "Pedir un pueblo más grande"],
+    d040: ["Una mañana, una cripta sellada del cementerio aparece abierta.", "Mirar dentro", "Avisar al cura", "Cerrarla y callar"],
+    d041: ["Puedes quedarte para siempre con una de estas cosas.", "Una llave que abre cualquier puerta", "Una vela que nunca se apaga", "Una brújula que señala a casa"],
+    d042: ["En una subasta, un cuadro maldito sale muy barato.", "Pujar", "Avisar a los demás postores", "Marcharte"],
+    d043: ["El pueblo te pide vigilar el puente la noche en que algo lo cruza.", "Hacer guardia", "Poner una trampa", "Buscar una excusa para no estar"],
+    d044: ["Tu galleta de la suerte dice: No confíes en quien está a tu izquierda.", "Creértelo", "Reírte", "Enseñársela"],
+    d045: ["Puedes volver a vivir un día de tu vida.", "Tu día más feliz", "Un día para enmendar un error", "Un día corriente y perezoso"],
+    d046: ["Un espejo de una tienda de antigüedades te muestra diez años mayor.", "Comprarlo", "Preguntar qué muestra", "Irte rápido"],
+    d047: ["Un fantasma te protegerá de por vida.", "Un caballero", "Una abuela", "Un niño travieso"],
+    d048: ["El anfitrión de una fiesta ha cerrado todas las puertas por fuera.", "Buscar otra salida", "Seguir la fiesta", "Exigir una explicación"],
+    d049: ["Solo te recordarán por una cosa.", "La bondad", "El valor", "El humor"],
+    d050: ["Aparece un libro de hechizos en tu puerta.", "Probar un hechizo", "Leerlo sin lanzar nada", "Llevarlo a una biblioteca"],
+    d051: ["Te ofrecen plaza en un barco que nunca ha vuelto de sus viajes.", "Zarpar", "Quedarte en tierra", "Preguntar antes a la tripulación"],
+    d052: ["Descubres que tu doble vive en el pueblo de al lado.", "Conocerlo", "Observarlo de lejos", "Mudarte"],
+    d053: ["En la cena, todas las velas se vuelven azules a la vez.", "Seguir comiendo", "Apagarlas", "Preguntar quién está ahí"],
+    d054: ["Puedes detener el tiempo una hora, una sola vez.", "Usarlo hoy", "Guardarlo para una emergencia", "Usarlo para dormir"],
+    d055: ["Una gárgola de la catedral te pide una adivinanza.", "Contarle una", "Pedirle una a ella", "Fingir que no la oyes"],
+    d056: ["Tu canción favorita suena en tu propio funeral. ¿Cuál es?", "Algo triste", "Algo alegre", "Algo que nadie espera"],
+    d057: ["Solo puedes tener un oficio en un pueblo encantado.", "Enterrador", "Posadero", "Sereno"],
+    d058: ["Un amigo te pide prestado el abrigo y lo devuelve con la carta de un desconocido en el bolsillo.", "Leer la carta", "Devolvérsela", "Buscar al desconocido"],
+    d059: ["Sale la luna llena y todos los perros del pueblo empiezan a aullar.", "Cerrar las puertas", "Salir a mirar", "Aullar con ellos"],
+    d060: ["Puedes renunciar a un sentido para agudizar los demás.", "El gusto", "El olfato", "Nunca, a ninguno"],
+    d061: ["Un carruaje sin cochero se detiene ante ti.", "Subir", "Buscar al cochero", "Seguir andando"],
+    d062: ["Puedes saber exactamente qué piensa de ti una persona.", "Tu mejor amigo", "Tu rival", "Nadie, gracias"],
+    d063: ["Llega una niebla espesa y la campana del pueblo da trece campanadas.", "Volver a contar", "Esconderte en casa", "Ir al campanario"],
+    d064: ["Descubres que tu casa tiene una habitación oculta.", "Abrirla ya", "Esperar a que sea de día", "Empapelarla"],
+    d065: ["Un vendedor ambulante vende suerte embotellada.", "Comprar una botella", "Comprar la caja entera", "Echarlo del pueblo"],
+    d066: ["Debes pasar un año solo en un monasterio de montaña.", "Llevar una pila de libros", "Llevar un instrumento", "Llevar un diario"],
+    d067: ["Los posos del té forman un nombre que no conoces.", "Buscar a esa persona", "Tomar otra taza", "No contárselo a nadie"],
+    d068: ["Puedes ir como invitado a cualquier fiesta de la historia.", "Una coronación real", "Un baile de máscaras desenfrenado", "Un concierto legendario"],
+    d069: ["Un moribundo te da una llave y susurra: Nunca lo abras.", "Abrirlo", "Guardarla para siempre", "Tirarla"],
+    d070: ["La mesa debe elegir quién explora primero la cripta.", "Ofrecerte voluntario", "Proponer a otro", "Proponer echarlo a suertes"],
+    d071: ["Te ofrecen un sitio en la mesa de la Muerte.", "Aceptar con educación", "Llevar un regalo", "Poner una excusa"],
+    d072: ["Una foto antigua te muestra en una fiesta de hace cien años.", "Investigar", "Enmarcarla", "Esconderla"],
+    d073: ["Puedes convertirte a voluntad en una criatura.", "Un murciélago", "Un lobo", "Un gato"],
+    d074: ["Alguien deja flores en tu puerta cada noche.", "Quedarte despierto para ver quién", "Dejar una nota de agradecimiento", "Dejar de abrir la puerta"],
+    d075: ["Una tormenta corta la luz durante una película de terror.", "Contar historias de fantasmas", "Irte a dormir", "Representar el final a la luz de las velas"],
+    d076: ["Puedes deshacer un invento de la historia.", "Los despertadores", "Los móviles", "Nada, que siga todo"],
+    d077: ["En un cruce a medianoche, un desconocido se ofrece a afinar tu guitarra.", "Dársela", "Preguntar antes el precio", "Irte con tu guitarra"],
+    d078: ["Puedes traer a alguien de vuelta para una sola conversación.", "Un familiar", "Un personaje famoso", "Un amigo de la infancia"],
+    d079: ["De la noche a la mañana aparece una trampilla en el suelo de la cocina.", "Bajar", "Clavarla", "Tirar una moneda y escuchar"],
+    d080: ["La última vela se consume y solo uno de vosotros puede sostenerla.", "Cogerla", "Ofrecérsela a otro", "Apagarla juntos"],
+  },
   guide: {
     mimicH: "Dead Set: Imitador",
     mimic: `<p>Un juego de preguntas para 4–12 jugadores, unos 8 minutos por partida. Todos comparten un <b>lugar</b> (una carta de historia) y tienen allí un <b>personaje</b>, salvo el <b>Imitador</b>, que solo ve estática y el tablero de lugares posibles.</p>
@@ -205,6 +292,22 @@ export default {
 <li><b>Se acabó el tiempo:</b> todos señalan a un sospechoso. Quien tenga más votos es condenado; con empate, el Imitador se escabulle.</li>
 </ol>
 <p>Tacha lugares en tu propio teléfono mientras escuchas: tus notas son privadas. Puntos: los Vivos +1 cada uno (quien atrapó al Imitador, +1 más); el Imitador +2, o +3 por nombrar el lugar.</p>`,
+    omenH: "Dead Set: El Presagio",
+    omen: `<p>Un juego de predicción para 4–12 jugadores, unos 10 minutos. Una rueda señala la <b>Vida</b>, la <b>Muerte</b> o el <b>Renacimiento</b>, en ese orden, en círculo. Siete rondas; cada cual tiene cinco <b>Influencias</b>.</p>
+<ol>
+<li><b>La rueda</b> muestra dónde empieza.</li>
+<li><b>En secreto</b> predices dónde se detiene, y puedes girarla un paso en cualquier sentido (por una Influencia).</li>
+<li><b>Todos los giros se suman</b> y la rueda se mueve una sola vez. Acertar vale 3.</li>
+</ol>
+<p>Al final, cada Influencia sin usar vale un punto. Gana quien tenga más puntos; los empates se comparten.</p>`,
+    mirrorH: "Dead Set: El Espejo",
+    mirror: `<p>Un juego de leer a los demás para 4–12 jugadores, unos 15 minutos. Ocho <b>dilemas</b> ficticios con tres respuestas; ninguna es la correcta.</p>
+<ol>
+<li><b>La charla.</b> Ves a quién lees esta ronda. Pregunta, provoca, despista.</li>
+<li><b>El voto sellado.</b> Respondes por ti y predices la respuesta de quien lees.</li>
+<li><b>El espejo</b> lo muestra todo: acertar vale 2, tu propia respuesta nada.</li>
+</ol>
+<p>Las parejas cambian cada ronda, así que todos leen a todos. Gana quien mejor lee.</p>`,
     graveH: "Dead Set: Saqueadores de tumbas",
     grave: `<p>Un juego por equipos con palabras (o iconos) para 4 a 12 jugadores, unos 15 minutos. Dos cuadrillas de saqueadores, la <b>Luna</b> y el <b>Sol</b>, excavan un cementerio de 25 lápidas en busca de las reliquias que invocarán a su deidad. La cuadrilla que gana a cara o cruz tiene 9 reliquias bajo tierra, la otra 8; 7 tumbas están vacías y una es de la <b>Muerte</b>.</p>
 <ol>

@@ -10,6 +10,8 @@ import { sceneMs, scenesFor } from './interludes.js';
 import { cardArt, roleEmblemId, roleNumber } from './cards.js';
 import { emblem } from './emblems.js';
 import { isGravePhase, graveMain, graveDock, graveActs, graveMoment, graveMomentHtml, G_MOMENT_TIME, graveEndHtml, graveLobbyDeck, GRAVE_QUIET, graveTitle, lobbyCrews, graveLobbyCenter } from './graverobbers.js';
+import { isOmenPhase, omenMain, omenDock, omenActs, omenMoment, omenMomentHtml, O_MOMENT_TIME, omenEndHtml, omenLobbyDeck, OMEN_QUIET, omenTitle } from './omen.js';
+import { isMirrorPhase, mirrorMain, mirrorDock, mirrorActs, mirrorMoment, mirrorMomentHtml, W_MOMENT_TIME, mirrorEndHtml, mirrorLobbyDeck, MIRROR_QUIET, mirrorTitle } from './mirror.js';
 import { isMimicPhase, mimicMain, mimicDock, mimicActs, mimicMoment, mimicMomentHtml, Q_MOMENT_TIME, mimicEndHtml, mimicLobbyDeck, MIMIC_QUIET, mimicTitle } from './mimic.js';
 import { isSeancePhase, seanceMain, seanceDock, seanceActs, seanceMoment, seanceMomentHtml, S_MOMENT_TIME, seanceEndHtml, seanceLobbyDeck, boardSheet as seanceSheet, SEANCE_QUIET, seanceTitle } from './seance.js';
 import { isMidnightPhase, midnightMain, midnightDock, midnightActs, midnightMoment, midnightMomentHtml, N_MOMENT_TIME, midnightEndHtml, midnightLobbyDeck, cardsSheet, MIDNIGHT_QUIET } from './midnight.js';
@@ -287,6 +289,8 @@ function detectMoments(v) {
   // Side Missions: the owner learns at once (personal, queued behind any shared scene).
   if (v.mode === 'missions' && v.me && !v.me.moderator) for (const x of freshPriv.filter((e) => e.kind === 'side' && e.state)) out.push({ type: 'mside', side: x.side, state: x.state, sound: x.state === 'done' ? 'approve' : 'unpick', tapOnly: true });
   function entryMoments(l) {
+    if (v.mode === 'omen' && l.ev?.startsWith('o-')) { const mm = omenMoment(l, v); if (mm) out.push(mm); return; }
+    if (v.mode === 'mirror' && l.ev?.startsWith('w-')) { const mm = mirrorMoment(l, v); if (mm) out.push(mm); return; }
     if (v.mode === 'mimic' && l.ev?.startsWith('q-')) { const mm = mimicMoment(l, v, fresh, { notify, name }); if (mm) out.push(...[].concat(mm)); return; }
     if (v.mode === 'graverobbers' && l.ev?.startsWith('g-')) { const mm = graveMoment(l, v, fresh, { notify, name }); if (mm) out.push(...[].concat(mm)); return; }
     if (v.mode === 'seance' && l.ev?.startsWith('s-')) { const mm = seanceMoment(l, v, fresh, { notify, name }); if (mm) out.push(...[].concat(mm)); return; }
@@ -373,9 +377,9 @@ function detectMoments(v) {
 const sceneData = (m) => ({ coin: m.coin ?? null, rules: m.rules?.length ?? 0, dead: (m.killed?.length ?? 0) + (m.expired?.length ?? 0), n: m.cards ? m.cards.length : m.count ?? 0 });
 
 const MOMENT_SOUND = { night0: 'night', day1: 'dawn', nightfall: 'night', dawn: 'dawn', tally: 'knock', death: 'death', revive: 'revive', bloodmoon: 'bloodmoon' };
-const END_THEME = { MIMIC: 'winLiving', GRAVEROBBERS: 'winLiving', SEANCE: 'winLiving', MIDNIGHT: 'winLiving', CARNIVAL: 'winJester', COFFINS: 'winLiving', DEMON: 'winDeath', DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester', LOVERS: 'winLovers', CULT: 'winCult', RIPPER: 'winRipper' };
+const END_THEME = { OMEN: 'winLiving', MIRROR: 'winLiving', MIMIC: 'winLiving', GRAVEROBBERS: 'winLiving', SEANCE: 'winLiving', MIDNIGHT: 'winLiving', CARNIVAL: 'winJester', COFFINS: 'winLiving', DEMON: 'winDeath', DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester', LOVERS: 'winLovers', CULT: 'winCult', RIPPER: 'winRipper' };
 const MOMENT_TIME = { end: 9000, private: 6000, gift: 5600, mside: 5200, coin: 5200, night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 5200, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
-const momentTime = (m) => (m.type === 'mreveal' ? revealTime(m) : Q_MOMENT_TIME[m.type] ? Q_MOMENT_TIME[m.type] : S_MOMENT_TIME[m.type] ? S_MOMENT_TIME[m.type] : G_MOMENT_TIME[m.type] ? G_MOMENT_TIME[m.type] : N_MOMENT_TIME[m.type] ? N_MOMENT_TIME[m.type] : K_MOMENT_TIME[m.type] ? K_MOMENT_TIME[m.type] : C_MOMENT_TIME[m.type] ? C_MOMENT_TIME[m.type] : X_MOMENT_TIME[m.type] ? X_MOMENT_TIME[m.type] : MISSION_MOMENT_TIME[m.type] ? MISSION_MOMENT_TIME[m.type] : !onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : (MOMENT_TIME[m.type] ?? 6000) + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
+const momentTime = (m) => (m.type === 'mreveal' ? revealTime(m) : O_MOMENT_TIME[m.type] ? O_MOMENT_TIME[m.type] : W_MOMENT_TIME[m.type] ? W_MOMENT_TIME[m.type] : Q_MOMENT_TIME[m.type] ? Q_MOMENT_TIME[m.type] : S_MOMENT_TIME[m.type] ? S_MOMENT_TIME[m.type] : G_MOMENT_TIME[m.type] ? G_MOMENT_TIME[m.type] : N_MOMENT_TIME[m.type] ? N_MOMENT_TIME[m.type] : K_MOMENT_TIME[m.type] ? K_MOMENT_TIME[m.type] : C_MOMENT_TIME[m.type] ? C_MOMENT_TIME[m.type] : X_MOMENT_TIME[m.type] ? X_MOMENT_TIME[m.type] : MISSION_MOMENT_TIME[m.type] ? MISSION_MOMENT_TIME[m.type] : !onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : (MOMENT_TIME[m.type] ?? 6000) + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
 
 function nextMoment() {
   clearTimeout(S.momentTimer);
@@ -445,7 +449,7 @@ function verdictMedal(id, nm) {
   const inner = p?.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="vm-ini">${esc([...(nm ?? '?')][0] ?? '?')}</span>`;
   return `<span class="v-medal" aria-hidden="true"><span class="v-disc">${inner}</span></span>`;
 }
-const WIN_GLYPH = { MIMIC: 'mimic', GRAVEROBBERS: 'undertaker', SEANCE: 'shade', MIDNIGHT: 'moon', CARNIVAL: 'veiled', COFFINS: 'undertaker', DEMON: 'death', DEATH: 'death', JESTER: 'jester', NON_DEATH: 'innocent', LOVERS: 'heart', CULT: 'cult', RIPPER: 'ripper' };
+const WIN_GLYPH = { OMEN: 'oracle', MIRROR: 'maskedvote', MIMIC: 'mimic', GRAVEROBBERS: 'undertaker', SEANCE: 'shade', MIDNIGHT: 'moon', CARNIVAL: 'veiled', COFFINS: 'undertaker', DEMON: 'death', DEATH: 'death', JESTER: 'jester', NON_DEATH: 'innocent', LOVERS: 'heart', CULT: 'cult', RIPPER: 'ripper' };
 const WIN_CLASS = { NON_DEATH: 'living', LOVERS: 'lovers', CULT: 'cult', RIPPER: 'ripper' };
 
 /** Midnight's verdict, from the winning sides. */
@@ -461,6 +465,8 @@ function didIWin(v, winner) {
   if (winner === 'CARNIVAL') return !!v.carnival?.winners?.includes(me.id);
   if (winner === 'MIDNIGHT') return !!v.midnight?.winners?.players?.includes(me.id);
   if (winner === 'SEANCE') return !!v.seance?.winners?.includes(me.id);
+  if (winner === 'OMEN') return !!v.omen?.winners?.includes(me.id);
+  if (winner === 'MIRROR') return !!v.mirror?.winners?.includes(me.id);
   if (winner === 'MIMIC') { const r = v.mimic?.result; return r ? (r.side === 'LIVING') !== (r.mimic === me.id) : null; }
   if (winner === 'GRAVEROBBERS') return !!v.graverobbers?.crews?.[v.graverobbers?.winner]?.includes(me.id);
   if (winner === 'JESTER') return v.jesterId === me.id;
@@ -546,6 +552,8 @@ function momentHtml(m) {
     case 'cdig': case 'cresult': case 'crise': case 'clantern': body = coffinsMomentHtml(m, { letters, onBoard, V }); break;
     case 'nfall': case 'ndawn': body = midnightMomentHtml(m, { letters, onBoard, V }); break;
     case 'gstart': case 'gsign': case 'gcoin': case 'gdig': body = graveMomentHtml(m, { letters, onBoard, V }); break;
+    case 'ospin': body = omenMomentHtml(m, { letters, onBoard, V }); break;
+    case 'wprompt': case 'wreveal': body = mirrorMomentHtml(m, { letters, onBoard, V }); break;
     case 'qstart': case 'qaccuse': case 'qverdict': case 'qunmask': case 'qguess': case 'qtime': body = mimicMomentHtml(m, { letters, onBoard, V }); break;
     case 'svisions': case 'scold': case 'sverdict': case 'slast': case 'sname': case 'snamed': body = seanceMomentHtml(m, { letters, onBoard, V }); break;
     case 'kintro': case 'kswap': case 'kclaim': case 'kreveal': case 'kpower': case 'klook': body = carnivalMomentHtml(m, { letters, onBoard, V }); break;
@@ -555,7 +563,7 @@ function momentHtml(m) {
       body = `<div class="m-art">${glyph(m.art || 'dagger')}</div><h1 class="m-title">${letters(t(m.title))}</h1>${m.names.length ? `<ul class="victims">${names(m.names)}</ul>` : ''}<p class="m-sub">${tmh(m.sub)}</p>`;
       break;
     case 'end': {
-      const title = m.winner === 'MIMIC' ? mimicTitle(V()?.mimic) : m.winner === 'GRAVEROBBERS' ? graveTitle(V()?.graverobbers) : m.winner === 'SEANCE' ? t(seanceTitle(m.result)) : m.winner === 'MIDNIGHT' ? t(midnightTitle(m.sides)) : m.winner === 'CARNIVAL' ? t('{names} wins', { names: m.whos ?? [] }) : m.winner === 'COFFINS' ? th('{a} wins', { a: m.who ?? '' }) : t({ DEMON: 'The Demon wins', DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[m.winner] ?? 'The end');
+      const title = m.winner === 'OMEN' ? omenTitle(V()) : m.winner === 'MIRROR' ? mirrorTitle(V()) : m.winner === 'MIMIC' ? mimicTitle(V()?.mimic) : m.winner === 'GRAVEROBBERS' ? graveTitle(V()?.graverobbers) : m.winner === 'SEANCE' ? t(seanceTitle(m.result)) : m.winner === 'MIDNIGHT' ? t(midnightTitle(m.sides)) : m.winner === 'CARNIVAL' ? t('{names} wins', { names: m.whos ?? [] }) : m.winner === 'COFFINS' ? th('{a} wins', { a: m.who ?? '' }) : t({ DEMON: 'The Demon wins', DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[m.winner] ?? 'The end');
       const won = didIWin(V(), m.winner);
       body = `<div class="m-art">${glyph(WIN_GLYPH[m.winner] ?? 'scroll')}</div>
         <span class="kicker">${t('The verdict')}</span><h1 class="m-title ${m.winner === 'DEATH' ? 'blood' : ''}">${letters(title)}</h1><p class="m-sub">${tmh(m.reason)}</p>
@@ -723,6 +731,8 @@ function phaseWord(v) {
   if (v.phase === 'NIGHT_0_REVEAL') return { word: t('Night'), num: '0', night: true };
   if (v.phase === 'M_REVEAL') return { word: t('Missions'), num: '', night: true };
   if (isMimicPhase(v.phase)) return { word: t('The Mimic'), num: '', night: false };
+  if (isOmenPhase(v.phase)) return { word: t('The Omen'), num: v.omen?.round ? roman(v.omen.round) : '', night: true };
+  if (isMirrorPhase(v.phase)) return { word: t('The Mirror'), num: v.mirror?.round ? roman(v.mirror.round) : '', night: true };
   if (isGravePhase(v.phase)) return { word: t('The cemetery'), num: v.graverobbers?.turnNo ? roman(v.graverobbers.turnNo) : '', night: true };
   if (isSeancePhase(v.phase)) return { word: t('The séance'), num: v.seance?.round ? roman(v.seance.round) : '', night: true };
   if (isMidnightPhase(v.phase)) return { word: t(['N_DEAL', 'N_NIGHT'].includes(v.phase) ? 'Midnight' : 'Dawn'), num: '', night: ['N_DEAL', 'N_NIGHT'].includes(v.phase) };
@@ -740,6 +750,8 @@ const STEP_EN = {
   M_NIGHT: 'Night interlude', M_LAST_STAND: 'The Last Stand', M_RECKONING: 'The Reckoning',
   N_DEAL: 'Your card', N_NIGHT: 'The night', N_DAY: 'Discussion', N_VOTE: 'The vote',
   G_INTRO: 'The crews', G_SIGN: 'The sign', G_DIG: 'The dig',
+  O_SHOW: 'The wheel', O_SECRET: 'Predict and turn', O_REVEAL: 'The wheel turns',
+  W_PROMPT: 'Talk it over', W_CHOOSE: 'Seal your ballot', W_REVEAL: 'The reveal',
   Q_INTRO: 'Your card', Q_ASK: 'Questions', Q_VOTE: 'An accusation', Q_GUESS: 'The Mimic names the place', Q_FINAL: 'The final vote',
   S_INTRO: 'The Ghost', S_VISION: 'Visions', S_DISCUSS: 'Discussion', S_CANDLE: 'Candles', S_LAST: 'The last breath', S_NAMING: 'The naming',
   K_UNMASK: 'The unmasking', K_LOTTERY: 'The first dancer', K_TURN: 'Swap, peek or claim', K_CHALLENGE: 'Challenges', K_POWER: 'A power', K_LOOK: 'A look',
@@ -1016,7 +1028,7 @@ function pickContexts(v) {
   if (!a || !me || me.moderator) return [];
   if (isMissionPhase(v.phase)) return missionPicks(v, S);
   if (isExorcismPhase(v.phase)) return exorcismPicks(v, S);
-  if (isCoffinsPhase(v.phase) || isCarnivalPhase(v.phase) || isMidnightPhase(v.phase) || isSeancePhase(v.phase) || isGravePhase(v.phase) || isMimicPhase(v.phase)) return [];
+  if (isCoffinsPhase(v.phase) || isCarnivalPhase(v.phase) || isMidnightPhase(v.phase) || isSeancePhase(v.phase) || isGravePhase(v.phase) || isMimicPhase(v.phase) || isOmenPhase(v.phase) || isMirrorPhase(v.phase)) return [];
   const out = [];
   switch (v.phase) {
     case 'DAY_PREP':
@@ -1094,7 +1106,7 @@ function roomScreen() {
     </aside>`;
   const top = `<header class="topbar" data-key="top">
       <span class="tb-emblem">${isNight(v.phase) ? glyph('moon') : glyph('sun')}</span>
-      <div class="phase-mini"><strong class="${pw.night ? 'night' : ''}">${esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</strong><span>${esc(stepOf(v))}${v.phase === 'LOBBY' ? ` · ${t('{n} seated', { n: v.players.length })}` : ['missions', 'exorcism', 'carnival', 'midnight', 'seance', 'coffins', 'graverobbers', 'mimic'].includes(v.mode) ? '' : ` · ${t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}`}</span></div>
+      <div class="phase-mini"><strong class="${pw.night ? 'night' : ''}">${esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</strong><span>${esc(stepOf(v))}${v.phase === 'LOBBY' ? ` · ${t('{n} seated', { n: v.players.length })}` : ['missions', 'exorcism', 'carnival', 'midnight', 'seance', 'coffins', 'graverobbers', 'mimic', 'omen', 'mirror'].includes(v.mode) ? '' : ` · ${t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}`}</span></div>
       <span class="clock" data-clock></span>
       <button class="btn btn-ghost icon-btn" data-act="sound" aria-label="${esc(t(sound.on ? 'Mute sounds' : 'Turn sounds on'))}">${glyph(sound.on ? 'bell' : 'bellOff')}</button>
       <button class="btn btn-ghost icon-btn" data-act="sheet" data-id="record" aria-label="${esc(t('Open match record'))}">${glyph('menu')}</button>
@@ -1176,6 +1188,8 @@ function mainFor(v, me) {
       if (isSeancePhase(v.phase)) return seanceMain(v, me, MH);
       if (isGravePhase(v.phase)) return graveMain(v, me, MH);
       if (isMimicPhase(v.phase)) return mimicMain(v, me, MH);
+      if (isOmenPhase(v.phase)) return omenMain(v, me, MH);
+      if (isMirrorPhase(v.phase)) return mirrorMain(v, me, MH);
       return isNight(v.phase) ? nightMain(v, me) : dayMain(v, me);
   }
 }
@@ -1396,6 +1410,8 @@ function lobbyDeck(v, isHost) {
   if (v.mode === 'midnight') return midnightLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
   if (v.mode === 'graverobbers') return graveLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
   if (v.mode === 'mimic') return mimicLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
+  if (v.mode === 'omen') return omenLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
+  if (v.mode === 'mirror') return mirrorLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
   if (v.mode === 'seance') return seanceLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
   const s = v.settings;
   const deck = v.setup?.publicDeck;
@@ -1523,6 +1539,9 @@ function modeChooser(v, isHost) {
     [t('Changing Hands'), t('Role cards change owners while nobody is looking. Trust your memory.'), [
       card('carnival', 'veiled', presetF('carnival', 'name'), t('A masked ball of bluff and memory: swap masks, claim powers, gather Souls. 4–12 players.')),
       card('midnight', 'moon', presetF('midnight', 'name'), t('One night, one vote: cards change hands in the dark. 4–12 players.'))]],
+    [t('Reading the Room'), t('No hidden sides: read the people around you, and outguess them.'), [
+      card('omen', 'oracle', presetF('omen', 'name'), t('A wheel of Life, Death and Rebirth that anyone may secretly turn. Predict where it stops. 4–12 players.')),
+      card('mirror', 'maskedvote', presetF('mirror', 'name'), t('Answer a dilemma, and predict how a friend answers it. 4–12 players.'))]],
     [t('Signs & Riddles'), t('Someone knows the secret and may only hint. Read the signs.'), [
       card('exorcism', 'oracle', presetF('exorcism', 'name'), t('A word game of bluff: one word each, then name the Demon. 3–12 players.')),
       card('seance', 'shade', presetF('seance', 'name'), t('A silent Ghost sends visions; find who, where and why, and the Deceiver. 4–10 players.')),
@@ -1562,6 +1581,18 @@ function setupForm(v) {
   const timer = (key, label) => `<label class="field"><span>${t(label)}</span><select class="input" data-set="timers.${key}">
       ${OPTS.map((n) => `<option value="${n}" ${tm8[key] === n ? 'selected' : ''}>${n === 0 ? t('Untimed') : n < 60 ? t('{n} s', { n }) : t('{n} min', { n: n / 60 })}</option>`).join('')}
       ${OPTS.includes(tm8[key]) ? '' : `<option selected value="${tm8[key]}">${t('{n} s', { n: tm8[key] })}</option>`}</select></label>`;
+  if (preset.omen) {
+    return `<div class="stack" style="gap:18px"><details class="more" data-key="d-otable" open><summary>${t('Table & timers')}</summary><div>
+      <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
+      <div class="grid2">${timer('oShow', 'The wheel shows its start')}${timer('oSecret', 'Predict and turn')}${timer('oReveal', 'The reveal')}</div>
+    </div></details></div>`;
+  }
+  if (preset.mirror) {
+    return `<div class="stack" style="gap:18px"><details class="more" data-key="d-wtable" open><summary>${t('Table & timers')}</summary><div>
+      <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
+      <div class="grid2">${timer('wTalk', 'Talking it over')}${timer('wChoose', 'Sealing the ballots')}${timer('wReveal', 'The reveal')}</div>
+    </div></details></div>`;
+  }
   if (preset.mimic) {
     return `<div class="stack" style="gap:18px"><details class="more" data-key="d-qtable" open><summary>${t('Table & timers')}</summary><div>
       <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
@@ -1605,7 +1636,7 @@ function setupForm(v) {
     </div></details></div>`;
   }
   return `<div class="stack" style="gap:18px">
-    ${preset.missions ? '' : `<div class="carousel" data-key="presets">${v.presets.filter((p) => !p.missions && !p.exorcism && !p.coffins && !p.carnival && !p.midnight && !p.seance && !p.graverobbers && !p.mimic).map((p) => `<button class="preset" data-act="preset" data-id="${p.id}" aria-pressed="${s.preset === p.id}" data-key="pr-${p.id}"><b>${esc(presetF(p.id, 'name'))}</b>${p.recommended ? `<span class="tag solid">${t('Best first game')}</span>` : ''}<small>${esc(presetF(p.id, 'blurb'))}</small><span class="kicker">${t('{a}–{b} players', { a: p.min, b: p.max })}</span></button>`).join('')}</div>`}
+    ${preset.missions ? '' : `<div class="carousel" data-key="presets">${v.presets.filter((p) => !p.missions && !p.exorcism && !p.coffins && !p.carnival && !p.midnight && !p.seance && !p.graverobbers && !p.mimic && !p.omen && !p.mirror).map((p) => `<button class="preset" data-act="preset" data-id="${p.id}" aria-pressed="${s.preset === p.id}" data-key="pr-${p.id}"><b>${esc(presetF(p.id, 'name'))}</b>${p.recommended ? `<span class="tag solid">${t('Best first game')}</span>` : ''}<small>${esc(presetF(p.id, 'blurb'))}</small><span class="kicker">${t('{a}–{b} players', { a: p.min, b: p.max })}</span></button>`).join('')}</div>`}
 
     ${preset.custom ? `<details class="more" data-key="d-custom" open><summary>${t('Custom deck')}</summary><div>
       <label class="check"><input type="checkbox" data-set-bool="dreams" ${s.dreams ? 'checked' : ''}><span><b>${t('Dreams')}</b><small>${t('Everyone draws a Dream card each night.')}</small></span></label>
@@ -2008,9 +2039,9 @@ function deathRoom(v, me, D) {
 
 // ── End ────────────────────────────────────────────────────────────────────
 function endMain(v, me) {
-  const title = v.winner === 'MIMIC' ? mimicTitle(v.mimic) : v.winner === 'GRAVEROBBERS' ? graveTitle(v.graverobbers) : v.winner === 'SEANCE' ? t(seanceTitle(v.seance?.result)) : v.winner === 'MIDNIGHT' ? t(midnightTitle(v.midnight?.winners?.sides)) : v.winner === 'CARNIVAL' ? t('{names} wins.', { names: (v.carnival?.winners ?? []).map((id) => v.players.find((p) => p.id === id)?.name ?? '') }) : v.winner === 'COFFINS' ? t('{a} wins.', { a: v.players.find((p) => p.id === v.coffins?.winner)?.name ?? '' }) : t({ DEMON: 'The Demon wins.', DEATH: 'Death wins.', NON_DEATH: 'The living win.', JESTER: 'The Jester wins.', DRAW: 'A draw.', ABORTED: 'Abandoned.', LOVERS: 'The Lovers win.', CULT: 'The Cult wins.', RIPPER: 'The Ripper wins.' }[v.winner] ?? 'The End');
+  const title = v.winner === 'OMEN' ? omenTitle(v) : v.winner === 'MIRROR' ? mirrorTitle(v) : v.winner === 'MIMIC' ? mimicTitle(v.mimic) : v.winner === 'GRAVEROBBERS' ? graveTitle(v.graverobbers) : v.winner === 'SEANCE' ? t(seanceTitle(v.seance?.result)) : v.winner === 'MIDNIGHT' ? t(midnightTitle(v.midnight?.winners?.sides)) : v.winner === 'CARNIVAL' ? t('{names} wins.', { names: (v.carnival?.winners ?? []).map((id) => v.players.find((p) => p.id === id)?.name ?? '') }) : v.winner === 'COFFINS' ? t('{a} wins.', { a: v.players.find((p) => p.id === v.coffins?.winner)?.name ?? '' }) : t({ DEMON: 'The Demon wins.', DEATH: 'Death wins.', NON_DEATH: 'The living win.', JESTER: 'The Jester wins.', DRAW: 'A draw.', ABORTED: 'Abandoned.', LOVERS: 'The Lovers win.', CULT: 'The Cult wins.', RIPPER: 'The Ripper wins.' }[v.winner] ?? 'The End');
   const won = didIWin(v, v.winner);
-  const revealed = !['coffins', 'carnival', 'midnight', 'seance', 'graverobbers', 'mimic'].includes(v.mode) && v.players.some((p) => p.role);
+  const revealed = !['coffins', 'carnival', 'midnight', 'seance', 'graverobbers', 'mimic', 'omen', 'mirror'].includes(v.mode) && v.players.some((p) => p.role);
   const everySecret = () => `<section data-key="reveal"><div class="rule">${t('Every secret')}</div>${revealed ? `<ul class="ledger">${v.players.map((p, i) => `<li class="${p.alive ? '' : 'dead'} ${p.id === me?.id ? 'me' : ''}" style="--i:${i}" data-key="rv-${p.id}">
       <span class="seat">${p.role ? glyph(p.role.glyph) : ''}</span>
       <span class="who"><b>${esc(p.name)}</b><small>${p.role ? esc(roleF(p.role.id, 'name')) : '—'}${p.originalRole ? ` ${th('(was {role})', { role: p.originalRole.id })}` : ''} · ${p.alive ? t('alive') : `† ${esc(stamp(p.diedAt))}`}</small></span>
@@ -2028,7 +2059,9 @@ function endMain(v, me) {
     ${v.mode === 'seance' ? seanceEndHtml(v) : ''}
     ${v.mode === 'graverobbers' ? graveEndHtml(v) : ''}
     ${v.mode === 'mimic' ? mimicEndHtml(v) : ''}
-    ${['coffins', 'carnival', 'midnight', 'seance', 'graverobbers', 'mimic'].includes(v.mode) ? '' : everySecret()}
+    ${v.mode === 'omen' ? omenEndHtml(v) : ''}
+    ${v.mode === 'mirror' ? mirrorEndHtml(v) : ''}
+    ${['coffins', 'carnival', 'midnight', 'seance', 'graverobbers', 'mimic', 'omen', 'mirror'].includes(v.mode) ? '' : everySecret()}
     ${me && !me.moderator ? `<details class="more" data-key="endnotes"><summary>${t('My notes')}</summary><div>${feed([...(v.private || [])].reverse(), 'feed-private')}</div></details>` : ''}
     <details class="more" data-key="endrec"><summary>${t('Public record')}</summary><div>${recordBlock(v)}</div></details>
     <div class="row center" data-key="endbtns">${v.recap ? `<button class="btn" data-act="recap">${glyph('scroll')} ${t('View recap')}</button>` : ''}</div>`;
@@ -2263,6 +2296,8 @@ function dock(v) {
         if (isMidnightPhase(v.phase)) parts.push(...midnightDock(v, { S, btn, holdBtn, rawName }));
         if (isGravePhase(v.phase)) parts.push(...graveDock(v, { S, btn, holdBtn, rawName }));
         if (isMimicPhase(v.phase)) parts.push(...mimicDock(v, { S, btn, holdBtn, rawName }));
+        if (isOmenPhase(v.phase)) parts.push(...omenDock(v, { S, btn, holdBtn, rawName }));
+        if (isMirrorPhase(v.phase)) parts.push(...mirrorDock(v, { S, btn, holdBtn, rawName }));
         if (isSeancePhase(v.phase)) parts.push(...seanceDock(v, { S, btn, holdBtn, rawName }));
         break;
     }
@@ -2533,13 +2568,15 @@ Object.assign(ACT, exorcismActs({ S, V, send: (...a) => send(...a), render: () =
 });
 Object.assign(ACT, midnightActs({ S, V, send: (...a) => send(...a), render: () => render(), burstAt, sound, haptic }));
 Object.assign(ACT, graveActs({ S, V, send: (...a) => send(...a), render: () => render(), haptic }));
+Object.assign(ACT, omenActs({ S, V, send: (...a) => send(...a), render: () => render(), haptic }));
+Object.assign(ACT, mirrorActs({ S, V, send: (...a) => send(...a), render: () => render(), haptic }));
 Object.assign(ACT, mimicActs({ S, V, send: (...a) => send(...a), render: () => render(), haptic }));
 Object.assign(ACT, seanceActs({ S, V, send: (...a) => send(...a), render: () => render(), haptic, notify: (x) => notify(x) }));
 Object.assign(ACT, carnivalActs({ S, V, send: (...a) => send(...a), render: () => render(), burstAt, sound, haptic }));
 Object.assign(ACT, coffinsActs({ S, V, send: (...a) => send(...a), render: () => render(), burstAt, sound, haptic }));
 Object.assign(ACT, missionActs({ S, V, send: (...a) => send(...a), render: () => render(), picked, burstAt, sound, haptic }));
 
-const QUIET = new Set([...MIMIC_QUIET, ...GRAVE_QUIET, ...SEANCE_QUIET, ...MIDNIGHT_QUIET, ...CARNIVAL_QUIET, ...COFFINS_QUIET, 'xPickVote', 'xPickGuess', 'xFlip', 'xPeek', 'xGrid', 'mPickLantern', 'mPickTeam', 'mPickWard', 'mPickHunch', 'mPickCandle', 'mPickWitness', 'mPickHaunt', 'mPickAccuse', 'mPickReckon', 'mPickCard', 'avPart', 'avRandom', 'codeTap', 'boardScore', 'boardMute', 'pickNominate', 'pickVote', 'pickRetaliate', 'pickSwap', 'pickTarget', 'pickOption', 'pickNightmare', 'pickConspire', 'pickDeath', 'shoot', 'sound', 'pickUseOption', 'momentNext']);
+const QUIET = new Set([...OMEN_QUIET, ...MIRROR_QUIET, ...MIMIC_QUIET, ...GRAVE_QUIET, ...SEANCE_QUIET, ...MIDNIGHT_QUIET, ...CARNIVAL_QUIET, ...COFFINS_QUIET, 'xPickVote', 'xPickGuess', 'xFlip', 'xPeek', 'xGrid', 'mPickLantern', 'mPickTeam', 'mPickWard', 'mPickHunch', 'mPickCandle', 'mPickWitness', 'mPickHaunt', 'mPickAccuse', 'mPickReckon', 'mPickCard', 'avPart', 'avRandom', 'codeTap', 'boardScore', 'boardMute', 'pickNominate', 'pickVote', 'pickRetaliate', 'pickSwap', 'pickTarget', 'pickOption', 'pickNightmare', 'pickConspire', 'pickDeath', 'shoot', 'sound', 'pickUseOption', 'momentNext']);
 document.addEventListener('click', (e) => {
   const link = e.target.closest('a[data-link]');
   if (link && link.origin === location.origin && !e.metaKey && !e.ctrlKey) { e.preventDefault(); go(link.pathname); return; }
@@ -2635,7 +2672,7 @@ document.addEventListener('change', (e) => {
     send('host.settings', { x: { [k]: el.type === 'checkbox' ? el.checked : ['demons', 'rounds'].includes(k) ? Number(el.value) : el.value } });
   }
   // Mode setups whose handlers live in their own modules (Coffins, Carnival).
-  if (['cSet', 'kSet', 'nSet', 'sSet', 'gSet', 'gCap', 'qSet'].includes(el.dataset.actChange)) ACT[el.dataset.actChange]?.(el);
+  if (['cSet', 'kSet', 'nSet', 'sSet', 'gSet', 'gCap', 'qSet', 'wSet'].includes(el.dataset.actChange)) ACT[el.dataset.actChange]?.(el);
   if (el.dataset.actChange === 'tieBreak') send('host.settings', { tieBreak: el.checked ? 'coin' : 'none' });
   if (el.dataset.actChange === 'assign') send('host.assign', { playerId: el.dataset.pid, roleId: el.value || null });
 });

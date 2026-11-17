@@ -5,6 +5,8 @@ export default {
   roles: {
     G_UNDERTAKER: { name: "Totengräber", when: "Immer", summary: "Du hast das Grabregister. Gib deiner Bande ein Wort und eine Zahl.", detail: "Nur du und der andere Totengräber wisst, was unter jedem Stein liegt. Dein Wort soll so viele Gräber deiner Bande verbinden und weit weg vom Grab des Todes führen." },
     G_DIGGER: { name: "Grabräuber", when: "Immer", summary: "Lies das Zeichen deines Totengräbers und grab die Reliquien deiner Bande aus.", detail: "Beratet euch, dann stimm auf dem Handy für ein Grab. Eure Reliquie: weitergraben. Ein leeres Grab oder eine Reliquie der anderen Bande: Der Zug geht weiter. Das Grab des Todes: Eure Bande verliert." },
+    O_SEER: { name: "Seher", when: "Immer", summary: "Sag voraus, wo das Rad stehen bleibt, und dreh es, wenn es sich lohnt.", detail: "Sag jede Runde heimlich Leben, Tod oder Wiedergeburt voraus und entscheide, ob du das Rad einen Schritt drehst (es kostet einen deiner fünf Einflüsse). Alle Drehungen werden addiert. Ein Treffer bringt 3; unbenutzter Einfluss am Ende je 1." },
+    W_READER: { name: "Leser", when: "Immer", summary: "Beantworte das Dilemma für dich und sag einen Freund voraus.", detail: "Jede Runde beantwortest du ein erfundenes Dilemma und sagst die Antwort der Person voraus, die du liest. Ein Treffer bringt 2; deine eigene Antwort nichts, also darfst du deinen Leser ruhig überraschen." },
     Q_MIMIC: { name: "Nachahmer", when: "Immer", summary: "Du trägst das Gesicht eines Freundes. Du weißt nicht, wo du bist.", detail: "Alle anderen sind am selben Ort. Hör den Fragen zu, antworte, als gehörtest du dazu, und finde den Ort heraus. Enttarne dich jederzeit und nenne ihn, um zu gewinnen; ein verurteilter Nachahmer hat noch einen letzten Tipp." },
     Q_LIVING: { name: "Lebender", when: "Immer", summary: "Du kennst den Ort. Beweise es, ohne ihn zu verraten.", detail: "Stell und beantworte Fragen zum Ort: genau genug, um zu zeigen, dass du dort warst, vage genug, dass der Nachahmer ihn nicht errät. Beschuldige einmal pro Spiel; nur ein einstimmiger Tisch verurteilt." },
     S_GHOST: { name: "Geist", when: "Immer", summary: "Du wurdest ermordet. Du weißt wer, wo und warum, und kannst nicht sprechen.", detail: "Schick jedem Leser eine Vision zu seiner Reihe. Mit einem kalten Fleck vereist du eine Vision, die nicht von dir ist." },
@@ -165,6 +167,8 @@ export default {
   },
   presets: {
     graverobbers: { name: "Dead Set: Grabräuber", blurb: "Zwei Grabräuberbanden, Mond und Sonne, durchwühlen einen Friedhof aus Wörtern oder Symbolen nach den Reliquien ihrer Gottheit. Nur die Totengräber wissen, was darunter liegt. Ein Grab gehört dem Tod." },
+    omen: { name: "Dead Set: Das Omen", blurb: "Ein okkultes Rad zeigt auf Leben, Tod oder Wiedergeburt. Jeder darf es heimlich drehen; sag voraus, wo es stehen bleibt." },
+    mirror: { name: "Dead Set: Der Spiegel", blurb: "Der Spukspiegel zeigt, was deine Freunde glauben, dass du tun würdest. Beantworte das Dilemma und lies die Person dir gegenüber." },
     mimic: { name: "Dead Set: Nachahmer", blurb: "Alle wissen, wo ihr seid, außer dem Ding mit dem Gesicht eines Freundes. Fragen, antworten, beschuldigen; der Nachahmer lauscht nach dem Ort." },
     seance: { name: "Dead Set: Séance", blurb: "Ein stummer, ermordeter Geist schickt Visionen; die Medien lesen daraus wer, wo und warum. Ein Täuscher unter ihnen tauscht Visionen gegen Lügen." },
     midnight: { name: "Dead Set: Mitternacht", blurb: "Eine Nacht, eine Abstimmung. Karten wechseln im Dunkeln die Hände; im Morgengrauen bist du, was vor dir liegt. Finde den Tod, oder sei er." },
@@ -195,6 +199,89 @@ export default {
     'Alle wachten auf. Irgendwie war das schlimmer.',
     'Der Tod stimmte mit der Stadt. Natürlich.',
   ],
+  // The Mirror: dilemmas by stable id, [prompt, A, B, C] (see public/dilemmas.js).
+  dilemmas: {
+    d001: ["Um Mitternacht klopft ein Fremder, vom Sturm durchnässt, und bittet um Einlass.", "Hereinlassen", "Durch die Tür reden", "So tun, als wäre niemand zu Hause"],
+    d002: ["Auf dem Dachboden deines neuen Hauses findest du ein verschlossenes Tagebuch.", "Das Schloss aufbrechen und lesen", "Es den alten Besitzern zurückgeben", "Es ungelesen verbrennen"],
+    d003: ["Eine Wahrsagerin bietet dir an, den Tag deines Todes zu nennen.", "Zuhören", "Höflich ablehnen", "Stattdessen nach jemand anderem fragen"],
+    d004: ["Bei einem Abendessen geht das Licht aus, und ein Schrei ertönt.", "Zum Schrei rennen", "Erst eine Kerze suchen", "Völlig still bleiben"],
+    d005: ["Ein Geist bietet an, eine Woche lang jeden heimzusuchen, den du nennst.", "Einen Rivalen nennen", "Einen Freund nennen, aus Spaß", "Ablehnen"],
+    d006: ["Du erbst eine bröckelnde Burg samt Familienfluch.", "Trotzdem einziehen", "Sofort verkaufen", "Ein Hotel daraus machen"],
+    d007: ["Jede Nacht um drei landet ein Rabe auf deinem Fensterbrett.", "Ihn füttern", "Mit ihm reden", "Die Vorhänge zuziehen"],
+    d008: ["Du darfst eine Nacht eingeschlossen an einem berühmten Spukort verbringen.", "In einem Burgverlies", "In einer verlassenen Anstalt", "Auf einem Geisterschiff auf See"],
+    d009: ["Dein Spiegelbild blinzelt einen Augenblick nach dir.", "Es niederstarren", "Alle Spiegel verhängen", "Winken und abwarten"],
+    d010: ["Eine Séance geht schief, und ein Geist bittet um einen Gefallen.", "Ihn anhören", "Die Séance sofort beenden", "Erst etwas aushandeln"],
+    d011: ["Der letzte Zug nach Hause ist leer bis auf einen schweigenden Fahrgast.", "Sich neben ihn setzen", "So weit weg wie möglich sitzen", "Auf den nächsten Zug warten"],
+    d012: ["Du darfst einen Gegenstand ins Jenseits mitnehmen.", "Ein Foto", "Ein gutes Buch", "Ein Kartenspiel"],
+    d013: ["Eine verfluchte Münze bringt Glück, kostet dich aber jeden Tag eine Erinnerung.", "Behalten", "An jemanden weitergeben", "In den Fluss werfen"],
+    d014: ["Du verirrst dich in der Dämmerung in einem nebligen Wald.", "Den fernen Lichtern folgen", "Auf einen Baum klettern und warten", "Den Weg zurückgehen"],
+    d015: ["Auf einem Maskenball trägt jemand dein Gesicht als Maske.", "Zur Rede stellen", "Leise folgen", "Masken tauschen und gehen"],
+    d016: ["Du erfährst ein Geheimnis über jede Person an diesem Tisch.", "Ihre größte Angst", "Ihre größte Lüge", "Ihr geheimes Talent"],
+    d017: ["Auf dem Weg zu einem wichtigen Treffen kreuzt eine schwarze Katze deinen Weg.", "Weitergehen", "Einen anderen Weg nehmen", "Anhalten und sie streicheln"],
+    d018: ["In deinem Haus spukt ein freundlicher, aber sehr lauter Geist.", "Sich damit arrangieren", "Einen Exorzisten rufen", "Eintritt von Touristen verlangen"],
+    d019: ["Du wachst als Vampir auf.", "Das Nachtleben annehmen", "Ein Heilmittel suchen", "Es geheim halten und weitermachen"],
+    d020: ["Ein geheimnisvoller Brief lädt dich zur Testamentseröffnung in ein Herrenhaus.", "Allein hingehen", "Mit einem Freund hingehen", "Ihn ignorieren"],
+    d021: ["Du bist der letzte wache Gast in einem alten Gasthaus, und die Treppe knarrt.", "Nachsehen", "Die Tür abschließen", "Schlaf vortäuschen"],
+    d022: ["Eine Hexe schenkt dir einen Trank.", "Liebestrank", "Wahrheitstrank", "Unsichtbarkeitstrank"],
+    d023: ["Du darfst in jedem Jahrhundert leben, ohne Rückweg.", "In der Vergangenheit", "Hier und jetzt", "In der fernen Zukunft"],
+    d024: ["Ein sprechendes Porträt gibt Ratschläge gegen Klatsch.", "Klatsch tauschen", "Es ignorieren", "Es zur Wand drehen"],
+    d025: ["Eure Gruppe sitzt in einer Hütte fest, und morgen geht das Essen aus.", "Die Flucht anführen", "Rationieren und warten", "Den Keller durchsuchen"],
+    d026: ["Aus dem Wald ruft deine eigene Stimme deinen Namen.", "Antworten", "Darauf zugehen", "In die andere Richtung rennen"],
+    d027: ["Ein Dschinn gewährt einen Wunsch, aber die Formulierung muss perfekt sein.", "Reichtum wünschen", "Mehr Wünsche wünschen", "Den Dschinn freiwünschen"],
+    d028: ["Eine alte Spieldose spielt jede Nacht von selbst.", "Sie selbst aufziehen", "Das Werk ausbauen", "Sie als Beweis aufnehmen"],
+    d029: ["Du darfst für den Rest deines Lebens nur ein Gericht essen.", "Ein großes Festmahl", "Einfaches Brot und Suppe", "Etwas Süßes"],
+    d030: ["Du findest eine Karte deines eigenen Gartens mit einem X.", "Noch heute Nacht graben", "Bei Tag mit Freunden graben", "Es vergraben lassen"],
+    d031: ["Ein Freund gesteht, dass er heimlich ein Werwolf ist.", "Beim Verstecken helfen", "Ihn bei Vollmond einsperren", "Um die Verwandlung bitten"],
+    d032: ["Du darfst einen Tag lang mit jemandem an diesem Tisch das Leben tauschen.", "Mit jemand Furchtlosem", "Mit jemand Reichem", "Mit jemand Geheimnisvollem"],
+    d033: ["Der Bestatter bietet an, deine Beerdigung vorab zu planen, mit Rabatt.", "Ein prächtiger Trauerzug", "Eine stille Zeremonie", "Ein Fest mit Tanz"],
+    d034: ["In deinem Haus läuft eine Uhr rückwärts.", "Reparieren", "In Ruhe lassen", "Versuchen, sie zu nutzen"],
+    d035: ["Der Zirkus ist in der Stadt, und ein Clown steckt dir eine Karte für eine geheime Vorstellung zu.", "Hingehen", "Die Karte verschenken", "Sie zerreißen"],
+    d036: ["Du kannst mit einer Tierart sprechen.", "Katzen", "Krähen", "Hunde"],
+    d037: ["Ein Sturm sperrt dich über Nacht in einen Leuchtturm mit einem Wärter, der nie schläft.", "Wach bleiben und reden", "Mit einem offenen Auge schlafen", "Dem Sturm trotzen"],
+    d038: ["Dein Schatten beginnt, sich von selbst zu bewegen.", "Ihm folgen", "Im Licht bleiben", "Freundschaft schließen"],
+    d039: ["Man bietet dir Unsterblichkeit an, aber du kannst diese Stadt nie verlassen.", "Annehmen", "Ablehnen", "Um eine größere Stadt bitten"],
+    d040: ["Eines Morgens steht eine versiegelte Gruft auf dem Friedhof offen.", "Hineinsehen", "Dem Pfarrer Bescheid sagen", "Sie schließen und schweigen"],
+    d041: ["Eins davon darfst du für immer behalten.", "Einen Schlüssel, der jede Tür öffnet", "Eine Kerze, die nie erlischt", "Einen Kompass, der nach Hause zeigt"],
+    d042: ["Auf einer Auktion geht ein verfluchtes Gemälde billig weg.", "Mitbieten", "Die anderen Bieter warnen", "Weggehen"],
+    d043: ["Das Dorf bittet dich, die Brücke in der Nacht zu bewachen, in der etwas sie überquert.", "Wache halten", "Eine Falle stellen", "Einen Grund finden, weg zu sein"],
+    d044: ["In deinem Glückskeks steht: Trau nicht der Person zu deiner Linken.", "Es glauben", "Darüber lachen", "Es ihr zeigen"],
+    d045: ["Du darfst einen Tag deines Lebens noch einmal erleben.", "Deinen glücklichsten Tag", "Einen Tag, um einen Fehler gutzumachen", "Einen gewöhnlichen, faulen Tag"],
+    d046: ["Ein Spiegel im Antiquitätenladen zeigt dich zehn Jahre älter.", "Ihn kaufen", "Fragen, was er zeigt", "Schnell gehen"],
+    d047: ["Ein Geist soll dich ein Leben lang beschützen.", "Ein Ritter", "Eine Großmutter", "Ein freches Kind"],
+    d048: ["Der Gastgeber einer Feier hat alle Türen von außen abgeschlossen.", "Einen anderen Ausgang suchen", "Weiterfeiern", "Eine Erklärung verlangen"],
+    d049: ["Man darf sich an dich nur für eine Sache erinnern.", "Güte", "Mut", "Humor"],
+    d050: ["Ein Zauberbuch liegt vor deiner Tür.", "Einen Zauber ausprobieren", "Es lesen, aber nichts zaubern", "Es in eine Bibliothek bringen"],
+    d051: ["Man bietet dir einen Platz auf einem Schiff an, das nie von seinen Fahrten zurückkehrte.", "Mitsegeln", "An Land bleiben", "Erst die Mannschaft fragen"],
+    d052: ["Im Nachbardorf lebt dein Doppelgänger.", "Ihn treffen", "Aus der Ferne beobachten", "Wegziehen"],
+    d053: ["Beim Abendessen werden alle Kerzen auf einmal blau.", "Weiteressen", "Sie auspusten", "Fragen, wer im Raum ist"],
+    d054: ["Du kannst einmal die Zeit für eine Stunde anhalten.", "Heute nutzen", "Für einen Notfall aufheben", "Sie verschlafen"],
+    d055: ["Ein Wasserspeier an der Kathedrale verlangt ein Rätsel von dir.", "Eins erzählen", "Stattdessen eins verlangen", "So tun, als hörte man nichts"],
+    d056: ["Auf deiner eigenen Beerdigung läuft dein Lieblingslied. Welches?", "Etwas Trauriges", "Etwas Fröhliches", "Etwas, das niemand erwartet"],
+    d057: ["Du darfst in einer Spukstadt einen einzigen Beruf haben.", "Bestatter", "Wirt", "Nachtwache"],
+    d058: ["Ein Freund leiht deinen Mantel und bringt ihn mit dem Brief eines Fremden in der Tasche zurück.", "Den Brief lesen", "Ihn dem Freund zurückgeben", "Den Fremden suchen"],
+    d059: ["Der Vollmond geht auf, und alle Hunde der Stadt beginnen zu heulen.", "Die Türen abschließen", "Nach draußen gehen", "Mitheulen"],
+    d060: ["Du darfst einen Sinn aufgeben, um die anderen zu schärfen.", "Den Geschmack", "Den Geruch", "Niemals, keinen"],
+    d061: ["Eine Kutsche ohne Kutscher hält vor dir.", "Einsteigen", "Den Kutscher suchen", "Weitergehen"],
+    d062: ["Du darfst genau wissen, was eine Person wirklich von dir denkt.", "Dein bester Freund", "Dein Rivale", "Niemand, danke"],
+    d063: ["Dichter Nebel zieht auf, und die Stadtglocke schlägt dreizehn.", "Noch einmal zählen", "Drinnen verstecken", "Zum Glockenturm gehen"],
+    d064: ["Du entdeckst, dass dein Haus ein verborgenes Zimmer hat.", "Sofort öffnen", "Auf Tageslicht warten", "Es zutapezieren"],
+    d065: ["Ein Hausierer verkauft Glück in Flaschen.", "Eine Flasche kaufen", "Die ganze Kiste kaufen", "Ihn aus der Stadt jagen"],
+    d066: ["Du musst ein Jahr allein in einem Bergkloster verbringen.", "Einen Stapel Bücher mitnehmen", "Ein Instrument mitnehmen", "Ein Tagebuch mitnehmen"],
+    d067: ["Deine Teeblätter bilden einen Namen, den du nicht kennst.", "Die Person suchen", "Noch eine Tasse trinken", "Niemandem erzählen"],
+    d068: ["Du darfst als Gast jede Feier der Geschichte besuchen.", "Eine Königskrönung", "Einen wilden Maskenball", "Ein legendäres Konzert"],
+    d069: ["Ein Sterbender gibt dir einen Schlüssel und flüstert: Öffne es niemals.", "Öffnen", "Ihn für immer behalten", "Ihn wegwerfen"],
+    d070: ["Der Tisch muss bestimmen, wer die Gruft zuerst erkundet.", "Freiwillig melden", "Jemand anderen vorschlagen", "Strohhalme ziehen vorschlagen"],
+    d071: ["Man bietet dir einen Platz an der Abendtafel des Todes an.", "Höflich annehmen", "Ein Geschenk mitbringen", "Eine Ausrede finden"],
+    d072: ["Ein altes Foto zeigt dich auf einer Feier vor hundert Jahren.", "Nachforschen", "Es einrahmen", "Es verstecken"],
+    d073: ["Du kannst dich nach Belieben in ein Wesen verwandeln.", "Eine Fledermaus", "Einen Wolf", "Eine Katze"],
+    d074: ["Jemand legt jede Nacht Blumen vor deine Tür.", "Wach bleiben, um zu sehen, wer", "Einen Dankeszettel hinlegen", "Nicht mehr aufmachen"],
+    d075: ["Ein Sturm legt während eines Gruselfilms den Strom lahm.", "Geistergeschichten erzählen", "Ins Bett gehen", "Das Ende bei Kerzenlicht nachspielen"],
+    d076: ["Du darfst eine Erfindung der Geschichte rückgängig machen.", "Wecker", "Handys", "Nichts, alles bleibt"],
+    d077: ["An einer Kreuzung um Mitternacht bietet ein Fremder an, deine Gitarre zu stimmen.", "Sie ihm geben", "Erst nach dem Preis fragen", "Mit der Gitarre gehen"],
+    d078: ["Du darfst jemanden für ein einziges Gespräch zurückholen.", "Einen Verwandten", "Eine berühmte Person", "Einen Kindheitsfreund"],
+    d079: ["Über Nacht erscheint eine Falltür im Küchenboden.", "Hinuntersteigen", "Sie zunageln", "Eine Münze hineinwerfen und lauschen"],
+    d080: ["Die letzte Kerze brennt herunter, und nur einer von euch kann sie halten.", "Sie nehmen", "Sie jemand anderem anbieten", "Sie gemeinsam ausblasen"],
+  },
   guide: {
     mimicH: "Dead Set: Nachahmer",
     mimic: `<p>Ein Fragespiel für 4–12 Spieler, etwa 8 Minuten pro Spiel. Alle teilen einen <b>Ort</b> (eine Story-Karte) und haben dort eine <b>Figur</b>, außer dem <b>Nachahmer</b>, der nur Rauschen und das Brett der möglichen Orte sieht.</p>
@@ -205,6 +292,22 @@ export default {
 <li><b>Die Zeit ist um:</b> Alle zeigen auf eine verdächtige Person. Die meisten Stimmen werden verurteilt; bei Gleichstand entwischt der Nachahmer.</li>
 </ol>
 <p>Streiche beim Zuhören Orte auf deinem eigenen Handy durch: Deine Notizen sind privat. Punkte: Lebende je +1 (wer den Nachahmer ertappt hat, +1 mehr); der Nachahmer +2, oder +3 für das Nennen des Ortes.</p>`,
+    omenH: "Dead Set: Das Omen",
+    omen: `<p>Ein Vorhersagespiel für 4–12 Spieler, etwa 10 Minuten. Ein Rad zeigt auf <b>Leben</b>, <b>Tod</b> oder <b>Wiedergeburt</b>, in dieser Reihenfolge im Kreis. Sieben Runden; jede Person hat fünf <b>Einfluss</b>.</p>
+<ol>
+<li><b>Das Rad</b> zeigt, wo es beginnt.</li>
+<li><b>Heimlich</b> sagst du voraus, wo es stehen bleibt, und darfst es einen Schritt in eine Richtung drehen (für einen Einfluss).</li>
+<li><b>Alle Drehungen werden addiert</b>, und das Rad bewegt sich einmal. Ein Treffer bringt 3.</li>
+</ol>
+<p>Am Ende ist jeder unbenutzte Einfluss einen Punkt wert. Die meisten Punkte gewinnen; Gleichstand wird geteilt.</p>`,
+    mirrorH: "Dead Set: Der Spiegel",
+    mirror: `<p>Ein Menschenkenntnis-Spiel für 4–12 Spieler, etwa 15 Minuten. Acht erfundene <b>Dilemmata</b> mit je drei Antworten; keine ist richtig.</p>
+<ol>
+<li><b>Besprechen.</b> Du siehst, wen du diese Runde liest. Frag, zieh auf, täusche.</li>
+<li><b>Versiegelte Stimme.</b> Du antwortest für dich und sagst die Antwort der Person voraus, die du liest.</li>
+<li><b>Der Spiegel</b> zeigt alles: Ein Treffer bringt 2, deine eigene Antwort nichts.</li>
+</ol>
+<p>Die Paare wechseln jede Runde, also liest jede Person jede. Wer am besten liest, gewinnt.</p>`,
     graveH: "Dead Set: Grabräuber",
     grave: `<p>Ein Teamspiel mit Wörtern (oder Symbolen) für 4–12 Spieler, etwa 15 Minuten. Zwei Grabräuberbanden, der <b>Mond</b> und die <b>Sonne</b>, graben einen Friedhof aus 25 Grabsteinen nach den Reliquien um, die ihre Gottheit beschwören. Die Bande, die den Münzwurf gewinnt, hat 9 Reliquien in der Erde, die andere 8; 7 Gräber sind leer, und eines gehört dem <b>Tod</b>.</p>
 <ol>

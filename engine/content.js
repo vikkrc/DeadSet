@@ -562,6 +562,19 @@ PRESETS.mimic = { id: 'mimic', name: 'Dead Set: Mimic', min: 4, max: 12, pool: [
   rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, mimic: true,
   blurb: 'Everyone knows where you are, except the thing wearing a friend\'s face. Ask, answer, accuse; the Mimic listens for the place.' };
 
+ROLES.O_SEER = { id: 'O_SEER', name: 'Seer', set: 'omen', alignment: 'INDEPENDENT', glyph: 'oracle', when: 'Always',
+  summary: 'Predict where the wheel will stop, and turn it when it pays.',
+  detail: 'Each round, secretly predict Life, Death or Rebirth, and choose whether to turn the wheel one step (it costs one of your five Influence). Every turn is added up. A right prediction scores 3; unused Influence is worth 1 each at the end.' };
+ROLES.W_READER = { id: 'W_READER', name: 'Reader', set: 'mirror', alignment: 'INDEPENDENT', glyph: 'medium', when: 'Always',
+  summary: 'Answer the dilemma for yourself, and predict a friend.',
+  detail: 'Each round you answer a fictional dilemma and predict the answer of the player you read. A right prediction scores 2; your own answer scores nothing, so surprising your reader is fair play.' };
+PRESETS.omen = { id: 'omen', name: 'Dead Set: The Omen', min: 4, max: 12, pool: [], dreams: false,
+  rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, omen: true,
+  blurb: 'An occult wheel points to Life, Death or Rebirth. Everyone may secretly turn it; guess where it stops.' };
+PRESETS.mirror = { id: 'mirror', name: 'Dead Set: The Mirror', min: 4, max: 12, pool: [], dreams: false,
+  rulesMin: 0, rulesMax: 0, ruleIds: [], doomsday: false, mirror: true,
+  blurb: 'The haunted mirror shows what your friends think you will do. Answer the dilemma, and read the person you face.' };
+
 export const MODES = {
   classic: { id: 'classic', roleSets: ['core', 'standard', 'full', 'side'], rules: true, dreams: true },
   missions: { id: 'missions', roleSets: ['missions'], rules: false, dreams: false },
@@ -572,8 +585,10 @@ export const MODES = {
   seance: { id: 'seance', roleSets: ['seance'], rules: false, dreams: false },
   graverobbers: { id: 'graverobbers', roleSets: ['graverobbers'], rules: false, dreams: false },
   mimic: { id: 'mimic', roleSets: ['mimic'], rules: false, dreams: false },
+  omen: { id: 'omen', roleSets: ['omen'], rules: false, dreams: false },
+  mirror: { id: 'mirror', roleSets: ['mirror'], rules: false, dreams: false },
 };
 /** The mode a preset belongs to. */
-export const modeOf = (presetId) => (PRESETS[presetId]?.missions ? 'missions' : PRESETS[presetId]?.exorcism ? 'exorcism' : PRESETS[presetId]?.coffins ? 'coffins' : PRESETS[presetId]?.carnival ? 'carnival' : PRESETS[presetId]?.midnight ? 'midnight' : PRESETS[presetId]?.seance ? 'seance' : PRESETS[presetId]?.graverobbers ? 'graverobbers' : PRESETS[presetId]?.mimic ? 'mimic' : 'classic');
+export const modeOf = (presetId) => (PRESETS[presetId]?.missions ? 'missions' : PRESETS[presetId]?.exorcism ? 'exorcism' : PRESETS[presetId]?.coffins ? 'coffins' : PRESETS[presetId]?.carnival ? 'carnival' : PRESETS[presetId]?.midnight ? 'midnight' : PRESETS[presetId]?.seance ? 'seance' : PRESETS[presetId]?.graverobbers ? 'graverobbers' : PRESETS[presetId]?.mimic ? 'mimic' : PRESETS[presetId]?.omen ? 'omen' : PRESETS[presetId]?.mirror ? 'mirror' : 'classic');
 /** Can this role be dealt in this mode? */
 export const roleInMode = (roleId, mode) => !!ROLES[roleId] && MODES[mode].roleSets.includes(ROLES[roleId].set);

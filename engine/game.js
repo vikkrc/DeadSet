@@ -21,6 +21,8 @@ import { startMidnight, midnightCommand, midnightAdvance, isMidnightPhase } from
 import { startSeance, seanceCommand, seanceAdvance, isSeancePhase } from './seance.js';
 import { startGrave, graveCommand, graveAdvance, isGravePhase } from './graverobbers.js';
 import { startMimic, mimicCommand, mimicAdvance, isMimicPhase } from './mimic.js';
+import { startOmen, omenCommand, omenAdvance, isOmenPhase } from './omen.js';
+import { startMirror, mirrorCommand, mirrorAdvance, isMirrorPhase } from './mirror.js';
 
 export { GameError };
 
@@ -139,8 +141,10 @@ export function startMatch(m, rng, now, { forceRoles = null, forceWord = null } 
   if (PRESETS[m.settings.preset]?.carnival) { m.N = null; m.S = null; startCarnival(m, rng, now); return; }
   if (PRESETS[m.settings.preset]?.midnight) { m.S = null; startMidnight(m, rng, now); return; }
   if (PRESETS[m.settings.preset]?.seance) { m.G = null; startSeance(m, rng, now); return; }
-  m.Q = null;
+  m.Q = null; m.O = null; m.W = null;
   if (PRESETS[m.settings.preset]?.mimic) { startMimic(m, rng, now); return; }
+  if (PRESETS[m.settings.preset]?.omen) { startOmen(m, rng, now); return; }
+  if (PRESETS[m.settings.preset]?.mirror) { startMirror(m, rng, now); return; }
   if (PRESETS[m.settings.preset]?.graverobbers) { m.S = null; m.N = null; startGrave(m, rng, now); return; }
   m.N = null;
   m.S = null;
@@ -625,8 +629,10 @@ export function hostAdvance(m, rng, now, { skipAll = false } = {}) {
   if (isSeancePhase(m.phase)) { seanceAdvance(m, rng, now); return; }
   if (isGravePhase(m.phase)) { graveAdvance(m, rng, now); return; }
   if (isMimicPhase(m.phase)) { mimicAdvance(m, rng, now); return; }
+  if (isOmenPhase(m.phase)) { omenAdvance(m, rng, now); return; }
+  if (isMirrorPhase(m.phase)) { mirrorAdvance(m, rng, now); return; }
   // Exorcism: the end screen returns the table to the same lobby (settings and scores kept).
-  if (m.phase === 'ENDED' && ['exorcism', 'coffins', 'carnival', 'midnight', 'seance', 'graverobbers', 'mimic'].includes(m.config?.mode)) { rematch(m, { ready: true }); return; }
+  if (m.phase === 'ENDED' && ['exorcism', 'coffins', 'carnival', 'midnight', 'seance', 'graverobbers', 'mimic', 'omen', 'mirror'].includes(m.config?.mode)) { rematch(m, { ready: true }); return; }
   switch (m.phase) {
     case 'NIGHT_0_REVEAL': pub(m, 'Night 0 ends.', 'phase'); beginDay(m, now); break;
     case 'DAY_PREP': closeMorning(m, now); break;
@@ -674,7 +680,7 @@ export function rematch(m, { ready = false } = {}) {
   const sMatch = m.sMatch;
   const gScores = m.gScores;
   const gMatch = m.gMatch;
-  const qKeep = { qScores: m.qScores, qMatch: m.qMatch, qLast: m.qLast };
+  const qKeep = { qScores: m.qScores, qMatch: m.qMatch, qLast: m.qLast, oScores: m.oScores, wScores: m.wScores, wSeen: m.wSeen };
   const fresh = newMatch({ id: m.id, code: m.code, hostId: m.hostId, moderated: m.moderated });
   Object.assign(m, { ...fresh, settings: m.settings, stateVersion: m.stateVersion + 1, phaseSeq: m.phaseSeq + 1 });
   m.phaseId = `LOBBY:${m.phaseSeq}`;
@@ -714,6 +720,16 @@ export function playerCommand(m, actorId, cmd, rng, now) {
   if (type.startsWith('n.')) {
     if (!m.N || !isMidnightPhase(m.phase)) throw new GameError('That window has closed.', 'STALE');
     midnightCommand(m, p, type, payload, rng, now);
+    return;
+  }
+  if (type.startsWith('o.')) {
+    if (!m.O || !isOmenPhase(m.phase)) throw new GameError('That window has closed.', 'STALE');
+    omenCommand(m, p, type, payload, rng, now);
+    return;
+  }
+  if (type.startsWith('w.')) {
+    if (!m.W || !isMirrorPhase(m.phase)) throw new GameError('That window has closed.', 'STALE');
+    mirrorCommand(m, p, type, payload, rng, now);
     return;
   }
   if (type.startsWith('q.')) {
@@ -952,7 +968,7 @@ export function chatChannels(m, p) {
   if (!p || m.phase === 'LOBBY' || m.phase === 'ENDED') return out;
   const remote = m.settings.transport === 'remote';
   const muted = p.statuses.some((s) => s.type === 'MUTE');
-  const inDay = isDayPhase(m.phase) || (isMissionPhase(m.phase) && !['M_REVEAL', 'M_NIGHT'].includes(m.phase)) || isExorcismPhase(m.phase) || isCoffinsPhase(m.phase) || isCarnivalPhase(m.phase) || m.phase === 'N_DAY' || m.phase === 'N_VOTE' || (isSeancePhase(m.phase) && m.phase !== 'S_INTRO') || (isGravePhase(m.phase) && m.phase !== 'G_INTRO') || (isMimicPhase(m.phase) && m.phase !== 'Q_INTRO');
+  const inDay = isDayPhase(m.phase) || (isMissionPhase(m.phase) && !['M_REVEAL', 'M_NIGHT'].includes(m.phase)) || isExorcismPhase(m.phase) || isCoffinsPhase(m.phase) || isCarnivalPhase(m.phase) || m.phase === 'N_DAY' || m.phase === 'N_VOTE' || (isSeancePhase(m.phase) && m.phase !== 'S_INTRO') || (isGravePhase(m.phase) && m.phase !== 'G_INTRO') || (isMimicPhase(m.phase) && m.phase !== 'Q_INTRO') || isOmenPhase(m.phase) || isMirrorPhase(m.phase);
   if (remote && inDay) {
     if (hasRule(m, 'FOG_OF_WAR')) {
       const seats = [...m.players].sort((a, b) => a.seat - b.seat);

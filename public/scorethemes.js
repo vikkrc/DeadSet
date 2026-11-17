@@ -25,6 +25,8 @@ const ENERGY = {
   gYard: 0, gSign: 1, gDig: 2,
   // Mimic: a familiar room, slightly wrong
   qDeal: 0, qAsk: 1, qAccuse: 2, qFinal: 2,
+  // The Omen and The Mirror
+  oShow: 0, oSecret: 1, wTalk: 0, wSeal: 1,
 };
 
 const rnd = (lo, hi) => lo + Math.random() * (hi - lo);

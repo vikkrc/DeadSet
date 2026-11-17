@@ -5,6 +5,8 @@ export default {
   roles: {
     G_UNDERTAKER: { name: "Sírásó", when: "Mindig", summary: "Nálad van a temetési lajstrom. Adj a csapatodnak egy szót és egy számot.", detail: "Csak te és a másik Sírásó tudjátok, mi fekszik minden kő alatt. A szavad annyi sírt kössön össze a csapatodéból, és vezessen messze a Halál sírjától." },
     G_DIGGER: { name: "Sírrabló", when: "Mindig", summary: "Olvasd a Sírásó jelét, és ásd ki a csapatod ereklyéit.", detail: "Beszéljétek meg, aztán szavazz egy sírra a telefonodon. A ti ereklyétek: áss tovább. Üres sír vagy a másik csapat ereklyéje: a kör továbbmegy. A Halál sírja: a csapatod veszít." },
+    O_SEER: { name: "Látó", when: "Mindig", summary: "Tippeld meg, hol áll meg a kerék, és forgasd, ha megéri.", detail: "Minden körben titokban tippelj: Élet, Halál vagy Újjászületés, és döntsd el, forgatsz-e egyet a keréken (ez öt Befolyásod egyikébe kerül). Minden forgatás összeadódik. A helyes tipp 3 pont; a fel nem használt Befolyás a végén egy-egy pont." },
+    W_READER: { name: "Olvasó", when: "Mindig", summary: "Válaszolj a dilemmára magadért, és tippeld meg egy barátodét.", detail: "Minden körben válaszolsz egy kitalált dilemmára, és megtippeled annak a válaszát, akit olvasol. A helyes tipp 2 pont; a saját válaszod semmit sem ér, úgyhogy meglepni az olvasódat teljesen jogos." },
     Q_MIMIC: { name: "Utánzó", when: "Mindig", summary: "Egy barátod arcát viseled. Nem tudod, hol vagy.", detail: "Mindenki más ugyanazon a helyen van. Figyeld a kérdéseket, válaszolj úgy, mintha odatartoznál, és jöjj rá a helyre. Bármikor leleplezheted magad és megnevezheted, hogy nyerj; az elítélt Utánzónak még jár egy utolsó tipp." },
     Q_LIVING: { name: "Élő", when: "Mindig", summary: "Tudod a helyet. Bizonyítsd, de ne áruld el.", detail: "Kérdezz és válaszolj a helyről: elég pontosan, hogy kiderüljön, jártál ott, de elég homályosan, hogy az Utánzó ne jöjjön rá. Játékonként egyszer vádolhatsz; csak az egyhangú asztal ítél el." },
     S_GHOST: { name: "Szellem", when: "Mindig", summary: "Meggyilkoltak. Tudod, ki, hol és miért, de nem beszélhetsz.", detail: "Küldj minden olvasónak egy látomást a sorához. Egy hideg folttal jegeld be a látomást, ami nem a tiéd." },
@@ -165,6 +167,8 @@ export default {
   },
   presets: {
     graverobbers: { name: "Dead Set: Sírrablók", blurb: "Két sírrabló csapat, a Hold és a Nap, szavakból vagy ikonokból álló temetőt ás fel istenük ereklyéiért. Csak a Sírásók tudják, mi van alattuk. Az egyik sír a Halálé." },
+    omen: { name: "Dead Set: Az Ómen", blurb: "Egy okkult kerék az Életre, a Halálra vagy az Újjászületésre mutat. Bárki titokban elforgathatja; tippeld meg, hol áll meg." },
+    mirror: { name: "Dead Set: A Tükör", blurb: "A kísértetjárta tükör azt mutatja, amit a barátaid gondolnak, hogy tennél. Válaszolj a dilemmára, és olvass abban, akivel szemben állsz." },
     mimic: { name: "Dead Set: Utánzó", blurb: "Mindenki tudja, hol vagytok, kivéve azt, aki egy barátod arcát viseli. Kérdezz, válaszolj, vádolj; az Utánzó a helyre fülel." },
     seance: { name: "Dead Set: Szeánsz", blurb: "Egy néma, meggyilkolt Szellem látomásokat küld; a Médiumok ezekből fejtik meg, ki, hol és miért. Köztük egy Csaló a látomásokat hazugságra cseréli." },
     midnight: { name: "Dead Set: Éjfél", blurb: "Egy éjszaka, egy szavazás. A kártyák a sötétben cserélnek gazdát; hajnalban az vagy, ami előtted fekszik. Találj egy Halált, vagy légy az." },
@@ -195,6 +199,89 @@ export default {
     'Mindenki felébredt. Valahogy ez volt a legrosszabb.',
     'A Halál a várossal szavazott. Hát persze.',
   ],
+  // The Mirror: dilemmas by stable id, [prompt, A, B, C] (see public/dilemmas.js).
+  dilemmas: {
+    d001: ["Éjfélkor egy idegen kopogtat, bőrig ázva a viharban, és bebocsátást kér.", "Beengeded", "Az ajtón keresztül beszélsz vele", "Úgy teszel, mintha senki sem lenne itthon"],
+    d002: ["Lezárt naplót találsz az új házad padlásán.", "Feltöröd és elolvasod", "Visszaadod a régi tulajdonosoknak", "Elégeted, olvasatlanul"],
+    d003: ["Egy jósnő felajánlja, hogy megmondja, melyik napon halsz meg.", "Meghallgatod", "Udvariasan nemet mondasz", "Inkább valaki másról kérdezel"],
+    d004: ["Egy vacsorán kialszanak a fények, és sikoly hasít a csendbe.", "A sikoly felé rohansz", "Előbb gyertyát keresel", "Mozdulatlanul maradsz"],
+    d005: ["Egy szellem felajánlja, hogy egy hétig bárkit kísért, akit megnevezel.", "Egy riválist nevezel meg", "Egy barátot, a móka kedvéért", "Visszautasítod"],
+    d006: ["Egy omladozó kastélyt örökölsz, családi átokkal együtt.", "Mégis beköltözöl", "Azonnal eladod", "Szállodát csinálsz belőle"],
+    d007: ["Egy holló minden éjjel háromkor az ablakpárkányodra száll.", "Megeteted", "Beszélgetsz vele", "Behúzod a függönyt"],
+    d008: ["Egy éjszakát tölthetsz bezárva egy híres kísértetjárta helyen.", "Egy várbörtönben", "Egy elhagyott elmegyógyintézetben", "Egy kísértethajón a tengeren"],
+    d009: ["A tükörképed egy pillanattal utánad pislog.", "Farkasszemet nézel vele", "Letakarsz minden tükröt", "Integetsz, és várod, mi lesz"],
+    d010: ["Egy szeánsz balul sül el, és egy szellem szívességet kér.", "Meghallgatod", "Azonnal véget vetsz a szeánsznak", "Előbb alkudozol valamiért"],
+    d011: ["Az utolsó hazafelé tartó vonaton csak egy néma utas ül.", "Mellé ülsz", "A lehető legmesszebb ülsz", "Megvárod a következő vonatot"],
+    d012: ["Egy tárgyat vihetsz magaddal a túlvilágra.", "Egy fényképet", "Egy jó könyvet", "Egy pakli kártyát"],
+    d013: ["Egy átkozott érme szerencsét hoz, de naponta egy emlékedbe kerül.", "Megtartod", "Továbbadod valakinek", "A folyóba dobod"],
+    d014: ["Alkonyatkor eltévedsz egy ködös erdőben.", "A távoli fényeket követed", "Felmászol egy fára, és vársz", "Visszafelé indulsz, amerről jöttél"],
+    d015: ["Egy álarcosbálon valaki a te arcodat viseli álarcként.", "Kérdőre vonod", "Csendben követed", "Álarcot cserélsz, és távozol"],
+    d016: ["Megtudhatsz egy titkot mindenkiről ennél az asztalnál.", "A legnagyobb félelmét", "A legnagyobb hazugságát", "A titkos tehetségét"],
+    d017: ["Egy fekete macska keresztezi az utad egy fontos találkozó felé.", "Mész tovább", "Másik utat választasz", "Megállsz megsimogatni"],
+    d018: ["Az otthonodban egy barátságos, de nagyon zajos szellem kísért.", "Megtanulsz együtt élni vele", "Ördögűzőt hívsz", "Belépőt szedsz a turistáktól"],
+    d019: ["Vámpírként ébredsz.", "Átadod magad az éjszakai életnek", "Gyógymódot keresel", "Titokban tartod, és élsz tovább"],
+    d020: ["Rejtélyes levél hív egy kúriába egy végrendelet felolvasására.", "Egyedül mész", "Egy baráttal mész", "Nem foglalkozol vele"],
+    d021: ["Egy régi fogadóban te vagy az utolsó ébren lévő vendég, és nyikorog a lépcső.", "Utánajársz", "Bezárod az ajtót", "Alvást színlelsz"],
+    d022: ["Egy boszorkány ingyen ad egy bájitalt.", "Szerelmi bájitalt", "Igazságszérumot", "Láthatatlanná tevő bájitalt"],
+    d023: ["Bármelyik évszázadban élhetsz, visszaút nélkül.", "A múltban", "Itt és most", "A távoli jövőben"],
+    d024: ["Egy beszélő portré tanácsot ad pletykáért cserébe.", "Pletykát adsz", "Nem foglalkozol vele", "A fal felé fordítod"],
+    d025: ["A csapatod egy faházban rekedt, és holnap elfogy az élelem.", "Te vezeted a menekülést", "Beosztjátok és vártok", "Átkutatod a pincét"],
+    d026: ["A saját hangodat hallod az erdőből, ahogy a neveden szólít.", "Válaszolsz", "Elindulsz felé", "Az ellenkező irányba futsz"],
+    d027: ["Egy dzsinn teljesít egy kívánságot, de a megfogalmazásnak tökéletesnek kell lennie.", "Gazdagságot kívánsz", "Több kívánságot kívánsz", "A dzsinn szabadságát kívánod"],
+    d028: ["Egy régi zenélődoboz minden éjjel magától szól.", "Magad húzod fel", "Kiveszed a szerkezetét", "Felveszed bizonyítéknak"],
+    d029: ["Életed végéig csak egyféle ételt ehetsz.", "Egy nagy lakomát", "Egyszerű kenyeret és levest", "Valami édeset"],
+    d030: ["X-szel jelölt térképet találsz a saját kertedről.", "Még ma éjjel ásol", "Nappal ásol, barátokkal", "Hagyod elásva"],
+    d031: ["Egy barátod bevallja, hogy titokban vérfarkas.", "Segítesz eltitkolni", "Telihold idején bezárod", "Megkéred, hogy mutassa meg az átváltozást"],
+    d032: ["Egy napra helyet cserélhetsz bárkivel ennél az asztalnál.", "Valakivel, aki rettenthetetlen", "Valakivel, aki gazdag", "Valakivel, aki rejtélyes"],
+    d033: ["A temetkezési vállalkozó kedvezménnyel előre megszervezné a temetésedet.", "Fényes gyászmenet", "Csendes szertartás", "Buli tánccal"],
+    d034: ["A házadban egy óra visszafelé jár.", "Megjavítod", "Békén hagyod", "Megpróbálod kihasználni"],
+    d035: ["Megérkezik a cirkusz, és egy bohóc jegyet csúsztat a kezedbe egy titkos előadásra.", "Elmész", "Elajándékozod a jegyet", "Széttéped"],
+    d036: ["Egy állatfaj nyelvén beszélhetsz.", "A macskákén", "A varjakén", "A kutyákén"],
+    d037: ["Egy vihar egy éjszakára egy világítótoronyba zár egy őrrel, aki sosem alszik.", "Fennmaradsz beszélgetni", "Fél szemmel alszol", "Dacolsz a viharral"],
+    d038: ["Az árnyékod magától kezd mozogni.", "Követed", "A fényben maradsz", "Összebarátkozol vele"],
+    d039: ["Halhatatlanságot kínálnak, de sosem hagyhatod el ezt a várost.", "Elfogadod", "Visszautasítod", "Nagyobb várost kérsz"],
+    d040: ["Egy reggel nyitva áll a temető egyik lezárt kriptája.", "Benézel", "Szólsz a papnak", "Becsukod, és hallgatsz"],
+    d041: ["Ezek közül egyet örökre megtarthatsz.", "Egy kulcsot, ami minden ajtót nyit", "Egy gyertyát, ami sosem alszik ki", "Egy iránytűt, ami hazafelé mutat"],
+    d042: ["Egy árverésen olcsón kel el egy átkozott festmény.", "Licitálsz rá", "Figyelmezteted a többi licitálót", "Elsétálsz"],
+    d043: ["A falu megkér, hogy őrizd a hidat azon az éjjelen, amikor valami átkel rajta.", "Őrt állsz", "Csapdát állítasz", "Kitalálsz valamit, hogy ne legyél ott"],
+    d044: ["A szerencsesütidben ez áll: Ne bízz a bal oldali szomszédodban.", "Elhiszed", "Kineveted", "Megmutatod neki"],
+    d045: ["Újraélhetsz egy napot az életedből.", "A legboldogabb napodat", "Egy napot, hogy helyrehozz egy hibát", "Egy átlagos, lusta napot"],
+    d046: ["Egy régiségbolt tükre tíz évvel idősebbnek mutat.", "Megveszed", "Megkérdezed, mit mutat", "Gyorsan távozol"],
+    d047: ["Életed végéig egy szellem vigyáz rád.", "Egy lovag", "Egy nagymama", "Egy csintalan gyerek"],
+    d048: ["Egy buli házigazdája kívülről bezárta az összes ajtót.", "Más kiutat keresel", "Bulizol tovább", "Magyarázatot követelsz"],
+    d049: ["Csak egy dologról emlékezhetnek rád.", "A kedvességedről", "A bátorságodról", "A humorodról"],
+    d050: ["Egy varázskönyv jelenik meg a küszöbödön.", "Kipróbálsz egy varázslatot", "Elolvasod, de nem varázsolsz", "Elviszed egy könyvtárba"],
+    d051: ["Helyet kínálnak egy hajón, amely még sosem tért vissza útjairól.", "Vízre szállsz", "A parton maradsz", "Előbb a legénységet kérdezed"],
+    d052: ["Rájössz, hogy a szomszéd faluban él a hasonmásod.", "Találkozol vele", "Messziről figyeled", "Elköltözöl"],
+    d053: ["Vacsora közben minden gyertya egyszerre kékre vált.", "Eszel tovább", "Elfújod őket", "Megkérdezed, ki van a szobában"],
+    d054: ["Egyszer egy órára megállíthatod az időt.", "Még ma felhasználod", "Vészhelyzetre tartogatod", "Átalszod"],
+    d055: ["A katedrális egyik vízköpője találós kérdést kér tőled.", "Mondasz egyet", "Inkább te kérsz egyet", "Úgy teszel, mintha nem hallanád"],
+    d056: ["A kedvenc dalod szól a saját temetéseden. Melyik az?", "Valami szomorú", "Valami vidám", "Valami, amire senki sem számít"],
+    d057: ["Egyetlen foglalkozásod lehet egy kísértetjárta városban.", "Temetkezési vállalkozó", "Fogadós", "Éjjeliőr"],
+    d058: ["Egy barátod kölcsönveszi a kabátodat, és egy idegen levelével a zsebében hozza vissza.", "Elolvasod a levelet", "Visszaadod neki", "Megkeresed az idegent"],
+    d059: ["Felkel a telihold, és a város összes kutyája vonyítani kezd.", "Bezárod az ajtókat", "Kimész megnézni", "Velük vonyítasz"],
+    d060: ["Feladhatsz egy érzéket, hogy a többi élesebb legyen.", "Az ízlelést", "A szaglást", "Soha, egyet sem"],
+    d061: ["Egy kocsis nélküli hintó áll meg előtted.", "Beszállsz", "Keresed a kocsist", "Továbbmész"],
+    d062: ["Megtudhatod, mit gondol rólad valójában egy ember.", "A legjobb barátod", "A riválisod", "Senki, köszönöm"],
+    d063: ["Sűrű köd ereszkedik le, és a városi harang tizenhármat üt.", "Újra megszámolod", "Bebújsz a házba", "Felmész a harangtoronyba"],
+    d064: ["Kiderül, hogy a házadban van egy rejtett szoba.", "Azonnal kinyitod", "Megvárod a nappalt", "Letapétázod"],
+    d065: ["Egy vándorárus palackozott szerencsét árul.", "Veszel egy üveggel", "Megveszed az egész ládát", "Kikergeted a városból"],
+    d066: ["Egy évet egyedül kell töltened egy hegyi kolostorban.", "Egy halom könyvet viszel", "Egy hangszert viszel", "Egy naplót viszel"],
+    d067: ["A teafüvek egy nevet rajzolnak ki, amit nem ismersz.", "Megkeresed azt a személyt", "Iszol még egy csészével", "Senkinek sem szólsz"],
+    d068: ["Vendégként elmehetsz a történelem bármelyik bulijára.", "Egy királyi koronázásra", "Egy vad álarcosbálra", "Egy legendás koncertre"],
+    d069: ["Egy haldokló egy kulcsot ad a kezedbe, és azt suttogja: Soha ne nyisd ki.", "Kinyitod", "Örökre megtartod", "Eldobod"],
+    d070: ["Az asztalnak ki kell választania, ki fedezi fel elsőként a kriptát.", "Jelentkezel", "Mást javasolsz", "Javaslod, hogy húzzatok szalmaszálat"],
+    d071: ["Helyet kínálnak neked a Halál vacsoraasztalánál.", "Udvariasan elfogadod", "Ajándékot viszel", "Kifogást keresel"],
+    d072: ["Egy régi fénykép téged mutat egy száz évvel ezelőtti bulin.", "Utánajársz", "Bekereteted", "Elrejted"],
+    d073: ["Kedved szerint átváltozhatsz egy lénnyé.", "Denevérré", "Farkassá", "Macskává"],
+    d074: ["Valaki minden éjjel virágot hagy a küszöbödön.", "Fennmaradsz, hogy lásd, ki az", "Köszönőcetlit hagysz", "Nem nyitsz többé ajtót"],
+    d075: ["Egy vihar miatt elmegy az áram egy horrorfilm közben.", "Kísértettörténeteket mesélsz", "Lefekszel aludni", "Gyertyafénynél eljátszod a befejezést"],
+    d076: ["Visszacsinálhatsz egy találmányt a történelemből.", "Az ébresztőórát", "A mobiltelefont", "Semmit, maradjon minden"],
+    d077: ["Éjfélkor egy keresztútnál egy idegen felajánlja, hogy behangolja a gitárodat.", "Odaadod", "Előbb megkérdezed az árát", "Elmész a gitároddal"],
+    d078: ["Egyetlen beszélgetésre visszahozhatsz valakit.", "Egy rokont", "Egy híres személyt", "Egy gyerekkori barátot"],
+    d079: ["Egyik éjjelről a másikra csapóajtó jelenik meg a konyha padlóján.", "Lemész", "Leszögezed", "Ledobsz egy érmét, és hallgatózol"],
+    d080: ["Az utolsó gyertya is csonkig ég, és csak egyikőtök tarthatja.", "Elveszed", "Felajánlod másnak", "Közösen elfújjátok"],
+  },
   guide: {
     mimicH: "Dead Set: Utánzó",
     mimic: `<p>Kérdezős játék 4–12 játékosnak, játékonként kb. 8 perc. Mindenki ugyanazon a <b>helyen</b> van (egy történetkártya), és ott egy <b>szereplő</b>, kivéve az <b>Utánzót</b>, aki csak zajt és a lehetséges helyek tábláját látja.</p>
@@ -205,6 +292,22 @@ export default {
 <li><b>Lejárt az idő:</b> mindenki rámutat egy gyanúsítottra. A legtöbb szavazatot kapót elítélik; döntetlennél az Utánzó elillan.</li>
 </ol>
 <p>Hallgatás közben húzd ki a helyeket a saját telefonodon: a jegyzeteid titkosak. Pontok: az Élők +1 (aki elkapta az Utánzót, +1 még); az Utánzó +2, a hely megnevezéséért +3.</p>`,
+    omenH: "Dead Set: Az Ómen",
+    omen: `<p>Jóslós játék 4–12 játékosnak, kb. 10 perc. Egy kerék az <b>Életre</b>, a <b>Halálra</b> vagy az <b>Újjászületésre</b> mutat, ebben a sorrendben körbe. Hét kör; mindenkinek öt <b>Befolyása</b> van.</p>
+<ol>
+<li><b>A kerék</b> megmutatja, honnan indul.</li>
+<li><b>Titokban</b> megtippeled, hol áll meg, és forgathatsz rajta egyet bármelyik irányba (egy Befolyásért).</li>
+<li><b>Minden forgatás összeadódik</b>, és a kerék egyszer mozdul. A helyes tipp 3 pont.</li>
+</ol>
+<p>A végén minden fel nem használt Befolyás egy pont. A legtöbb pont nyer; holtversenyben osztoznak.</p>`,
+    mirrorH: "Dead Set: A Tükör",
+    mirror: `<p>Emberismereti játék 4–12 játékosnak, kb. 15 perc. Nyolc kitalált <b>dilemma</b>, mindegyik három válasszal; egyik sem helyes.</p>
+<ol>
+<li><b>Beszélgetés.</b> Látod, kit olvasol ebben a körben. Kérdezd, ugrasd, vezesd félre.</li>
+<li><b>Lepecsételt szavazat.</b> Válaszolsz magadért, és megtippeled annak a válaszát, akit olvasol.</li>
+<li><b>A tükör</b> mindent megmutat: a helyes tipp 2 pont, a saját válaszod semmit.</li>
+</ol>
+<p>A párok körről körre forognak, így mindenki mindenkit olvas. A legjobb olvasó nyer.</p>`,
     graveH: "Dead Set: Sírrablók",
     grave: `<p>Csapatjáték szavakkal (vagy ikonokkal) 4–12 játékosnak, kb. 15 perc. Két sírrabló csapat, a <b>Hold</b> és a <b>Nap</b>, egy 25 sírkőből álló temetőt ás fel az ereklyékért, amelyekkel megidézhetik istenüket. Az érmefeldobást nyerő csapatnak 9 ereklyéje van a földben, a másiknak 8; 7 sír üres, egy pedig a <b>Halálé</b>.</p>
 <ol>

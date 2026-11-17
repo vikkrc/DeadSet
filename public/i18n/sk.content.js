@@ -5,6 +5,8 @@ export default {
   roles: {
     G_UNDERTAKER: { name: "Hrobár", when: "Vždy", summary: "Máš pohrebný register. Daj svojej partii jedno slovo a jedno číslo.", detail: "Len ty a druhý Hrobár viete, čo leží pod každým kameňom. Tvoje slovo má spojiť toľko hrobov tvojej partie a viesť ďaleko od hrobu Smrti." },
     G_DIGGER: { name: "Kopáč hrobov", when: "Vždy", summary: "Čítaj Hrobárovo znamenie a vykopávaj relikvie svojej partie.", detail: "Dohodnite sa a potom hlasuj za hrob na telefóne. Vaša relikvia: kopte ďalej. Prázdny hrob alebo relikvia druhej partie: ťah prechádza. Hrob Smrti: vaša partia prehráva." },
+    O_SEER: { name: "Veštec", when: "Vždy", summary: "Tipni, kde koleso zastaví, a otoč ho, keď sa to oplatí.", detail: "Každé kolo tajne tipni Život, Smrť alebo Znovuzrodenie a rozhodni, či koleso otočíš o krok (stojí to jeden z piatich Vplyvov). Všetky otočenia sa sčítajú. Správny tip má 3 body; nepoužitý Vplyv má na konci po jednom bode." },
+    W_READER: { name: "Čitateľ", when: "Vždy", summary: "Odpovedz na dilemu za seba a tipni odpoveď priateľa.", detail: "Každé kolo odpovieš na vymyslenú dilemu a tipneš odpoveď hráča, ktorého čítaš. Správny tip má 2 body; tvoja odpoveď nič, takže prekvapiť svojho čitateľa je fér." },
     Q_MIMIC: { name: "Napodobňovač", when: "Vždy", summary: "Nosíš tvár priateľa. Nevieš, kde si.", detail: "Všetci ostatní sú na jednom mieste. Počúvaj otázky, odpovedaj, akoby si tam patril, a zisti miesto. Kedykoľvek sa môžeš odhaliť a pomenovať ho, aby si vyhral; odsúdený Napodobňovač má ešte posledný tip." },
     Q_LIVING: { name: "Živý", when: "Vždy", summary: "Poznáš miesto. Dokáž to, ale neprezraď ho.", detail: "Pýtaj sa a odpovedaj o mieste: dosť presne, aby bolo jasné, že si tam bol, a dosť hmlisto, aby to Napodobňovač neuhádol. Raz za hru môžeš obviniť; odsudzuje len jednomyseľný stôl." },
     S_GHOST: { name: "Duch", when: "Vždy", summary: "Zavraždili ťa. Vieš kto, kde a prečo, ale nemôžeš hovoriť.", detail: "Pošli každému čitateľovi víziu k jeho radu. Studeným miestom zamraz víziu, ktorá nie je tvoja." },
@@ -165,6 +167,8 @@ export default {
   },
   presets: {
     graverobbers: { name: "Dead Set: Vykrádači hrobov", blurb: "Dve partie vykrádačov hrobov, Mesiac a Slnko, prekopávajú cintorín slov alebo ikon pre relikvie svojho božstva. Čo leží pod zemou, vedia len Hrobári. Jeden hrob patrí Smrti." },
+    omen: { name: "Dead Set: Znamenie", blurb: "Okultné koleso ukazuje na Život, Smrť alebo Znovuzrodenie. Ktokoľvek ho môže tajne otočiť; tipni, kde zastaví." },
+    mirror: { name: "Dead Set: Zrkadlo", blurb: "Strašidelné zrkadlo ukazuje, čo si priatelia myslia, že urobíš. Odpovedz na dilemu a čítaj toho, koho máš oproti." },
     mimic: { name: "Dead Set: Napodobňovač", blurb: "Všetci vedia, kde ste, okrem toho, kto nosí tvár priateľa. Pýtaj sa, odpovedaj, obviňuj; Napodobňovač načúva, kde to je." },
     seance: { name: "Dead Set: Seansa", blurb: "Nemý zavraždený Duch posiela vízie; Médiá z nich lúštia kto, kde a prečo. Klamár medzi nimi vymieňa vízie za lži." },
     midnight: { name: "Dead Set: Polnoc", blurb: "Jedna noc, jedno hlasovanie. Karty v tme menia majiteľov; za úsvitu si tým, čo leží pred tebou. Nájdi Smrť, alebo ňou buď." },
@@ -195,6 +199,89 @@ export default {
     'Všetci sa zobudili. Nejako to bolo horšie.',
     'Smrť hlasovala s mestom. Samozrejme.',
   ],
+  // The Mirror: dilemmas by stable id, [prompt, A, B, C] (see public/dilemmas.js).
+  dilemmas: {
+    d001: ["O polnoci klope cudzinec, premočený búrkou, a prosí, aby mohol vojsť.", "Pustíš ho dnu", "Rozprávaš sa s ním cez dvere", "Tváriš sa, že nikto nie je doma"],
+    d002: ["Na povale nového domu nájdeš zamknutý denník.", "Vylomíš zámok a prečítaš ho", "Vrátiš ho starým majiteľom", "Spáliš ho neprečítaný"],
+    d003: ["Veštkyňa ti ponúkne, že ti povie deň tvojej smrti.", "Vypočuješ si ju", "Zdvorilo odmietneš", "Spýtaš sa radšej na niekoho iného"],
+    d004: ["Na večierku zhasnú svetlá a ozve sa výkrik.", "Bežíš za výkrikom", "Najprv hľadáš sviečku", "Ostaneš úplne bez pohybu"],
+    d005: ["Duch ti ponúkne, že týždeň bude strašiť kohokoľvek, koho určíš.", "Určíš rivala", "Určíš priateľa, pre zábavu", "Odmietneš"],
+    d006: ["Zdedíš rozpadávajúci sa hrad aj s rodinnou kliatbou.", "Aj tak sa nasťahuješ", "Hneď ho predáš", "Urobíš z neho hotel"],
+    d007: ["Na parapet ti každú noc o tretej sadne havran.", "Nakŕmiš ho", "Rozprávaš sa s ním", "Zatiahneš závesy"],
+    d008: ["Môžeš stráviť noc zamknutý na slávnom strašidelnom mieste.", "V hradnej kobke", "V opustenom blázinci", "Na lodi duchov na mori"],
+    d009: ["Tvoj odraz žmurkne o okamih po tebe.", "Zízaš naň, kým neuhne", "Zakryješ všetky zrkadlá", "Zamávaš a uvidíš, čo sa stane"],
+    d010: ["Seansa sa pokazí a duch ťa prosí o láskavosť.", "Vypočuješ ho", "Seansu okamžite ukončíš", "Najprv si niečo vyjednáš"],
+    d011: ["Posledný vlak domov je prázdny, až na jedného mlčanlivého cestujúceho.", "Sadneš si vedľa neho", "Sadneš si čo najďalej", "Počkáš na ďalší vlak"],
+    d012: ["Do posmrtného života si môžeš vziať jeden predmet.", "Fotografiu", "Dobrú knihu", "Balíček kariet"],
+    d013: ["Prekliata minca prináša šťastie, ale každý deň ťa stojí jednu spomienku.", "Necháš si ju", "Dáš ju niekomu ďalej", "Hodíš ju do rieky"],
+    d014: ["Za súmraku zablúdiš v hmlistom lese.", "Ideš za vzdialenými svetlami", "Vylezieš na strom a čakáš", "Vrátiš sa cestou, ktorou si prišiel"],
+    d015: ["Na maškarnom bále má niekto ako masku tvoju tvár.", "Postavíš sa mu", "Potichu ho sleduješ", "Vymeníš si masky a odídeš"],
+    d016: ["O každom pri tomto stole sa môžeš dozvedieť jedno tajomstvo.", "Jeho najväčší strach", "Jeho najväčšiu lož", "Jeho tajný talent"],
+    d017: ["Cestou na dôležité stretnutie ti skríži cestu čierna mačka.", "Pokračuješ", "Vyberieš sa inou cestou", "Zastavíš sa a pohladkáš ju"],
+    d018: ["V tvojom dome straší priateľský, ale veľmi hlučný duch.", "Naučíš sa s ním žiť", "Zavoláš exorcistu", "Budeš vyberať vstupné od turistov"],
+    d019: ["Zobudíš sa ako upír.", "Prijmeš nočný život", "Hľadáš liek", "Utajíš to a žiješ ďalej"],
+    d020: ["Záhadný list ťa pozýva do kaštieľa na čítanie závetu.", "Ideš sám", "Ideš s priateľom", "Ignoruješ ho"],
+    d021: ["V starom hostinci si posledný hosť, ktorý ešte nespí, a škrípu schody.", "Ideš to preskúmať", "Zamkneš si dvere", "Predstieraš, že spíš"],
+    d022: ["Čarodejnica ti dá jeden elixír zadarmo.", "Elixír lásky", "Elixír pravdy", "Elixír neviditeľnosti"],
+    d023: ["Môžeš žiť v ktoromkoľvek storočí, bez cesty späť.", "V minulosti", "Tu a teraz", "V ďalekej budúcnosti"],
+    d024: ["Hovoriaci portrét ponúka rady výmenou za klebety.", "Vymeníš klebety", "Ignoruješ ho", "Otočíš ho k stene"],
+    d025: ["Tvoja skupina uviazla v chate a zajtra dôjde jedlo.", "Povedieš útek", "Rozdelíte zásoby a počkáte", "Prehľadáš pivnicu"],
+    d026: ["Z lesa počuješ vlastný hlas, ako ťa volá menom.", "Odpovieš", "Ideš za ním", "Utečieš na druhú stranu"],
+    d027: ["Džin splní jedno želanie, ale musí byť sformulované dokonale.", "Želáš si bohatstvo", "Želáš si viac želaní", "Želáš si džinovu slobodu"],
+    d028: ["Stará hracia skrinka každú noc hrá sama od seba.", "Natiahneš ju sám", "Vyberieš z nej mechanizmus", "Nahráš ju ako dôkaz"],
+    d029: ["Do konca života môžeš jesť iba jedno jedlo.", "Veľkú hostinu", "Obyčajný chlieb a polievku", "Niečo sladké"],
+    d030: ["Nájdeš mapu svojej vlastnej záhrady s vyznačeným X.", "Kopeš ešte dnes v noci", "Kopeš za denného svetla s priateľmi", "Necháš to zakopané"],
+    d031: ["Priateľ sa ti prizná, že je tajne vlkolak.", "Pomôžeš mu to utajiť", "Za splnu ho zamkneš", "Požiadaš ho, nech ti ukáže premenu"],
+    d032: ["Na jeden deň si môžeš vymeniť život s kýmkoľvek pri tomto stole.", "S niekým nebojácnym", "S niekým bohatým", "S niekým záhadným"],
+    d033: ["Pohrebník ti ponúka zľavu, ak si pohreb naplánuješ vopred.", "Veľkolepý sprievod", "Tichý obrad", "Večierok s tancom"],
+    d034: ["V tvojom dome ide hodiny dozadu.", "Opravíš ich", "Necháš ich tak", "Pokúsiš sa ich využiť"],
+    d035: ["V meste je cirkus a klaun ti strčí lístok na tajné predstavenie.", "Ideš", "Lístok niekomu daruješ", "Roztrháš ho"],
+    d036: ["Môžeš hovoriť s jedným druhom zvierat.", "S mačkami", "S vranami", "So psami"],
+    d037: ["Búrka ťa na noc uväzní v majáku so strážcom, ktorý nikdy nespí.", "Ostaneš hore a rozprávaš sa", "Spíš s jedným okom otvoreným", "Vzdoruješ búrke"],
+    d038: ["Tvoj tieň sa začne hýbať sám od seba.", "Ideš za ním", "Držíš sa svetla", "Spriateliš sa s ním"],
+    d039: ["Ponúkajú ti nesmrteľnosť, ale toto mesto už nikdy neopustíš.", "Prijmeš", "Odmietneš", "Vypýtaš si väčšie mesto"],
+    d040: ["Jedného rána je zapečatená hrobka na cintoríne otvorená.", "Nazrieš dnu", "Povieš to farárovi", "Zatvoríš ju a mlčíš"],
+    d041: ["Jednu z týchto vecí si môžeš nechať navždy.", "Kľúč, ktorý otvorí každé dvere", "Sviečku, ktorá nikdy nezhasne", "Kompas, ktorý ukazuje domov"],
+    d042: ["Na aukcii sa lacno predáva prekliaty obraz.", "Prihodíš", "Varuješ ostatných dražiteľov", "Odídeš"],
+    d043: ["Dedina ťa požiada, aby si strážil most v noci, keď cezeň niečo prejde.", "Budeš strážiť", "Nastražíš pascu", "Nájdeš dôvod, prečo byť preč"],
+    d044: ["Otvoríš koláčik šťastia a v ňom stojí: Never tomu, kto sedí naľavo od teba.", "Uveríš", "Zasmeješ sa", "Ukážeš mu to"],
+    d045: ["Môžeš znova prežiť jeden deň svojho života.", "Svoj najšťastnejší deň", "Deň, keď napravíš chybu", "Obyčajný, lenivý deň"],
+    d046: ["Zrkadlo v starožitníctve ťa ukazuje o desať rokov staršieho.", "Kúpiš ho", "Spýtaš sa, čo ukazuje", "Rýchlo odídeš"],
+    d047: ["Na celý život ti pridelia ducha strážcu.", "Rytiera", "Babičku", "Huncútske dieťa"],
+    d048: ["Hostiteľ večierka zamkol všetky dvere zvonka.", "Hľadáš iný východ", "Bavíš sa ďalej", "Žiadaš vysvetlenie"],
+    d049: ["Môžu si ťa pamätať len pre jednu vec.", "Pre láskavosť", "Pre odvahu", "Pre humor"],
+    d050: ["Na prahu sa ti objaví kniha kúziel.", "Vyskúšaš jedno kúzlo", "Prečítaš ju, ale nič nezačaruješ", "Odnesieš ju do knižnice"],
+    d051: ["Ponúknu ti miesto na lodi, ktorá sa zo svojich plavieb ešte nikdy nevrátila.", "Vyplávaš", "Ostaneš na brehu", "Najprv sa spýtaš posádky"],
+    d052: ["Zistíš, že v susednej dedine žije tvoj dvojník.", "Stretneš sa s ním", "Sleduješ ho z diaľky", "Odsťahuješ sa"],
+    d053: ["Pri večeri všetky sviečky naraz zmodrejú.", "Ješ ďalej", "Sfúkneš ich", "Spýtaš sa miestnosti, kto je tam"],
+    d054: ["Raz môžeš na hodinu zastaviť čas.", "Využiješ to ešte dnes", "Odložíš si to na núdzu", "Prespíš to"],
+    d055: ["Chrlič na katedrále od teba chce hádanku.", "Povieš mu jednu", "Vypýtaš si hádanku od neho", "Tváriš sa, že nepočuješ"],
+    d056: ["Na tvojom vlastnom pohrebe hrá tvoja obľúbená pieseň. Ktorá?", "Niečo smutné", "Niečo veselé", "Niečo, čo nikto nečaká"],
+    d057: ["V strašidelnom meste môžeš mať jediné zamestnanie.", "Pohrebník", "Hostinský", "Nočná hliadka"],
+    d058: ["Priateľ si požičia tvoj kabát a vráti ho s listom od cudzinca vo vrecku.", "Prečítaš list", "Vrátiš mu ho", "Nájdeš cudzinca"],
+    d059: ["Vychádza spln a všetky psy v meste začnú zavýjať.", "Zamkneš dvere", "Ideš sa von pozrieť", "Zavýjaš s nimi"],
+    d060: ["Môžeš sa vzdať jedného zmyslu, aby sa ostatné zostrili.", "Chuti", "Čuchu", "Nikdy, ani jedného"],
+    d061: ["Pred tebou zastaví koč bez kočiša.", "Nastúpiš", "Hľadáš kočiša", "Ideš ďalej"],
+    d062: ["Môžeš presne vedieť, čo si o tebe naozaj myslí jeden človek.", "Tvoj najlepší priateľ", "Tvoj rival", "Nikto, ďakujem"],
+    d063: ["Priženie sa hustá hmla a mestský zvon odbije trinásť.", "Spočítaš to znova", "Skryješ sa dnu", "Ideš do zvonice"],
+    d064: ["Zistíš, že tvoj dom má skrytú miestnosť.", "Hneď ju otvoríš", "Počkáš na denné svetlo", "Prelepíš ju tapetou"],
+    d065: ["Potulný obchodník predáva šťastie vo fľašiach.", "Kúpiš si fľašu", "Kúpiš celú debnu", "Vyženieš ho z mesta"],
+    d066: ["Musíš stráviť rok sám v horskom kláštore.", "Vezmeš kopu kníh", "Vezmeš hudobný nástroj", "Vezmeš denník"],
+    d067: ["Čajové lístky vytvoria meno, ktoré nepoznáš.", "Hľadáš toho človeka", "Vypiješ ďalšiu šálku", "Nikomu nič nepovieš"],
+    d068: ["Ako hosť môžeš navštíviť ktorýkoľvek večierok v dejinách.", "Kráľovskú korunováciu", "Divoký maškarný bál", "Legendárny koncert"],
+    d069: ["Umierajúci muž ti podá kľúč a zašepká: Nikdy ho neotváraj.", "Otvoríš ho", "Necháš si ho navždy", "Zahodíš ho"],
+    d070: ["Stôl musí vybrať, kto prvý preskúma kryptu.", "Prihlásiš sa", "Navrhneš niekoho iného", "Navrhneš ťahať slamky"],
+    d071: ["Ponúknu ti miesto pri Smrtinom stole na večeru.", "Zdvorilo prijmeš", "Prinesieš dar", "Vyhovoríš sa"],
+    d072: ["Stará fotografia ťa ukazuje na večierku spred sto rokov.", "Pátraš po tom", "Zarámuješ ju", "Schováš ju"],
+    d073: ["Podľa vôle sa môžeš premeniť na jedno stvorenie.", "Na netopiera", "Na vlka", "Na mačku"],
+    d074: ["Niekto ti každú noc nechá kvety na prahu.", "Ostaneš hore, aby si zistil kto", "Necháš ďakovný lístok", "Prestaneš otvárať dvere"],
+    d075: ["Počas hororu vypadne kvôli búrke elektrina.", "Rozprávaš strašidelné príbehy", "Ideš spať", "Pri sviečkach zahráš koniec"],
+    d076: ["Môžeš vrátiť späť jeden vynález v dejinách.", "Budíky", "Mobilné telefóny", "Nič, nech je všetko tak"],
+    d077: ["O polnoci na rázcestí ti cudzinec ponúkne, že naladí tvoju gitaru.", "Podáš mu ju", "Najprv sa spýtaš na cenu", "Odídeš aj s gitarou"],
+    d078: ["Na jediný rozhovor môžeš niekoho vrátiť.", "Príbuzného", "Slávnu osobnosť", "Priateľa z detstva"],
+    d079: ["Cez noc sa v kuchynskej podlahe objavia padacie dvere.", "Zídeš dolu", "Zatlčieš ich", "Hodíš dnu mincu a počúvaš"],
+    d080: ["Dohára posledná sviečka a držať ju môže iba jeden z vás.", "Vezmeš si ju", "Ponúkneš ju niekomu inému", "Spoločne ju sfúknete"],
+  },
   guide: {
     mimicH: "Dead Set: Napodobňovač",
     mimic: `<p>Hra otázok pre 4–12 hráčov, asi 8 minút na hru. Všetci sú na jednom <b>mieste</b> (karta príbehu) a majú tam <b>postavu</b>, okrem <b>Napodobňovača</b>, ktorý vidí len šum a tabuľu možných miest.</p>
@@ -205,6 +292,22 @@ export default {
 <li><b>Čas vypršal:</b> všetci ukážu na jedného podozrivého. Kto má najviac hlasov, je odsúdený; pri remíze Napodobňovač zmizne.</li>
 </ol>
 <p>Počas počúvania si prečiarkuj miesta na vlastnom telefóne: poznámky sú súkromné. Body: Živí po +1 (kto chytil Napodobňovača, ešte +1); Napodobňovač +2, za pomenovanie miesta +3.</p>`,
+    omenH: "Dead Set: Znamenie",
+    omen: `<p>Hra predpovedí pre 4–12 hráčov, asi 10 minút. Koleso ukazuje na <b>Život</b>, <b>Smrť</b> alebo <b>Znovuzrodenie</b>, v tomto poradí dookola. Sedem kôl; každý má päť <b>Vplyvov</b>.</p>
+<ol>
+<li><b>Koleso</b> ukáže, odkiaľ začína.</li>
+<li><b>Tajne</b> tipneš, kde zastaví, a môžeš ho otočiť o krok ktorýmkoľvek smerom (za jeden Vplyv).</li>
+<li><b>Všetky otočenia sa sčítajú</b> a koleso sa pohne raz. Správny tip má 3 body.</li>
+</ol>
+<p>Na konci má každý nepoužitý Vplyv jeden bod. Vyhráva najviac bodov; pri remíze sa delia.</p>`,
+    mirrorH: "Dead Set: Zrkadlo",
+    mirror: `<p>Hra čítania ľudí pre 4–12 hráčov, asi 15 minút. Osem vymyslených <b>dilem</b>, každá s tromi odpoveďami; žiadna nie je správna.</p>
+<ol>
+<li><b>Rozhovor.</b> Vidíš, koho v tomto kole čítaš. Pýtaj sa, podpichuj, zavádzaj.</li>
+<li><b>Zapečatený hlas.</b> Odpovieš za seba a tipneš odpoveď toho, koho čítaš.</li>
+<li><b>Zrkadlo</b> ukáže všetko: správny tip má 2 body, tvoja odpoveď nič.</li>
+</ol>
+<p>Dvojice sa každé kolo menia, takže každý číta každého. Vyhráva najlepší čitateľ.</p>`,
     graveH: "Dead Set: Vykrádači hrobov",
     grave: `<p>Tímová hra so slovami (alebo ikonami) pre 4–12 hráčov, asi 15 minút. Dve partie vykrádačov hrobov, <b>Mesiac</b> a <b>Slnko</b>, prekopávajú cintorín s 25 náhrobkami a hľadajú relikvie, ktoré privolajú ich božstvo. Partia, ktorá vyhrá hod mincou, má v zemi 9 relikvií, druhá 8; 7 hrobov je prázdnych a jeden patrí <b>Smrti</b>.</p>
 <ol>

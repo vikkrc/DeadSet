@@ -349,6 +349,16 @@ const MOODS = {
   qAsk: { root: 61.7, scale: [0, 2, 3, 5, 7, 8, 11], chord: [1, 1.19, 1.5], cutoff: 620, wind: 0.012, gain: 0.48, tick: 66, pluck: { bpm: 92, pattern: [1, 0, 1, 0, 0, 1, 0, 1], notes: [0, 3, 7, 11] }, motif: { voice: 'box', every: [9, 14], len: [2, 4], beat: 0.7, oct: 4 } },
   qAccuse: { root: 55, scale: [0, 1, 3, 6, 7, 8], chord: [1, 1.06, 1.5], cutoff: 500, wind: 0.02, gain: 0.54, heart: 80, swell: [5, 8], motif: { voice: 'bell', every: [5, 8], len: [1, 2], beat: 1, oct: 2 } },
   qFinal: { root: 51.9, scale: [0, 1, 3, 5, 7, 8], chord: [1, 1.19, 1.5], cutoff: 560, wind: 0.02, gain: 0.54, heart: 96, drum: { bpm: 112, pattern: [1, 0, 0, 1, 1, 0, 0, 0], pitch: 54, gain: 0.15 }, motif: { voice: 'box', every: [5, 8], len: [2, 3], beat: 0.5, oct: 4 } },
+  // Dead Set: The Omen. An astrolabe in a candlelit study: ticking gears and a slow choir.
+  //   oShow   – the wheel shows its face: a held drone and bells
+  //   oSecret – the secret choice: the clockwork ticks faster, a nervous box tune
+  oShow: { root: 55, scale: [0, 2, 3, 7, 8], chord: [1, 1.5, 2], cutoff: 460, wind: 0.02, gain: 0.52, choir: 0.018, tick: 60, motif: { voice: 'bell', every: [8, 12], len: [1, 2], beat: 1.2, oct: 3 } },
+  oSecret: { root: 61.7, scale: [0, 1, 3, 5, 7, 8], chord: [1, 1.19, 1.5], cutoff: 560, wind: 0.015, gain: 0.5, tick: 84, heart: 70, motif: { voice: 'box', every: [6, 9], len: [2, 3], beat: 0.6, oct: 4 } },
+  // Dead Set: The Mirror. A dressing room behind the stage: a cracked waltz, whispers.
+  //   wTalk – talking it over: a lilting waltz on the music box
+  //   wSeal – sealing the ballots: the waltz stops, a heartbeat and a clock
+  wTalk: { root: 58.3, scale: [0, 2, 4, 5, 7, 9], chord: [1, 1.26, 1.5], cutoff: 600, wind: 0.01, gain: 0.48, pluck: { bpm: 84, pattern: [1, 0, 0, 1, 0, 0], notes: [0, 4, 7] }, shimmer: 0.006, motif: { voice: 'box', every: [8, 12], len: [3, 4], beat: 0.7, oct: 5 } },
+  wSeal: { root: 55, scale: [0, 1, 3, 7, 8], chord: [1, 1.06, 1.5], cutoff: 500, wind: 0.02, gain: 0.52, heart: 76, tick: 72, motif: { voice: 'bell', every: [6, 9], len: [1, 2], beat: 1, oct: 3 } },
   // Overlay mixed on top of any mood when the table is down to its last few.
   tension: { root: 110, scale: [0, 1], chord: [], cutoff: 3000, wind: 0, gain: 0.5, shimmer: 0.012, heart: 104 },
 };

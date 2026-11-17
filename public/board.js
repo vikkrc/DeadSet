@@ -10,6 +10,8 @@ import { midnightBoard } from './midnight.js';
 import { seanceBoard } from './seance.js';
 import { graveBoard, lobbyCrews, graveLobbyCenter } from './graverobbers.js';
 import { mimicBoard } from './mimic.js';
+import { omenBoard } from './omen.js';
+import { mirrorBoard } from './mirror.js';
 import { cardArt, roleEmblemId } from './cards.js';
 import { missionBoardStage, missionBoardRing, gridHtml, hunchArrowsSvg, hunchLegend } from './missions.js';
 
@@ -43,7 +45,8 @@ export function activeRuleNotes(v) {
 export function moodFor(v) {
   switch (v.phase) {
     case 'LOBBY': return 'lobby';
-    case 'ENDED': if (v.winner === 'MIMIC') return v.mimic?.result?.side === 'LIVING' ? 'endLiving' : 'endDeath';
+    case 'ENDED': if (v.winner === 'OMEN' || v.winner === 'MIRROR') return 'endLiving';
+      if (v.winner === 'MIMIC') return v.mimic?.result?.side === 'LIVING' ? 'endLiving' : 'endDeath';
       if (v.winner === 'GRAVEROBBERS') return v.graverobbers?.cause === 'death' ? 'endDeath' : 'endLiving';
       if (v.winner === 'SEANCE') return { full: 'endLiving', hollow: 'endDraw', deceiver: 'endDeath', lost: 'endDraw' }[v.seance?.result] ?? 'endDraw';
       if (v.winner === 'MIDNIGHT') { const sd = v.midnight?.winners?.sides ?? []; return sd.includes('JESTER') ? 'endJester' : sd.includes('LIVING') ? 'endLiving' : sd.includes('DEATH') ? 'endDeath' : 'endDraw'; }
@@ -58,6 +61,12 @@ export function moodFor(v) {
     case 'M_NIGHT': return 'mCandle';
     case 'M_LAST_STAND': return 'mStand';
     case 'M_RECKONING': return 'mReckon';
+    case 'O_SHOW': return 'oShow';
+    case 'O_SECRET': return 'oSecret';
+    case 'O_REVEAL': return 'oShow';
+    case 'W_PROMPT': return 'wTalk';
+    case 'W_CHOOSE': return 'wSeal';
+    case 'W_REVEAL': return 'wTalk';
     case 'Q_INTRO': return 'qDeal';
     case 'Q_ASK': return 'qAsk';
     case 'Q_VOTE': case 'Q_GUESS': return 'qAccuse';
@@ -160,8 +169,8 @@ export function boardScreen(v, h) {
           ${classic ? `<span class="kicker">${t('Rule cards')}</span>
           <div class="deckrow">${ruleCards}</div>` : ''}
           ${v.mode === 'coffins' ? `<div class="c-lobbyhand">${Array.from({ length: s.c?.coffins ?? 4 }, (_, i) => coffinCard(i === (s.c?.coffins ?? 4) - 1 ? 'C' : 'G')).join('')}</div><p class="small muted">${th('Each player: {g} Gold and one Curse.', { g: (s.c?.coffins ?? 4) - 1 })}</p>` : ''}
-          ${['exorcism', 'coffins', 'carnival', 'midnight', 'seance', 'graverobbers', 'mimic'].includes(v.mode) ? '' : `<span class="kicker">${t('Story')}</span>`}
-          ${['exorcism', 'coffins', 'carnival', 'midnight', 'seance', 'graverobbers', 'mimic'].includes(v.mode) ? '' : `<p class="scenario">${s.scenario.mode === 'manual' && s.scenario.who ? esc(`${scen('WHO', s.scenario.who)} · ${scen('WHERE', s.scenario.where)} · ${scen('WHY', s.scenario.why)}`) : t('Dealt when the match begins.')}</p>`}
+          ${['exorcism', 'coffins', 'carnival', 'midnight', 'seance', 'graverobbers', 'mimic', 'omen', 'mirror'].includes(v.mode) ? '' : `<span class="kicker">${t('Story')}</span>`}
+          ${['exorcism', 'coffins', 'carnival', 'midnight', 'seance', 'graverobbers', 'mimic', 'omen', 'mirror'].includes(v.mode) ? '' : `<p class="scenario">${s.scenario.mode === 'manual' && s.scenario.who ? esc(`${scen('WHO', s.scenario.who)} · ${scen('WHERE', s.scenario.where)} · ${scen('WHY', s.scenario.why)}`) : t('Dealt when the match begins.')}</p>`}
         </section>
       </div></main>`;
   }
@@ -173,6 +182,8 @@ export function boardScreen(v, h) {
   if (v.mode === 'seance' && v.seance) return seanceBoard(v, { header });
   if (v.mode === 'graverobbers' && v.graverobbers) return graveBoard(v, { header });
   if (v.mode === 'mimic' && v.mimic) return mimicBoard(v, { header, ring });
+  if (v.mode === 'omen' && v.omen) return omenBoard(v, { header, ring });
+  if (v.mode === 'mirror' && v.mirror) return mirrorBoard(v, { header, ring });
 
   // ── 1 · Living table + 2 · sky + 6 · threads + 17 · plaques ────────────
   const players = [...v.players].sort((a, b) => a.seat - b.seat);

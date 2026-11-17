@@ -44,7 +44,7 @@ function strings(src) {
 }
 
 // Client: every string literal inside a t( / th( / tm( / tmh( call (balanced parens).
-for (const f of ['public/app.js', 'public/board.js', 'public/gazette.js', 'public/guide.js', 'public/gifts.js', 'public/missions.js', 'public/exorcism.js', 'public/coffins.js', 'public/carnival.js', 'public/midnight.js', 'public/seance.js', 'public/graverobbers.js', 'public/mimic.js']) {
+for (const f of ['public/app.js', 'public/board.js', 'public/gazette.js', 'public/guide.js', 'public/gifts.js', 'public/missions.js', 'public/exorcism.js', 'public/coffins.js', 'public/carnival.js', 'public/midnight.js', 'public/seance.js', 'public/graverobbers.js', 'public/mimic.js', 'public/omen.js', 'public/mirror.js', 'public/kit.js']) {
   const src = read(f);
   const re = /\b(?:t|th)\(/g;
   let m;
@@ -109,13 +109,13 @@ for (const m of read('public/gifts.js').matchAll(/const QUIP = \[([\s\S]*?)\];/g
 
 // Engine: message templates (strings shaped like sentences or containing {params}).
 for (const m of read('engine/content.js').matchAll(/verb: '([^']+)'/g)) keys.add(m[1]);
-for (const f of ['engine/missions.js', 'engine/exorcism.js', 'engine/coffins.js', 'engine/carnival.js', 'engine/midnight.js', 'engine/seance.js', 'engine/graverobbers.js', 'engine/mimic.js', 'engine/game.js', 'engine/night.js', 'engine/day.js', 'engine/setup.js', 'engine/views.js', 'engine/victory.js', 'engine/state.js', 'server/rooms.js', 'server/index.js']) {
+for (const f of ['engine/missions.js', 'engine/exorcism.js', 'engine/coffins.js', 'engine/carnival.js', 'engine/midnight.js', 'engine/seance.js', 'engine/graverobbers.js', 'engine/mimic.js', 'engine/omen.js', 'engine/mirror.js', 'engine/game.js', 'engine/night.js', 'engine/day.js', 'engine/setup.js', 'engine/views.js', 'engine/victory.js', 'engine/state.js', 'server/rooms.js', 'server/index.js']) {
   for (const s of strings(read(f))) {
     if (/\{\w+\}/.test(s) || (/^[A-Z]/.test(s) && /\s/.test(s) && !/^[A-Z_]+$/.test(s))) keys.add(s);
     else if (/^(ready|asleep|ballots recorded|have seen their role|are ready|have spoken|ready to vote|votes in|candles lit|Table|Lobby|End)$/.test(s)) keys.add(s);
   }
 }
-const SKIP = new Set(['', 'host', 'standard', 'lot', 'B', 'rotate', 'spoken', 'JESTER', 'mine', 'DOUBLE_AGENT', 'GAMBLER', 'WITCH', 'N_DEAL', 'N_NIGHT', 'copy', 'DEMON', 'F', 'MASKED_VOTE', 'REGULAR', 'missions', 'stand', 'coin', 'DEATH', 'INDEPENDENT', 'ABSTAIN', 'Dead Set', 'Payload too large', 'Invalid JSON', 'Method not allowed', 'Could not restore rooms:']);
+const SKIP = new Set(['', 'C', 'REBIRTH', 'death', 'necro', 'host', 'standard', 'lot', 'B', 'rotate', 'spoken', 'JESTER', 'mine', 'DOUBLE_AGENT', 'GAMBLER', 'WITCH', 'N_DEAL', 'N_NIGHT', 'copy', 'DEMON', 'F', 'MASKED_VOTE', 'REGULAR', 'missions', 'stand', 'coin', 'DEATH', 'INDEPENDENT', 'ABSTAIN', 'Dead Set', 'Payload too large', 'Invalid JSON', 'Method not allowed', 'Could not restore rooms:']);
 const list = [...keys].filter((k) => !SKIP.has(k) && !k.startsWith('deadline')).sort();
 const lang = process.argv[2];
 if (lang) {

@@ -45,7 +45,7 @@ export function botDecide(m, botId, rng) {
       if (a.type === 'swap' && a.snatcher && a.choice == null && a.targets?.length && chance(rng, 0.5)) return { cmd: { type: 'dream.swap', payload: { target: pick(rng, a.targets) } } };
       return null;
     case 'NIGHT_ACTIONS': return nightMove(m, v, rng);
-    default: return m.Q && m.phase?.startsWith('Q_') ? mimicMove(m, v, rng) : m.X ? exorcismMove(m, v, rng) : m.G ? graveMove(m, v, rng) : m.S ? seanceMove(m, v, rng) : m.N ? midnightMove(m, v, rng) : m.K ? carnivalMove(m, v, rng) : m.C ? coffinsMove(m, v, rng) : m.M ? missionMove(m, v, rng) : null;
+    default: return m.O && m.phase?.startsWith('O_') ? omenMove(m, v, rng) : m.W && m.phase?.startsWith('W_') ? mirrorMove(m, v, rng) : m.Q && m.phase?.startsWith('Q_') ? mimicMove(m, v, rng) : m.X ? exorcismMove(m, v, rng) : m.G ? graveMove(m, v, rng) : m.S ? seanceMove(m, v, rng) : m.N ? midnightMove(m, v, rng) : m.K ? carnivalMove(m, v, rng) : m.C ? coffinsMove(m, v, rng) : m.M ? missionMove(m, v, rng) : null;
   }
 }
 
@@ -82,6 +82,21 @@ function exorcismMove(m, v, rng) {
 // early, so it gets dug), bid what they believe is safe (their own buried gold
 // plus a share of the table) and sometimes bluff a raise, dig the plots of
 // players who passed rather than those who bid high, and wager like the dice.
+// The Omen: bots predict at random, and turn the wheel now and then while Influence lasts.
+function omenMove(m, v, rng) {
+  const a = v.action || {};
+  if (a.type !== 'oballot' || a.ballot || !chance(rng, 0.5)) return null;
+  const rot = a.influence > 0 && chance(rng, 0.35) ? pick(rng, [-1, 1]) : 0;
+  return { cmd: { type: 'o.ballot', payload: { pred: rng.int(3), rot } } };
+}
+
+// The Mirror: bots answer and predict at random (from their own view only).
+function mirrorMove(m, v, rng) {
+  const a = v.action || {};
+  if (a.type !== 'wballot' || a.ballot || !chance(rng, 0.5)) return null;
+  return { cmd: { type: 'w.ballot', payload: { own: pick(rng, ['A', 'B', 'C']), pred: pick(rng, ['A', 'B', 'C']) } } };
+}
+
 // Mimic: bots ask random players, accuse now and then once a few questions have gone round, and vote at random (a Mimic bot always
 // agrees to convict someone else). A Mimic bot unmasks late with a random guess. For pacing tests, not strategy.
 function mimicMove(m, v, rng) {

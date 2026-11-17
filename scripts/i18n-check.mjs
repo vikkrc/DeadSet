@@ -1,6 +1,7 @@
 // Checks every translation file: placeholders and HTML tags must match the
 // English key, and content tables must have the same shape as engine/content.js.
 import { SIDE_MISSIONS } from '../engine/sidemissions.js';
+import { DILEMMAS } from '../public/dilemmas.js';
 import { ROLES, DREAMS, RULE_CARDS, PRESETS, SCENARIO, PRODUCTS, LANGS, MISSION_CARDS, MISSION_STORY } from '../engine/content.js';
 
 let bad = 0;
@@ -25,6 +26,12 @@ for (const code of LANGS.filter((c) => c !== 'en')) {
   for (const k of ['genericSteps', 'genericScenes']) if (d.missionStory?.[k]?.length !== MISSION_STORY[k].length) err(`missionStory.${k} length`);
   for (const id of Object.keys(SIDE_MISSIONS)) if (!d.sideMissions?.[id]) err(`side mission ${id} missing`);
   if (d.whispers?.length !== 9) err('whispers length');
+  // The Mirror: every dilemma id, as [prompt, A, B, C], all non-empty and the three answers distinct.
+  for (const x of DILEMMAS) {
+    const tr = d.dilemmas?.[x.id];
+    if (!Array.isArray(tr) || tr.length !== 4 || tr.some((y) => !y)) err(`dilemma ${x.id} missing or malformed`);
+    else if (new Set(tr.slice(1)).size !== 3) err(`dilemma ${x.id}: answers not distinct`);
+  }
   if (!d.and) err('and missing');
 }
 console.log(bad ? `${bad} problem(s)` : 'translations ok');

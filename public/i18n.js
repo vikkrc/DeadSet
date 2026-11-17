@@ -14,6 +14,11 @@ const cache = {};
 let EN = { roles: {}, dreams: {}, rules: {}, presets: {}, scenario: { WHO: [], WHERE: [], WHY: [] }, products: [] };
 
 export const getLang = () => lang;
+/** The Mirror: a dilemma's prompt and three answers in the reader's language (English from the bank). */
+export function dilemmaText(d) {
+  const tr = d ? D?.dilemmas?.[d.id] : null;
+  return { prompt: tr?.[0] ?? d?.prompt ?? '', choices: [0, 1, 2].map((i) => tr?.[i + 1] ?? d?.choices?.[i] ?? '') };
+}
 export const isLang = (c) => CODES.includes(c);
 
 /** Best guess from the browser, used before the player has chosen. */

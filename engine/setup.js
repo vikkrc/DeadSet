@@ -6,6 +6,8 @@ import { N_DEFAULTS, applyMidnightPatch, validateMidnight } from './midnight.js'
 import { S_DEFAULTS, applySeancePatch, validateSeance } from './seance.js';
 import { G_DEFAULTS, applyGravePatch, validateGrave } from './graverobbers.js';
 import { Q_DEFAULTS, applyMimicPatch, validateMimic } from './mimic.js';
+import { O_DEFAULTS, applyOmenPatch, validateOmen } from './omen.js';
+import { W_DEFAULTS, applyMirrorPatch, validateMirror } from './mirror.js';
 import {
   ROLES, PRESETS, RULE_CARDS, RULE_IDS, COPY_SENSITIVE, SCENARIO, MIN_PLAYERS, ABS_MAX_PLAYERS, LANGS,
   DREAM_WEIGHTS, DREAM_WEIGHT_MAX, SMALL_TABLE, STANDARD_EXTENDED, FULL_EXTENDED,
@@ -53,7 +55,9 @@ export function defaultSettings() {
       nDeal: 15, nStep: 10, nDay: 300, nVote: 30,
       sIntro: 20, sVision: 90, sDiscuss: 180, sCandle: 45, sName: 60,
       gIntro: 20, gSign: 90, gVote: 45,
-      qIntro: 20, qRound: 480, qVote: 30, qGuess: 30, qFinal: 45 },
+      qIntro: 20, qRound: 480, qVote: 30, qGuess: 30, qFinal: 45,
+      oShow: 8, oSecret: 40, oReveal: 12,
+      wTalk: 75, wChoose: 30, wReveal: 12 },
     transport: 'in-person',
     revealOnDeath: false,
     endReveal: true,
@@ -96,6 +100,9 @@ export function defaultSettings() {
     g: { ...G_DEFAULTS, crew: {}, cap: {} },
     // Mimic mode
     q: { ...Q_DEFAULTS },
+    // The Omen and The Mirror
+    o: { ...O_DEFAULTS },
+    w: { ...W_DEFAULTS, packs: [...W_DEFAULTS.packs] },
   };
 }
 
@@ -109,7 +116,7 @@ export function applySettingsPatch(settings, patch = {}) {
   const s = structuredClone(settings);
   // Switching modes (Classic / Missions / Exorcism): each mode keeps its own
   // last preset and options, so going there and back loses nothing.
-  if (patch.mode && ['classic', 'missions', 'exorcism', 'coffins', 'carnival', 'midnight', 'seance', 'graverobbers', 'mimic'].includes(patch.mode) && patch.mode !== modeOf(s.preset)) {
+  if (patch.mode && ['classic', 'missions', 'exorcism', 'coffins', 'carnival', 'midnight', 'seance', 'graverobbers', 'mimic', 'omen', 'mirror'].includes(patch.mode) && patch.mode !== modeOf(s.preset)) {
     const from = modeOf(s.preset);
     s.memory = { ...(s.memory || {}) };
     s.memory[from] = { preset: s.preset, dreams: s.dreams, doomsday: s.doomsday, rules: structuredClone(s.rules) };
@@ -198,6 +205,8 @@ export function applySettingsPatch(settings, patch = {}) {
   if (patch.s) applySeancePatch(s, patch.s);
   if (patch.g) applyGravePatch(s, patch.g);
   if (patch.q) applyMimicPatch(s, patch.q);
+  if (patch.o) applyOmenPatch(s, patch.o);
+  if (patch.w) applyMirrorPatch(s, patch.w);
   if (typeof patch.twins === 'boolean') s.twins = patch.twins;
   if (typeof patch.sideMissions === 'boolean') s.sideMissions = patch.sideMissions;
   if (patch.missionCards !== undefined) s.missionCards = clampInt(patch.missionCards, 0, 2, 1);
@@ -302,6 +311,8 @@ export function validateSetup(n, settings, players = []) {
   if (PRESETS[settings.preset]?.seance) return validateSeance(n, settings, players);
   if (PRESETS[settings.preset]?.graverobbers) return validateGrave(n, settings, players);
   if (PRESETS[settings.preset]?.mimic) return validateMimic(n, settings);
+  if (PRESETS[settings.preset]?.omen) return validateOmen(n, settings);
+  if (PRESETS[settings.preset]?.mirror) return validateMirror(n, settings);
   const errors = [];
   const warnings = [];
   const preset = PRESETS[settings.preset];

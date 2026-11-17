@@ -133,6 +133,7 @@ Other Missions ideas kept for later:
 | **Hidden Allegiances** | Classic Dead Set, Missions | Secret sides; a town hunts its killers over days and votes |
 | **Changing Hands** | Carnival, Midnight | Role cards change owners in secret; memory and bluff |
 | **Signs & Riddles** | Exorcism, Séance, Graverobbers, Mimic | One side knows the secret and may only hint |
+| **Reading the Room** | The Omen, The Mirror (Beta 9) | No hidden sides: read the people around you and outguess them |
 | **Bluff & Wager** | Coffins | Bury, bid and dare: a quick game of nerve |
 
 New modes join a family (or open a new one) when they are pitched. The twelve modes parked from the 2026-11-17 spec (below) suggest four more: **Reading the Room** (The Omen, The Mirror), **Quiet Hands** (The Vigil, The Vault), **Bargains & Betrayals** (Inheritance, The Pact) and **Tall Tales** (The Gazette, Confessions). The Ritual joins Hidden Allegiances; Treasure Hunters, The Black Market and Standoff join Bluff & Wager.
@@ -149,7 +150,7 @@ Séance needed by far the most new art, so it moved back behind the lighter mode
 | 6 | **Séance** | | Built (SEANCE.md) |
 | 7 | **Graverobbers** | | Built (GRAVEROBBERS.md); three crews added |
 | 8 | **Mimic** | No new art, 8 minutes, nearly designed; reuses Exorcism's rounds and the WHERE cards | Built (MIMIC.md) |
-| 9 | **The Omen + The Mirror** | Opens *Reading the Room*. Both are sealed simultaneous ballots with scored rounds: build a reusable kit (sealed ballot, round loop, score ledger, synced reveal) that half the later modes use | Full spec |
+| 9 | **The Omen + The Mirror** | Opens *Reading the Room*. Both are sealed simultaneous ballots with scored rounds: build a reusable kit (sealed ballot, round loop, score ledger, synced reveal) that half the later modes use | Built (OMEN.md, MIRROR.md); the kit is engine/kit.js + public/kit.js |
 | 10 | **The Pact + Standoff** | Pairs and targets around the table: arrows between seats, simultaneous reveals | Full spec |
 | 11 | **Treasure Hunters + The Vigil** | The first push-your-luck game and the first fully co-operative one; quick, very different moods | Full spec |
 | 12 | **Inheritance + The Black Market** | Coin economies, a rotating Executor or Seller, allocation and bid controls, hidden values revealed at the end | Full spec |
@@ -523,7 +524,7 @@ The spec suggested (1) The Omen, The Mirror, The Pact; (2) Inheritance, Confessi
 - **Content:** at least 30 vetted questions per language, each with aliases and three fallback fakes. Never invented at runtime.
 - **Players and length:** 4–10, 15–30 minutes. Family: Tall Tales.
 
-#### Dead Set: The Omen (simultaneous prediction) · Beta 9
+#### Dead Set: The Omen (simultaneous prediction) · Beta 9 · built (OMEN.md)
 **The pitch:** an occult wheel points to Life, Death or Rebirth. Everyone can secretly turn it; guess where it will stop.
 - **Each round:** a public starting point; every player secretly predicts the finish and may turn the wheel one step either way (spending one of 5 Influence).
 - **Resolution:** the sum of all turns moves the wheel; a correct prediction scores +3. Seven rounds; unused Influence is +1 each at the end.
@@ -546,7 +547,7 @@ The spec suggested (1) The Omen, The Mirror, The Pact; (2) Inheritance, Confessi
 - **End:** every clue shown with a walkthrough of the deduction.
 - **Players and length:** 4–10, 15–25 minutes. Family: Quiet Hands.
 
-#### Dead Set: The Mirror (social prediction) · Beta 9
+#### Dead Set: The Mirror (social prediction) · Beta 9 · built (MIRROR.md; 80 dilemmas, expandable by packs)
 **The pitch:** the haunted mirror doesn't show you: it shows what your friends think you'll do.
 - **Eight dilemmas,** each with three plausible answers. Everyone answers for themself and predicts the answer of one assigned player (the targets rotate so everyone reads everyone).
 - **Scoring:** +2 for every correct prediction. Your own answer scores nothing, so surprising your reader is fair play.
