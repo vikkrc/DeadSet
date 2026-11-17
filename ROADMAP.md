@@ -137,21 +137,33 @@ Other Missions ideas kept for later:
 
 New modes join a family (or open a new one) when they are pitched. The twelve modes parked from the 2026-11-17 spec (below) suggest four more: **Reading the Room** (The Omen, The Mirror), **Quiet Hands** (The Vigil, The Vault), **Bargains & Betrayals** (Inheritance, The Pact) and **Tall Tales** (The Gazette, Confessions). The Ritual joins Hidden Allegiances; Treasure Hunters, The Black Market and Standoff join Bluff & Wager.
 
-## Order of the next betas (reordered 2026-11-12; Graverobbers inserted as Beta 7 on 2026-11-17)
+## Order of the next betas (reordered 2026-11-12; Graverobbers inserted as Beta 7 on 2026-11-17; the full plan of 22 modes set on 2026-11-17)
 
-Séance needs by far the most new art (84 vision cards, more story cards and backdrops), so it moves back. The lighter modes come first:
+Séance needed by far the most new art, so it moved back behind the lighter modes. From Beta 8 on, the order follows four rules: fully specified, low-art modes first; modes that share machinery are built together in one beta; every beta brings a different kind of game; and the modes that still need real design work (Council, Lifeboat) go last, so their design and bot balancing can run alongside the earlier betas.
 
-| Beta | Mode | Status |
-|---|---|---|
-| 3 | **Coffins** | Built (COFFINS.md); redesigned to the Codex |
-| 4 | **Carnival** | Built (CARNIVAL.md) |
-| 5 | **Midnight** | Built (MIDNIGHT.md) |
-| 6 | **Séance** | Built (SEANCE.md) |
-| 7 | **Graverobbers** | Built (GRAVEROBBERS.md) |
-| 8 | **Mimic** | Pitch |
-| 9 | **Council** | Pitch |
-| 10 | **Lifeboat** | Pitch |
-| 11 | **To be decided:** a new big game | — |
+| Beta | Mode(s) | Why together / why now | Status |
+|---|---|---|---|
+| 3 | **Coffins** | | Built (COFFINS.md); redesigned to the Codex |
+| 4 | **Carnival** | | Built (CARNIVAL.md) |
+| 5 | **Midnight** | | Built (MIDNIGHT.md) |
+| 6 | **Séance** | | Built (SEANCE.md) |
+| 7 | **Graverobbers** | | Built (GRAVEROBBERS.md); three crews added |
+| 8 | **Mimic** | No new art, 8 minutes, nearly designed; reuses Exorcism's rounds and the WHERE cards | In progress (MIMIC.md) |
+| 9 | **The Omen + The Mirror** | Opens *Reading the Room*. Both are sealed simultaneous ballots with scored rounds: build a reusable kit (sealed ballot, round loop, score ledger, synced reveal) that half the later modes use | Full spec |
+| 10 | **The Pact + Standoff** | Pairs and targets around the table: arrows between seats, simultaneous reveals | Full spec |
+| 11 | **Treasure Hunters + The Vigil** | The first push-your-luck game and the first fully co-operative one; quick, very different moods | Full spec |
+| 12 | **Inheritance + The Black Market** | Coin economies, a rotating Executor or Seller, allocation and bid controls, hidden values revealed at the end | Full spec |
+| 13 | **The Ritual + Last Words** | Mostly reuse: Missions machinery for the Ritual, the word pool for Last Words | Full spec / pitch |
+| 14 | **The Gazette + Confessions** | Opens *Tall Tales*. Easy engines, heavy content: vetted question and case banks in 7 languages (start writing them during Betas 8–13) | Full spec |
+| 15 | **The Vault** | A puzzle solver and 30+ solver-checked chambers | Full spec |
+| 16 | **Sketches** | The only new technology: a live shared drawing canvas on phones and TV | Pitch |
+| 17 | **Council** | The deepest hidden-role game; design it thoroughly in parallel first | Pitch, needs design |
+| 18 | **Lifeboat** | Survival with a traitor; a lot still to design | Pitch, needs design |
+| 19 | **The big final update:** The Wake (8–25 players) or Hollow Manor | The last big game before release | Pitch |
+
+**Kept parked:** Contagion, The Inquest and Whitechapel. They overlap with modes the game has or will have (Midnight, Séance, Mimic), or need a map engine.
+
+**Between betas:** the Missions feature ideas (campaign mode, branching routes and the rest, see Beta 1) are improvements to an existing mode and fit between betas.
 
 **Reuse first.** Every mode casts its characters from the existing Dead Set roles, emblems and cards wherever the role fits, so most art is already drawn and the brand stays one family. Each mode below lists its cast and which existing design it reuses. Anything marked **new** needs fresh art.
 
@@ -370,7 +382,7 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 
 ---
 
-## Beta 9: Dead Set: Council (a cousin of Secret Hitler)
+## Beta 17: Dead Set: Council (a cousin of Secret Hitler; moved from Beta 9)
 
 **The pitch:** the town is governed by decrees, and Death is quietly writing them.
 
@@ -404,7 +416,7 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 
 ---
 
-## Beta 10: Dead Set: Lifeboat (survival with a traitor)
+## Beta 18: Dead Set: Lifeboat (survival with a traitor; moved from Beta 10)
 
 **The pitch:** the ship is gone. Twelve days to land, too few rations, and someone aboard wants nobody to make it.
 
@@ -432,7 +444,7 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 
 ---
 
-## Beta 11: the big final game update before release
+## Beta 19: the big final game update before release
 
 **To be decided:** a new big game, either one of the parked modes below or something new worthy of the last big update before the first full version. The same reuse-first rule applies.
 
@@ -440,7 +452,7 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 
 ## Pitched and parked
 
-### Dead Set: The Wake (two rooms and a deadline, a cousin of Two Rooms and a Boom)
+### Dead Set: The Wake (two rooms and a deadline, a cousin of Two Rooms and a Boom) · candidate for Beta 19
 **The pitch:** a funeral at a great house, two parlours, and a killer. Before the clock strikes, Death must be in the same room as the Heir.
 - **Rooms:** phones split the group into two physical rooms.
 - **Hostages:** each round, every room picks a Host who sends some guests across.
@@ -449,20 +461,20 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 - **Optional characters:** the Gambler, the Bodyguard, the Medium.
 - **Players and length:** 8–25, about 20 minutes. The large-party mode.
 
-### Dead Set: Last Words (a word game with a hidden twist, a cousin of Werewords)
+### Dead Set: Last Words (a word game with a hidden twist, a cousin of Werewords) · Beta 13
 **The pitch:** the dying man had one last word. Find it before the candle burns down.
 - **Questions:** the Oracle knows the secret word and answers only with phone buttons: Yes, No, Close, Way off.
 - **Death** also knows the word and steers the table away from it.
 - **Win:** if the word is found, Death may name the Oracle to steal the win. If time runs out, the table may name Death.
 - **Players and length:** 4–12, 5–10 minutes.
 
-### Dead Set: Sketches (a cousin of A Fake Artist Goes to New York)
+### Dead Set: Sketches (a cousin of A Fake Artist Goes to New York) · Beta 16
 **The pitch:** draw the thing. One of you has no idea what the thing is.
 - **Drawing:** everyone except the Forger sees a secret word. Over two rounds, each player adds one continuous stroke to a shared drawing on their phone, and the picture builds up live on the TV.
 - **Win:** everyone votes for the Forger. If caught, the Forger still wins by guessing the word.
 - **Players and length:** 5–10, about 10 minutes. The comedy mode.
 
-### Dead Set: Contagion (infection spreading, in the spirit of The Thing)
+### Dead Set: Contagion (infection spreading, in the spirit of The Thing) · parked
 **The pitch:** something got aboard the research station, and every handshake might be the one.
 - **Trading:** each round you secretly trade one card with a neighbour. Patient Zero can pass Infected cards, so you may be infected without knowing.
 - **Testing:** a few test kits reveal the truth.
@@ -470,7 +482,7 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 - **End reveal:** the infection drawn spreading across the table.
 - **Players and length:** 6–14, about 20 minutes.
 
-### Dead Set: The Inquest (a cousin of Deception: Murder in Hong Kong)
+### Dead Set: The Inquest (a cousin of Deception: Murder in Hong Kong) · parked
 **The pitch:** the coroner knows exactly what happened, but may only answer in riddles.
 - **Suspects:** every suspect shows four "means" cards and four "clue" cards. The Murderer secretly picks one of each from their own hand.
 - **The Coroner** knows the answer and can only place markers on scene tiles such as "cause of death" or "time".
@@ -478,7 +490,7 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 - **Extra roles:** an Accomplice and a Witness, with a Reckoning-style ending.
 - **Players and length:** 4–12, about 25 minutes. Hard deduction.
 
-### Dead Set: Whitechapel (hidden movement, a cousin of Letters from Whitechapel)
+### Dead Set: Whitechapel (hidden movement, a cousin of Letters from Whitechapel) · parked
 **The pitch:** the Ripper moves through the fog, and the town has to box him in before dawn.
 - **Movement:** a map of the location. The Ripper moves secretly on their phone; investigators move openly and search for clues.
 - **The informant:** a secret investigator misleads searches.
@@ -486,7 +498,7 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 - **TV:** fog, lantern light and footprints on the map.
 - **Players and length:** 3–8, about 35 minutes.
 
-### Dead Set: Hollow Manor (a cousin of Betrayal at House on the Hill)
+### Dead Set: Hollow Manor (a cousin of Betrayal at House on the Hill) · candidate for Beta 19
 **The pitch:** you're all friends exploring a house, until the house picks one of you.
 - **First half:** co-operative exploration. Room tiles are revealed on the TV (themed on the WHERE locations), with items and omens to find.
 - **The Turn:** after a random omen, the house chooses a traitor, or a secret traitor reveals themself. Each side gets different rules on their phone, and the rest is a race.
@@ -495,13 +507,13 @@ Séance needs by far the most new art (84 vision cards, more story cards and bac
 
 ---
 
-### Later: twelve modes from the implementation spec (added 2026-11-17)
+### Twelve modes from the implementation spec (added 2026-11-17, scheduled in Betas 9–15)
 
 The full rules, state machines, scoring, edge cases and test matrices are in **design/TWELVE-MODES-SPEC.md**. These are parked ideas, not scheduled betas. When one is picked up: one mode at a time, pure engine and privacy tests first, then phones, TV, bots, translations and docs, following the newest mode's pattern (Graverobbers). Two names need care: the trivia game uses `gazette_game` (the existing `public/gazette.js` is the recap newspaper), and **Treasure Hunters** shares no code with Graverobbers.
 
-Suggested build order from the spec: (1) The Omen, The Mirror, The Pact; (2) Inheritance, Confessions, Standoff; (3) Treasure Hunters, The Gazette, The Black Market; (4) The Vigil, The Ritual, The Vault.
+The spec suggested (1) The Omen, The Mirror, The Pact; (2) Inheritance, Confessions, Standoff; (3) Treasure Hunters, The Gazette, The Black Market; (4) The Vigil, The Ritual, The Vault. The schedule above regroups them by shared machinery and content cost.
 
-#### Dead Set: The Gazette (creative trivia and bluffing)
+#### Dead Set: The Gazette (creative trivia and bluffing) · Beta 14
 **The pitch:** the Gazette prints impossible-sounding facts. One Editor knows the real answer; everyone else invents a convincing fake.
 - **A round:** the question appears; non-Editors type a fake answer; the real answer and the fakes are shown as identical anonymous options; everyone votes for the truth (never their own fake).
 - **Scoring:** +2 for finding the truth; +1 to a fake's author for every vote it fools; the Editor +2 if fewer than half the voters found the truth.
@@ -509,14 +521,14 @@ Suggested build order from the spec: (1) The Omen, The Mirror, The Pact; (2) Inh
 - **Content:** at least 30 vetted questions per language, each with aliases and three fallback fakes. Never invented at runtime.
 - **Players and length:** 4–10, 15–30 minutes. Family: Tall Tales.
 
-#### Dead Set: The Omen (simultaneous prediction)
+#### Dead Set: The Omen (simultaneous prediction) · Beta 9
 **The pitch:** an occult wheel points to Life, Death or Rebirth. Everyone can secretly turn it; guess where it will stop.
 - **Each round:** a public starting point; every player secretly predicts the finish and may turn the wheel one step either way (spending one of 5 Influence).
 - **Resolution:** the sum of all turns moves the wheel; a correct prediction scores +3. Seven rounds; unused Influence is +1 each at the end.
 - **TV:** an astrolabe wheel that turns once by the net total, with a ledger of who pushed which way.
 - **Players and length:** 4–12, 10–15 minutes. Family: Reading the Room.
 
-#### Dead Set: The Vigil (silent co-operative ordering)
+#### Dead Set: The Vigil (silent co-operative ordering) · Beta 11
 **The pitch:** a midnight vigil. Light the numbered candles on the altar in rising order, without a word.
 - **Three levels:** everyone holds secret numbers from 1 to 100 (1, 2, 2 cards at 4–6 players; 1, 1, 2 at 7–10).
 - **Play** any candle at any moment. Every lower number still in someone's hand is lost and adds one Discord mark. Too many marks (4–6 by table size) and the vigil fails.
@@ -524,7 +536,7 @@ Suggested build order from the spec: (1) The Omen, The Mirror, The Pact; (2) Inh
 - **No turns, no talking, no traitor:** a calm co-operative contrast to the deduction modes.
 - **Players and length:** 4–10, 10–20 minutes. Family: Quiet Hands.
 
-#### Dead Set: The Vault (co-operative logic puzzles)
+#### Dead Set: The Vault (co-operative logic puzzles) · Beta 15
 **The pitch:** three sealed chambers, each with a four-digit lock. Everyone holds part of the evidence.
 - **Clues** are true statements about the code ("the second digit is even", "digits one and three sum to 9"), split among the players. Together they fit exactly one code; nobody can solve it alone.
 - **The Locksmith** (rotating) enters the agreed code. Three wrong guesses on a chamber, or the timer running out, and the vault stays shut for good.
@@ -532,28 +544,28 @@ Suggested build order from the spec: (1) The Omen, The Mirror, The Pact; (2) Inh
 - **End:** every clue shown with a walkthrough of the deduction.
 - **Players and length:** 4–10, 15–25 minutes. Family: Quiet Hands.
 
-#### Dead Set: The Mirror (social prediction)
+#### Dead Set: The Mirror (social prediction) · Beta 9
 **The pitch:** the haunted mirror doesn't show you: it shows what your friends think you'll do.
 - **Eight dilemmas,** each with three plausible answers. Everyone answers for themself and predicts the answer of one assigned player (the targets rotate so everyone reads everyone).
 - **Scoring:** +2 for every correct prediction. Your own answer scores nothing, so surprising your reader is fair play.
 - **Content:** at least 40 dilemmas per language.
 - **Players and length:** 4–12, 15–20 minutes. Family: Reading the Room.
 
-#### Dead Set: Inheritance (negotiation and votes)
+#### Dead Set: Inheritance (negotiation and votes) · Beta 12
 **The pitch:** a contested estate. Each player is Executor once and writes the will; the others accept it or tear it up.
 - **The will:** the Executor splits an estate (12, 16 or 20 coins by table size) among any players, themself included.
 - **The vote:** a strict majority of the other players must accept. Otherwise nobody is paid, and every non-Executor gets one consolation coin.
 - **Deals and threats** are spoken and never enforced. The wealthiest player wins.
 - **Players and length:** 4–12, 20–30 minutes. Family: Bargains & Betrayals.
 
-#### Dead Set: Treasure Hunters (push your luck)
+#### Dead Set: Treasure Hunters (push your luck) · Beta 11
 **The pitch:** the crew descends into haunted ruins together. Grab your share and run, or risk one more step.
 - **Five expeditions.** Cards are revealed one by one: treasure piles up on the floor; the first Wraith, Collapse or Curse is a warning, the second of the same kind collapses the expedition and the floor is lost.
 - **After each card,** everyone still inside secretly chooses Continue or Leave. Leavers split the floor; a lone leaver earns a +2 relic bonus.
 - **At most six reveals;** whoever is still inside then shares what is left.
 - **Players and length:** 4–12, 15–20 minutes. Family: Bluff & Wager. (Not related to Graverobbers.)
 
-#### Dead Set: The Ritual (co-operative runes with a hidden Cultist)
+#### Dead Set: The Ritual (co-operative runes with a hidden Cultist) · Beta 13
 **The pitch:** complete three rituals before three fail. One of you serves the other side.
 - **Each round:** a public recipe of three runes; everyone holds two secret runes. The rotating Conductor picks three ritualists, who each offer one rune at once.
 - **The Cultist** can lie about their hand, offer a wrong rune, or once per game corrupt their rune into any other.
@@ -561,7 +573,7 @@ Suggested build order from the spec: (1) The Omen, The Mirror, The Pact; (2) Inh
 - **Win:** three successes for the Living, three failures for the Cultist. No elimination, no final accusation.
 - **Players and length:** 5–10, 20–30 minutes. Family: Hidden Allegiances.
 
-#### Dead Set: Confessions (two truths and a lie)
+#### Dead Set: Confessions (two truths and a lie) · Beta 14
 **The pitch:** one player sits in the confessional with three statements. Exactly one is a lie.
 - **Each player confesses once,** either Personal (they write three statements and mark the lie) or Fictional (a pre-written character case). A timeout falls back to a Fictional case.
 - **Interrogation:** the table questions the Confessor, then votes for the lie.
@@ -569,14 +581,14 @@ Suggested build order from the spec: (1) The Omen, The Mirror, The Pact; (2) Inh
 - **Care:** never ask for sensitive or real criminal disclosures; at least 60 Fictional cases per language.
 - **Players and length:** 4–10, 15–30 minutes. Family: Tall Tales.
 
-#### Dead Set: The Black Market (auctions and counterfeits)
+#### Dead Set: The Black Market (auctions and counterfeits) · Beta 12
 **The pitch:** relics change hands in the dark, and some of them are fakes.
 - **The Seller** secretly picks a genuine relic (worth 4–6) or a counterfeit (worth −4) and pitches it, true or not.
 - **Sealed bids** of 0–3 coins; the high bidder may spend one of two Audit seals to expose it. A caught fake cancels the sale and costs the Seller 2.
 - **Two market cycles** (everyone sells twice); hidden values are revealed only at the end. Score: coins + relic values + reputation.
 - **Players and length:** 3–9, 20–30 minutes. Family: Bluff & Wager.
 
-#### Dead Set: Standoff (simultaneous threats)
+#### Dead Set: Standoff (simultaneous threats) · Beta 10
 **The pitch:** five confrontations in a lawless room. Everyone aims at someone, and most shots are blanks.
 - **Each player** holds 2 live and 3 blank cursed rounds, and spends one per round on a chosen target.
 - **The aim is revealed** (not the rounds); each target chooses once: Stand or Duck.
@@ -584,7 +596,7 @@ Suggested build order from the spec: (1) The Omen, The Mirror, The Pact; (2) Inh
 - **Nobody dies or is removed.** Symbolic, supernatural duelling art; no realistic weapons.
 - **Players and length:** 4–12, 10–15 minutes. Family: Bluff & Wager.
 
-#### Dead Set: The Pact (trust and betrayal)
+#### Dead Set: The Pact (trust and betrayal) · Beta 10
 **The pitch:** at the witching hour two people swear a pact, and each decides whether to keep it.
 - **Each round,** players are paired (round-robin; one bye at odd tables, worth +2). Pairs talk, then each secretly chooses Honour or Betray.
 - **Payoffs:** both honour 3/3; betray an honourer 5/0; both betray 1/1.
