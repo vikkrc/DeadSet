@@ -14,6 +14,7 @@ import { ROLES, PRESETS, LANGS, modeOf, roleInMode } from '../engine/content.js'
 import { byId, pub } from '../engine/state.js';
 import { botDecide, botAvatar, BOT_NAMES } from './bots.js';
 import { interludeMs, OPEN_DURING_SCENES } from '../public/interludes.js';
+import { REMATCH_READY } from '../public/modes.js';
 import { redrawExorcism } from '../engine/exorcism.js';
 
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no 0/O/1/I
@@ -145,7 +146,7 @@ export class RoomManager {
       case 'host.extend': extendDeadline(m, Math.max(10, Math.min(300, Number(payload.seconds) || 30)), now); break;
       case 'host.end': abortMatch(m, now); break;
       case 'host.xredraw': if (!m.X) throw new GameError('Nothing to redraw.'); redrawExorcism(m, this.rng, now); break;
-      case 'host.rematch': { const x = ['exorcism', 'coffins', 'carnival', 'midnight', 'seance', 'graverobbers', 'mimic', 'omen', 'mirror'].includes(m.config?.mode); rematch(m, { ready: x }); m.players.forEach((p) => { p.ready = x || p.bot || p.id === m.hostId; p.connected = this.isConnected(room, p.id); }); break; }
+      case 'host.rematch': { const x = REMATCH_READY.includes(m.config?.mode); rematch(m, { ready: x }); m.players.forEach((p) => { p.ready = x || p.bot || p.id === m.hostId; p.connected = this.isConnected(room, p.id); }); break; }
       case 'host.kick': {
         if (payload.playerId === pid) throw new GameError('You cannot remove yourself.');
         removePlayer(m, payload.playerId);

@@ -7,6 +7,7 @@ import { sound, score, haptic, burstAt, celebrate, ambient } from './fx.js';
 import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './board.js';
 import { seatLayout } from './layout.js';
 import { sceneMs, scenesFor } from './interludes.js';
+import { MODES, MODE_IDS, FAMILIES, COLLECTION, modeOfPhase } from './modes.js';
 import { cardArt, roleEmblemId, roleNumber } from './cards.js';
 import { emblem } from './emblems.js';
 import { isGravePhase, graveMain, graveDock, graveActs, graveMoment, graveMomentHtml, G_MOMENT_TIME, graveEndHtml, graveLobbyDeck, GRAVE_QUIET, graveTitle, lobbyCrews, graveLobbyCenter } from './graverobbers.js';
@@ -23,6 +24,20 @@ import { giftHtml, productIndex } from './gifts.js';
 import { gazetteHtml, frontPageHtml } from './gazette.js';
 import { isMissionPhase, missionMain, missionPicks, missionCenter, missionDock, missionActs, missionMoment, missionMomentHtml, MISSION_MOMENT_TIME, revealTime, missionEndHtml, knowledgeHtml, trackHtml, gridHtml, missionMarks, hunchArrowsSvg, hunchLegend } from './missions.js';
 import { LANGS, t, th, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, mcardF, scen, optLabel, list as tlist, loadLang, setContent, browserLang, isLang, getLang, extra as tx } from './i18n.js';
+
+/** Each mode's client hooks, keyed by the registry's mode id (B7). Phases find their mode by prefix. */
+const CLIENT = {
+  missions: { main: missionMain, dock: missionDock, picks: missionPicks },
+  exorcism: { main: exorcismMain, dock: exorcismDock, picks: exorcismPicks },
+  coffins: { main: coffinsMain, dock: coffinsDock },
+  carnival: { main: carnivalMain, dock: carnivalDock },
+  midnight: { main: midnightMain, dock: midnightDock },
+  seance: { main: seanceMain, dock: seanceDock },
+  graverobbers: { main: graveMain, dock: graveDock },
+  mimic: { main: mimicMain, dock: mimicDock },
+  omen: { main: omenMain, dock: omenDock },
+  mirror: { main: mirrorMain, dock: mirrorDock },
+};
 
 const app = document.getElementById('app');
 const S = {
@@ -652,15 +667,10 @@ function render() {
   const ghost = !!v?.me && !v.me.moderator && v.me.alive === false && v.phase !== 'LOBBY' && v.phase !== 'ENDED' && S.route?.name === 'room';
   document.body.classList.toggle('is-dead', ghost);
   document.body.classList.toggle('is-board', onBoard());
-  document.body.classList.toggle('mode-exorcism', v?.mode === 'exorcism' && ['room', 'board'].includes(S.route?.name));
-  document.body.classList.toggle('mode-graverobbers', v?.mode === 'graverobbers' && ['room', 'board'].includes(S.route?.name));
-  document.body.classList.toggle('mode-mimic', v?.mode === 'mimic' && ['room', 'board'].includes(S.route?.name));
-  document.body.classList.toggle('mode-seance', v?.mode === 'seance' && ['room', 'board'].includes(S.route?.name));
-  document.body.classList.toggle('mode-midnight', v?.mode === 'midnight' && ['room', 'board'].includes(S.route?.name));
-  document.body.classList.toggle('mn-night', v?.mode === 'midnight' && ['N_DEAL', 'N_NIGHT'].includes(v?.phase) && ['room', 'board'].includes(S.route?.name));
-  document.body.classList.toggle('mode-carnival', v?.mode === 'carnival' && ['room', 'board'].includes(S.route?.name));
-  document.body.classList.toggle('mode-coffins', v?.mode === 'coffins' && ['room', 'board'].includes(S.route?.name));
-  document.body.classList.toggle('mode-missions', v?.mode === 'missions' && ['room', 'board'].includes(S.route?.name));
+  // One mode class per mode, from the registry (B7); Midnight's night look on top.
+  const inTable = ['room', 'board'].includes(S.route?.name);
+  for (const id of MODE_IDS) document.body.classList.toggle(`mode-${id}`, inTable && v?.mode === id);
+  document.body.classList.toggle('mn-night', v?.mode === 'midnight' && ['N_DEAL', 'N_NIGHT'].includes(v?.phase) && inTable);
   // The score plays on the TV board, and on any phone whose owner switched it on (hamburger menu).
   const phoneMusic = !onBoard() && phoneMusicOn() && S.route?.name === 'room' && v && v.table?.score !== false;
   if (phoneMusic || (onBoard() && v && S.board.audio && v.table?.score !== false)) { score.setTheme(v.table?.scoreTheme ?? 'classic'); score.play(moodFor(v)); score.tension(tenseFor(v)); } else score.stop();
@@ -675,8 +685,8 @@ function render() {
 const toastsHtml = (cls) => `<div class="${cls}" data-key="${cls}" aria-live="polite">${S.notes.map((n) => `<div class="toast ${n.kind}" data-key="n-${n.id}">${esc(n.text)}</div>`).join('')}</div>`;
 const inRoomView = () => S.route.name === 'room' && S.conn !== 'gone' && !!S.token && !!V();
 
-/** The collection at a glance, for the home page (E1). */
-const HOME = { modes: 11, min: 3, max: 25 };
+/** The collection at a glance, for the home page (E1), from the registry. */
+const HOME = COLLECTION;
 
 function view() {
   const r = S.route;
@@ -1045,9 +1055,8 @@ function pickContexts(v) {
   const a = v.action;
   const me = v.me;
   if (!a || !me || me.moderator) return [];
-  if (isMissionPhase(v.phase)) return missionPicks(v, S);
-  if (isExorcismPhase(v.phase)) return exorcismPicks(v, S);
-  if (isCoffinsPhase(v.phase) || isCarnivalPhase(v.phase) || isMidnightPhase(v.phase) || isSeancePhase(v.phase) || isGravePhase(v.phase) || isMimicPhase(v.phase) || isOmenPhase(v.phase) || isMirrorPhase(v.phase)) return [];
+  const mode = modeOfPhase(v.phase);
+  if (mode) return CLIENT[mode]?.picks ? CLIENT[mode].picks(v, S) : [];
   const out = [];
   switch (v.phase) {
     case 'DAY_PREP':
@@ -1199,16 +1208,7 @@ function mainFor(v, me) {
     case 'NIGHT_0_REVEAL': case 'M_REVEAL': return revealMain(v, me);
     case 'ENDED': return endMain(v, me);
     default:
-      if (isMissionPhase(v.phase)) return missionMain(v, me, MH);
-      if (isExorcismPhase(v.phase)) return exorcismMain(v, me, MH);
-      if (isCoffinsPhase(v.phase)) return coffinsMain(v, me, MH);
-      if (isCarnivalPhase(v.phase)) return carnivalMain(v, me, MH);
-      if (isMidnightPhase(v.phase)) return midnightMain(v, me, MH);
-      if (isSeancePhase(v.phase)) return seanceMain(v, me, MH);
-      if (isGravePhase(v.phase)) return graveMain(v, me, MH);
-      if (isMimicPhase(v.phase)) return mimicMain(v, me, MH);
-      if (isOmenPhase(v.phase)) return omenMain(v, me, MH);
-      if (isMirrorPhase(v.phase)) return mirrorMain(v, me, MH);
+      if (CLIENT[modeOfPhase(v.phase)]?.main) return CLIENT[modeOfPhase(v.phase)].main(v, me, MH);
       return isNight(v.phase) ? nightMain(v, me) : dayMain(v, me);
   }
 }
@@ -1550,25 +1550,9 @@ function modeChooser(v, isHost) {
       ? `<button class="mode-card ${on ? 'on' : ''}" data-act="gameMode" data-mode="${mode}" aria-pressed="${on}" data-key="mode-${mode}">${inner}</button>`
       : `<div class="mode-card ${on ? 'on' : 'off'}" data-key="mode-${mode}">${inner}</div>`;
   };
-  // Modes grouped by their core mechanic (room to grow: new modes join a family).
-  const families = [
-    [t('Hidden Allegiances'), t('Secret sides, a town that must find its killers.'), [
-      card('classic', 'death', t('Classic Dead Set'), t('Hidden roles, night kills, Dreams and Rule cards. 5–25 players.')),
-      card('missions', 'mission', presetF('missions', 'name'), t('Teams, votes and sabotage. Nobody dies. 5–12 players.'))]],
-    [t('Changing Hands'), t('Role cards change owners while nobody is looking. Trust your memory.'), [
-      card('carnival', 'veiled', presetF('carnival', 'name'), t('A masked ball of bluff and memory: swap masks, claim powers, gather Souls. 4–12 players.')),
-      card('midnight', 'moon', presetF('midnight', 'name'), t('One night, one vote: cards change hands in the dark. 4–12 players.'))]],
-    [t('Reading the Room'), t('No hidden sides: read the people around you, and outguess them.'), [
-      card('omen', 'oracle', presetF('omen', 'name'), t('A wheel of Life, Death and Rebirth that anyone may secretly turn. Predict where it stops. 4–12 players.')),
-      card('mirror', 'maskedvote', presetF('mirror', 'name'), t('Answer a dilemma, and predict how a friend answers it. 4–12 players.'))]],
-    [t('Signs & Riddles'), t('Someone knows the secret and may only hint. Read the signs.'), [
-      card('exorcism', 'oracle', presetF('exorcism', 'name'), t('A word game of bluff: one word each, then name the Demon. 3–12 players.')),
-      card('seance', 'shade', presetF('seance', 'name'), t('A silent Ghost sends visions; find who, where and why, and the Deceiver. 4–10 players.')),
-      card('graverobbers', 'headstone', presetF('graverobbers', 'name'), t('Two crews dig a cemetery of words or icons; one word and a number from the Undertaker. 4–12 players.')),
-      card('mimic', 'mimic', presetF('mimic', 'name'), t('Everyone knows the place except the Mimic. Ask, answer, accuse. 4–12 players.'))]],
-    [t('Bluff & Wager'), t('Bury, bid and dare. A quick game of nerve.'), [
-      card('coffins', 'undertaker', presetF('coffins', 'name'), t('A quick bluffing game: bury gold, hide your curse, bid and dig. 3–10 players.'))]],
-  ];
+  // Modes grouped by their core mechanic, from the registry (B7): a new mode joins its family there.
+  const families = FAMILIES.map((f) => [t(f.title), t(f.sub), MODE_IDS.filter((id) => MODES[id].family === f.id)
+    .map((id) => card(id, MODES[id].emblem, MODES[id].name ? t(MODES[id].name) : presetF(id, 'name'), t(MODES[id].blurb)))]);
   return `<section class="mode-pick" data-key="modepick">
     <div class="rule">${t('Game mode')}</div>
     ${families.map(([title, sub, cards], i) => `<div class="mode-family" data-key="mf-${i}"><div class="mf-head"><span class="kicker">${title}</span><small>${sub}</small></div><div class="mode-cards">${cards.join('')}</div></div>`).join('')}
@@ -2308,16 +2292,7 @@ function dock(v) {
         if (a.type === 'night' && !a.done && !S.ui.veiled[v.phaseId]) { const r = commitReady(a); parts.push(btn(`${glyph('moon')} ${esc(r.label)}`, 'commit', 'btn-solid', !r.ok)); }
         break;
       default:
-        if (isMissionPhase(v.phase)) parts.push(...missionDock(v, { S, btn, holdBtn, rawName }));
-        if (isExorcismPhase(v.phase)) parts.push(...exorcismDock(v, { S, btn, holdBtn, rawName }));
-        if (isCoffinsPhase(v.phase)) parts.push(...coffinsDock(v, { S, btn, holdBtn, rawName }));
-        if (isCarnivalPhase(v.phase)) parts.push(...carnivalDock(v, { S, btn, holdBtn, rawName }));
-        if (isMidnightPhase(v.phase)) parts.push(...midnightDock(v, { S, btn, holdBtn, rawName }));
-        if (isGravePhase(v.phase)) parts.push(...graveDock(v, { S, btn, holdBtn, rawName }));
-        if (isMimicPhase(v.phase)) parts.push(...mimicDock(v, { S, btn, holdBtn, rawName }));
-        if (isOmenPhase(v.phase)) parts.push(...omenDock(v, { S, btn, holdBtn, rawName }));
-        if (isMirrorPhase(v.phase)) parts.push(...mirrorDock(v, { S, btn, holdBtn, rawName }));
-        if (isSeancePhase(v.phase)) parts.push(...seanceDock(v, { S, btn, holdBtn, rawName }));
+        if (CLIENT[modeOfPhase(v.phase)]?.dock) parts.push(...CLIENT[modeOfPhase(v.phase)].dock(v, { S, btn, holdBtn, rawName }));
         break;
     }
   }

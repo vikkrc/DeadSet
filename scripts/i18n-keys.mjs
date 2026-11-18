@@ -79,6 +79,8 @@ for (const m of read('public/app.js').matchAll(/setRow\('\w+', '((?:[^'\\]|\\.)*
 // Labels passed through small helpers that call t() themselves.
 for (const m of read('public/app.js').matchAll(/timer\('\w+', '((?:[^'\\]|\\.)*)'\)/g)) keys.add(unq(m[1]));
 for (const m of read('public/app.js').matchAll(/\bcount\('((?:[^'\\]|\\.)*)'\)/g)) keys.add(unq(m[1]));
+// The mode registry: family titles and subtitles, lobby blurbs and Classic's name.
+for (const m of read('public/modes.js').matchAll(/\b(?:title|sub|blurb|name): '((?:[^'\\]|\\.)*)'/g)) keys.add(unq(m[1]));
 // Ceremony card labels (translated through a variable).
 for (const k of ['Who', 'Where', 'Why', 'Turn {n}']) keys.add(k);
 // Tables of labels the client translates at render time.
