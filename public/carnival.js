@@ -31,7 +31,7 @@ export const MASK_INK = {
   BARD: '#c0602a', GUARDIAN: '#2c6aa0', MENTALIST: '#7656b0', ORACLE: '#1c8088', WITCH: '#467a2a', DOUBLE_AGENT: '#5b5f66',
   MIMIC: '#a03f86', JESTER: '#a8902a', SCAPEGOAT: '#85603a', INNOCENT: '#6f8796',
 };
-const ink = (id) => (MASK_INK[id] ? `--mk:${MASK_INK[id]}` : '');
+const ink = (id) => (MASK_INK[id] ? `--suit:${MASK_INK[id]}` : '');
 /** What each mask does when claimed (CARNIVAL.md §4). */
 export const POWER = {
   DEATH: 'Take 2 Souls from a player of your choice. They count toward your Harvest.',
@@ -102,8 +102,9 @@ const LEGEND = [['soul', 'Souls'], ['offering', 'The Offering'], ['harvest', 'Ha
 export function maskCard(id, { back = false, cls = '', act = '', sel = false, key = '', badge = '' } = {}) {
   const tag = act ? 'button' : 'span';
   const attrs = `${act ? `data-act="${act}" data-id="${id}" aria-pressed="${sel}"` : ''} ${key ? `data-key="${key}"` : ''}`;
+  cls = `tarot--${cls.includes('big') ? 'hand' : cls.includes('thumb') ? 'thumb' : 'small'} ${cls.replace(/\b(big|thumb)\b/g, '')}`;
   if (back || !id) return `<${tag} class="tarot back kcard ${cls}" ${attrs} aria-label="${esc(t('A mask, face down'))}"><span class="sig">DS</span>${badge}</${tag}>`;
-  return `<${tag} class="tarot kcard ${id === 'DEATH' ? 'rubric' : ''} ${sel ? 'sel' : ''} ${cls}" style="${ink(id)}" ${attrs} aria-label="${esc(roleName(id))}">
+  return `<${tag} class="tarot kcard ${id === 'DEATH' ? 'rubric' : ''} ${sel ? 'is-chosen' : ''} ${cls}" style="${ink(id)}" ${attrs} aria-label="${esc(roleName(id))}">
     <span class="arc-num">${esc(roleNumber({ id }, t))}</span>${cardArt(embOf(id))}<span class="nm">${esc(roleName(id))}</span>${badge}</${tag}>`;
 }
 
