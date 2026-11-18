@@ -1477,6 +1477,7 @@ export default {
     "The other Demon: {names}": "Druhý Démon: {names}",
     "The password": "Heslo",
     "The séance begins": "Seansa sa začína",
+    "The exorcism begins": "Exorcizmus sa začína",
     "The table named one of the Living. The Demon wins.": "Stôl označil jedného zo Živých. Démon vyhráva.",
     "The table names {b}, and {b} is the Demon!": "Stôl označí {b} – a {b} je Démon!",
     "The table · {n} player": "Stôl · {n} hráč",

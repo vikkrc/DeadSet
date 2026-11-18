@@ -419,7 +419,7 @@ export function exorcismMoment(l, v, fresh, { notify, name: nm }) {
     case 'x-lottery': {
       const order = l.order.map((id) => ({ id, name: nm(id), av: v.players.find((p) => p.id === id)?.avatar ?? null }));
       return { type: 'mlottery', order, leader: l.leader, leaderName: nm(l.leader), idx: l.order.indexOf(l.leader), spins: l.spins ?? 2, sound: null,
-        kickerText: t('The séance begins'), titleText: t('Who speaks first?'), resultText: t('The first to speak') };
+        kickerText: t('The exorcism begins'), titleText: t('Who speaks first?'), resultText: t('The first to speak') };
     }
     case 'x-clue': if (!l.timeout) notify(l.word ? t('{a}: {word}', { a: nm(l.pid), word: l.word }) : t('{a} has spoken', { a: nm(l.pid) })); return null;
     case 'x-round': notify(t('Round {n}', { n: l.n })); return null;

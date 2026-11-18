@@ -1477,6 +1477,7 @@ export default {
     "The other Demon: {names}": "A másik Démon: {names}",
     "The password": "A jelszó",
     "The séance begins": "Kezdődik a szeánsz",
+    "The exorcism begins": "Kezdődik az ördögűzés",
     "The table named one of the Living. The Demon wins.": "Az asztal egy Élőt nevezett meg. A Démon nyer.",
     "The table names {b}, and {b} is the Demon!": "Az asztal őt nevezi meg: {b} – és {b} a Démon!",
     "The table · {n} player": "Az asztal · {n} játékos",

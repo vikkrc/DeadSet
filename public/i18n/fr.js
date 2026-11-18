@@ -1477,6 +1477,7 @@ export default {
     "The other Demon: {names}": "L'autre Démon : {names}",
     "The password": "Le mot de passe",
     "The séance begins": "La séance commence",
+    "The exorcism begins": "L’exorcisme commence",
     "The table named one of the Living. The Demon wins.": "La table a désigné un Vivant. Le Démon gagne.",
     "The table names {b}, and {b} is the Demon!": "La table désigne {b}, et {b} est le Démon !",
     "The table · {n} player": "La table · {n} joueur",
