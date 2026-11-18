@@ -284,7 +284,7 @@ export function midnightLobbyDeck(v, isHost, h) {
   const deck = Object.entries(v.setup?.publicDeck?.exact ?? {}).map(([id, c]) => ({ id, n: c }));
   return `${explainer()}
     <section class="lobby-deck" data-key="ndeck">
-    <div class="rule">${t(n === 1 ? 'The table · {n} player' : 'The table · {n} players', { n })}</div>
+    <div class="rule">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     ${n >= 4 ? `<p class="small muted">${th('{n} cards: one each, three on the table.', { n: n + 3 })}</p>` : `<p class="small muted">${t('Seat 4 to 12 players.')}</p>`}
     <div class="k-lobbydeck" data-key="nld">${deck.map(({ id, n: c }) => `<button class="kld-c" data-act="sheet" data-id="ncards">${ncard(id, { cls: 'thumb' })}${c > 1 ? `<b>×${c}</b>` : ''}</button>`).join('')}</div>
     <button class="btn btn-ghost btn-sm" data-act="sheet" data-id="ncards" data-key="nref-btn">${glyph('moon')} ${t('What every card does')}</button>

@@ -341,7 +341,7 @@ export function graveLobbyDeck(v, isHost, h) {
       ${s.captains === 'chosen' && isHost ? `<select class="input lang-select" data-act-change="gCap" data-crew="${c}"><option value="">${t('Undertaker: random')}</option>${chosen[c].map((id) => `<option value="${id}" ${s.cap?.[c] === id ? 'selected' : ''}>${pname(v, id)}</option>`).join('')}</select>` : ''}</section>`).join('')}</div>` : '';
   return `${explainer()}
     <section class="lobby-deck" data-key="gdeck">
-    <div class="rule">${t(n === 1 ? 'The table · {n} player' : 'The table · {n} players', { n })}</div>
+    <div class="rule">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     <p class="small muted">${three ? (n >= 6 ? t('Three crews: the Moon, the Sun and the Stars. Each needs an Undertaker and at least one digger.') : t('Three crews need 6 to 12 players.')) : n >= 4 ? t('Two crews: the Moon and the Sun. Each needs an Undertaker and at least one digger.') : t('Seat 4 to 12 players.')}</p>
     <div class="g-lobbyart ${three ? 'three' : ''}" data-key="glart"><span class="arc c-B">${cardArt('moon')}<span class="nm">${t('The Moon')}</span></span>${three ? '' : `<span class="arc">${cardArt('undertaker')}<span class="nm">${esc(roleF('G_UNDERTAKER', 'name'))}</span></span>`}<span class="arc c-G">${cardArt('sun')}<span class="nm">${t('The Sun')}</span></span>${three ? `<span class="arc c-V">${cardArt('star')}<span class="nm">${t('The Stars')}</span></span>` : ''}</div>
     ${row(t('Number of crews'), t('Three crews: a third of the table each. Death\'s grave puts a crew out; the others dig on.'), sel('teams', three ? 3 : 2, [[2, t('Two crews')], [3, t('Three crews')]]), three ? t('Three crews') : t('Two crews'))}

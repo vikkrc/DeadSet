@@ -8,6 +8,7 @@ import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './bo
 import { seatLayout } from './layout.js';
 import { sceneMs, scenesFor } from './interludes.js';
 import { MODES, MODE_IDS, FAMILIES, COLLECTION, modeOfPhase, modeInfo } from './modes.js';
+import { explainer } from './kit.js';
 import { cardArt, roleEmblemId, roleNumber } from './cards.js';
 import { emblem } from './emblems.js';
 import { isGravePhase, graveMain, graveDock, graveActs, graveMoment, graveMomentHtml, G_MOMENT_TIME, graveEndHtml, graveLobbyDeck, GRAVE_QUIET, graveTitle, graveKicker, lobbyCrews, graveLobbyCenter } from './graverobbers.js';
@@ -1426,11 +1427,11 @@ function lobbyMain(v, me) {
     ${me && !me.moderator ? portraitRow(v.players.find((p) => p.id === me.id)?.avatar) : ''}
     ${isHost && S.ui.botsPanel ? botsPanel(v) : ''}
     ${modeChooser(v, isHost)}
+    ${v.mode === 'classic' || v.mode === 'missions' ? howItWorks(v) : ''}
     ${lobbyDeck(v, isHost)}
-    <section data-key="setup">
-      <div class="rule">${t('Setup')}</div>
-      ${isHost ? setupForm(v) : setupSummary(v)}
-    </section>
+    ${isHost ? (setupForm(v) ? `<section data-key="setup"><div class="rule">${t('Rules')}</div>${setupForm(v)}</section>` : '') : `<section data-key="setup"><div class="rule">${t('Rules')}</div>${setupSummary(v)}</section>`}
+    ${tableSection(v, isHost)}
+    ${isHost ? timersForm(v) : ''}
     <section class="stack" data-key="report">
       ${report.errors.map((e, i) => `<div class="banner blood" data-key="err-${i}">${glyph('dagger')}<div><p>${tmh(e)}</p></div></div>`).join('')}
       ${report.warnings.map((w, i) => `<div class="banner" data-key="warn-${i}">${glyph('scroll')}<div><p>${tmh(w)}</p></div></div>`).join('')}
@@ -1499,15 +1500,15 @@ function musicRow(v, isHost) {
 
 /** 20 · Tonight's deck, the extended pool, rule cards and table switches. */
 function lobbyDeck(v, isHost) {
-  if (v.mode === 'exorcism') return exorcismLobbyDeck(v, isHost, { LANGS, music: musicRow(v, isHost) });
-  if (v.mode === 'coffins') return coffinsLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
-  if (v.mode === 'carnival') return carnivalLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
-  if (v.mode === 'midnight') return midnightLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
-  if (v.mode === 'graverobbers') return graveLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
-  if (v.mode === 'mimic') return mimicLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
-  if (v.mode === 'omen') return omenLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
-  if (v.mode === 'mirror') return mirrorLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
-  if (v.mode === 'seance') return seanceLobbyDeck(v, isHost, { music: musicRow(v, isHost) });
+  if (v.mode === 'exorcism') return exorcismLobbyDeck(v, isHost, { LANGS, music: '' });
+  if (v.mode === 'coffins') return coffinsLobbyDeck(v, isHost, { music: '' });
+  if (v.mode === 'carnival') return carnivalLobbyDeck(v, isHost, { music: '' });
+  if (v.mode === 'midnight') return midnightLobbyDeck(v, isHost, { music: '' });
+  if (v.mode === 'graverobbers') return graveLobbyDeck(v, isHost, { music: '' });
+  if (v.mode === 'mimic') return mimicLobbyDeck(v, isHost, { music: '' });
+  if (v.mode === 'omen') return omenLobbyDeck(v, isHost, { music: '' });
+  if (v.mode === 'mirror') return mirrorLobbyDeck(v, isHost, { music: '' });
+  if (v.mode === 'seance') return seanceLobbyDeck(v, isHost, { music: '' });
   const s = v.settings;
   const deck = v.setup?.publicDeck;
   const preset = v.presets.find((p) => p.id === s.preset);
@@ -1549,9 +1550,6 @@ function lobbyDeck(v, isHost) {
     ${pool}
     <div class="rule">${t('Rule cards in play')}</div>
     <div class="deckrow">${ruleCards}</div>
-    <div class="rule">${t('The table')}</div>
-    ${isHost ? `<label class="toggle-row"><span><b>${t('Table language')}</b><small>${t('The default for everyone. Each player can still pick their own.')}</small></span><select class="input lang-select" data-act-change="tableLang">${LANGS.map((l) => `<option value="${l.code}" ${tableLang === l.code ? 'selected' : ''}>${esc(l.name)}</option>`).join('')}</select></label>`
-      : `<div class="toggle-row"><span><b>${t('Table language')}</b><small>${t('Set by the host. You can pick your own above.')}</small></span><span class="tag">${esc(LANGS.find((l) => l.code === tableLang)?.name ?? tableLang)}</span></div>`}
     <div class="rule">${t('Other sides')}</div>
     ${toggle('lovers', 'Lovers', 'Two random players fall in love. If one dies, so does the other; if they are the last two alive, they win together.')}
     ${s.deckMode === 'exact' && preset.custom ? `<p class="small muted">${t('With "Choose every role", add the Cult Leader or the Ripper with the role counters.')}</p>` : `${toggle('cult', 'The Cult', 'A Cult Leader recruits one player each night. The Cult wins when it outnumbers everyone else.')}
@@ -1564,9 +1562,6 @@ function lobbyDeck(v, isHost) {
     ${toggle('bloodMoon', 'Blood Moon', 'After two nights in a row without a death, no protection holds for a night.')}
     ${toggle('finalTwoDeath', 'Death wins in the final two', 'If a Death is among the last two players alive, Death wins at once.')}
     ${toggle('threads', 'Threads of suspicion', 'Draws who accused whom across the table')}
-    ${toggle('score', 'Atmospheric score', 'Music and effects play on the TV board')}
-    ${musicRow(v, isHost)}
-    ${toggle('backdrops', 'Location backdrops', 'The TV board shows a scene for the story\'s WHERE card.')}
   </section>`;
 }
 
@@ -1593,9 +1588,6 @@ function missionLobbyDeck(v, isHost, cards) {
     <div class="rule">${t(n === 1 ? 'Tonight\'s deck · {n} player' : 'Tonight\'s deck · {n} players', { n })}</div>
     <div class="deckrow">${cards || `<p class="small muted">${t('Seat 5 to 12 players to see the deck.')}</p>`}</div>
     ${sizes ? `<p class="small muted" data-key="msizes">${th('Team sizes for missions 1–5: {sizes}.', { sizes: sizes.join(' · ') })}${n >= 7 ? ` ${t('Mission 4 needs two Sabotage cards to fail.')}` : ''}</p>` : ''}
-    <div class="rule">${t('The table')}</div>
-    ${isHost ? `<label class="toggle-row"><span><b>${t('Table language')}</b><small>${t('The default for everyone. Each player can still pick their own.')}</small></span><select class="input lang-select" data-act-change="tableLang">${LANGS.map((l) => `<option value="${l.code}" ${tableLang === l.code ? 'selected' : ''}>${esc(l.name)}</option>`).join('')}</select></label>`
-      : `<div class="toggle-row"><span><b>${t('Table language')}</b><small>${t('Set by the host. You can pick your own above.')}</small></span><span class="tag">${esc(LANGS.find((l) => l.code === tableLang)?.name ?? tableLang)}</span></div>`}
     <div class="rule">${t('Roles')}</div>
     <p class="small muted">${t('Every table has a Medium and a Reaper. Empty seats are Companions and Shades.')}</p>
     ${roleRow('BELIEVER', 'Sees the Medium and the Charlatan as two candles.')}
@@ -1611,9 +1603,6 @@ function missionLobbyDeck(v, isHost, cards) {
     ${select('missionCards', s.missionCards ?? 1, [[0, 'Off'], [1, 'Rare'], [2, 'Sometimes']], 'Mission cards', 'Most missions are Regular. Sometimes a card changes the team, the vote or the reveal.')}
     ${toggle('clues', 'Clues', 'Rarely, at dawn, one or two players find a true hint about Death\'s team.')}
     ${v.table?.clues ? select('clueOdds', v.table.clueOdds, [[1, 'Rare'], [2, 'Uncommon'], [3, 'Common']], 'How often', '') : ''}
-    ${toggle('score', 'Atmospheric score', 'Music and effects play on the TV board')}
-    ${musicRow(v, isHost)}
-    ${toggle('backdrops', 'Location backdrops', 'The TV board shows a scene for the story\'s WHERE card.')}
   </section>`;
 }
 
@@ -1655,65 +1644,7 @@ function setupForm(v) {
   const s = v.settings;
   const preset = v.presets.find((p) => p.id === s.preset);
   const rules = (S.content?.rules ?? []).filter((r) => preset.ruleIds.includes(r.id));
-  const tm8 = s.timers;
-  const OPTS = [0, 15, 30, 45, 60, 90, 120, 180, 300, 600];
-  const timer = (key, label) => `<label class="field"><span>${t(label)}</span><select class="input" data-set="timers.${key}">
-      ${OPTS.map((n) => `<option value="${n}" ${tm8[key] === n ? 'selected' : ''}>${n === 0 ? t('Untimed') : n < 60 ? t('{n} s', { n }) : t('{n} min', { n: n / 60 })}</option>`).join('')}
-      ${OPTS.includes(tm8[key]) ? '' : `<option selected value="${tm8[key]}">${t('{n} s', { n: tm8[key] })}</option>`}</select></label>`;
-  if (preset.omen) {
-    return `<div class="stack" style="gap:18px"><details class="more" data-key="d-otable" open><summary>${t('Table & timers')}</summary><div>
-      <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
-      <div class="grid2">${timer('oShow', 'The wheel shows its start')}${timer('oSecret', 'Predict and turn')}${timer('oReveal', 'The reveal')}</div>
-    </div></details></div>`;
-  }
-  if (preset.mirror) {
-    return `<div class="stack" style="gap:18px"><details class="more" data-key="d-wtable" open><summary>${t('Table & timers')}</summary><div>
-      <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
-      <div class="grid2">${timer('wTalk', 'Talking it over')}${timer('wChoose', 'Sealing the ballots')}${timer('wReveal', 'The reveal')}</div>
-    </div></details></div>`;
-  }
-  if (preset.mimic) {
-    return `<div class="stack" style="gap:18px"><details class="more" data-key="d-qtable" open><summary>${t('Table & timers')}</summary><div>
-      <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
-      <div class="grid2">${timer('qIntro', 'Looking at your card')}${timer('qRound', 'The questions')}${timer('qVote', 'Each accusation vote')}${timer('qGuess', 'The Mimic\'s guess')}${timer('qFinal', 'The final vote')}</div>
-    </div></details></div>`;
-  }
-  if (preset.graverobbers) {
-    return `<div class="stack" style="gap:18px"><details class="more" data-key="d-gtable" open><summary>${t('Table & timers')}</summary><div>
-      <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
-      <div class="grid2">${timer('gIntro', 'Meeting your crew')}${timer('gSign', 'The sign')}${timer('gVote', 'Each vote')}</div>
-    </div></details></div>`;
-  }
-  if (preset.seance) {
-    return `<div class="stack" style="gap:18px"><details class="more" data-key="d-stable" open><summary>${t('Table & timers')}</summary><div>
-      <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
-      <div class="grid2">${timer('sIntro', 'Looking at your role')}${timer('sVision', 'Visions')}${timer('sDiscuss', 'Discussion')}${timer('sCandle', 'Candles')}${timer('sName', 'The naming')}</div>
-    </div></details></div>`;
-  }
-  if (preset.midnight) {
-    return `<div class="stack" style="gap:18px"><details class="more" data-key="d-ntable" open><summary>${t('Table & timers')}</summary><div>
-      <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
-      <div class="grid2">${timer('nDeal', 'Looking at your card')}${timer('nStep', 'Each night step')}${timer('nDay', 'Discussion')}${timer('nVote', 'The vote')}</div>
-    </div></details></div>`;
-  }
-  if (preset.carnival) {
-    return `<div class="stack" style="gap:18px"><details class="more" data-key="d-ktable" open><summary>${t('Table & timers')}</summary><div>
-      <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
-      <div class="grid2">${timer('kTurn', 'Each turn')}${timer('kChallenge', 'Challenges')}${timer('kPower', 'Power picks')}${timer('kLook', 'Looking at a mask')}</div>
-    </div></details></div>`;
-  }
-  if (preset.coffins) {
-    return `<div class="stack" style="gap:18px"><details class="more" data-key="d-ctable" open><summary>${t('Table & timers')}</summary><div>
-      <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
-      <div class="grid2">${timer('cBury', 'Burial')}${timer('cTurn', 'Each turn')}${timer('cBid', 'Each bid')}${timer('cDig', 'Each dig pick')}${timer('cWager', 'Ghost wagers')}</div>
-    </div></details></div>`;
-  }
-  if (preset.exorcism) {
-    return `<div class="stack" style="gap:18px"><details class="more" data-key="d-xtable" open><summary>${t('Table & timers')}</summary><div>
-      <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
-      <div class="grid2">${timer('xClue', 'Each speaker')}${timer('xDiscuss', 'Discussion')}${timer('xVote', 'Voting')}${timer('xGuess', 'The Demon\'s guess')}</div>
-    </div></details></div>`;
-  }
+  if (v.mode !== 'classic' && v.mode !== 'missions') return '';
   return `<div class="stack" style="gap:18px">
     ${preset.missions ? '' : `<div class="carousel" data-key="presets">${v.presets.filter((p) => !p.missions && !p.exorcism && !p.coffins && !p.carnival && !p.midnight && !p.seance && !p.graverobbers && !p.mimic && !p.omen && !p.mirror).map((p) => `<button class="preset" data-act="preset" data-id="${p.id}" aria-pressed="${s.preset === p.id}" data-key="pr-${p.id}"><b>${esc(presetF(p.id, 'name'))}</b>${p.recommended ? `<span class="tag solid">${t('Best first game')}</span>` : ''}<small>${esc(presetF(p.id, 'blurb'))}</small><span class="kicker">${t('{a}–{b} players', { a: p.min, b: p.max })}</span></button>`).join('')}</div>`}
 
@@ -1737,16 +1668,80 @@ function setupForm(v) {
       ${s.scenario.mode === 'manual' ? ['who', 'where', 'why'].map((k) => `<label class="field"><span>${t(k.toUpperCase())}</span><input class="input" maxlength="80" data-set-text="scenario.${k}" value="${esc(s.scenario[k])}" placeholder="${esc(scen(k.toUpperCase(), { who: 'Lost Tourists', where: 'a Haunted Mansion', why: 'Solve a Murder' }[k]))}"></label>`).join('') : `<p class="small muted">${t('Pure storytelling. It never changes the rules.')}</p>`}
     </div></details>
 
-    <details class="more" data-key="d-table"><summary>${t('Table & timers')}</summary><div>
-      <div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>
-      ${preset.missions ? `<div class="grid2">${timer('proposal', 'Proposal')}${timer('teamVote', 'Team vote')}${timer('mission', 'Mission')}${timer('interlude', 'Night interlude')}${timer('lastStand', 'Last Stand')}${timer('reckoning', 'Reckoning')}</div>` : `<div class="grid2">${timer('morning', 'Morning')}${timer('discussion', 'Discussion')}${timer('defense', 'Defence (each)')}${timer('voting', 'Voting')}${timer('night', 'Night')}${timer('retaliation', 'Final act')}</div>
-      <p class="small muted">${t(s.dreams ? 'Each night opens with a fifteen-second nightfall: everyone reads their Dream before actions begin.' : 'Each night opens with a five-second nightfall before actions begin.')}</p>`}
-      ${preset.missions ? '' : `<label class="check"><input type="checkbox" data-set-bool="revealOnDeath" ${s.revealOnDeath ? 'checked' : ''}><span><b>${t('Reveal roles on death')}</b><small>${t('Never with the Hidden Roles card.')}</small></span></label>
+    ${preset.missions ? '' : `<div class="stack tight" data-key="c-house">
+      <label class="check"><input type="checkbox" data-set-bool="revealOnDeath" ${s.revealOnDeath ? 'checked' : ''}><span><b>${t('Reveal roles on death')}</b><small>${t('Never with the Hidden Roles card.')}</small></span></label>
       <label class="check"><input type="checkbox" data-set-bool="endReveal" ${s.endReveal ? 'checked' : ''}><span><b>${t('Reveal every role at the end')}</b></span></label>
       <label class="check"><input type="checkbox" data-set-bool="selfNomination" ${s.selfNomination ? 'checked' : ''}><span><b>${t('Allow self-nomination')}</b></span></label>
-      <label class="check"><input type="checkbox" data-set-bool="selfVote" ${s.selfVote ? 'checked' : ''}><span><b>${t('Nominees may vote for themselves')}</b></span></label>`}
-    </div></details>
+      <label class="check"><input type="checkbox" data-set-bool="selfVote" ${s.selfVote ? 'checked' : ''}><span><b>${t('Nominees may vote for themselves')}</b></span></label></div>`}
   </div>`;
+}
+
+/** Timers (C7): the last lobby section, collapsed, for every mode. */
+function timersForm(v) {
+  const s = v.settings;
+  const tm8 = s.timers;
+  const OPTS = [0, 15, 30, 45, 60, 90, 120, 180, 300, 600];
+  const timer = (key, label) => `<label class="field"><span>${t(label)}</span><select class="input" data-set="timers.${key}">
+      ${OPTS.map((n) => `<option value="${n}" ${tm8[key] === n ? 'selected' : ''}>${n === 0 ? t('Untimed') : n < 60 ? t('{n} s', { n }) : t('{n} min', { n: n / 60 })}</option>`).join('')}
+      ${OPTS.includes(tm8[key]) ? '' : `<option selected value="${tm8[key]}">${t('{n} s', { n: tm8[key] })}</option>`}</select></label>`;
+  const rows = {
+    omen: () => `${timer('oShow', 'The wheel shows its start')}${timer('oSecret', 'Predict and turn')}${timer('oReveal', 'The reveal')}`,
+    mirror: () => `${timer('wTalk', 'Talking it over')}${timer('wChoose', 'Sealing the ballots')}${timer('wReveal', 'The reveal')}`,
+    mimic: () => `${timer('qIntro', 'Looking at your card')}${timer('qRound', 'The questions')}${timer('qVote', 'Each accusation vote')}${timer('qGuess', 'The Mimic\'s guess')}${timer('qFinal', 'The final vote')}`,
+    graverobbers: () => `${timer('gIntro', 'Meeting your crew')}${timer('gSign', 'The sign')}${timer('gVote', 'Each vote')}`,
+    seance: () => `${timer('sIntro', 'Looking at your role')}${timer('sVision', 'Visions')}${timer('sDiscuss', 'Discussion')}${timer('sCandle', 'Candles')}${timer('sName', 'The naming')}`,
+    midnight: () => `${timer('nDeal', 'Looking at your card')}${timer('nStep', 'Each night step')}${timer('nDay', 'Discussion')}${timer('nVote', 'The vote')}`,
+    carnival: () => `${timer('kTurn', 'Each turn')}${timer('kChallenge', 'Challenges')}${timer('kPower', 'Power picks')}${timer('kLook', 'Looking at a mask')}`,
+    coffins: () => `${timer('cBury', 'Burial')}${timer('cTurn', 'Each turn')}${timer('cBid', 'Each bid')}${timer('cDig', 'Each dig pick')}${timer('cWager', 'Ghost wagers')}`,
+    exorcism: () => `${timer('xClue', 'Each speaker')}${timer('xDiscuss', 'Discussion')}${timer('xVote', 'Voting')}${timer('xGuess', 'The Demon\'s guess')}`,
+    missions: () => `${timer('proposal', 'Proposal')}${timer('teamVote', 'Team vote')}${timer('mission', 'Mission')}${timer('interlude', 'Night interlude')}${timer('lastStand', 'Last Stand')}${timer('reckoning', 'Reckoning')}`,
+    classic: () => `${timer('morning', 'Morning')}${timer('discussion', 'Discussion')}${timer('defense', 'Defence (each)')}${timer('voting', 'Voting')}${timer('night', 'Night')}${timer('retaliation', 'Final act')}`,
+  };
+  const note = v.mode === 'classic' ? `<p class="small muted">${t(s.dreams ? 'Each night opens with a fifteen-second nightfall: everyone reads their Dream before actions begin.' : 'Each night opens with a five-second nightfall before actions begin.')}</p>` : '';
+  return `<details class="more" data-key="d-timers"><summary>${t('Timers')}</summary><div><div class="grid2">${(rows[v.mode] ?? rows.classic)()}</div>${note}</div></details>`;
+}
+
+/** How it works (C7) for the two modes that had no explainer; every other mode draws its own. */
+function howItWorks(v) {
+  const steps = v.mode === 'missions' ? [
+    ['mission', t('The proposal'), t('The Mission Leader picks a team; everyone votes Approve or Reject in secret.')],
+    ['maskedvote', t('The mission'), t('Each team member secretly plays a card. Death may play Sabotage; one Sabotage fails the mission.')],
+    ['lantern', t('The night interlude'), t('After missions 2, 3 and 4 the Candle holder learns one player\'s side.')],
+    ['crown', t('The end'), t('Three successes or three failures decide it: then the Reaper names the Medium, or the table names Death.')],
+  ] : [
+    ['death', t('Hidden roles'), t('Everyone gets a secret role. Death\'s team knows each other; the town does not.')],
+    ['moon', t('Night'), t('Death chooses a victim, while other roles protect, look or meddle.')],
+    ['sun', t('Day'), t('Talk it over, accuse, defend, then vote in a secret ballot.')],
+    ['crown', t('Winning'), t('The town wins when no Death is left alive; Death wins when it outnumbers everyone else.')],
+  ];
+  return explainer(t(v.mode === 'missions' ? 'How Missions works' : 'How Dead Set works'), steps, glyph, `how-${v.mode}`);
+}
+
+/**
+ * The table (C7): the same section in every mode. Table language; music (the score switch and its style in
+ * one row); location backdrops where the mode deals a story; Same room / Remote only where remote play changes
+ * something.
+ */
+function tableSection(v, isHost) {
+  const s = v.settings;
+  const info = MODES[v.mode] ?? MODES.classic;
+  const tableLang = v.table?.lang ?? 'en';
+  const lang = isHost
+    ? `<label class="toggle-row"><span><b>${t('Table language')}</b><small>${t('The default for everyone. Each player can still pick their own.')}</small></span><select class="input lang-select" data-act-change="tableLang">${LANGS.map((l) => `<option value="${l.code}" ${tableLang === l.code ? 'selected' : ''}>${esc(l.name)}</option>`).join('')}</select></label>`
+    : `<div class="toggle-row"><span><b>${t('Table language')}</b><small>${t('Set by the host. You can pick your own above.')}</small></span><span class="tag">${esc(LANGS.find((l) => l.code === tableLang)?.name ?? tableLang)}</span></div>`;
+  const on = v.table?.score !== false;
+  const cur = v.table?.scoreTheme ?? 'classic';
+  const style = MUSIC_STYLES.find(([k]) => k === cur) ?? MUSIC_STYLES[0];
+  const music = isHost
+    ? `<div class="toggle-row music-row"><span><b>${t('Atmospheric score')}</b><small>${t(on ? style[2] : 'Music and effects play on the TV board')}</small></span>
+        ${on ? `<select class="input lang-select" data-set-str="scoreTheme" data-key="music-style" aria-label="${esc(t('Music style'))}">${MUSIC_STYLES.map(([k, l]) => `<option value="${k}" ${k === cur ? 'selected' : ''}>${t(l)}</option>`).join('')}</select>` : ''}
+        <input type="checkbox" class="switch" data-set-bool="score" ${on ? 'checked' : ''} aria-label="${esc(t('Atmospheric score'))}"></div>`
+    : `<div class="toggle-row"><span><b>${t('Atmospheric score')}</b><small>${t(on ? style[2] : 'Music and effects play on the TV board')}</small></span><span class="tag ${on ? 'solid' : ''}">${on ? t(style[1]) : t('Off')}</span></div>`;
+  const backdrops = info.story ? (isHost
+    ? `<label class="toggle-row"><span><b>${t('Location backdrops')}</b><small>${t('The TV board shows a scene for the story\'s WHERE card.')}</small></span><input type="checkbox" class="switch" data-set-bool="backdrops" ${v.table?.backdrops ? 'checked' : ''}></label>`
+    : `<div class="toggle-row"><span><b>${t('Location backdrops')}</b><small>${t('The TV board shows a scene for the story\'s WHERE card.')}</small></span><span class="tag ${v.table?.backdrops ? 'solid' : ''}">${t(v.table?.backdrops ? 'On' : 'Off')}</span></div>`) : '';
+  const transport = info.remote && isHost ? `<div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>` : '';
+  return `<section class="lobby-table" data-key="ltable"><div class="rule">${t('The table')}</div>${v.mode === 'exorcism' ? '' : lang}${music}${backdrops}${transport}</section>`;
 }
 const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
 

@@ -132,7 +132,7 @@ export function omenLobbyDeck(v, isHost, h) {
     ['crown', t('Seven rounds'), t('Unused Influence is worth one point each at the end. The most points wins; ties share.')],
   ], glyph, 'oexplain')}
     <section class="lobby-deck" data-key="odeck">
-    <div class="rule">${t(n === 1 ? 'The table · {n} player' : 'The table · {n} players', { n })}</div>
+    <div class="rule">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     <p class="small muted">${n >= 4 ? t('Everyone plays for themself. No hidden sides.') : t('Seat 4 to 12 players.')}</p>
     <div class="o-lobbyart" data-key="olart">${wheel({ at: 0, mark: 0, size: 'sm', key: 'olwheel' })}</div>
     ${h.music ?? ''}

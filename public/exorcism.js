@@ -251,7 +251,7 @@ export function exorcismLobbyDeck(v, isHost, h) {
   const scores = scoreboard(v);
   return `${explainerHtml()}
     <section class="lobby-deck" data-key="xdeck">
-    <div class="rule">${t(n === 1 ? 'The table · {n} player' : 'The table · {n} players', { n })}</div>
+    <div class="rule">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     ${n >= 3 ? `<p class="small muted" data-key="xcount">${th(x.demons === 2 ? '{l} Living and two Demons.' : '{l} Living and one Demon.', { l: Math.max(0, n - (x.demons ?? 1)) })}</p>` : `<p class="small muted">${t('Seat 3 to 12 players.')}</p>`}
     ${isHost ? `<label class="toggle-row"><span><b>${t('Table language')}</b><small>${t('Forced on every phone in Exorcism, so the words match.')}</small></span><select class="input lang-select" data-act-change="tableLang">${h.LANGS.map((l) => `<option value="${l.code}" ${tableLang === l.code ? 'selected' : ''}>${esc(l.name)}</option>`).join('')}</select></label>`
       : `<div class="toggle-row"><span><b>${t('Table language')}</b><small>${t('Forced on every phone in Exorcism, so the words match.')}</small></span><span class="tag">${esc(h.LANGS.find((l) => l.code === tableLang)?.name ?? tableLang)}</span></div>`}

@@ -473,7 +473,7 @@ export function carnivalLobbyDeck(v, isHost, h) {
   const harvests = [[0, t('Off')], ...[2, 4, 6, 8, 10, 12].map((x) => [x, String(x)])];
   return `${explainer()}
     <section class="lobby-deck" data-key="kdeck">
-    <div class="rule">${t(n === 1 ? 'The table · {n} player' : 'The table · {n} players', { n })}</div>
+    <div class="rule">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     ${n >= 4 ? `<p class="small muted" data-key="kcount">${n < 6 ? th(6 - n === 1 ? '{n} masks: one sits on an empty chair.' : '{n} masks: {c} sit on empty chairs.', { n: 6, c: 6 - n }) : th('{n} masks, one per guest.', { n })}</p>` : `<p class="small muted">${t('Seat 4 to 12 players.')}</p>`}
     <div class="k-lobbydeck" data-key="kld">${deck.map(({ id, n: c }) => `<button class="kld-c" data-act="sheet" data-id="masks">${maskCard(id, { cls: 'thumb' })}${c > 1 ? `<b>×${c}</b>` : ''}</button>`).join('')}</div>
     <button class="btn btn-ghost btn-sm" data-act="sheet" data-id="masks" data-key="kref-btn">${glyph('mask')} ${t('What every mask does')}</button>

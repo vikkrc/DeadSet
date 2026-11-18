@@ -427,7 +427,7 @@ export function seanceLobbyDeck(v, isHost, h) {
   const decN = s.deceivers === 'none' ? 0 : s.deceivers === 'two' ? (n >= 9 ? 2 : n >= 5 ? 1 : 0) : s.deceivers === 'one' ? 1 : n >= 5 ? 1 : 0;
   return `${explainer()}
     <section class="lobby-deck" data-key="sdeck">
-    <div class="rule">${t(n === 1 ? 'The table · {n} player' : 'The table · {n} players', { n })}</div>
+    <div class="rule">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     <p class="small muted">${n >= 4 ? th(decN === 1 ? 'One Ghost, {m} readers, {d} Deceiver among them.' : decN ? 'One Ghost, {m} readers, {d} Deceivers among them.' : 'One Ghost and {m} readers, all honest.', { m: Math.max(0, n - 1), d: decN }) : t('Seat 4 to 10 players.')}</p>
     <div class="s-lobbycards" data-key="slc">${['S_GHOST', 'S_MEDIUM', 'S_DECEIVER'].map((id) => rcard(id, 'thumb')).join('')}</div>
     ${row(t('Difficulty'), t(DIFF_SUB[s.difficulty ?? 'standard']), sel('difficulty', s.difficulty ?? 'standard', DIFF), t(DIFF.find((x) => x[0] === (s.difficulty ?? 'standard'))[1]))}

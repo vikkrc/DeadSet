@@ -423,7 +423,7 @@ export function coffinsLobbyDeck(v, isHost, h) {
   const hand = `<div class="c-lobbyhand" data-key="clh">${Array.from({ length: coffins }, (_, i) => coffinCard(i === coffins - 1 ? 'C' : 'G', { key: `clh-${i}` })).join('')}</div>`;
   return `${explainerHtml()}
     <section class="lobby-deck" data-key="cdeck">
-    <div class="rule">${t(n === 1 ? 'The table · {n} player' : 'The table · {n} players', { n })}</div>
+    <div class="rule">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     ${n >= 3 ? `<p class="small muted" data-key="ccount">${th('Each player: {g} Gold and one Curse.', { g: coffins - 1 })}</p>` : `<p class="small muted">${t('Seat 3 to 10 players.')}</p>`}
     ${hand}
     <div class="rule">${t('Winning')}</div>

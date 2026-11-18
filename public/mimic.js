@@ -319,7 +319,7 @@ export function mimicLobbyDeck(v, isHost, h) {
   const board = s.board ?? 16;
   return `${explainer()}
     <section class="lobby-deck" data-key="qdeck">
-    <div class="rule">${t(n === 1 ? 'The table · {n} player' : 'The table · {n} players', { n })}</div>
+    <div class="rule">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     <p class="small muted">${n >= 4 ? t('One Mimic; everyone else is Living.') : t('Seat 4 to 12 players.')}</p>
     <div class="q-lobbyart" data-key="qlart"><span class="arc">${cardArt('mimic')}<span class="nm">${esc(roleF('Q_MIMIC', 'name'))}</span></span>${scard('WHERE', 5)}${scard('WHO', 3)}</div>
     ${row(t('Places on the board'), t('How many possible places everyone sees. More places, harder for the Mimic.'), sel('board', board, BOARDS), BOARDS.find((x) => x[0] === board)?.[1] ?? String(board))}
