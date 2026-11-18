@@ -24,32 +24,34 @@ export const FAMILIES = [
  * - rolesAtEnd: the end screen turns every role card face up (and lists every secret).
  * - aliveCount: the header counts the living.
  * - story: the mode deals WHO / WHERE / WHY story cards.
+ * - utility: the row under the table (C3), fixed slots in this order, each only when present: My card (the
+ *   role sheet), The board (a mode reference sheet), Notes ('*' every private note, or one note kind), Story.
  * - unit, count, offset, roman: the header's word (C4) is the unit of play and its number, read from the view at
  *   `count` (plus `offset`); Roman only where the count stays small and is part of the story (C5).
  */
 export const MODES = {
   classic: { family: 'hidden', emblem: 'death', name: 'Classic Dead Set', blurb: 'Hidden roles, night kills, Dreams and Rule cards. 5–25 players.', min: 5, max: 25,
-    prefix: null, rematchReady: false, draw: null, lobbyMood: 'lobby', rolesAtEnd: true, aliveCount: true, story: true },
+    prefix: null, rematchReady: false, draw: null, lobbyMood: 'lobby', rolesAtEnd: true, aliveCount: true, story: true, utility: { card: true, notes: '*', story: true, rules: true } },
   missions: { family: 'hidden', emblem: 'mission', blurb: 'Teams, votes and sabotage. Nobody dies. 5–12 players.', min: 5, max: 12,
-    prefix: 'M_', rematchReady: false, draw: 'wheel', lobbyMood: 'mGather', rolesAtEnd: true, aliveCount: false, story: true, unit: 'Mission', count: 'missions.mission', offset: 1, roman: true },
+    prefix: 'M_', rematchReady: false, draw: 'wheel', lobbyMood: 'mGather', rolesAtEnd: true, aliveCount: false, story: true, unit: 'Mission', count: 'missions.mission', offset: 1, roman: true, utility: { card: true, notes: '*', story: true } },
   carnival: { family: 'hands', emblem: 'veiled', blurb: 'A masked ball of bluff and memory: swap masks, claim powers, gather Souls. 4–12 players.', min: 4, max: 12,
-    prefix: 'K_', rematchReady: true, draw: 'wheel', lobbyMood: 'kUnmask', unit: 'Turn', count: 'carnival.turnNo' },
+    prefix: 'K_', rematchReady: true, draw: 'wheel', lobbyMood: 'kUnmask', unit: 'Turn', count: 'carnival.turnNo', utility: { board: 'masks', notes: 'look', notesIf: 'carnival.diary' } },
   midnight: { family: 'hands', emblem: 'moon', blurb: 'One night, one vote: cards change hands in the dark. 4–12 players.', min: 4, max: 12,
-    prefix: 'N_', rematchReady: true, draw: null, lobbyMood: 'nDeal' },
+    prefix: 'N_', rematchReady: true, draw: null, lobbyMood: 'nDeal', utility: { board: 'ncards', notes: 'nsee' } },
   omen: { family: 'reading', emblem: 'oracle', blurb: 'A wheel of Life, Death and Rebirth that anyone may secretly turn. Predict where it stops. 4–12 players.', min: 4, max: 12,
     prefix: 'O_', rematchReady: true, draw: null, lobbyMood: 'oShow', unit: 'Round', count: 'omen.round' },
   mirror: { family: 'reading', emblem: 'maskedvote', blurb: 'Answer a dilemma, and predict how a friend answers it. 4–12 players.', min: 4, max: 12,
     prefix: 'W_', rematchReady: true, draw: null, lobbyMood: 'wTalk', unit: 'Dilemma', count: 'mirror.round' },
   exorcism: { family: 'signs', emblem: 'oracle', blurb: 'A word game of bluff: one word each, then name the Demon. 3–12 players.', min: 3, max: 12,
-    prefix: 'X_', rematchReady: true, draw: 'wheel', lobbyMood: 'xLobby', rolesAtEnd: true, unit: 'Round', count: 'exorcism.round' },
+    prefix: 'X_', rematchReady: true, draw: 'wheel', lobbyMood: 'xLobby', rolesAtEnd: true, unit: 'Round', count: 'exorcism.round', utility: { card: true, notes: '*' } },
   seance: { family: 'signs', emblem: 'shade', blurb: 'A silent Ghost sends visions; find who, where and why, and the Deceiver. 4–10 players.', min: 4, max: 10,
-    prefix: 'S_', rematchReady: true, draw: 'wheel', lobbyMood: 'sGather', unit: 'Round', count: 'seance.round' },
+    prefix: 'S_', rematchReady: true, draw: 'wheel', lobbyMood: 'sGather', unit: 'Round', count: 'seance.round', utility: { board: 'sboard', notes: '*' } },
   graverobbers: { family: 'signs', emblem: 'headstone', blurb: 'Two crews dig a cemetery of words or icons; one word and a number from the Undertaker. 4–12 players.', min: 4, max: 12,
     prefix: 'G_', rematchReady: true, draw: 'coin', lobbyMood: 'gYard', unit: 'Turn', count: 'graverobbers.turnNo' },
   mimic: { family: 'signs', emblem: 'mimic', blurb: 'Everyone knows the place except the Mimic. Ask, answer, accuse. 4–12 players.', min: 4, max: 12,
     prefix: 'Q_', rematchReady: true, draw: 'fan', lobbyMood: 'qDeal', unit: 'Question', count: 'mimic.askCount', offset: 1 },
   coffins: { family: 'wager', emblem: 'undertaker', blurb: 'A quick bluffing game: bury gold, hide your curse, bid and dig. 3–10 players.', min: 3, max: 10,
-    prefix: 'C_', rematchReady: true, draw: 'wheel', lobbyMood: 'cLobby', unit: 'Round', count: 'coffins.round' },
+    prefix: 'C_', rematchReady: true, draw: 'wheel', lobbyMood: 'cLobby', unit: 'Round', count: 'coffins.round', utility: { card: true, notes: '*' } },
 };
 
 export const MODE_IDS = Object.keys(MODES);

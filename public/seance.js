@@ -245,17 +245,9 @@ export function seanceMain(v, me, h) {
     }
     default: break;
   }
-  return `${head(v)}${statusBar(v, me)}${stage}${chipsRow(v)}${zoomLayer(UI)}`;
+  return `${head(v)}${statusBar(v, me)}${stage}${h.chips(v)}${zoomLayer(UI)}`;
 }
 
-function chipsRow(v) {
-  if (!v.me || v.me.moderator) return '';
-  const notes = (v.private || []).length;
-  return `<nav class="chips s-chips" data-key="schips">
-    <button class="chip" data-act="sheet" data-id="sboard">${glyph('p_candle')}<span>${t('The board')}</span></button>
-    <button class="chip" data-act="sheet" data-id="notes">${glyph('scroll')}<span>${t('Notes')}</span>${notes ? `<b>${notes}</b>` : ''}</button>
-  </nav>`;
-}
 
 export function seanceDock(v, h) {
   const { S: UI, btn, holdBtn, commitBtn } = h;

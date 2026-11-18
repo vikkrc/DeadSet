@@ -74,14 +74,6 @@ function report(seen) {
     ${seen.map((e) => `<div class="nr-row">${(e.cards ?? []).length ? `<span class="nr-cards">${e.cards.map((c) => ncard(c.role, { cls: 'thumb' })).join('')}</span>` : ''}<p>${tmh(e.msg)}</p></div>`).join('')}</div>`;
 }
 
-function chipsRow(v) {
-  if (!v.me || v.me.moderator) return '';
-  const notes = (v.private || []).filter((e) => e.kind === 'nsee').length;
-  return `<nav class="chips" data-key="nchips">
-    <button class="chip" data-act="sheet" data-id="ncards">${glyph('moon')}<span>${t('Cards in play')}</span><b>${v.midnight.deck.reduce((s, x) => s + x.n, 0)}</b></button>
-    <button class="chip" data-act="sheet" data-id="notes">${glyph('scroll')}<span>${t('Notes')}</span>${notes ? `<b>${notes}</b>` : ''}</button>
-  </nav>`;
-}
 
 // ── Phone ──────────────────────────────────────────────────────────────────
 const KIND_TITLE = {
@@ -134,7 +126,7 @@ export function midnightMain(v, me, h) {
       break;
     default: break;
   }
-  return `${head(v)}${stage}${chipsRow(v)}`;
+  return `${head(v)}${stage}${h.chips(v)}`;
 }
 
 export function midnightDock(v, h) {

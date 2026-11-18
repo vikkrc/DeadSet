@@ -1209,17 +1209,32 @@ function head(v, extra = '') {
   </header>`;
 }
 
-function chips(v) {
+/** The board sheet of each mode: its icon and the count on its badge. */
+const BOARD_SHEET = {
+  masks: { glyph: 'mask', count: (v) => v.carnival?.inPlay?.length },
+  ncards: { glyph: 'moon', count: (v) => v.midnight?.deck?.reduce((s, x) => s + x.n, 0) },
+  sboard: { glyph: 'p_candle', count: () => 0 },
+};
+/**
+ * One utility row under the table (C3): My card · The board · Notes · Story (· Rules in Classic), the same icons,
+ * height and place in every mode; the registry says which slots a mode has.
+ */
+function utilityRow(v) {
   const me = v.me;
   if (!me || me.moderator || v.phase === 'LOBBY') return '';
-  const notes = (v.private || []).length;
-  return `<nav class="chips" data-key="chips">
-    <button class="chip" data-act="sheet" data-id="role">${me.role ? glyph(me.role.glyph) : ''}<span>${t('My role')}</span></button>
-    <button class="chip" data-act="sheet" data-id="notes">${glyph('scroll')}<span>${t('Notes')}</span>${notes ? `<b>${notes}</b>` : ''}</button>
-    ${v.activeRules?.length ? `<button class="chip ${Object.keys(activeRuleNotes(v)).length ? 'live' : ''}" data-act="sheet" data-id="rules">${glyph('magistrate')}<span>${t('Rules')}</span><b>${v.activeRules.length}</b></button>` : ''}
-    ${v.scenario ? `<button class="chip" data-act="sheet" data-id="story">${glyph('whispers')}<span>${t('Story')}</span></button>` : ''}
-  </nav>`;
+  const u = MODES[v.mode]?.utility;
+  if (!u) return '';
+  const slot = (id, icon, label, n = 0, cls = '') => `<button class="chip util ${cls}" data-act="sheet" data-id="${id}" data-key="u-${id}">${icon}<span>${label}</span>${n ? `<b>${n}</b>` : ''}</button>`;
+  const out = [];
+  if (u.card && me.role) out.push(slot('role', glyph(me.role.glyph), t('My card')));
+  if (u.board) { const b = BOARD_SHEET[u.board]; out.push(slot(u.board, glyph(b.glyph), t('The board'), b.count(v))); }
+  const notesOn = !u.notesIf || u.notesIf.split('.').reduce((o, k) => o?.[k], v);
+  if (u.notes && notesOn) out.push(slot('notes', glyph('scroll'), t('Notes'), (v.private || []).filter((e) => u.notes === '*' || e.kind === u.notes).length));
+  if (u.story && v.scenario) out.push(slot('story', glyph('whispers'), t('Story')));
+  if (u.rules && v.activeRules?.length) out.push(slot('rules', glyph('magistrate'), t('Rules'), v.activeRules.length, Object.keys(activeRuleNotes(v)).length ? 'live' : ''));
+  return out.length ? `<nav class="chips util-row" data-key="chips">${out.join('')}</nav>` : '';
 }
+const chips = utilityRow;
 
 function mainFor(v, me) {
   if (me?.moderator) return moderatorMain(v);

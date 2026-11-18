@@ -168,14 +168,6 @@ function purse(v) {
 /** The slip that says what is happening. */
 const slip = (kicker, title, sub = '', cls = '') => `<div class="k-slip ${cls} rise-in" data-key="kslip-${esc(kicker).slice(0, 18)}"><span class="kicker">${kicker}</span><h2>${title}</h2>${sub ? `<p>${sub}</p>` : ''}</div>`;
 
-function chipsRow(v) {
-  if (!v.me || v.me.moderator) return '';
-  const notes = v.carnival.diary ? (v.private || []).filter((e) => e.kind === 'look').length : 0;
-  return `<nav class="chips" data-key="kchips">
-    <button class="chip" data-act="sheet" data-id="masks">${glyph('mask')}<span>${t('Masks at the ball')}</span><b>${v.carnival.inPlay.length}</b></button>
-    ${v.carnival.diary ? `<button class="chip" data-act="sheet" data-id="notes">${glyph('scroll')}<span>${t('The ball diary')}</span>${notes ? `<b>${notes}</b>` : ''}</button>` : ''}
-  </nav>`;
-}
 
 // ── Phone: main screen ─────────────────────────────────────────────────────
 export function carnivalMain(v, me, h) {
@@ -240,13 +232,13 @@ export function carnivalMain(v, me, h) {
         stage = `<div class="k-look rise-in" data-key="klook-${v.phaseId}"><span class="kicker">${esc(title)}</span>
           <div class="kl-cards">${a.looks.map((x) => `<figure class="kl-c">${maskCard(x.mask, { cls: 'big' })}<figcaption><b>${esc(roleName(x.mask))}</b>${x.seat === v.me.id ? '' : `<small>${esc(pname(v, x.seat))}</small>`}</figcaption></figure>`).join('')}</div>
           <p class="small muted">${t('Only you see this. Remember it.')}</p></div>`;
-        return `${head(v)}${stage}${chipsRow(v)}`;
+        return `${head(v)}${stage}${h.chips(v)}`;
       }
       stage = slip(t('A moment'), K.look?.kind === 'peek' ? th('{a} lifts their mask…', { a: pname(v, K.look?.pid) }) : th('{a} reads the masks…', { a: pname(v, K.look?.pid) }), t('The ball waits until they are done.'));
       break;
     default: break;
   }
-  return `${head(v)}${stage}${ballroom(v, { pick, open })}${purse(v)}${below}${chipsRow(v)}`;
+  return `${head(v)}${stage}${ballroom(v, { pick, open })}${purse(v)}${below}${h.chips(v)}`;
 }
 
 // ── Phone: the dock ────────────────────────────────────────────────────────

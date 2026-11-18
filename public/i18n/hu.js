@@ -2778,5 +2778,6 @@ export default {
     "Dilemma": "Dilemma",
     "Question": "Kérdés",
     "wrong candles": "hibás gyertya",
+    "My card": "A kártyám",
   },
 };

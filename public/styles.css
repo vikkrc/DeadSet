@@ -4917,3 +4917,6 @@ body[data-mode='mirror']:not([data-time='night']) {
 /* Séance naming (C2): the ring picks; the evidence list under it mirrors the choice. */
 .s-evidence { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; font: italic 400 15px/1.3 var(--text); color: var(--bone-2); }
 .s-evidence li.sel b { color: var(--gilt-hi); }
+/* The utility row (C3): one height and place in every mode. */
+.util-row { margin-top: 10px; }
+.chip.util { min-height: 44px; padding: 0 14px; }

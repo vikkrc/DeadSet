@@ -2778,5 +2778,6 @@ export default {
     "Dilemma": "Dilema",
     "Question": "Pregunta",
     "wrong candles": "velas erróneas",
+    "My card": "Mi carta",
   },
 };
