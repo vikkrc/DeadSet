@@ -325,7 +325,7 @@ export function coffinsMoment(l, v, fresh, { notify, name: nm, sound }) {
     case 'c-lottery': {
       const order = l.order.map((id) => ({ id, name: nm(id), av: v.players.find((p) => p.id === id)?.avatar ?? null }));
       return { type: 'mlottery', pointer: 'shovel', order, leader: l.leader, leaderName: nm(l.leader), idx: l.order.indexOf(l.leader), spins: l.spins ?? 2, sound: null,
-        kickerText: t('Before the first burial'), titleText: t('Who plays first?'), resultText: t('The first to play') };
+        kickerText: t('Before the first round'), titleText: t('Who plays first?'), resultText: '{name} plays first' };
     }
     case 'c-round': if (l.n > 1) notify(t('Round {n} · {a} starts', { n: l.n, a: nm(l.first) })); return null;
     case 'c-bid': notify(t(l.open ? '{a} challenges: "I can open {n}."' : '{a} raises: "I can open {n}."', { a: nm(l.pid), n: l.n })); sound?.('accuse'); return null;

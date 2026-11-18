@@ -397,7 +397,8 @@ export function missionMoment(l, v, fresh, { notify, name: nm, ...h }) {
     case 'm-candle': if (l.target) notify(t('{a} held the Candle to {b}', { a: nm(l.by), b: nm(l.target) })); return null;
     case 'm-lottery': {
       const order = l.order.map((id) => ({ id, name: nm(id), av: v.players.find((p) => p.id === id)?.avatar ?? null }));
-      return { type: 'mlottery', order, leader: l.leader, leaderName: nm(l.leader), idx: l.order.indexOf(l.leader), spins: l.spins ?? 2, sound: null };
+      return { type: 'mlottery', order, leader: l.leader, leaderName: nm(l.leader), idx: l.order.indexOf(l.leader), spins: l.spins ?? 2, sound: null,
+        kickerText: t('Before the first mission'), titleText: t('Who leads first?'), resultText: '{name} leads first' };
     }
     case 'm-lantern': return { type: 'mlantern', by: nm(l.by), to: nm(l.to), chosen: l.chosen, sound: 'approve' };
     case 'm-propose': notify(th('{a} proposes {names}', { a: nm(l.leader), names: l.team.map(nm) })); return null;
@@ -436,9 +437,9 @@ export function missionMomentHtml(m, h) {
           <span class="lot-disc">${x.av ? avatarSvg(x.av, 'lot-av') : `<b>${esc(x.name[0])}</b>`}</span><small>${esc(x.name)}</small></li>`;
       }).join('');
       const turn = m.spins * 360 + (m.idx / n) * 360;
-      return `<span class="kicker">${esc(m.kickerText ?? t('Before the first mission'))}</span><h1 class="m-title">${letters(m.titleText ?? t('Who carries the lantern?'))}</h1>
+      return `<span class="kicker">${esc(m.kickerText ?? t('Before the first mission'))}</span><h1 class="m-title">${letters(m.titleText ?? t('Who leads first?'))}</h1>
         <div class="lot-wheel" style="--turn:${turn}deg"><ul>${seats}</ul>${m.pointer === 'shovel' ? `<div class="lot-hand shovel" aria-hidden="true">${SHOVEL}</div>` : `<div class="lot-hand" aria-hidden="true"><i></i>${glyph('lantern')}</div>`}</div>
-        <div class="lot-result"><span class="kicker">${esc(m.resultText ?? t('The first Mission Leader'))}</span><b>${esc(m.leaderName)}</b></div>`;
+        <div class="lot-result"><b>${esc(t(m.resultText ?? '{name} leads first', { name: m.leaderName }))}</b></div>`;
     }
     case 'mlantern':
       return `<div class="m-art lantern-art">${glyph('lantern')}</div><span class="kicker">${esc(t(m.chosen ? 'The lantern is handed on' : 'The lantern passes on'))}</span>

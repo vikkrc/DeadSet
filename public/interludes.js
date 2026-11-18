@@ -51,7 +51,7 @@ export function sceneMs(type, d = {}) {
     case 'qunmask': return 3400;
     case 'qguess': return 4800;
     case 'qtime': return 3200;
-    case 'gstart': return 5600;
+    case 'gstart': return 8600; // every first-player draw lasts as long as the wheel (C8)
     case 'gsign': return 3000;
     case 'gcoin': return 3600;
     case 'gdig': return 3800;

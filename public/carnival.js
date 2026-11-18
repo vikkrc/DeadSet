@@ -364,7 +364,7 @@ export function carnivalMoment(l, v, fresh, { notify, name: nm, sound }) {
     case 'k-lottery': {
       const order = l.order.map((id) => ({ id, name: nm(id), av: v.players.find((p) => p.id === id)?.avatar ?? null }));
       return { type: 'mlottery', order, leader: l.leader, leaderName: nm(l.leader), idx: l.order.indexOf(l.leader), spins: l.spins ?? 2, sound: null,
-        kickerText: t('The masks turn face down'), titleText: t('Who dances first?'), resultText: t('The first dancer') };
+        kickerText: t('Before the first turn'), titleText: t('Who dances first?'), resultText: '{name} dances first' };
     }
     case 'k-swap': return { type: 'kswap', by: nm(l.by), a: pname(v, l.a), b: pname(v, l.b), witch: !!l.power, sound: 'whoosh' };
     case 'k-peek': notify(t('{a} lifts their mask for a moment.', { a: nm(l.by) })); return null;

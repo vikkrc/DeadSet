@@ -361,7 +361,7 @@ export function seanceMoment(l, v, fresh, { notify, name: nm }) {
     case 's-lottery': {
       const order = l.order.map((id) => ({ id, name: nm(id), av: v.players.find((p) => p.id === id)?.avatar ?? null }));
       return { type: 'mlottery', order, leader: l.leader, leaderName: nm(l.leader), idx: l.order.indexOf(l.leader), spins: l.spins ?? 2, sound: null,
-        kickerText: t('The séance'), titleText: t('Who was murdered?'), resultText: t('The Ghost') };
+        kickerText: t('Before the first round'), titleText: t('Who was murdered?'), resultText: '{name} is the Ghost' };
     }
     case 's-round': notify(th('Round {n}. The Ghost reaches out.', { n: l.round })); return null;
     case 's-visions': return { type: 'svisions', count: l.count, shown: l.shown, assign: l.assign, mine: v.me?.id && l.shown?.[v.me.id] ? l.shown[v.me.id] : null, row: v.me?.id ? l.assign?.[v.me.id] : null, sound: 'unfold' };

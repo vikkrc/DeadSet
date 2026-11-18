@@ -81,6 +81,8 @@ for (const m of read('public/app.js').matchAll(/timer\('\w+', '((?:[^'\\]|\\.)*)
 for (const m of read('public/app.js').matchAll(/\bcount\('((?:[^'\\]|\\.)*)'\)/g)) keys.add(unq(m[1]));
 // The mode registry: family titles and subtitles, lobby blurbs and Classic's name.
 for (const m of read('public/modes.js').matchAll(/\b(?:title|sub|blurb|name|unit): '((?:[^'\\]|\\.)*)'/g)) keys.add(unq(m[1]));
+// The first-player draw's result line (C8), translated at render time.
+for (const f of ['public/missions.js', 'public/exorcism.js', 'public/coffins.js', 'public/carnival.js', 'public/seance.js']) for (const m of read(f).matchAll(/resultText: '((?:[^'\\]|\\.)*)'/g)) keys.add(unq(m[1]));
 // Ceremony card labels (translated through a variable).
 for (const k of ['Who', 'Where', 'Why', 'Turn {n}']) keys.add(k);
 // Tables of labels the client translates at render time.

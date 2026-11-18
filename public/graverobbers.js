@@ -226,7 +226,7 @@ export function graveMoment(l, v, fresh, { notify, name: nm }) {
     default: return null;
   }
 }
-export const G_MOMENT_TIME = { gstart: 5600, gsign: 3000, gcoin: 3600, gdig: 3800 };
+export const G_MOMENT_TIME = { gstart: 8600, gsign: 3000, gcoin: 3600, gdig: 3800 };
 
 export function graveMomentHtml(m, h) {
   const { letters } = h;
@@ -235,11 +235,11 @@ export function graveMomentHtml(m, h) {
       if (m.crews?.V) {
         // Three crews: the three sigils turn in a circle, and the first crew's rises.
         return `<div class="g-draw3 pick-${m.first}">${ALL.map((c, i) => `<span class="gd c-${c} ${c === m.first ? 'won' : ''}" style="--i:${i}">${emblem(CREW_EMB[c])}</span>`).join('')}</div>
-      <span class="kicker">${esc(t('The lot decides'))}</span><h1 class="m-title c-${m.first}">${letters(t(DIGS_FIRST[m.first]))}</h1>
+      <span class="kicker">${esc(t('Before the first turn'))}</span><h1 class="m-title c-${m.first}">${letters(t(DIGS_FIRST[m.first]))}</h1>
       <p class="m-sub">${esc(t('Seven relics for the first crew, six for each of the others. Death\'s grave puts a crew out.'))}</p>`;
       }
       return `<div class="g-coin-scene"><div class="g-coin flip-${m.first}"><span class="f B">${emblem('moon')}</span><span class="f G">${emblem('sun')}</span></div></div>
-      <span class="kicker">${esc(t('The coin decides'))}</span><h1 class="m-title c-${m.first}">${letters(t(DIGS_FIRST[m.first]))}</h1>
+      <span class="kicker">${esc(t('Before the first turn'))}</span><h1 class="m-title c-${m.first}">${letters(t(DIGS_FIRST[m.first]))}</h1>
       <p class="m-sub">${esc(t('Nine relics for the first crew, eight for the other. One grave is Death\'s.'))}</p>`;
     }
     case 'gsign': return `<div class="m-art g-sig c-${m.crew}">${emblem(CREW_EMB[m.crew])}</div><span class="kicker">${esc(t(CAP_OF[m.crew]))}</span>
