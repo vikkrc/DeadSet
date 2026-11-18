@@ -5078,3 +5078,16 @@ details.more summary,
 .w-opt { min-height: 48px; }
 .w-opt b { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid var(--gilt-2); border-radius: 50%; }
 .sg-chip { min-height: 44px; }
+
+/* ── Contrast in every state (D4) ──
+   An inactive thing dims its frame and art, never its text below 0.7: players still read it. */
+.coff.buried { opacity: 1; }
+.coff.buried::after { opacity: 1; background: rgba(9, 11, 12, 0.5); animation: none; }
+.coff.buried .cc-buried { z-index: 4; color: var(--bone-2); }
+.tok.dead, .tok.unready, div.mode-card.off, .cseat.passed, .crelic.used, .kme-row, .chipbtn, .xo.quiet, .xo-face.quiet,
+.gt-crew:has(.g-altar.out), .b-sound.off, .scdl.out, .bars .b-name small, .x-order .xo-n, .g-stone.reg.k-N, .nb-steps li { opacity: 0.7; }
+.w-tile.hit .w-names small, .hit .w-names small { color: var(--bone-2); }
+/* Seats that cannot be picked dim their medallion, not their name. */
+.ring.picking .tok.mute { opacity: 1; filter: none; }
+.ring.picking .tok.mute .tok-disc { opacity: 0.35; filter: grayscale(1); }
+.ring.picking .tok.mute .tok-name { color: var(--ash); }
