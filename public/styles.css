@@ -4870,3 +4870,8 @@ body.has-moment #app .notes-slot { visibility: visible; }
 .is-board .toast { padding: 6px 14px; font-size: 19px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .is-board .toasts .toast:not(:last-child) { opacity: 0.75; }
 .is-board .toasts .toast:nth-last-child(n+3) { display: none; }
+/* A5: the TV Gazette never scrolls away its masthead; older editions fold to their headline */
+.b-side .gazette.tv .mast { position: sticky; top: -22px; z-index: 2; margin: -22px -24px 10px; padding: 22px 24px 10px; background: color-mix(in srgb, var(--ink-2) 96%, var(--ink)); }
+.gazette.tv .b-grid { margin: 6px 0 14px; }
+.gazette.tv .edition.folded { opacity: 0.8; }
+.gazette.tv .edition.folded h4 { margin: 0; }

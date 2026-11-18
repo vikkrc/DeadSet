@@ -1179,6 +1179,7 @@ export default {
     "The host starts the first mission.": "A házigazda elindítja az első küldetést.",
     "The last proposal goes ahead whatever the vote.": "Az utolsó javaslat a szavazástól függetlenül indul.",
     "The missions": "A küldetések",
+    "The deduction": "A nyomozás",
     "The proposal": "A javaslat",
     "The reveal": "A felfedés",
     "The table decides": "Az asztal dönt",

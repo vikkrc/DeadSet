@@ -1179,6 +1179,7 @@ export default {
     "The host starts the first mission.": "Hostiteľ spúšťa prvú misiu.",
     "The last proposal goes ahead whatever the vote.": "Posledný návrh vyráža bez ohľadu na hlasovanie.",
     "The missions": "Misie",
+    "The deduction": "Dedukcia",
     "The proposal": "Návrh",
     "The reveal": "Odhalenie",
     "The table decides": "Stôl rozhoduje",

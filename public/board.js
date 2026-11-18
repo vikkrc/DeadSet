@@ -248,7 +248,7 @@ export function boardScreen(v, h) {
     <div class="b-cols">
       <section class="b-stage">${mr ? missionBoardStage(v, h) : ''}${table}${mr && v.phase === 'ENDED' && v.missions?.hunches?.length ? hunchLegend() : ''}<div class="plaques">${plaques}</div>
       </section>
-      <aside class="b-side" data-scroll="b-gz">${mr ? `<div class="b-grid"><span class="kicker">${t('The missions')}</span>${gridHtml(v)}</div>` : ''}${gazetteHtml(v, h)}</aside>
+      <aside class="b-side" data-key="b-gz">${gazetteHtml(v, h, { tv: true, after: mr ? `<section class="b-grid"><span class="kicker">${t('The deduction')}</span>${gridHtml(v)}</section>` : '' })}</aside>
     </div>
     <div class="b-pressure" aria-hidden="true">${Array.from({ length: 22 }, (_, i) => `<i style="--i:${i}"></i>`).join('')}</div>
   </main>`;

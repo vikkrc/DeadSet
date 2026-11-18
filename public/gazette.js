@@ -122,7 +122,12 @@ export function editions(v, h) {
 }
 
 /** The Gazette column / record: masthead + editions. */
-export function gazetteHtml(v, h, { masthead = true, limit = 40 } = {}) {
+/**
+ * The Gazette. On the TV (`tv`) nobody can scroll it, so it never auto-scrolls: the masthead stays at the top,
+ * `after` (Missions' deduction grid) follows it, the latest two editions are printed in full and older ones
+ * collapse to their headline.
+ */
+export function gazetteHtml(v, h, { masthead = true, limit = 40, tv = false, after = '' } = {}) {
   const { glyph, esc, t, th } = h;
   const w = scenarioWords(v.scenario, h);
   const alive = v.players.filter((p) => p.alive).length;
@@ -133,11 +138,12 @@ export function gazetteHtml(v, h, { masthead = true, limit = 40 } = {}) {
     if (c.acc) return `<span class="ev"><span class="mini">${esc(c.acc[0][0])}</span><span class="arrow">⟶</span><span class="mini">${esc(c.acc[1][0])}</span>${esc(c.text)}</span>`;
     return `<span class="ev ${c.cls ?? ''}">${c.icon ? glyph(c.icon) : ''}${esc(c.text)}</span>`;
   };
-  return `<div class="gazette">
+  return `<div class="gazette ${tv ? 'tv' : ''}">
     ${masthead ? `<div class="mast"><h3>${th('The Dead Set <i>Gazette</i>')}</h3><div><span>${esc(v.scenario ? w.place : t('Unknown parts'))}</span><span>${esc(edLabel)}</span>${v.mode === 'missions' ? '' : `<span>${th('{a} of {b} alive', { a: alive, b: v.players.length })}</span>`}</div></div>` : ''}
-    ${eds.length ? eds.map((e, i) => `<article class="edition ${i === 0 && v.phase !== 'ENDED' ? 'today' : ''}" data-key="ed-${esc(e.key)}">
+    ${after}
+    ${eds.length ? eds.map((e, i) => `<article class="edition ${i === 0 && v.phase !== 'ENDED' ? 'today' : ''} ${tv && i >= 2 ? 'folded' : ''}" data-key="ed-${esc(e.key)}">
       <div class="when"><b>${e.kind === 'end' || e.kind === 'finale' ? '·' : roman(e.num)}</b><span>${esc(when(e))}</span></div>
-      <div><h4 class="${e.tone}">${esc(e.title)}</h4><div class="events">${e.chips.map(chip).join('')}</div></div>
+      <div><h4 class="${e.tone}">${esc(e.title)}</h4>${tv && i >= 2 ? '' : `<div class="events">${e.chips.map(chip).join('')}</div>`}</div>
     </article>`).join('') : `<p class="small muted">${t('The presses are quiet. Nothing has happened yet.')}</p>`}
   </div>`;
 }

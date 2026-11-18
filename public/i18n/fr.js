@@ -1179,6 +1179,7 @@ export default {
     "The host starts the first mission.": "L'hôte lance la première mission.",
     "The last proposal goes ahead whatever the vote.": "La dernière proposition part quel que soit le vote.",
     "The missions": "Les missions",
+    "The deduction": "La déduction",
     "The proposal": "La proposition",
     "The reveal": "La révélation",
     "The table decides": "La table décide",
