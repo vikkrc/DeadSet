@@ -662,6 +662,9 @@ function render() {
   tickClock();
 }
 
+const toastsHtml = (cls) => `<div class="${cls}" data-key="${cls}" aria-live="polite">${S.notes.map((n) => `<div class="toast ${n.kind}" data-key="n-${n.id}">${esc(n.text)}</div>`).join('')}</div>`;
+const inRoomView = () => S.route.name === 'room' && S.conn !== 'gone' && !!S.token && !!V();
+
 function view() {
   const r = S.route;
   let html = '';
@@ -678,7 +681,9 @@ function view() {
   if (S.ui.recap && V()?.recap) html += recapHtml(V());
   if (S.moment) html += momentHtml(S.moment);
   if (S.conn === 'lost' && S.code) html += `<div class="conn" data-key="conn" role="status"><span class="pulse-dot"></span>${t('Reconnecting… your choices are safe on the server.')}</div>`;
-  html += `<div class="toasts" data-key="toasts" aria-live="polite">${S.notes.map((n) => `<div class="toast ${n.kind}" data-key="n-${n.id}">${esc(n.text)}</div>`).join('')}</div>`;
+  // In a room, notices sit in their own slot under the header (they push the page down, never cover
+  // it); elsewhere, and on the TV, they float in the toast column.
+  if (!inRoomView()) html += toastsHtml('toasts');
   return html;
 }
 
@@ -1113,7 +1118,7 @@ function roomScreen() {
       <button class="btn btn-ghost icon-btn" data-act="sheet" data-id="record" aria-label="${esc(t('Open match record'))}">${glyph('menu')}</button>
       ${fuse()}
     </header>`;
-  return `<div class="shell" data-key="shell">${side}<div class="col">${top}<main class="main" id="main" data-key="main-${v.phase === 'LOBBY' ? 'lobby' : 'game'}">${coachCard(v)}${mainFor(v, v.me)}</main></div></div>${dock(v)}${sheet(v)}`;
+  return `<div class="shell" data-key="shell">${side}<div class="col">${top}${toastsHtml('notes-slot')}<main class="main" id="main" data-key="main-${v.phase === 'LOBBY' ? 'lobby' : 'game'}">${coachCard(v)}${mainFor(v, v.me)}</main></div></div>${dock(v)}${sheet(v)}`;
 }
 
 function hostBox() {

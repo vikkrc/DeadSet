@@ -4857,3 +4857,10 @@ body.is-board .lot-hand.shovel { --sh-h: calc(min(460px, 54vh) * 0.34); }
 .qt-end .x-scores .ledger .tag { padding: 2px 6px; font-size: 13px; }
 .qt-end .x-scores p { display: none; }
 .qt-end .q-endpair { margin-top: 0; }
+
+/* A3: notices in a room sit in a slot under the header: they push the page down and never cover it */
+.notes-slot { position: sticky; top: 58px; z-index: 19; display: grid; gap: 6px; padding: 0 14px; background: color-mix(in srgb, var(--ink) 96%, transparent); }
+.notes-slot:not(:empty) { padding: 8px 14px; border-bottom: 1px solid var(--iron); }
+.notes-slot .toast { box-shadow: none; }
+@media (min-width: 980px) { .notes-slot { top: 0; } }
+body.has-moment #app .notes-slot { visibility: visible; }
