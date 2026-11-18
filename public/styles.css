@@ -1637,8 +1637,6 @@ body.is-board .reveal-stamp .stamp { font-size: 34px; }
 .mode-card small { color: var(--ash); font-size: 12.5px; line-height: 1.4; }
 .mode-card.on { border-color: var(--bone); background: linear-gradient(160deg, color-mix(in srgb, var(--bone) 10%, var(--ink-2)), var(--ink-2)); box-shadow: 0 0 0 3px rgba(236, 229, 213, 0.08); transform: translateY(-2px); }
 .mode-card.on > .glyph { color: var(--bone); }
-.mode-card[data-mode='missions'].on { border-color: var(--gilt); box-shadow: 0 0 0 3px rgba(233, 194, 122, 0.12), 0 0 26px rgba(233, 194, 122, 0.15); }
-.mode-card[data-mode='missions'].on > .glyph { color: var(--gilt); }
 div.mode-card.off { opacity: 0.45; }
 @media (max-width: 380px) { .mode-cards { grid-template-columns: 1fr; } }
 
@@ -2714,12 +2712,6 @@ body.blood-moon {
 :root { --frame-ember: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='%23e08a78'><defs><g id='c'><path d='M32 2.5H17A14.5 14.5 0 0 1 2.5 17V32'/><path d='M32 6.5H20.5A18.4 18.4 0 0 1 6.5 20.5V32' stroke-width='.6'/><path d='M6.5 2l4.5 4.5-4.5 4.5L2 6.5z' fill='%23e08a78' stroke='none'/><path d='M15.5 15.5c4 5 10.5 4.5 10.5.5 0-2.6-3.6-2.8-3.8-.4M15.5 15.5c5 4 4.5 10.5.5 10.5-2.6 0-2.8-3.6-.4-3.8' stroke-width='.8'/></g></defs><use href='%23c'/><use href='%23c' transform='matrix(-1 0 0 1 96 0)'/><use href='%23c' transform='matrix(1 0 0 -1 0 96)'/><use href='%23c' transform='matrix(-1 0 0 -1 96 96)'/><path d='M32 2.5H64M32 93.5H64M2.5 32V64M93.5 32V64'/><path d='M32 6.5H64M32 89.5H64M6.5 32V64M89.5 32V64' stroke-width='.6'/></svg>");
   --frame-amethyst: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='%23c3b3ee'><defs><g id='c'><path d='M32 2.5H17A14.5 14.5 0 0 1 2.5 17V32'/><path d='M32 6.5H20.5A18.4 18.4 0 0 1 6.5 20.5V32' stroke-width='.6'/><path d='M6.5 2l4.5 4.5-4.5 4.5L2 6.5z' fill='%23c3b3ee' stroke='none'/><path d='M15.5 15.5c4 5 10.5 4.5 10.5.5 0-2.6-3.6-2.8-3.8-.4M15.5 15.5c5 4 4.5 10.5.5 10.5-2.6 0-2.8-3.6-.4-3.8' stroke-width='.8'/></g></defs><use href='%23c'/><use href='%23c' transform='matrix(-1 0 0 1 96 0)'/><use href='%23c' transform='matrix(1 0 0 -1 0 96)'/><use href='%23c' transform='matrix(-1 0 0 -1 96 96)'/><path d='M32 2.5H64M32 93.5H64M2.5 32V64M93.5 32V64'/><path d='M32 6.5H64M32 89.5H64M6.5 32V64M89.5 32V64' stroke-width='.6'/></svg>"); }
 /* Exorcism: amethyst mist, day or night */
-body.mode-exorcism, body.mode-exorcism[data-time='night'] {
-  --ink: #09070f; --ink-2: #120f1c; --ink-3: #1c172b; --iron: #342c4a;
-  --bone: #e3dcf0; --bone-2: #b3a9c9; --ash: #8a80a3;
-  --gilt: #c3b3ee; --gilt-2: #6a5b96; --gilt-hi: #efe8ff; --glow: rgba(143, 123, 208, 0.17);
-  --frame: var(--frame-amethyst);
-}
 /* Dead: the existing cold fade; gilt desaturates to ash */
 body.is-dead { --gilt: #8f97a3; --gilt-2: #4b5363; --gilt-hi: #c9ced6; }
 
@@ -3180,10 +3172,6 @@ body:has(#app > .recap) .fx-canvas, body:has(#app > .recap) .fx-layer { display:
 /* ══ Carnival (Beta 4): the masked ball, in the Codex language ═════════════
    Wine-dark ground, the same gilt; masks are arcana cards (lattice backs face
    down), the table is the astrolabe, status is a vellum slip, holds are wax. */
-body.mode-carnival, body.mode-carnival[data-time='night'] {
-  --ink: #0d080a; --ink-2: #160d10; --ink-3: #231418; --iron: #3d2a2c;
-  --glow: rgba(176, 58, 92, 0.14);
-}
 
 /* The mask card: an arcana card, sized by font-size (every inner size is em). */
 .kcard { width: 6.2em; aspect-ratio: 11 / 18; padding: 1.05em 0.75em 0.9em; gap: 0.32em; font-size: 9px; flex: none; }
@@ -3464,12 +3452,6 @@ body.is-board .m-kintro .krunes .kr { height: 34px; } body.is-board .m-kintro .k
    (vellum faces, the lattice back); the graveyard is the astrolabe table. */
 @keyframes cPop { from { opacity: 0; transform: scale(1.7); } }
 @keyframes cFlame { 50% { transform: translateX(-50%) scale(.85, 1.1); opacity: .85; } }
-body.mode-coffins, body.mode-coffins[data-time='night'] {
-  --ink: #06080d; --ink-2: #0c1018; --ink-3: #151b26; --iron: #2b3344;
-  --bone: #dbe1ec; --bone-2: #aab4c6; --ash: #8590a5;
-  --gilt: #b9c4d8; --gilt-2: #5d6a82; --gilt-hi: #e6ecf6; --glow: rgba(150, 175, 220, 0.12);
-  --frame: var(--frame-silver);
-}
 
 /* The coffin card: an arcana card sized by font-size */
 .coff { width: 6.2em; aspect-ratio: 11 / 18; padding: 1em 0.7em 0.85em; gap: 0.35em; font-size: 9px; flex: none; justify-content: flex-start; }
@@ -3642,12 +3624,6 @@ body.is-board .c-stamp { font-size: 32px; }
 /* ══ Midnight (Beta 5): one night, one vote ════════════════════════════════
    The deal and the night in the Codex night tokens (silver on blue-black);
    the day in the usual gilt. Cards are arcana cards; the night screen is still. */
-body.mode-midnight.mn-night {
-  --ink: #06080d; --ink-2: #0c1018; --ink-3: #151b26; --iron: #2b3344;
-  --bone: #dbe1ec; --bone-2: #aab4c6; --ash: #8590a5;
-  --gilt: #b9c4d8; --gilt-2: #5d6a82; --gilt-hi: #e6ecf6; --glow: rgba(120, 150, 210, 0.12);
-  --frame: var(--frame-silver);
-}
 .ncard { width: 6.2em; aspect-ratio: 11 / 18; padding: 1.05em 0.75em 0.9em; gap: 0.32em; font-size: 9px; flex: none; }
 .ncard .arc-num { font-size: 0.86em; }
 .ncard .nm { font-size: 1.5em; line-height: 1; text-align: center; overflow-wrap: normal; }
@@ -3791,7 +3767,6 @@ body.mode-midnight.mn-night {
 /* ═══ Dead Set: Séance ═══════════════════════════════════════════════════
    A dark parlour: vellum visions and story cards, a candle clock, gilt for
    what is solved, char for what is struck, frost for the Ghost's cold spots. */
-body.mode-seance { --glow: rgba(214, 190, 140, 0.35); }
 .srole { width: 6.2em; aspect-ratio: 11 / 18; padding: 1.05em 0.75em 0.9em; gap: 0.32em; font-size: 9px; flex: none; }
 .srole .nm { font-size: 1.6em; line-height: 1; }
 .srole.big { font-size: 16px; }
@@ -4875,3 +4850,60 @@ body.has-moment #app .notes-slot { visibility: visible; }
 .gazette.tv .b-grid { margin: 6px 0 14px; }
 .gazette.tv .edition.folded { opacity: 0.8; }
 .gazette.tv .edition.folded h4 { margin: 0; }
+
+/* ── Mode moods (B1) ──
+   One block per mode, token overrides only, keyed by body[data-mode] (set in room and on the TV, so the lobby
+   previews the mood as the host browses). Moods hold in daylight; every eyes-shut step keeps the night palette.
+   --accent is the mode's signature for line-work and glows; --gilt stays the ornament everywhere. */
+body { --accent: var(--gilt); }
+body[data-time='night'] { --accent: var(--gilt-hi); }
+body[data-mode='classic']:not([data-time='night']) { --accent: var(--blood-ink); }
+body[data-mode='missions']:not([data-time='night']) {
+  --ink: #0d0b07; --ink-2: #17130c; --ink-3: #241e13; --iron: #3f3522;
+  --glow: rgba(211, 154, 74, 0.14); --accent: #d69c4c;
+}
+body[data-mode='exorcism']:not([data-time='night']) {
+  --ink: #09070f; --ink-2: #120f1c; --ink-3: #1c172b; --iron: #342c4a;
+  --bone: #e3dcf0; --bone-2: #b3a9c9; --ash: #8a80a3;
+  --gilt: #c3b3ee; --gilt-2: #6a5b96; --gilt-hi: #efe8ff; --glow: rgba(143, 123, 208, 0.17);
+  --frame: var(--frame-amethyst); --accent: #b49ae8;
+}
+body[data-mode='carnival']:not([data-time='night']) {
+  --ink: #0d080a; --ink-2: #160d10; --ink-3: #231418; --iron: #3d2a2c;
+  --glow: rgba(176, 58, 92, 0.14); --accent: #c9587a;
+}
+/* Coffins: a grave-slate ground of its own, warm text; the night palette stays for eyes-shut steps. */
+body[data-mode='coffins']:not([data-time='night']) {
+  --ink: #090b0c; --ink-2: #111416; --ink-3: #1a1f22; --iron: #343b40;
+  --ash: #8e8a80; --glow: rgba(140, 160, 175, 0.12); --accent: #a3b4c2;
+}
+body[data-mode='midnight']:not([data-time='night']) {
+  --ink: #0a0a0e; --ink-2: #121219; --ink-3: #1c1c26; --iron: #333344;
+  --glow: rgba(130, 140, 200, 0.12); --accent: #9aa6dc;
+}
+body[data-mode='seance']:not([data-time='night']) {
+  --ink: #0e0a07; --ink-2: #18110b; --ink-3: #261a10; --iron: #42301f;
+  --glow: rgba(214, 190, 140, 0.35); --accent: #e4b46a;
+}
+body[data-mode='graverobbers']:not([data-time='night']) {
+  --ink: #080b08; --ink-2: #10150f; --ink-3: #1a2218; --iron: #2f3a2b;
+  --glow: rgba(120, 160, 90, 0.13); --accent: #93b272;
+}
+body[data-mode='mimic']:not([data-time='night']) {
+  --ink: #0a0c0b; --ink-2: #121614; --ink-3: #1c211e; --iron: #353d39;
+  --glow: rgba(150, 180, 160, 0.12); --accent: #a2b8a9;
+}
+body[data-mode='omen']:not([data-time='night']) {
+  --ink: #0d0a06; --ink-2: #17120a; --ink-3: #241c10; --iron: #43361f;
+  --glow: rgba(216, 178, 90, 0.15); --accent: #dcb65e;
+}
+/* The Mirror: mercury, kept apart from night by its warm text. */
+body[data-mode='mirror']:not([data-time='night']) {
+  --ink: #0a0b0d; --ink-2: #121418; --ink-3: #1c1f25; --iron: #363b45;
+  --glow: rgba(170, 190, 220, 0.12); --accent: #bccadb;
+}
+/* Where the accent shows: the header rule and its emblem, the chosen mode card, the TV's phase rule. */
+.topbar { border-bottom-color: color-mix(in srgb, var(--accent) 45%, var(--iron)); }
+.topbar .tb-emblem { color: var(--accent); }
+.mode-card.on, .mode-card[data-mode].on { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent), 0 0 26px color-mix(in srgb, var(--accent) 16%, transparent); }
+.mode-card.on > .glyph, .mode-card[data-mode].on > .glyph { color: var(--accent); }

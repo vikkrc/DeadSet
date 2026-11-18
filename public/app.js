@@ -661,16 +661,16 @@ function render() {
   document.querySelectorAll('[data-scroll]').forEach((el) => { bottoms[el.dataset.scroll] = el.scrollHeight - el.scrollTop - el.clientHeight < 30; });
   const v = V();
   const night = !!v && isNight(v.phase) && ['room', 'board'].includes(S.route?.name);
-  document.body.dataset.time = night ? 'night' : 'day';
+  // Midnight's deal and night steps are eyes-shut steps too: they take the night palette (B1).
+  const dark = night || (!!v && ['N_DEAL', 'N_NIGHT'].includes(v.phase) && ['room', 'board'].includes(S.route?.name));
+  document.body.dataset.time = dark ? 'night' : 'day';
   document.body.classList.toggle('has-moment', !!S.moment);
   document.body.classList.toggle('blood-moon', !!v?.bloodMoon && night);
   const ghost = !!v?.me && !v.me.moderator && v.me.alive === false && v.phase !== 'LOBBY' && v.phase !== 'ENDED' && S.route?.name === 'room';
   document.body.classList.toggle('is-dead', ghost);
   document.body.classList.toggle('is-board', onBoard());
-  // One mode class per mode, from the registry (B7); Midnight's night look on top.
-  const inTable = ['room', 'board'].includes(S.route?.name);
-  for (const id of MODE_IDS) document.body.classList.toggle(`mode-${id}`, inTable && v?.mode === id);
-  document.body.classList.toggle('mn-night', v?.mode === 'midnight' && ['N_DEAL', 'N_NIGHT'].includes(v?.phase) && inTable);
+  // One attribute carries the mode's colour mood (B1); the stylesheet keys every mood off it.
+  document.body.dataset.mode = ['room', 'board'].includes(S.route?.name) ? (v?.mode ?? '') : '';
   // The score plays on the TV board, and on any phone whose owner switched it on (hamburger menu).
   const phoneMusic = !onBoard() && phoneMusicOn() && S.route?.name === 'room' && v && v.table?.score !== false;
   if (phoneMusic || (onBoard() && v && S.board.audio && v.table?.score !== false)) { score.setTheme(v.table?.scoreTheme ?? 'classic'); score.play(moodFor(v)); score.tension(tenseFor(v)); } else score.stop();
