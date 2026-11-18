@@ -49,8 +49,9 @@ const SIDE = (id) => (id === 'DEATH' || id === 'CONSPIRATOR' ? 'death' : id === 
 export function ncard(id, { back = false, cls = '', act = '', sel = false, key = '', label = '' } = {}) {
   const tag = act ? 'button' : 'span';
   const attrs = `${act ? `data-act="${act}" data-id="${esc(label || id)}" aria-pressed="${sel}"` : ''} ${key ? `data-key="${key}"` : ''}`;
-  if (back || !id) return `<${tag} class="tarot back ncard ${sel ? 'sel' : ''} ${cls}" ${attrs} aria-label="${esc(t('A card, face down'))}"><span class="sig">DS</span></${tag}>`;
-  return `<${tag} class="tarot ncard ${SIDE(id) === 'death' ? 'rubric' : ''} ${sel ? 'sel' : ''} ${cls}" ${attrs} aria-label="${esc(rname(id))}">
+  cls = `tarot--${cls.includes('big') ? 'hand' : cls.includes('thumb') ? 'thumb' : 'small'} ${cls.replace(/\b(big|thumb)\b/g, '')} ${sel ? 'is-chosen' : ''}`;
+  if (back || !id) return `<${tag} class="tarot back ncard ${cls}" ${attrs} aria-label="${esc(t('A card, face down'))}"><span class="sig">DS</span></${tag}>`;
+  return `<${tag} class="tarot night ncard ${SIDE(id) === 'death' ? 'rubric' : ''} ${cls}" ${attrs} aria-label="${esc(rname(id))}">
     <span class="arc-num">${esc(roleNumber({ id }, t))}</span>${cardArt(embOf(id))}<span class="nm">${esc(rname(id))}</span></${tag}>`;
 }
 
