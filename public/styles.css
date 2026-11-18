@@ -5068,3 +5068,13 @@ details.more summary,
 /* Seat names on the TV may run wider than the medallion, so a short name is never cut. */
 .is-board .ring:not(.dense) .tok-name { max-width: 9em; overflow: visible; }
 .is-board .ring.dense .tok-name { max-width: 7em; }
+
+/* ── Tap targets: 44 px at the least (D3) ── */
+.g-view button, .s-tabs button, .s-drawer-btn { min-height: 44px; }
+/* Graverobbers' number picker: a 5 + 4 grid of 48 px buttons instead of nine 36 px dots in one row. */
+.g-nums { grid-template-columns: repeat(5, 48px); justify-content: center; gap: 8px 10px; }
+.g-num { width: 48px; height: 48px; aspect-ratio: auto; font-size: 18px; }
+/* The Mirror's answers: 48 px rows, the letter in a 32 px disc. */
+.w-opt { min-height: 48px; }
+.w-opt b { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid var(--gilt-2); border-radius: 50%; }
+.sg-chip { min-height: 44px; }
