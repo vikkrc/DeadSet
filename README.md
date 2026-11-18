@@ -4,9 +4,23 @@ A multiplayer social-deduction party game played on everyone's own phone. One au
 
 **→ Rules and modes: [GUIDE.md](GUIDE.md)** (also in the app at `/guide`)
 
-**→ Dead Set: Missions**, the team-and-sabotage mode for 5–12 players: [MISSIONS.md](MISSIONS.md)
+**→ The modes**, grouped as in the lobby:
 
-**→ Dead Set: Exorcism**, the word game of bluff for 3–12 players: [EXORCISM.md](EXORCISM.md)
+| Family | Mode | Players | Rules |
+|---|---|---|---|
+| Hidden Allegiances | Classic Dead Set | 5–25 | [GUIDE.md](GUIDE.md) |
+| | Dead Set: Missions | 5–12 | [MISSIONS.md](MISSIONS.md) |
+| Changing Hands | Dead Set: Carnival | 4–12 | [CARNIVAL.md](CARNIVAL.md) |
+| | Dead Set: Midnight | 4–12 | [MIDNIGHT.md](MIDNIGHT.md) |
+| Reading the Room | Dead Set: The Omen | 4–12 | [OMEN.md](OMEN.md) |
+| | Dead Set: The Mirror | 4–12 | [MIRROR.md](MIRROR.md) |
+| Signs & Riddles | Dead Set: Exorcism | 3–12 | [EXORCISM.md](EXORCISM.md) |
+| | Dead Set: Séance | 4–10 | [SEANCE.md](SEANCE.md) |
+| | Dead Set: Graverobbers | 4–12 | [GRAVEROBBERS.md](GRAVEROBBERS.md) |
+| | Dead Set: Mimic | 4–12 | [MIMIC.md](MIMIC.md) |
+| Bluff & Wager | Dead Set: Coffins | 3–10 | [COFFINS.md](COFFINS.md) |
+
+What comes next: [ROADMAP.md](ROADMAP.md).
 
 ## Run it
 
@@ -58,7 +72,7 @@ test/              node:test suites
 - All randomness is server-side.
 - Commands are checked against the current phase id, so late or replayed taps are rejected. A ballot is replaced in place; it never counts twice.
 
-**Interface:** a "mourning stationery" identity: soot paper, bone ink, one oxblood accent, Instrument Serif and Instrument Sans. The whole palette cools to ink-blue at night.
+**Interface:** the *Codex* identity, an illuminated manuscript by candlelight: vellum cards with pencil-drawn emblems on near-black ink, gilt ornament and one rubric red, Grenze Gotisch blackletter for titles and EB Garamond for text (both self-hosted). The palette cools to night blue at night, and each mode has its own mood. The source of truth for the look is [design/codex/DESIGN-GUIDE.md](design/codex/DESIGN-GUIDE.md); the consistency rules across modes are in [design/deadset-consistency/CONSISTENCY-PASS.md](design/deadset-consistency/CONSISTENCY-PASS.md).
 - Players sit around a **table ring**, and tapping a seat is how you target anyone.
 - Public events play as short **cinematic moments**: nightfall, dawn, the vote tally and the verdict.
 - **Seven languages** (en, hu, sk, cs, de, fr, es). Each player picks their own; the host sets the table default. UI strings are keyed by their English text (`public/i18n.js`, dictionaries in `public/i18n/`), and the server sends events as `[template, params]` so every phone renders them in its own language. `node scripts/i18n-keys.mjs <lang>` lists missing strings, and `node scripts/i18n-check.mjs` checks placeholders. On localhost (or with `?i18n=debug`) the browser console also warns about any string a dictionary lacks.
