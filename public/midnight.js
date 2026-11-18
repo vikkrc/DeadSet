@@ -127,7 +127,7 @@ export function midnightMain(v, me, h) {
     }
     case 'N_DAY':
       stage = `${slip(t('Dawn'), t('Who are you now?'), t('Your card may have changed hands in the night. Talk it over; the vote comes when the time runs out.'))}
-        <p class="center-text nclock" data-key="nclock"><b class="clock" data-clock></b></p>${report(me?.n?.seen)}
+        ${report(me?.n?.seen)}
         <div class="ndealt" data-key="ndealt"><span class="kicker">${t('You were dealt')}</span>${ncard(me?.n?.dealt, { cls: 'thumb' })}<b>${esc(rname(me?.n?.dealt))}</b></div>`;
       break;
     case 'N_VOTE':
