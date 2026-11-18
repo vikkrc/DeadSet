@@ -2777,5 +2777,6 @@ export default {
     "Turn": "Zug",
     "Dilemma": "Dilemma",
     "Question": "Frage",
+    "wrong candles": "falsche Kerzen",
   },
 };

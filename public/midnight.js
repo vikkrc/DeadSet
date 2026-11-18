@@ -57,16 +57,14 @@ export function ncard(id, { back = false, cls = '', act = '', sel = false, key =
 // ── Pieces ─────────────────────────────────────────────────────────────────
 const slip = (kicker, title, sub = '', cls = '') => `<div class="k-slip ${cls} rise-in" data-key="nslip-${esc(String(kicker)).slice(0, 16)}"><span class="kicker">${kicker}</span><h2>${title}</h2>${sub ? `<p>${sub}</p>` : ''}</div>`;
 
-/** Struck medallions to choose from (players), plus the three table cards when allowed. */
-function picker(v, ids, { selected = [], act = 'nPick', tables = false } = {}) {
+/**
+ * Choosing on the table ring (C2), like every other pick: the choosable seats breathe, the chosen one turns to
+ * vellum, the rest dim. When the step may pick table cards, they lie face down in the ring's centre disc.
+ */
+function picker(v, ids, h, { selected = [], act = 'nPick', tables = false } = {}) {
   const sel = new Set(selected);
-  const seats = ids.map((id) => {
-    const p = v.players.find((x) => x.id === id);
-    return `<button class="nseat ${sel.has(id) ? 'sel' : ''}" data-act="${act}" data-id="${id}" aria-pressed="${sel.has(id)}" data-key="ns-${id}">
-      <span class="ns-disc">${p?.avatar ? avatarSvg(p.avatar, 'ns-av') : `<b>${esc((p?.name ?? '?').slice(0, 1))}</b>`}</span><span class="ns-name">${esc(p?.name ?? '?')}</span></button>`;
-  }).join('');
-  const tbl = tables ? `<div class="ntable" data-key="ntable">${TABLE.map((c, i) => `<button class="ntc ${sel.has(c) ? 'sel' : ''}" data-act="${act}" data-id="${c}" aria-pressed="${sel.has(c)}">${ncard(null)}<small>${ROMAN[i + 1]}</small></button>`).join('')}</div>` : '';
-  return `${ids.length ? `<div class="npick" data-key="npick">${seats}</div>` : ''}${tbl}`;
+  const tbl = tables ? `<div class="ntable in-ring" data-key="ntable">${TABLE.map((c, i) => `<button class="ntc ${sel.has(c) ? 'sel' : ''}" data-act="${act}" data-id="${c}" aria-pressed="${sel.has(c)}" aria-label="${esc(th('Table card {n}', { n: ROMAN[i + 1] }))}">${ncard(null)}<small>${ROMAN[i + 1]}</small></button>`).join('')}</div>` : '';
+  return h.ring(v, { pick: { ids, selected: [...sel].filter((x) => !isTable(x)), act }, center: tbl });
 }
 
 /** What you have seen tonight, as a vellum report. */
@@ -115,9 +113,9 @@ export function midnightMain(v, me, h) {
       if (a.type === 'nstep') {
         const sel = S.sel.npick ?? [];
         const body = a.kind === 'done' ? `<p class="npow">${t('Nothing more to do. Close your eyes until dawn.')}</p>`
-          : a.kind === 'lonePeek' || a.kind === 'GAMBLER' ? picker(v, [], { selected: sel, tables: true })
-            : a.kind === 'MENTALIST' ? picker(v, a.targets, { selected: sel, tables: true })
-              : picker(v, a.targets, { selected: sel });
+          : a.kind === 'lonePeek' || a.kind === 'GAMBLER' ? picker(v, [], h, { selected: sel, tables: true })
+            : a.kind === 'MENTALIST' ? picker(v, a.targets, h, { selected: sel, tables: true })
+              : picker(v, a.targets, h, { selected: sel });
         stage = `${head2}<div class="nact me" data-key="nact">${a.kind !== 'done' ? `<span class="kicker">${t('You wake')}</span><h3>${t(KIND_TITLE[a.kind] ?? '')}</h3>` : ''}${body}</div>${report(a.seen)}`;
       } else {
         // The same frame on every sleeping phone: no controls, nothing to read.
@@ -132,7 +130,7 @@ export function midnightMain(v, me, h) {
       break;
     case 'N_VOTE':
       stage = `${slip(t('The vote'), t(a.choice ? 'Your finger is pointed' : 'Point at one player'), a.choice ? th('You point at {name}. {done}/{total} have pointed.', { name: pname(v, a.choice), ...(v.progress ?? { done: 0, total: 0 }) }) : t('The most voted die, if they have two votes or more. If a Death dies, the Living win.'))}
-        ${picker(v, a.targets ?? [], { selected: [S.sel.npick?.[0] ?? a.choice].filter(Boolean) })}`;
+        ${picker(v, a.targets ?? [], h, { selected: [S.sel.npick?.[0] ?? a.choice].filter(Boolean) })}`;
       break;
     default: break;
   }

@@ -3665,6 +3665,10 @@ body.is-board .c-stamp { font-size: 32px; }
 .ntc .ncard { font-size: 7.5px; transition: transform 0.2s var(--ease); }
 .ntc.sel .ncard { transform: translateY(-6px); box-shadow: 0 0 0 2px var(--gilt-hi), 0 0 18px var(--glow); }
 .ntc.sel { color: var(--gilt-hi); }
+/* In the ring's centre disc (C2): three small face-down cards, still a 44 px tap target each. */
+.ntable.in-ring { margin: 0; gap: 6px; }
+.ntable.in-ring .ntc { min-width: 44px; min-height: 44px; justify-content: center; }
+.ntable.in-ring .ntc .ncard { font-size: 4.6px; }
 .nreport { position: relative; margin: 12px auto; max-width: 30rem; padding: 16px 20px 14px; color: var(--sepia); background: var(--vellum-stain), var(--vellum); background-size: 100% 100%, auto; border-radius: 3px; box-shadow: 0 1.2em 2em -1.2em #000; }
 .nreport::before { content: ''; position: absolute; inset: 6px; pointer-events: none; border: 1px solid var(--sepia-2); border-image: var(--frame-ink) 32 / 16px stretch; }
 .nreport .kicker { color: var(--rubric); }
@@ -4910,3 +4914,6 @@ body[data-mode='mirror']:not([data-time='night']) {
 .topbar .tb-emblem { color: var(--accent); }
 .mode-card.on, .mode-card[data-mode].on { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent), 0 0 26px color-mix(in srgb, var(--accent) 16%, transparent); }
 .mode-card.on > .glyph, .mode-card[data-mode].on > .glyph { color: var(--accent); }
+/* Séance naming (C2): the ring picks; the evidence list under it mirrors the choice. */
+.s-evidence { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; font: italic 400 15px/1.3 var(--text); color: var(--bone-2); }
+.s-evidence li.sel b { color: var(--gilt-hi); }

@@ -239,11 +239,8 @@ export function seanceMain(v, me, h) {
       const sel = UI.sel.spick ?? [];
       const ev = wrongCandles(S);
       stage = `${doNow(t(a.count > 1 ? 'Name the two Deceivers' : 'Name the Deceiver'), s.named ? th('You named {names}.', { names: s.named.map((x) => rawName(v, x)) }) : t('Who lit candles on the wrong cards? Who argued for a lie? Name them correctly for the full victory.'))}
-        <div class="s-name" data-key="snpick">${(a.targets ?? []).map((id) => {
-          const e = ev[id];
-          const on = sel.includes(id) || (!sel.length && s.named?.includes(id));
-          return `<button class="s-nm ${on ? 'sel' : ''}" data-act="sPickName" data-id="${id}" aria-pressed="${on}">${disc(v, id)}<b>${pname(v, id)}</b><small>${e ? th(e.wrong === 1 ? '{n} wrong candle of {m}' : '{n} wrong candles of {m}', { n: e.wrong, m: e.lit }) : t('no candles')}</small></button>`;
-        }).join('')}</div>`;
+        ${h.ring(v, { pick: { ids: a.targets ?? [], selected: sel.length ? sel : (s.named ?? []), act: 'sPickName' }, marks: Object.fromEntries((a.targets ?? []).filter((id) => ev[id]?.wrong).map((id) => [id, String(ev[id].wrong)])), center: `<span class="c-sub">${esc(t('wrong candles'))}</span>` })}
+        <ul class="s-evidence" data-key="snev">${(a.targets ?? []).map((id) => { const e = ev[id]; const on = sel.includes(id) || (!sel.length && s.named?.includes(id)); return `<li class="${on ? 'sel' : ''}"><b>${pname(v, id)}</b> ${e ? th(e.wrong === 1 ? '{n} wrong candle of {m}' : '{n} wrong candles of {m}', { n: e.wrong, m: e.lit }) : t('no candles')}</li>`; }).join('')}</ul>`;
       break;
     }
     default: break;

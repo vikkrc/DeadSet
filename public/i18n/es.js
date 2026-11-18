@@ -2777,5 +2777,6 @@ export default {
     "Turn": "Turno",
     "Dilemma": "Dilema",
     "Question": "Pregunta",
+    "wrong candles": "velas erróneas",
   },
 };

@@ -2777,5 +2777,6 @@ export default {
     "Turn": "Lépés",
     "Dilemma": "Dilemma",
     "Question": "Kérdés",
+    "wrong candles": "hibás gyertya",
   },
 };

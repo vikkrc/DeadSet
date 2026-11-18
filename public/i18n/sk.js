@@ -2777,5 +2777,6 @@ export default {
     "Turn": "Ťah",
     "Dilemma": "Dilema",
     "Question": "Otázka",
+    "wrong candles": "chybné sviečky",
   },
 };

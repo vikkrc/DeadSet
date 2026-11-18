@@ -2777,5 +2777,6 @@ export default {
     "Turn": "Tour",
     "Dilemma": "Dilemme",
     "Question": "Question",
+    "wrong candles": "bougies fausses",
   },
 };
