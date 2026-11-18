@@ -1210,6 +1210,10 @@ body.is-dead::after { content: ''; position: fixed; inset: 0; pointer-events: no
 .ra.vote { color: rgba(236, 229, 213, 0.55); stroke-width: 0.4; }
 .ra.ghost { color: rgba(170, 185, 210, 0.5); }
 .ra.failed { opacity: 0.4; }
+/* Recap arrowheads: a marker does not inherit its arrow's colour, so each kind fills its own. */
+.rah { fill: var(--bone-2); }
+.rah.death { fill: #e2585e; } .rah.protect { fill: #9fd0a8; } .rah.info { fill: #8fb4e6; } .rah.other { fill: #c8b48a; }
+.rah.dream { fill: #b59be0; } .rah.accuse { fill: #e9c27a; } .rah.vote { fill: rgba(236, 229, 213, 0.55); } .rah.ghost { fill: rgba(170, 185, 210, 0.5); }
 #rah path { fill: context-stroke; }
 @keyframes raDraw { to { stroke-dashoffset: 0; } }
 .recap-side { display: grid; gap: 8px; align-content: start; }

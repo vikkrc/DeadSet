@@ -2277,18 +2277,18 @@ function recapRing(v, step) {
   const paths = step.arrows.map((a, i) => {
     const p1 = at(a.from); const p2 = at(a.to);
     if (!p1 || !p2) return '';
-    if (a.from === a.to) return `<path class="ra ${a.cls}" style="--d:${0.15 + i * 0.12}s" pathLength="1" d="M${(p1.x - r * 0.7).toFixed(1)} ${(p1.y - r * 0.7).toFixed(1)} c-6 -9 8 -9 ${(r * 1.4).toFixed(1)} 0" marker-end="url(#rah)"/>`;
+    if (a.from === a.to) return `<path class="ra ${a.cls}" style="--d:${0.15 + i * 0.12}s" pathLength="1" d="M${(p1.x - r * 0.7).toFixed(1)} ${(p1.y - r * 0.7).toFixed(1)} c-6 -9 8 -9 ${(r * 1.4).toFixed(1)} 0" marker-end="url(#rah-${(a.cls || 'plain').split(' ')[0]})"/>`;
     const dx = p2.x - p1.x; const dy = p2.y - p1.y; const len = Math.hypot(dx, dy) || 1;
     const sx = p1.x + (dx / len) * r; const sy = p1.y + (dy / len) * r; const ex = p2.x - (dx / len) * (r + 1); const ey = p2.y - (dy / len) * (r + 1);
     const mx = (sx + ex) / 2 * 0.7 + 50 * 0.3; const my = (sy + ey) / 2 * 0.7 + 50 * 0.3;
-    return `<path class="ra ${a.cls}" style="--d:${0.15 + i * 0.12}s" pathLength="1" d="M${sx.toFixed(1)} ${sy.toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}" marker-end="url(#rah)"/>`;
+    return `<path class="ra ${a.cls}" style="--d:${0.15 + i * 0.12}s" pathLength="1" d="M${sx.toFixed(1)} ${sy.toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}" marker-end="url(#rah-${(a.cls || 'plain').split(' ')[0]})"/>`;
   }).join('');
   const seats = players.map((p, i) => {
     const q = pos[i];
     const cls = [step.deadBefore.has(p.id) ? 'gone' : '', step.died.includes(p.id) ? 'falls' : '', p.alignment === 'DEATH' ? 'death' : ''].join(' ');
     return `<g class="rs ${cls}"><circle cx="${q.x.toFixed(1)}" cy="${q.y.toFixed(1)}" r="${r}"/><text x="${q.x.toFixed(1)}" y="${(q.y + r * 0.38).toFixed(1)}" font-size="${(r * 1.05).toFixed(1)}">${esc(initials(p.name))}</text><text class="rs-name" x="${q.x.toFixed(1)}" y="${(q.y + r + 3.2).toFixed(1)}" font-size="${dense ? 2.2 : 2.8}">${esc(p.name)}</text></g>`;
   }).join('');
-  return `<svg class="recap-ring" viewBox="-4 -4 108 108" aria-hidden="true"><defs><marker id="rah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z"/></marker></defs><circle class="rr-table" cx="50" cy="50" r="${dense ? 22 : 28}"/>${paths}${seats}</svg>`;
+  return `<svg class="recap-ring" viewBox="-4 -4 108 108" aria-hidden="true"><defs>${[...new Set(step.arrows.map((a) => (a.cls || 'plain').split(' ')[0]))].map((k) => `<marker id="rah-${k}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path class="rah ${k}" d="M0 0 L10 5 L0 10 z"/></marker>`).join('')}</defs><circle class="rr-table" cx="50" cy="50" r="${dense ? 22 : 28}"/>${paths}${seats}</svg>`;
 }
 function recapHtml(v) {
   const steps = recapSteps(v);
