@@ -384,7 +384,7 @@ select.input option { background: var(--ink-2); }
 .b-host { top: 0; right: 0; min-width: 9px; width: 9px; height: 9px; padding: 0; border-radius: 0; background: var(--blood); border: 0; transform: rotate(45deg); }
 .b-ok { bottom: -4px; right: -4px; background: var(--bone); color: var(--ink); border-color: var(--bone); }
 .b-mark { top: -6px; right: -8px; background: var(--blood); border-color: var(--blood-ink); color: #fff3f0; font-family: var(--serif); font-size: 10px; font-weight: 400; }
-.b-stamp { bottom: -6px; right: -6px; background: var(--blood); border-color: var(--blood-ink); color: #fff; animation: stampIn 0.45s var(--spring) both; }
+.b-stamp { bottom: -6px; right: -6px; background: var(--blood); border-color: var(--blood-ink); color: #fff; animation: badge-stamp-in 0.45s var(--spring) both; }
 
 /* tally marks, moon */
 .tally { display: inline-flex; gap: 4px; flex-wrap: wrap; justify-content: center; max-width: 110px; }
@@ -532,7 +532,7 @@ details.more > div { padding: 12px 0 4px; display: grid; gap: 12px; animation: f
 .host-slot .btn-host { min-height: 52px; padding: 0 18px; max-width: 150px; background: var(--ink-2); border-color: var(--gilt-2); font-size: 10px; letter-spacing: 0.1em; line-height: 1.15; }
 .dock-note { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 14px; border: 1px dashed var(--gilt-2); border-radius: 3px; background: var(--ink-2); font: 600 11px/1 var(--sans); letter-spacing: 0.12em; text-transform: uppercase; color: var(--bone-2); }
 .dock-note .glyph { font-size: 17px; }
-.dock-note.stamped { border-style: solid; border-color: rgba(226, 88, 94, 0.55); color: var(--bone); animation: stampIn 0.5s var(--spring) both; }
+.dock-note.stamped { border-style: solid; border-color: rgba(226, 88, 94, 0.55); color: var(--bone); animation: badge-stamp-in 0.5s var(--spring) both; }
 .dock-note.blood { color: var(--blood-ink); border-color: rgba(226, 88, 94, 0.5); }
 @media (min-width: 980px) { .dock { left: 300px; } }
 
@@ -617,7 +617,7 @@ body.has-sheet { overflow: hidden; }
 .m-art .moon { width: 96px; height: 96px; }
 .m-art.sunrise { animation: sunrise 1.6s var(--ease) both; }
 .m-art.sunrise .glyph { color: #e9c27a; animation: spin 18s linear infinite; filter: drop-shadow(0 0 14px rgba(233, 194, 122, 0.5)); }
-.stars i { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #dde2ea; animation: twinkle 2.2s ease-in-out infinite; }
+.stars i { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #dde2ea; animation: star-twinkle 2.2s ease-in-out infinite; }
 .stars i:nth-child(1) { top: -6px; left: -40px; } .stars i:nth-child(2) { top: 20px; left: 120px; animation-delay: 0.5s; } .stars i:nth-child(3) { top: 70px; left: -56px; animation-delay: 1s; }
 .stars i:nth-child(4) { top: -20px; left: 90px; animation-delay: 1.4s; } .stars i:nth-child(5) { top: 96px; left: 104px; animation-delay: 0.8s; }
 .m-title { font: 400 clamp(46px, 14vw, 82px)/0.9 var(--serif); letter-spacing: -0.03em; }
@@ -718,9 +718,9 @@ body.has-sheet { overflow: hidden; }
 @keyframes strike { to { transform: scaleX(1); } }
 @keyframes grow { from { width: 0; } }
 @keyframes stamp { from { opacity: 0; transform: rotate(-8deg) scale(2.6); } 70% { opacity: 1; transform: rotate(-8deg) scale(0.94); } }
-@keyframes stampIn { from { opacity: 0; transform: scale(1.8); } }
+@keyframes badge-stamp-in { from { opacity: 0; transform: scale(1.8); } }
 @keyframes shrink { from { transform: scaleX(1); } to { transform: scaleX(0); } }
-@keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.6); } 50% { opacity: 1; transform: scale(1); } }
+@keyframes star-twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.6); } 50% { opacity: 1; transform: scale(1); } }
 @keyframes noteIn { from { opacity: 0; transform: translateY(-14px) scale(0.96); } }
 @keyframes noteOut { to { opacity: 0; transform: translateY(-8px); } }
 @keyframes sheetUp { from { transform: translateY(100%); } }
@@ -810,7 +810,7 @@ body.has-sheet { overflow: hidden; }
 .inv-hint { margin-top: 64px; display: grid; gap: 6px; justify-items: center; text-align: center; animation: fadeUp 0.7s 0.8s both; }
 .inv-hint p { font: italic 400 21px var(--serif); color: var(--bone-2); }
 .inv-recover, .letter-link { margin-top: 36px; background: none; border: 0; color: var(--ash); font: 400 12.5px var(--sans); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; padding: 10px; }
-.letter { position: relative; margin: 40px auto 0; width: min(430px, calc(100vw - 32px)); min-width: 0; padding: 38px 22px 22px; display: grid; gap: 14px; background: linear-gradient(170deg, #efe8d8, #e0d6c0); color: #2a221d; border-radius: 3px; box-shadow: 0 50px 80px -30px rgba(0, 0, 0, 0.95); transform-origin: top center; animation: unfold 0.9s var(--spring) both; }
+.letter { position: relative; margin: 40px auto 0; width: min(430px, calc(100vw - 32px)); min-width: 0; padding: 38px 22px 22px; display: grid; gap: 14px; background: linear-gradient(170deg, #efe8d8, #e0d6c0); color: #2a221d; border-radius: 3px; box-shadow: 0 50px 80px -30px rgba(0, 0, 0, 0.95); transform-origin: top center; animation: letter-unfold 0.9s var(--spring) both; }
 .letter::before { content: ''; position: absolute; inset: 8px; border: 1px solid rgba(60, 45, 35, 0.18); pointer-events: none; }
 .letter .k { font: 600 9.5px var(--sans); letter-spacing: 0.22em; text-transform: uppercase; color: #8a7865; }
 .letter h2 { font: 400 40px/0.98 var(--serif); color: #1e1814; }
@@ -825,7 +825,7 @@ body.has-sheet { overflow: hidden; }
 .sign small { font: 600 9px var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: #8a7865; padding-bottom: 10px; white-space: nowrap; }
 .letter .letter-link { margin: 0; color: #8a7865; }
 .letter .btn { min-height: 52px; }
-@keyframes unfold { from { opacity: 0; transform: perspective(900px) rotateX(-70deg) translateY(-20px); } }
+@keyframes letter-unfold { from { opacity: 0; transform: perspective(900px) rotateX(-70deg) translateY(-20px); } }
 .seal-shards { position: absolute; top: 64px; left: 50%; width: 90px; height: 60px; transform: translateX(-50%); z-index: 3; pointer-events: none; }
 .seal-shards i { position: absolute; top: 10px; width: 34px; height: 38px; background: radial-gradient(circle at 55% 35%, #c33a43, #7d151d 80%); }
 .seal-shards i:nth-child(1) { left: 4px; clip-path: polygon(30% 0, 100% 8%, 82% 34%, 100% 58%, 74% 100%, 18% 88%, 0 52%, 6% 18%); animation: shardL 0.9s var(--ease) both; }
@@ -1337,7 +1337,7 @@ body.is-dead::after { content: ''; position: fixed; inset: 0; pointer-events: no
 .g-2 .g-fly { animation: flyAway 2.2s 3.2s ease-in both; }
 .g-3 .g-float { animation: floaty 3s 3s ease-in-out infinite; transform-origin: 60px 60px; }
 .g-4 .g-hands { animation: spinBack 1.6s 3s linear infinite; transform-origin: 60px 66px; }
-.g-5 .g-unfold { animation: unfold 1s 3s ease-out both; transform-origin: 60px 88px; }
+.g-5 .g-unfold { animation: gift-unfold 1s 3s ease-out both; transform-origin: 60px 88px; }
 .g-6 .g-puff circle { animation: puff 2s 3s ease-out infinite; transform-origin: 70px 30px; }
 .g-7 .c1 { animation: fan1 0.8s 3s ease-out both; transform-origin: 60px 80px; } .g-7 .c3 { animation: fan3 0.8s 3s ease-out both; transform-origin: 60px 80px; }
 .g-8 .g-flame { animation: flicker 0.25s 3s infinite alternate, snuff 0.6s 5s ease-in both; transform-origin: 60px 44px; } .g-8 .g-rain path { animation: rain 0.8s 3s linear infinite; }
@@ -1349,7 +1349,7 @@ body.is-dead::after { content: ''; position: fixed; inset: 0; pointer-events: no
 @keyframes flyAway { 20% { transform: translate(-10px, -10px) rotate(-8deg); } to { transform: translate(260px, -220px) rotate(40deg); opacity: 0; } }
 @keyframes floaty { 50% { transform: translate(8px, -16px) rotate(10deg); } }
 @keyframes spinBack { to { transform: rotate(-360deg); } }
-@keyframes unfold { from { transform: scaleY(0.2); } }
+@keyframes gift-unfold { from { transform: scaleY(0.2); } }
 @keyframes puff { from { transform: scale(0.3); opacity: 0.6; } to { transform: scale(1.8) translateY(-20px); opacity: 0; } }
 @keyframes fan1 { to { transform: rotate(-22deg); } } @keyframes fan3 { to { transform: rotate(22deg); } }
 @keyframes snuff { to { opacity: 0.15; transform: scale(0.4); } }
@@ -1410,8 +1410,8 @@ body.is-dead::after { content: ''; position: fixed; inset: 0; pointer-events: no
 .backdrop svg { width: 100%; height: 100%; }
 .backdrop svg [stroke] { stroke-width: inherit; }
 .board2.has-backdrop > :not(.backdrop) { position: relative; z-index: 1; }
-.bd-star { fill: currentColor; animation: twinkle 4s calc(var(--i) * 0.6s) ease-in-out infinite; }
-@keyframes twinkle { 50% { opacity: 0.2; } }
+.bd-star { fill: currentColor; animation: bd-twinkle 4s calc(var(--i) * 0.6s) ease-in-out infinite; }
+@keyframes bd-twinkle { 50% { opacity: 0.2; } }
 .bd-rock { animation: rock 7s ease-in-out infinite; transform-origin: 800px 700px; }
 @keyframes rock { 50% { transform: rotate(-3deg) translateY(10px); } }
 .bd-waves { animation: waves 6s linear infinite; }
@@ -1591,10 +1591,10 @@ body.is-dead::after { content: ''; position: fixed; inset: 0; pointer-events: no
 @keyframes rcShake { 0%, 100% { translate: 0 0; rotate: 0deg; } 20% { translate: -7px 0; rotate: -3deg; } 50% { translate: 7px 0; rotate: 2deg; } 80% { translate: -3px 0; rotate: 0deg; } }
 @keyframes rcCrack { to { stroke-dashoffset: 0; } }
 @keyframes smokeOut { 50% { filter: blur(3px); opacity: 0.6; } 100% { filter: blur(1px); opacity: 0.85; } }
-.reveal-stamp { display: grid; justify-items: center; gap: 6px; opacity: 0; animation: stampIn 0.5s var(--d) var(--spring) forwards; }
+.reveal-stamp { display: grid; justify-items: center; gap: 6px; opacity: 0; animation: stamp-in 0.5s var(--d) var(--spring) forwards; }
 .reveal-stamp .stamp { font-size: 22px; padding: 10px 22px; }
 .reveal-stamp small { color: var(--bone-2); }
-@keyframes stampIn { from { opacity: 0; transform: scale(2.4) rotate(-12deg); } to { opacity: 1; transform: rotate(-6deg); } }
+@keyframes stamp-in { from { opacity: 0; transform: scale(2.4) rotate(-12deg); } to { opacity: 1; transform: rotate(-6deg); } }
 .reveal-wash { position: fixed; inset: 0; pointer-events: none; opacity: 0; animation: washIn 1.6s var(--d) ease-out forwards; }
 .reveal-wash.fail { background: radial-gradient(circle at 50% 45%, rgba(179, 36, 45, 0.42), rgba(60, 8, 12, 0.35) 70%); }
 .reveal-wash.ok { background: radial-gradient(circle at 50% 45%, rgba(233, 194, 122, 0.24), transparent 65%); }
@@ -1604,7 +1604,7 @@ body.is-dead::after { content: ''; position: fixed; inset: 0; pointer-events: no
 .named { margin: 18px 0 8px; }
 .named-name { font: 400 clamp(44px, 12vw, 84px)/1 var(--serif); animation: namedIn 1.2s 0.6s var(--ease) both; display: inline-block; }
 @keyframes namedIn { from { opacity: 0; letter-spacing: 0.3em; filter: blur(8px); } to { opacity: 1; letter-spacing: 0; filter: none; } }
-.m-mnamed .verdict-stamp, .m-mreckon .verdict-stamp { opacity: 0; animation: stampIn 0.5s var(--d, 2.4s) var(--spring) forwards; }
+.m-mnamed .verdict-stamp, .m-mreckon .verdict-stamp { opacity: 0; animation: stamp-in 0.5s var(--d, 2.4s) var(--spring) forwards; }
 .late { animation: fadeUp 0.6s 3.1s both; }
 
 /* TV board. */
@@ -1670,7 +1670,7 @@ body.is-board .mi-scene { font-size: 30px; }
 @keyframes clGlow { 50% { transform: scale(1.12); opacity: 0.8; } }
 @keyframes clFlicker { from { transform: scaleY(1) rotate(-2deg); } to { transform: scaleY(1.12) rotate(2deg); } }
 @keyframes clLight { from { opacity: 0; transform: scale(0.2); } }
-.late-stamp { opacity: 0; animation: stampIn 0.5s 2s var(--spring) forwards; }
+.late-stamp { opacity: 0; animation: stamp-in 0.5s 2s var(--spring) forwards; }
 .panel.lit { border-color: rgba(242, 212, 155, 0.6); box-shadow: 0 0 22px rgba(242, 212, 155, 0.15); }
 .mcb-step { font: italic 400 15px/1.2 var(--serif); color: var(--gilt); }
 
@@ -3303,12 +3303,12 @@ button.kcard:active { transform: scale(0.96); }
 .k-claimcard .kcard.big { font-size: 15px; animation: kDeal 0.7s var(--ease) both; }
 .m-kclaim .krunes, .m-kpower .krunes { justify-content: center; margin-top: 8px; }
 .k-reveal { list-style: none; padding: 0; margin: 18px auto 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 22px 18px; max-width: 46rem; }
-.k-reveal li { display: flex; flex-direction: column; align-items: center; gap: 8px; animation: kFlipIn 0.6s var(--ease) both; animation-delay: var(--d); }
+.k-reveal li { display: flex; flex-direction: column; align-items: center; gap: 8px; animation: k-flip-in 0.6s var(--ease) both; animation-delay: var(--d); }
 .k-reveal .kr-card .kcard { font-size: 11px; }
 .k-reveal li b { font: 600 11px/1.2 var(--text); letter-spacing: 0.22em; text-transform: uppercase; color: var(--bone-2); }
 .k-reveal .stamp { font-size: 12px; animation: none; transform: rotate(-7deg); }
 .k-reveal li.false .kr-card { filter: saturate(0.7) brightness(0.85); }
-@keyframes kFlipIn { from { opacity: 0; transform: perspective(600px) rotateY(90deg); } }
+@keyframes k-flip-in { from { opacity: 0; transform: perspective(600px) rotateY(90deg); } }
 .m-art.k-sting { width: 150px; height: 150px; color: var(--gilt); --paper: transparent; animation: kSting 1.1s var(--ease) both; }
 .m-art.k-sting svg { width: 100%; height: 100%; }
 @keyframes kSting { 0% { opacity: 0; transform: scale(0.6) rotate(-12deg); } 60% { opacity: 1; transform: scale(1.06) rotate(2deg); } 100% { transform: none; } }
@@ -3411,7 +3411,7 @@ body.is-board .k-reveal .c-stamp { font-size: 22px; }
 .ki-med svg { width: 100%; height: 100%; }
 .ki-med b { font: 600 24px var(--text); color: var(--bone); }
 .ki-name { font: 600 14px/1.2 var(--text); letter-spacing: 0.24em; text-transform: uppercase; color: var(--bone); }
-.ki-card .kcard.big { font-size: 15px; animation: kDeal 0.7s var(--ease) both, kFlipIn 0.7s var(--ease) both; }
+.ki-card .kcard.big { font-size: 15px; animation: kDeal 0.7s var(--ease) both, k-flip-in 0.7s var(--ease) both; }
 .m-kintro .m-title { color: color-mix(in srgb, var(--mk, #f1e4c8) 30%, #f1e4c8); }
 .m-kintro .krunes { justify-content: center; margin-top: 4px; }
 .ki-pow { max-width: 26rem; margin-left: auto; margin-right: auto; }
@@ -3426,7 +3426,7 @@ body.is-board .m-kintro .krunes .kr { height: 34px; } body.is-board .m-kintro .k
 /* Carnival: the look, on the looker's phone only */
 .k-look { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 18px auto; text-align: center; }
 .kl-cards { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px; }
-.kl-c { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; animation: kFlipIn 0.7s var(--ease) both; }
+.kl-c { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; animation: k-flip-in 0.7s var(--ease) both; }
 .kl-c + .kl-c { animation-delay: 0.35s; }
 .kl-c .kcard.big { font-size: 15px; }
 .kl-c figcaption b { display: block; font: 600 30px/1 var(--black); padding-bottom: 0.1em; color: var(--bone); }
@@ -3496,7 +3496,7 @@ button.coff:active { transform: scale(0.96); }
 .cplot > i .coff { font-size: 1em; box-shadow: 0 0 0 1px var(--gilt-2), 0 0.5em 1em -0.3em #000; }
 .cplot > i.open .coff { transform: rotate(-4deg) translateX(0.6em); }
 .cplot > i.open .coff .nm { display: none; }
-.cplot > i.fresh .coff { animation: kFlipIn 0.6s var(--ease) both; box-shadow: 0 0 0 1px var(--gilt-hi), 0 0 1.6em var(--glow); }
+.cplot > i.fresh .coff { animation: c-flip-in 0.6s var(--ease) both; box-shadow: 0 0 0 1px var(--gilt-hi), 0 0 1.6em var(--glow); }
 .cp-more { position: absolute; right: -4px; bottom: -6px; font: 600 11px/1 var(--bit); color: var(--gilt-hi); background: var(--ink); border: 1px solid var(--gilt-2); border-radius: 8px; padding: 2px 4px; }
 .bdg.c-hand { left: -6%; right: auto; bottom: -4%; top: auto; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 11px; display: grid; place-items: center; background: var(--ink); border: 1px solid var(--gilt); color: var(--gilt-hi); font: 600 12px/1 var(--bit); font-variant-numeric: tabular-nums lining-nums; }
 .bdg.c-bid { right: -8%; top: -8%; left: auto; min-width: 26px; height: 26px; border-radius: 47% 53% 50% 48% / 52% 46% 54% 48%; display: grid; place-items: center; padding: 0 5px;
@@ -3570,7 +3570,7 @@ button.coff:active { transform: scale(0.96); }
 
 /* Moments */
 .m-cresult .c-opened { list-style: none; padding: 0; margin: 16px auto 6px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; max-width: 36rem; }
-.c-opened li { animation: kFlipIn 0.6s var(--ease) both; animation-delay: var(--d); }
+.c-opened li { animation: c-flip-in 0.6s var(--ease) both; animation-delay: var(--d); }
 .c-opened .coff { font-size: 9px; }
 body.is-board .c-opened .coff { font-size: 14px; }
 .c-verdict { animation: fadeIn 0.5s var(--ease) both; animation-delay: var(--d); }
@@ -3664,7 +3664,7 @@ body.mode-midnight.mn-night {
 /* The deal */
 .ndeal { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 8px 0; }
 .nflip { padding: 0; border: 0; background: none; cursor: pointer; }
-.nflip .ncard { animation: kFlipIn 0.55s var(--ease) both; }
+.nflip .ncard { animation: k-flip-in 0.55s var(--ease) both; }
 .npow { max-width: 28rem; margin: 6px auto; text-align: center; font: italic 400 16px/1.4 var(--text); color: var(--bone-2); }
 
 /* The night: the same still frame on every phone */
@@ -3918,7 +3918,7 @@ button.scard { cursor: pointer; border: 0; transition: transform 0.2s var(--ease
 
 /* scenes */
 .sm-vis { display: flex; justify-content: center; gap: 14px; margin-top: 12px; }
-.sm-vis .vcard.big { font-size: 24px; animation: kFlipIn 0.7s var(--ease) both; }
+.sm-vis .vcard.big { font-size: 24px; animation: k-flip-in 0.7s var(--ease) both; }
 .sm-all { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 52rem; margin-top: 14px; }
 .sm-all > span { animation: fadeUp 0.5s calc(var(--i) * 0.35s + 0.6s) var(--ease) both; }
 .sm-all .vcard.thumb { font-size: 11px; }
@@ -4032,7 +4032,7 @@ button.scard { cursor: pointer; border: 0; transition: transform 0.2s var(--ease
 .coff.f-D .nm { color: #f1e4c8; }
 /* crisp: no wobble filter or 3D layer on cards that turn over (WebKit rasterises those at 1x) */
 .cplot .arc-art .emblem, .c-opened .arc-art .emblem, .c-lantern-card .arc-art .emblem { filter: none; }
-@keyframes kFlipIn { from { opacity: 0; transform: scaleX(0.02); } to { opacity: 1; transform: none; } }
+@keyframes c-flip-in { from { opacity: 0; transform: scaleX(0.02); } to { opacity: 1; transform: none; } }
 /* turning a buried coffin: it lifts, turns and settles; Gold flashes, a curse bleeds, Death goes dark */
 .cplot > i.fresh .coff { animation: cTurn 0.9s var(--ease) both; }
 @keyframes cTurn { 0% { transform: translateY(0) scaleX(1); } 35% { transform: translateY(-1.4em) scaleX(0.02); } 70% { transform: translateY(-1.4em) scaleX(1.08); } 100% { transform: rotate(-4deg) translateX(0.6em); } }
