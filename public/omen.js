@@ -147,12 +147,11 @@ export function omenEndHtml(v) {
   const O = v.omen;
   if (!O?.winners) return '';
   const back = v.deadline ? `<p class="center-text small muted">${t('Back to the lobby in')} <b class="clock" data-clock></b></p>` : '';
-  const rounds = (O.history ?? []).map((r) => `<li><span class="kicker">${roman(r.round)}</span>${faceChip(r.start)}<span class="o-rot r${Math.sign(r.offset)}">${r.offset > 0 ? `+${r.offset}` : r.offset}</span>${faceChip(r.finish)}</li>`).join('');
+  const rounds = (O.history ?? []).map((r) => `<li><span class="kicker">${r.round}</span>${faceChip(r.start)}<span class="o-rot r${Math.sign(r.offset)}">${r.offset > 0 ? `+${r.offset}` : r.offset}</span>${faceChip(r.finish)}</li>`).join('');
   return `${back}${scoreLedger(v, O.scores, { title: t('The final count'), key: 'oend', winners: O.winners,
     extra: (id) => `<small class="o-bonus">${th('+{n} Influence', { n: O.bonus?.[id] ?? 0 })}</small>` })}
     <section data-key="orounds"><div class="rule">${t('Every turn of the wheel')}</div><ol class="o-hist">${rounds}</ol></section>`;
 }
-const roman = (n) => ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][n] ?? String(n);
 
 // ── TV ─────────────────────────────────────────────────────────────────────
 export function omenBoard(v, h) {

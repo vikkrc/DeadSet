@@ -52,6 +52,10 @@ const S = {
 // ── Utilities ──────────────────────────────────────────────────────────────
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const ROMAN = ['0', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX'];
+/**
+ * Roman numerals (C5) only for counts that stay small and belong to the story: Day, Night, Mission, chapters and
+ * card numbers up to XXI. Turn, round, question and dilemma counters can run high, so they use plain figures.
+ */
 const roman = (n) => ROMAN[n] ?? String(n);
 const V = () => S.view;
 const player = (id) => V()?.players.find((p) => p.id === id);

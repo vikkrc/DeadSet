@@ -22,7 +22,6 @@ const ROW_Q = { WHO: 'Who killed me?', WHERE: 'Where did it happen?', WHY: 'Why 
 const ROW_NAME = { WHO: 'who killed me', WHERE: 'where it happened', WHY: 'why it happened' };
 const ROW_EMB = { WHO: 's_crowd', WHY: 'key' };
 setNamer('row', (r) => (ROW_NAME[r] ? t(ROW_NAME[r]) : String(r))); // a raw row id, or text already translated
-const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
 const pname = (v, id) => esc(v.players.find((p) => p.id === id)?.name ?? t('Someone'));
 const rawName = (v, id) => v.players.find((p) => p.id === id)?.name ?? t('Someone');
 const cardName = (row, idx) => scenAt(row, idx);
