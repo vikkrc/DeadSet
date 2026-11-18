@@ -4920,3 +4920,5 @@ body[data-mode='mirror']:not([data-time='night']) {
 /* The utility row (C3): one height and place in every mode. */
 .util-row { margin-top: 10px; }
 .chip.util { min-height: 44px; padding: 0 14px; }
+/* Rank-based modes (C6): the viewer's place instead of Defeat, in bone, not blood. */
+.result-stamp.place { border-color: var(--bone-2); color: var(--bone); font-size: 34px; }

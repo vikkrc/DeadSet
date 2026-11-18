@@ -2779,5 +2779,10 @@ export default {
     "Question": "Otázka",
     "wrong candles": "chybné svíčky",
     "My card": "Moje karta",
+    "Everyone wins": "Vyhrávají všichni",
+    "Nobody wins": "Nikdo nevyhrává",
+    "Place {n} of {total}": "{n}. místo z {total}",
+    "The Deceiver wins": "Lhář vyhrává",
+    "The table wins": "Vyhrává stůl",
   },
 };

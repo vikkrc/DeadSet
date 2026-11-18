@@ -358,7 +358,9 @@ export function graveLobbyDeck(v, isHost, h) {
 }
 
 // ── End ────────────────────────────────────────────────────────────────────
-export const graveTitle = (R) => (RISES[R?.winner] ? t(RISES[R.winner]) : t('The End'));
+export const graveTitle = (R) => (CREW_NAME[R?.winner] ? t('{names} wins', { names: [t(CREW_NAME[R.winner])] }) : t('The End'));
+/** The verdict's kicker: the winning crew's sky. */
+export const graveKicker = (R) => (RISES[R?.winner] ? t(RISES[R.winner]) : '');
 
 export function graveEndHtml(v) {
   const R = v.graverobbers;

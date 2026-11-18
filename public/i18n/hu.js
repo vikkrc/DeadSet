@@ -2779,5 +2779,10 @@ export default {
     "Question": "Kérdés",
     "wrong candles": "hibás gyertya",
     "My card": "A kártyám",
+    "Everyone wins": "Mindenki nyer",
+    "Nobody wins": "Senki sem nyer",
+    "Place {n} of {total}": "{n}. hely ({total} közül)",
+    "The Deceiver wins": "A Csaló nyer",
+    "The table wins": "Az asztal nyer",
   },
 };

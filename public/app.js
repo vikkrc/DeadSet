@@ -10,7 +10,7 @@ import { sceneMs, scenesFor } from './interludes.js';
 import { MODES, MODE_IDS, FAMILIES, COLLECTION, modeOfPhase, modeInfo } from './modes.js';
 import { cardArt, roleEmblemId, roleNumber } from './cards.js';
 import { emblem } from './emblems.js';
-import { isGravePhase, graveMain, graveDock, graveActs, graveMoment, graveMomentHtml, G_MOMENT_TIME, graveEndHtml, graveLobbyDeck, GRAVE_QUIET, graveTitle, lobbyCrews, graveLobbyCenter } from './graverobbers.js';
+import { isGravePhase, graveMain, graveDock, graveActs, graveMoment, graveMomentHtml, G_MOMENT_TIME, graveEndHtml, graveLobbyDeck, GRAVE_QUIET, graveTitle, graveKicker, lobbyCrews, graveLobbyCenter } from './graverobbers.js';
 import { isOmenPhase, omenMain, omenDock, omenActs, omenMoment, omenMomentHtml, O_MOMENT_TIME, omenEndHtml, omenLobbyDeck, OMEN_QUIET, omenTitle } from './omen.js';
 import { isMirrorPhase, mirrorMain, mirrorDock, mirrorActs, mirrorMoment, mirrorMomentHtml, W_MOMENT_TIME, mirrorEndHtml, mirrorLobbyDeck, MIRROR_QUIET, mirrorTitle } from './mirror.js';
 import { isMimicPhase, mimicMain, mimicDock, mimicActs, mimicMoment, mimicMomentHtml, Q_MOMENT_TIME, mimicEndHtml, mimicLobbyDeck, MIMIC_QUIET, mimicTitle } from './mimic.js';
@@ -497,17 +497,56 @@ function didIWin(v, winner) {
   return (winner === 'DEATH' && me.alignment === 'DEATH') || (winner === 'NON_DEATH' && me.alignment === 'NON_DEATH');
 }
 
-/** The verdict scene's title, computed once from the end log entry (and the view of that moment). */
-function endTitle(m) {
-  if ((m.winner === 'OMEN' || m.winner === 'MIRROR') && m.whos?.length) return t('{names} wins', { names: m.whos });
-  return m.winner === 'OMEN' ? omenTitle(V()) : m.winner === 'MIRROR' ? mirrorTitle(V()) : m.winner === 'MIMIC' ? mimicTitle(V()?.mimic) : m.winner === 'GRAVEROBBERS' ? graveTitle(V()?.graverobbers) : m.winner === 'SEANCE' ? t(seanceTitle(m.result)) : m.winner === 'MIDNIGHT' ? t(midnightTitle(m.sides)) : m.winner === 'CARNIVAL' ? t('{names} wins', { names: m.whos ?? [] }) : m.winner === 'COFFINS' ? th('{a} wins', { a: m.who ?? '' }) : t({ DEMON: 'The Demon wins', DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[m.winner] ?? 'The end');
+const noStop = (x) => String(x ?? '').replace(/[.。]\s*$/, '');
+/** Scores for the rank-based modes (C6), by player id: the viewer's place replaces 'Defeat'. */
+function rankScores(v) {
+  if (v.mode === 'omen') return v.omen?.scores;
+  if (v.mode === 'mirror') return v.mirror?.scores;
+  if (v.mode === 'carnival') return Object.fromEntries((v.carnival?.seats ?? []).filter((x) => !x.chair).map((x) => [x.id, x.souls ?? 0]));
+  if (v.mode === 'coffins') return Object.fromEntries((v.coffins?.plots ?? []).map((x) => [x.id, x.wins ?? 0]));
+  return null;
 }
-function endBody(m) {
-  const { title, won } = m.frozen;
-  return `<div class="m-art">${glyph(WIN_GLYPH[m.winner] ?? 'scroll')}</div>
-        <span class="kicker">${t('The verdict')}</span><h1 class="m-title ${m.winner === 'DEATH' ? 'blood' : ''}">${letters(title)}</h1><p class="m-sub">${tmh(m.reason)}</p>
-        ${won === null || won === undefined ? '' : `<div class="result-stamp ${won ? 'win' : 'loss'}">${t(won ? 'Victory' : 'Defeat')}</div>`}`;
+/**
+ * One verdict for every mode (C6): the title is '{side or name} win(s)' with no full stop; a special outcome rides
+ * in the kicker; the stamp is the viewer's Victory or Defeat (or their place, in rank-based modes); no stamp for
+ * spectators and the TV.
+ */
+function verdict(v, { winner = v?.winner, result = null, sides = null, whos = null, who = null, pids = null } = {}) {
+  const names = (ids) => (ids ?? []).map((id) => v?.players.find((p) => p.id === id)?.name ?? '');
+  let kicker = t('The verdict');
+  let title;
+  switch (winner) {
+    case 'OMEN': title = whos?.length ? t('{names} wins', { names: whos }) : omenTitle(v); break;
+    case 'MIRROR': title = whos?.length ? t('{names} wins', { names: whos }) : mirrorTitle(v); break;
+    case 'MIMIC': title = mimicTitle(v?.mimic); break;
+    case 'GRAVEROBBERS': title = graveTitle(v?.graverobbers); kicker = noStop(graveKicker(v?.graverobbers)) || kicker; break;
+    case 'SEANCE': {
+      const r = result ?? v?.seance?.result;
+      title = t({ full: 'The table wins', hollow: 'Everyone wins', deceiver: 'The Deceiver wins', lost: 'Nobody wins' }[r] ?? 'The End');
+      kicker = noStop(t(seanceTitle(r)));
+      break;
+    }
+    case 'MIDNIGHT': title = noStop(t(midnightTitle(sides ?? v?.midnight?.winners?.sides))); break;
+    case 'CARNIVAL': title = t('{names} wins', { names: whos?.length ? whos : names(v?.carnival?.winners) }); break;
+    case 'COFFINS': title = th('{a} wins', { a: who || names([v?.coffins?.winner])[0] }); break;
+    default: title = t({ DEMON: 'The Demon wins', DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[winner] ?? 'The End');
+  }
+  const me = v?.me;
+  let won = didIWin(v, winner);
+  if (won == null && pids && me && !me.moderator) won = pids.includes(me.id);
+  let stamp = null;
+  if (won === true) stamp = { cls: 'win', text: t('Victory') };
+  else if (won === false) {
+    const sc = rankScores(v);
+    if (sc && me && sc[me.id] != null) {
+      const ids = Object.keys(sc);
+      const place = 1 + ids.filter((id) => sc[id] > sc[me.id]).length;
+      stamp = { cls: 'place', text: t('Place {n} of {total}', { n: place, total: ids.length }) };
+    } else stamp = { cls: 'loss', text: t('Defeat') };
+  }
+  return { kicker, title, stamp, emblem: WIN_GLYPH[winner] ?? 'scroll' };
 }
+const stampHtml = (st) => (st ? `<div class="result-stamp ${st.cls}">${esc(st.text)}</div>` : '');
 
 function momentHtml(m) {
   const names = (list, cls = '') => list.map((n, i) => `<li class="victim ${cls}" style="--d:${0.9 + i * 0.5}s"><span>${esc(n)}</span></li>`).join('');
@@ -596,8 +635,10 @@ function momentHtml(m) {
       break;
     case 'end': {
       // Freeze the verdict when the scene opens: the room may already be back in the lobby (A6).
-      if (!m.frozen) m.frozen = { title: endTitle(m), won: didIWin(V(), m.winner) ?? (m.pids && V()?.me ? m.pids.includes(V().me.id) : null) };
-      body = endBody(m);
+      if (!m.frozen) m.frozen = verdict(V(), { winner: m.winner, result: m.result, sides: m.sides, whos: m.whos, who: m.who, pids: m.pids });
+      const f = m.frozen;
+      body = `<div class="m-art">${glyph(f.emblem)}</div>
+        <span class="kicker">${esc(f.kicker)}</span><h1 class="m-title ${m.winner === 'DEATH' ? 'blood' : ''}">${letters(f.title)}</h1><p class="m-sub">${tmh(m.reason)}</p>${stampHtml(f.stamp)}`;
       break;
     }
     default: break;
@@ -2077,15 +2118,14 @@ function deathRoom(v, me, D) {
 
 // ── End ────────────────────────────────────────────────────────────────────
 function endMain(v, me) {
-  const title = v.winner === 'OMEN' ? omenTitle(v) : v.winner === 'MIRROR' ? mirrorTitle(v) : v.winner === 'MIMIC' ? mimicTitle(v.mimic) : v.winner === 'GRAVEROBBERS' ? graveTitle(v.graverobbers) : v.winner === 'SEANCE' ? t(seanceTitle(v.seance?.result)) : v.winner === 'MIDNIGHT' ? t(midnightTitle(v.midnight?.winners?.sides)) : v.winner === 'CARNIVAL' ? t('{names} wins.', { names: (v.carnival?.winners ?? []).map((id) => v.players.find((p) => p.id === id)?.name ?? '') }) : v.winner === 'COFFINS' ? t('{a} wins.', { a: v.players.find((p) => p.id === v.coffins?.winner)?.name ?? '' }) : t({ DEMON: 'The Demon wins.', DEATH: 'Death wins.', NON_DEATH: 'The living win.', JESTER: 'The Jester wins.', DRAW: 'A draw.', ABORTED: 'Abandoned.', LOVERS: 'The Lovers win.', CULT: 'The Cult wins.', RIPPER: 'The Ripper wins.' }[v.winner] ?? 'The End');
-  const won = didIWin(v, v.winner);
+  const vd = verdict(v);
   const revealed = !!modeInfo(v.mode).rolesAtEnd && v.players.some((p) => p.role);
   const everySecret = () => `<section data-key="reveal"><div class="rule">${t('Every secret')}</div>${revealed ? `<ul class="ledger">${v.players.map((p, i) => `<li class="${p.alive ? '' : 'dead'} ${p.id === me?.id ? 'me' : ''}" style="--i:${i}" data-key="rv-${p.id}">
       <span class="seat">${p.role ? glyph(p.role.glyph) : ''}</span>
       <span class="who"><b>${esc(p.name)}</b><small>${p.role ? esc(roleF(p.role.id, 'name')) : '—'}${p.originalRole ? ` ${th('(was {role})', { role: p.originalRole.id })}` : ''} · ${p.alive ? t('alive') : `† ${esc(stamp(p.diedAt))}`}</small></span>
       <span class="tags">${p.lover ? `<span class="tag love" title="${esc(t('Lovers'))}">${glyph('heart')}</span>` : ''}<span class="tag ${p.alignment === 'DEATH' ? 'blood' : ''}">${esc(ALIGN[p.alignment] ?? '')}</span></span></li>`).join('')}</ul>` : `<p class="muted">${t('The host chose not to reveal roles.')}</p>`}</section>`;
-  return `<section class="verdict ${v.winner === 'DEATH' || v.winner === 'DEMON' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<span class="kicker">${t('Verdict')}</span><h1>${letters(title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
-      ${won === null ? '' : `<div class="result-stamp ${won ? 'win' : 'loss'}">${won ? t('Victory') : t('Defeat')}</div>`}</section>
+  return `<section class="verdict ${v.winner === 'DEATH' || v.winner === 'DEMON' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<span class="kicker">${esc(vd.kicker)}</span><h1>${letters(vd.title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
+      ${stampHtml(vd.stamp)}</section>
     <div class="end-next" data-key="endnext">${v.host?.rematch ? `<button class="btn btn-solid btn-wide" data-act="rematch">${glyph('scroll')} ${t('Play again, same table')}</button>` : `<p class="small muted center-text">${t('Waiting for the host to start the next round.')}</p>`}</div>
     ${revealed ? ring(v, { reveal: true, center: v.mode === 'exorcism' ? '' : centerFor(v), marks: v.mode === 'missions' ? missionMarks(v) : {}, extra: v.mode === 'missions' ? hunchArrowsSvg(v) : '', orb: v.mode === 'exorcism' ? endOrb(v) : '' }) : ''}
     ${revealed && v.missions?.hunches?.length ? hunchLegend() : ''}

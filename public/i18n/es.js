@@ -2779,5 +2779,10 @@ export default {
     "Question": "Pregunta",
     "wrong candles": "velas erróneas",
     "My card": "Mi carta",
+    "Everyone wins": "Ganan todos",
+    "Nobody wins": "Nadie gana",
+    "Place {n} of {total}": "Puesto {n} de {total}",
+    "The Deceiver wins": "Gana el Impostor",
+    "The table wins": "Gana la mesa",
   },
 };
