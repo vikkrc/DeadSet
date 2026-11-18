@@ -416,7 +416,7 @@ select.input option { background: var(--ink-2); }
 .deck { display: grid; gap: 8px; }
 .deck-row { display: flex; gap: 6px; overflow-x: auto; padding: 4px 2px 6px; scrollbar-width: none; }
 .deck-row::-webkit-scrollbar { display: none; }
-.deck-card { flex: 0 0 auto; width: 76px; display: grid; justify-items: center; gap: 4px; padding: 10px 6px 8px; border: 1px solid var(--gilt-2); border-radius: 6px; background: linear-gradient(160deg, var(--ink-3), var(--ink-2)); animation: dealIn 0.5s var(--spring) both; }
+.deck-card { flex: 0 0 auto; width: 76px; display: grid; justify-items: center; gap: 4px; padding: 10px 6px 8px; border: 1px solid var(--gilt-2); border-radius: 6px; background: linear-gradient(160deg, var(--ink-3), var(--ink-2)); animation: tarot-deal 0.5s var(--spring) both; }
 .deck-card:nth-child(2) { animation-delay: 0.06s; } .deck-card:nth-child(3) { animation-delay: 0.12s; } .deck-card:nth-child(4) { animation-delay: 0.18s; } .deck-card:nth-child(5) { animation-delay: 0.24s; } .deck-card:nth-child(6) { animation-delay: 0.3s; }
 .deck-card .glyph { font-size: 26px; stroke-width: 1.2; }
 .deck-card b { font-size: 10.5px; font-weight: 600; text-align: center; line-height: 1.15; }
@@ -731,7 +731,6 @@ body.has-sheet { overflow: hidden; }
 @keyframes sheetPop { from { opacity: 0; transform: translateY(calc(-50% + 24px)) scale(0.97); } }
 @keyframes sheetDrop { from { opacity: 0; transform: translateY(-18px) scale(0.97); } }
 @keyframes tileIn { from { opacity: 0; transform: rotateX(-90deg) translateY(-10px); } }
-@keyframes dealIn { from { opacity: 0; transform: translateY(16px) rotate(-6deg); } }
 @keyframes zz { 0% { opacity: 0; transform: translate(0, 0); } 20% { opacity: 0.9; } 100% { opacity: 0; transform: translate(16px, -46px); } }
 @keyframes hint { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
 @keyframes seal { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
@@ -840,18 +839,7 @@ body.has-sheet { overflow: hidden; }
 .lobby-deck .rule { margin: 6px 0 0; }
 .deckrow { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 8px; scrollbar-width: none; }
 .deckrow::-webkit-scrollbar { display: none; }
-.dcard { position: relative; flex: none; width: 78px; height: 108px; padding: 8px 4px; display: grid; justify-items: center; align-content: center; gap: 6px; border: 1px solid var(--gilt-2); border-radius: 7px; background: linear-gradient(165deg, var(--ink-3), var(--ink-2)); color: var(--bone); font: inherit; animation: dealIn 0.5s var(--spring) both; }
 .dcard:nth-child(2) { animation-delay: 0.05s; } .dcard:nth-child(3) { animation-delay: 0.1s; } .dcard:nth-child(4) { animation-delay: 0.15s; } .dcard:nth-child(5) { animation-delay: 0.2s; } .dcard:nth-child(6) { animation-delay: 0.25s; }
-.dcard .glyph { font-size: 28px; stroke-width: 1.15; }
-.dcard b { font: 600 10px/1.15 var(--sans); text-align: center; }
-.dcard i { position: absolute; top: 5px; right: 7px; font: 500 11px var(--mono); color: var(--ash); font-style: normal; }
-.dcard.death { border-color: rgba(226, 88, 94, 0.6); color: var(--blood-ink); }
-.dcard.secret { border-style: dashed; }
-.dcard .q { font: italic 400 36px/1 var(--serif); color: var(--bone-2); }
-.dcard.rcard { border-color: rgba(233, 194, 122, 0.45); width: 96px; }
-.dcard.rcard .glyph { color: #e9c27a; }
-button.dcard.rcard { cursor: pointer; }
-.dcard.fd { background: repeating-linear-gradient(45deg, transparent 0 7px, var(--iron) 7px 8px), var(--ink-2); }
 .kicker.on { color: var(--bone); }
 .pool-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
 .pool-grid > * { display: grid; justify-items: center; gap: 3px; padding: 8px 2px; border: 1px solid var(--gilt-2); border-radius: 6px; background: var(--ink-2); color: var(--bone-2); font: 600 8.5px/1.15 var(--sans); text-align: center; transition: opacity 0.25s, transform 0.25s var(--spring); }
@@ -907,7 +895,7 @@ input.switch:checked::after { transform: translateX(18px); background: var(--ink
 /* 19 · Opening ceremony (phone: stacked; TV: dealt in a row) */
 .m-night0 { background: radial-gradient(120% 80% at 50% 25%, #172033, #06080c 68%); color: #dde2ea; }
 .cer-cards { display: grid; gap: 10px; width: 100%; perspective: 900px; }
-.cer-card { height: 92px; animation: dealIn 0.6s var(--spring) both; animation-delay: calc(var(--d) - 0.6s); }
+.cer-card { height: 92px; animation: tarot-deal 0.6s var(--spring) both; animation-delay: calc(var(--d) - 0.6s); }
 .cer-in { position: relative; height: 100%; transform-style: preserve-3d; animation: cerFlip 0.8s var(--spring) both; animation-delay: var(--d); }
 .cer-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border: 1px solid var(--gilt-2); border-radius: 8px; background: #10131b; }
 .cer-face.back { display: grid; place-items: center; background: repeating-linear-gradient(45deg, transparent 0 8px, var(--iron) 8px 9px), #10131b; }
@@ -919,7 +907,7 @@ input.switch:checked::after { transform: translateX(18px); background: var(--ink
 @keyframes cerFlip { from { transform: rotateX(0deg); } to { transform: rotateX(180deg); } }
 .cer-line { animation: fadeUp 0.6s var(--ease) both; animation-delay: var(--d); }
 .cer-rules { display: grid; gap: 8px; width: 100%; }
-.cer-rule { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; padding: 10px 12px; border: 1px solid rgba(233, 194, 122, 0.45); border-radius: 8px; background: rgba(16, 19, 27, 0.9); text-align: left; animation: dealIn 0.6s var(--spring) both; animation-delay: var(--d); }
+.cer-rule { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; padding: 10px 12px; border: 1px solid rgba(233, 194, 122, 0.45); border-radius: 8px; background: rgba(16, 19, 27, 0.9); text-align: left; animation: tarot-deal 0.6s var(--spring) both; animation-delay: var(--d); }
 .cer-rule .glyph { font-size: 24px; color: #e9c27a; }
 .cer-rule .k { display: block; font: 600 8.5px var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: #e9c27a; }
 .cer-rule b { display: block; font: 400 19px/1.1 var(--serif); }
@@ -1013,9 +1001,6 @@ body.pressure.is-board .b-clock { color: var(--blood-ink); }
 .b-table { display: grid; justify-items: center; }
 .b-deck { display: grid; gap: 14px; align-content: center; }
 .b-deck .deckrow { flex-wrap: wrap; overflow: visible; }
-.b-deck .dcard { width: 96px; height: 132px; }
-.b-deck .dcard .glyph { font-size: 34px; }
-.b-deck .dcard b { font-size: 11.5px; }
 .board2.lobby .tok:not(.empty) { animation: dropIn 0.7s var(--spring) both; }
 @keyframes dropIn { from { opacity: 0; transform: translate(-50%, -260%); } 70% { opacity: 1; transform: translate(-50%, -44%); } }
 /* moments on the TV */
@@ -2340,8 +2325,7 @@ button.tarot:active { transform: scale(0.96); }
 .sheet .face.front.tarot .sum { font-size: 0.86em; }
 /* the thumbnail: the same card, small, beside its text */
 .role-mini { grid-template-columns: 50px 1fr; border-radius: 0; border-color: var(--iron); }
-.tarot.mini { width: 50px; aspect-ratio: 11 / 18; font-size: 5px; padding: 1.4em 1.2em; gap: 0; justify-content: flex-end; }
-.tarot.mini .arc-art { flex: 1; width: 92%; }
+.role-mini .tarot--thumb { font-size: 8px; }
 
 /* ── Dreams ── */
 .dream-reveal { width: min(56vw, 232px); aspect-ratio: 11 / 18; }
@@ -2352,7 +2336,7 @@ button.tarot:active { transform: scale(0.96); }
 .dr-face.front.tarot p { font: italic 400 0.86em/1.3 var(--text); color: #a9b2c4; }
 .dr-face.front.tarot .kicker { color: #9fb0d2; font-size: max(0.62em, 10px); }
 .dream { grid-template-columns: 46px 1fr; border: 1px solid #5d6a82; border-image: var(--frame-silver) 32 / 22px stretch; border-radius: 0; padding: 16px 18px; }
-.dream .tarot.mini { width: 46px; }
+.dream .tarot--thumb { font-size: 7.4px; }
 .dream h3 { font: 600 22px/1 var(--black); }
 .dream p { font: italic 400 15px/1.35 var(--text); }
 
@@ -2388,11 +2372,12 @@ button.tarot:active { transform: scale(0.96); }
 .cer-face.back.tarot .sig { font-size: 1.6em; }
 
 /* ── Lobby deck: small real cards (titles in caps: blackletter never goes under 20px) ── */
-.dcard.tarot { width: 74px; height: auto; aspect-ratio: 11 / 18; padding: 9px 6px 7px; gap: 4px; justify-content: flex-start; font-size: 6px; border: 0; animation: dealIn 0.5s var(--spring) both; }
+/* the lobby deck: small tarot cards with the role's name printed under the art */
+.dcard.tarot { width: 74px; padding: 9px 6px 7px; gap: 4px; font-size: 6px; animation: tarot-deal 0.5s var(--spring) both; }
 .dcard.tarot .arc-art { flex: 1; width: 90%; }
 .dcard.tarot b { font: 600 8.5px/1.1 var(--text); letter-spacing: 0.08em; text-transform: uppercase; color: var(--sepia); }
 .dcard.tarot.noir b { color: #f1e4c8; }
-.dcard.tarot i { top: 6px; right: 8px; z-index: 2; font: 600 10px/1 var(--bit); color: var(--rubric); }
+.dcard.tarot i { position: absolute; font-style: normal; top: 6px; right: 8px; z-index: 2; font: 600 10px/1 var(--bit); color: var(--rubric); }
 .dcard.tarot.noir i { color: var(--blood-ink); }
 .dcard.tarot.back { justify-content: center; }
 .dcard.tarot.back b { color: var(--gilt); font-size: 8px; }

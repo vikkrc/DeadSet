@@ -1345,7 +1345,7 @@ function sheet(v) {
       const pool = (deck?.pool ?? []).filter((x) => roles[x]);
       title = t('{n} extended', { n: id });
       body = `<p class="muted card-info">${esc(t('Extended pool · used from 7 players'))}</p>
-        <div class="info-pool">${pool.map((x) => `<button class="dcard tarot ${roles[x].alignment === 'DEATH' ? 'noir' : ''}" data-act="cardInfo" data-kind="role" data-id="${x}">${cardArt(roleEmblemId(roles[x]))}<b>${esc(roleF(x, 'name'))}</b></button>`).join('')}</div>`;
+        <div class="info-pool">${pool.map((x) => `<button class="tarot--small dcard tarot ${roles[x].alignment === 'DEATH' ? 'noir' : ''}" data-act="cardInfo" data-kind="role" data-id="${x}">${cardArt(roleEmblemId(roles[x]))}<b>${esc(roleF(x, 'name'))}</b></button>`).join('')}</div>`;
     } else {
       title = t('Rule cards');
       body = `<p class="muted card-info">${esc(t('Drawn at start'))} · ${id}</p>`;
@@ -1534,12 +1534,12 @@ function lobbyDeck(v, isHost) {
   const deck = v.setup?.publicDeck;
   const preset = v.presets.find((p) => p.id === s.preset);
   const roles = Object.fromEntries((S.content?.roles ?? []).map((r) => [r.id, r]));
-  const card = (id, n, cls = '') => `<button class="dcard tarot ${roles[id]?.alignment === 'DEATH' ? 'noir' : ''} ${cls}" data-act="cardInfo" data-kind="role" data-id="${id}" data-key="ld-${id}" aria-label="${esc(roleF(id, 'name'))}">${roles[id] ? cardArt(roleEmblemId(roles[id])) : ''}<b>${esc(roleF(id, 'name'))}</b>${n > 1 ? `<i>×${n}</i>` : ''}</button>`;
+  const card = (id, n, cls = '') => `<button class="tarot--small dcard tarot ${roles[id]?.alignment === 'DEATH' ? 'noir' : ''} ${cls}" data-act="cardInfo" data-kind="role" data-id="${id}" data-key="ld-${id}" aria-label="${esc(roleF(id, 'name'))}">${roles[id] ? cardArt(roleEmblemId(roles[id])) : ''}<b>${esc(roleF(id, 'name'))}</b>${n > 1 ? `<i>×${n}</i>` : ''}</button>`;
   let cards = '';
   if (deck?.exact) cards = Object.entries(deck.exact).map(([id, n]) => card(id, n, roles[id]?.alignment === 'DEATH' ? 'death' : '')).join('');
   else if (deck) {
     cards = Object.entries(deck.core).filter(([, n]) => n > 0).map(([id, n]) => card(id, n, id === 'DEATH' ? 'death' : '')).join('')
-      + (deck.extended ? `<button class="dcard tarot back secret" data-act="cardInfo" data-kind="ext" data-id="${deck.extended}" data-key="ld-ext"><span class="sig">?</span><b>${t('{n} extended', { n: deck.extended })}</b></button>` : '');
+      + (deck.extended ? `<button class="tarot--small dcard tarot back secret" data-act="cardInfo" data-kind="ext" data-id="${deck.extended}" data-key="ld-ext"><span class="sig">?</span><b>${t('{n} extended', { n: deck.extended })}</b></button>` : '');
   }
   if (preset.missions) return missionLobbyDeck(v, isHost, cards);
   const allExt = (S.content?.roles ?? []).filter((r) => r.set === 'standard' || r.set === 'full').map((r) => r.id);
@@ -1555,9 +1555,9 @@ function lobbyDeck(v, isHost) {
     }).join('')}</div>${editable ? `<p class="small muted">${t('Tap to add or remove roles from the pool.')}</p>` : ''}` : '';
   const ruleCards = s.rules.mode === 'manual'
     ? (s.rules.selected.length ? s.rules.selected.map((id) => isHost
-      ? `<button class="dcard rcard tarot edict" data-act="cardInfo" data-kind="rule" data-id="${id}" data-key="lr-${id}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><b>${esc(ruleF(id, 'name'))}</b><i>×</i></button>`
-      : `<button class="dcard rcard tarot edict" data-act="cardInfo" data-kind="rule" data-id="${id}" data-key="lr-${id}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><b>${esc(ruleF(id, 'name'))}</b></button>`).join('') : `<p class="small muted">${t('No rule cards chosen.')}</p>`)
-    : Array.from({ length: s.rules.count }, (_, i) => `<button class="dcard rcard fd tarot back" data-act="cardInfo" data-kind="ruledraw" data-id="${s.rules.count}" data-key="lr-r${i}"><span class="sig">?</span><b>${t('Drawn at start')}</b></button>`).join('') || `<p class="small muted">${t('No rule cards.')}</p>`;
+      ? `<button class="tarot--small dcard rcard tarot edict" data-act="cardInfo" data-kind="rule" data-id="${id}" data-key="lr-${id}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><b>${esc(ruleF(id, 'name'))}</b><i>×</i></button>`
+      : `<button class="tarot--small dcard rcard tarot edict" data-act="cardInfo" data-kind="rule" data-id="${id}" data-key="lr-${id}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><b>${esc(ruleF(id, 'name'))}</b></button>`).join('') : `<p class="small muted">${t('No rule cards chosen.')}</p>`)
+    : Array.from({ length: s.rules.count }, (_, i) => `<button class="tarot--small dcard rcard fd tarot back" data-act="cardInfo" data-kind="ruledraw" data-id="${s.rules.count}" data-key="lr-r${i}"><span class="sig">?</span><b>${t('Drawn at start')}</b></button>`).join('') || `<p class="small muted">${t('No rule cards.')}</p>`;
   const toggle = (key, title, sub) => isHost
     ? `<label class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><input type="checkbox" class="switch" data-set-bool="${key}" ${v.table?.[key] ? 'checked' : ''}></label>`
     : `<div class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><span class="tag ${v.table?.[key] ? 'solid' : ''}">${t(v.table?.[key] ? 'On' : 'Off')}</span></div>`;
@@ -1820,7 +1820,7 @@ function roleCardHtml(role, { align = null, flipKey = 'role', flipped = null, mi
   // The Death team's own card is vellum like every other (same brightness across the table); only its ink is red.
   const rubric = a === 'DEATH' ? 'rubric' : '';
   if (mini) {
-    return `<button class="role-mini" data-act="sheet" data-id="role" data-key="rolemini"><span class="tarot mini ${rubric}">${cardArt(roleEmblemId(role))}</span><span><b>${esc(roleF(role.id, 'name'))}</b><small>${esc(roleF(role.id, 'summary'))}</small></span></button>`;
+    return `<button class="role-mini" data-act="sheet" data-id="role" data-key="rolemini"><span class="tarot tarot--thumb ${rubric}">${cardArt(roleEmblemId(role))}</span><span><b>${esc(roleF(role.id, 'name'))}</b><small>${esc(roleF(role.id, 'summary'))}</small></span></button>`;
   }
   return `<div class="card-stage" data-key="stage-${flipKey}">
     <button class="flipcard ${isFlipped ? 'flipped' : ''}" data-act="flip" data-key="${flipKey}" data-tilt aria-label="${isFlipped ? esc(t('Your role: {x}', { x: roleF(role.id, 'name') })) : esc(t('Turn over your role card'))}">
@@ -2057,7 +2057,7 @@ const DREAM_EMB = {
 };
 function dreamCard(d) {
   if (!d) return '';
-  return `<div class="dream" data-key="dream-${d.id}"><span class="tarot mini dreamsuit">${cardArt(DREAM_EMB[d.id] ?? 'moon')}</span><div><span class="kicker">${t('Tonight\'s dream')}</span><h3>${esc(dreamF(d.id, 'name'))}</h3><p>${esc(dreamF(d.id, 'text'))}</p></div></div>`;
+  return `<div class="dream" data-key="dream-${d.id}"><span class="tarot tarot--thumb dreamsuit">${cardArt(DREAM_EMB[d.id] ?? 'moon')}</span><div><span class="kicker">${t('Tonight\'s dream')}</span><h3>${esc(dreamF(d.id, 'name'))}</h3><p>${esc(dreamF(d.id, 'text'))}</p></div></div>`;
 }
 
 function actionsStage(v, me, a) {
