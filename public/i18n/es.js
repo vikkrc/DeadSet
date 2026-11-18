@@ -2774,5 +2774,8 @@ export default {
     "Tap the card your row's visions point to, then light the candle. The most candles are put to the spirit.": "Toca la carta a la que apuntan las visiones de tu fila y enciende la vela. La que tenga más velas se presenta al espíritu.",
     "Vote to stop digging": "Votar para dejar de cavar",
     "Your candle stays dark.": "Tu vela sigue apagada.",
+    "Turn": "Turno",
+    "Dilemma": "Dilema",
+    "Question": "Pregunta",
   },
 };

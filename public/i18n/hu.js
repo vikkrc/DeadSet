@@ -2774,5 +2774,8 @@ export default {
     "Tap the card your row's visions point to, then light the candle. The most candles are put to the spirit.": "Koppints arra a kártyára, amire a sorod látomásai mutatnak, aztán gyújtsd meg a gyertyát. A legtöbb gyertyát kapott kártyát a szellem elé teszik.",
     "Vote to stop digging": "Szavazok az ásás befejezésére",
     "Your candle stays dark.": "A gyertyád nem ég.",
+    "Turn": "Lépés",
+    "Dilemma": "Dilemma",
+    "Question": "Kérdés",
   },
 };

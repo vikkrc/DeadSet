@@ -2774,5 +2774,8 @@ export default {
     "Tap the card your row's visions point to, then light the candle. The most candles are put to the spirit.": "Touche la carte que désignent les visions de ta rangée, puis allume la bougie. La carte qui a le plus de bougies est soumise à l’esprit.",
     "Vote to stop digging": "Voter pour arrêter de creuser",
     "Your candle stays dark.": "Ta bougie reste éteinte.",
+    "Turn": "Tour",
+    "Dilemma": "Dilemme",
+    "Question": "Question",
   },
 };

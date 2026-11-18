@@ -754,24 +754,28 @@ setInterval(tickClock, 250);
 const fuse = () => '<div class="fuse" data-fuse data-key="fuse" hidden><i></i></div>';
 
 // ── Labels ─────────────────────────────────────────────────────────────────
+/**
+ * The header's big word (C4): the unit of play and its number (Day II, Mission IV, Round 3, Turn 12, Dilemma 2),
+ * set per mode in the registry. The step goes in the subtitle; the mode's name in the room menu and the TV wordmark.
+ */
 function phaseWord(v) {
+  const dark = isNight(v.phase) || ['N_DEAL', 'N_NIGHT'].includes(v.phase);
   if (v.phase === 'LOBBY') return { word: t('Lobby'), num: '', night: false };
-  if (v.phase === 'ENDED') return { word: t('The End'), num: '', night: false };
+  if (v.phase === 'ENDED' || v.phase === 'M_LAST_STAND' || v.phase === 'M_RECKONING') return { word: t('The End'), num: '', night: false };
   if (v.phase === 'NIGHT_0_REVEAL') return { word: t('Night'), num: '0', night: true };
-  if (v.phase === 'M_REVEAL') return { word: t('Missions'), num: '', night: true };
-  if (isMimicPhase(v.phase)) return { word: t('The Mimic'), num: '', night: false };
-  if (isOmenPhase(v.phase)) return { word: t('The Omen'), num: v.omen?.round ? roman(v.omen.round) : '', night: true };
-  if (isMirrorPhase(v.phase)) return { word: t('The Mirror'), num: v.mirror?.round ? roman(v.mirror.round) : '', night: true };
-  if (isGravePhase(v.phase)) return { word: t('The cemetery'), num: v.graverobbers?.turnNo ? roman(v.graverobbers.turnNo) : '', night: true };
-  if (isSeancePhase(v.phase)) return { word: t('The séance'), num: v.seance?.round ? roman(v.seance.round) : '', night: true };
-  if (isMidnightPhase(v.phase)) return { word: t(['N_DEAL', 'N_NIGHT'].includes(v.phase) ? 'Midnight' : 'Dawn'), num: '', night: ['N_DEAL', 'N_NIGHT'].includes(v.phase) };
-  if (isCarnivalPhase(v.phase)) return { word: t('The Ball'), num: v.carnival?.turnNo ? roman(v.carnival.turnNo) : '', night: false };
-  if (isCoffinsPhase(v.phase)) return { word: t('Round'), num: roman(v.coffins?.round ?? 1), night: false };
-  if (isExorcismPhase(v.phase)) return { word: t('Exorcism'), num: v.exorcism?.rounds > 1 && v.phase === 'X_CLUES' ? roman(v.exorcism.round) : '', night: v.phase === 'X_REVEAL' };
-  if (isMissionPhase(v.phase)) return { word: v.phase === 'M_LAST_STAND' || v.phase === 'M_RECKONING' ? t('The End') : t('Mission'), num: v.phase === 'M_LAST_STAND' || v.phase === 'M_RECKONING' ? '' : roman((v.missions?.mission ?? 0) + 1), night: v.phase === 'M_NIGHT' };
-  if (isNight(v.phase) || v.phase === 'NIGHT_RESOLVING') return { word: t('Night'), num: roman(v.nightNumber), night: true };
+  if (isMidnightPhase(v.phase)) return { word: t(dark ? 'Midnight' : 'Dawn'), num: '', night: dark };
+  const mode = modeOfPhase(v.phase);
+  const info = mode && MODES[mode];
+  if (info?.unit) {
+    const raw = info.count.split('.').reduce((o, k) => o?.[k], v);
+    const n = Math.max(1, (Number(raw) || 0) + (info.offset ?? 0));
+    return { word: t(info.unit), num: info.roman ? roman(n) : String(n), night: dark };
+  }
+  if (dark || v.phase === 'NIGHT_RESOLVING') return { word: t('Night'), num: roman(v.nightNumber), night: true };
   return { word: t('Day'), num: roman(v.dayNumber), night: false };
 }
+/** The mode's own name, for the room menu and the TV wordmark line (C4). */
+const modeName = (v) => (MODES[v?.mode]?.name ? t(MODES[v.mode].name) : presetF(v?.mode, 'name'));
 const STEP_EN = {
   LOBBY: 'Gathering', NIGHT_0_REVEAL: 'Role reveal', DAY_PREP: 'Morning', DAY_DISCUSSION: 'Discussion',
   DAY_DEFENSE: 'Defence', DAY_VOTING: 'Secret ballot', DAY_RESOLVING: 'Final act', NIGHT_DREAM_SWAP: 'Nightfall', NIGHT_ACTIONS: 'Night actions', ENDED: 'Match over',
@@ -1233,7 +1237,7 @@ function sheet(v) {
   let title = '';
   let body = '';
   if (s === 'record') {
-    title = th('Room {code}', { code: '%CODE%' }).replace('%CODE%', `<span class="code-txt">${esc(v.code)}</span>`);
+    title = `${esc(modeName(v))} · ${th('Room {code}', { code: '%CODE%' }).replace('%CODE%', `<span class="code-txt">${esc(v.code)}</span>`)}`;
     body = `${hostBox()}<section class="menu-sec" data-key="msec-device"><div class="rule">${t('This device')}</div>${langRow(v)}${phoneMusicToggle()}${v.me?.moderator ? '' : tutorialToggle()}</section>
       <section class="menu-sec" data-key="msec-record">${recordBlock(v)}</section>
       <section class="menu-sec menu-actions" data-key="msec-actions"><div class="rule">${t('Leave or learn')}</div><div class="menu-links"><a class="btn btn-sm btn-ghost" href="/guide" data-link>${t('How to play')}</a><button class="btn btn-sm btn-ghost" data-act="leave">${glyph('out')} ${t('Leave this device')}</button></div>
@@ -2255,7 +2259,7 @@ function boardView() {
   const v = V();
   if (S.conn === 'gone') return goneScreen();
   if (!v) return loadingScreen();
-  return boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, content: S.content, audio: S.board.audio, wordmark });
+  return boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark });
 }
 
 // ── Dock (primary action) ──────────────────────────────────────────────────

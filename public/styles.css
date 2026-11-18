@@ -932,6 +932,9 @@ body.is-board { overflow: hidden; }
 .board2 { position: relative; height: 100dvh; display: grid; grid-template-rows: auto 1fr; padding: 0 3vw 2vh; overflow: hidden; }
 .b-head { position: relative; z-index: 4; display: flex; align-items: center; gap: 22px; height: 92px; }
 .b-head .wordmark { font-size: 30px; }
+/* The mode's name rides on the wordmark line (C4); the big word beside it is the unit of play. */
+.b-head .b-brand { display: grid; justify-items: start; gap: 4px; }
+.b-head .b-mode { font: 600 12px/1 var(--text); letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); white-space: nowrap; padding-left: 2px; }
 .b-phase { font: 400 46px/1 var(--serif); }
 .b-phase i { font-style: italic; }
 .b-phase sup { font-size: 0.48em; color: var(--ash); margin-left: 4px; }

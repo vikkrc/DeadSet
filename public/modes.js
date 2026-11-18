@@ -24,30 +24,32 @@ export const FAMILIES = [
  * - rolesAtEnd: the end screen turns every role card face up (and lists every secret).
  * - aliveCount: the header counts the living.
  * - story: the mode deals WHO / WHERE / WHY story cards.
+ * - unit, count, offset, roman: the header's word (C4) is the unit of play and its number, read from the view at
+ *   `count` (plus `offset`); Roman only where the count stays small and is part of the story (C5).
  */
 export const MODES = {
   classic: { family: 'hidden', emblem: 'death', name: 'Classic Dead Set', blurb: 'Hidden roles, night kills, Dreams and Rule cards. 5–25 players.', min: 5, max: 25,
     prefix: null, rematchReady: false, draw: null, lobbyMood: 'lobby', rolesAtEnd: true, aliveCount: true, story: true },
   missions: { family: 'hidden', emblem: 'mission', blurb: 'Teams, votes and sabotage. Nobody dies. 5–12 players.', min: 5, max: 12,
-    prefix: 'M_', rematchReady: false, draw: 'wheel', lobbyMood: 'mGather', rolesAtEnd: true, aliveCount: false, story: true },
+    prefix: 'M_', rematchReady: false, draw: 'wheel', lobbyMood: 'mGather', rolesAtEnd: true, aliveCount: false, story: true, unit: 'Mission', count: 'missions.mission', offset: 1, roman: true },
   carnival: { family: 'hands', emblem: 'veiled', blurb: 'A masked ball of bluff and memory: swap masks, claim powers, gather Souls. 4–12 players.', min: 4, max: 12,
-    prefix: 'K_', rematchReady: true, draw: 'wheel', lobbyMood: 'kUnmask' },
+    prefix: 'K_', rematchReady: true, draw: 'wheel', lobbyMood: 'kUnmask', unit: 'Turn', count: 'carnival.turnNo' },
   midnight: { family: 'hands', emblem: 'moon', blurb: 'One night, one vote: cards change hands in the dark. 4–12 players.', min: 4, max: 12,
     prefix: 'N_', rematchReady: true, draw: null, lobbyMood: 'nDeal' },
   omen: { family: 'reading', emblem: 'oracle', blurb: 'A wheel of Life, Death and Rebirth that anyone may secretly turn. Predict where it stops. 4–12 players.', min: 4, max: 12,
-    prefix: 'O_', rematchReady: true, draw: null, lobbyMood: 'oShow' },
+    prefix: 'O_', rematchReady: true, draw: null, lobbyMood: 'oShow', unit: 'Round', count: 'omen.round' },
   mirror: { family: 'reading', emblem: 'maskedvote', blurb: 'Answer a dilemma, and predict how a friend answers it. 4–12 players.', min: 4, max: 12,
-    prefix: 'W_', rematchReady: true, draw: null, lobbyMood: 'wTalk' },
+    prefix: 'W_', rematchReady: true, draw: null, lobbyMood: 'wTalk', unit: 'Dilemma', count: 'mirror.round' },
   exorcism: { family: 'signs', emblem: 'oracle', blurb: 'A word game of bluff: one word each, then name the Demon. 3–12 players.', min: 3, max: 12,
-    prefix: 'X_', rematchReady: true, draw: 'wheel', lobbyMood: 'xLobby', rolesAtEnd: true },
+    prefix: 'X_', rematchReady: true, draw: 'wheel', lobbyMood: 'xLobby', rolesAtEnd: true, unit: 'Round', count: 'exorcism.round' },
   seance: { family: 'signs', emblem: 'shade', blurb: 'A silent Ghost sends visions; find who, where and why, and the Deceiver. 4–10 players.', min: 4, max: 10,
-    prefix: 'S_', rematchReady: true, draw: 'wheel', lobbyMood: 'sGather' },
+    prefix: 'S_', rematchReady: true, draw: 'wheel', lobbyMood: 'sGather', unit: 'Round', count: 'seance.round' },
   graverobbers: { family: 'signs', emblem: 'headstone', blurb: 'Two crews dig a cemetery of words or icons; one word and a number from the Undertaker. 4–12 players.', min: 4, max: 12,
-    prefix: 'G_', rematchReady: true, draw: 'coin', lobbyMood: 'gYard' },
+    prefix: 'G_', rematchReady: true, draw: 'coin', lobbyMood: 'gYard', unit: 'Turn', count: 'graverobbers.turnNo' },
   mimic: { family: 'signs', emblem: 'mimic', blurb: 'Everyone knows the place except the Mimic. Ask, answer, accuse. 4–12 players.', min: 4, max: 12,
-    prefix: 'Q_', rematchReady: true, draw: 'fan', lobbyMood: 'qDeal' },
+    prefix: 'Q_', rematchReady: true, draw: 'fan', lobbyMood: 'qDeal', unit: 'Question', count: 'mimic.askCount', offset: 1 },
   coffins: { family: 'wager', emblem: 'undertaker', blurb: 'A quick bluffing game: bury gold, hide your curse, bid and dig. 3–10 players.', min: 3, max: 10,
-    prefix: 'C_', rematchReady: true, draw: 'wheel', lobbyMood: 'cLobby' },
+    prefix: 'C_', rematchReady: true, draw: 'wheel', lobbyMood: 'cLobby', unit: 'Round', count: 'coffins.round' },
 };
 
 export const MODE_IDS = Object.keys(MODES);

@@ -2774,5 +2774,8 @@ export default {
     "Tap the card your row's visions point to, then light the candle. The most candles are put to the spirit.": "Tippe auf die Karte, auf die die Visionen deiner Reihe zeigen, und entzünde die Kerze. Die meisten Kerzen werden dem Geist vorgelegt.",
     "Vote to stop digging": "Für Grabungsende stimmen",
     "Your candle stays dark.": "Deine Kerze bleibt dunkel.",
+    "Turn": "Zug",
+    "Dilemma": "Dilemma",
+    "Question": "Frage",
   },
 };

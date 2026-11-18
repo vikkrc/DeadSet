@@ -122,7 +122,7 @@ const RULE_GLYPH = {
 export const ruleGlyph = (id) => RULE_GLYPH[id] ?? 'scroll';
 
 export function boardScreen(v, h) {
-  const { esc, glyph, ring, centerFor, codeTiles, qrSvg, stepOf, phaseWord, audio, wordmark, t, th, tmh, roleF, ruleF, presetF, scen, tlist } = h;
+  const { esc, glyph, ring, centerFor, codeTiles, qrSvg, stepOf, phaseWord, modeName, audio, wordmark, t, th, tmh, roleF, ruleF, presetF, scen, tlist } = h;
   const pw = phaseWord(v);
   const night = ['NIGHT_0_REVEAL', 'NIGHT_DREAM_SWAP', 'NIGHT_ACTIONS', 'M_REVEAL', 'M_NIGHT'].includes(v.phase);
   const place = v.scenario ? scen('WHERE', v.scenario.where).replace(/^(a|an|the)\s+/i, '') : '';
@@ -130,7 +130,7 @@ export function boardScreen(v, h) {
     : !audio ? `<button class="b-sound start" data-act="boardScore">${glyph('bell')} ${t('Start the score')}</button>`
       : `<button class="b-sound on" data-act="boardMute">${glyph('bell')}<span class="eq"><i></i><i></i><i></i><i></i></span> ${night ? t('Night score') : t('Day score')}</button>`;
   const header = `<header class="b-head" data-key="bhead">
-    ${wordmark()}
+    <span class="b-brand">${wordmark()}${v.phase === 'LOBBY' || v.mode === 'classic' ? '' : `<span class="b-mode">${esc(modeName(v).replace(/^Dead Set\s*[:·–-]\s*/i, ''))}</span>`}</span>
     <span class="b-phase">${pw.night ? `<i>${esc(pw.word)}</i>` : esc(pw.word)}${pw.num ? `<sup>${esc(pw.num)}</sup>` : ''}</span>
     <span class="b-step">${esc(stepOf(v))}${place ? ` · ${esc(place)}` : ''}</span>
     <span class="grow"></span>

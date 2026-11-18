@@ -2774,5 +2774,8 @@ export default {
     "Tap the card your row's visions point to, then light the candle. The most candles are put to the spirit.": "Ťukni na kartu, na ktorú ukazujú vízie tvojho radu, a zapáľ sviečku. Karta s najviac sviečkami ide pred ducha.",
     "Vote to stop digging": "Hlasovať za koniec kopania",
     "Your candle stays dark.": "Tvoja sviečka zostáva zhasnutá.",
+    "Turn": "Ťah",
+    "Dilemma": "Dilema",
+    "Question": "Otázka",
   },
 };
