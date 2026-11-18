@@ -158,7 +158,7 @@ export function graveMain(v, me, h) {
 }
 
 export function graveDock(v, h) {
-  const { S: UI, btn, holdBtn } = h;
+  const { S: UI, btn, holdBtn, commitBtn } = h;
   const a = v.action || {};
   const parts = [];
   const note = (x) => `<span class="dock-note" data-key="gdn">${x}</span>`;
@@ -172,7 +172,7 @@ export function graveDock(v, h) {
       break;
     }
     case 'gvote':
-      parts.push(a.choice === 'stop' ? `<span class="dock-note stamped" data-key="gstop">${glyph('check')} ${t('You vote to stop')}</span>` : holdBtn('gStop', t('Hold to stop digging'), ''));
+      parts.push(a.choice === 'stop' ? `<span class="dock-note stamped" data-key="gstop">${glyph('check')} ${t('You vote to stop')}</span>` : commitBtn('secret', 'gStop', t('Vote to stop digging'), { cls: 'btn-ghost' }));
       break;
     default: break;
   }

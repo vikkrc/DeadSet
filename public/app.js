@@ -1172,6 +1172,18 @@ function hostBox() {
   </div>`;
 }
 
+/**
+ * C1: the one way to commit a choice. 'public' is a hold on the wax button, for acts that are public and
+ * irreversible (accusing, naming, unmasking, a raise others must answer). 'secret' is a tap, for a secret choice
+ * that stays private (votes, ballots, night actions, predictions, plays); the dock then shows a stamped note.
+ */
+function commitBtn(kind, act, label, { cls = '', dis = false, key = act, extra = '' } = {}) {
+  if (kind === 'public') return holdBtn(act, label, `btn-blood ${cls}`, { dis, key });
+  return `<button class="btn btn-solid ${cls}" data-act="${act}" data-key="d-${key}" ${extra} ${dis ? 'disabled' : ''} ${S.pending ? 'data-pending' : ''}>${esc(label)}</button>`;
+}
+/** The stamped note after a secret choice is in. */
+const sealedNote = (text, key = 'sealed') => `<span class="dock-note stamped" data-key="${key}">${glyph('check')} ${esc(text)}</span>`;
+
 function holdBtn(act, label, cls = '', { dis = false, key = act } = {}) {
   return `<button class="btn hold ${cls} ${S.ui.holding === key ? 'holding' : ''}" data-hold="${act}" data-key="hold-${key}" ${dis ? 'disabled' : ''} ${S.pending ? 'data-pending' : ''}><span class="hold-fill"></span><span class="hold-label">${esc(label)}</span></button>`;
 }
@@ -2273,7 +2285,7 @@ function dock(v) {
         break;
       }
       case 'DAY_DISCUSSION':
-        if (a.type === 'nominate' && !a.mine && S.sel.nominate) parts.push(btn(th('Accuse {name}', { name: rawName(S.sel.nominate) }), 'nominate', 'btn-blood'));
+        if (a.type === 'nominate' && !a.mine && S.sel.nominate) parts.push(commitBtn('public', 'nominate', th('Hold to accuse {name}', { name: rawName(S.sel.nominate) })));
         break;
       case 'DAY_VOTING':
         if (a.type === 'ballot') {
@@ -2285,14 +2297,14 @@ function dock(v) {
       case 'DAY_RESOLVING':
         if (a.type === 'retaliate') {
           parts.push(btn(t('Go quietly'), 'retaliate', 'btn-ghost', false, 'quiet', 'data-none="1"'));
-          if (S.sel.retaliate) parts.push(btn(th('Take {name}', { name: rawName(S.sel.retaliate) }), 'retaliate', 'btn-blood'));
+          if (S.sel.retaliate) parts.push(commitBtn('public', 'retaliate', th('Hold to take {name}', { name: rawName(S.sel.retaliate) })));
         }
         break;
       case 'NIGHT_ACTIONS':
         if (a.type === 'night' && !a.done && !S.ui.veiled[v.phaseId]) { const r = commitReady(a); parts.push(btn(`${glyph('moon')} ${esc(r.label)}`, 'commit', 'btn-solid', !r.ok)); }
         break;
       default:
-        if (CLIENT[modeOfPhase(v.phase)]?.dock) parts.push(...CLIENT[modeOfPhase(v.phase)].dock(v, { S, btn, holdBtn, rawName }));
+        if (CLIENT[modeOfPhase(v.phase)]?.dock) parts.push(...CLIENT[modeOfPhase(v.phase)].dock(v, { S, btn, holdBtn, commitBtn, sealedNote, rawName }));
         break;
     }
   }

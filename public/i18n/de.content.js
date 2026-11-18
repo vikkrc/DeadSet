@@ -349,7 +349,7 @@ export default {
     coffinsH: "Dead Set: Särge",
     coffins: `<p>Ein schnelles Bluffspiel für 3–10 Spieler, in der Lobby wählbar. Jeder hält 3 Goldsärge und einen Fluch (4 und einen mit der längeren Option).</p>
 <ol>
-<li><b>Das Begräbnis.</b> Alle vergraben gleichzeitig heimlich einen Sarg: antippen, dann halten. Danach, ab dem ersten Spieler der Runde, vergräbst du in deinem Zug entweder einen weiteren Sarg oben auf deinem Stapel oder forderst heraus: <i>„Ich kann N öffnen“</i>, höchstens so viele, wie insgesamt vergraben sind.</li>
+<li><b>Das Begräbnis.</b> Alle vergraben gleichzeitig heimlich einen Sarg: antippen, dann auf Vergraben tippen. Danach, ab dem ersten Spieler der Runde, vergräbst du in deinem Zug entweder einen weiteren Sarg oben auf deinem Stapel oder forderst heraus: <i>„Ich kann N öffnen“</i>, höchstens so viele, wie insgesamt vergraben sind.</li>
 <li><b>Das Bieten.</b> Reihum erhöht jeder oder passt. Ein Pass gilt für die ganze Runde. Wer zuletzt übrig bleibt, ist der Gräber.</li>
 <li><b>Die Grabung.</b> Der Gräber öffnet zuerst seine eigenen Särge von oben nach unten, dann wählt er andere Gräber, immer den obersten Sarg, bis N offen sind.</li>
 <li><b>Sauber oder verflucht.</b> Nur Gold: eine saubere Grabung, der Grabstein wird vergoldet. Ein Fluch im eigenen Grab: Du wählst einen Sarg, den du verlierst. Der Fluch eines anderen: Er zieht blind einen deiner Särge, und der ist weg. Wem der Fluch gehört, beginnt die nächste Runde.</li>

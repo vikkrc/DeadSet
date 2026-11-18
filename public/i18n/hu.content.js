@@ -349,7 +349,7 @@ export default {
     coffinsH: "Dead Set: Koporsók",
     coffins: `<p>Gyors blöffjáték 3–10 játékosnak, a lobbiban választható. Mindenkinél 3 Arany koporsó és egy Átok van (a hosszabb változatban 4 és egy).</p>
 <ol>
-<li><b>A temetés.</b> Mindenki egyszerre, titokban eltemet egy koporsót: koppints rá, majd tartsd nyomva. Aztán a kör első játékosától kezdve a körödben vagy eltemetsz még egy koporsót a halmod tetejére, vagy kihívást teszel: <i>„Ki tudok nyitni N-et”</i>, legfeljebb annyit, ahány összesen el van temetve.</li>
+<li><b>A temetés.</b> Mindenki egyszerre, titokban eltemet egy koporsót: koppints rá, majd az Eltemetem gombra. Aztán a kör első játékosától kezdve a körödben vagy eltemetsz még egy koporsót a halmod tetejére, vagy kihívást teszel: <i>„Ki tudok nyitni N-et”</i>, legfeljebb annyit, ahány összesen el van temetve.</li>
 <li><b>A licit.</b> Körben mindenki emel vagy passzol. A passz az egész körre szól. Az utolsó licitáló lesz az Ásó.</li>
 <li><b>Az ásás.</b> Az Ásó előbb a saját koporsóit nyitja ki felülről lefelé, aztán más sírokat választ, mindig a legfelső koporsót, amíg N nyitva nincs.</li>
 <li><b>Tiszta vagy átkozott.</b> Csupa Arany: tiszta ásás, a sírkő bearanyozódik. Átok a saját sírodban: te választod ki, melyik koporsót veszíted el. Más átka: ő vakon húz egyet a koporsóid közül, és az elvész. Az átok gazdája kezdi a következő kört.</li>

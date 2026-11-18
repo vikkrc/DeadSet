@@ -349,7 +349,7 @@ export default {
     coffinsH: "Dead Set : Cercueils",
     coffins: `<p>Un jeu de bluff rapide pour 3 à 10 joueurs, à choisir dans le salon. Chacun tient 3 cercueils d'Or et une Malédiction (4 et une avec l'option longue).</p>
 <ol>
-<li><b>L'enterrement.</b> Tout le monde enterre en secret un cercueil en même temps : touche-le, puis maintiens. Ensuite, à partir du premier joueur de la manche, à ton tour tu enterres un autre cercueil sur ta pile, ou tu lances un défi : <i>« Je peux en ouvrir N »</i>, au plus le nombre total enterré.</li>
+<li><b>L'enterrement.</b> Tout le monde enterre en secret un cercueil en même temps : touche-le, puis touche L'enterrer. Ensuite, à partir du premier joueur de la manche, à ton tour tu enterres un autre cercueil sur ta pile, ou tu lances un défi : <i>« Je peux en ouvrir N »</i>, au plus le nombre total enterré.</li>
 <li><b>L'enchère.</b> À tour de rôle, chacun surenchérit ou passe. Passer vaut pour toute la manche. Le dernier encore en lice devient le Fossoyeur.</li>
 <li><b>La fouille.</b> Le Fossoyeur ouvre d'abord ses propres cercueils de haut en bas, puis choisit d'autres tombes, toujours le cercueil du dessus, jusqu'à en avoir ouvert N.</li>
 <li><b>Propre ou maudit.</b> Que de l'Or : une fouille propre, et la stèle se dore. Une malédiction dans ta tombe : tu choisis le cercueil que tu perds. Celle d'un autre : il tire à l'aveugle un de tes cercueils, qui disparaît. Le propriétaire de la malédiction commence la manche suivante.</li>

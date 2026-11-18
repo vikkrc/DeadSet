@@ -164,7 +164,7 @@ export const GUIDE_EN = {
   coffinsH: 'Dead Set: Coffins',
   coffins: `<p>A quick bluffing game for 3–10 players, chosen in the lobby. Everyone holds 3 Gold coffins and one Curse (4 and one with the longer option).</p>
 <ol>
-<li><b>The burial.</b> Everyone secretly buries one coffin at once: tap it, then hold. Then, from the round's first player, each turn you either bury another coffin on top of your stack, or challenge: <i>"I can open N"</i>, up to the number buried in total.</li>
+<li><b>The burial.</b> Everyone secretly buries one coffin at once: tap it, then tap Bury it. Then, from the round's first player, each turn you either bury another coffin on top of your stack, or challenge: <i>"I can open N"</i>, up to the number buried in total.</li>
 <li><b>The bidding.</b> Around the table, raise or pass. A pass is final for the round. The last bidder left is the Digger.</li>
 <li><b>The dig.</b> The Digger opens their own coffins first, top down, then picks other graves, one top coffin at a time, until N are open.</li>
 <li><b>Clean, or cursed.</b> All Gold: a clean dig, and the headstone turns gilt. A curse in your own grave: you choose a coffin to lose. Someone else's curse: they draw one of your coffins blindly, and it is gone. Their owner starts the next round.</li>

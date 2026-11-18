@@ -89,11 +89,13 @@ function revealLedger(v) {
 }
 
 export function omenDock(v, h) {
-  const { S: UI, btn } = h;
+  const { S: UI, commitBtn, sealedNote } = h;
   const a = v.action || {};
   if (a.type !== 'oballot') return [];
   const ready = UI.sel.opred != null;
-  return [ready ? btn(a.ballot ? t('Change my omen') : t('Seal my omen'), 'oSeal', a.ballot ? 'btn-ghost' : 'btn-solid') : `<span class="dock-note" data-key="odn">${t('Pick where it stops')}</span>`];
+  // Classic's pattern (C1): the stamp while the sealed ballot stands; the button again once you change it.
+  if (a.ballot && UI.sel.opred === a.ballot.pred && (UI.sel.orot ?? 0) === (a.ballot.rot ?? 0)) return [sealedNote(t('Sealed · you can change it until everyone is in'), 'osealed')];
+  return [ready ? commitBtn('secret', 'oSeal', a.ballot ? t('Change my omen') : t('Seal my omen')) : `<span class="dock-note" data-key="odn">${t('Pick where it stops')}</span>`];
 }
 
 export function omenActs(h) {

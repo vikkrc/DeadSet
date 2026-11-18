@@ -349,7 +349,7 @@ export default {
     coffinsH: "Dead Set: Rakve",
     coffins: `<p>Rychlá blafovací hra pro 3–10 hráčů, volitelná v lobby. Každý má 3 Zlaté rakve a jednu Kletbu (v delší verzi 4 a jednu).</p>
 <ol>
-<li><b>Pohřeb.</b> Všichni najednou tajně zakopou jednu rakev: ťukni na ni a podrž. Pak od prvního hráče kola na svém tahu buď zakopeš další rakev navrch své hromádky, nebo vyzveš: <i>„Dokážu otevřít N“</i>, nejvýš tolik, kolik je celkem zakopáno.</li>
+<li><b>Pohřeb.</b> Všichni najednou tajně zakopou jednu rakev: ťukni na ni a potom na Zakopat. Pak od prvního hráče kola na svém tahu buď zakopeš další rakev navrch své hromádky, nebo vyzveš: <i>„Dokážu otevřít N“</i>, nejvýš tolik, kolik je celkem zakopáno.</li>
 <li><b>Dražba.</b> Dokola každý zvýší, nebo pasuje. Pas platí na celé kolo. Poslední, kdo zbude, je Hrobník.</li>
 <li><b>Kopání.</b> Hrobník nejdřív otevře vlastní rakve shora dolů, pak vybírá jiné hroby, vždy vrchní rakev, dokud jich není otevřeno N.</li>
 <li><b>Čistě, nebo prokletě.</b> Samé Zlato: čistá vykopávka a náhrobek zezlátne. Kletba ve vlastním hrobě: vybereš si, kterou rakev ztratíš. Cizí kletba: její majitel naslepo vytáhne jednu tvou rakev a ta je pryč. Majitel kletby začíná další kolo.</li>

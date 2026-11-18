@@ -530,7 +530,7 @@ details.more > div { padding: 12px 0 4px; display: grid; gap: 12px; animation: f
 .dock > .btn, .dock > .dock-note { flex: 1; max-width: 420px; }
 .dock .btn { min-height: 52px; box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.9); }
 .host-slot .btn-host { min-height: 52px; padding: 0 18px; max-width: 150px; background: var(--ink-2); border-color: var(--gilt-2); font-size: 10px; letter-spacing: 0.1em; line-height: 1.15; }
-.dock-note { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 14px; border: 1px dashed var(--gilt-2); border-radius: 3px; background: var(--ink-2); font: 600 11px/1 var(--sans); letter-spacing: 0.12em; text-transform: uppercase; color: var(--bone-2); }
+.dock-note { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 14px; border: 1px dashed var(--gilt-2); border-radius: 3px; background: var(--ink-2); font: 600 11px/1.35 var(--sans); text-align: center; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bone-2); }
 .dock-note .glyph { font-size: 17px; }
 .dock-note.stamped { border-style: solid; border-color: rgba(226, 88, 94, 0.55); color: var(--bone); animation: badge-stamp-in 0.5s var(--spring) both; }
 .dock-note.blood { color: var(--blood-ink); border-color: rgba(226, 88, 94, 0.5); }

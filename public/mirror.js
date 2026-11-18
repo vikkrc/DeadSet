@@ -115,11 +115,12 @@ function readingsGrid(v, L, me) {
 }
 
 export function mirrorDock(v, h) {
-  const { S: UI, btn } = h;
+  const { S: UI, commitBtn, sealedNote } = h;
   const a = v.action || {};
   if (a.type !== 'wballot') return [];
   const ready = UI.sel.wown && UI.sel.wpred;
-  return [ready ? btn(a.ballot ? t('Change my ballot') : t('Seal my ballot'), 'wSeal', a.ballot ? 'btn-ghost' : 'btn-solid') : `<span class="dock-note" data-key="wdn">${t('Choose both answers')}</span>`];
+  if (a.ballot && UI.sel.wown === a.ballot.own && UI.sel.wpred === a.ballot.pred) return [sealedNote(t('Sealed · you can change it until everyone is in'), 'wsealed')];
+  return [ready ? commitBtn('secret', 'wSeal', a.ballot ? t('Change my ballot') : t('Seal my ballot')) : `<span class="dock-note" data-key="wdn">${t('Choose both answers')}</span>`];
 }
 
 export function mirrorActs(h) {

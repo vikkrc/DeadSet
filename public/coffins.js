@@ -170,7 +170,7 @@ export function coffinsMain(v, me, h) {
       break;
     case 'C_BURY':
       if (a.type === 'cbury' && !a.done) {
-        stage = `<div class="cturn me rise-in" data-key="cbury-me"><span class="kicker">${th('Round {n}', { n: C.round })}</span><h2>${t('Bury your first coffin')}</h2><p class="small muted">${t('Tap a coffin, then hold to bury it. Everyone buries one at once.')}</p></div>`;
+        stage = `<div class="cturn me rise-in" data-key="cbury-me"><span class="kicker">${th('Round {n}', { n: C.round })}</span><h2>${t('Bury your first coffin')}</h2><p class="small muted">${t('Tap a coffin, then bury it. Everyone buries one at once.')}</p></div>`;
         hand = myCoffins(v, { pickable: true, selected: S.sel.ccard });
       } else {
         stage = `<div class="cturn" data-key="cbury"><span class="kicker">${th('Round {n}', { n: C.round })}</span><h2>${t(ghost ? 'The living bury their coffins' : 'Your coffin is in the ground')}</h2><p class="small muted">${th('{done}/{total} have buried', v.progress ?? { done: 0, total: 0 })}</p></div>`;
@@ -254,12 +254,12 @@ export function coffinsMain(v, me, h) {
 
 // ── Phone: the dock ────────────────────────────────────────────────────────
 export function coffinsDock(v, h) {
-  const { S, btn, holdBtn, rawName } = h;
+  const { S, btn, holdBtn, commitBtn, rawName } = h;
   const a = v.action || {};
   const parts = [];
   switch (a.type) {
     case 'cbury':
-      if (!a.done) parts.push(holdBtn('cBury', S.sel.ccard ? t('Hold to bury') : t('Tap a coffin first'), 'btn-solid', { dis: !S.sel.ccard }));
+      if (!a.done) parts.push(commitBtn('secret', 'cBury', S.sel.ccard ? t('Bury it') : t('Tap a coffin first'), { dis: !S.sel.ccard }));
       break;
     case 'cturn':
       if (S.ui.clantern && a.lantern?.length) {
@@ -283,7 +283,7 @@ export function coffinsDock(v, h) {
       else parts.push(`<span class="dock-note" data-key="cdn">${t('Tap a grave to dig')}</span>`);
       break;
     case 'closs':
-      parts.push(holdBtn('cLose', S.sel.ccard ? t('Hold to give it up') : t('Tap a coffin first'), 'btn-blood', { dis: !S.sel.ccard }));
+      parts.push(commitBtn('secret', 'cLose', S.sel.ccard ? t('Give it up') : t('Tap a coffin first'), { dis: !S.sel.ccard }));
       break;
     default: break;
   }

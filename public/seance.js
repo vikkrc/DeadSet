@@ -225,8 +225,8 @@ export function seanceMain(v, me, h) {
       const mine = s.visions ?? [];
       const others = readersOf(S, row).filter((id) => id !== me?.id && S.shown?.[id]);
       const pick = UI.sel.scard ?? (typeof s.lit === 'number' ? s.lit : null);
-      const title = !candle ? t('Describe your vision') : v.phase === 'S_LAST' ? t('One last candle') : s.lit != null ? (s.lit === 'abstain' ? t('You hold your candle.') : th('Your candle burns on {card}.', { card: cardName(row, s.lit) })) : t('Light your candle');
-      const hint = !candle ? t('Tell the table what you see and which card it points to. Tap any card to see it large.') : t('Tap the card your row\'s visions point to, then hold to light it. The most candles are put to the spirit.');
+      const title = !candle ? t('Describe your vision') : v.phase === 'S_LAST' ? t('One last candle') : s.lit != null ? (s.lit === 'abstain' ? t('Your candle stays dark.') : th('Your candle burns on {card}.', { card: cardName(row, s.lit) })) : t('Light your candle');
+      const hint = !candle ? t('Tell the table what you see and which card it points to. Tap any card to see it large.') : t('Tap the card your row\'s visions point to, then light the candle. The most candles are put to the spirit.');
       const tabs = `<nav class="s-tabs" data-key="stabs"><button class="${tab === 'mine' ? 'on' : ''}" data-act="sTab" data-id="mine">${esc(t(ROW_Q[row]))}</button><button class="${tab === 'table' ? 'on' : ''}" data-act="sTab" data-id="table">${t('The whole table')}</button></nav>`;
       const minePanel = `<div class="s-mine" data-key="smine">
           <div class="sm-yours">${mine.map((x) => vcard(x, { cls: 'big', frost: S.frosted.includes(me?.id), act: 'sZoomV', label: x })).join('')}<small>${t('Your vision')}</small></div>
@@ -262,7 +262,7 @@ function chipsRow(v) {
 }
 
 export function seanceDock(v, h) {
-  const { S: UI, btn, holdBtn } = h;
+  const { S: UI, btn, holdBtn, commitBtn } = h;
   const a = v.action || {};
   const S = v.seance;
   const s = v.me?.s ?? {};
@@ -276,11 +276,11 @@ export function seanceDock(v, h) {
       else parts.push(note(t('Tap a vision in your hand')));
       break;
     }
-    case 'scold': if (UI.sel.scold && S.cold > 0) parts.push(holdBtn('sCold', th('Hold to frost {name}\'s vision', { name: v.players.find((p) => p.id === UI.sel.scold)?.name ?? '' }), 'btn-blood')); break;
+    case 'scold': if (UI.sel.scold && S.cold > 0) parts.push(commitBtn('secret', 'sCold', th('Frost {name}\'s vision', { name: v.players.find((p) => p.id === UI.sel.scold)?.name ?? '' }))); break;
     case 'slight': {
       const pick = UI.sel.scard;
-      if (pick != null && pick !== s.lit) parts.push(holdBtn('sLight', t('Hold to light the candle'), 'btn-blood'));
-      else if (s.lit == null) { parts.push(note(t('Tap a card'))); parts.push(holdBtn('sAbstain', t('Hold my candle'), '')); }
+      if (pick != null && pick !== s.lit) parts.push(commitBtn('secret', 'sLight', t('Light the candle')));
+      else if (s.lit == null) { parts.push(note(t('Tap a card'))); parts.push(commitBtn('secret', 'sAbstain', t('Keep my candle dark'), { cls: 'btn-ghost' })); }
       else parts.push(`<span class="dock-note stamped" data-key="slit">${glyph('check')} ${t('Your candle is lit')}</span>`);
       break;
     }

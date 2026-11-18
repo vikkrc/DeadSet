@@ -140,7 +140,7 @@ export function midnightMain(v, me, h) {
 }
 
 export function midnightDock(v, h) {
-  const { S, btn, holdBtn, rawName } = h;
+  const { S, btn, holdBtn, commitBtn, rawName } = h;
   const a = v.action || {};
   const sel = S.sel.npick ?? [];
   const parts = [];
@@ -155,12 +155,12 @@ export function midnightDock(v, h) {
       const tables = sel.filter(isTable);
       const ps = sel.filter((x) => !isTable(x));
       const ready = k === 'WITCH' ? ps.length === 2 : k === 'MENTALIST' ? ps.length === 1 || tables.length === 2 : (k === 'lonePeek' || k === 'GAMBLER') ? tables.length === 1 : ps.length === 1;
-      parts.push(ready ? holdBtn('nAct', t(k === 'WITCH' || k === 'DOUBLE_AGENT' || k === 'GAMBLER' ? 'Hold to swap' : k === 'copy' ? 'Hold to copy' : 'Hold to look'), 'btn-blood') : note(t(KIND_TITLE[k] ?? '')));
+      parts.push(ready ? commitBtn('secret', 'nAct', t(k === 'WITCH' || k === 'DOUBLE_AGENT' || k === 'GAMBLER' ? 'Swap' : k === 'copy' ? 'Copy' : 'Look')) : note(t(KIND_TITLE[k] ?? '')));
       break;
     }
     case 'nvote': {
       const pickd = sel[0];
-      if (pickd && pickd !== a.choice) parts.push(holdBtn('nVote', th('Hold to point at {name}', { name: rawName(pickd) }), 'btn-blood'));
+      if (pickd && pickd !== a.choice) parts.push(commitBtn('secret', 'nVote', th('Point at {name}', { name: rawName(pickd) })));
       else if (a.choice) parts.push(`<span class="dock-note stamped" data-key="nv-${a.choice}">${glyph('check')} ${th('You point at {name}', { name: rawName(a.choice) })}</span>`);
       break;
     }

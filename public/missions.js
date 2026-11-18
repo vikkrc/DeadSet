@@ -262,7 +262,7 @@ function reckonStage(v, a) {
 
 // ── Dock ───────────────────────────────────────────────────────────────────
 export function missionDock(v, h) {
-  const { S, btn, holdBtn, rawName } = h;
+  const { S, btn, holdBtn, commitBtn, rawName } = h;
   const a = v.action || {};
   const parts = [];
   switch (a.type) {
@@ -278,7 +278,7 @@ export function missionDock(v, h) {
       parts.push(btn(`${glyph('reject')} ${t('Reject')}`, 'mVote', `btn-blood ${a.choice === false ? 'is-on' : ''}`, false, 'reject', 'data-v="0"'));
       break;
     case 'mplay':
-      if (!a.played && S.sel.mcard && S.ui.mcover?.[v.phaseId] === false) parts.push(holdBtn('mPlay', t(S.sel.mcard === 'F' ? 'Hold to play Sabotage' : 'Hold to play Succeed'), 'btn-solid'));
+      if (!a.played && S.sel.mcard && S.ui.mcover?.[v.phaseId] === false) parts.push(commitBtn('secret', 'mPlay', t(S.sel.mcard === 'F' ? 'Play Sabotage' : 'Play Succeed')));
       break;
     case 'mnight':
       if (!a.done && S.ui.veiled[v.phaseId] === false) {

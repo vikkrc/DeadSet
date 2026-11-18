@@ -349,7 +349,7 @@ export default {
     coffinsH: "Dead Set: Ataúdes",
     coffins: `<p>Un juego de faroles rápido para 3–10 jugadores, que se elige en la sala. Cada cual tiene 3 ataúdes de Oro y una Maldición (4 y una con la opción larga).</p>
 <ol>
-<li><b>El entierro.</b> Todos entierran en secreto un ataúd a la vez: tócalo y mantén. Después, desde el primer jugador de la ronda, en tu turno entierras otro ataúd encima de tu pila o lanzas un desafío: <i>«Puedo abrir N»</i>, como mucho el total enterrado.</li>
+<li><b>El entierro.</b> Todos entierran en secreto un ataúd a la vez: tócalo y luego toca Enterrarlo. Después, desde el primer jugador de la ronda, en tu turno entierras otro ataúd encima de tu pila o lanzas un desafío: <i>«Puedo abrir N»</i>, como mucho el total enterrado.</li>
 <li><b>La puja.</b> Por turnos, cada uno sube o pasa. Pasar vale para toda la ronda. El último que queda es el Sepulturero.</li>
 <li><b>La excavación.</b> El Sepulturero abre primero sus propios ataúdes de arriba abajo; luego elige otras tumbas, siempre el ataúd de arriba, hasta abrir N.</li>
 <li><b>Limpia o maldita.</b> Todo Oro: una excavación limpia, y la lápida se dora. Una maldición en tu tumba: eliges qué ataúd pierdes. La de otro: saca a ciegas uno de tus ataúdes y desaparece. El dueño de la maldición empieza la ronda siguiente.</li>
