@@ -2366,6 +2366,8 @@ export default {
     "Choose a number from 1 to 9.": "Vyber číslo od 1 do 9.",
     "Crews": "Partie",
     "Dealt at random, or chosen here.": "Rozdelené náhodne alebo vybrané tu.",
+    "{n} games of bluff and deduction. One phone each.": "{n} hier plných blafovania a dedukcie. Každý jeden telefón.",
+    "{a}–{b} players · one phone each · no app to install": "{a}–{b} hráčov · každý jeden telefón · nič netreba inštalovať",
     "Every reading": "Každé čítanie",
     "You made no prediction.": "Netipoval si.",
     "You said {x}; they chose {y}.": "Povedal si {x}; zvolil {y}.",

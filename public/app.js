@@ -675,6 +675,9 @@ function render() {
 const toastsHtml = (cls) => `<div class="${cls}" data-key="${cls}" aria-live="polite">${S.notes.map((n) => `<div class="toast ${n.kind}" data-key="n-${n.id}">${esc(n.text)}</div>`).join('')}</div>`;
 const inRoomView = () => S.route.name === 'room' && S.conn !== 'gone' && !!S.token && !!V();
 
+/** The collection at a glance, for the home page (E1). */
+const HOME = { modes: 11, min: 3, max: 25 };
+
 function view() {
   const r = S.route;
   let html = '';
@@ -850,7 +853,7 @@ function homeScreen() {
         <p class="whisper" data-key="wh-${S.whisper ?? 0}">“${esc(line)}”</p>
       </section>
       <section class="h-panel">
-        <p class="h-tag">${t('Hidden roles. Secret votes. Find them before they outnumber you.')}</p>
+        <p class="h-tag">${t('{n} games of bluff and deduction. One phone each.', { n: HOME.modes })}</p>
         <div class="seg" role="tablist"><button role="tab" data-act="homeTab" data-id="host" aria-pressed="${tab === 'host'}">${t('Host a table')}</button><button role="tab" data-act="homeTab" data-id="join" aria-pressed="${tab === 'join'}">${t('Join a table')}</button></div>
         ${tab === 'host' ? `<div class="stack" data-key="h-host">
           <label class="field"><span>${t('Your name')}</span><input class="input" maxlength="20" autocomplete="nickname" placeholder="${esc(t('e.g. Morgan'))}" data-draft="createName" value="${esc(d.createName ?? '')}"></label>
@@ -867,7 +870,7 @@ function homeScreen() {
           <button class="btn btn-wide btn-tall ${code.length === 6 ? 'btn-solid' : ''}" data-act="gotoRoom" ${code.length === 6 ? '' : 'disabled'}>${t('Find the table')}</button>
           <p class="foot">${t('Or scan the QR code on the host\'s screen')}</p>
         </div>`}
-        <p class="foot">${t('5–13 players · one phone each · no app to install')}</p>
+        <p class="foot">${t('{a}–{b} players · one phone each · no app to install', { a: HOME.min, b: HOME.max })}</p>
       </section>
     </div>
   </main>`;

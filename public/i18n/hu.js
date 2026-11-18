@@ -2366,6 +2366,8 @@ export default {
     "Choose a number from 1 to 9.": "Válassz számot 1 és 9 között.",
     "Crews": "Csapatok",
     "Dealt at random, or chosen here.": "Véletlenszerűen osztva, vagy itt választva.",
+    "{n} games of bluff and deduction. One phone each.": "{n} blöff- és nyomozós játék. Mindenkinek egy telefon.",
+    "{a}–{b} players · one phone each · no app to install": "{a}–{b} játékos · mindenkinek egy telefon · nincs mit telepíteni",
     "Every reading": "Minden olvasás",
     "You made no prediction.": "Nem tippeltél.",
     "You said {x}; they chose {y}.": "Te {x}-t mondtál; ő {y}-t választotta.",

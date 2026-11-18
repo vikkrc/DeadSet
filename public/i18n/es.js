@@ -2366,6 +2366,8 @@ export default {
     "Choose a number from 1 to 9.": "Elige un número del 1 al 9.",
     "Crews": "Cuadrillas",
     "Dealt at random, or chosen here.": "Al azar, o elegidas aquí.",
+    "{n} games of bluff and deduction. One phone each.": "{n} juegos de farol y deducción. Un móvil cada uno.",
+    "{a}–{b} players · one phone each · no app to install": "{a}–{b} jugadores · un móvil cada uno · nada que instalar",
     "Every reading": "Todas las lecturas",
     "You made no prediction.": "No hiciste ninguna predicción.",
     "You said {x}; they chose {y}.": "Dijiste {x}; eligió {y}.",
