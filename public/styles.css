@@ -3760,17 +3760,13 @@ body.is-board .c-stamp { font-size: 32px; }
 /* ═══ Dead Set: Séance ═══════════════════════════════════════════════════
    A dark parlour: vellum visions and story cards, a candle clock, gilt for
    what is solved, char for what is struck, frost for the Ghost's cold spots. */
-.srole { width: 6.2em; aspect-ratio: 11 / 18; padding: 1.05em 0.75em 0.9em; gap: 0.32em; font-size: 9px; flex: none; }
-.srole .nm { font-size: 1.6em; line-height: 1; }
-.srole.big { font-size: 16px; }
-.srole.thumb { font-size: 7px; }
-.srole.back .sig { width: 2.6em; height: 2.6em; font-size: 1.5em; }
 .s-lobbycards { display: flex; justify-content: center; gap: 12px; margin: 10px 0 14px; }
+.s-lobbycards .srole { font-size: 7px; }
 
 /* the vision: motifs collide inside the arch */
 .vcard { width: 6.4em; aspect-ratio: 11 / 17; padding: 0.9em 0.7em; font-size: 10px; flex: none; justify-content: center; }
-.vcard.thumb { font-size: 7px; padding: 0.6em 0.5em; }
-.vcard.big { font-size: 22px; }
+.vcard.tarot--thumb { font-size: 7px; padding: 0.6em 0.5em; }
+.vcard.tarot--hand { font-size: 22px; }
 .vcard.back .sig { width: 2.6em; height: 2.6em; font-size: 1.5em; }
 .v-art { position: relative; width: 100%; flex: 1; min-height: 0; clip-path: var(--arch); background: var(--sepia); }
 .v-art::before { content: ''; position: absolute; inset: 1.5px; clip-path: var(--arch); background: radial-gradient(circle at 50% 40%, var(--vellum) 0 38%, transparent 80%), radial-gradient(circle, rgba(29, 21, 16, 0.55) 0.9px, transparent 1.4px) 0 0 / 5px 5px, var(--vellum-2); }
@@ -3793,13 +3789,12 @@ body.is-board .c-stamp { font-size: 32px; }
   background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.55), transparent 45%), linear-gradient(160deg, rgba(196, 220, 240, 0.72), rgba(120, 150, 180, 0.6)); backdrop-filter: blur(1.5px); box-shadow: inset 0 0 1.4em rgba(255, 255, 255, 0.6); }
 .v-frost .emblem { width: 38%; color: #fff; --paper: transparent; filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8)); }
 .v-frost b { font: 600 0.9em/1 var(--text); letter-spacing: 0.24em; text-transform: uppercase; color: #fff; text-shadow: 0 0 6px rgba(40, 70, 110, 0.8); }
-.vcard.thumb .v-frost b { display: none; }
+.vcard.tarot--thumb .v-frost b { display: none; }
 .v-mark { position: absolute; top: -6px; right: -6px; z-index: 5; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: var(--blood); color: #fff; box-shadow: 0 0 0 2px var(--ink); }
 .v-mark svg { width: 13px; height: 13px; }
-button.vcard { cursor: pointer; border: 0; transition: transform 0.2s var(--ease), box-shadow 0.2s; }
-.vcard.sel, .scard.sel { transform: translateY(-4px); box-shadow: 0 0 0 2px var(--gilt-hi), 0 0 24px var(--glow), 0 1.4em 2.4em -1.4em #000; }
 
 /* the story card */
+/* Séance story cards and visions are tarot cards with their own, squarer geometry: they carry etchings and names, not an arched window */
 .scard { width: 7.2em; aspect-ratio: 11 / 16; padding: 0.95em 0.6em 0.8em; gap: 0.3em; font-size: 10px; flex: none; }
 .scard.mini { font-size: 7px; }
 .scard .arc-num { font-size: 0.8em; }
@@ -3807,12 +3802,9 @@ button.vcard { cursor: pointer; border: 0; transition: transform 0.2s var(--ease
 .scard .arc-art { width: 92%; }
 .s-bd { position: relative; display: block; width: 92%; flex: 1; min-height: 0; overflow: hidden; clip-path: var(--arch); color: var(--sepia); background: radial-gradient(circle at 50% 30%, var(--vellum), var(--vellum-2)); --ground: var(--vellum); }
 .s-bd svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-button.scard { cursor: pointer; border: 0; transition: transform 0.2s var(--ease), box-shadow 0.2s, filter 0.3s; }
 .scard.solved { box-shadow: 0 0 0 2px var(--gilt-hi), 0 0 30px rgba(230, 196, 120, 0.55), 0 1.4em 2.4em -1.4em #000; }
 .scard.solved::after { content: ''; position: absolute; inset: -14px; z-index: -1; border-radius: 50%; background: repeating-conic-gradient(rgba(230, 196, 120, 0.35) 0 3deg, transparent 3deg 12deg); mask: radial-gradient(circle, transparent 45%, #000 46%, transparent 72%); animation: spin 40s linear infinite; }
 .scard.truth { box-shadow: 0 0 0 2px var(--rubric), 0 1.4em 2.4em -1.4em #000; }
-.scard.struck { filter: grayscale(0.85) brightness(0.42) sepia(0.5); }
-.scard.dim { opacity: 0.35; }
 .s-x { position: absolute; inset: 12% 10%; z-index: 3; background: linear-gradient(45deg, transparent 47%, var(--blood) 47% 53%, transparent 53%), linear-gradient(-45deg, transparent 47%, var(--blood) 47% 53%, transparent 53%); opacity: 0.9; }
 .srow-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 10px; justify-items: center; margin: 8px 0; }
 .srow-cards .scard { width: 100%; max-width: 8.4em; }
@@ -3836,8 +3828,8 @@ button.scard { cursor: pointer; border: 0; transition: transform 0.2s var(--ease
 .svr-item { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .svr-item > span, .svr-item > button { display: inline-flex; }
 .svr-item figcaption, .sbv figcaption { display: flex; align-items: center; gap: 5px; font: 600 10.5px/1.1 var(--text); letter-spacing: 0.12em; text-transform: uppercase; color: var(--bone-2); }
-.svrows .vcard.thumb { font-size: 8.5px; }
-.svrows.compact .vcard.thumb { font-size: 6.5px; }
+.svrows .vcard.tarot--thumb { font-size: 8.5px; }
+.svrows.compact .vcard.tarot--thumb { font-size: 6.5px; }
 .s-disc { width: 56px; height: 56px; border-radius: 50%; overflow: hidden; display: inline-grid; place-items: center; flex: none; background: var(--ink-2); border: 1.5px solid var(--gilt-2); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--iron); }
 .s-disc svg { width: 100%; height: 100%; }
 .s-disc b { font: 600 22px var(--text); color: var(--bone); }
@@ -3860,7 +3852,7 @@ button.scard { cursor: pointer; border: 0; transition: transform 0.2s var(--ease
 .sg-who b { font: 600 12px/1.1 var(--text); letter-spacing: 0.14em; text-transform: uppercase; }
 .sg-who small { font: italic 400 13px/1.2 var(--text); color: var(--bone-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sg-sent { display: flex; gap: 6px; }
-.sg-sent .vcard.thumb { font-size: 6.4px; }
+.sg-sent .vcard.tarot--thumb { font-size: 6.4px; }
 .sg-empty { width: 44px; aspect-ratio: 11 / 17; display: grid; place-items: center; border: 1px dashed var(--gilt-2); border-radius: 4px; background: transparent; color: var(--gilt); cursor: pointer; }
 .sg-empty svg { width: 18px; height: 18px; }
 .sg-hand { margin: 12px 0; }
@@ -3872,24 +3864,24 @@ button.scard { cursor: pointer; border: 0; transition: transform 0.2s var(--ease
 .sd-body { margin-top: 8px; padding: 14px; text-align: left; color: var(--sepia); }
 .sd-body p { color: var(--sepia-2); }
 .sd-hand { display: flex; justify-content: center; gap: 10px; margin: 8px 0; }
-.sd-hand .vcard.thumb { font-size: 9px; }
+.sd-hand .vcard.tarot--thumb { font-size: 9px; }
 .sd-body .ns-name { color: var(--sepia); }
 
 .s-mine { text-align: center; margin: 8px 0; }
 .sm-cards { display: flex; justify-content: center; gap: 12px; margin-top: 6px; }
-.sm-cards .vcard.big { font-size: 20px; }
+.sm-cards .vcard.tarot--hand { font-size: 20px; }
 .s-ref { margin: 10px 0; }
 .sr-cards { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
 .sr-cards figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; font: 600 10px/1 var(--text); letter-spacing: 0.12em; text-transform: uppercase; color: var(--bone-2); }
-.sr-cards .vcard.thumb { font-size: 8px; }
+.sr-cards .vcard.tarot--thumb { font-size: 8px; }
 .s-sheet section { margin: 10px 0; }
 
 /* scenes */
 .sm-vis { display: flex; justify-content: center; gap: 14px; margin-top: 12px; }
-.sm-vis .vcard.big { font-size: 24px; animation: tarot-turn 0.7s var(--ease) both; }
+.sm-vis .vcard.tarot--hand { font-size: 24px; animation: tarot-turn 0.7s var(--ease) both; }
 .sm-all { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 52rem; margin-top: 14px; }
 .sm-all > span { animation: fadeUp 0.5s calc(var(--i) * 0.35s + 0.6s) var(--ease) both; }
-.sm-all .vcard.thumb { font-size: 11px; }
+.sm-all .vcard.tarot--thumb { font-size: 11px; }
 .sm-cold .emblem { color: #dbe9f7; filter: drop-shadow(0 0 12px rgba(200, 230, 255, 0.7)); }
 .sm-verdicts { display: flex; justify-content: center; gap: 18px; margin: 14px 0 6px; flex-wrap: wrap; }
 .smv { display: flex; flex-direction: column; align-items: center; gap: 8px; animation: fadeUp 0.6s calc(var(--i) * 2.4s + 0.4s) var(--ease) both; }
@@ -3916,7 +3908,7 @@ button.scard { cursor: pointer; border: 0; transition: transform 0.2s var(--ease
 .se-who b { font: 600 12px/1.1 var(--text); letter-spacing: 0.14em; text-transform: uppercase; }
 .se-who small { font: italic 400 13px var(--text); color: var(--ash); }
 .se-vis { grid-area: vis; display: flex; align-items: center; gap: 8px; }
-.se-vis .vcard.thumb { font-size: 7.5px; }
+.se-vis .vcard.tarot--thumb { font-size: 7.5px; }
 .se-swap { display: flex; align-items: center; gap: 6px; color: var(--blood-ink); }
 .se-swap svg { width: 14px; height: 14px; }
 .se-swap small { font: italic 400 12px/1.2 var(--text); max-width: 12ch; }
@@ -3940,7 +3932,7 @@ button.scard { cursor: pointer; border: 0; transition: transform 0.2s var(--ease
 .sb-row .srow-cards .scard { font-size: 9px; max-width: none; }
 .sb-vis { grid-area: vis; display: flex; flex-wrap: wrap; gap: 14px; min-height: 20px; }
 .sbv { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.sbv .vcard.thumb { font-size: 9px; }
+.sbv .vcard.tarot--thumb { font-size: 9px; }
 .sb-ghost { padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
 .sb-ghost b { font: 600 22px/1 var(--black); padding-bottom: 0.08em; }
 .sb-ghost small { font: italic 400 14px var(--text); color: var(--bone-2); }
@@ -3961,7 +3953,7 @@ button.scard { cursor: pointer; border: 0; transition: transform 0.2s var(--ease
 .sb-row .srow-cards { display: flex; gap: 8px; }
 .sb-row .srow-cards .scard { width: 7.8em; font-size: 10.5px; }
 .sb-vis { gap: 10px; align-items: flex-start; }
-.sbv .vcard.thumb { font-size: 11px; }
+.sbv .vcard.tarot--thumb { font-size: 11px; }
 .sboard .k-cols { grid-template-columns: minmax(0, 1fr) 300px; }
 .v-frost { justify-content: flex-end; padding-bottom: 0.8em; background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.45), transparent 45%), linear-gradient(160deg, rgba(196, 220, 240, 0.42), rgba(120, 150, 180, 0.38)); backdrop-filter: blur(0.6px); }
 .v-frost .emblem { position: absolute; top: 8%; right: 8%; width: 26%; }
@@ -4072,7 +4064,7 @@ button.scard { cursor: pointer; border: 0; transition: transform 0.2s var(--ease
 /* the introduction */
 .s-intro { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 6px 0; }
 .s-intro.open { flex-direction: row; align-items: center; justify-content: center; }
-.s-intro.open .srole.big { font-size: 11px; }
+.s-intro.open .srole.tarot--hand { font-size: 11px; }
 .s-how { margin: 0; padding-left: 20px; max-width: 18rem; font: 400 15px/1.35 var(--text); color: var(--bone); }
 .s-how li { margin: 0 0 7px; }
 .s-how li::marker { color: var(--gilt-hi); font-family: var(--bit); }
@@ -4086,12 +4078,12 @@ button.scard { cursor: pointer; border: 0; transition: transform 0.2s var(--ease
 .sg-chip.on { border-color: var(--gilt-hi); color: var(--bone); box-shadow: 0 0 0 2px rgba(233, 194, 122, 0.15); }
 .sg-chip.done:not(.on) { opacity: 0.7; }
 .sg-sent { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 4px 0 8px; }
-.sg-sent .vcard.thumb { font-size: 9px; }
+.sg-sent .vcard.tarot--thumb { font-size: 9px; }
 .sg-hand { margin: 8px 0 4px; }
 .sg-hand > .kicker { display: block; margin-bottom: 6px; }
 .sgh-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
 .sgh-cards .vcard { width: 100%; font-size: clamp(8px, 2.4vw, 12px); }
-.sgh-cards .vcard.sel { transform: translateY(-5px); }
+.sgh-cards .vcard.is-chosen { transform: translateY(-5px); }
 
 /* a reader's row: your vision, the others on your row, the candidates */
 .s-tabs { display: flex; border: 1px solid var(--iron); border-radius: 4px; overflow: hidden; margin: 0 0 10px; }
@@ -4104,7 +4096,7 @@ button.scard { cursor: pointer; border: 0; transition: transform 0.2s var(--ease
 .sm-others { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
 .sm-others > small { width: 100%; }
 .sm-others figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; }
-.sm-others .vcard.thumb { width: 66px; font-size: 7px; }
+.sm-others .vcard.tarot--thumb { width: 66px; font-size: 7px; }
 .sm-others figcaption { font: 600 10px/1 var(--text); letter-spacing: 0.12em; text-transform: uppercase; color: var(--bone-2); }
 button.vcard { cursor: zoom-in; }
 .sgh-cards button.vcard, .sd-hand button.vcard { cursor: pointer; }
@@ -4117,7 +4109,7 @@ button.vcard { cursor: zoom-in; }
 .st-solved svg { width: 14px; height: 14px; }
 .st-visions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 4px; }
 .st-vis { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; }
-.st-vis .vcard.thumb { width: 70px; font-size: 7.5px; }
+.st-vis .vcard.tarot--thumb { width: 70px; font-size: 7.5px; }
 .st-vis figcaption { font: 600 10px/1 var(--text); letter-spacing: 0.12em; text-transform: uppercase; color: var(--bone-2); }
 
 /* the Naming: everyone with their candle record */
@@ -4152,7 +4144,7 @@ button.vcard { cursor: zoom-in; }
 .sb-row { padding: 6px 0; }
 .sb-row .srow-cards { display: flex; gap: 8px; margin: 0; }
 .sb-row .srow-cards .scard { width: 7.4em; font-size: 12.5px; }
-.sbv .vcard.thumb { width: 6.6em; font-size: 12px; }
+.sbv .vcard.tarot--thumb { width: 6.6em; font-size: 12px; }
 /* bigger motifs now that the whole card is theirs */
 .vl0 .vm2 { width: 96%; left: 2%; top: 16%; }
 .vl0 .vm1 { width: 50%; left: 25%; top: 34%; }
@@ -4489,8 +4481,8 @@ button.g-stone:active { transform: scale(0.96); }
 .q-places .scard .nm { font-size: 1.32em; }
 .q-places.n20, .q-places.n30 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .q-places.n30 .scard { font-size: 5.4px; }
-.q-places .scard.struck { filter: grayscale(0.9) brightness(0.38); }
-.q-places .scard.struck::before { content: ''; position: absolute; inset: 10% 6%; z-index: 3; background: linear-gradient(to top right, transparent calc(50% - 1px), var(--blood-ink) 50%, transparent calc(50% + 1px)); pointer-events: none; }
+.q-places .scard.is-struck { filter: grayscale(0.9) brightness(0.38); }
+.q-places .scard.is-struck::before { content: ''; position: absolute; inset: 10% 6%; z-index: 3; background: linear-gradient(to top right, transparent calc(50% - 1px), var(--blood-ink) 50%, transparent calc(50% + 1px)); pointer-events: none; }
 .q-places .scard.guess { box-shadow: 0 0 0 2px var(--blood-ink), 0 0 20px rgba(226, 88, 94, 0.5); }
 .q-places.end .scard { font-size: 7px; }
 /* the arrows of the last questions */
