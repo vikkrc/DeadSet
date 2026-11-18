@@ -7,7 +7,7 @@ import { sound, score, haptic, burstAt, celebrate, ambient } from './fx.js';
 import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './board.js';
 import { seatLayout } from './layout.js';
 import { sceneMs, scenesFor } from './interludes.js';
-import { MODES, MODE_IDS, FAMILIES, COLLECTION, modeOfPhase } from './modes.js';
+import { MODES, MODE_IDS, FAMILIES, COLLECTION, modeOfPhase, modeInfo } from './modes.js';
 import { cardArt, roleEmblemId, roleNumber } from './cards.js';
 import { emblem } from './emblems.js';
 import { isGravePhase, graveMain, graveDock, graveActs, graveMoment, graveMomentHtml, G_MOMENT_TIME, graveEndHtml, graveLobbyDeck, GRAVE_QUIET, graveTitle, lobbyCrews, graveLobbyCenter } from './graverobbers.js';
@@ -1134,7 +1134,7 @@ function roomScreen() {
     </aside>`;
   const top = `<header class="topbar" data-key="top">
       <span class="tb-emblem">${isNight(v.phase) ? glyph('moon') : glyph('sun')}</span>
-      <div class="phase-mini"><strong class="${pw.night ? 'night' : ''}">${esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</strong><span>${esc(stepOf(v))}${v.phase === 'LOBBY' ? ` · ${t('{n} seated', { n: v.players.length })}` : ['missions', 'exorcism', 'carnival', 'midnight', 'seance', 'coffins', 'graverobbers', 'mimic', 'omen', 'mirror'].includes(v.mode) ? '' : ` · ${t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}`}</span></div>
+      <div class="phase-mini"><strong class="${pw.night ? 'night' : ''}">${esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</strong><span>${esc(stepOf(v))}${v.phase === 'LOBBY' ? ` · ${t('{n} seated', { n: v.players.length })}` : !modeInfo(v.mode).aliveCount ? '' : ` · ${t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}`}</span></div>
       <span class="clock" data-clock></span>
       <button class="btn btn-ghost icon-btn" data-act="sound" aria-label="${esc(t(sound.on ? 'Mute sounds' : 'Turn sounds on'))}">${glyph(sound.on ? 'bell' : 'bellOff')}</button>
       <button class="btn btn-ghost icon-btn" data-act="sheet" data-id="record" aria-label="${esc(t('Open match record'))}">${glyph('menu')}</button>
@@ -2044,7 +2044,7 @@ function deathRoom(v, me, D) {
 function endMain(v, me) {
   const title = v.winner === 'OMEN' ? omenTitle(v) : v.winner === 'MIRROR' ? mirrorTitle(v) : v.winner === 'MIMIC' ? mimicTitle(v.mimic) : v.winner === 'GRAVEROBBERS' ? graveTitle(v.graverobbers) : v.winner === 'SEANCE' ? t(seanceTitle(v.seance?.result)) : v.winner === 'MIDNIGHT' ? t(midnightTitle(v.midnight?.winners?.sides)) : v.winner === 'CARNIVAL' ? t('{names} wins.', { names: (v.carnival?.winners ?? []).map((id) => v.players.find((p) => p.id === id)?.name ?? '') }) : v.winner === 'COFFINS' ? t('{a} wins.', { a: v.players.find((p) => p.id === v.coffins?.winner)?.name ?? '' }) : t({ DEMON: 'The Demon wins.', DEATH: 'Death wins.', NON_DEATH: 'The living win.', JESTER: 'The Jester wins.', DRAW: 'A draw.', ABORTED: 'Abandoned.', LOVERS: 'The Lovers win.', CULT: 'The Cult wins.', RIPPER: 'The Ripper wins.' }[v.winner] ?? 'The End');
   const won = didIWin(v, v.winner);
-  const revealed = !['coffins', 'carnival', 'midnight', 'seance', 'graverobbers', 'mimic', 'omen', 'mirror'].includes(v.mode) && v.players.some((p) => p.role);
+  const revealed = !!modeInfo(v.mode).rolesAtEnd && v.players.some((p) => p.role);
   const everySecret = () => `<section data-key="reveal"><div class="rule">${t('Every secret')}</div>${revealed ? `<ul class="ledger">${v.players.map((p, i) => `<li class="${p.alive ? '' : 'dead'} ${p.id === me?.id ? 'me' : ''}" style="--i:${i}" data-key="rv-${p.id}">
       <span class="seat">${p.role ? glyph(p.role.glyph) : ''}</span>
       <span class="who"><b>${esc(p.name)}</b><small>${p.role ? esc(roleF(p.role.id, 'name')) : '—'}${p.originalRole ? ` ${th('(was {role})', { role: p.originalRole.id })}` : ''} · ${p.alive ? t('alive') : `† ${esc(stamp(p.diedAt))}`}</small></span>
@@ -2064,7 +2064,7 @@ function endMain(v, me) {
     ${v.mode === 'mimic' ? mimicEndHtml(v) : ''}
     ${v.mode === 'omen' ? omenEndHtml(v) : ''}
     ${v.mode === 'mirror' ? mirrorEndHtml(v) : ''}
-    ${['coffins', 'carnival', 'midnight', 'seance', 'graverobbers', 'mimic', 'omen', 'mirror'].includes(v.mode) ? '' : everySecret()}
+    ${modeInfo(v.mode).rolesAtEnd ? everySecret() : ''}
     ${me && !me.moderator ? `<details class="more" data-key="endnotes"><summary>${t('My notes')}</summary><div>${feed([...(v.private || [])].reverse(), 'feed-private')}</div></details>` : ''}
     <details class="more" data-key="endrec"><summary>${t('Public record')}</summary><div>${recordBlock(v)}</div></details>
     <div class="row center" data-key="endbtns">${v.recap ? `<button class="btn" data-act="recap">${glyph('scroll')} ${t('View recap')}</button>` : ''}</div>`;

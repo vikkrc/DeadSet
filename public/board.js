@@ -172,8 +172,8 @@ export function boardScreen(v, h) {
           ${classic ? `<span class="kicker">${t('Rule cards')}</span>
           <div class="deckrow">${ruleCards}</div>` : ''}
           ${v.mode === 'coffins' ? `<div class="c-lobbyhand">${Array.from({ length: s.c?.coffins ?? 4 }, (_, i) => coffinCard(i === (s.c?.coffins ?? 4) - 1 ? 'C' : 'G')).join('')}</div><p class="small muted">${th('Each player: {g} Gold and one Curse.', { g: (s.c?.coffins ?? 4) - 1 })}</p>` : ''}
-          ${['exorcism', 'coffins', 'carnival', 'midnight', 'seance', 'graverobbers', 'mimic', 'omen', 'mirror'].includes(v.mode) ? '' : `<span class="kicker">${t('Story')}</span>`}
-          ${['exorcism', 'coffins', 'carnival', 'midnight', 'seance', 'graverobbers', 'mimic', 'omen', 'mirror'].includes(v.mode) ? '' : `<p class="scenario">${s.scenario.mode === 'manual' && s.scenario.who ? esc(`${scen('WHO', s.scenario.who)} · ${scen('WHERE', s.scenario.where)} · ${scen('WHY', s.scenario.why)}`) : t('Dealt when the match begins.')}</p>`}
+          ${!modeInfo(v.mode).story ? '' : `<span class="kicker">${t('Story')}</span>`}
+          ${!modeInfo(v.mode).story ? '' : `<p class="scenario">${s.scenario.mode === 'manual' && s.scenario.who ? esc(`${scen('WHO', s.scenario.who)} · ${scen('WHERE', s.scenario.where)} · ${scen('WHY', s.scenario.why)}`) : t('Dealt when the match begins.')}</p>`}
         </section>
       </div></main>`;
   }
