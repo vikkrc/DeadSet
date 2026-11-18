@@ -667,7 +667,7 @@ function morphNode(a, b) {
   for (const { name, value } of [...b.attributes]) if (a.getAttribute(name) !== value) a.setAttribute(name, value);
   for (const { name } of [...a.attributes]) {
     if (b.hasAttribute(name)) continue;
-    if (name === 'style' || (name === 'open' && a.tagName === 'DETAILS')) continue; // JS-driven / user-driven
+    if (name === 'style' || name === 'data-tiny' || (name === 'open' && a.tagName === 'DETAILS')) continue; // JS-driven / user-driven
     a.removeAttribute(name);
   }
   if (a.tagName === 'INPUT') {
@@ -724,8 +724,29 @@ function render() {
   ambient(night ? 'night' : null);
   morph(app, view());
   mountBalls(app);
+  legibility();
   app.querySelectorAll('[data-scroll]').forEach((el) => { if (bottoms[el.dataset.scroll] !== false) el.scrollTop = el.scrollHeight; });
   tickClock();
+}
+
+/**
+ * D2: card text too small to read is not shown. A card's name, number and monogram scale with the card (em) and
+ * with any transform around it (fans, thumbnails); when one would render under the floor (11 px on a phone, 16 px
+ * on the TV), it is hidden and the card shows its emblem alone. Runs after each render, once the layout settles.
+ */
+const TINY_TEXT = '.arc .nm, .arc .arc-num, .arc .sig, .cf-o';
+let legibilityRaf = 0;
+function legibility() {
+  cancelAnimationFrame(legibilityRaf);
+  legibilityRaf = requestAnimationFrame(() => {
+    const floor = onBoard() ? 16 : 11;
+    for (const el of app.querySelectorAll(TINY_TEXT)) {
+      const h = el.offsetHeight;
+      const scale = h ? el.getBoundingClientRect().height / h : 1;
+      const fs = parseFloat(getComputedStyle(el).fontSize) * (scale || 1);
+      el.toggleAttribute('data-tiny', fs > 0 && fs < floor);
+    }
+  });
 }
 
 const toastsHtml = (cls) => `<div class="${cls}" data-key="${cls}" aria-live="polite">${S.notes.map((n) => `<div class="toast ${n.kind}" data-key="n-${n.id}">${esc(n.text)}</div>`).join('')}</div>`;

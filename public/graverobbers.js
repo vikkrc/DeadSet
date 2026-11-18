@@ -41,7 +41,7 @@ function disc(v, id, cls = '') {
 
 // ── The stones ─────────────────────────────────────────────────────────────
 /** What is carved on a closed stone. */
-const carving = (x) => (x.icon ? `<span class="gs-icon">${emblem(x.icon)}</span>` : `<span class="gs-word">${esc(x.w)}</span>`);
+const carving = (x) => (x.icon ? `<span class="gs-icon">${emblem(x.icon)}</span>` : `<span class="gs-word ${String(x.w ?? '').length > 9 ? 'long xlong' : String(x.w ?? '').length > 7 ? 'long' : ''}">${esc(x.w)}</span>`);
 /** What an open grave shows. */
 function opened(x, i) {
   if (x.k === 'D') return `<span class="gs-open">${emblem('death')}</span>`;
