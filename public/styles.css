@@ -4864,3 +4864,9 @@ body.is-board .lot-hand.shovel { --sh-h: calc(min(460px, 54vh) * 0.34); }
 .notes-slot .toast { box-shadow: none; }
 @media (min-width: 980px) { .notes-slot { top: 0; } }
 body.has-moment #app .notes-slot { visibility: visible; }
+/* A4: on the TV, notices sit in the header strip between the title and the clock (the one place that
+   is free on every board), the latest two, newest at the bottom; the caption under the table stays clear */
+.is-board .toasts { top: 14px; bottom: auto; left: 50%; right: auto; transform: translateX(-50%); width: min(560px, 36vw); gap: 4px; }
+.is-board .toast { padding: 6px 14px; font-size: 19px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.is-board .toasts .toast:not(:last-child) { opacity: 0.75; }
+.is-board .toasts .toast:nth-last-child(n+3) { display: none; }
