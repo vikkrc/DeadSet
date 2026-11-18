@@ -33,10 +33,10 @@ const doNow = (title, hint = '', cls = '') => `<div class="s-do q-do ${cls}" dat
 // ── Cards ──────────────────────────────────────────────────────────────────
 /** The Mimic's card: static where the place should be. Same size and shape as the Living's pair. */
 function staticCard(cls = '') {
-  return `<span class="arc scard q-static ${cls}"><span class="arc-num">${esc(t('Where'))}</span><span class="q-noise" aria-hidden="true"></span><span class="nm">${esc(t('Static'))}</span></span>`;
+  return `<span class="tarot scard q-static ${cls}"><span class="arc-num">${esc(t('Where'))}</span><span class="q-noise" aria-hidden="true"></span><span class="nm">${esc(t('Static'))}</span></span>`;
 }
 function mimicRoleCard(cls = '') {
-  return `<span class="arc scard q-role rubric ${cls}"><span class="arc-num">${esc(t('Who'))}</span><span class="s-ic">${emblem('mimic')}</span><span class="nm">${esc(roleF('Q_MIMIC', 'name'))}</span></span>`;
+  return `<span class="tarot scard q-role rubric ${cls}"><span class="arc-num">${esc(t('Who'))}</span><span class="s-ic">${emblem('mimic')}</span><span class="nm">${esc(roleF('Q_MIMIC', 'name'))}</span></span>`;
 }
 
 /** Your card: the place and your character (Living), or static and the Mimic (the Mimic). */
@@ -321,7 +321,7 @@ export function mimicLobbyDeck(v, isHost, h) {
     <section class="lobby-deck" data-key="qdeck">
     <div class="rule">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     <p class="small muted">${n >= 4 ? t('One Mimic; everyone else is Living.') : t('Seat 4 to 12 players.')}</p>
-    <div class="q-lobbyart" data-key="qlart"><span class="arc">${cardArt('mimic')}<span class="nm">${esc(roleF('Q_MIMIC', 'name'))}</span></span>${scard('WHERE', 5)}${scard('WHO', 3)}</div>
+    <div class="q-lobbyart" data-key="qlart"><span class="tarot">${cardArt('mimic')}<span class="nm">${esc(roleF('Q_MIMIC', 'name'))}</span></span>${scard('WHERE', 5)}${scard('WHO', 3)}</div>
     ${row(t('Places on the board'), t('How many possible places everyone sees. More places, harder for the Mimic.'), sel('board', board, BOARDS), BOARDS.find((x) => x[0] === board)?.[1] ?? String(board))}
     ${row(t('Last guess'), t('A caught Mimic may still name the place and steal the win.'), sw('lastGuess', s.lastGuess !== false), t(s.lastGuess !== false ? 'On' : 'Off'))}
     ${row(t('The TV backdrop sharpens'), t('A trust option: the TV shows the true place deeply blurred, sharpening as time runs out. Anyone who opens the TV link could read it.'), sw('tvHint', !!s.tvHint), t(s.tvHint ? 'On' : 'Off'))}

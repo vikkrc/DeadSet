@@ -2230,7 +2230,7 @@ body.pressure .sky-orb.sun, body.pressure .sky-orb.moon { background: radial-gra
 
 /* ═════════════════════════════════════════════════════════════════════════
    Codex step 5 · The Arcana: one tarot deck, one back
-   Anatomy (.arc, sized by font-size; every inner size is em): ink nine-slice
+   Anatomy (.tarot, sized by font-size; every inner size is em): ink nine-slice
    frame, number in rubric caps, lancet-arched art window with halftone and
    the emblem inside its ray ring, blackletter title, one italic line,
    faction in tiny caps. Faces: vellum (every role, Death included on a
@@ -2247,17 +2247,17 @@ body.pressure .sky-orb.sun, body.pressure .sky-orb.moon { background: radial-gra
 .emblem { --paper: var(--ink-2); overflow: visible; }
 
 /* ── The card ── */
-.arc {
+.tarot {
   position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.55em;
   padding: 1.5em 1.35em 1.25em; text-align: center; border-radius: 0.4em; color: var(--sepia);
   background: var(--vellum-stain), var(--vellum); background-size: 100% 100%, auto;
   box-shadow: 0 0 0 1px #77633f, 0 1.8em 3em -1.4em #000, inset 0 0 2em rgba(84, 54, 18, 0.24);
 }
-.arc::before {
+.tarot::before {
   content: ''; position: absolute; inset: 0.42em; pointer-events: none; z-index: 0;
   border: 1px solid var(--sepia-2); border-image: var(--frame-ink) 32 / 1.5em stretch;
 }
-.arc > * { position: relative; z-index: 1; }
+.tarot > * { position: relative; z-index: 1; }
 .arc-num { font: 600 0.74em/1 var(--text); letter-spacing: 0.34em; text-indent: 0.34em; color: var(--rubric); text-transform: uppercase; }
 .arc-art { position: relative; flex: 1; min-height: 0; width: 86%; clip-path: var(--arch); background: var(--sepia); display: grid; align-items: end; justify-items: center; overflow: hidden; }
 .arc-art::before {
@@ -2265,31 +2265,31 @@ body.pressure .sky-orb.sun, body.pressure .sky-orb.moon { background: radial-gra
   background: linear-gradient(var(--vellum) 30%, transparent 95%), radial-gradient(circle, rgba(29, 21, 16, 0.6) 0.9px, transparent 1.4px) 0 0 / 5px 5px, var(--vellum-2);
 }
 .arc-art .emblem { position: relative; width: 100%; height: auto; max-height: 100%; padding: 19% 4% 3%; color: var(--sepia); --paper: var(--vellum); filter: url(#ds-wobble); stroke-width: 2.2; }
-.arc .nm, .arc .arc-ttl { font: 600 2em/0.98 var(--black); color: var(--sepia); padding-bottom: 0.08em; }
-.arc .sum, .arc .arc-sub { font: italic 400 0.86em/1.25 var(--text); color: var(--sepia-2); max-width: 22ch; }
+.tarot .nm, .tarot .arc-ttl { font: 600 2em/0.98 var(--black); color: var(--sepia); padding-bottom: 0.08em; }
+.tarot .sum, .tarot .arc-sub { font: italic 400 0.86em/1.25 var(--text); color: var(--sepia-2); max-width: 22ch; }
 .arc-fac { font: 600 0.6em/1.2 var(--text); letter-spacing: 0.3em; text-indent: 0.3em; text-transform: uppercase; color: var(--sepia-2); }
 .arc-alias { font: italic 400 0.72em/1 var(--text); color: var(--sepia-2); }
 /* Death on a phone: the same paper, red ink and a red edge */
-.arc.rubric { box-shadow: 0 0 0 1px var(--rubric), 0 1.8em 3em -1.4em #000, inset 0 0 2em rgba(84, 54, 18, 0.24); }
-.arc.rubric::before { border-image-source: var(--frame-rubric); }
-.arc.rubric .nm, .arc.rubric .arc-fac { color: var(--rubric); }
+.tarot.rubric { box-shadow: 0 0 0 1px var(--rubric), 0 1.8em 3em -1.4em #000, inset 0 0 2em rgba(84, 54, 18, 0.24); }
+.tarot.rubric::before { border-image-source: var(--frame-rubric); }
+.tarot.rubric .nm, .tarot.rubric .arc-fac { color: var(--rubric); }
 /* Death in public (TV lobby deck, end reveal, guide): the one black card */
-.arc.noir { color: var(--bone); background: radial-gradient(120% 90% at 50% 20%, #2a0c0e, #0c0707 70%); box-shadow: 0 0 0 1px var(--gilt-2), 0 1.8em 3em -1.4em #000; }
-.arc.noir::before { border-image-source: var(--frame-gilt-card); }
-.arc.noir .arc-num { color: var(--blood-ink); }
-.arc.noir .nm, .arc.noir .arc-ttl, .arc.noir b { color: #f1e4c8; }
-.arc.noir .sum, .arc.noir .arc-sub, .arc.noir .arc-fac { color: #c2b496; }
-.arc.noir .arc-art { background: #c9a35a; }
-.arc.noir .arc-art::before { background: linear-gradient(#150809 30%, transparent 95%), radial-gradient(circle, rgba(201, 163, 90, 0.5) 0.9px, transparent 1.4px) 0 0 / 5px 5px, #1d0b0c; }
-.arc.noir .arc-art .emblem { color: #efe1c2; --paper: #1d0b0c; }
+.tarot.noir { color: var(--bone); background: radial-gradient(120% 90% at 50% 20%, #2a0c0e, #0c0707 70%); box-shadow: 0 0 0 1px var(--gilt-2), 0 1.8em 3em -1.4em #000; }
+.tarot.noir::before { border-image-source: var(--frame-gilt-card); }
+.tarot.noir .arc-num { color: var(--blood-ink); }
+.tarot.noir .nm, .tarot.noir .arc-ttl, .tarot.noir b { color: #f1e4c8; }
+.tarot.noir .sum, .tarot.noir .arc-sub, .tarot.noir .arc-fac { color: #c2b496; }
+.tarot.noir .arc-art { background: #c9a35a; }
+.tarot.noir .arc-art::before { background: linear-gradient(#150809 30%, transparent 95%), radial-gradient(circle, rgba(201, 163, 90, 0.5) 0.9px, transparent 1.4px) 0 0 / 5px 5px, #1d0b0c; }
+.tarot.noir .arc-art .emblem { color: #efe1c2; --paper: #1d0b0c; }
 /* Dreams: the night suit, silver on indigo */
-.arc.dreamsuit { color: #dbe1ec; background: radial-gradient(120% 90% at 50% 20%, #18213a, #070a12 72%); box-shadow: 0 0 0 1px #5d6a82, 0 1.8em 3em -1.4em #000; }
-.arc.dreamsuit::before { border-image-source: var(--frame-silver); }
-.arc.dreamsuit .arc-art { background: #b9c4d8; }
-.arc.dreamsuit .arc-art::before { background: linear-gradient(#0a0e18 30%, transparent 95%), radial-gradient(circle, rgba(185, 196, 216, 0.45) 0.9px, transparent 1.4px) 0 0 / 5px 5px, #101627; }
-.arc.dreamsuit .arc-art .emblem { color: #e3e9f4; --paper: #101627; }
+.tarot.dreamsuit { color: #dbe1ec; background: radial-gradient(120% 90% at 50% 20%, #18213a, #070a12 72%); box-shadow: 0 0 0 1px #5d6a82, 0 1.8em 3em -1.4em #000; }
+.tarot.dreamsuit::before { border-image-source: var(--frame-silver); }
+.tarot.dreamsuit .arc-art { background: #b9c4d8; }
+.tarot.dreamsuit .arc-art::before { background: linear-gradient(#0a0e18 30%, transparent 95%), radial-gradient(circle, rgba(185, 196, 216, 0.45) 0.9px, transparent 1.4px) 0 0 / 5px 5px, #101627; }
+.tarot.dreamsuit .arc-art .emblem { color: #e3e9f4; --paper: #101627; }
 /* The back: every face-down card in the game */
-.arc.back, .face.back.arc {
+.tarot.back, .face.back.tarot {
   justify-content: center; align-items: center; color: var(--gilt);
   background:
     repeating-linear-gradient(45deg, transparent 0 0.62em, rgba(201, 163, 90, 0.34) 0.62em 0.68em),
@@ -2297,47 +2297,73 @@ body.pressure .sky-orb.sun, body.pressure .sky-orb.moon { background: radial-gra
     radial-gradient(120% 90% at 50% 50%, #2a0c0e, #0c0707 75%);
   box-shadow: 0 0 0 1px var(--gilt-2), 0 1.8em 3em -1.4em #000;
 }
-.arc.back::before { border-image-source: var(--frame-gilt-card); }
-.arc .sig {
+.tarot.back::before { border-image-source: var(--frame-gilt-card); }
+.tarot .sig {
   display: grid; place-items: center; width: 3.4em; height: 3.4em; border-radius: 50%;
   border: 1px solid #c9a35a; box-shadow: 0 0 0 0.2em #0c0707, 0 0 0 0.24em #8a6d35; background: #0c0707;
   font: 700 2.2em/1 var(--mark); color: #c9a35a; letter-spacing: -0.02em;
 }
 
+/* ── The card component (B4) ──
+   Every card in the game is a .tarot. Faces: vellum (default), .noir, .rubric, .dreamsuit, .night, .edict, .back;
+   a mode tints a face through --suit (Carnival's masks) or --win/--win-2 (the art window of a .night card).
+   Sizes share one geometry and scale with font-size: thumb (emblem only), small, hand, hero.
+   States: .is-chosen, .is-struck, .is-dim. Motion: tarot-deal (onto the table), tarot-turn (face up). */
+:is(.tarot--thumb, .tarot--small, .tarot--hand, .tarot--hero) { width: 6.2em; aspect-ratio: 11 / 18; padding: 1.05em 0.75em 0.9em; gap: 0.32em; flex: none; }
+.tarot--thumb { font-size: 6.4px; padding: 0.7em 0.55em; }
+.tarot--small { font-size: 9px; }
+.tarot--hand { font-size: 13px; }
+.tarot--hero { font-size: 17px; }
+:is(.tarot--thumb, .tarot--small, .tarot--hand, .tarot--hero) .arc-num { font-size: 0.86em; }
+:is(.tarot--thumb, .tarot--small, .tarot--hand, .tarot--hero) .nm { font-size: 1.55em; line-height: 1; text-align: center; overflow-wrap: normal; }
+:is(.tarot--thumb, .tarot--small, .tarot--hand, .tarot--hero).back .sig { width: 2.6em; height: 2.6em; font-size: 1.5em; }
+.tarot--thumb .arc-num, .tarot--thumb .nm { display: none; }
+.tarot--thumb .arc-art { width: 100%; flex: 1; }
+.tarot.night:not(.back) .arc-art::before { background: radial-gradient(circle, rgba(241, 228, 200, 0.12) 0.9px, transparent 1.4px) 0 0 / 5px 5px, linear-gradient(180deg, var(--win, #232a3a), var(--win-2, #0d1119)); }
+.tarot.night:not(.back) .arc-art .emblem { padding: 8% 0 0; color: #eef0f6; --paper: var(--win-2, #151b26); }
+.tarot--thumb.night:not(.back) .arc-art .emblem { padding: 0; }
+button.tarot { cursor: pointer; border: 0; font-family: inherit; transition: transform 0.25s var(--ease), box-shadow 0.25s, filter 0.3s; }
+button.tarot:active { transform: scale(0.96); }
+.tarot.is-chosen { transform: translateY(-0.6em); box-shadow: 0 0 0 2px var(--gilt-hi), 0 0 2.4em var(--glow), 0 1.8em 3em -1.4em #000; }
+.tarot.is-struck { filter: grayscale(0.85) brightness(0.42) sepia(0.5); }
+.tarot.is-dim { opacity: 0.35; }
+@keyframes tarot-deal { from { opacity: 0; transform: translateY(18px) rotate(-4deg); } }
+@keyframes tarot-turn { from { opacity: 0; transform: perspective(600px) rotateY(90deg); } }
+
 /* ── The role card on a phone (flips from the lattice back) ── */
 .flipcard { width: min(64vw, 272px); aspect-ratio: 11 / 18; font-size: min(4.1vw, 17px); }
 .face { border-radius: 0.4em; overflow: visible; box-shadow: none; }
-.face.front.arc { transform: rotateY(180deg); justify-content: flex-start; padding: 1.5em 1.35em 1.25em; border: 0; outline: 0; background: var(--vellum-stain), var(--vellum); background-size: 100% 100%, auto; }
-.face.front.arc.rubric { background: var(--vellum-stain), var(--vellum); }
-.face.front.arc .nm { font-size: 2.05em; }
-.face.front.arc .sum { font-size: 0.86em; }
-.face.back.arc .sig { font-size: 2.2em; }
-.face.back.arc .hint { position: absolute; bottom: 2.2em; left: 0; right: 0; text-indent: 0.24em; color: var(--gilt); }
+.face.front.tarot { transform: rotateY(180deg); justify-content: flex-start; padding: 1.5em 1.35em 1.25em; border: 0; outline: 0; background: var(--vellum-stain), var(--vellum); background-size: 100% 100%, auto; }
+.face.front.tarot.rubric { background: var(--vellum-stain), var(--vellum); }
+.face.front.tarot .nm { font-size: 2.05em; }
+.face.front.tarot .sum { font-size: 0.86em; }
+.face.back.tarot .sig { font-size: 2.2em; }
+.face.back.tarot .hint { position: absolute; bottom: 2.2em; left: 0; right: 0; text-indent: 0.24em; color: var(--gilt); }
 .face.front .corner { display: none; }
 .shine { z-index: 2; border-radius: 0.4em; background: linear-gradient(115deg, transparent 32%, rgba(236, 210, 143, 0.32) 46%, transparent 60%); }
 .sheet .flipcard { width: min(46vw, 196px); font-size: min(2.9vw, 12px); }
-.sheet .face.front.arc .nm { font-size: 2.05em; }
-.sheet .face.front.arc .sum { font-size: 0.86em; }
+.sheet .face.front.tarot .nm { font-size: 2.05em; }
+.sheet .face.front.tarot .sum { font-size: 0.86em; }
 /* the thumbnail: the same card, small, beside its text */
 .role-mini { grid-template-columns: 50px 1fr; border-radius: 0; border-color: var(--iron); }
-.arc.mini { width: 50px; aspect-ratio: 11 / 18; font-size: 5px; padding: 1.4em 1.2em; gap: 0; justify-content: flex-end; }
-.arc.mini .arc-art { flex: 1; width: 92%; }
+.tarot.mini { width: 50px; aspect-ratio: 11 / 18; font-size: 5px; padding: 1.4em 1.2em; gap: 0; justify-content: flex-end; }
+.tarot.mini .arc-art { flex: 1; width: 92%; }
 
 /* ── Dreams ── */
 .dream-reveal { width: min(56vw, 232px); aspect-ratio: 11 / 18; }
 .dr-face { border-radius: 0.4em; border: 0; }
 .dr-face.back { background: radial-gradient(120% 90% at 50% 30%, #18213a, #070a12 72%); box-shadow: 0 0 0 1px #5d6a82; }
-.dr-face.front.arc { font-size: min(3.6vw, 14.5px); justify-content: flex-start; gap: 0.4em; padding: 1.5em 1.2em 1.2em; }
-.dr-face.front.arc h3 { font: 600 1.7em/1 var(--black); color: #eef3fb; }
-.dr-face.front.arc p { font: italic 400 0.86em/1.3 var(--text); color: #a9b2c4; }
-.dr-face.front.arc .kicker { color: #9fb0d2; font-size: max(0.62em, 10px); }
+.dr-face.front.tarot { font-size: min(3.6vw, 14.5px); justify-content: flex-start; gap: 0.4em; padding: 1.5em 1.2em 1.2em; }
+.dr-face.front.tarot h3 { font: 600 1.7em/1 var(--black); color: #eef3fb; }
+.dr-face.front.tarot p { font: italic 400 0.86em/1.3 var(--text); color: #a9b2c4; }
+.dr-face.front.tarot .kicker { color: #9fb0d2; font-size: max(0.62em, 10px); }
 .dream { grid-template-columns: 46px 1fr; border: 1px solid #5d6a82; border-image: var(--frame-silver) 32 / 22px stretch; border-radius: 0; padding: 16px 18px; }
-.dream .arc.mini { width: 46px; }
+.dream .tarot.mini { width: 46px; }
 .dream h3 { font: 600 22px/1 var(--black); }
 .dream p { font: italic 400 15px/1.35 var(--text); }
 
 /* ── Edicts: Rule cards, typographic, a giant rubric initial and a wax seal ── */
-.edict:not(.arc) {
+.edict:not(.tarot) {
   position: relative; display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: start; text-align: left;
   padding: 14px 16px; color: var(--sepia); border: 0; border-radius: 0.4em;
   background: var(--vellum-stain), #cdb98c; background-size: 100% 100%, auto;
@@ -2360,35 +2386,35 @@ body.pressure .sky-orb.sun, body.pressure .sky-orb.moon { background: radial-gra
 /* ── The story spread (opening ceremony): three typographic cards turning ── */
 .cer-cards { grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .cer-card { height: auto; aspect-ratio: 11 / 18; font-size: clamp(8px, 2.5vw, 13px); }
-.cer-face.arc { border: 0; border-radius: 0.4em; }
-.cer-face.front.arc { justify-content: center; gap: 0.5em; padding: 1.6em 0.9em; }
+.cer-face.tarot { border: 0; border-radius: 0.4em; }
+.cer-face.front.tarot { justify-content: center; gap: 0.5em; padding: 1.6em 0.9em; }
 .cer-face.front .arc-num { position: absolute; top: 1.7em; left: 0; right: 0; font-size: max(0.74em, 9px); }
 .cer-face.front .k { font: 600 3em/0.95 var(--black); letter-spacing: 0; text-transform: none; color: var(--rubric); padding-bottom: 0.1em; border-bottom: 1px solid rgba(142, 27, 31, 0.5); }
 .cer-face.front b { font: italic 400 1.35em/1.15 var(--text); color: var(--sepia); }
-.cer-face.back.arc .sig { font-size: 1.6em; }
+.cer-face.back.tarot .sig { font-size: 1.6em; }
 
 /* ── Lobby deck: small real cards (titles in caps: blackletter never goes under 20px) ── */
-.dcard.arc { width: 74px; height: auto; aspect-ratio: 11 / 18; padding: 9px 6px 7px; gap: 4px; justify-content: flex-start; font-size: 6px; border: 0; animation: dealIn 0.5s var(--spring) both; }
-.dcard.arc .arc-art { flex: 1; width: 90%; }
-.dcard.arc b { font: 600 8.5px/1.1 var(--text); letter-spacing: 0.08em; text-transform: uppercase; color: var(--sepia); }
-.dcard.arc.noir b { color: #f1e4c8; }
-.dcard.arc i { top: 6px; right: 8px; z-index: 2; font: 600 10px/1 var(--bit); color: var(--rubric); }
-.dcard.arc.noir i { color: var(--blood-ink); }
-.dcard.arc.back { justify-content: center; }
-.dcard.arc.back b { color: var(--gilt); font-size: 8px; }
-.dcard.arc .sig { font-size: 1.5em; width: 34px; height: 34px; font-size: 18px; }
-.dcard.arc.edict { justify-content: center; gap: 6px; background: var(--vellum-stain), #cdb98c; background-size: 100% 100%, auto; width: 74px; }
-.dcard.arc.edict .ed-ini { font: 800 32px/0.9 var(--black); color: var(--rubric); font-style: normal; }
-.board2 .dcard.arc { width: 96px; }
-.board2 .dcard.arc b { font-size: 10px; }
-.board2 .dcard.arc.edict { width: 96px; }
+.dcard.tarot { width: 74px; height: auto; aspect-ratio: 11 / 18; padding: 9px 6px 7px; gap: 4px; justify-content: flex-start; font-size: 6px; border: 0; animation: dealIn 0.5s var(--spring) both; }
+.dcard.tarot .arc-art { flex: 1; width: 90%; }
+.dcard.tarot b { font: 600 8.5px/1.1 var(--text); letter-spacing: 0.08em; text-transform: uppercase; color: var(--sepia); }
+.dcard.tarot.noir b { color: #f1e4c8; }
+.dcard.tarot i { top: 6px; right: 8px; z-index: 2; font: 600 10px/1 var(--bit); color: var(--rubric); }
+.dcard.tarot.noir i { color: var(--blood-ink); }
+.dcard.tarot.back { justify-content: center; }
+.dcard.tarot.back b { color: var(--gilt); font-size: 8px; }
+.dcard.tarot .sig { font-size: 1.5em; width: 34px; height: 34px; font-size: 18px; }
+.dcard.tarot.edict { justify-content: center; gap: 6px; background: var(--vellum-stain), #cdb98c; background-size: 100% 100%, auto; width: 74px; }
+.dcard.tarot.edict .ed-ini { font: 800 32px/0.9 var(--black); color: var(--rubric); font-style: normal; }
+.board2 .dcard.tarot { width: 96px; }
+.board2 .dcard.tarot b { font-size: 10px; }
+.board2 .dcard.tarot.edict { width: 96px; }
 
 /* ── Mission cards: tarot cards; Succeed and Sabotage share one vellum face on phones ── */
-.mcard.arc { width: 210px; min-height: 0; height: 344px; padding: 1.5em 1.2em 1.2em; border: 0; font-size: 13px; display: flex; }
-.mcard.arc .mc-name { font: 600 1.9em/1 var(--black); color: var(--sepia); }
-.mcard.arc .mc-text { font: italic 400 0.92em/1.3 var(--text); color: var(--sepia-2); max-width: 22ch; }
-.mcard.arc .mc-foot { font: 600 0.68em/1.2 var(--text); letter-spacing: 0.2em; text-transform: uppercase; color: var(--rubric); }
-.mcard.arc.special { box-shadow: 0 0 0 1px var(--gilt), 0 0 40px -6px var(--gilt), inset 0 0 2em rgba(84, 54, 18, 0.24); }
+.mcard.tarot { width: 210px; min-height: 0; height: 344px; padding: 1.5em 1.2em 1.2em; border: 0; font-size: 13px; display: flex; }
+.mcard.tarot .mc-name { font: 600 1.9em/1 var(--black); color: var(--sepia); }
+.mcard.tarot .mc-text { font: italic 400 0.92em/1.3 var(--text); color: var(--sepia-2); max-width: 22ch; }
+.mcard.tarot .mc-foot { font: 600 0.68em/1.2 var(--text); letter-spacing: 0.2em; text-transform: uppercase; color: var(--rubric); }
+.mcard.tarot.special { box-shadow: 0 0 0 1px var(--gilt), 0 0 40px -6px var(--gilt), inset 0 0 2em rgba(84, 54, 18, 0.24); }
 .mc-in { width: 210px; height: 344px; }
 .mc-back { border: 0; border-radius: 0.4em; font-size: 13px; }
 .mc-back, .mrc-back {
@@ -2401,7 +2427,7 @@ body.pressure .sky-orb.sun, body.pressure .sky-orb.moon { background: radial-gra
   font-family: var(--mark);
 }
 .mplay-card { width: 140px; height: 229px; border: 0; border-radius: 0.4em; background: none; padding: 0; font-size: 9px; }
-.mplay-card .mpc-in.arc { width: 100%; height: 100%; justify-content: flex-start; }
+.mplay-card .mpc-in.tarot { width: 100%; height: 100%; justify-content: flex-start; }
 .mplay-card .mpc-in b { font: 600 2.5em/1 var(--black); color: var(--sepia); }
 .mplay-card .mpc-in small { font: italic 400 1.2em/1.25 var(--text); color: var(--sepia-2); }
 .mplay-card.good .mpc-art .glyph, .mplay-card.bad .mpc-art .glyph { color: inherit; }
@@ -2410,30 +2436,30 @@ body.pressure .sky-orb.sun, body.pressure .sky-orb.moon { background: radial-gra
 /* a card you cannot play looks the same from across the table: no dimming */
 .mplay-card:disabled { opacity: 1; cursor: not-allowed; }
 /* the public reveal: Succeed on vellum, Sabotage flips black with a red flare */
-.mrc-front.arc { font-size: calc(var(--w) / 11); padding: 1.2em 0.8em 1em; gap: 0.35em; border: 0; border-radius: 0.4em; justify-content: flex-start; }
-.mrc-front.arc b { font: 600 1.9em/1 var(--black); white-space: nowrap; color: var(--sepia); }
-.mrc-front.arc.noir b { color: #f1e4c8; }
-.mrc.good .mrc-front.arc { color: var(--sepia); border: 0; }
-.mrc.bad .mrc-front.arc { border: 0; box-shadow: 0 0 0 1px var(--blood-ink), 0 0 36px rgba(228, 93, 80, 0.55); }
+.mrc-front.tarot { font-size: calc(var(--w) / 11); padding: 1.2em 0.8em 1em; gap: 0.35em; border: 0; border-radius: 0.4em; justify-content: flex-start; }
+.mrc-front.tarot b { font: 600 1.9em/1 var(--black); white-space: nowrap; color: var(--sepia); }
+.mrc-front.tarot.noir b { color: #f1e4c8; }
+.mrc.good .mrc-front.tarot { color: var(--sepia); border: 0; }
+.mrc.bad .mrc-front.tarot { border: 0; box-shadow: 0 0 0 1px var(--blood-ink), 0 0 36px rgba(228, 93, 80, 0.55); }
 .mrc-back { border: 0; border-radius: 0.4em; }
 
 /* the print wobble lives in index.html (#ds-wobble); reduced motion changes nothing: it is static */
 /* the turning faces stay stacked on top of each other */
-.face.arc, .cer-face.arc, .dr-face.arc, .mrc-front.arc { position: absolute; inset: 0; }
-.face.front.arc, .dr-face.front.arc, .mrc-front.arc { transform: rotateY(180deg); }
-.cer-face.front.arc { transform: rotateX(180deg); display: flex; grid-template-columns: none; text-align: center; }
+.face.tarot, .cer-face.tarot, .dr-face.tarot, .mrc-front.tarot { position: absolute; inset: 0; }
+.face.front.tarot, .dr-face.front.tarot, .mrc-front.tarot { transform: rotateY(180deg); }
+.cer-face.front.tarot { transform: rotateX(180deg); display: flex; grid-template-columns: none; text-align: center; }
 .mrc { height: calc(var(--w) * 18 / 11); }
-.face.front.arc .sum { color: var(--sepia-2); max-width: 22ch; }
-.face.front.arc .nm { color: var(--sepia); }
-.face.front.arc.rubric .nm { color: var(--rubric); }
+.face.front.tarot .sum { color: var(--sepia-2); max-width: 22ch; }
+.face.front.tarot .nm { color: var(--sepia); }
+.face.front.tarot.rubric .nm { color: var(--rubric); }
 .cer-rule.edict small, .rule-card.edict small, .rule-card.edict p { display: block; line-height: 1.3; margin-top: 3px; }
 .cer-rule.edict .k { color: var(--rubric); }
 .cer-rule.edict b { color: var(--sepia); }
 /* small deck cards: the emblem fills the window instead of sinking to its sill */
-.dcard.arc .arc-art { align-items: center; }
-.dcard.arc .arc-art .emblem { padding: 22% 2% 2%; }
-.dcard.arc.back { gap: 8px; }
-.dcard.arc.back b { position: static; text-align: center; line-height: 1.2; }
+.dcard.tarot .arc-art { align-items: center; }
+.dcard.tarot .arc-art .emblem { padding: 22% 2% 2%; }
+.dcard.tarot.back { gap: 8px; }
+.dcard.tarot.back b { position: static; text-align: center; line-height: 1.2; }
 
 /* ═════════════════════════════════════════════════════════════════════════
    Codex step 6 · Moments, stamps, vote tallies
@@ -2698,10 +2724,10 @@ body.pressure .sky-orb.sun, body.pressure .sky-orb.moon { background: radial-gra
 .paper .stampx .stamp { font-size: 40px; }
 .paper:has(.stampx) .hl { padding-inline: 190px; }
 /* the stolen dream: two night-suit cards, the old one fading out */
-.swap-card.arc { width: 134px; min-height: 0; aspect-ratio: 11 / 18; border: 0; border-radius: 0.4em; padding: 1.3em 0.9em 1em; gap: 0.4em; font-size: 9px; justify-content: flex-start; }
-.swap-card.arc b { font: 600 20px/1 var(--black); color: #eef3fb; padding-bottom: 0.08em; }
-.swap-card.arc small { font: italic 400 12px/1.25 var(--text); color: #a9b2c4; }
-.swap-card.arc.new { width: 150px; box-shadow: 0 0 0 1px #9fb0d2, 0 0 30px rgba(159, 176, 210, 0.3), 0 1.8em 3em -1.4em #000; }
+.swap-card.tarot { width: 134px; min-height: 0; aspect-ratio: 11 / 18; border: 0; border-radius: 0.4em; padding: 1.3em 0.9em 1em; gap: 0.4em; font-size: 9px; justify-content: flex-start; }
+.swap-card.tarot b { font: 600 20px/1 var(--black); color: #eef3fb; padding-bottom: 0.08em; }
+.swap-card.tarot small { font: italic 400 12px/1.25 var(--text); color: #a9b2c4; }
+.swap-card.tarot.new { width: 150px; box-shadow: 0 0 0 1px #9fb0d2, 0 0 30px rgba(159, 176, 210, 0.3), 0 1.8em 3em -1.4em #000; }
 .sheet .gazette { padding: 18px 16px 8px; background: var(--vellum-stain), linear-gradient(170deg, #e2d3ae, var(--vellum) 60%, #d3c094); background-size: 100% 100%, auto; box-shadow: 0 0 0 1px #77633f, inset 0 0 2em rgba(84, 54, 18, 0.2); }
 /* room codes are read aloud and typed: never blackletter */
 .code-txt { font: 600 0.8em/1 var(--text); letter-spacing: 0.08em; font-variant-numeric: lining-nums tabular-nums; vertical-align: 0.04em; }
@@ -2861,8 +2887,8 @@ body.is-dead { --gilt: #8f97a3; --gilt-2: #4b5363; --gilt-hi: #c9ced6; }
 .board2 .ring.dense .b-nom { min-width: 20px; height: 20px; font-size: 11px; }
 .board2 .ring.dense .tok-name { font-size: clamp(10px, 1.3vh, 13px); }
 /* monograms are never set under 20px */
-.dcard.arc .sig { font-size: 20px; width: 36px; height: 36px; }
-.cer-face.back.arc .sig { font-size: max(1.6em, 20px); }
+.dcard.tarot .sig { font-size: 20px; width: 36px; height: 36px; }
+.cer-face.back.tarot .sig { font-size: max(1.6em, 20px); }
 .edict .ed-wax { font-size: 20px; width: 38px; height: 38px; }
 body.is-dead { --ash: #8a919c; } /* labels keep 4.5:1 under the cold fade */
 
@@ -3022,7 +3048,7 @@ svg.avatar { border-radius: 50%; clip-path: circle(50% at 50% 50%); }
 .dr-face.front { visibility: hidden; animation: faceOn 0s 0.95s forwards; }
 @media (prefers-reduced-motion: reduce) { .flipcard .face { transition: none; } }
 /* the hint on the lattice back sits on an ink plate so it reads */
-.face.back.arc .hint {
+.face.back.tarot .hint {
   left: 50%; right: auto; bottom: 1.9em; transform: translateX(-50%); white-space: nowrap;
   padding: 0.5em 1.1em 0.45em; background: #0c0707; color: #c9a35a; font-size: max(0.62em, 10px); letter-spacing: 0.24em; text-indent: 0.24em;
   box-shadow: 0 0 0 1px #8a6d35, 0 0 0 3px #0c0707, 0 0 0 4px #8a6d35;
@@ -3090,7 +3116,7 @@ input.switch::after {
 input.switch:checked { background: var(--vellum-2); }
 input.switch:checked::before { background: var(--vellum); }
 input.switch:checked::after { transform: translateX(22px) rotate(45deg); background: var(--wax); box-shadow: inset 0 -2px 3px rgba(0, 0, 0, 0.35); }
-.face.back.arc .hint { white-space: normal; max-width: 80%; width: max-content; text-align: center; letter-spacing: 0.16em; text-indent: 0.16em; line-height: 1.35; }
+.face.back.tarot .hint { white-space: normal; max-width: 80%; width: max-content; text-align: center; letter-spacing: 0.16em; text-indent: 0.16em; line-height: 1.35; }
 
 /* ═════════════════════════════════════════════════════════════════════════
    Polish 3 · iPhone edges, card turns, the replay
@@ -4157,7 +4183,7 @@ button.vcard { cursor: zoom-in; }
 
 /* a card, large: tap anywhere to close */
 .s-zoom { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: rgba(5, 4, 3, 0.88); backdrop-filter: blur(3px); animation: fadeIn 0.2s both; cursor: zoom-out; }
-.s-zoom .arc.huge { width: min(78vw, 360px); font-size: min(4.6vw, 21px); }
+.s-zoom .tarot.huge { width: min(78vw, 360px); font-size: min(4.6vw, 21px); }
 .s-zoom p { margin: 0; font: italic 400 14px var(--text); color: var(--bone-2); }
 .s-chips { margin-top: 12px; }
 
@@ -4315,9 +4341,9 @@ button.g-stone:active { transform: scale(0.96); }
 .g-crewedit li .btn svg { width: 16px; height: 16px; }
 .g-crewedit select { margin-top: 8px; width: 100%; }
 .g-lobbyart { display: flex; justify-content: center; gap: 12px; margin: 10px 0 14px; }
-.g-lobbyart .arc { width: 6.2em; aspect-ratio: 11 / 18; padding: 1em 0.7em 0.85em; gap: 0.32em; font-size: 8px; }
-.g-lobbyart .arc .nm { font-size: 1.5em; }
-.g-lobbyart .arc.c-B .arc-art .emblem { color: var(--lapis-2); }
+.g-lobbyart .tarot { width: 6.2em; aspect-ratio: 11 / 18; padding: 1em 0.7em 0.85em; gap: 0.32em; font-size: 8px; }
+.g-lobbyart .tarot .nm { font-size: 1.5em; }
+.g-lobbyart .tarot.c-B .arc-art .emblem { color: var(--lapis-2); }
 
 /* scenes */
 .g-coin-scene { perspective: 600px; margin-bottom: 14px; }
@@ -4420,7 +4446,7 @@ button.g-stone:active { transform: scale(0.96); }
 .g-signword.c-V .g-signn { background: var(--amethyst); }
 .ge-digs i.k-V { border-color: var(--amethyst); color: var(--amethyst); }
 .g-bar.c-V .gb-you { color: var(--amethyst); }
-.g-lobbyart .arc.c-V .arc-art .emblem { color: var(--amethyst-2); }
+.g-lobbyart .tarot.c-V .arc-art .emblem { color: var(--amethyst-2); }
 /* a crew that opened Death's grave */
 .g-altar.out { opacity: 0.45; filter: grayscale(0.7); position: relative; }
 .ga-out { position: absolute; left: -4px; top: -6px; width: 18px; height: 18px; color: var(--blood-ink); }
@@ -4550,7 +4576,7 @@ button.g-stone:active { transform: scale(0.96); }
 @keyframes qFlip { from { transform: rotateY(90deg) scale(0.8); } }
 /* lobby */
 .q-lobbyart { display: flex; justify-content: center; gap: 12px; margin: 10px 0 14px; }
-.q-lobbyart .arc { width: 6.2em; aspect-ratio: 11 / 18; padding: 1em 0.7em 0.85em; gap: 0.32em; font-size: 8px; }
+.q-lobbyart .tarot { width: 6.2em; aspect-ratio: 11 / 18; padding: 1em 0.7em 0.85em; gap: 0.32em; font-size: 8px; }
 .q-lobbyart .scard { font-size: 8.6px; }
 /* end */
 .q-endpair { display: flex; align-items: center; justify-content: center; gap: 22px; margin: 10px 0; }

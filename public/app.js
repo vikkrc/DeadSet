@@ -558,7 +558,7 @@ function momentHtml(m) {
       const sc = m.sc ?? { who: '?', where: '?', why: '?' };
       const cards = [['Who', 'mentalist', scen('WHO', sc.who)], ['Where', 'necro', scen('WHERE', sc.where)], ['Why', 'scroll', scen('WHY', sc.why)]];
       body = `<span class="kicker">${t('Night 0 · the story is dealt')}</span><h1 class="m-title">${letters(t('The game begins'))}</h1>
-        <div class="cer-cards">${cards.map(([k, g, txt], i) => `<div class="cer-card" style="--d:${0.9 + i * 0.85}s"><div class="cer-in"><div class="cer-face back arc back"><span class="sig">DS</span></div><div class="cer-face front arc"><span class="arc-num">${['I', 'II', 'III'][i]}</span><span class="k">${t(k)}</span><b>${esc(txt)}</b></div></div></div>`).join('')}</div>
+        <div class="cer-cards">${cards.map(([k, g, txt], i) => `<div class="cer-card" style="--d:${0.9 + i * 0.85}s"><div class="cer-in"><div class="cer-face back tarot back"><span class="sig">DS</span></div><div class="cer-face front tarot"><span class="arc-num">${['I', 'II', 'III'][i]}</span><span class="k">${t(k)}</span><b>${esc(txt)}</b></div></div></div>`).join('')}</div>
         <p class="m-sub cer-line" style="--d:3.6s">${tmh(m.scenario)}</p>
         ${m.rules.length ? `<div class="cer-rules">${m.rules.map((r, i) => `<div class="cer-rule edict" style="--d:${4.2 + i * 0.7}s"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(r.id, 'name')][0] ?? '')}</i><span><span class="k">${t('Rule card')}</span><b>${esc(ruleF(r.id, 'name'))}</b><small>${esc(ruleF(r.id, 'text'))}</small></span><span class="ed-wax" aria-hidden="true">DS</span></div>`).join('')}</div>` : ''}
         <p class="m-sub small cer-line" style="--d:${4.6 + m.rules.length * 0.7}s">${onBoard() ? t('Players: look only at your own screen.') : t('Next: your role card, face down. Look only at your own screen.')}</p>`;
@@ -575,7 +575,7 @@ function momentHtml(m) {
       break;
     case 'dreamswap':
       body = `<span class="kicker">${m.stole ? esc(dreamF('DREAM_SNATCHER', 'name')) : t('A Dream Snatcher struck')}</span><h1 class="m-title">${letters(t(m.stole ? 'You stole a dream' : 'Your dream was stolen'))}</h1>
-        <div class="swap-cards"><div class="swap-card gone arc dreamsuit">${cardArt(DREAM_EMB[m.from] ?? 'moon')}<b>${esc(dreamF(m.from, 'name'))}</b></div><span class="swap-arrow">⟶</span><div class="swap-card new arc dreamsuit">${cardArt(DREAM_EMB[m.to] ?? 'moon')}<b>${esc(dreamF(m.to, 'name'))}</b><small>${esc(dreamF(m.to, 'text'))}</small></div></div>
+        <div class="swap-cards"><div class="swap-card gone tarot dreamsuit">${cardArt(DREAM_EMB[m.from] ?? 'moon')}<b>${esc(dreamF(m.from, 'name'))}</b></div><span class="swap-arrow">⟶</span><div class="swap-card new tarot dreamsuit">${cardArt(DREAM_EMB[m.to] ?? 'moon')}<b>${esc(dreamF(m.to, 'name'))}</b><small>${esc(dreamF(m.to, 'text'))}</small></div></div>
         <p class="m-sub small">${t('Tonight you dream this instead. Keep it to yourself.')}</p>`;
       break;
     case 'dawn': {
@@ -734,7 +734,7 @@ function render() {
  * with any transform around it (fans, thumbnails); when one would render under the floor (11 px on a phone, 16 px
  * on the TV), it is hidden and the card shows its emblem alone. Runs after each render, once the layout settles.
  */
-const TINY_TEXT = '.arc .nm, .arc .arc-num, .arc .sig, .cf-o';
+const TINY_TEXT = '.tarot .nm, .tarot .arc-num, .tarot .sig, .cf-o';
 let legibilityRaf = 0;
 function legibility() {
   cancelAnimationFrame(legibilityRaf);
@@ -1345,7 +1345,7 @@ function sheet(v) {
       const pool = (deck?.pool ?? []).filter((x) => roles[x]);
       title = t('{n} extended', { n: id });
       body = `<p class="muted card-info">${esc(t('Extended pool · used from 7 players'))}</p>
-        <div class="info-pool">${pool.map((x) => `<button class="dcard arc ${roles[x].alignment === 'DEATH' ? 'noir' : ''}" data-act="cardInfo" data-kind="role" data-id="${x}">${cardArt(roleEmblemId(roles[x]))}<b>${esc(roleF(x, 'name'))}</b></button>`).join('')}</div>`;
+        <div class="info-pool">${pool.map((x) => `<button class="dcard tarot ${roles[x].alignment === 'DEATH' ? 'noir' : ''}" data-act="cardInfo" data-kind="role" data-id="${x}">${cardArt(roleEmblemId(roles[x]))}<b>${esc(roleF(x, 'name'))}</b></button>`).join('')}</div>`;
     } else {
       title = t('Rule cards');
       body = `<p class="muted card-info">${esc(t('Drawn at start'))} · ${id}</p>`;
@@ -1534,12 +1534,12 @@ function lobbyDeck(v, isHost) {
   const deck = v.setup?.publicDeck;
   const preset = v.presets.find((p) => p.id === s.preset);
   const roles = Object.fromEntries((S.content?.roles ?? []).map((r) => [r.id, r]));
-  const card = (id, n, cls = '') => `<button class="dcard arc ${roles[id]?.alignment === 'DEATH' ? 'noir' : ''} ${cls}" data-act="cardInfo" data-kind="role" data-id="${id}" data-key="ld-${id}" aria-label="${esc(roleF(id, 'name'))}">${roles[id] ? cardArt(roleEmblemId(roles[id])) : ''}<b>${esc(roleF(id, 'name'))}</b>${n > 1 ? `<i>×${n}</i>` : ''}</button>`;
+  const card = (id, n, cls = '') => `<button class="dcard tarot ${roles[id]?.alignment === 'DEATH' ? 'noir' : ''} ${cls}" data-act="cardInfo" data-kind="role" data-id="${id}" data-key="ld-${id}" aria-label="${esc(roleF(id, 'name'))}">${roles[id] ? cardArt(roleEmblemId(roles[id])) : ''}<b>${esc(roleF(id, 'name'))}</b>${n > 1 ? `<i>×${n}</i>` : ''}</button>`;
   let cards = '';
   if (deck?.exact) cards = Object.entries(deck.exact).map(([id, n]) => card(id, n, roles[id]?.alignment === 'DEATH' ? 'death' : '')).join('');
   else if (deck) {
     cards = Object.entries(deck.core).filter(([, n]) => n > 0).map(([id, n]) => card(id, n, id === 'DEATH' ? 'death' : '')).join('')
-      + (deck.extended ? `<button class="dcard arc back secret" data-act="cardInfo" data-kind="ext" data-id="${deck.extended}" data-key="ld-ext"><span class="sig">?</span><b>${t('{n} extended', { n: deck.extended })}</b></button>` : '');
+      + (deck.extended ? `<button class="dcard tarot back secret" data-act="cardInfo" data-kind="ext" data-id="${deck.extended}" data-key="ld-ext"><span class="sig">?</span><b>${t('{n} extended', { n: deck.extended })}</b></button>` : '');
   }
   if (preset.missions) return missionLobbyDeck(v, isHost, cards);
   const allExt = (S.content?.roles ?? []).filter((r) => r.set === 'standard' || r.set === 'full').map((r) => r.id);
@@ -1555,9 +1555,9 @@ function lobbyDeck(v, isHost) {
     }).join('')}</div>${editable ? `<p class="small muted">${t('Tap to add or remove roles from the pool.')}</p>` : ''}` : '';
   const ruleCards = s.rules.mode === 'manual'
     ? (s.rules.selected.length ? s.rules.selected.map((id) => isHost
-      ? `<button class="dcard rcard arc edict" data-act="cardInfo" data-kind="rule" data-id="${id}" data-key="lr-${id}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><b>${esc(ruleF(id, 'name'))}</b><i>×</i></button>`
-      : `<button class="dcard rcard arc edict" data-act="cardInfo" data-kind="rule" data-id="${id}" data-key="lr-${id}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><b>${esc(ruleF(id, 'name'))}</b></button>`).join('') : `<p class="small muted">${t('No rule cards chosen.')}</p>`)
-    : Array.from({ length: s.rules.count }, (_, i) => `<button class="dcard rcard fd arc back" data-act="cardInfo" data-kind="ruledraw" data-id="${s.rules.count}" data-key="lr-r${i}"><span class="sig">?</span><b>${t('Drawn at start')}</b></button>`).join('') || `<p class="small muted">${t('No rule cards.')}</p>`;
+      ? `<button class="dcard rcard tarot edict" data-act="cardInfo" data-kind="rule" data-id="${id}" data-key="lr-${id}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><b>${esc(ruleF(id, 'name'))}</b><i>×</i></button>`
+      : `<button class="dcard rcard tarot edict" data-act="cardInfo" data-kind="rule" data-id="${id}" data-key="lr-${id}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><b>${esc(ruleF(id, 'name'))}</b></button>`).join('') : `<p class="small muted">${t('No rule cards chosen.')}</p>`)
+    : Array.from({ length: s.rules.count }, (_, i) => `<button class="dcard rcard fd tarot back" data-act="cardInfo" data-kind="ruledraw" data-id="${s.rules.count}" data-key="lr-r${i}"><span class="sig">?</span><b>${t('Drawn at start')}</b></button>`).join('') || `<p class="small muted">${t('No rule cards.')}</p>`;
   const toggle = (key, title, sub) => isHost
     ? `<label class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><input type="checkbox" class="switch" data-set-bool="${key}" ${v.table?.[key] ? 'checked' : ''}></label>`
     : `<div class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><span class="tag ${v.table?.[key] ? 'solid' : ''}">${t(v.table?.[key] ? 'On' : 'Off')}</span></div>`;
@@ -1820,12 +1820,12 @@ function roleCardHtml(role, { align = null, flipKey = 'role', flipped = null, mi
   // The Death team's own card is vellum like every other (same brightness across the table); only its ink is red.
   const rubric = a === 'DEATH' ? 'rubric' : '';
   if (mini) {
-    return `<button class="role-mini" data-act="sheet" data-id="role" data-key="rolemini"><span class="arc mini ${rubric}">${cardArt(roleEmblemId(role))}</span><span><b>${esc(roleF(role.id, 'name'))}</b><small>${esc(roleF(role.id, 'summary'))}</small></span></button>`;
+    return `<button class="role-mini" data-act="sheet" data-id="role" data-key="rolemini"><span class="tarot mini ${rubric}">${cardArt(roleEmblemId(role))}</span><span><b>${esc(roleF(role.id, 'name'))}</b><small>${esc(roleF(role.id, 'summary'))}</small></span></button>`;
   }
   return `<div class="card-stage" data-key="stage-${flipKey}">
     <button class="flipcard ${isFlipped ? 'flipped' : ''}" data-act="flip" data-key="${flipKey}" data-tilt aria-label="${isFlipped ? esc(t('Your role: {x}', { x: roleF(role.id, 'name') })) : esc(t('Turn over your role card'))}">
-      <span class="face back arc back"><span class="sig">DS</span><span class="hint kicker">${t('Tap to turn over')}</span></span>
-      <span class="face front arc ${rubric}">
+      <span class="face back tarot back"><span class="sig">DS</span><span class="hint kicker">${t('Tap to turn over')}</span></span>
+      <span class="face front tarot ${rubric}">
         <span class="arc-num">${esc(roleNumber(role, t))}</span>
         ${cardArt(roleEmblemId(role))}
         <span class="nm">${esc(roleF(role.id, 'name'))}</span>
@@ -2027,7 +2027,7 @@ function nightfallStage(v, me, a) {
   // Everyone turns over tonight's Dream; Dream Snatchers may also swap.
   const reveal = `<div class="dream-reveal" data-key="dr-${me.dream.id}-${v.phaseId}"><div class="dr-in">
       <div class="dr-face back">${moon(0.08)}</div>
-      <div class="dr-face front arc dreamsuit">${cardArt(DREAM_EMB[me.dream.id] ?? 'moon')}<span class="kicker">${t('Tonight\'s dream')}</span><h3>${esc(dreamF(me.dream.id, 'name'))}</h3><p>${esc(dreamF(me.dream.id, 'text'))}</p></div>
+      <div class="dr-face front tarot dreamsuit">${cardArt(DREAM_EMB[me.dream.id] ?? 'moon')}<span class="kicker">${t('Tonight\'s dream')}</span><h3>${esc(dreamF(me.dream.id, 'name'))}</h3><p>${esc(dreamF(me.dream.id, 'text'))}</p></div>
     </div></div>`;
   if (a.type === 'swap' && a.snatcher) {
     // Snatchers need the table, so their card is compact and the ring comes first.
@@ -2057,7 +2057,7 @@ const DREAM_EMB = {
 };
 function dreamCard(d) {
   if (!d) return '';
-  return `<div class="dream" data-key="dream-${d.id}"><span class="arc mini dreamsuit">${cardArt(DREAM_EMB[d.id] ?? 'moon')}</span><div><span class="kicker">${t('Tonight\'s dream')}</span><h3>${esc(dreamF(d.id, 'name'))}</h3><p>${esc(dreamF(d.id, 'text'))}</p></div></div>`;
+  return `<div class="dream" data-key="dream-${d.id}"><span class="tarot mini dreamsuit">${cardArt(DREAM_EMB[d.id] ?? 'moon')}</span><div><span class="kicker">${t('Tonight\'s dream')}</span><h3>${esc(dreamF(d.id, 'name'))}</h3><p>${esc(dreamF(d.id, 'text'))}</p></div></div>`;
 }
 
 function actionsStage(v, me, a) {

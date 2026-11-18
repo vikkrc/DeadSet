@@ -145,17 +145,17 @@ export function boardScreen(v, h) {
     const s = v.settings;
     const deck = v.setup?.publicDeck;
     const roles = Object.fromEntries((h.content?.roles ?? []).map((r) => [r.id, r]));
-    const card = (id, n, cls = '') => `<div class="dcard arc ${roles[id]?.alignment === 'DEATH' ? 'noir' : ''} ${cls}" data-key="dk-${id}">${roles[id] ? cardArt(roleEmblemId(roles[id])) : ''}<b>${esc(roleF(id, 'name'))}</b>${n > 1 ? `<i>×${n}</i>` : ''}</div>`;
+    const card = (id, n, cls = '') => `<div class="dcard tarot ${roles[id]?.alignment === 'DEATH' ? 'noir' : ''} ${cls}" data-key="dk-${id}">${roles[id] ? cardArt(roleEmblemId(roles[id])) : ''}<b>${esc(roleF(id, 'name'))}</b>${n > 1 ? `<i>×${n}</i>` : ''}</div>`;
     let deckHtml = '';
     if (deck?.exact) deckHtml = Object.entries(deck.exact).map(([id, n]) => card(id, n, roles[id]?.alignment === 'DEATH' ? 'death' : '')).join('');
     else if (deck) {
       deckHtml = Object.entries(deck.core).filter(([, n]) => n > 0).map(([id, n]) => card(id, n, id === 'DEATH' ? 'death' : '')).join('')
-        + (deck.extended ? `<div class="dcard arc back secret" data-key="dk-ext"><span class="sig">?</span><b>${th('{n} extended', { n: deck.extended })}</b></div>` : '');
+        + (deck.extended ? `<div class="dcard tarot back secret" data-key="dk-ext"><span class="sig">?</span><b>${th('{n} extended', { n: deck.extended })}</b></div>` : '');
     }
     const classic = v.mode === 'classic';
     const ruleCards = !classic ? '' : s.rules.mode === 'manual'
-      ? (s.rules.selected.length ? s.rules.selected.map((id) => `<div class="dcard rcard arc edict" data-key="rc-${id}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><b>${esc(ruleF(id, 'name'))}</b></div>`).join('') : `<p class="small muted">${t('No rule cards.')}</p>`)
-      : Array.from({ length: s.rules.count }, (_, i) => `<div class="dcard rcard fd arc back" data-key="rc-r${i}"><span class="sig">?</span><b>${t('Drawn at start')}</b></div>`).join('') || `<p class="small muted">${t('No rule cards.')}</p>`;
+      ? (s.rules.selected.length ? s.rules.selected.map((id) => `<div class="dcard rcard tarot edict" data-key="rc-${id}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><b>${esc(ruleF(id, 'name'))}</b></div>`).join('') : `<p class="small muted">${t('No rule cards.')}</p>`)
+      : Array.from({ length: s.rules.count }, (_, i) => `<div class="dcard rcard fd tarot back" data-key="rc-r${i}"><span class="sig">?</span><b>${t('Drawn at start')}</b></div>`).join('') || `<p class="small muted">${t('No rule cards.')}</p>`;
     return `<main class="board2 lobby" data-key="board-lobby">${header}
       <div class="b-lobby">
         <section class="b-join">

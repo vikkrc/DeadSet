@@ -34,9 +34,9 @@ export function vcard(id, { cls = '', frost = false, act = '', sel = false, key 
   const vi = VISIONS[id];
   const tag = act ? 'button' : 'span';
   const attrs = `${act ? `data-act="${act}" data-id="${esc(label || id)}" aria-pressed="${sel}"` : ''} ${key ? `data-key="${key}"` : ''}`;
-  if (!vi) return `<${tag} class="arc back vcard ${cls}" ${attrs} aria-label="${esc(t('A vision, face down'))}"><span class="sig">DS</span></${tag}>`;
+  if (!vi) return `<${tag} class="tarot back vcard ${cls}" ${attrs} aria-label="${esc(t('A vision, face down'))}"><span class="sig">DS</span></${tag}>`;
   const motifs = vi.motifs.map((m, i) => `<span class="vm vm${i + 1}">${emblem(m)}</span>`).join('');
-  return `<${tag} class="arc vcard vl${vi.layout} ${frost ? 'frost' : ''} ${sel ? 'sel' : ''} ${cls}" ${attrs} aria-label="${esc(t('A vision'))}">
+  return `<${tag} class="tarot vcard vl${vi.layout} ${frost ? 'frost' : ''} ${sel ? 'sel' : ''} ${cls}" ${attrs} aria-label="${esc(t('A vision'))}">
     <span class="v-art" aria-hidden="true">${motifs}</span>
     ${frost ? `<span class="v-frost">${emblem('v_snow')}<b>${esc(t('Cold spot'))}</b></span>` : ''}${mark ? `<span class="v-mark">${mark}</span>` : ''}</${tag}>`;
 }
@@ -47,13 +47,13 @@ export function scard(row, idx, { cls = '', act = '', sel = false, key = '', sta
   const attrs = `${act ? `data-act="${act}" data-id="${idx}" aria-pressed="${sel}"` : ''} ${key ? `data-key="${key}"` : ''}`;
   const art = row === 'WHERE' ? `<span class="s-bd" aria-hidden="true">${backdropSvg(idx, 'card')}</span>`
     : `<span class="s-ic" aria-hidden="true">${emblem(STORY_ICONS[row]?.[idx] ?? ROW_EMB[row])}</span>`;
-  return `<${tag} class="arc scard row-${row} ${state} ${sel ? 'sel' : ''} ${cls}" ${attrs}>
+  return `<${tag} class="tarot scard row-${row} ${state} ${sel ? 'sel' : ''} ${cls}" ${attrs}>
     <span class="arc-num">${esc(t(ROW_LABEL[row]))}</span>${art}<span class="nm" style="--nl:${[...cardName(row, idx)].length}">${esc(cardName(row, idx))}</span>${state === 'struck' ? '<i class="s-x" aria-hidden="true"></i>' : ''}${state === 'solved' ? `<i class="s-ok" aria-hidden="true">${glyph('check')}</i>` : ''}</${tag}>`;
 }
 
 /** A role card for the reveal. */
 function rcard(id, cls = '') {
-  return `<span class="arc srole ${id === 'S_DECEIVER' ? 'rubric' : ''} ${cls}"><span class="arc-num">${esc(t('Séance'))}</span>${cardArt(ROLE_EMB[id] ?? 'medium')}<span class="nm">${esc(roleF(id, 'name'))}</span></span>`;
+  return `<span class="tarot srole ${id === 'S_DECEIVER' ? 'rubric' : ''} ${cls}"><span class="arc-num">${esc(t('Séance'))}</span>${cardArt(ROLE_EMB[id] ?? 'medium')}<span class="nm">${esc(roleF(id, 'name'))}</span></span>`;
 }
 
 /** The séance clock: candles, burnt ones gone out. */
@@ -182,7 +182,7 @@ export function seanceMain(v, me, h) {
         MEDIUM: ['Each round you read one row: who, where or why.', 'The Ghost sends you a vision. Describe it, argue, then light a candle on the card it points to.', 'Solve all three rows before the candles burn out, then name the Deceiver.'],
       }[s.role] ?? [];
       stage = `${doNow(open ? esc(roleF(id, 'name')) : th('{a} is the Ghost', { a: rawName(v, S.ghost) }), open ? '' : t('Shield your screen. Tap the card to turn it over.'))}
-        <div class="s-intro ${open ? 'open' : ''}" data-key="sintro"><button class="nflip ${open ? 'open' : ''}" data-act="sFlip" data-key="sflip-${open ? 'o' : 'c'}">${open ? rcard(id, 'big') : '<span class="arc back srole big"><span class="sig">DS</span></span>'}</button>
+        <div class="s-intro ${open ? 'open' : ''}" data-key="sintro"><button class="nflip ${open ? 'open' : ''}" data-act="sFlip" data-key="sflip-${open ? 'o' : 'c'}">${open ? rcard(id, 'big') : '<span class="tarot back srole big"><span class="sig">DS</span></span>'}</button>
         ${open ? `<ol class="s-how">${how.map((x) => `<li>${esc(t(x))}</li>`).join('')}</ol>` : ''}</div>
         ${open && s.truth ? truthStrip(S, s.truth) : ''}${open && s.fellows?.length ? `<p class="npow">${th('The other Deceiver: {names}.', { names: s.fellows.map((x) => rawName(v, x)) })}</p>` : ''}
         ${a.done ? `<p class="small muted center-text">${th('Waiting for the others · {done}/{total}', v.progress ?? { done: 0, total: 0 })}</p>` : ''}`;

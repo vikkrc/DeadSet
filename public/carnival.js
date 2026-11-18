@@ -102,8 +102,8 @@ const LEGEND = [['soul', 'Souls'], ['offering', 'The Offering'], ['harvest', 'Ha
 export function maskCard(id, { back = false, cls = '', act = '', sel = false, key = '', badge = '' } = {}) {
   const tag = act ? 'button' : 'span';
   const attrs = `${act ? `data-act="${act}" data-id="${id}" aria-pressed="${sel}"` : ''} ${key ? `data-key="${key}"` : ''}`;
-  if (back || !id) return `<${tag} class="arc back kcard ${cls}" ${attrs} aria-label="${esc(t('A mask, face down'))}"><span class="sig">DS</span>${badge}</${tag}>`;
-  return `<${tag} class="arc kcard ${id === 'DEATH' ? 'rubric' : ''} ${sel ? 'sel' : ''} ${cls}" style="${ink(id)}" ${attrs} aria-label="${esc(roleName(id))}">
+  if (back || !id) return `<${tag} class="tarot back kcard ${cls}" ${attrs} aria-label="${esc(t('A mask, face down'))}"><span class="sig">DS</span>${badge}</${tag}>`;
+  return `<${tag} class="tarot kcard ${id === 'DEATH' ? 'rubric' : ''} ${sel ? 'sel' : ''} ${cls}" style="${ink(id)}" ${attrs} aria-label="${esc(roleName(id))}">
     <span class="arc-num">${esc(roleNumber({ id }, t))}</span>${cardArt(embOf(id))}<span class="nm">${esc(roleName(id))}</span>${badge}</${tag}>`;
 }
 

@@ -30,8 +30,8 @@ export const faceArt = (f) => emblem(FACE_EMB[f] ?? 'coin', { cls: 'c-face-em' }
 export function coffinCard(f, { cls = '', act = '', id = '', sel = false, label = '', key = '', badge = '' } = {}) {
   const tag = act ? 'button' : 'span';
   const attrs = `${act ? `data-act="${act}" data-id="${esc(id)}" aria-pressed="${sel}"` : ''} ${key ? `data-key="${key}"` : ''} aria-label="${esc(label || (f ? faceName(f) : t('A coffin')))}"`;
-  if (!f) return `<${tag} class="arc back coff ${sel ? 'sel' : ''} ${cls}" ${attrs}><span class="sig">DS</span>${badge}</${tag}>`;
-  return `<${tag} class="arc coff f-${f} ${f === 'C' ? 'rubric' : f === 'D' ? 'noir' : ''} ${sel ? 'sel' : ''} ${cls}" ${attrs}>${cardArt(FACE_EMB[f])}<span class="nm">${esc(t(FACE_SHORT[f]))}</span>${badge}</${tag}>`;
+  if (!f) return `<${tag} class="tarot back coff ${sel ? 'sel' : ''} ${cls}" ${attrs}><span class="sig">DS</span>${badge}</${tag}>`;
+  return `<${tag} class="tarot coff f-${f} ${f === 'C' ? 'rubric' : f === 'D' ? 'noir' : ''} ${sel ? 'sel' : ''} ${cls}" ${attrs}>${cardArt(FACE_EMB[f])}<span class="nm">${esc(t(FACE_SHORT[f]))}</span>${badge}</${tag}>`;
 }
 
 const RELIC_GLYPH = { LANTERN: 'lantern', KEY: 'key', WARD: 'ward' };

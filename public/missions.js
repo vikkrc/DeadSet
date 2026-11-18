@@ -52,7 +52,7 @@ export function trackHtml(v, { big = false } = {}) {
 /** A mission card face (also used by the card-draw moment). */
 export function cardFace(id, { size = null, fails = null } = {}) {
   const special = id !== 'REGULAR';
-  return `<div class="mcard arc ${special ? 'special' : ''}" data-key="mcard-${id}">
+  return `<div class="mcard tarot ${special ? 'special' : ''}" data-key="mcard-${id}">
     <span class="mc-kick arc-num">${t(special ? 'Mission card' : 'Regular Mission')}</span>
     ${cardArt(missionEmblemId(id))}
     <b class="mc-name">${esc(mcardF(id, 'name'))}</b>
@@ -230,7 +230,7 @@ function playStage(v, a, S) {
   }
   const sel = S.sel.mcard;
   const card = (id, label, g, dis) => `<button class="mplay-card ${id === 'F' ? 'bad' : 'good'} ${sel === id ? 'sel' : ''}" data-act="mPickCard" data-id="${id}" ${dis ? 'disabled' : ''} data-key="mpc-${id}" aria-pressed="${sel === id}">
-    <span class="mpc-in arc"><span class="arc-num">${t('Mission')}</span>${cardArt(g)}<b>${t(label)}</b>${dis ? `<small>${t(a.warded ? 'You are warded.' : 'Only Death can sabotage.')}</small>` : ''}</span></button>`;
+    <span class="mpc-in tarot"><span class="arc-num">${t('Mission')}</span>${cardArt(g)}<b>${t(label)}</b>${dis ? `<small>${t(a.warded ? 'You are warded.' : 'Only Death can sabotage.')}</small>` : ''}</span></button>`;
   return `<section class="mplay" data-key="mplay"><div class="mplay-cards">${card('S', 'Succeed', 'succeed', false)}${card('F', 'Sabotage', 'sabotage', !a.canFail)}</div>
     <button class="btn btn-ghost btn-sm" data-act="mCover">${glyph('veil')} ${t('Cover')}</button></section>`;
 }
@@ -481,7 +481,7 @@ export function missionMomentHtml(m, h) {
       const n = m.cards ? m.cards.length : m.count;
       const cards = Array.from({ length: n }, (_, i) => {
         const c = m.cards?.[i];
-        return `<div class="mrc ${m.cards ? (c === 'F' ? 'bad' : 'good') : 'smoke'}" style="--i:${i};--n:${n};--d:${2.2 + i * 1.15}s"><div class="mrc-in"><div class="mrc-back"><b>DS</b></div><div class="mrc-front arc ${c === 'F' ? 'noir' : ''}">${m.cards ? `${cardArt(c === 'F' ? 'sabotage' : 'succeed')}<b>${t(c === 'F' ? 'Sabotage' : 'Succeed')}</b>${c === 'F' ? '<svg class="mrc-crack" viewBox="0 0 100 140" aria-hidden="true"><path d="M50 0L44 34 58 50 40 78 56 98 48 140"/><path d="M58 50L84 58M40 78L14 72"/></svg>' : ''}` : glyph('smoke')}</div></div></div>`;
+        return `<div class="mrc ${m.cards ? (c === 'F' ? 'bad' : 'good') : 'smoke'}" style="--i:${i};--n:${n};--d:${2.2 + i * 1.15}s"><div class="mrc-in"><div class="mrc-back"><b>DS</b></div><div class="mrc-front tarot ${c === 'F' ? 'noir' : ''}">${m.cards ? `${cardArt(c === 'F' ? 'sabotage' : 'succeed')}<b>${t(c === 'F' ? 'Sabotage' : 'Succeed')}</b>${c === 'F' ? '<svg class="mrc-crack" viewBox="0 0 100 140" aria-hidden="true"><path d="M50 0L44 34 58 50 40 78 56 98 48 140"/><path d="M58 50L84 58M40 78L14 72"/></svg>' : ''}` : glyph('smoke')}</div></div></div>`;
       }).join('');
       const end = 2.2 + n * 1.15 + 0.4;
       return `<div class="reveal-wash ${m.failed ? 'fail' : 'ok'}" style="--d:${end}s" aria-hidden="true"></div><span class="kicker">${t('Mission {n}', { n: m.mission + 1 })}${m.weight > 1 ? ` · ${t('counts twice')}` : ''}</span><h1 class="m-title">${letters(t('The cards are turned'))}</h1>
