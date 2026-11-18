@@ -4926,3 +4926,27 @@ body[data-mode='mirror']:not([data-time='night']) {
 .chip.util { min-height: 44px; padding: 0 14px; }
 /* Rank-based modes (C6): the viewer's place instead of Defeat, in bone, not blood. */
 .result-stamp.place { border-color: var(--bone-2); color: var(--bone); font-size: 34px; }
+
+/* ── Type scale (B2) ──
+   The only text sizes: phone values here, the TV's in .is-board (×1.6 with a 16 px floor, scaling up on bigger
+   boards). Cards are the exception: they scale with font-size in em, and a card too small for its title to reach
+   --fs-label shows its emblem only (D2). */
+:root {
+  --fs-label: 11px;   /* caps labels, tracked; the floor for any text on a phone */
+  --fs-small: 13px;   /* captions, hints, card subtitles */
+  --fs-body: 16px;
+  --fs-lead: 19px;    /* italic flavour lines */
+  --fs-h3: 24px;      /* blackletter section titles */
+  --fs-h2: 32px;
+  --fs-h1: 44px;      /* moment titles */
+  --fs-display: 64px;
+}
+.is-board {
+  --fs-label: clamp(16px, 1vw, 22px); --fs-small: clamp(19px, 1.2vw, 26px); --fs-body: clamp(24px, 1.5vw, 32px); --fs-lead: clamp(28px, 1.75vw, 38px);
+  --fs-h3: clamp(34px, 2.1vw, 46px); --fs-h2: clamp(48px, 3vw, 64px); --fs-h1: clamp(72px, 4.5vw, 96px); --fs-display: clamp(110px, 6.9vw, 150px);
+}
+/* The floor for the shared labels that sat at 9–10.5 px. */
+.kicker, .tok-name, .ring.dense .tok-name, .host-slot .btn-host, .chip b, .bdg, .b-mark, .dcard b, .rr b, .dw-seg button, .mc-foot,
+.xb-k, .x-order .xo-n, .bars .b-name small, .xball.small .xb-k, .xball.small .xb-sub, .xb-orbit.crowded .xo-pill, .xball.small .xo-pill,
+.envelope .addr small, .sign small, .mk.heat, .accused small { font-size: var(--fs-label); }
+.small, .check small, .toggle-row small, .preset small, .portrait-row small, .sg small, .role-mini small, .mates small { font-size: var(--fs-small); }
