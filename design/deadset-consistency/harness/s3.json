@@ -1,0 +1,4 @@
+[{"name":"graverobbers","settings":[{"mode":"graverobbers"}],"bots":7,"maxMs":360000},
+ {"name":"mimic","settings":[{"mode":"mimic"}],"bots":5,"maxMs":300000},
+ {"name":"omen","settings":[{"mode":"omen"}],"bots":5,"maxMs":300000},
+ {"name":"mirror","settings":[{"mode":"mirror"}],"bots":5,"maxMs":300000}]

@@ -1,0 +1,4 @@
+[{"name":"coffins","settings":[{"mode":"coffins"}],"bots":4,"maxMs":360000},
+ {"name":"carnival","settings":[{"mode":"carnival"}],"bots":5,"maxMs":360000},
+ {"name":"midnight","settings":[{"mode":"midnight"}],"bots":6,"maxMs":300000},
+ {"name":"seance","settings":[{"mode":"seance"}],"bots":5,"maxMs":360000}]

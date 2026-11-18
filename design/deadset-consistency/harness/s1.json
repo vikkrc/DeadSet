@@ -1,0 +1,3 @@
+[{"name":"standard","settings":[{"preset":"standard"}],"bots":7,"maxMs":420000},
+ {"name":"missions","settings":[{"mode":"missions"}],"bots":6,"maxMs":420000},
+ {"name":"exorcism","settings":[{"mode":"exorcism"}],"bots":5,"maxMs":300000}]

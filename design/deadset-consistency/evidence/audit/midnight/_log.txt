@@ -1,0 +1,18 @@
+code 7TD2MW
+phases:
+LOBBY:0
+N_DEAL:-1:1
+N_NIGHT:0:2
+N_NIGHT:1:3
+N_NIGHT:2:4
+N_NIGHT:3:5
+N_NIGHT:4:6
+N_NIGHT:5:7
+N_NIGHT:6:8
+N_DAY:7:9
+N_VOTE:7:10
+ENDED:7:11
+LOBBY:12
+
+errors:
+advance: Nothing to advance.
