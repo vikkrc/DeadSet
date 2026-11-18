@@ -353,7 +353,7 @@ function detectMoments(v) {
       case 'shot': out.push({ type: 'death', sound: 'shot', title: 'A shot rings out', names: (l.victims ?? []).map(name), sub: l.victims?.length ? 'Nobody saw who pulled the trigger.' : 'The bullet found no one.' }); break;
       case 'final-act': out.push({ type: 'call', kicker: ruleF('EQUAL_EXCHANGE', 'name'), title: 'A final act', sub: 'The condemned may take one more with them.', sound: 'knock' }); break;
       case 'exchange': out.push({ type: 'death', title: 'An equal exchange', names: (l.victims ?? []).map(name), sub: 'The condemned did not go alone.' }); break;
-      case 'end': out.push({ type: 'end', winner: l.winner, reason: l.reason, who: l.pid ? name(l.pid) : '', whos: (l.pids ?? []).map(name), sides: l.sides, result: l.result, tapOnly: true }); break;
+      case 'end': out.push({ type: 'end', winner: l.winner, reason: l.reason, who: l.pid ? name(l.pid) : '', whos: (l.pids ?? []).map(name), pids: l.pids ?? null, sides: l.sides, result: l.result, tapOnly: true }); break;
       case 'discussion': notify(t('Day {n} · the floor is open', { n: roman(v.dayNumber) })); break;
       case 'defense': notify(t('Defence: each nominee speaks in turn')); pubSound('spot'); break;
       case 'novote': notify(t('Nobody was nominated. No vote today.')); break;
@@ -478,6 +478,18 @@ function didIWin(v, winner) {
   return (winner === 'DEATH' && me.alignment === 'DEATH') || (winner === 'NON_DEATH' && me.alignment === 'NON_DEATH');
 }
 
+/** The verdict scene's title, computed once from the end log entry (and the view of that moment). */
+function endTitle(m) {
+  if ((m.winner === 'OMEN' || m.winner === 'MIRROR') && m.whos?.length) return t('{names} wins', { names: m.whos });
+  return m.winner === 'OMEN' ? omenTitle(V()) : m.winner === 'MIRROR' ? mirrorTitle(V()) : m.winner === 'MIMIC' ? mimicTitle(V()?.mimic) : m.winner === 'GRAVEROBBERS' ? graveTitle(V()?.graverobbers) : m.winner === 'SEANCE' ? t(seanceTitle(m.result)) : m.winner === 'MIDNIGHT' ? t(midnightTitle(m.sides)) : m.winner === 'CARNIVAL' ? t('{names} wins', { names: m.whos ?? [] }) : m.winner === 'COFFINS' ? th('{a} wins', { a: m.who ?? '' }) : t({ DEMON: 'The Demon wins', DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[m.winner] ?? 'The end');
+}
+function endBody(m) {
+  const { title, won } = m.frozen;
+  return `<div class="m-art">${glyph(WIN_GLYPH[m.winner] ?? 'scroll')}</div>
+        <span class="kicker">${t('The verdict')}</span><h1 class="m-title ${m.winner === 'DEATH' ? 'blood' : ''}">${letters(title)}</h1><p class="m-sub">${tmh(m.reason)}</p>
+        ${won === null || won === undefined ? '' : `<div class="result-stamp ${won ? 'win' : 'loss'}">${t(won ? 'Victory' : 'Defeat')}</div>`}`;
+}
+
 function momentHtml(m) {
   const names = (list, cls = '') => list.map((n, i) => `<li class="victim ${cls}" style="--d:${0.9 + i * 0.5}s"><span>${esc(n)}</span></li>`).join('');
   let body = '';
@@ -564,11 +576,9 @@ function momentHtml(m) {
       body = `<div class="m-art">${glyph(m.art || 'dagger')}</div><h1 class="m-title">${letters(t(m.title))}</h1>${m.names.length ? `<ul class="victims">${names(m.names)}</ul>` : ''}<p class="m-sub">${tmh(m.sub)}</p>`;
       break;
     case 'end': {
-      const title = m.winner === 'OMEN' ? omenTitle(V()) : m.winner === 'MIRROR' ? mirrorTitle(V()) : m.winner === 'MIMIC' ? mimicTitle(V()?.mimic) : m.winner === 'GRAVEROBBERS' ? graveTitle(V()?.graverobbers) : m.winner === 'SEANCE' ? t(seanceTitle(m.result)) : m.winner === 'MIDNIGHT' ? t(midnightTitle(m.sides)) : m.winner === 'CARNIVAL' ? t('{names} wins', { names: m.whos ?? [] }) : m.winner === 'COFFINS' ? th('{a} wins', { a: m.who ?? '' }) : t({ DEMON: 'The Demon wins', DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[m.winner] ?? 'The end');
-      const won = didIWin(V(), m.winner);
-      body = `<div class="m-art">${glyph(WIN_GLYPH[m.winner] ?? 'scroll')}</div>
-        <span class="kicker">${t('The verdict')}</span><h1 class="m-title ${m.winner === 'DEATH' ? 'blood' : ''}">${letters(title)}</h1><p class="m-sub">${tmh(m.reason)}</p>
-        ${won === null ? '' : `<div class="result-stamp ${won ? 'win' : 'loss'}">${t(won ? 'Victory' : 'Defeat')}</div>`}`;
+      // Freeze the verdict when the scene opens: the room may already be back in the lobby (A6).
+      if (!m.frozen) m.frozen = { title: endTitle(m), won: didIWin(V(), m.winner) ?? (m.pids && V()?.me ? m.pids.includes(V().me.id) : null) };
+      body = endBody(m);
       break;
     }
     default: break;
