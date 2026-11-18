@@ -5056,3 +5056,15 @@ details.more summary,
 .w-choices li .k-disc b,
 .w-mine .k-disc b,
 .w-grid .k-disc b { font-size: var(--fs-label); }
+
+/* ── The TV from the sofa (D1) ──
+   Every label on the board reaches --fs-label (16 px at 1600 wide, growing with the board). */
+.is-board :is(.tok-name, .ring.dense .tok-name, .board2 .tok-name, .board2 .ring.dense .tok-name, .kl-n, .kl-name, .bdg, .b-step, .b-mode, .c-sub, .cc-l,
+  .c-clock, .o-chip, .o-rot, .ev, .ev .mini, .arrow, .kicker, .done, .ok, .rulechip, .mc-foot, .xb-k, .xb-sub) { font-size: var(--fs-label); }
+.is-board :is(.ev, .edition small, .b-side small, .b-side em, .b-side th) { font-size: var(--fs-small); }
+.is-board :is(.gt-crew li > span, .gt-crew li > em, .gt-crew b > small, .c-ledger li > b, .c-ledger span > small, .k-side li > b, .kboard li > b,
+  .kr > b, .now > b, .b-now > b, .lot-seat > small, .sb-steps li, .sb-stats > span, .sb-ghost small, .sb-clock small, .gsn-digs small,
+  .plaque > span, .dcard > b, .dcard > i, .k-disc.sm > b, .g-disc.sm > b, .kl-x .o-plus, .photo > span) { font-size: var(--fs-label); }
+/* Seat names on the TV may run wider than the medallion, so a short name is never cut. */
+.is-board .ring:not(.dense) .tok-name { max-width: 9em; overflow: visible; }
+.is-board .ring.dense .tok-name { max-width: 7em; }
