@@ -52,7 +52,7 @@ export function trackHtml(v, { big = false } = {}) {
 /** A mission card face (also used by the card-draw moment). */
 export function cardFace(id, { size = null, fails = null } = {}) {
   const special = id !== 'REGULAR';
-  return `<div class="mcard tarot ${special ? 'special' : ''}" data-key="mcard-${id}">
+  return `<div class="tarot tarot--hero mcard ${special ? 'special' : ''}" data-key="mcard-${id}">
     <span class="mc-kick arc-num">${t(special ? 'Mission card' : 'Regular Mission')}</span>
     ${cardArt(missionEmblemId(id))}
     <b class="mc-name">${esc(mcardF(id, 'name'))}</b>

@@ -1488,13 +1488,6 @@ body.is-dead::after { content: ''; position: fixed; inset: 0; pointer-events: no
 .mc-banner small { color: var(--bone-2); }
 .mc-banner.special { border-color: rgba(233, 194, 122, 0.55); background: linear-gradient(rgba(233, 194, 122, 0.08), rgba(233, 194, 122, 0.02)), var(--ink-2); }
 .mc-banner.special > .glyph { color: var(--gilt); }
-.mcard { width: 210px; min-height: 290px; padding: 18px 16px; border-radius: 12px; border: 1px solid var(--gilt-2); background: linear-gradient(160deg, var(--ink-3), var(--ink)); display: grid; justify-items: center; align-content: center; gap: 10px; text-align: center; }
-.mcard.special { border-color: var(--gilt); box-shadow: inset 0 0 0 4px rgba(233, 194, 122, 0.12), 0 0 40px rgba(233, 194, 122, 0.2); }
-.mc-art .glyph { font-size: 64px; color: var(--bone); stroke-width: 1; }
-.mcard.special .mc-art .glyph { color: var(--gilt); }
-.mc-name { font: 400 28px/1 var(--serif); }
-.mc-text { color: var(--bone-2); font-size: 13px; line-height: 1.4; }
-.mc-foot { font: 600 10px/1.3 var(--sans); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash); }
 .mc-flip { perspective: 900px; margin: 6px auto; }
 .mc-in { position: relative; width: 210px; height: 290px; transform-style: preserve-3d; animation: mcTurn 1s 0.7s var(--spring) both; }
 .mc-back, .mc-front { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; }
@@ -1630,8 +1623,8 @@ body.is-board .vf-in { width: 84px; height: 84px; }
 body.is-board .vf-face .glyph { font-size: 42px; }
 body.is-board .vflip { max-width: 900px; gap: 18px 16px; }
 body.is-board .vflip small { font-size: 15px; max-width: 100px; }
-body.is-board .mc-in { width: 280px; height: 386px; }
-body.is-board .mc-in .mcard { width: 280px; min-height: 386px; }
+body.is-board .mc-in { width: 240px; height: 393px; }
+body.is-board .mc-in .mcard { font-size: 15px; }
 body.is-board .reveal-stamp .stamp { font-size: 34px; }
 
 /* Lobby: the top-line game-mode choice. */
@@ -2309,14 +2302,15 @@ body.pressure .sky-orb.sun, body.pressure .sky-orb.moon { background: radial-gra
    a mode tints a face through --suit (Carnival's masks) or --win/--win-2 (the art window of a .night card).
    Sizes share one geometry and scale with font-size: thumb (emblem only), small, hand, hero.
    States: .is-chosen, .is-struck, .is-dim. Motion: tarot-deal (onto the table), tarot-turn (face up). */
-:is(.tarot--thumb, .tarot--small, .tarot--hand, .tarot--hero) { width: 6.2em; aspect-ratio: 11 / 18; padding: 1.05em 0.75em 0.9em; gap: 0.32em; flex: none; }
+:is(.tarot--thumb, .tarot--small, .tarot--hand) { width: 6.2em; aspect-ratio: 11 / 18; padding: 1.05em 0.75em 0.9em; gap: 0.32em; flex: none; }
 .tarot--thumb { font-size: 6.4px; padding: 0.7em 0.55em; }
 .tarot--small { font-size: 9px; }
-.tarot--hand { font-size: 13px; }
-.tarot--hero { font-size: 17px; }
-:is(.tarot--thumb, .tarot--small, .tarot--hand, .tarot--hero) .arc-num { font-size: 0.86em; }
-:is(.tarot--thumb, .tarot--small, .tarot--hand, .tarot--hero) .nm { font-size: 1.55em; line-height: 1; text-align: center; overflow-wrap: normal; }
-:is(.tarot--thumb, .tarot--small, .tarot--hand, .tarot--hero).back .sig { width: 2.6em; height: 2.6em; font-size: 1.5em; }
+.tarot--hand { font-size: 15px; }
+:is(.tarot--thumb, .tarot--small, .tarot--hand) .arc-num { font-size: 0.86em; }
+:is(.tarot--thumb, .tarot--small, .tarot--hand) .nm { font-size: 1.55em; line-height: 1; text-align: center; overflow-wrap: normal; }
+:is(.tarot--thumb, .tarot--small, .tarot--hand).back .sig { width: 2.6em; height: 2.6em; font-size: 1.5em; }
+/* the hero: one card filling the moment (a role, a mission), with room for its text */
+.tarot--hero { width: 16em; aspect-ratio: 11 / 18; padding: 1.5em 1.2em 1.2em; font-size: 13px; flex: none; }
 .tarot--thumb .arc-num, .tarot--thumb .nm { display: none; }
 .tarot--thumb .arc-art { width: 100%; flex: 1; }
 .tarot.night:not(.back) .arc-art::before { background: radial-gradient(circle, rgba(241, 228, 200, 0.12) 0.9px, transparent 1.4px) 0 0 / 5px 5px, linear-gradient(180deg, var(--win, #232a3a), var(--win-2, #0d1119)); }
@@ -2410,12 +2404,11 @@ button.tarot:active { transform: scale(0.96); }
 .board2 .dcard.tarot.edict { width: 96px; }
 
 /* ── Mission cards: tarot cards; Succeed and Sabotage share one vellum face on phones ── */
-.mcard.tarot { width: 210px; min-height: 0; height: 344px; padding: 1.5em 1.2em 1.2em; border: 0; font-size: 13px; display: flex; }
-.mcard.tarot .mc-name { font: 600 1.9em/1 var(--black); color: var(--sepia); }
-.mcard.tarot .mc-text { font: italic 400 0.92em/1.3 var(--text); color: var(--sepia-2); max-width: 22ch; }
-.mcard.tarot .mc-foot { font: 600 0.68em/1.2 var(--text); letter-spacing: 0.2em; text-transform: uppercase; color: var(--rubric); }
-.mcard.tarot.special { box-shadow: 0 0 0 1px var(--gilt), 0 0 40px -6px var(--gilt), inset 0 0 2em rgba(84, 54, 18, 0.24); }
-.mc-in { width: 210px; height: 344px; }
+.mcard .mc-name { font: 600 1.9em/1 var(--black); color: var(--sepia); }
+.mcard .mc-text { font: italic 400 0.92em/1.3 var(--text); color: var(--sepia-2); max-width: 22ch; }
+.mcard .mc-foot { font: 600 0.68em/1.2 var(--text); letter-spacing: 0.2em; text-transform: uppercase; color: var(--rubric); }
+.mcard.special { box-shadow: 0 0 0 1px var(--gilt), 0 0 40px -6px var(--gilt), inset 0 0 2em rgba(84, 54, 18, 0.24); }
+.mc-in { width: 208px; height: 340px; }
 .mc-back { border: 0; border-radius: 0.4em; font-size: 13px; }
 .mc-back, .mrc-back {
   color: var(--gilt);
