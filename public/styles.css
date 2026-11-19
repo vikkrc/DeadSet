@@ -713,7 +713,29 @@ body.has-sheet { overflow: hidden; }
 .guide table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 .guide th, .guide td { text-align: left; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--iron); color: var(--bone-2); }
 .guide th { font: 600 9.5px/1 var(--sans); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash); }
-.toc a { text-decoration: none; }
+/* E3: the guide's chapters. A phone jumps with a sticky select; a wide screen keeps a left column. */
+.guide-main { max-width: 820px; }
+.g-nav { position: sticky; top: 0; z-index: 3; margin: 0 -14px; padding: 8px 14px 10px; background: var(--ink); border-bottom: 1px solid var(--iron); }
+.g-jump { display: grid; gap: 2px; }
+.g-jump select { width: 100%; min-height: 44px; font-size: var(--fs-body); background: transparent; }
+.g-jump select option, .g-jump select optgroup { background: var(--ink-2); color: var(--bone); }
+.g-col { display: none; }
+.g-body { display: grid; gap: 44px; }
+.g-body > section { scroll-margin-top: 92px; }
+@media (min-width: 980px) {
+  .guide-main { max-width: 1120px; }
+  .guide { grid-template-columns: 220px minmax(0, 1fr); column-gap: 48px; align-items: start; }
+  .guide > .phase-head { grid-column: 1 / -1; }
+  .g-nav { top: 24px; margin: 0; padding: 0; border: 0; background: none; max-height: calc(100dvh - 48px); overflow-y: auto; }
+  .g-jump { display: none; }
+  .g-col { display: grid; gap: 2px; }
+  .g-col .kicker { margin: 0 0 6px; }
+  .g-col .g-modes { margin-top: 22px; }
+  .g-col small { margin: 10px 0 2px; font-size: var(--fs-label); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash); }
+  .g-col a { display: block; padding: 6px 0 6px 12px; border-left: 1px solid var(--iron); font: italic 400 var(--fs-body)/1.25 var(--text); color: var(--bone-2); text-decoration: none; }
+  .g-col a:hover, .g-col a:focus-visible { border-left-color: var(--accent); color: var(--bone); }
+  .g-body > section { scroll-margin-top: 24px; }
+}
 .phase-head .scenario { margin-top: 6px; }
 
 /* ── Board (TV) ────────────────────────────────────────────────────────── */
@@ -3052,8 +3074,8 @@ body.has-moment { overflow: hidden; }
 .topbar .phase-mini span { font: italic 400 14px/1.2 var(--text); color: var(--bone-2); }
 .tb-emblem .glyph { width: 30px; height: 30px; }
 @media (max-width: 979px) {
-  .phase-head h1, .phase-head .ph-step { display: none; }
-  .phase-head:not(:has(.ph-x, .ghost-tag, .cover)) { display: none; }
+  .phase-head:not(.guide > *) h1, .phase-head:not(.guide > *) .ph-step { display: none; }
+  .phase-head:not(.guide > *):not(:has(.ph-x, .ghost-tag, .cover)) { display: none; }
 }
 .ph-x + .ph-x::before, .ph-step + .ph-x::before { content: ' · '; color: var(--ash); }
 @media (max-width: 979px) { .ph-step + .ph-x::before { content: none; } }

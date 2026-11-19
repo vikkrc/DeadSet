@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Tres misiones fracasaron",
     "Use the Candle": "Usa la Vela",
     "Game mode": "Modo de juego",
+    "Chapters": "Capítulos",
+    "The modes": "Los modos de juego",
     "Classic Dead Set": "Dead Set clásico",
     "Hidden roles, night kills, Dreams and Rule cards. 5–25 players.": "Roles ocultos, muertes nocturnas, Sueños y cartas de regla. 5–25 jugadores.",
     "Teams, votes and sabotage. Nobody dies. 5–12 players.": "Equipos, votos y sabotaje. Nadie muere. 5–12 jugadores.",

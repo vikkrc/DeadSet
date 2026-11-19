@@ -185,8 +185,25 @@ export const GUIDE_EN = {
   missionCardsH: 'Mission cards',
 };
 
-export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF, presetF, tx, mcardF }) {
+/** Where each mode's chapter is; the basics are chapters 0–11 (Classic). */
+const MODE_SECTION = { missions: 'g12', exorcism: 'g13', coffins: 'g14', carnival: 'g15', midnight: 'g16', seance: 'g17', graverobbers: 'g18', mimic: 'g19', omen: 'g20', mirror: 'g21' };
+
+export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF, presetF, tx, mcardF, FAMILIES, MODES }) {
   const G = { ...GUIDE_EN, ...(tx('guide', null) ?? {}) };
+  // E3: two groups, the basics and the modes by family (as in the lobby, without the "Dead Set:" prefix).
+  // A phone gets a sticky select; a wide screen a left column with the same entries.
+  const basics = [...G.toc.map((x, i) => [`g${i}`, x]), ['g11', G.sidesH]];
+  const families = FAMILIES.map((f) => [t(f.title), Object.keys(MODE_SECTION).filter((id) => MODES[id]?.family === f.id)
+    .map((id) => [MODE_SECTION[id], presetF(id, 'name').replace(/^Dead Set:\s*/, '')])]).filter(([, ms]) => ms.length);
+  const opt = ([id, label]) => `<option value="${id}">${esc(label.replace(/<[^>]+>/g, ''))}</option>`;
+  const link = ([id, label]) => `<a href="#${id}">${label}</a>`;
+  const nav = `<nav class="g-nav" aria-label="${esc(t('Chapters'))}">
+    <label class="g-jump"><span class="kicker">${t('Chapters')}</span><select class="input" data-act-change="guideJump">
+      <optgroup label="${esc(G.basicsH)}">${basics.map(opt).join('')}</optgroup>
+      ${families.map(([title, ms]) => `<optgroup label="${esc(`${t('The modes')} · ${title}`)}">${ms.map(opt).join('')}</optgroup>`).join('')}</select></label>
+    <div class="g-col"><div class="kicker">${G.basicsH}</div>${basics.map(link).join('')}
+      <div class="kicker g-modes">${t('The modes')}</div>${families.map(([title, ms]) => `<small>${esc(title)}</small>${ms.map(link).join('')}`).join('')}</div>
+  </nav>`;
   const roles = c?.roles ?? [];
   const bySet = (set) => roles.filter((r) => r.set === set);
   const align = (a) => t({ DEATH: 'Death', INDEPENDENT: 'Independent', CULT: 'Cult', RIPPER: 'The Ripper' }[a] ?? 'Non-Death');
@@ -196,7 +213,7 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   return `<div class="guide">
   <header class="phase-head"><span class="kicker">${G.kicker}</span><h1>${G.title}</h1>
     <p class="scenario">${G.intro}</p></header>
-  <nav class="toc pill-row">${G.toc.map((x, i) => `<a class="tag" href="#g${i}">${x}</a>`).join('')}<a class="tag" href="#g11">${G.sidesH}</a><a class="tag" href="#g12">${G.missionsH}</a><a class="tag" href="#g13">${G.exorcismH}</a><a class="tag" href="#g14">${G.coffinsH}</a><a class="tag" href="#g15">${G.carnivalH}</a><a class="tag" href="#g16">${G.midnightH}</a><a class="tag" href="#g17">${G.seanceH}</a><a class="tag" href="#g18">${G.graveH}</a><a class="tag" href="#g19">${G.mimicH}</a><a class="tag" href="#g20">${G.omenH}</a><a class="tag" href="#g21">${G.mirrorH}</a></nav>
+  ${nav}<div class="g-body">
   <section id="g0"><h2>${G.basicsH}</h2>${G.basics}</section>
   <section id="g1"><h2>${G.roundH}</h2>${G.round}</section>
   <section id="g2"><h2>${G.winH}</h2>${G.win}</section>
@@ -232,5 +249,5 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   <section id="g19"><h2>${G.mimicH}</h2>${G.mimic}${roles.filter((r) => r.set === 'mimic').map(entry).join('')}</section>
   <section id="g20"><h2>${G.omenH}</h2>${G.omen}</section>
   <section id="g21"><h2>${G.mirrorH}</h2>${G.mirror}</section>
-  </div>`;
+  </div></div>`;
 }

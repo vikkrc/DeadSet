@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Tři mise selhaly",
     "Use the Candle": "Použij Svíčku",
     "Game mode": "Herní režim",
+    "Chapters": "Kapitoly",
+    "The modes": "Herní režimy",
     "Classic Dead Set": "Klasický Dead Set",
     "Hidden roles, night kills, Dreams and Rule cards. 5–25 players.": "Skryté role, noční vraždy, Sny a Karty pravidel. 5–25 hráčů.",
     "Teams, votes and sabotage. Nobody dies. 5–12 players.": "Týmy, hlasování a sabotáž. Nikdo neumírá. 5–12 hráčů.",

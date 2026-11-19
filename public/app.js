@@ -1010,7 +1010,8 @@ function joinScreen() {
 }
 const loadingScreen = () => `<main class="main narrow" data-key="load">${wordmark()}<div class="loading"><span class="pulse-dot"></span> ${t('Finding your seat…')}</div></main>`;
 const goneScreen = () => `<main class="main narrow" data-key="gone">${wordmark()}<header class="phase-head"><h1>${t('No such <i>table.</i>')}</h1><p class="muted">${th('Room {code} doesn\'t exist, or it has been cleared away.', { code: S.code })}</p></header><a class="btn" href="/" data-link>${t('Back to start')}</a></main>`;
-const guideScreen = () => `<main class="main" style="max-width:820px" data-key="guide"><div class="row between">${wordmark()}<div class="row">${langChip()}<button class="btn btn-sm" data-act="back">${t('Back')}</button></div></div>${renderGuide(S.content, H)}</main>`;
+// E3: the guide closes with the room menu's own control (an icon button), not a diamond button.
+const guideScreen = () => `<main class="main guide-main" data-key="guide"><div class="row between">${wordmark()}<div class="row">${langChip()}<button class="btn btn-ghost icon-btn" data-act="back" aria-label="${esc(t('Back'))}">${glyph('close')}</button></div></div>${renderGuide(S.content, { ...H, FAMILIES, MODES })}</main>`;
 
 /** Language picker chip (opens the language sheet). */
 function langChip() {
@@ -2737,6 +2738,7 @@ document.addEventListener('change', (e) => {
   if (el.dataset.set) send('host.settings', nest(el.dataset.set, Number(el.value)));
   if (el.dataset.setBool) send('host.settings', { [el.dataset.setBool]: el.checked });
   if (el.dataset.setStr) send('host.settings', { [el.dataset.setStr]: el.value });
+  if (el.dataset.actChange === 'guideJump') { document.getElementById(el.value)?.scrollIntoView({ behavior: calm.matches ? 'auto' : 'smooth', block: 'start' }); return; }
   if (el.dataset.actChange === 'pool' && s) {
     const pool = new Set(s.extendedPool);
     if (el.checked) pool.add(el.dataset.id); else pool.delete(el.dataset.id);

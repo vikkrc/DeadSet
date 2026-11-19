@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "Chapters": "Fejezetek",
+    "The modes": "A játékmódok",
     "Classic Dead Set": "Klasszikus Dead Set",
     "Hidden roles, night kills, Dreams and Rule cards. 5–25 players.": "Rejtett szerepek, éjszakai gyilkosságok, Álmok és Szabálykártyák. 5–25 játékos.",
     "Teams, votes and sabotage. Nobody dies. 5–12 players.": "Csapatok, szavazások és szabotázs. Senki sem hal meg. 5–12 játékos.",
