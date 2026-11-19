@@ -259,7 +259,7 @@ export function graveMomentHtml(m, h) {
 }
 
 // ── Lobby ──────────────────────────────────────────────────────────────────
-function explainer() {
+export function explainerHtml() {
   const steps = [
     ['undertaker', 'The Undertakers', 'One per crew. Only they see what lies under every stone.'],
     ['p_letter', 'One word, one number', 'The Undertaker links some of the crew\'s graves: “Ocean · 3”.'],
@@ -339,7 +339,7 @@ export function graveLobbyDeck(v, isHost, h) {
   const editor = crews ? `<div class="g-crewedit ${three ? 'three' : ''}" data-key="gcrewedit">${list.map((c) => `<section class="c-${c}"><header>${emblem(CREW_EMB[c])}<b>${t(CREW_NAME[c])}</b></header>
       <ul>${chosen[c].map((id) => `<li>${disc(v, id, 'xs')}<span>${pname(v, id)}</span>${isHost ? moveTo(id, c) : ''}</li>`).join('')}</ul>
       ${s.captains === 'chosen' && isHost ? `<select class="input lang-select" data-act-change="gCap" data-crew="${c}"><option value="">${t('Undertaker: random')}</option>${chosen[c].map((id) => `<option value="${id}" ${s.cap?.[c] === id ? 'selected' : ''}>${pname(v, id)}</option>`).join('')}</select>` : ''}</section>`).join('')}</div>` : '';
-  return `${explainer()}
+  return `${explainerHtml()}
     <section class="lobby-deck" data-key="gdeck">
     <div class="rule lstep">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     <p class="small muted">${three ? (n >= 6 ? t('Three crews: the Moon, the Sun and the Stars. Each needs an Undertaker and at least one digger.') : t('Three crews need 6 to 12 players.')) : n >= 4 ? t('Two crews: the Moon and the Sun. Each needs an Undertaker and at least one digger.') : t('Seat 4 to 12 players.')}</p>

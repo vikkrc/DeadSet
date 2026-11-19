@@ -188,7 +188,7 @@ export const GUIDE_EN = {
 /** Where each mode's chapter is; the basics are chapters 0–11 (Classic). */
 const MODE_SECTION = { missions: 'g12', exorcism: 'g13', coffins: 'g14', carnival: 'g15', midnight: 'g16', seance: 'g17', graverobbers: 'g18', mimic: 'g19', omen: 'g20', mirror: 'g21' };
 
-export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF, presetF, tx, mcardF, FAMILIES, MODES }) {
+export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF, presetF, tx, mcardF, FAMILIES, MODES, howFor = () => '' }) {
   const G = { ...GUIDE_EN, ...(tx('guide', null) ?? {}) };
   // E3: two groups, the basics and the modes by family (as in the lobby, without the "Dead Set:" prefix).
   // A phone gets a sticky select; a wide screen a left column with the same entries.
@@ -210,7 +210,17 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   const entry = (r) => { const alias = roleF(r.id, 'alias'); return `<div class="entry">${glyph(r.glyph)}<div><div class="when">${esc(align(r.alignment))} · ${esc(roleF(r.id, 'when'))}</div><h4>${esc(roleF(r.id, 'name'))}${alias ? ` <span class="small muted">(${esc(alias)})</span>` : ''}</h4><p>${esc(roleF(r.id, 'summary'))} ${esc(roleF(r.id, 'detail'))}</p></div></div>`; };
   const scaling = c?.scaling ?? {};
   const row = (cells, tag = 'td') => `<tr>${cells.map((x) => `<${tag}>${x}</${tag}>`).join('')}</tr>`;
-  return `<div class="guide">
+  // Polish pass: every mode chapter opens with its emblem, its family and table size, and the same
+  // illustrated "How it works" steps as its lobby; the basics open with Classic's.
+  const familyOf = (id) => FAMILIES.find((f) => f.id === MODES[id]?.family);
+  const head = (id) => `<div class="g-mhead">${glyph(MODES[id].emblem)}<div><span class="kicker">${esc(t(familyOf(id)?.title ?? ''))}</span><span class="g-mfacts">${esc(t('{a}–{b} players', { a: MODES[id].min, b: MODES[id].max }))}</span></div></div>${howFor(id)}`;
+  const chapters = (html) => html
+    .replace(/(<section id="g0"><h2>[\s\S]*?<\/h2>)/, `$1${head('classic')}`)
+    .replace(/<section id="(g\d+)"><h2>([\s\S]*?)<\/h2>/g, (m, sec, h2) => {
+      const id = Object.keys(MODE_SECTION).find((k) => MODE_SECTION[k] === sec);
+      return id ? `<section id="${sec}" class="g-mode"><h2>${h2}</h2>${head(id)}` : m;
+    });
+  return chapters(`<div class="guide">
   <header class="phase-head"><span class="kicker">${G.kicker}</span><h1>${G.title}</h1>
     <p class="scenario">${G.intro}</p></header>
   ${nav}<div class="g-body">
@@ -249,5 +259,5 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   <section id="g19"><h2>${G.mimicH}</h2>${G.mimic}${roles.filter((r) => r.set === 'mimic').map(entry).join('')}</section>
   <section id="g20"><h2>${G.omenH}</h2>${G.omen}</section>
   <section id="g21"><h2>${G.mirrorH}</h2>${G.mirror}</section>
-  </div></div>`;
+  </div></div>`);
 }

@@ -123,14 +123,19 @@ export function omenMomentHtml(m, h) {
 }
 
 // ── Lobby ──────────────────────────────────────────────────────────────────
-export function omenLobbyDeck(v, isHost, h) {
-  const n = v.players.length;
-  return `${explainer(t('How The Omen works'), [
+/** How it works: the lobby's step 2 and the guide's chapter header. */
+export function explainerHtml() {
+  return explainer(t('How The Omen works'), [
     ['oracle', t('The wheel'), t('It points to Life, Death or Rebirth. Everyone sees where each round starts.')],
     ['mentalist', t('Predict'), t('Secretly guess where it will stop: a right guess scores 3.')],
     ['maskedvote', t('Turn it'), t('Spend one of your five Influence to turn it one step, either way. Every turn is added up.')],
     ['crown', t('Seven rounds'), t('Unused Influence is worth one point each at the end. The most points wins; ties share.')],
-  ], glyph, 'oexplain')}
+  ], glyph, 'oexplain');
+}
+
+export function omenLobbyDeck(v, isHost, h) {
+  const n = v.players.length;
+  return `${explainerHtml()}
     <section class="lobby-deck" data-key="odeck">
     <div class="rule lstep">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     <p class="small muted">${n >= 4 ? t('Everyone plays for themself. No hidden sides.') : t('Seat 4 to 12 players.')}</p>

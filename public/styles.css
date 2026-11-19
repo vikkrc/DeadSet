@@ -5087,3 +5087,15 @@ details.more summary,
 .lobby-steps details.more[open] summary.lstep::after { transform: rotate(45deg); }
 .rule.sub { margin: 14px 0 8px; font-size: var(--fs-label); letter-spacing: 0.14em; color: var(--ash); }
 .rule.sub::after { background: color-mix(in srgb, var(--iron) 60%, transparent); }
+
+/* Polish pass: a more visual guide. Each mode chapter opens with its emblem, family and table size, then
+   the mode's own illustrated steps (the same as its lobby), framed like a page from the rule book. */
+.g-mhead { display: flex; align-items: center; gap: 14px; margin: 2px 0 14px; }
+.g-mhead > .glyph { flex: none; font-size: 46px; color: var(--accent); stroke-width: 1.1; }
+.g-mhead > div { display: grid; gap: 4px; }
+.g-mhead .kicker { margin: 0; }
+.g-mfacts { font: italic 400 var(--fs-body)/1.2 var(--text); color: var(--bone-2); }
+.guide .x-explain { margin: 0 0 18px; padding: 14px 16px 6px; border: 1px solid var(--iron); border-radius: 4px; background: var(--ink-2); }
+.guide .x-explain > .rule { margin-bottom: 10px; }
+.guide .x-steps { padding-left: 0; }
+.guide .x-steps li { max-width: none; }

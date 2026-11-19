@@ -11,15 +11,15 @@ import { MODES, MODE_IDS, FAMILIES, COLLECTION, modeOfPhase, modeInfo } from './
 import { explainer } from './kit.js';
 import { cardArt, roleEmblemId, roleNumber } from './cards.js';
 import { emblem } from './emblems.js';
-import { isGravePhase, graveMain, graveDock, graveActs, graveMoment, graveMomentHtml, G_MOMENT_TIME, graveEndHtml, graveLobbyDeck, GRAVE_QUIET, graveTitle, graveKicker, lobbyCrews, graveLobbyCenter } from './graverobbers.js';
-import { isOmenPhase, omenMain, omenDock, omenActs, omenMoment, omenMomentHtml, O_MOMENT_TIME, omenEndHtml, omenLobbyDeck, OMEN_QUIET, omenTitle } from './omen.js';
-import { isMirrorPhase, mirrorMain, mirrorDock, mirrorActs, mirrorMoment, mirrorMomentHtml, W_MOMENT_TIME, mirrorEndHtml, mirrorLobbyDeck, MIRROR_QUIET, mirrorTitle } from './mirror.js';
-import { isMimicPhase, mimicMain, mimicDock, mimicActs, mimicMoment, mimicMomentHtml, Q_MOMENT_TIME, mimicEndHtml, mimicLobbyDeck, MIMIC_QUIET, mimicTitle } from './mimic.js';
-import { isSeancePhase, seanceMain, seanceDock, seanceActs, seanceMoment, seanceMomentHtml, S_MOMENT_TIME, seanceEndHtml, seanceLobbyDeck, boardSheet as seanceSheet, SEANCE_QUIET, seanceTitle } from './seance.js';
-import { isMidnightPhase, midnightMain, midnightDock, midnightActs, midnightMoment, midnightMomentHtml, N_MOMENT_TIME, midnightEndHtml, midnightLobbyDeck, cardsSheet, MIDNIGHT_QUIET } from './midnight.js';
-import { isCarnivalPhase, carnivalMain, carnivalDock, carnivalActs, carnivalMoment, carnivalMomentHtml, lookMoments, K_MOMENT_TIME, carnivalEndHtml, carnivalLobbyDeck, masksSheet, CARNIVAL_QUIET } from './carnival.js';
-import { isCoffinsPhase, coffinsMain, coffinsDock, coffinsActs, coffinsMoment, coffinsMomentHtml, lanternMoments, C_MOMENT_TIME, coffinsEndHtml, coffinsLobbyDeck, COFFINS_QUIET } from './coffins.js';
-import { lobbyOrb, endOrb, isExorcismPhase, exorcismMain, exorcismPicks, exorcismDock, exorcismActs, exorcismMoment, exorcismMomentHtml, X_MOMENT_TIME, exorcismEndHtml, exorcismLobbyDeck, setExorcismContent, mountBalls } from './exorcism.js';
+import { isGravePhase, graveMain, graveDock, graveActs, graveMoment, graveMomentHtml, G_MOMENT_TIME, graveEndHtml, graveLobbyDeck, GRAVE_QUIET, graveTitle, graveKicker, lobbyCrews, graveLobbyCenter, explainerHtml as how_graverobbers } from './graverobbers.js';
+import { isOmenPhase, omenMain, omenDock, omenActs, omenMoment, omenMomentHtml, O_MOMENT_TIME, omenEndHtml, omenLobbyDeck, OMEN_QUIET, omenTitle, explainerHtml as how_omen } from './omen.js';
+import { isMirrorPhase, mirrorMain, mirrorDock, mirrorActs, mirrorMoment, mirrorMomentHtml, W_MOMENT_TIME, mirrorEndHtml, mirrorLobbyDeck, MIRROR_QUIET, mirrorTitle, explainerHtml as how_mirror } from './mirror.js';
+import { isMimicPhase, mimicMain, mimicDock, mimicActs, mimicMoment, mimicMomentHtml, Q_MOMENT_TIME, mimicEndHtml, mimicLobbyDeck, MIMIC_QUIET, mimicTitle, explainerHtml as how_mimic } from './mimic.js';
+import { isSeancePhase, seanceMain, seanceDock, seanceActs, seanceMoment, seanceMomentHtml, S_MOMENT_TIME, seanceEndHtml, seanceLobbyDeck, boardSheet as seanceSheet, SEANCE_QUIET, seanceTitle, explainerHtml as how_seance } from './seance.js';
+import { isMidnightPhase, midnightMain, midnightDock, midnightActs, midnightMoment, midnightMomentHtml, N_MOMENT_TIME, midnightEndHtml, midnightLobbyDeck, cardsSheet, MIDNIGHT_QUIET, explainerHtml as how_midnight } from './midnight.js';
+import { isCarnivalPhase, carnivalMain, carnivalDock, carnivalActs, carnivalMoment, carnivalMomentHtml, lookMoments, K_MOMENT_TIME, carnivalEndHtml, carnivalLobbyDeck, masksSheet, CARNIVAL_QUIET, explainerHtml as how_carnival } from './carnival.js';
+import { isCoffinsPhase, coffinsMain, coffinsDock, coffinsActs, coffinsMoment, coffinsMomentHtml, lanternMoments, C_MOMENT_TIME, coffinsEndHtml, coffinsLobbyDeck, COFFINS_QUIET, explainerHtml as how_coffins } from './coffins.js';
+import { lobbyOrb, endOrb, isExorcismPhase, exorcismMain, exorcismPicks, exorcismDock, exorcismActs, exorcismMoment, exorcismMomentHtml, X_MOMENT_TIME, exorcismEndHtml, exorcismLobbyDeck, setExorcismContent, mountBalls, explainerHtml as how_exorcism } from './exorcism.js';
 import { avatarSvg, randomAvatar, PARTS, COLORS } from './avatar.js';
 import { giftHtml, productIndex } from './gifts.js';
 import { gazetteHtml, frontPageHtml } from './gazette.js';
@@ -1010,8 +1010,11 @@ function joinScreen() {
 }
 const loadingScreen = () => `<main class="main narrow" data-key="load">${wordmark()}<div class="loading"><span class="pulse-dot"></span> ${t('Finding your seat…')}</div></main>`;
 const goneScreen = () => `<main class="main narrow" data-key="gone">${wordmark()}<header class="phase-head"><h1>${t('No such <i>table.</i>')}</h1><p class="muted">${th('Room {code} doesn\'t exist, or it has been cleared away.', { code: S.code })}</p></header><a class="btn" href="/" data-link>${t('Back to start')}</a></main>`;
+/** A mode's "How it works" steps (the lobby's step 2), reused at the head of its guide chapter. */
+const HOW = { carnival: how_carnival, coffins: how_coffins, midnight: how_midnight, seance: how_seance, graverobbers: how_graverobbers, mimic: how_mimic, omen: how_omen, mirror: how_mirror, exorcism: how_exorcism };
+const guideHow = (id) => (id === 'classic' || id === 'missions' ? howItWorks({ mode: id }) : HOW[id]?.() ?? '');
 // E3: the guide closes with the room menu's own control (an icon button), not a diamond button.
-const guideScreen = () => `<main class="main guide-main" data-key="guide"><div class="row between">${wordmark()}<div class="row">${langChip()}<button class="btn btn-ghost icon-btn" data-act="back" aria-label="${esc(t('Back'))}">${glyph('close')}</button></div></div>${renderGuide(S.content, { ...H, FAMILIES, MODES })}</main>`;
+const guideScreen = () => `<main class="main guide-main" data-key="guide"><div class="row between">${wordmark()}<div class="row">${langChip()}<button class="btn btn-ghost icon-btn" data-act="back" aria-label="${esc(t('Back'))}">${glyph('close')}</button></div></div>${renderGuide(S.content, { ...H, FAMILIES, MODES, howFor: guideHow })}</main>`;
 
 /** Language picker chip (opens the language sheet). */
 function langChip() {

@@ -418,7 +418,7 @@ export function carnivalMomentHtml(m, h) {
 }
 
 // ── Lobby ──────────────────────────────────────────────────────────────────
-function explainer() {
+export function explainerHtml() {
   const steps = [
     ['veiled', 'The unmasking', 'Everyone is dealt a mask: a role card. For a moment every mask is shown; then they turn face down.'],
     ['witch', 'Swap or pretend', 'Trade masks with someone, or only pretend to. Nobody, not even they, learns which.'],
@@ -472,7 +472,7 @@ export function carnivalLobbyDeck(v, isHost, h) {
   const pool = new Set(k.pool ?? []);
   const need = Math.max(6, n);
   const harvests = [[0, t('Off')], ...[2, 4, 6, 8, 10, 12].map((x) => [x, String(x)])];
-  return `${explainer()}
+  return `${explainerHtml()}
     <section class="lobby-deck" data-key="kdeck">
     <div class="rule lstep">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     ${n >= 4 ? `<p class="small muted" data-key="kcount">${n < 6 ? th(6 - n === 1 ? '{n} masks: one sits on an empty chair.' : '{n} masks: {c} sit on empty chairs.', { n: 6, c: 6 - n }) : th('{n} masks, one per guest.', { n })}</p>` : `<p class="small muted">${t('Seat 4 to 12 players.')}</p>`}

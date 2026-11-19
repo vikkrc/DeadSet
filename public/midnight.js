@@ -237,7 +237,7 @@ export function midnightMomentHtml(m, h) {
 }
 
 // ── Lobby ──────────────────────────────────────────────────────────────────
-function explainer() {
+export function explainerHtml() {
   const steps = [
     ['moon', 'One look', 'Everyone sees their own card once. Three more lie face down on the table.'],
     ['witch', 'One night', 'The phones wake each role in turn. Cards are looked at and swapped in the dark.'],
@@ -283,7 +283,7 @@ export function midnightLobbyDeck(v, isHost, h) {
   const sel = (key, value, opts) => `<select class="input lang-select" data-act-change="nSet" data-id="${key}">${opts.map(([x, l]) => `<option value="${x}" ${String(value) === String(x) ? 'selected' : ''}>${l}</option>`).join('')}</select>`;
   const custom = s.deck === 'custom';
   const deck = Object.entries(v.setup?.publicDeck?.exact ?? {}).map(([id, c]) => ({ id, n: c }));
-  return `${explainer()}
+  return `${explainerHtml()}
     <section class="lobby-deck" data-key="ndeck">
     <div class="rule lstep">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     ${n >= 4 ? `<p class="small muted">${th('{n} cards: one each, three on the table.', { n: n + 3 })}</p>` : `<p class="small muted">${t('Seat 4 to 12 players.')}</p>`}

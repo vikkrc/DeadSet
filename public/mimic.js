@@ -289,7 +289,7 @@ export function mimicMomentHtml(m, h) {
 }
 
 // ── Lobby ──────────────────────────────────────────────────────────────────
-function explainer() {
+export function explainerHtml() {
   const steps = [
     ['mimic', 'The cards', 'Everyone shares one place and holds a character there. One of you is the Mimic and sees only static.'],
     ['lantern', 'Questions', 'Whoever holds the lantern asks anyone a question aloud, then passes the lantern to them.'],
@@ -317,7 +317,7 @@ export function mimicLobbyDeck(v, isHost, h) {
   const sw = (key, on) => `<input type="checkbox" class="switch" data-act-change="qSet" data-id="${key}" ${on ? 'checked' : ''}>`;
   const BOARDS = [[16, '16'], [12, '12'], [20, '20'], [30, t('All 30')]];
   const board = s.board ?? 16;
-  return `${explainer()}
+  return `${explainerHtml()}
     <section class="lobby-deck" data-key="qdeck">
     <div class="rule lstep">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     <p class="small muted">${n >= 4 ? t('One Mimic; everyone else is Living.') : t('Seat 4 to 12 players.')}</p>
