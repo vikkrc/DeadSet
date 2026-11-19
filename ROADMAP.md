@@ -136,7 +136,7 @@ Other Missions ideas kept for later:
 | **Reading the Room** | The Omen, The Mirror (Beta 9) | No hidden sides: read the people around you and outguess them |
 | **Bluff & Wager** | Coffins | Bury, bid and dare: a quick game of nerve |
 
-New modes join a family (or open a new one) when they are pitched. The twelve modes parked from the 2026-11-17 spec (below) suggest four more: **Reading the Room** (The Omen, The Mirror), **Quiet Hands** (The Vigil, The Vault), **Bargains & Betrayals** (Inheritance, The Pact) and **Tall Tales** (The Gazette, Confessions). The Ritual joins Hidden Allegiances; Treasure Hunters, The Black Market and Standoff join Bluff & Wager.
+New modes join a family (or open a new one) when they are pitched. The twelve modes from the 2026-11-17 spec (below, scheduled in Betas 9–15) suggested four more. **Reading the Room** (The Omen, The Mirror) is open since Beta 9; still to come are **Quiet Hands** (The Vigil, The Vault), **Bargains & Betrayals** (Inheritance, The Pact) and **Tall Tales** (The Gazette, Confessions). The Ritual joins Hidden Allegiances; Treasure Hunters, The Black Market and Standoff join Bluff & Wager.
 
 ## Order of the next betas (reordered 2026-11-12; Graverobbers inserted as Beta 7 on 2026-11-17; the full plan of 22 modes set on 2026-11-17)
 
@@ -177,7 +177,7 @@ Séance needed by far the most new art, so it moved back behind the lighter mode
 
 ## Beta 3: Dead Set: Coffins (a cousin of Skull)
 
-**Status: rules agreed** (see COFFINS.md).
+**Status: built** (see COFFINS.md); redesigned to the Codex, with fanned coffin stacks, a burial order and a coin-by-coin dig.
 
 **The pitch:** everyone buries something. Some coffins hold gold, one holds a curse. How many can you open?
 
@@ -213,7 +213,7 @@ Séance needed by far the most new art, so it moved back behind the lighter mode
 
 ## Beta 4: Dead Set: Carnival (inspired by Mascarade)
 
-**Status: rules drafted** (see CARNIVAL.md).
+**Status: built** (see CARNIVAL.md), with a look phase for peeks, custom masks and music in every style.
 
 **The pitch:** at a masked ball where Death is a guest, nobody is sure which mask they're wearing.
 
@@ -290,7 +290,7 @@ Séance needed by far the most new art, so it moved back behind the lighter mode
 
 ## Beta 6: Dead Set: Séance (a hidden-traitor co-op, a cousin of Mysterium)
 
-**Status: built** (see SEANCE.md). The 84 visions are generated from a pencil motif library; the larger story-card pool is still to come.
+**Status: built** (see SEANCE.md). The 84 visions are generated from a pencil motif library. The larger story pool (20 WHO, 15 WHERE, 15 WHY, with WHERE etchings) is built too (SEANCE.md §12).
 
 **The pitch:** someone was murdered. Their ghost wants to help you, but the ghost can't speak, and a second spirit is lying.
 

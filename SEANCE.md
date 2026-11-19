@@ -1,6 +1,6 @@
 # Dead Set: Séance — rules and game spec
 
-**Status: built for Beta 6 (2026-11-16).** The decisions of §10 are settled below, and §3 changed after balance simulations (a wrong verdict no longer burns an extra candle). The vision etchings are generated from a motif library (§8); the larger story-card pool is still to come.
+**Status: built for Beta 6 (2026-11-16).** The decisions of §10 are settled below, and §3 changed after balance simulations (a wrong verdict no longer burns an extra candle). The vision etchings are generated from a motif library (§8); the larger story-card pool was added in the rework of §12.
 
 A co-operative deduction game with a hidden traitor, for **4–10 players**, chosen in the lobby next to Classic, Missions and Exorcism. One phone each, plus the TV board, which matters more here than in any other mode.
 
