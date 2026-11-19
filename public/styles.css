@@ -47,6 +47,19 @@
   --ease: cubic-bezier(0.2, 0.7, 0.1, 1);
   --spring: cubic-bezier(0.3, 1.6, 0.5, 1);
   --t-phase: 1.2s;
+  /* B6: the global layers, bottom to top. Inside a component, small literals (-1 to 9) stack its own
+     parts; anything that has to sit over the page uses one of these names (scripts/check-styles.mjs). */
+  --z-dock: 20;      /* the bottom action dock */
+  --z-header: 30;    /* the sticky phone header */
+  --z-sheet: 50;     /* the record sheet and its scrim */
+  --z-recap: 60;     /* the full-screen match recap */
+  --z-toast: 70;     /* notices: over the page and the recap, under moments */
+  --z-conn: 75;      /* the connection-lost bar */
+  --z-moment: 80;    /* scene interludes cover everything below */
+  --z-zoom: 90;      /* a zoomed card, which can open from a moment */
+  --z-fx: 94;        /* confetti and particle layers */
+  --z-veil: 95;      /* full-screen colour washes */
+  --z-grain: 300;    /* the press grain over everything */
   --safe-b: env(safe-area-inset-bottom, 0px);
   color-scheme: dark;
 }
@@ -97,14 +110,14 @@ body::after {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 300;
+  z-index: var(--z-grain);
   opacity: 0.38;
   mix-blend-mode: overlay;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='.33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 body.has-moment { overflow: hidden; }
 #app { position: relative; z-index: 1; }
-.fx-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 95; }
+.fx-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: var(--z-veil); }
 
 h1, h2, h3 { font-family: var(--serif); font-weight: 400; margin: 0; letter-spacing: -0.01em; }
 h2 { font-size: 28px; line-height: 1; }
@@ -218,7 +231,7 @@ select.input option { background: var(--ink-2); }
 .main.narrow { max-width: 520px; gap: 24px; padding-top: 28px; }
 .side { display: none; }
 .topbar {
-  position: sticky; top: 0; z-index: 20;
+  position: sticky; top: 0; z-index: var(--z-header);
   display: flex; align-items: center; gap: 4px; height: 58px;
   padding: 0 4px 0 14px;
   background: color-mix(in srgb, var(--ink) 96%, transparent);
@@ -526,7 +539,7 @@ details.more > div { padding: 12px 0 4px; display: grid; gap: 12px; animation: f
 .chat form .input { min-height: 42px; font-size: 16px; }
 
 /* ── Dock ──────────────────────────────────────────────────────────────── */
-.dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; padding: 14px 14px max(16px, calc(10px + var(--safe-b))); background: linear-gradient(transparent, var(--ink) 38%); display: flex; gap: 8px; justify-content: center; animation: dockIn 0.4s var(--spring) both; }
+.dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-dock); padding: 14px 14px max(16px, calc(10px + var(--safe-b))); background: linear-gradient(transparent, var(--ink) 38%); display: flex; gap: 8px; justify-content: center; animation: dockIn 0.4s var(--spring) both; }
 .dock > .btn, .dock > .dock-note { flex: 1; max-width: 420px; }
 .dock .btn { min-height: 52px; box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.9); }
 .host-slot .btn-host { min-height: 52px; padding: 0 18px; max-width: 150px; background: var(--ink-2); border-color: var(--gilt-2); font-size: 10px; letter-spacing: 0.1em; line-height: 1.15; }
@@ -537,11 +550,11 @@ details.more > div { padding: 12px 0 4px; display: grid; gap: 12px; animation: f
 @media (min-width: 980px) { .dock { left: 300px; } }
 
 /* ── Sheets ────────────────────────────────────────────────────────────── */
-.sheet-scrim { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, 0.66); animation: fadeIn 0.25s both; }
+.sheet-scrim { position: fixed; inset: 0; z-index: var(--z-sheet); background: rgba(0, 0, 0, 0.66); animation: fadeIn 0.25s both; }
 .sheet {
   /* A floating card anchored under the top bar, never to the bottom edge, so
      mobile browser toolbars (e.g. Safari's floating tab bar) can't cover it. */
-  position: fixed; z-index: 51; top: calc(env(safe-area-inset-top, 0px) + 64px); left: 10px; right: 10px;
+  position: fixed; z-index: calc(var(--z-sheet) + 1); top: calc(env(safe-area-inset-top, 0px) + 64px); left: 10px; right: 10px;
   max-width: 560px; margin: 0 auto; max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 64px - 110px);
   display: flex; flex-direction: column; gap: 8px; padding: 14px 16px 0;
   background: linear-gradient(180deg, var(--ink-3), var(--ink-2) 120px); border: 1px solid var(--gilt-2); border-radius: 14px;
@@ -589,19 +602,19 @@ body.has-sheet { overflow: hidden; }
 .ledger .tags { display: flex; gap: 6px; }
 
 /* ── Notifications ─────────────────────────────────────────────────────── */
-.toasts { position: fixed; top: 66px; left: 50%; transform: translateX(-50%); z-index: 70; display: grid; gap: 6px; width: min(92vw, 420px); pointer-events: none; }
+.toasts { position: fixed; top: 66px; left: 50%; transform: translateX(-50%); z-index: var(--z-toast); display: grid; gap: 6px; width: min(92vw, 420px); pointer-events: none; }
 .toast { padding: 10px 14px; border: 1px solid var(--gilt-2); border-radius: 6px; background: var(--ink-2); font-size: 13px; text-align: center; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5); animation: noteIn 0.4s var(--spring) both, noteOut 0.4s 3s var(--ease) forwards; }
 .toast.accuse { border-color: rgba(226, 88, 94, 0.55); }
 .toast.accuse::before { content: '⟶ '; color: var(--blood-ink); }
 .toast.err { background: var(--blood); border-color: var(--blood); color: #fff3f0; }
 @media (min-width: 980px) { .toasts { top: 18px; left: calc(50% + 150px); } }
-.conn { position: fixed; top: 0; left: 0; right: 0; z-index: 75; padding: 8px 16px; background: var(--blood); color: #fff3f0; font-size: 12.5px; text-align: center; display: flex; gap: 8px; justify-content: center; align-items: center; }
+.conn { position: fixed; top: 0; left: 0; right: 0; z-index: var(--z-conn); padding: 8px 16px; background: var(--blood); color: #fff3f0; font-size: 12.5px; text-align: center; display: flex; gap: 8px; justify-content: center; align-items: center; }
 .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: beat 1s infinite; display: inline-block; }
 .loading { display: flex; gap: 10px; align-items: center; color: var(--ash); }
 
 /* ── Moments (cinematic interstitials) ─────────────────────────────────── */
 .moment {
-  position: fixed; inset: 0; z-index: 80;
+  position: fixed; inset: 0; z-index: var(--z-moment);
   display: grid; grid-template-rows: 1fr auto; justify-items: center; align-items: center;
   padding: 40px 24px calc(28px + var(--safe-b)); text-align: center; cursor: pointer;
   background: radial-gradient(120% 75% at 50% 32%, var(--ink-3), var(--ink) 65%);
@@ -1170,7 +1183,7 @@ body.is-dead::after { content: ''; position: fixed; inset: 0; pointer-events: no
 .letter-check input { width: 20px; height: 20px; accent-color: #7d151d; flex: none; }
 
 /* ── Recap ────────────────────────────────────────────────────────────────── */
-.recap { position: fixed; inset: 0; z-index: 60; display: grid; grid-template-rows: auto auto 1fr auto; gap: 6px; padding: calc(12px + env(safe-area-inset-top, 0px)) 16px calc(14px + var(--safe-b)); background: radial-gradient(ellipse at 50% 30%, #1a1714, #0b0a09 75%); animation: fadeUp 0.4s var(--ease) both; overflow: hidden; }
+.recap { position: fixed; inset: 0; z-index: var(--z-recap); display: grid; grid-template-rows: auto auto 1fr auto; gap: 6px; padding: calc(12px + env(safe-area-inset-top, 0px)) 16px calc(14px + var(--safe-b)); background: radial-gradient(ellipse at 50% 30%, #1a1714, #0b0a09 75%); animation: fadeUp 0.4s var(--ease) both; overflow: hidden; }
 .recap.is-night { background: radial-gradient(ellipse at 50% 30%, #141a26, #07090e 75%); }
 .recap-top { display: flex; justify-content: space-between; align-items: center; }
 .recap-title { margin: 0; text-align: center; font: 400 38px/1 var(--serif); animation: fadeUp 0.4s var(--ease) both; }
@@ -1698,7 +1711,7 @@ body.is-board .lot-disc { width: 70px; height: 70px; } body.is-board .lot-seat s
 .tok.known-candle .tok-disc { box-shadow: 0 0 0 2px rgba(242, 212, 155, 0.5), 0 0 16px rgba(242, 212, 155, 0.35); }
 
 /* ── Celebration layers (CSS carries the glow; the canvas only adds sparks) ── */
-.fx-layer { position: fixed; inset: 0; pointer-events: none; z-index: 94; opacity: 0; animation: fxLayer 7s ease-out forwards; contain: strict; }
+.fx-layer { position: fixed; inset: 0; pointer-events: none; z-index: var(--z-fx); opacity: 0; animation: fxLayer 7s ease-out forwards; contain: strict; }
 .fx-layer::before, .fx-layer::after { content: ''; position: absolute; inset: 0; }
 @keyframes fxLayer { 0% { opacity: 0; } 10% { opacity: 1; } 70% { opacity: 0.85; } 100% { opacity: 0; } }
 .fx-dawn::before { background: radial-gradient(ellipse 80% 55% at 50% 105%, rgba(255, 211, 107, 0.42), rgba(233, 164, 58, 0.14) 45%, transparent 70%); }
@@ -4115,7 +4128,7 @@ button.vcard { cursor: zoom-in; }
 .sd-t.sel { border-color: var(--rubric); color: var(--rubric); }
 
 /* a card, large: tap anywhere to close */
-.s-zoom { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: rgba(5, 4, 3, 0.88); backdrop-filter: blur(3px); animation: fadeIn 0.2s both; cursor: zoom-out; }
+.s-zoom { position: fixed; inset: 0; z-index: var(--z-zoom); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: rgba(5, 4, 3, 0.88); backdrop-filter: blur(3px); animation: fadeIn 0.2s both; cursor: zoom-out; }
 .s-zoom .tarot.huge { width: min(78vw, 360px); font-size: min(4.6vw, 21px); }
 .s-zoom p { margin: 0; font: italic 400 14px var(--text); color: var(--bone-2); }
 .s-chips { margin-top: 12px; }
@@ -4806,7 +4819,7 @@ body.is-board .lot-hand.shovel { --sh-h: calc(min(460px, 54vh) * 0.34); }
 /* Notices in a room take over the header strip for a moment: the page never moves and nothing is
    covered. Only the newest shows; it fills the 58 px bar, wraps to two lines and fades back to the
    phase title. On a wide screen (no header) the same strip floats at the top of the game column. */
-.notes-slot { position: fixed; top: 0; left: 0; right: 0; z-index: 70; height: 58px; pointer-events: none; }
+.notes-slot { position: fixed; top: 0; left: 0; right: 0; z-index: var(--z-toast); height: 58px; pointer-events: none; }
 .notes-slot:empty { display: none; }
 .notes-slot .toast { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 0.3em; padding: 0 16px; border: 0; border-bottom: 1px solid var(--gilt-2); border-radius: 0; box-shadow: 0 8px 24px -16px rgba(0, 0, 0, 0.9); background: var(--ink-2); font-size: 15px; line-height: 1.3; color: var(--bone); animation: slotIn 0.3s var(--ease) both, slotOut 0.3s 3s var(--ease) forwards; }
 .notes-slot .toast > span { min-width: 0; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; text-align: center; }
