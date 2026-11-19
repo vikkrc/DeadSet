@@ -5070,3 +5070,20 @@ details.more summary,
 .ring.picking .tok.mute { opacity: 1; filter: none; }
 .ring.picking .tok.mute .tok-disc { opacity: 0.35; filter: grayscale(1); }
 .ring.picking .tok.mute .tok-name { color: var(--ash); }
+
+/* Polish pass: the guided lobby. Every lobby walks the host through the same numbered steps, in order:
+   the game, how it works, the deck, its rules, the table, the timers. A mode's own groups (the masks,
+   twists, other sides…) sit under Rules as quieter sub-headings. Steps a mode does not have are skipped,
+   and the numbers follow. */
+.lobby-steps { display: grid; gap: inherit; counter-reset: lstep; }
+.lobby-steps .rule.lstep { counter-increment: lstep; margin-top: 10px; font-size: var(--fs-label); color: var(--bone-2); }
+.lobby-steps .rule.lstep::before, .lobby-steps summary.lstep::before {
+  content: counter(lstep); flex: none; display: inline-grid; place-items: center; width: 22px; height: 22px; border: 1px solid var(--accent); border-radius: 50%;
+  font: 500 12px/1 var(--bit); letter-spacing: 0; color: var(--accent); transform: none;
+}
+.lobby-steps summary.lstep { counter-increment: lstep; color: var(--bone-2); }
+.lobby-steps summary.lstep::after { content: '+'; margin-left: auto; font: 400 18px/1 var(--mono); color: var(--ash); transition: transform var(--t-ui) var(--spring); }
+.lobby-steps details.more[open] summary.lstep::before { transform: none; }
+.lobby-steps details.more[open] summary.lstep::after { transform: rotate(45deg); }
+.rule.sub { margin: 14px 0 8px; font-size: var(--fs-label); letter-spacing: 0.14em; color: var(--ash); }
+.rule.sub::after { background: color-mix(in srgb, var(--iron) 60%, transparent); }

@@ -1448,12 +1448,14 @@ function lobbyMain(v, me) {
     ${isHost ? `<p class="small muted center-text" data-key="seathint">${t('Tap a seat to move or remove a player.')}${v.mode === 'graverobbers' && (v.settings.g?.crews ?? 'seats') === 'seats' ? ` ${t('Moving a player across the table changes their crew.')}` : ''}</p>` : ''}
     ${me && !me.moderator ? portraitRow(v.players.find((p) => p.id === me.id)?.avatar) : ''}
     ${isHost && S.ui.botsPanel ? botsPanel(v) : ''}
+    <div class="lobby-steps" data-key="lsteps">
     ${modeChooser(v, isHost)}
     ${v.mode === 'classic' || v.mode === 'missions' ? howItWorks(v) : ''}
-    ${lobbyDeck(v, isHost)}
-    ${isHost ? (setupForm(v) ? `<section data-key="setup"><div class="rule">${t('Rules')}</div>${setupForm(v)}</section>` : '') : `<section data-key="setup"><div class="rule">${t('Rules')}</div>${setupSummary(v)}</section>`}
+    ${lobbyDeck(v, isHost, v.mode === 'classic' || v.mode === 'missions' ? (isHost ? setupPresets(v) : setupSummary(v)) : '')}
+    ${isHost && setupForm(v) ? `<section data-key="setup">${setupForm(v)}</section>` : ''}
     ${tableSection(v, isHost)}
     ${isHost ? timersForm(v) : ''}
+    </div>
     <section class="stack" data-key="report">
       ${report.errors.map((e, i) => `<div class="banner blood" data-key="err-${i}">${glyph('dagger')}<div><p>${tmh(e)}</p></div></div>`).join('')}
       ${report.warnings.map((w, i) => `<div class="banner" data-key="warn-${i}">${glyph('scroll')}<div><p>${tmh(w)}</p></div></div>`).join('')}
@@ -1521,7 +1523,7 @@ function musicRow(v, isHost) {
 }
 
 /** 20 · Tonight's deck, the extended pool, rule cards and table switches. */
-function lobbyDeck(v, isHost) {
+function lobbyDeck(v, isHost, top = '') {
   if (v.mode === 'exorcism') return exorcismLobbyDeck(v, isHost, { LANGS, music: '' });
   if (v.mode === 'coffins') return coffinsLobbyDeck(v, isHost, { music: '' });
   if (v.mode === 'carnival') return carnivalLobbyDeck(v, isHost, { music: '' });
@@ -1542,7 +1544,7 @@ function lobbyDeck(v, isHost) {
     cards = Object.entries(deck.core).filter(([, n]) => n > 0).map(([id, n]) => card(id, n, id === 'DEATH' ? 'death' : '')).join('')
       + (deck.extended ? `<button class="tarot--small dcard tarot back secret" data-act="cardInfo" data-kind="ext" data-id="${deck.extended}" data-key="ld-ext"><span class="sig">?</span><b>${t('{n} extended', { n: deck.extended })}</b></button>` : '');
   }
-  if (preset.missions) return missionLobbyDeck(v, isHost, cards);
+  if (preset.missions) return missionLobbyDeck(v, isHost, cards, top);
   const allExt = (S.content?.roles ?? []).filter((r) => r.set === 'standard' || r.set === 'full').map((r) => r.id);
   const poolIds = preset.custom ? allExt : preset.pool;
   const inPool = new Set(deck?.pool ?? (preset.custom ? s.extendedPool : preset.pool));
@@ -1567,16 +1569,18 @@ function lobbyDeck(v, isHost) {
     : `<div class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><span class="tag ${s[key] ? 'solid' : ''}">${t(s[key] ? 'On' : 'Off')}</span></div>`;
   const tableLang = v.table?.lang ?? 'en';
   return `<section class="lobby-deck" data-key="ldeck">
-    <div class="rule">${t(v.players.length === 1 ? 'Tonight\'s deck · {n} player' : 'Tonight\'s deck · {n} players', { n: v.players.length })}</div>
+    <div class="rule lstep">${t(v.players.length === 1 ? 'Tonight\'s deck · {n} player' : 'Tonight\'s deck · {n} players', { n: v.players.length })}</div>
+    ${top}
     <div class="deckrow">${cards || `<p class="small muted">${t('Seat at least 5 players to see the deck.')}</p>`}</div>
     ${pool}
-    <div class="rule">${t('Rule cards in play')}</div>
+    <div class="rule sub">${t('Rule cards in play')}</div>
     <div class="deckrow">${ruleCards}</div>
-    <div class="rule">${t('Other sides')}</div>
+    <div class="rule lstep">${t('Rules')}</div>
+    <div class="rule sub">${t('Other sides')}</div>
     ${toggle('lovers', 'Lovers', 'Two random players fall in love. If one dies, so does the other; if they are the last two alive, they win together.')}
     ${s.deckMode === 'exact' && preset.custom ? `<p class="small muted">${t('With "Choose every role", add the Cult Leader or the Ripper with the role counters.')}</p>` : `${toggle('cult', 'The Cult', 'A Cult Leader recruits one player each night. The Cult wins when it outnumbers everyone else.')}
     ${toggle('ripper', 'The Ripper', 'A lone killer strikes each night and wins as the last one standing.')}`}
-    <div class="rule">${t('Twists')}</div>
+    <div class="rule sub">${t('Twists')}</div>
     ${toggle('clues', 'Clues', 'Rarely, at dawn, one or two players find a true hint about Death\'s team.')}
     ${v.table?.clues ? (isHost ? `<label class="toggle-row sub"><span><b>${t('How often')}</b></span><select class="input lang-select" data-act-change="clueOdds">${[[1, 'Rare'], [2, 'Uncommon'], [3, 'Common']].map(([n, l]) => `<option value="${n}" ${v.table.clueOdds === n ? 'selected' : ''}>${t(l)}</option>`).join('')}</select></label>` : `<div class="toggle-row sub"><span><b>${t('How often')}</b></span><span class="tag">${t(['', 'Rare', 'Uncommon', 'Common'][v.table.clueOdds] ?? 'Rare')}</span></div>`) : ''}
     ${isHost ? `<label class="toggle-row"><span><b>${t('Coin-toss tiebreak')}</b><small>${t('A tied vote is settled by a coin toss instead of sparing everyone.')}</small></span><input type="checkbox" class="switch" data-act-change="tieBreak" ${v.table?.tieBreak === 'coin' ? 'checked' : ''}></label>`
@@ -1588,7 +1592,7 @@ function lobbyDeck(v, isHost) {
 }
 
 /** Lobby deck and switches for Dead Set: Missions. */
-function missionLobbyDeck(v, isHost, cards) {
+function missionLobbyDeck(v, isHost, cards, top = '') {
   const s = v.settings;
   const on = { BELIEVER: true, CHARLATAN: true, VEILED: false, STRAY: false, UNDERTAKER: false, M_JESTER: false, ...(s.mRoles || {}) };
   const n = v.players.length;
@@ -1607,10 +1611,12 @@ function missionLobbyDeck(v, isHost, cards) {
     : `<div class="toggle-row"><span><b>${t(title)}</b><small>${t(sub)}</small></span><span class="tag ${s[key] ? 'solid' : ''}">${t(s[key] ? 'On' : 'Off')}</span></div>`;
   const tableLang = v.table?.lang ?? 'en';
   return `<section class="lobby-deck" data-key="ldeck">
-    <div class="rule">${t(n === 1 ? 'Tonight\'s deck · {n} player' : 'Tonight\'s deck · {n} players', { n })}</div>
+    <div class="rule lstep">${t(n === 1 ? 'Tonight\'s deck · {n} player' : 'Tonight\'s deck · {n} players', { n })}</div>
+    ${top}
     <div class="deckrow">${cards || `<p class="small muted">${t('Seat 5 to 12 players to see the deck.')}</p>`}</div>
     ${sizes ? `<p class="small muted" data-key="msizes">${th('Team sizes for missions 1–5: {sizes}.', { sizes: sizes.join(' · ') })}${n >= 7 ? ` ${t('Mission 4 needs two Sabotage cards to fail.')}` : ''}</p>` : ''}
-    <div class="rule">${t('Roles')}</div>
+    <div class="rule lstep">${t('Rules')}</div>
+    <div class="rule sub">${t('Roles')}</div>
     <p class="small muted">${t('Every table has a Medium and a Reaper. Empty seats are Companions and Shades.')}</p>
     ${roleRow('BELIEVER', 'Sees the Medium and the Charlatan as two candles.')}
     ${roleRow('CHARLATAN', 'Death: looks like the Medium to the Believer.')}
@@ -1619,7 +1625,7 @@ function missionLobbyDeck(v, isHost, cards) {
     ${roleRow('UNDERTAKER', 'Living: learns how many Death players were on each failed team.')}
     ${roleRow('M_JESTER', 'Plays for itself: wins if named in the Last Stand or by the Reaper. From 7 players.')}
     ${setRow('twins', 'Twins', 'Two Living players who know each other.')}
-    <div class="rule">${t('Twists')}</div>
+    <div class="rule sub">${t('Twists')}</div>
     ${setRow('sideMissions', 'Side Missions', 'Everyone gets a secret personal objective. Complete it and your Last Stand vote counts double; fail it and it counts half.')}
     ${select('leaderMode', s.leaderMode ?? 'next', [['next', 'Next in line'], ['choose', 'Chosen by the last leader']], 'Next Mission Leader', 'After a mission, the lantern goes to the next player in line, or the last leader hands it to someone who has not led a mission yet.')}
     ${select('missionCards', s.missionCards ?? 1, [[0, 'Off'], [1, 'Rare'], [2, 'Sometimes']], 'Mission cards', 'Most missions are Regular. Sometimes a card changes the team, the vote or the reveal.')}
@@ -1638,10 +1644,11 @@ function modeChooser(v, isHost) {
       : `<div class="mode-card ${on ? 'on' : 'off'}" data-key="mode-${mode}">${inner}</div>`;
   };
   // Modes grouped by their core mechanic, from the registry (B7): a new mode joins its family there.
-  const families = FAMILIES.map((f) => [t(f.title), t(f.sub), MODE_IDS.filter((id) => MODES[id].family === f.id)
+  // A guest cannot change the mode, so they see only the chosen one (with its family), not the whole list.
+  const families = FAMILIES.filter((f) => isHost || MODES[v.mode]?.family === f.id).map((f) => [t(f.title), t(f.sub), MODE_IDS.filter((id) => MODES[id].family === f.id && (isHost || id === v.mode))
     .map((id) => card(id, MODES[id].emblem, MODES[id].name ? t(MODES[id].name) : presetF(id, 'name'), t(MODES[id].blurb)))]);
   return `<section class="mode-pick" data-key="modepick">
-    <div class="rule">${t('Game mode')}</div>
+    <div class="rule lstep">${t('Game mode')}</div>
     ${families.map(([title, sub, cards], i) => `<div class="mode-family" data-key="mf-${i}"><div class="mf-head"><span class="kicker">${title}</span><small>${sub}</small></div><div class="mode-cards">${cards.join('')}</div></div>`).join('')}
   </section>`;
 }
@@ -1662,7 +1669,8 @@ function setupSummary(v) {
   </div>`;
 }
 
-function setupForm(v) {
+/** The deck step's own controls (Classic): the preset, a custom deck, Dreams and the Doomsday day. */
+function setupPresets(v) {
   const s = v.settings;
   const preset = v.presets.find((p) => p.id === s.preset);
   const rules = (S.content?.rules ?? []).filter((r) => preset.ruleIds.includes(r.id));
@@ -1671,14 +1679,23 @@ function setupForm(v) {
     ${preset.missions ? '' : `<div class="carousel" data-key="presets">${v.presets.filter((p) => !p.missions && !p.exorcism && !p.coffins && !p.carnival && !p.midnight && !p.seance && !p.graverobbers && !p.mimic && !p.omen && !p.mirror).map((p) => `<button class="preset" data-act="preset" data-id="${p.id}" aria-pressed="${s.preset === p.id}" data-key="pr-${p.id}"><b>${esc(presetF(p.id, 'name'))}</b>${p.recommended ? `<span class="tag solid">${t('Best first game')}</span>` : ''}<small>${esc(presetF(p.id, 'blurb'))}</small><span class="kicker">${t('{a}–{b} players', { a: p.min, b: p.max })}</span></button>`).join('')}</div>`}
 
     ${preset.custom ? `<details class="more" data-key="d-custom" open><summary>${t('Custom deck')}</summary><div>
-      <label class="check"><input type="checkbox" data-set-bool="dreams" ${s.dreams ? 'checked' : ''}><span><b>${t('Dreams')}</b><small>${t('Everyone draws a Dream card each night.')}</small></span></label>
-      <label class="check"><input type="checkbox" data-set-bool="doomsday" ${s.doomsday ? 'checked' : ''}><span><b>${t('Doomsday Clock')}</b><small>${t('Death wins if nobody has won when the final Day closes.')}</small></span></label>
+      <label class="toggle-row"><span><b>${t('Dreams')}</b><small>${t('Everyone draws a Dream card each night.')}</small></span><input type="checkbox" class="switch" data-set-bool="dreams" ${s.dreams ? 'checked' : ''}></label>
+      <label class="toggle-row"><span><b>${t('Doomsday Clock')}</b><small>${t('Death wins if nobody has won when the final Day closes.')}</small></span><input type="checkbox" class="switch" data-set-bool="doomsday" ${s.doomsday ? 'checked' : ''}></label>
       ${customDeckEditor(v)}
       ${s.dreams ? dreamWeightsEditor(v) : ''}
     </div></details>` : ''}
-    ${preset.id === 'classic' ? `<label class="check"><input type="checkbox" data-set-bool="dreams" ${s.dreams ? 'checked' : ''}><span><b>${t('Simplified Dreams')}</b><small>${t('Off by default for teaching games.')}</small></span></label>` : ''}
+    ${preset.id === 'classic' ? `<label class="toggle-row"><span><b>${t('Simplified Dreams')}</b><small>${t('Off by default for teaching games.')}</small></span><input type="checkbox" class="switch" data-set-bool="dreams" ${s.dreams ? 'checked' : ''}></label>` : ''}
     ${preset.id === 'doomsday' || (preset.custom && s.doomsday) ? `<label class="field"><span>${t('Doomsday after Day')}</span><select class="input" data-set="doomsdayDays">${[1, 2, 3, 4, 5, 6, 7].map((n) => `<option ${s.doomsdayDays === n ? 'selected' : ''}>${n}</option>`).join('')}</select></label>` : ''}
+  </div>`;
+}
 
+/** The Rules step's controls after the switches (Classic, Missions): rule cards, the story, house rules. */
+function setupForm(v) {
+  const s = v.settings;
+  const preset = v.presets.find((p) => p.id === s.preset);
+  const rules = (S.content?.rules ?? []).filter((r) => preset.ruleIds.includes(r.id));
+  if (v.mode !== 'classic' && v.mode !== 'missions') return '';
+  return `<div class="stack" style="gap:18px">
     <details class="more ${preset.missions ? 'hidden' : ''}" data-key="d-rules" open><summary>${t('Rule cards')}</summary><div>
       ${preset.rulesMax === 0 ? '' : `<div class="seg" role="group"><button data-act="rulesMode" data-mode="random" aria-pressed="${s.rules.mode === 'random'}">${t('Draw at random')}</button><button data-act="rulesMode" data-mode="manual" aria-pressed="${s.rules.mode === 'manual'}">${t('Choose')}</button></div>`}
       ${s.rules.mode === 'random' ? `<div class="stepper"><span>${t('How many')}</span>${range(preset.rulesMin, preset.rulesMax).map((n) => `<button data-act="ruleCount" data-n="${n}" aria-pressed="${s.rules.count === n}">${n}</button>`).join('')}</div><small class="muted small">${t('Drawn secretly when the match starts.')}</small>`
@@ -1691,10 +1708,10 @@ function setupForm(v) {
     </div></details>
 
     ${preset.missions ? '' : `<div class="stack tight" data-key="c-house">
-      <label class="check"><input type="checkbox" data-set-bool="revealOnDeath" ${s.revealOnDeath ? 'checked' : ''}><span><b>${t('Reveal roles on death')}</b><small>${t('Never with the Hidden Roles card.')}</small></span></label>
-      <label class="check"><input type="checkbox" data-set-bool="endReveal" ${s.endReveal ? 'checked' : ''}><span><b>${t('Reveal every role at the end')}</b></span></label>
-      <label class="check"><input type="checkbox" data-set-bool="selfNomination" ${s.selfNomination ? 'checked' : ''}><span><b>${t('Allow self-nomination')}</b></span></label>
-      <label class="check"><input type="checkbox" data-set-bool="selfVote" ${s.selfVote ? 'checked' : ''}><span><b>${t('Nominees may vote for themselves')}</b></span></label></div>`}
+      <label class="toggle-row"><span><b>${t('Reveal roles on death')}</b><small>${t('Never with the Hidden Roles card.')}</small></span><input type="checkbox" class="switch" data-set-bool="revealOnDeath" ${s.revealOnDeath ? 'checked' : ''}></label>
+      <label class="toggle-row"><span><b>${t('Reveal every role at the end')}</b></span><input type="checkbox" class="switch" data-set-bool="endReveal" ${s.endReveal ? 'checked' : ''}></label>
+      <label class="toggle-row"><span><b>${t('Allow self-nomination')}</b></span><input type="checkbox" class="switch" data-set-bool="selfNomination" ${s.selfNomination ? 'checked' : ''}></label>
+      <label class="toggle-row"><span><b>${t('Nominees may vote for themselves')}</b></span><input type="checkbox" class="switch" data-set-bool="selfVote" ${s.selfVote ? 'checked' : ''}></label></div>`}
   </div>`;
 }
 
@@ -1720,7 +1737,7 @@ function timersForm(v) {
     classic: () => `${timer('morning', 'Morning')}${timer('discussion', 'Discussion')}${timer('defense', 'Defence (each)')}${timer('voting', 'Voting')}${timer('night', 'Night')}${timer('retaliation', 'Final act')}`,
   };
   const note = v.mode === 'classic' ? `<p class="small muted">${t(s.dreams ? 'Each night opens with a fifteen-second nightfall: everyone reads their Dream before actions begin.' : 'Each night opens with a five-second nightfall before actions begin.')}</p>` : '';
-  return `<details class="more" data-key="d-timers"><summary>${t('Timers')}</summary><div><div class="grid2">${(rows[v.mode] ?? rows.classic)()}</div>${note}</div></details>`;
+  return `<details class="more" data-key="d-timers"><summary class="lstep">${t('Timers')}</summary><div><div class="grid2">${(rows[v.mode] ?? rows.classic)()}</div>${note}</div></details>`;
 }
 
 /** How it works (C7) for the two modes that had no explainer; every other mode draws its own. */
@@ -1763,7 +1780,7 @@ function tableSection(v, isHost) {
     ? `<label class="toggle-row"><span><b>${t('Location backdrops')}</b><small>${t('The TV board shows a scene for the story\'s WHERE card.')}</small></span><input type="checkbox" class="switch" data-set-bool="backdrops" ${v.table?.backdrops ? 'checked' : ''}></label>`
     : `<div class="toggle-row"><span><b>${t('Location backdrops')}</b><small>${t('The TV board shows a scene for the story\'s WHERE card.')}</small></span><span class="tag ${v.table?.backdrops ? 'solid' : ''}">${t(v.table?.backdrops ? 'On' : 'Off')}</span></div>`) : '';
   const transport = info.remote && isHost ? `<div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>` : '';
-  return `<section class="lobby-table" data-key="ltable"><div class="rule">${t('The table')}</div>${v.mode === 'exorcism' ? '' : lang}${music}${backdrops}${transport}</section>`;
+  return `<section class="lobby-table" data-key="ltable"><div class="rule lstep">${t('The table')}</div>${v.mode === 'exorcism' ? '' : lang}${music}${backdrops}${transport}</section>`;
 }
 const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
 

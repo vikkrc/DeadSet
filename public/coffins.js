@@ -399,7 +399,7 @@ export function explainerHtml() {
     ['death', 'The dig', 'Open your own grave first, then the top coffins of others. A curse costs you a coffin.'],
     ['ward', 'Win', 'Win your clean digs, or be the last one with coffins.'],
   ];
-  return `<section class="x-explain" data-key="cexplain"><div class="rule">${t('How Coffins works')}</div>
+  return `<section class="x-explain" data-key="cexplain"><div class="rule lstep">${t('How Coffins works')}</div>
     <ol class="x-steps">${steps.map(([g, a, b], i) => `<li style="--i:${i}"><span class="xs-g">${glyph(g)}</span><span><b>${t(a)}</b><small>${t(b)}</small></span></li>`).join('')}</ol></section>`;
 }
 
@@ -423,14 +423,15 @@ export function coffinsLobbyDeck(v, isHost, h) {
   const hand = `<div class="c-lobbyhand" data-key="clh">${Array.from({ length: coffins }, (_, i) => coffinCard(i === coffins - 1 ? 'C' : 'G', { key: `clh-${i}` })).join('')}</div>`;
   return `${explainerHtml()}
     <section class="lobby-deck" data-key="cdeck">
-    <div class="rule">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
+    <div class="rule lstep">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     ${n >= 3 ? `<p class="small muted" data-key="ccount">${th('Each player: {g} Gold and one Curse.', { g: coffins - 1 })}</p>` : `<p class="small muted">${t('Seat 3 to 10 players.')}</p>`}
     ${hand}
-    <div class="rule">${t('Winning')}</div>
+    <div class="rule lstep">${t('Rules')}</div>
+    <div class="rule sub">${t('Winning')}</div>
     ${row(t('Clean digs to win'), t('Or be the last one with coffins.'), sel('toWin', c.toWin ?? 2, [[1, '1'], [2, '2'], [3, '3']]), String(c.toWin ?? 2))}
     ${row(t('Coffins per player'), t('5 makes a longer game.'), sel('coffins', coffins, [[4, t('4 (3 Gold, 1 Curse)')], [5, t('5 (4 Gold, 1 Curse)')]]), String(coffins))}
     ${row(t('Games per match'), t('Scores carry over between games.'), sel('games', c.games ?? 1, [[1, '1'], [3, '3'], [5, '5']]), String(c.games ?? 1))}
-    <div class="rule">${t('Twists')}</div>
+    <div class="rule sub">${t('Twists')}</div>
     ${row(t('Ghost wagers and Revenants'), t('Knocked-out players wager on every dig. Three right and they rise again.'), sw('wagers', c.wagers !== false), onOff(c.wagers !== false))}
     ${row(t('The Death coffin'), t('Each round one hidden player holds it. Dig it up, and they steal a coffin from you.'), sw('deathCoffin', c.deathCoffin !== false), onOff(c.deathCoffin !== false))}
     ${row(t('Relics'), t('Everyone gets a secret Lantern, Key or Ward, used once.'), sw('relics', !!c.relics), onOff(!!c.relics))}

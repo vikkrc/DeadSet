@@ -406,7 +406,7 @@ function explainer() {
     ['charlatan', 'The Deceiver', 'One reader is a second spirit. It knows the truth too, and swaps visions for lies.'],
     ['p_candle', 'Candles', 'Argue, then light candles. Solve all three rows before the clock burns out, then name the Deceiver.'],
   ];
-  return `<section class="x-explain" data-key="sexplain"><div class="rule">${t('How the Séance works')}</div>
+  return `<section class="x-explain" data-key="sexplain"><div class="rule lstep">${t('How the Séance works')}</div>
     <ol class="x-steps">${steps.map(([g, a, b], i) => `<li style="--i:${i}"><span class="xs-g">${glyph(g)}</span><span><b>${t(a)}</b><small>${t(b)}</small></span></li>`).join('')}</ol></section>`;
 }
 
@@ -430,9 +430,10 @@ export function seanceLobbyDeck(v, isHost, h) {
   const decN = s.deceivers === 'none' ? 0 : s.deceivers === 'two' ? (n >= 9 ? 2 : n >= 5 ? 1 : 0) : s.deceivers === 'one' ? 1 : n >= 5 ? 1 : 0;
   return `${explainer()}
     <section class="lobby-deck" data-key="sdeck">
-    <div class="rule">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
+    <div class="rule lstep">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     <p class="small muted">${n >= 4 ? th(decN === 1 ? 'One Ghost, {m} readers, {d} Deceiver among them.' : decN ? 'One Ghost, {m} readers, {d} Deceivers among them.' : 'One Ghost and {m} readers, all honest.', { m: Math.max(0, n - 1), d: decN }) : t('Seat 4 to 10 players.')}</p>
     <div class="s-lobbycards" data-key="slc">${['S_GHOST', 'S_MEDIUM', 'S_DECEIVER'].map((id) => rcard(id, 'thumb')).join('')}</div>
+    <div class="rule lstep">${t('Rules')}</div>
     ${row(t('Difficulty'), t(DIFF_SUB[s.difficulty ?? 'standard']), sel('difficulty', s.difficulty ?? 'standard', DIFF), t(DIFF.find((x) => x[0] === (s.difficulty ?? 'standard'))[1]))}
     ${row(t('Deceivers'), t('A second spirit among the readers.'), sel('deceivers', s.deceivers ?? 'auto', DEC), DEC.find((x) => x[0] === (s.deceivers ?? 'auto'))[1])}
     ${s.deceivers === 'two' ? row(t('Deceivers know each other'), '', sw('know', s.know !== false), t(s.know !== false ? 'On' : 'Off')) : ''}

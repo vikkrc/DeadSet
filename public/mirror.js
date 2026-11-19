@@ -171,7 +171,7 @@ export function mirrorLobbyDeck(v, isHost, h) {
     ['crown', t('Read them right'), t('A right prediction scores 2; your own answer scores nothing. The best reader wins.')],
   ], glyph, 'wexplain')}
     <section class="lobby-deck" data-key="wdeck">
-    <div class="rule">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
+    <div class="rule lstep">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     <p class="small muted">${n >= 4 ? th('{n} dilemmas in the bank; each game draws eight the table has not seen lately.', { n: DILEMMAS.length }) : t('Seat 4 to 12 players.')}</p>
     ${dilemmaCard(DILEMMAS[8].id, { size: 'lobby' })}
     ${packRow}

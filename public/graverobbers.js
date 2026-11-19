@@ -266,7 +266,7 @@ function explainer() {
     ['necro', 'Dig', 'The crew votes for a grave. Your relic: dig on. Empty, or theirs: the turn passes.'],
     ['death', 'Death\'s grave', 'Open it and your crew loses at once. Find all your relics first to win.'],
   ];
-  return `<section class="x-explain" data-key="gexplain"><div class="rule">${t('How Graverobbers works')}</div>
+  return `<section class="x-explain" data-key="gexplain"><div class="rule lstep">${t('How Graverobbers works')}</div>
     <ol class="x-steps">${steps.map(([g, a, b], i) => `<li style="--i:${i}"><span class="xs-g">${glyph(g)}</span><span><b>${t(a)}</b><small>${t(b)}</small></span></li>`).join('')}</ol></section>`;
 }
 
@@ -341,9 +341,10 @@ export function graveLobbyDeck(v, isHost, h) {
       ${s.captains === 'chosen' && isHost ? `<select class="input lang-select" data-act-change="gCap" data-crew="${c}"><option value="">${t('Undertaker: random')}</option>${chosen[c].map((id) => `<option value="${id}" ${s.cap?.[c] === id ? 'selected' : ''}>${pname(v, id)}</option>`).join('')}</select>` : ''}</section>`).join('')}</div>` : '';
   return `${explainer()}
     <section class="lobby-deck" data-key="gdeck">
-    <div class="rule">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
+    <div class="rule lstep">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     <p class="small muted">${three ? (n >= 6 ? t('Three crews: the Moon, the Sun and the Stars. Each needs an Undertaker and at least one digger.') : t('Three crews need 6 to 12 players.')) : n >= 4 ? t('Two crews: the Moon and the Sun. Each needs an Undertaker and at least one digger.') : t('Seat 4 to 12 players.')}</p>
     <div class="g-lobbyart ${three ? 'three' : ''}" data-key="glart"><span class="tarot c-B">${cardArt('moon')}<span class="nm">${t('The Moon')}</span></span>${three ? '' : `<span class="tarot">${cardArt('undertaker')}<span class="nm">${esc(roleF('G_UNDERTAKER', 'name'))}</span></span>`}<span class="tarot c-G">${cardArt('sun')}<span class="nm">${t('The Sun')}</span></span>${three ? `<span class="tarot c-V">${cardArt('star')}<span class="nm">${t('The Stars')}</span></span>` : ''}</div>
+    <div class="rule lstep">${t('Rules')}</div>
     ${row(t('Number of crews'), t('Three crews: a third of the table each. Death\'s grave puts a crew out; the others dig on.'), sel('teams', three ? 3 : 2, [[2, t('Two crews')], [3, t('Three crews')]]), three ? t('Three crews') : t('Two crews'))}
     ${row(t('Graves show'), t('Words in the table\'s language, or pencil icons.'), sel('tiles', s.tiles ?? 'words', TILES), TILES.find((x) => x[0] === (s.tiles ?? 'words'))[1])}
     ${(s.tiles ?? 'words') === 'words' ? row(t('Famous names'), t('Add films, heroes, celebrities and landmarks to the words.'), sw('famous', !!s.famous), t(s.famous ? 'On' : 'Off')) : ''}

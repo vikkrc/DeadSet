@@ -426,7 +426,7 @@ function explainer() {
     ['magistrate', 'Claim', 'Say which mask you wear and use its power. Anyone who thinks it is theirs may challenge: wrong guesses pay into the Offering.'],
     ['death', 'Win', 'Gather 13 Souls, reap a Harvest of 6 with Death, or be the richest when someone is ruined.'],
   ];
-  return `<section class="x-explain" data-key="kexplain"><div class="rule">${t('How Carnival works')}</div>
+  return `<section class="x-explain" data-key="kexplain"><div class="rule lstep">${t('How Carnival works')}</div>
     <ol class="x-steps">${steps.map(([g, a, b], i) => `<li style="--i:${i}"><span class="xs-g">${glyph(g)}</span><span><b>${t(a)}</b><small>${t(b)}</small></span></li>`).join('')}</ol></section>`;
 }
 
@@ -474,18 +474,19 @@ export function carnivalLobbyDeck(v, isHost, h) {
   const harvests = [[0, t('Off')], ...[2, 4, 6, 8, 10, 12].map((x) => [x, String(x)])];
   return `${explainer()}
     <section class="lobby-deck" data-key="kdeck">
-    <div class="rule">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
+    <div class="rule lstep">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     ${n >= 4 ? `<p class="small muted" data-key="kcount">${n < 6 ? th(6 - n === 1 ? '{n} masks: one sits on an empty chair.' : '{n} masks: {c} sit on empty chairs.', { n: 6, c: 6 - n }) : th('{n} masks, one per guest.', { n })}</p>` : `<p class="small muted">${t('Seat 4 to 12 players.')}</p>`}
     <div class="k-lobbydeck" data-key="kld">${deck.map(({ id, n: c }) => `<button class="kld-c" data-act="sheet" data-id="masks">${maskCard(id, { cls: 'thumb' })}${c > 1 ? `<b>×${c}</b>` : ''}</button>`).join('')}</div>
     <button class="btn btn-ghost btn-sm" data-act="sheet" data-id="masks" data-key="kref-btn">${glyph('mask')} ${t('What every mask does')}</button>
-    <div class="rule">${t('The masks')}</div>
+    <div class="rule lstep">${t('Rules')}</div>
+    <div class="rule sub">${t('The masks')}</div>
     ${row(t('Masks'), t('Recommended grows with the table. Custom: pick one mask per seat (Death is required; only the Innocent may repeat).'), sel('masks', custom ? 'custom' : 'recommended', [['recommended', t('Recommended')], ['custom', t('Custom')]]), t(custom ? 'Custom' : 'Recommended'))}
     ${custom ? maskEditor(v, isHost, need) : ''}
-    <div class="rule">${t('Winning')}</div>
+    <div class="rule sub">${t('Winning')}</div>
     ${row(t('A full purse'), t('Souls needed to win.'), sel('target', k.target ?? 13, [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((x) => [x, String(x)])), String(k.target ?? 13))}
     ${row(t('Death\'s harvest'), t('Souls reaped with Death to win. Each reap is 2.'), sel('harvest', k.harvest ?? 6, harvests), (harvests.find(([x]) => x === (k.harvest ?? 6)) ?? harvests[3])[1])}
     ${row(t('Penalty for a wrong claim'), t('Paid into the Offering by every revealed player without the mask.'), sel('penalty', k.penalty ?? 1, [[1, '1'], [2, '2']]), String(k.penalty ?? 1))}
-    <div class="rule">${t('The ball')}</div>
+    <div class="rule sub">${t('The ball')}</div>
     ${row(t('The opening dance'), t('Turns each player must spend on Swap or pretend before anything else.'), sel('dance', k.dance ?? 1, [[1, '1'], [2, '2']]), String(k.dance ?? 1))}
     ${row(t('Notes (the ball diary)'), t('A private log of what you have seen. Off: memory only.'), sw('diary', !!k.diary), onOff(!!k.diary))}
     ${row(t('Games per match'), t('Scores carry over between games.'), sel('games', k.games ?? 1, [[1, '1'], [3, '3']]), String(k.games ?? 1))}

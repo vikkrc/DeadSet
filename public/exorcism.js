@@ -231,7 +231,7 @@ export function explainerHtml() {
     ['magistrate', 'Name the Demon', 'Talk it over and vote. Miss, and the Demon wins.'],
     ['death', 'One last guess', 'A caught Demon gets one guess at the password. Right, and the Demon still wins.'],
   ];
-  return `<section class="x-explain" data-key="xexplain"><div class="rule">${t('How Exorcism works')}</div>
+  return `<section class="x-explain" data-key="xexplain"><div class="rule lstep">${t('How Exorcism works')}</div>
     <ol class="x-steps">${steps.map(([g, a, b], i) => `<li style="--i:${i}"><span class="xs-g">${glyph(g)}</span><span><b>${t(a)}</b><small>${t(b)}</small></span></li>`).join('')}</ol></section>`;
 }
 
@@ -251,17 +251,18 @@ export function exorcismLobbyDeck(v, isHost, h) {
   const scores = scoreboard(v);
   return `${explainerHtml()}
     <section class="lobby-deck" data-key="xdeck">
-    <div class="rule">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
+    <div class="rule lstep">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     ${n >= 3 ? `<p class="small muted" data-key="xcount">${th(x.demons === 2 ? '{l} Living and two Demons.' : '{l} Living and one Demon.', { l: Math.max(0, n - (x.demons ?? 1)) })}</p>` : `<p class="small muted">${t('Seat 3 to 12 players.')}</p>`}
     ${isHost ? `<label class="toggle-row"><span><b>${t('Table language')}</b><small>${t('Forced on every phone in Exorcism, so the words match.')}</small></span><select class="input lang-select" data-act-change="tableLang">${h.LANGS.map((l) => `<option value="${l.code}" ${tableLang === l.code ? 'selected' : ''}>${esc(l.name)}</option>`).join('')}</select></label>`
       : `<div class="toggle-row"><span><b>${t('Table language')}</b><small>${t('Forced on every phone in Exorcism, so the words match.')}</small></span><span class="tag">${esc(h.LANGS.find((l) => l.code === tableLang)?.name ?? tableLang)}</span></div>`}
-    <div class="rule">${t('The Demon')}</div>
+    <div class="rule lstep">${t('Rules')}</div>
+    <div class="rule sub">${t('The Demon')}</div>
     ${row(t('Demons'), t('Two Demons need at least 7 players.'), sel('demons', x.demons ?? 1, [[1, t('One')], [2, t('Two')]]), t(x.demons === 2 ? 'Two' : 'One'))}
     ${x.demons === 2 ? row(t('Demons know each other'), t('Off: each Demon works alone.'), sw('demonsKnow', x.demonsKnow), onOff(x.demonsKnow)) : ''}
     ${row(t('The Demon\'s hint'), t('A vague whisper about the password. None is the classic game.'), sel('hint', x.hint ?? 'none', hints), hints.find(([k]) => k === (x.hint ?? 'none'))[1])}
     ${row(t('One last guess'), t('A caught Demon may still win by naming the password.'), sw('guess', x.guess !== false), onOff(x.guess !== false))}
     ${row(t('Tied vote'), '', sel('tie', x.tie ?? 'demon', ties), ties.find(([k]) => k === (x.tie ?? 'demon'))[1])}
-    <div class="rule">${t('The words')}</div>
+    <div class="rule sub">${t('The words')}</div>
     ${row(t('Word grid'), t('16 words on the TV (and on phones); the password is one of them, and the Demon guesses from it.'), sw('grid', x.grid !== false), onOff(x.grid !== false))}
     ${row(t('Rounds'), t('How many times the word goes around the table.'), sel('rounds', x.rounds ?? 1, [[1, '1'], [2, '2'], [3, '3']]), String(x.rounds ?? 1))}
     ${row(t('Type the words'), t('Each speaker also types their word, shown on the TV. Off: just say it aloud.'), sw('typed', !!x.typed), onOff(!!x.typed))}

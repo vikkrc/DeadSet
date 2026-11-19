@@ -296,7 +296,7 @@ function explainer() {
     ['dagger', 'Accuse', 'Once per game each. The clock stops; only a unanimous table convicts.'],
     ['mentalist', 'The Mimic', 'Unmask at any moment and name the place. Caught? One last guess.'],
   ];
-  return `<section class="x-explain" data-key="qexplain"><div class="rule">${t('How Mimic works')}</div>
+  return `<section class="x-explain" data-key="qexplain"><div class="rule lstep">${t('How Mimic works')}</div>
     <ol class="x-steps">${steps.map(([g, a, b], i) => `<li style="--i:${i}"><span class="xs-g">${glyph(g)}</span><span><b>${t(a)}</b><small>${t(b)}</small></span></li>`).join('')}</ol></section>`;
 }
 
@@ -319,9 +319,10 @@ export function mimicLobbyDeck(v, isHost, h) {
   const board = s.board ?? 16;
   return `${explainer()}
     <section class="lobby-deck" data-key="qdeck">
-    <div class="rule">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
+    <div class="rule lstep">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     <p class="small muted">${n >= 4 ? t('One Mimic; everyone else is Living.') : t('Seat 4 to 12 players.')}</p>
     <div class="q-lobbyart" data-key="qlart"><span class="tarot">${cardArt('mimic')}<span class="nm">${esc(roleF('Q_MIMIC', 'name'))}</span></span>${scard('WHERE', 5)}${scard('WHO', 3)}</div>
+    <div class="rule lstep">${t('Rules')}</div>
     ${row(t('Places on the board'), t('How many possible places everyone sees. More places, harder for the Mimic.'), sel('board', board, BOARDS), BOARDS.find((x) => x[0] === board)?.[1] ?? String(board))}
     ${row(t('Last guess'), t('A caught Mimic may still name the place and steal the win.'), sw('lastGuess', s.lastGuess !== false), t(s.lastGuess !== false ? 'On' : 'Off'))}
     ${row(t('The TV backdrop sharpens'), t('A trust option: the TV shows the true place deeply blurred, sharpening as time runs out. Anyone who opens the TV link could read it.'), sw('tvHint', !!s.tvHint), t(s.tvHint ? 'On' : 'Off'))}

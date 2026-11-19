@@ -58,7 +58,7 @@ export function settingRow(isHost, title, sub, control, shown) {
 
 /** The explainer steps at the top of a mode's lobby deck: [glyph, title, text], already translated. */
 export function explainer(title, steps, glyph, key) {
-  return `<section class="x-explain" data-key="${key}"><div class="rule">${title}</div>
+  return `<section class="x-explain" data-key="${key}"><div class="rule lstep">${title}</div>
     <ol class="x-steps">${steps.map(([g, a, b], i) => `<li style="--i:${i}"><span class="xs-g">${glyph(g)}</span><span><b>${a}</b><small>${b}</small></span></li>`).join('')}</ol></section>`;
 }
 

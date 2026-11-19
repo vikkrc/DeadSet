@@ -244,7 +244,7 @@ function explainer() {
     ['whispers', 'One argument', 'At dawn you are whatever card is in front of you. Talk it over.'],
     ['magistrate', 'One vote', 'Everyone points at once. If a Death dies, the Living win.'],
   ];
-  return `<section class="x-explain" data-key="nexplain"><div class="rule">${t('How Midnight works')}</div>
+  return `<section class="x-explain" data-key="nexplain"><div class="rule lstep">${t('How Midnight works')}</div>
     <ol class="x-steps">${steps.map(([g, a, b], i) => `<li style="--i:${i}"><span class="xs-g">${glyph(g)}</span><span><b>${t(a)}</b><small>${t(b)}</small></span></li>`).join('')}</ol></section>`;
 }
 
@@ -285,11 +285,12 @@ export function midnightLobbyDeck(v, isHost, h) {
   const deck = Object.entries(v.setup?.publicDeck?.exact ?? {}).map(([id, c]) => ({ id, n: c }));
   return `${explainer()}
     <section class="lobby-deck" data-key="ndeck">
-    <div class="rule">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
+    <div class="rule lstep">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     ${n >= 4 ? `<p class="small muted">${th('{n} cards: one each, three on the table.', { n: n + 3 })}</p>` : `<p class="small muted">${t('Seat 4 to 12 players.')}</p>`}
     <div class="k-lobbydeck" data-key="nld">${deck.map(({ id, n: c }) => `<button class="kld-c" data-act="sheet" data-id="ncards">${ncard(id, { cls: 'thumb' })}${c > 1 ? `<b>×${c}</b>` : ''}</button>`).join('')}</div>
     <button class="btn btn-ghost btn-sm" data-act="sheet" data-id="ncards" data-key="nref-btn">${glyph('moon')} ${t('What every card does')}</button>
-    <div class="rule">${t('The cards')}</div>
+    <div class="rule lstep">${t('Rules')}</div>
+    <div class="rule sub">${t('The cards')}</div>
     ${row(t('Cards'), t('Recommended grows with the table. Custom: choose them yourself.'), sel('deck', custom ? 'custom' : 'recommended', [['recommended', t('Recommended')], ['custom', t('Custom')]]), t(custom ? 'Custom' : 'Recommended'))}
     ${custom ? deckEditor(v, isHost, n + 3) : ''}
     ${row(t('A lone Death peeks'), t('A Death who wakes alone may look at one table card.'), `<input type="checkbox" class="switch" data-act-change="nSet" data-id="lonePeek" ${s.lonePeek !== false ? 'checked' : ''}>`, t(s.lonePeek !== false ? 'On' : 'Off'))}
