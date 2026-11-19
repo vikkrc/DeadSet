@@ -5099,3 +5099,8 @@ details.more summary,
 .guide .x-explain > .rule { margin-bottom: 10px; }
 .guide .x-steps { padding-left: 0; }
 .guide .x-steps li { max-width: none; }
+/* The guide as a rule book: Classic's own sections are listed under it in the chapter column */
+@media (min-width: 980px) { .g-col a.sub { padding: 3px 0 3px 26px; font-size: var(--fs-small); color: var(--ash); } }
+.guide .g-mode h3, .guide section h3[id] { margin: 26px 0 8px; scroll-margin-top: 92px; }
+.guide h4.g-sub { margin: 18px 0 6px; font: 400 19px/1.15 var(--serif); }
+.guide .k-ref { margin: 4px 0 8px; }

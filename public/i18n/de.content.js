@@ -283,100 +283,6 @@ export default {
     d080: ["Die letzte Kerze brennt herunter, und nur einer von euch kann sie halten.", "Sie nehmen", "Sie jemand anderem anbieten", "Sie gemeinsam ausblasen"],
   },
   guide: {
-    mimicH: "Dead Set: Nachahmer",
-    mimic: `<p>Ein Fragespiel für 4–12 Spieler, etwa 8 Minuten pro Spiel. Alle teilen einen <b>Ort</b> (eine Story-Karte) und haben dort eine <b>Figur</b>, außer dem <b>Nachahmer</b>, der nur Rauschen und das Brett der möglichen Orte sieht.</p>
-<ol>
-<li><b>Fragen.</b> Wer die Laterne hält, fragt laut irgendwen nach dem Ort und tippt dann auf die gefragte Person; die Laterne geht an sie. Frag nie die Person zurück, die dich gerade gefragt hat.</li>
-<li><b>Beschuldigen.</b> Jede Person einmal pro Spiel. Die Uhr steht still, alle anderen stimmen ab; nur ein einstimmiger Tisch verurteilt. Wird ein Lebender verurteilt, gewinnt der Nachahmer.</li>
-<li><b>Der Nachahmer</b> kann sich jederzeit enttarnen und den Ort nennen: richtig, er gewinnt; falsch, die Lebenden gewinnen. Ein ertappter Nachahmer hat noch einen letzten Tipp.</li>
-<li><b>Die Zeit ist um:</b> Alle zeigen auf eine verdächtige Person. Die meisten Stimmen werden verurteilt; bei Gleichstand entwischt der Nachahmer.</li>
-</ol>
-<p>Streiche beim Zuhören Orte auf deinem eigenen Handy durch: Deine Notizen sind privat. Punkte: Lebende je +1 (wer den Nachahmer ertappt hat, +1 mehr); der Nachahmer +2, oder +3 für das Nennen des Ortes.</p>`,
-    omenH: "Dead Set: Das Omen",
-    omen: `<p>Ein Vorhersagespiel für 4–12 Spieler, etwa 10 Minuten. Ein Rad zeigt auf <b>Leben</b>, <b>Tod</b> oder <b>Wiedergeburt</b>, in dieser Reihenfolge im Kreis. Sieben Runden; jede Person hat fünf <b>Einfluss</b>.</p>
-<ol>
-<li><b>Das Rad</b> zeigt, wo es beginnt.</li>
-<li><b>Heimlich</b> sagst du voraus, wo es stehen bleibt, und darfst es einen Schritt in eine Richtung drehen (für einen Einfluss).</li>
-<li><b>Alle Drehungen werden addiert</b>, und das Rad bewegt sich einmal. Ein Treffer bringt 3.</li>
-</ol>
-<p>Am Ende ist jeder unbenutzte Einfluss einen Punkt wert. Die meisten Punkte gewinnen; Gleichstand wird geteilt.</p>`,
-    mirrorH: "Dead Set: Der Spiegel",
-    mirror: `<p>Ein Menschenkenntnis-Spiel für 4–12 Spieler, etwa 15 Minuten. Acht erfundene <b>Dilemmata</b> mit je drei Antworten; keine ist richtig.</p>
-<ol>
-<li><b>Besprechen.</b> Du siehst, wen du diese Runde liest. Frag, zieh auf, täusche.</li>
-<li><b>Versiegelte Stimme.</b> Du antwortest für dich und sagst die Antwort der Person voraus, die du liest.</li>
-<li><b>Der Spiegel</b> zeigt alles: Ein Treffer bringt 2, deine eigene Antwort nichts.</li>
-</ol>
-<p>Die Paare wechseln jede Runde, also liest jede Person jede. Wer am besten liest, gewinnt.</p>`,
-    graveH: "Dead Set: Grabräuber",
-    grave: `<p>Ein Teamspiel mit Wörtern (oder Symbolen) für 4–12 Spieler, etwa 15 Minuten. Zwei Grabräuberbanden, der <b>Mond</b> und die <b>Sonne</b>, graben einen Friedhof aus 25 Grabsteinen nach den Reliquien um, die ihre Gottheit beschwören. Die Bande, die den Münzwurf gewinnt, hat 9 Reliquien in der Erde, die andere 8; 7 Gräber sind leer, und eines gehört dem <b>Tod</b>.</p>
-<ol>
-<li><b>Die Totengräber.</b> Einer pro Bande. Nur sie sehen das Grabregister: was unter jedem Stein liegt.</li>
-<li><b>Das Zeichen.</b> In seinem Zug gibt der Totengräber ein Wort und eine Zahl: <i>„Ozean · 3“</i>. Das Wort darf nicht auf dem Brett stehen. Danach sagt er nichts mehr.</li>
-<li><b>Das Graben.</b> Die Grabräuber beraten sich und stimmen auf ihren Handys ab. Die meisten Stimmen graben; bei Gleichstand entscheidet die Münze. Eure Reliquie: weitergraben, bis zur Zahl. Ein leeres Grab oder eine Reliquie der anderen Bande (jetzt gehört sie ihnen): Der Zug geht weiter. Das Grab des Todes: Eure Bande verliert sofort.</li>
-<li><b>Aufhören.</b> Die Bande kann abstimmen aufzuhören. Hört sie vor der Zahl auf, behält sie einen Bonusgrabgang für den nächsten Zug (er stapelt sich nicht).</li>
-</ol>
-<p>Die Bande, deren Reliquien zuerst alle ausgegraben sind, gewinnt. Auf dem Handy wechselst du zwischen <b>Steinen</b> (Wörter oder Symbole) und <b>Karte</b> (das Brett auf einen Blick). In der Lobby: Wörter oder Symbole, berühmte Namen an oder aus, Banden und Totengräber zufällig oder gewählt, getippte oder gesprochene Zeichen.</p>`,
-    seanceH: "Dead Set: Séance",
-    seance: `<p>Ein kooperatives Mordrätsel mit Verräter. 4–10 Spieler, etwa 30 Minuten. Ein Spieler ist der <b>Geist</b>: Er weiß, wer ihn getötet hat, wo und warum, und kann nicht sprechen. Alle anderen sind Leser.</p>
-<ol>
-<li><b>Das Brett.</b> Drei Reihen Geschichtskarten: wer, wo und warum. In jeder Reihe ist eine Karte die Wahrheit.</li>
-<li><b>Visionen.</b> Jede Runde bekommt jeder Leser eine Reihe, und der Geist schickt ihm eine wortlose Vision dazu: zwei oder drei gezeichnete Motive auf einer Karte.</li>
-<li><b>Diskussion.</b> Die Visionen werden für alle aufgedeckt. Beschreibt sie, streitet, überzeugt. Der Geist schweigt, kann aber eine Vision mit einem <b>kalten Fleck</b> vereisen: Die ist nicht von mir.</li>
-<li><b>Kerzen.</b> Jeder Leser entzündet eine Kerze auf einer Karte seiner Reihe oder hält sie zurück. Die Karte mit den meisten Kerzen wird dem Geist vorgelegt. Richtig: Die Reihe ist gelöst. Falsch: Die Karte wird gestrichen. Jede Runde brennt eine Kerze der Séance-Uhr herunter.</li>
-</ol>
-<p>Ab fünf Spielern versteckt sich ein <b>Täuscher</b> unter den Lesern. Er kennt die Wahrheit und tauscht ein paarmal pro Spiel die Vision eines anderen Lesers gegen eine Lüge. Löst alle drei Reihen, bevor die Kerzen herunterbrennen, und nennt dann den Täuscher: richtig ist ein voller Sieg, falsch ein hohler, den sich der Täuscher teilt. Brennt die Uhr herunter, gewinnt der Täuscher (bleibt eine Reihe offen, kommt zuerst der <b>letzte Atemzug</b>). Der Endbildschirm spielt jede Runde nach: die wahren Visionen, die Tausche und die Kerzen.</p>`,
-    midnightH: "Dead Set: Mitternacht",
-    midnight: `<p>Eine Nacht, eine Abstimmung, keine zweite Chance. 4–12 Spieler, etwa 10 Minuten. Das Deck hat eine Karte pro Spieler und drei weitere verdeckt auf dem Tisch.</p>
-<ol>
-<li><b>Ein Blick.</b> Alle sehen ihre eigene Karte einmal an.</li>
-<li><b>Eine Nacht.</b> Die Handys wecken die Rollen der Reihe nach: Nachahmer, Tod, Verschwörer, Zwillinge, Mentalist, Doppelagent, Hexe, Spieler, Schlaflose. Jeder Schritt dauert gleich lang und läuft auch, wenn seine Karte auf dem Tisch liegt, damit die Nacht nichts verrät. Karten werden im Dunkeln angesehen und getauscht.</li>
-<li><b>Ein Streit.</b> Im Morgengrauen bist du die Karte, die vor dir liegt, nicht die, die du bekommen hast. Redet darüber.</li>
-<li><b>Eine Abstimmung.</b> Alle zeigen gleichzeitig. Wer die meisten Stimmen hat, stirbt, wenn es mindestens zwei sind (bei Gleichstand alle). Stirbt der Rächer, stirbt auch, auf wen er gezeigt hat.</li>
-</ol>
-<p>Die Lebenden gewinnen, wenn ein Tod stirbt (oder, wenn kein Spieler der Tod ist, wenn niemand stirbt). Tod und Verschwörer gewinnen, wenn kein Tod stirbt. Der Narr gewinnt allein, wenn er abgewählt wird. <b>Karten im Spiel</b> zeigt den Nachtschritt jeder Karte. Am Ende seht ihr jede Karte, wie sie ausgeteilt wurde und im Morgengrauen, und die ganze Nacht als Protokoll.</p>`,
-    carnivalH: "Dead Set: Karneval",
-    carnival: `<p>Ein Maskenball aus Bluff und Gedächtnis für 4–12 Spieler, in der Lobby wählbar. Jede Maske ist eine bekannte Rollenkarte.</p>
-<ol>
-<li><b>Die Demaskierung.</b> Jeder erhält eine Maske (bei 4–5 Spielern sitzen die übrigen Masken auf leeren Stühlen). Zehn Sekunden lang ist jede Maske auf dem TV und jedem Handy zu sehen. Merk sie dir; dann werden sie verdeckt.</li>
-<li><b>Dein Zug: eins von dreien.</b> <i>Tauschen oder täuschen</i>: wähle eine andere Maske und halte Tauschen oder Täuschen. Beide Knöpfe sehen gleich aus, und niemand, nicht einmal der andere Spieler, erfährt, was du gewählt hast. <i>Spähen</i>: Sieh kurz deine eigene Maske an; alle sehen, dass du geschaut hast. <i>Beanspruchen</i>: Nenne eine Maske und nutze ihre Kraft.</li>
-<li><b>Herausforderungen.</b> Beansprucht jemand eine Maske, fragt jedes andere Handy: <i>Ist das deine Maske?</i> Fordert niemand heraus, gilt der Anspruch: die Kraft wirkt, was auch immer der Spieler wirklich trägt. Fordert jemand heraus, heben Anspruchsteller und Herausforderer ihre Masken: Wer sie wirklich trägt, nutzt die Kraft, alle anderen Aufgedeckten zahlen eine Seele in die Opfergabe.</li>
-<li><b>Der Eröffnungstanz.</b> Der erste Zug jedes Spielers (zwei, wenn der Host es will) muss Tauschen oder täuschen sein.</li>
-<li><b>Sieg</b> mit vollem Beutel (13 Seelen), mit der Ernte des Todes (6 Seelen, geerntet durch Ansprüche auf den Tod) oder, sobald jemand auf 0 fällt, als Reichste(r).</li>
-</ol>
-<p>Tippe jederzeit auf <b>Masken auf dem Ball</b>: jede Maske im Spiel mit ihrer Kraft, ausgeschrieben und als Reihe von Zeichen (Münze für Seelen, Geschenk für die Opfergabe, Sense für die Ernte, Auge für einen Blick, gekreuzte Pfeile für einen Tausch). <b>Das Balltagebuch</b> (Notizen) ist standardmäßig aus: Was du gesehen hast, behältst du im Kopf. Der Host kann es in der Lobby einschalten.</p>
-<p>Punkte werden zwischen Spielen übernommen: der Sieger +3, alle anderen +1 für jede Seele über 6.</p>`,
-    coffinsH: "Dead Set: Särge",
-    coffins: `<p>Ein schnelles Bluffspiel für 3–10 Spieler, in der Lobby wählbar. Jeder hält 3 Goldsärge und einen Fluch (4 und einen mit der längeren Option).</p>
-<ol>
-<li><b>Das Begräbnis.</b> Alle vergraben gleichzeitig heimlich einen Sarg: antippen, dann auf Vergraben tippen. Danach, ab dem ersten Spieler der Runde, vergräbst du in deinem Zug entweder einen weiteren Sarg oben auf deinem Stapel oder forderst heraus: <i>„Ich kann N öffnen“</i>, höchstens so viele, wie insgesamt vergraben sind.</li>
-<li><b>Das Bieten.</b> Reihum erhöht jeder oder passt. Ein Pass gilt für die ganze Runde. Wer zuletzt übrig bleibt, ist der Gräber.</li>
-<li><b>Die Grabung.</b> Der Gräber öffnet zuerst seine eigenen Särge von oben nach unten, dann wählt er andere Gräber, immer den obersten Sarg, bis N offen sind.</li>
-<li><b>Sauber oder verflucht.</b> Nur Gold: eine saubere Grabung, der Grabstein wird vergoldet. Ein Fluch im eigenen Grab: Du wählst einen Sarg, den du verlierst. Der Fluch eines anderen: Er zieht blind einen deiner Särge, und der ist weg. Wem der Fluch gehört, beginnt die nächste Runde.</li>
-<li><b>Gewinne</b> mit deinen sauberen Grabungen (standardmäßig 2; 1 oder 3 in der Lobby) oder als letzter Spieler mit Särgen.</li>
-</ol>
-<p><b>Der Sarg des Todes</b> (standardmäßig an): Jede Runde hält ihn ein verborgener Spieler anstelle eines Goldsargs. Gräbst du ihn aus, scheitert die Grabung, und sein Halter stiehlt dir einen Sarg, der zu Gold wird. <b>Geisterwetten</b> (standardmäßig an): Spieler ohne Särge wetten bei jeder Grabung auf Gold oder Fluch; nach drei Treffern erheben sie sich als Wiedergänger mit einem Goldsarg. <b>Reliquien</b> (standardmäßig aus): eine geheime Laterne (in ein Grab spähen), ein Schlüssel (ein fremdes Grab vor dem eigenen öffnen) oder ein Schutz (ein Fluch kostet nichts), je einmal nutzbar.</p>
-<p>Punkte werden zwischen Spielen übernommen: der Sieger +3, jede saubere Grabung +1, jedes Auferstehen +1.</p>`,
-    exorcismH: "Dead Set: Exorzismus",
-    exorcism: `<p>Ein Wortspiel voller Bluff für 3–12 Spieler, in der Lobby wählbar. Auf jedem Handy gilt die Sprache des Tisches, damit die Wörter passen.</p>
-<ol>
-<li><b>Die Kristallkugel.</b> Alle sehen die Kategorie. Die Lebenden sehen auch das Passwort; der Dämon (einer, ab 7 Spielern zwei) nicht, er bekommt höchstens ein vages Flüstern, wenn der Gastgeber es erlaubt.</li>
-<li><b>Das Los.</b> Ein Los bestimmt, wer anfängt; dann geht es reihum in Sitzordnung.</li>
-<li><b>Jeder ein Wort.</b> Bist du dran, sag ein Wort, das zum Passwort passt, und halte den Knopf auf deinem Handy. Zeig, dass du es kennst, ohne es dem Dämon zu verraten. Auf Wunsch werden die Wörter eingetippt und auf dem Fernseher gezeigt.</li>
-<li><b>Benennt den Dämon.</b> Beratet euch, dann stimmen alle ab. Wird ein Lebender benannt (oder steht es unentschieden ohne Münze), gewinnt der Dämon.</li>
-<li><b>Ein letzter Versuch.</b> Ein entlarvter Dämon darf einmal das Passwort raten, aus dem 4×4-Wortgitter oder getippt. Trifft er, gewinnt er trotzdem.</li>
-</ol>
-<p>Die Runde endet in derselben Lobby mit denselben Einstellungen, und die Punkte laufen weiter: Lebende +1 für einen Sieg, Dämonen +2.</p>`,
-    missionsH: "Dead Set: Missionen",
-    missions: `<p>Ein zweiter Modus für 5–12 Spieler, in der Lobby wählbar. Niemand stirbt: Der Tod hat sich in die Expedition geschlichen, und der Tisch muss ihn finden.</p>
-<ol>
-<li><b>Die Missionskarte.</b> Jede Mission beginnt mit einer gezogenen Karte, bevor ein Team gewählt wird. Die meisten sind <i>Normale Missionen</i>; ab und zu ändert eine Karte das Team, die Abstimmung oder die Aufdeckung. Sie gilt für die ganze Mission.</li>
-<li><b>Der Vorschlag.</b> Der Missionsanführer (die Laterne) wählt ein Team in der angezeigten Größe.</li>
-<li><b>Die Teamabstimmung.</b> Alle stimmen geheim zu oder lehnen ab; die Stimmen werden alle auf einmal mit Namen aufgedeckt. Eine Mehrheit schickt das Team los. Sonst schlägt der nächste Spieler zur Linken vor. Der fünfte Vorschlag zieht los, egal wie abgestimmt wird.</li>
-<li><b>Die Mission.</b> Jedes Teammitglied spielt geheim eine Karte. Die Lebenden können nur Erfolg spielen; der Tod darf Erfolg oder Sabotage spielen. Eine Sabotage lässt die Mission scheitern (zwei auf Mission 4 ab 7 Spielern). Die Karten werden gemischt und einzeln aufgedeckt.</li>
-<li><b>Die nächtliche Pause.</b> Alle wählen einen geheimen Verdacht. Nach Mission 2, 3 und 4 erfährt der Halter der Kerze die Seite eines Spielers, und die Kerze geht an ihn über. Im Morgengrauen können Hinweise kommen.</li>
-</ol>
-<p><b>Das Ende.</b> Drei Erfolge: Der Tod enttarnt sich, und der Schnitter nennt das Medium. Richtig – der Tod gewinnt; falsch – die Lebenden gewinnen. Drei Fehlschläge: das letzte Gefecht. Alle nennen einen Spieler. Ist es einer der Lebenden, gewinnt der Tod; fangt ihr den Tod, bekommt der Schnitter trotzdem die Abrechnung.</p>`,
     missionCardsH: "Missionskarten",
     sidesH: "Weitere Seiten und Wendungen",
     sides: `<p>Optional, in der Lobby einschaltbar (oder in eigenen Spielen über die Rollenzähler). Die Stadt gewinnt erst, wenn Tod, Sekte und Ripper alle verschwunden sind.</p>
@@ -388,19 +294,9 @@ export default {
 <li><b>Münzwurf bei Gleichstand</b> (optional): Ein Gleichstand an der Spitze wird per Münzwurf entschieden, statt alle zu verschonen.</li>
 <li><b>Offene Abstimmung</b> (eine Regelkarte): Jede Stimme ist öffentlich, sobald sie abgegeben wird.</li>
 </ul>`,
-    kicker: 'Die Regeln, v1.0',
     title: 'So wird<br><i>gespielt.</i>',
-    intro: 'Die meisten von euch wollen überleben. Ein paar von euch sind der Tod. Niemand weiß, wer wer ist — außer dem Tod, der seine Mitspieler kennt.',
     toc: ['Grundlagen', 'Eine Runde', 'Sieg', 'Grundrollen', 'Zusatzrollen', 'Volles Deck', 'Träume', 'Regelkarten', 'Modi', 'Nachtreihenfolge', 'Handys'],
     basicsH: 'Die Grundlagen',
-    basics: `<p>Dead Set ist ein Social-Deduction-Partyspiel für 5–13 Spieler. Alle treten mit dem eigenen Handy demselben Raum bei und erhalten eine geheime <b>Rolle</b>. Die meisten Rollen gehören zur <b>Nicht-Tod</b>-Fraktion; ein oder mehrere Spieler sind heimlich der <b>Tod</b>.</p>
-<ul>
-<li><b>Rollen</b> gelten für das ganze Spiel: deine Gesinnung und deine Fähigkeit.</li>
-<li><b>Träume</b> sind Effekte für eine Nacht: ab Nacht 1 zieht jeder lebende Spieler jede Nacht heimlich einen.</li>
-<li><b>Regelkarten</b> (1–3, beim Aufbau gezogen) verbiegen das ganze Spiel — doppelte Morde, gewichtete Stimmen, Geister, die abstimmen.</li>
-<li>Das <b>Szenario</b> (WER / WO / WARUM) ist reines Erzählen. Es ändert nie eine Regel.</li>
-</ul>
-<p>Du darfst die Wahrheit über deine Rolle sagen, lügen oder schweigen. Zeig nie deinen Bildschirm. Die App ist der Erzähler: Niemand muss aussetzen, und der Gastgeber sieht nicht mehr Geheimnisse als alle anderen.</p>`,
     roundH: 'Eine Runde',
     round: `<ol>
 <li><b>Nacht 0 — die Enthüllung.</b> Dreh deine Rollenkarte um, lies sie, tippe auf <em>Verstanden</em>. Sonst passiert nichts: keine Morde, keine Träume, keine Fähigkeiten. Tod-Spieler sehen ihre Mitspieler.</li>
@@ -436,8 +332,6 @@ export default {
     dreamsNote: `Manche Träume sind seltener als andere, und Schlaflosigkeit kommt nie öfter als zweimal pro Spiel vor; im eigenen Spiel lässt sich die Häufigkeit jedes Traums einstellen. Tausche der Traumdiebe passieren während des Einbruchs der Nacht, bevor die Aktionen öffnen, in Sitzreihenfolge, je einmal. Es zählt die Karte, die du am Ende hältst.`,
     rulesH: 'Regelkarten',
     rulesP: '1–3 werden beim Aufbau gezogen (oder gewählt) und gelten das ganze Spiel. Manche lassen sich nur auf Ehrenwort durchsetzen, wenn ihr im selben Raum spielt.',
-    modesH: 'Modi',
-    modesTh: ['Modus', 'Spieler', 'Was sich ändert'],
     countsH: 'Rollenanzahl',
     countsTh: ['Spieler', 'Tod', 'Unschuldiger', 'Wächter · Mentalist · Psycho', 'Zusatz'],
     modesNote: 'Klassisch / Lernen füllt Zusatzplätze mit Unschuldigen. Im selben Raum oder online ist nur eine Frage der Übertragung, kein anderes Spiel: online gibt es zusätzlich einen Tischchat in der App (und bei Nebel des Krieges Nachbarflüstern).',
@@ -454,15 +348,259 @@ export default {
 <li><b>Verbundene Schicksale.</b> Huren sterben mit einem besuchten Opfer des Todes; Träger von Geteiltem Albtraum und Schlafwandeln sterben mit ihrem Partner. Nur Wiederbelebung oder Schutzengel verhindern einen verbundenen Tod. Danach läuft geliehene Zeit ab.</li>
 <li><b>Tagesanbruch.</b> Überlebende erhalten ihre privaten Berichte. Die Öffentlichkeit erfährt nur, wer gestorben ist.</li>
 </ol>`,
-    phonesH: 'Spielen am Handy',
-    phones: `<ul>
-<li>Der Gastgeber erstellt einen Raum und teilt den sechsstelligen Code oder QR-Code. Alle anderen öffnen den Link, geben einen Namen ein und tippen auf <em>Bereit</em>.</li>
-<li>Dein Platz ist an deinen Browser gebunden. Ist ein Handy leer, kann der Gastgeber in seinen Steuerelementen einen einmaligen <b>Wiederherstellungscode</b> ausgeben; gibst du ihn auf einem neuen Gerät ein, wandert dein Platz dorthin und das alte Gerät wird abgemeldet.</li>
-<li>Das Handy des Gastgebers ist ein normales Spielerhandy mit ein paar Extra-Knöpfen: Phase weiterschalten, 30 Sekunden hinzufügen, Spiel beenden. Der Gastgeber sieht weder Rollen noch Träume noch Stimmen.</li>
-<li>Eine <b>öffentliche Anzeige</b> (ohne Geheimnisse) kann auf einem Fernseher laufen: öffne <span class="mono">/board/CODE</span>.</li>
-<li>Soll jemand den Tisch leiten und alles sehen, erstelle den Raum als <b>vertrauenswürdiger Moderator</b>. Er kann keinen Platz einnehmen, und alle werden informiert.</li>
-<li>Jeder wählt seine Sprache selbst über den Sprachknopf auf dem Startbildschirm, der Einladung oder im Raummenü. Die Standardsprache des Tisches legt der Gastgeber in der Lobby fest.</li>
-<li>STUMM, Nebel des Krieges und Verfluchte Stille sind am Tisch Ehrensache. Online setzt der Chat sie durch.</li>
+    kicker: "Das Regelbuch",
+    intro: "Dead Set ist eine Familie von Partyspielen für einen Raum. Alle spielen auf dem eigenen Handy; ein Fernseher, falls vorhanden, ist die gemeinsame Bühne. Wählt ein Spiel, lest sein Kapitel, spielt.",
+    aboutH: "Was Dead Set ist",
+    about: `<p>Dead Set ist eine Sammlung sozialer Spiele (verborgene Rollen, Bluff, Wortspiele, Vorhersagen), die sich einen Tisch teilen. Jedes Spiel funktioniert gleich: Das <b>Handy jeder Person ist ein privater Bildschirm</b>, der nur zeigt, was diese Person wissen darf, und die App ist der Erzähler. Niemand muss aussetzen, um das Spiel zu leiten.</p>
+<ul>
+<li><b>Keine Installation.</b> Es läuft im Browser. Beitreten mit einem sechsstelligen Code, einem Link oder einem QR-Code.</li>
+<li><b>3 bis 25 Spieler</b>, je nach Spiel. Jedes Kapitel nennt Tischgröße und Dauer.</li>
+<li><b>Ein Fernseher ist optional, aber am schönsten.</b> Er zeigt den Tisch, die Szenen, die Punkte und die Musik. Ein Geheimnis zeigt er nie.</li>
+<li><b>Sieben Sprachen.</b> Jede Person wählt ihre eigene; Wortspiele nutzen die Tischsprache auf allen Handys, damit die Wörter übereinstimmen.</li>
+<li><b>Ein Tisch, viele Spiele.</b> Wechselt das Spiel zwischen den Runden in der Lobby; innerhalb einer Partie werden die Punkte übernommen.</li>
 </ul>`,
+    tableH: "Einen Tisch eröffnen",
+    table: `<ol>
+<li><b>Tisch eröffnen.</b> Der Gastgeber tippt auf <em>Tisch eröffnen</em>, gibt einen Namen ein und erhält einen sechsstelligen Raumcode.</li>
+<li><b>Einladen.</b> Teilt den Code, den Link oder den QR-Code. Alle anderen tippen auf <em>Tisch beitreten</em> (oder öffnen den Link), geben einen Namen ein und wählen ein Porträt.</li>
+<li><b>Den Fernseher einschalten.</b> Tippt in der Lobby auf <em>TV-Tisch</em>, oder öffnet den Raum im Browser des Fernsehers und wählt <em>TV-Tisch öffnen</em>. Mehrere Bildschirme können den Tisch gleichzeitig zeigen.</li>
+<li><b>Plätze.</b> Die Spieler sitzen in der Reihenfolge, in der sie beitreten. Der Gastgeber kann auf einen Platz tippen, um jemanden umzusetzen oder zu entfernen.</li>
+</ol>
+<p>Dein Platz ist an deinen Browser gebunden. Fällt ein Handy aus, kann der Gastgeber dir im Raummenü einen einmaligen Wiederherstellungscode geben; wähle auf dem neuen Handy <em>Meinen Platz wiederherstellen</em> und gib ihn ein, dann zieht dein Platz (mit seinen Geheimnissen) dorthin um. Ein Handy, das die Verbindung verliert, behält seinen Platz und holt auf, sobald es zurück ist.</p>
+<p>Für einen Tisch, an dem jemand das Spiel leiten und alles sehen will, eröffnet den Raum mit einem <b>vertrauenswürdigen Moderator</b>. Der Moderator hat keinen Platz, und alle werden darüber informiert.</p>`,
+    setupH: "Ein Spiel einrichten",
+    setup: `<p>Die Lobby führt den Gastgeber bei jedem Spiel durch dieselben nummerierten Schritte. Gäste sehen dieselben Schritte, nur zum Lesen.</p>
+<ol>
+<li><b>Das Spiel.</b> Wählt eines, nach Familien geordnet: Verborgene Treue, Wechselnde Hände, Menschenkenntnis, Zeichen &amp; Rätsel, Bluff &amp; Einsatz.</li>
+<li><b>So funktioniert es.</b> Vier oder fünf bebilderte Schritte: das ganze Spiel auf einen Blick.</li>
+<li><b>Das Deck.</b> Was bei dieser Tischgröße ausgeteilt wird: Rollen, Masken, Karten oder Orte. Es passt sich an, wenn Spieler beitreten.</li>
+<li><b>Regeln.</b> Die Schalter des Spiels. Die Voreinstellungen ergeben ein gutes erstes Spiel.</li>
+<li><b>Der Tisch.</b> Die Tischsprache, die Musik und ihr Stil, Hintergründe und (wo es etwas ändert) ob ihr im selben Raum oder per Fernspiel mit Chat spielt.</li>
+<li><b>Timer.</b> Wie lange jeder Schritt dauert. Eingeklappt; die Voreinstellungen passen für die meisten Tische.</li>
+</ol>
+<p>Alle tippen auf <b>Bereit</b>, sobald sie die Einstellungen gelesen haben, und der Gastgeber startet das Spiel. Ein Problem mit den Einstellungen (zu wenige Spieler für eine Rolle zum Beispiel) erscheint als Hinweis unter den Schritten.</p>`,
+    playH: "Wie jedes Spiel abläuft",
+    play: `<ul>
+<li><b>Zeig nie deinen Bildschirm.</b> Dein Handy zeigt deine Rolle, deine Karten und deine Entscheidungen. Alles andere wird laut gesagt oder auf dem Fernseher gezeigt.</li>
+<li><b>Gemeinsame Szenen.</b> Große Momente (eine Enthüllung, eine Stimmauszählung, die Nacht) laufen auf allen Handys und dem Fernseher im selben Moment und gleich lang. Man kann sie nicht überspringen, und währenddessen läuft kein Timer.</li>
+<li><b>Eine Person wählen:</b> Tippe auf ihren Platz am Tischkreis. Ein wählbarer Platz pulsiert; deine Wahl wird pergamentfarben.</li>
+<li><b>Bestätigen:</b> Die meisten Entscheidungen sind ein Tippen und lassen sich bis zum Ende des Schritts ändern. Versiegelte Entscheidungen (eine Stimme, eine verdeckt gespielte Karte) sind ein <b>Halten</b>: Lass den Daumen liegen, bis sich das Siegel schließt.</li>
+<li><b>Die Kopfzeile</b> nennt den aktuellen Schritt des Spiels und seine Nummer (Nacht II, Mission 3, Runde 4…) mit der verbleibenden Zeit.</li>
+<li><b>Unter dem Tisch:</b> <em>Meine Karte</em> (deine Rolle, jederzeit), das Nachschlageblatt des Spiels, deine privaten <em>Notizen</em> und die <em>Geschichte</em>, wo das Spiel sie hat.</li>
+<li><b>Timer.</b> Läuft die Zeit ab, wird alles, was du nicht abgegeben hast, zu einem Passen oder einer Enthaltung. Der Gastgeber kann im Raummenü 30 Sekunden hinzufügen, weitergehen oder das Spiel beenden.</li>
+<li><b>Hinweise</b> darauf, was andere gerade getan haben, erscheinen kurz in der Kopfzeile.</li>
+<li><b>Ehrenregeln.</b> Einige Regeln (Schweigen, stummgeschaltete Spieler) kann nur der Tisch selbst einhalten. Beim Fernspiel setzt der Chat sie durch.</li>
+</ul>`,
+    afterH: "Nach einem Spiel",
+    after: `<p>Der Endbildschirm nennt die Sieger, deckt jedes Geheimnis auf und spielt in den meisten Spielen nach, was wirklich geschah. Blättere die Rückschau in deinem Tempo durch.</p>
+<p>Viele Spiele werden als <b>Partie</b> aus 1, 3 oder 5 Spielen gespielt: Die Punkte werden übernommen, und der Tisch kehrt mit denselben Einstellungen in dieselbe Lobby zurück, alle bereit für das nächste Spiel. In der Lobby kann der Gastgeber auch zu einem anderen Spiel wechseln; Tisch, Plätze und Porträts bleiben.</p>`,
+    hSetup: "Vorbereitung",
+    hCast: "Die Besetzung",
+    hLoop: "Ablauf eines Spiels",
+    hWin: "Sieg und Punkte",
+    hOpts: "Optionen in der Lobby",
+    classicP: "Das ursprüngliche Dead Set: verborgene Rollen, nächtliche Morde und eine geheime Abstimmung am Tag. Die meisten von euch wollen überleben. Ein paar von euch sind der Tod. Niemand weiß, wer wer ist — außer dem Tod, der seine Mitspieler kennt.",
+    presetsH: "Varianten",
+    modesTh: ['Variante', 'Spieler', 'Was sich ändert'],
+    classicSetup: `<p>5–13 Spieler (bis 25 mit eigenem Deck). Alle erhalten eine geheime <b>Rolle</b>. Die meisten Rollen gehören zur Seite <b>Nicht-Tod</b>; ein oder mehrere Spieler sind heimlich der <b>Tod</b>, und die Spieler des Todes kennen einander. Nacht und Tag wechseln sich ab, bis eine Seite gewinnt.</p>
+<ul>
+<li><b>Rollen</b> sind, wer du das ganze Spiel über bist: deine Seite und deine Fähigkeit.</li>
+<li><b>Träume</b> sind Effekte für eine Nacht: Ab Nacht 1 zieht jeder lebende Spieler jede Nacht heimlich einen.</li>
+<li><b>Regelkarten</b> (1–3, beim Aufbau gezogen) verbiegen das ganze Spiel: doppelte Morde, gewichtete Stimmen, Geister, die abstimmen.</li>
+<li><b>Die Geschichte</b> (WER / WO / WARUM) ist reines Erzählen. Sie ändert nie eine Regel.</li>
+</ul>
+<p>Du darfst die Wahrheit über deine Rolle sagen, lügen oder schweigen. Der Gastgeber spielt wie alle anderen und sieht nicht mehr Geheimnisse.</p>`,
+    missionsSetup: `<p>5–12 Spieler. Niemand stirbt: Der Tod hat sich in die Expedition eingeschlichen, und der Tisch muss ihn finden, bevor er das Medium findet. Alle erhalten eine geheime Rolle. Die Spieler des Todes sehen einander (außer dem Streuner); die Lebenden kennen nur sich selbst, und das Medium spürt, wer der Tod ist.</p>
+<p>Der Tisch spielt fünf Missionen. Jede Mission braucht ein Team bestimmter Größe (in der Lobby und auf dem Fernseher gezeigt); ab 7 Spielern braucht Mission 4 zwei Sabotagen, um zu scheitern.</p>`,
+    missionsLoop: `<ol>
+<li><b>Die Missionskarte.</b> Jede Mission beginnt mit einer Karte. Die meisten sind regulär; ab und zu ändert eine das Team, die Abstimmung oder die Enthüllung dieser Mission.</li>
+<li><b>Der Vorschlag.</b> Der Missionsanführer (er hält die Laterne) tippt Spieler im Kreis an, um das Team zu füllen.</li>
+<li><b>Die Teamabstimmung.</b> Alle halten heimlich Zustimmen oder Ablehnen. Die Stimmen werden auf einmal aufgedeckt, mit Namen. Eine Mehrheit schickt das Team los; sonst geht die Laterne an den nächsten Spieler. Der fünfte Vorschlag einer Mission gilt unabhängig von der Abstimmung.</li>
+<li><b>Die Mission.</b> Jedes Teammitglied spielt verdeckt eine Karte. Die Lebenden können nur Erfolg spielen; der Tod darf Erfolg oder Sabotage spielen. Die Karten werden gemischt und einzeln umgedreht: Eine Sabotage lässt die Mission scheitern.</li>
+<li><b>Das nächtliche Zwischenspiel.</b> Alle notieren einen geheimen Verdacht, wer der Tod ist. Nach den Missionen 2, 3 und 4 erfährt der Halter der Kerze die Seite eines Spielers, und die Kerze geht an diesen Spieler. Mit Hinweisen kann im Morgengrauen ein wahrer Hinweis kommen.</li>
+</ol>`,
+    missionsWin: `<ul>
+<li><b>Drei Erfolge:</b> Der Tod enttarnt sich, und der Schnitter nennt, wen er für das Medium hält (der Tod darf sich vorher beraten). Richtig: Der Tod gewinnt. Falsch: Die Lebenden gewinnen.</li>
+<li><b>Drei Fehlschläge:</b> das letzte Gefecht. Alle nennen einen Spieler. Nennt der Tisch einen Lebenden, gewinnt der Tod; fängt er den Tod, bekommt der Schnitter trotzdem die Abrechnung: Findet er das Medium, stiehlt der Tod den Sieg.</li>
+<li><b>Nebenmissionen</b> ändern das Gewicht deiner Stimme im letzten Gefecht: doppelt, wenn du deine erfüllt hast, halb, wenn nicht.</li>
+<li>Der Narr gewinnt, falls im Spiel, allein, wenn er im letzten Gefecht oder vom Schnitter genannt wird.</li>
+</ul>`,
+    missionsOpts: `<ul>
+<li><b>Rollen:</b> Gläubiger, Scharlatan, Verschleierter, Streuner, Totengräber und Narr ein- oder ausschalten, und die Zwillinge hinzufügen.</li>
+<li><b>Nebenmissionen:</b> ein geheimes persönliches Ziel für alle.</li>
+<li><b>Nächster Missionsanführer:</b> der Nächste in der Reihe, oder vom letzten Anführer gewählt.</li>
+<li><b>Missionskarten:</b> aus, selten oder manchmal.</li>
+<li><b>Hinweise:</b> selten, gelegentlich oder häufig.</li>
+<li><b>Geschichte:</b> ein zufälliges WER / WO / WARUM, oder eure eigene.</li>
+</ul>`,
+    exorcismSetup: `<p>3–12 Spieler, 5–10 Minuten pro Runde. Die Lebenden kennen das geheime Passwort, das den Dämon unter ihnen bannen würde; der Dämon kennt es nicht. Alle sehen die Kategorie. Die Wörter erscheinen auf allen Handys in der Tischsprache, damit sie übereinstimmen.</p>`,
+    exorcismLoop: `<ol>
+<li><b>Die Kristallkugel.</b> Tippe darauf, um hineinzusehen: die Kategorie und (wenn du lebend bist) das Passwort. Der Dämon sieht nur die Kategorie und muss bluffen.</li>
+<li><b>Das Los.</b> Eine Lotterie bestimmt, wer zuerst spricht; dann geht der Zug in Sitzreihenfolge um den Tisch.</li>
+<li><b>Ein Wort pro Person.</b> Sag in deinem Zug ein Wort, das mit dem Passwort zu tun hat, und halte dann die Taste auf deinem Handy. Beweise, dass du es kennst, ohne es dem Dämon zu verraten. Je nach Lobby gehen die Wörter einmal oder öfter herum und können eingetippt und auf dem Fernseher gezeigt werden.</li>
+<li><b>Den Dämon nennen.</b> Beratet euch, dann stimmen alle für einen Spieler.</li>
+<li><b>Ein letzter Versuch.</b> Ein gefasster Dämon darf das Passwort nennen, aus dem Wortgitter oder eingetippt.</li>
+</ol>`,
+    exorcismWin: `<ul>
+<li>Die Abstimmung trifft einen Lebenden oder endet unentschieden (außer die Münze entscheidet Gleichstände): <b>Der Dämon gewinnt</b>.</li>
+<li>Die Abstimmung trifft den Dämon: <b>Die Lebenden gewinnen</b>, außer der Dämon errät dann das Passwort und stiehlt den Sieg.</li>
+<li>Die Punkte laufen Runde für Runde weiter: jeder Lebende +1 für einen Sieg, jeder Dämon +2.</li>
+</ul>`,
+    exorcismOpts: `<ul>
+<li><b>Dämonen:</b> einer, oder ab 7 Spielern zwei; zwei Dämonen können einander kennen oder nicht.</li>
+<li><b>Ein letzter Versuch:</b> an oder aus.</li>
+<li><b>Gleichstand:</b> Der Dämon entkommt, oder eine Münze entscheidet.</li>
+<li><b>Wortgitter:</b> 16 Wörter auf Fernseher und Handys; das Passwort ist eines davon.</li>
+<li><b>Runden:</b> wie oft die Wörter um den Tisch gehen. <b>Wörter eintippen:</b> auf dem Fernseher gezeigt.</li>
+<li><b>Kategorien:</b> aus welchen Wortlisten gezogen wird.</li>
+</ul>`,
+    coffinsSetup: `<p>3–10 Spieler, ein schnelles Spiel. Alle spielen für sich und halten vier Särge: drei mit Gold und einen Fluch (fünf mit der längeren Option: vier Gold, ein Fluch). Deine Särge sind vor allen anderen verborgen.</p>`,
+    coffinsLoop: `<ol>
+<li><b>Die Beerdigung.</b> Alle vergraben gleichzeitig heimlich einen Sarg: Tippe einen Sarg an, dann auf Vergraben. Dein Grab ist ein Stapel, der neueste oben.</li>
+<li><b>Vergraben oder herausfordern.</b> Ab dem ersten Spieler der Runde vergräbst du in deinem Zug entweder einen weiteren Sarg oben auf deinem Stapel, oder du forderst heraus: „Ich kann N öffnen“, höchstens so viele, wie insgesamt vergraben sind.</li>
+<li><b>Das Bieten.</b> Reihum erhöht man die Zahl oder passt. Passen gilt für die ganze Runde. Wer als letzter Bieter übrig bleibt, ist der Gräber.</li>
+<li><b>Das Graben.</b> Der Gräber öffnet zuerst die eigenen Särge, von oben nach unten, dann wählt er andere Gräber, jeweils den obersten Sarg, bis N Särge offen sind. Jeder Sarg wird auf dem Fernseher umgedreht.</li>
+<li><b>Das Ergebnis.</b> Alles Gold: ein sauberes Graben, und dein Grabstein wird vergoldet. Ein Fluch im eigenen Grab: Du wählst einen Sarg, den du verlierst. Der Fluch eines anderen: Er zieht blind einen deiner Särge, und der ist weg; der Besitzer des Fluchs beginnt die nächste Runde.</li>
+</ol>`,
+    coffinsWin: `<ul>
+<li>Gewinne mit zwei sauberen Grabungen (1 oder 3 in der Lobby), oder als letzter Spieler mit Särgen.</li>
+<li>Über eine Partie: der Sieger +3, jedes saubere Graben +1, jede Rückkehr von den Toten +1.</li>
+</ul>`,
+    coffinsOpts: `<ul>
+<li><b>Der Sarg des Todes</b> (voreingestellt an): In jeder Runde hält ein verborgener Spieler ihn anstelle eines Goldsargs. Gräbst du ihn aus, scheitert das Graben; sein Halter stiehlt einen deiner Särge, der zu Gold wird.</li>
+<li><b>Geisterwetten und Wiedergänger</b> (voreingestellt an): Spieler ohne Särge wetten bei jedem Graben auf Gold oder Fluch; dreimal richtig, und sie kehren mit einem Goldsarg zurück.</li>
+<li><b>Reliquien</b> (voreingestellt aus): eine geheime Laterne (in ein Grab spähen), ein Schlüssel (ein anderes Grab vor dem eigenen öffnen) oder ein Schutz (ein Fluch kostet nichts), je einmal nutzbar.</li>
+<li><b>Saubere Grabungen zum Sieg, Särge pro Spieler, Spiele pro Partie.</b></li>
+</ul>`,
+    carnivalSetup: `<p>4–12 Spieler. Alle spielen für sich. Jede Maske ist eine bekannte Dead-Set-Rolle mit einer Fähigkeit. Alle beginnen mit 6 Seelen; die Opfergabe, der Teller in der Tischmitte, ist zu Beginn leer. Bei 4–5 Spielern liegen zwei zusätzliche Masken auf leeren Stühlen: Sie nehmen am Ball teil, handeln aber nie.</p>
+<p><b>Die Demaskierung:</b> Ein paar Sekunden lang wird jede Maske offen gezeigt, auf dem Fernseher und auf allen Handys. Merkt sie euch; dann werden sie umgedreht. Eine Lotterie bestimmt den ersten Tänzer, und es geht im Uhrzeigersinn weiter.</p>`,
+    carnivalLoop: `<p>In deinem Zug tust du eines von drei Dingen:</p>
+<ul>
+<li><b>Tauschen oder täuschen.</b> Wähle eine andere Maske (einen Spieler oder einen leeren Stuhl) und halte dann Tauschen oder Täuschen. Die beiden Tasten sehen gleich aus, und niemand, nicht einmal der andere Spieler, erfährt, was du gewählt hast.</li>
+<li><b>Spähen.</b> Sieh dir kurz deine eigene Maske an. Alle sehen, dass du geschaut hast.</li>
+<li><b>Beanspruchen.</b> Nenne eine Maske, „Ich bin der Richter“, und nutze ihre Fähigkeit.</li>
+</ul>
+<p><b>Herausforderungen.</b> Beansprucht jemand eine Maske, fragt jedes andere Handy: <em>Ist das deine Maske?</em> Fordert niemand heraus, gilt der Anspruch, und die Fähigkeit wirkt, was auch immer der Beanspruchende wirklich trägt. Fordert jemand heraus, heben der Beanspruchende und alle Herausforderer ihre Masken: Wer sie wirklich trägt, nutzt die Fähigkeit, alle anderen Aufgedeckten zahlen eine Seele (oder mehr, je nach Lobby) in die Opfergabe.</p>
+<p><b>Der Eröffnungstanz.</b> Der erste Zug jedes Spielers (zwei, wenn der Gastgeber will) muss Tauschen oder täuschen sein, damit die Masken schon im Zweifel sind, bevor jemand etwas beansprucht.</p>`,
+    carnivalWin: `<ul>
+<li><b>Ein voller Beutel:</b> 13 Seelen (oder die Zahl aus der Lobby), und du gewinnst sofort.</li>
+<li><b>Die Ernte des Todes:</b> Wer durch Ansprüche als Tod 6 Seelen geerntet hat, gewinnt.</li>
+<li><b>Ruin:</b> Sobald jemand auf 0 Seelen fällt, gewinnt der Reichste (bei Gleichstand die höhere Ernte).</li>
+<li>Über eine Partie: der Sieger +3, alle anderen +1 für jede Seele über 6.</li>
+</ul>`,
+    carnivalOpts: `<ul>
+<li><b>Masken:</b> Das empfohlene Set wächst mit dem Tisch; oder stellt euer eigenes zusammen, eine Maske pro Platz (der Tod ist Pflicht; nur der Unschuldige darf mehrfach vorkommen).</li>
+<li><b>Voller Beutel, Ernte des Todes, Strafe für einen falschen Anspruch, Eröffnungstanz, Spiele pro Partie.</b></li>
+<li><b>Notizen (das Balltagebuch):</b> voreingestellt aus, damit ihr das Gesehene im Kopf behaltet.</li>
+</ul>
+<p>Tippe jederzeit auf <em>Masken auf dem Ball</em>, um jede Maske im Spiel mit ihrer Fähigkeit zu sehen, als Zeichenreihe gezeichnet.</p>`,
+    midnightSetup: `<p>4–12 Spieler, etwa 10 Minuten. Eine Nacht, eine Abstimmung, keine zweite Chance. Das Deck hat eine Karte pro Spieler und drei verdeckte Karten auf dem Tisch (die leeren Stühle). Das Deck ist öffentlich; wer was hält, nicht. Alle sehen ihre eigene Karte einmal, beim Austeilen.</p>
+<p>Karten wechseln im Dunkeln den Besitzer. <b>Im Morgengrauen bist du die Karte, die vor dir liegt</b>, nicht die, die du bekommen hast.</p>`,
+    midnightLoop: `<ol>
+<li><b>Das Austeilen.</b> Sieh dir deine Karte einmal an.</li>
+<li><b>Die Nacht.</b> Die Handys wecken jede Rolle der Reihe nach: Nachahmer, Tod, Verschwörer, Zwillinge, Mentalist, Doppelagent, Hexe, Spieler, Schlaflose. Jeder Schritt dauert gleich lange, 10 Sekunden, und läuft auch, wenn seine Karte auf dem Tisch liegt, damit die Nacht nichts verrät. Nur wer diese Karte bekommen hat, erhält Steuerelemente; jedes andere Handy sagt, die Augen geschlossen zu halten. Ein Spieler, der nichts tut, tauscht mit einer zufälligen Tischkarte.</li>
+<li><b>Der Tag.</b> Eine Diskussion (voreingestellt 5 Minuten): behaupten, beschuldigen, lügen. Karten können gewandert sein; traut niemandem, nicht einmal euch selbst. Der Gastgeber kann die Abstimmung früher öffnen.</li>
+<li><b>Die Abstimmung.</b> Alle zeigen gleichzeitig auf einen anderen Spieler. Wer die meisten Stimmen hat, stirbt, wenn es mindestens zwei sind; bei Gleichstand an der Spitze sterben alle Gleichplatzierten. Stirbt der Rächer, stirbt auch der Spieler, auf den er gezeigt hat.</li>
+</ol>`,
+    midnightWin: `<ul>
+<li>Die Seiten werden von den Karten im Morgengrauen abgelesen (ein Nachahmer zählt als die kopierte Rolle).</li>
+<li><b>Die Lebenden</b> gewinnen, wenn mindestens ein Tod stirbt; ist kein Tod unter den Spielern, wenn niemand stirbt.</li>
+<li><b>Der Tod und der Verschwörer</b> gewinnen, wenn kein Tod stirbt (und der Narr nicht starb).</li>
+<li><b>Der Narr</b> gewinnt allein, wenn er hinausgewählt wird. Mehrere Seiten können zusammen gewinnen.</li>
+<li>Über eine Partie: jeder Sieger +1, der Narr +2. Der Endbildschirm zeigt jede Karte wie ausgeteilt und im Morgengrauen und spielt die Nacht nach.</li>
+</ul>`,
+    midnightOpts: `<ul>
+<li><b>Karten:</b> Das empfohlene Deck wächst mit dem Tisch; oder wählt sie selbst (Tod 1–2, Zwillinge 0 oder 2, Unschuldige 0–4, der Rest 0–1; insgesamt Spieler + 3).</li>
+<li><b>Ein einsamer Tod späht:</b> Ein Tod, der allein erwacht, darf eine Tischkarte ansehen.</li>
+<li><b>Länge der Diskussion, Spiele pro Partie.</b></li>
+</ul>`,
+    seanceSetup: `<p>4–10 Spieler, etwa 30 Minuten. Ein kooperativer Mordfall mit einem Verräter. Ein Spieler ist der Geist: Er weiß, wer ihn getötet hat, wo und warum, und er kann nicht sprechen. Alle anderen sind Medien und lesen seine Visionen. Ab fünf Spielern kann sich ein Täuscher unter den Medien verstecken: ein zweiter Geist, der die Wahrheit kennt und gegen den Tisch arbeitet.</p>
+<p><b>Das Brett:</b> drei Reihen Story-Karten, WER, WO und WARUM. In jeder Reihe ist eine Karte die Wahrheit.</p>`,
+    seanceLoop: `<ol>
+<li><b>Visionen.</b> In jeder Runde bekommt jedes Medium eine Reihe. Der Geist wählt für jedes Medium eine Vision aus seiner Hand: eine Karte mit zwei oder drei radierten Motiven, die auf die Wahrheit in dieser Reihe deuten soll.</li>
+<li><b>Die Enthüllung.</b> Die Visionen werden für alle aufgedeckt. Beschreibt sie, streitet, überzeugt. Der Geist schweigt, kann aber eine Vision mit einem kalten Fleck vereisen: <em>Die ist nicht von mir.</em></li>
+<li><b>Der Tausch des Täuschers.</b> Ein paar Mal pro Spiel tauscht der Täuscher heimlich die Vision eines anderen Mediums gegen eine seiner Lügen.</li>
+<li><b>Kerzen.</b> Jedes Medium zündet eine Kerze auf einer Karte seiner Reihe an oder hält sie zurück. Die Karte mit den meisten Kerzen wird dem Geist vorgelegt. Richtig: Die Reihe ist gelöst. Falsch: Die Karte wird gestrichen.</li>
+<li><b>Die Uhr.</b> Jede Runde brennt eine Kerze der Séance-Uhr ab (sieben bei Standard).</li>
+</ol>`,
+    seanceWin: `<ul>
+<li>Löst alle drei Reihen, bevor die Kerzen herunterbrennen, und nennt dann den Täuscher. Richtig: ein <b>voller Sieg</b>. Falsch: ein <b>hohler Sieg</b>, den der Täuscher teilt.</li>
+<li>Brennt die Uhr aus, gewinnt der Täuscher (ohne Täuscher verliert der Tisch). Ist nur noch eine Reihe offen, zünden vorher alle eine Kerze des letzten Atemzugs darauf an.</li>
+<li>Über eine Partie: ein voller Sieg +2 für den Geist und jedes Medium; ein hohler +1 für jeden und +1 für den Täuscher; ein Sieg des Täuschers +3.</li>
+<li>Der Endbildschirm spielt jede Runde nach: die wahren Visionen, die Täusche und die Kerzen.</li>
+</ul>`,
+    seanceOpts: `<ul>
+<li><b>Schwierigkeit:</b> wie viele Karten pro Reihe, Visionen pro Medium und Kerzen auf der Uhr.</li>
+<li><b>Täuscher:</b> keiner, einer oder zwei, und ob zwei einander kennen; wie viele Täusche sie haben.</li>
+<li><b>Die kalten Flecken des Geistes:</b> wie viele Visionen er vereisen darf.</li>
+<li><b>Letzter Atemzug:</b> an oder aus. <b>Der Geist:</b> ausgelost oder vom Gastgeber gewählt. <b>Spiele pro Partie.</b></li>
+</ul>`,
+    graveSetup: `<p>4–12 Spieler, etwa 15 Minuten. Zwei Grabräuberbanden, der Mond und die Sonne, graben auf einem Friedhof mit 25 Grabsteinen nach den Reliquien, die ihre Gottheit rufen. Eine Münze bestimmt die Bande, die zuerst gräbt: Sie hat 9 Reliquien in der Erde, die andere 8. Sieben Gräber sind leer, und eines ist das Grab des Todes.</p>
+<p>Jede Bande hat einen <b>Totengräber</b>, den einzigen Spieler, der das Grabregister sieht: was unter jedem Stein liegt. Alle anderen graben. Die Grabsteine zeigen Wörter in der Tischsprache oder Bleistiftsymbole.</p>`,
+    graveLoop: `<ol>
+<li><b>Das Zeichen.</b> Im Zug seiner Bande gibt der Totengräber ein Wort und eine Zahl, „Ozean · 3“: ein Wort, das mehrere Gräber seiner Bande verbindet, und wie viele. Das Wort darf nicht auf dem Brett stehen. Danach sagt er nichts mehr.</li>
+<li><b>Das Graben.</b> Die Gräber beraten sich und stimmen auf ihren Handys ab; das Grab mit den meisten Stimmen wird geöffnet (bei Gleichstand entscheidet die Münze).</li>
+<li><b>Was darunter liegt.</b> Eine Reliquie deiner Bande: Grabt weiter, bis zur Zahl. Ein leeres Grab oder eine Reliquie der anderen Bande (die nun ihr gehört): Der Zug geht weiter. Das Grab des Todes: Eure Bande verliert sofort.</li>
+<li><b>Aufhören.</b> Die Bande kann dafür stimmen aufzuhören. Wer vor Erreichen der Zahl aufhört, behält ein Bonusgraben für den nächsten Zug (es sammelt sich nie an).</li>
+</ol>
+<p>Schalte dein Handy zwischen <em>Steine</em> (Wörter oder Symbole) und <em>Karte</em> (das Brett auf einen Blick) um.</p>
+<p><b>Drei Banden</b> (6–12 Spieler): der Mond, die Sonne und die Sterne, je ein Drittel des Tisches. Die erste Bande versteckt 7 Reliquien, die anderen je 6, mit 5 leeren Gräbern. Das Grab des Todes wirft eine Bande aus dem Spiel; die anderen graben weiter, und bleibt eine Bande übrig, gewinnt sie.</p>`,
+    graveWin: `<ul>
+<li>Die erste Bande, deren Reliquien alle ausgegraben sind, gewinnt, auch wenn die andere Bande einige davon versehentlich ausgegraben hat.</li>
+<li>Eine Bande, die das Grab des Todes öffnet, verliert sofort (bei drei Banden scheidet sie aus).</li>
+<li>Über eine Partie aus 1, 3 oder 5 Spielen: jeder Sieg +1. Die Totengräber wechseln zwischen den Spielen.</li>
+</ul>`,
+    graveOpts: `<ul>
+<li><b>Anzahl der Banden:</b> zwei, oder ab 6 Spielern drei.</li>
+<li><b>Auf den Gräbern:</b> Wörter oder Symbole; <b>berühmte Namen</b> (Filme, Helden, Wahrzeichen) an oder aus.</li>
+<li><b>Banden:</b> nach Plätzen (setzt Spieler um, um die Bande zu wechseln) oder zufällig. <b>Totengräber:</b> reihum, zufällig oder gewählt.</li>
+<li><b>Zeichen:</b> getippt (das Wort erscheint auf allen Bildschirmen) oder gesprochen (laut gesagt, die Zahl getippt). <b>Spiele pro Partie.</b></li>
+</ul>`,
+    mimicSetup: `<p>4–12 Spieler, etwa 8 Minuten pro Spiel. Alle teilen einen geheimen Ort, eine Story-Karte, und spielen dort eine Figur, außer dem Nachahmer, der nur Rauschen und das Brett der möglichen Orte sieht. Die Lebenden müssen den Nachahmer finden; der Nachahmer muss den Ort herausfinden.</p>`,
+    mimicLoop: `<ol>
+<li><b>Fragen.</b> Wer die Laterne hält, stellt irgendwem laut eine Frage zum Ort und tippt dann auf die gefragte Person; die Laterne geht an sie, und sie fragt als Nächstes. Frag nie die Person zurück, die dich gerade gefragt hat. Antworte so, dass die Lebenden dich erkennen, ohne dem Nachahmer den Ort zu verraten.</li>
+<li><b>Beschuldigen.</b> Einmal pro Spiel darf jede Person einen Spieler beschuldigen. Die Uhr hält an; alle anderen stimmen mit Zustimmen oder Ablehnen. Nur ein einstimmiger Tisch verurteilt; sonst läuft die Uhr weiter.</li>
+<li><b>Der Nachahmer enttarnt sich.</b> Jederzeit darf der Nachahmer sich zeigen und den Ort nennen.</li>
+<li><b>Die Zeit ist um.</b> Läuft die Uhr ab (voreingestellt 8 Minuten), zeigen alle auf einen Verdächtigen. Die meisten Stimmen werden verurteilt; bei Gleichstand entwischt der Nachahmer.</li>
+</ol>
+<p>Streiche beim Zuhören Orte auf deinem Handy durch: Deine Notizen sind privat.</p>`,
+    mimicWin: `<ul>
+<li>Verurteilt den Nachahmer: <b>Die Lebenden gewinnen</b>, außer ein gefasster Nachahmer nennt dann den Ort und stiehlt den Sieg.</li>
+<li>Verurteilt einen Lebenden, oder lasst den Nachahmer entwischen: <b>Der Nachahmer gewinnt</b>.</li>
+<li>Der Nachahmer nennt den Ort: richtig, er gewinnt; falsch, die Lebenden gewinnen.</li>
+<li>Über eine Partie (voreingestellt 3 Spiele): die Lebenden je +1, wer den Nachahmer beschuldigt und gefangen hat, +1 mehr; der Nachahmer +2, oder +3 für den richtigen Ort.</li>
+</ul>`,
+    mimicOpts: `<ul>
+<li><b>Orte auf dem Brett:</b> Mehr Orte machen es dem Nachahmer schwerer.</li>
+<li><b>Letzter Tipp:</b> Ein gefasster Nachahmer darf noch den Ort nennen.</li>
+<li><b>Der Hintergrund am Fernseher wird schärfer:</b> eine Vertrauensoption. Der Fernseher zeigt den wahren Ort stark verschwommen, der mit ablaufender Zeit schärfer wird. Wer den TV-Link öffnet, könnte ihn erkennen.</li>
+<li><b>Fragezeit, Spiele pro Partie.</b></li>
+</ul>`,
+    omenSetup: `<p>4–12 Spieler, etwa 10 Minuten. Alle spielen für sich; es gibt keine verborgenen Seiten. Ein okkultes Rad zeigt auf eines von drei Feldern, Leben, Tod und Wiedergeburt, in dieser Reihenfolge im Uhrzeigersinn. Alle beginnen mit 5 Einfluss, für alle sichtbar.</p>`,
+    omenLoop: `<p>Sieben Runden, jede in drei Schritten:</p>
+<ol>
+<li><b>Das Rad</b> zeigt, wo es in dieser Runde beginnt.</li>
+<li><b>Der versiegelte Stimmzettel.</b> Sag heimlich voraus, wo das Rad stehen bleibt, und entscheide, ob du es einen Schritt zurück, einen Schritt weiter drehst oder lässt. Eine Drehung kostet einen Einfluss; ohne Einfluss kannst du es nur lassen. Du kannst deinen Zettel ändern, bis alle abgegeben haben.</li>
+<li><b>Die Enthüllung.</b> Alle Drehungen werden zusammengezählt, und das Rad bewegt sich einmal, um die Summe (drei Schritte in dieselbe Richtung bringen es zurück). Danach wird jede Vorhersage und jede Drehung gezeigt.</li>
+</ol>
+<p>Die Kunst ist, den Tisch zu lesen: Wer hat noch Einfluss, wer will das Rad wo haben, und wer wird es drehen?</p>`,
+    omenWin: `<ul>
+<li>Eine richtige Vorhersage bringt 3 Punkte. Ein fehlender Zettel sagt nichts voraus und dreht nichts.</li>
+<li>Am Ende ist jeder unverbrauchte Einfluss 1 Punkt wert. Die meisten Punkte gewinnen; Gleichstand teilt den Sieg.</li>
+</ul>`,
+    omenOpts: `<p>Keine Schalter: nur die Timer für jeden Schritt.</p>`,
+    mirrorSetup: `<p>4–12 Spieler, etwa 15 Minuten. Alle spielen für sich. Ein verwunschener Spiegel zeigt nicht dein Spiegelbild: Er zeigt, was deine Freunde glauben, dass du tust. Acht erfundene Dilemmata, jedes mit drei Antworten, A, B und C, und keiner richtigen.</p>
+<p>In jeder Runde liest du einen anderen Spieler. Die Paare wechseln, sodass im Lauf des Spiels alle alle lesen, und jede Person wird in jeder Runde von genau einer gelesen.</p>`,
+    mirrorLoop: `<ol>
+<li><b>Beratet euch.</b> Das Dilemma und wer wen liest, sind öffentlich. Fragt, neckt, führt in die Irre.</li>
+<li><b>Der versiegelte Stimmzettel.</b> Wähle deine eigene Antwort und sag die Antwort der Person voraus, die du liest. Beides ist nötig, und du kannst es ändern, bis alle abgegeben haben.</li>
+<li><b>Der Spiegel zeigt alles:</b> jede Antwort und jede Lesung, richtig oder falsch.</li>
+</ol>`,
+    mirrorWin: `<ul>
+<li>Eine richtige Vorhersage bringt 2 Punkte; deine eigene Antwort bringt nichts, also ist es fair, deinen Leser zu überraschen.</li>
+<li>Ein fehlender Zettel wird zu einer zufälligen Antwort; wer diese Person liest, wird trotzdem daran gemessen.</li>
+<li>Wer am besten liest, gewinnt; Gleichstand teilt den Sieg.</li>
+</ul>`,
+    mirrorOpts: `<p>Keine Schalter außer den Timern. Sobald es mehr Dilemma-Pakete gibt, lässt euch die Lobby wählen, aus welchen die acht gezogen werden.</p>`,
   },
 };

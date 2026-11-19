@@ -16,8 +16,8 @@ import { isOmenPhase, omenMain, omenDock, omenActs, omenMoment, omenMomentHtml, 
 import { isMirrorPhase, mirrorMain, mirrorDock, mirrorActs, mirrorMoment, mirrorMomentHtml, W_MOMENT_TIME, mirrorEndHtml, mirrorLobbyDeck, MIRROR_QUIET, mirrorTitle, explainerHtml as how_mirror } from './mirror.js';
 import { isMimicPhase, mimicMain, mimicDock, mimicActs, mimicMoment, mimicMomentHtml, Q_MOMENT_TIME, mimicEndHtml, mimicLobbyDeck, MIMIC_QUIET, mimicTitle, explainerHtml as how_mimic } from './mimic.js';
 import { isSeancePhase, seanceMain, seanceDock, seanceActs, seanceMoment, seanceMomentHtml, S_MOMENT_TIME, seanceEndHtml, seanceLobbyDeck, boardSheet as seanceSheet, SEANCE_QUIET, seanceTitle, explainerHtml as how_seance } from './seance.js';
-import { isMidnightPhase, midnightMain, midnightDock, midnightActs, midnightMoment, midnightMomentHtml, N_MOMENT_TIME, midnightEndHtml, midnightLobbyDeck, cardsSheet, MIDNIGHT_QUIET, explainerHtml as how_midnight } from './midnight.js';
-import { isCarnivalPhase, carnivalMain, carnivalDock, carnivalActs, carnivalMoment, carnivalMomentHtml, lookMoments, K_MOMENT_TIME, carnivalEndHtml, carnivalLobbyDeck, masksSheet, CARNIVAL_QUIET, explainerHtml as how_carnival } from './carnival.js';
+import { isMidnightPhase, midnightMain, midnightDock, midnightActs, midnightMoment, midnightMomentHtml, N_MOMENT_TIME, midnightEndHtml, midnightLobbyDeck, cardsSheet, MIDNIGHT_QUIET, explainerHtml as how_midnight, NPOWER } from './midnight.js';
+import { isCarnivalPhase, carnivalMain, carnivalDock, carnivalActs, carnivalMoment, carnivalMomentHtml, lookMoments, K_MOMENT_TIME, carnivalEndHtml, carnivalLobbyDeck, masksSheet, CARNIVAL_QUIET, explainerHtml as how_carnival, POWER as K_POWER } from './carnival.js';
 import { isCoffinsPhase, coffinsMain, coffinsDock, coffinsActs, coffinsMoment, coffinsMomentHtml, lanternMoments, C_MOMENT_TIME, coffinsEndHtml, coffinsLobbyDeck, COFFINS_QUIET, explainerHtml as how_coffins } from './coffins.js';
 import { lobbyOrb, endOrb, isExorcismPhase, exorcismMain, exorcismPicks, exorcismDock, exorcismActs, exorcismMoment, exorcismMomentHtml, X_MOMENT_TIME, exorcismEndHtml, exorcismLobbyDeck, setExorcismContent, mountBalls, explainerHtml as how_exorcism } from './exorcism.js';
 import { avatarSvg, randomAvatar, PARTS, COLORS } from './avatar.js';
@@ -1012,9 +1012,12 @@ const loadingScreen = () => `<main class="main narrow" data-key="load">${wordmar
 const goneScreen = () => `<main class="main narrow" data-key="gone">${wordmark()}<header class="phase-head"><h1>${t('No such <i>table.</i>')}</h1><p class="muted">${th('Room {code} doesn\'t exist, or it has been cleared away.', { code: S.code })}</p></header><a class="btn" href="/" data-link>${t('Back to start')}</a></main>`;
 /** A mode's "How it works" steps (the lobby's step 2), reused at the head of its guide chapter. */
 const HOW = { carnival: how_carnival, coffins: how_coffins, midnight: how_midnight, seance: how_seance, graverobbers: how_graverobbers, mimic: how_mimic, omen: how_omen, mirror: how_mirror, exorcism: how_exorcism };
+/** The guide's cast for the games whose cast is the whole deck: every Carnival mask, every Midnight card. */
+const allOf = (powers) => ({ setup: { publicDeck: { exact: Object.fromEntries(Object.keys(powers).map((id) => [id, 1])) } } });
+const guideCast = (id) => (id === 'carnival' ? masksSheet(allOf(K_POWER)) : id === 'midnight' ? cardsSheet(allOf(NPOWER)) : '');
 const guideHow = (id) => (id === 'classic' || id === 'missions' ? howItWorks({ mode: id }) : HOW[id]?.() ?? '');
 // E3: the guide closes with the room menu's own control (an icon button), not a diamond button.
-const guideScreen = () => `<main class="main guide-main" data-key="guide"><div class="row between">${wordmark()}<div class="row">${langChip()}<button class="btn btn-ghost icon-btn" data-act="back" aria-label="${esc(t('Back'))}">${glyph('close')}</button></div></div>${renderGuide(S.content, { ...H, FAMILIES, MODES, howFor: guideHow })}</main>`;
+const guideScreen = () => `<main class="main guide-main" data-key="guide"><div class="row between">${wordmark()}<div class="row">${langChip()}<button class="btn btn-ghost icon-btn" data-act="back" aria-label="${esc(t('Back'))}">${glyph('close')}</button></div></div>${renderGuide(S.content, { ...H, FAMILIES, MODES, howFor: guideHow, castFor: guideCast })}</main>`;
 
 /** Language picker chip (opens the language sheet). */
 function langChip() {
@@ -2751,6 +2754,14 @@ document.addEventListener('input', (e) => {
     textTimers[path] = setTimeout(() => send('host.settings', nest(path, el.value), { quiet: true }), 450);
   }
 });
+// The guide's chapter menu follows the page as you scroll (the last chapter or section whose top has passed).
+addEventListener('scroll', () => {
+  const sel = document.querySelector('.g-jump select');
+  if (!sel || sel === document.activeElement) return;
+  let cur = sel.options[0]?.value;
+  for (const o of sel.options) { const el = document.getElementById(o.value); if (el && el.getBoundingClientRect().top < 120) cur = o.value; }
+  if (sel.value !== cur) sel.value = cur;
+}, { passive: true });
 document.addEventListener('change', (e) => {
   const el = e.target;
   const s = V()?.settings;
