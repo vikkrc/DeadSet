@@ -162,10 +162,10 @@ Séance needed by far the most new art, so it moved back behind the lighter mode
 | 18 | **Lifeboat** | Survival with a traitor; a lot still to design | Pitch, needs design |
 | 19 | **The big final update:** The Wake (8–25 players) or Hollow Manor | The last big game before release | Pitch |
 
-**Next: a polish pass across the game (before Beta 10).**
-- **The lobby, guided:** make clear what is being set up at each step, in order; bring every mode's setup to the same visual and informational level, quick rule explainers included.
-- **How to play:** categorised by game first, then each game in its own sections; a much more visual guide throughout.
-- **Visual polish for every mode:** animations, layouts and everything in between.
+**Next: a polish pass across the game (before Beta 10).** Preceded by the consistency pass (design/deadset-consistency/CONSISTENCY-PASS.md, all 11 steps done).
+- **The lobby, guided** · done: every lobby walks through the same numbered steps (the game, how it works, the deck, its rules, the table, the timers); every mode has a "How it works" explainer; each mode's switches sit under one Rules heading; a guest sees only the chosen mode.
+- **How to play** · done: chapters in two groups (the basics, then the modes by family) with a sticky chapter menu on phones and a left column on wide screens; every mode chapter opens with its emblem, family, table size and illustrated steps.
+- **Visual polish for every mode:** animations, layouts and everything in between. The consistency pass unified the cards, motion, layers, colours, type and end screens; a screenshot sweep of every mode on phone and TV follows.
 
 **Kept parked:** Contagion, The Inquest and Whitechapel. They overlap with modes the game has or will have (Midnight, Séance, Mimic), or need a map engine.
 
