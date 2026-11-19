@@ -749,7 +749,7 @@ function legibility() {
   });
 }
 
-const toastsHtml = (cls) => `<div class="${cls}" data-key="${cls}" aria-live="polite">${S.notes.map((n) => `<div class="toast ${n.kind}" data-key="n-${n.id}">${esc(n.text)}</div>`).join('')}</div>`;
+const toastsHtml = (cls) => `<div class="${cls}" data-key="${cls}" aria-live="polite">${S.notes.map((n) => `<div class="toast ${n.kind}" data-key="n-${n.id}"><span>${esc(n.text)}</span></div>`).join('')}</div>`;
 const inRoomView = () => S.route.name === 'room' && S.conn !== 'gone' && !!S.token && !!V();
 
 /** The collection at a glance, for the home page (E1), from the registry. */
