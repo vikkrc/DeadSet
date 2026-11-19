@@ -5104,3 +5104,9 @@ details.more summary,
 .guide .g-mode h3, .guide section h3[id] { margin: 26px 0 8px; scroll-margin-top: 92px; }
 .guide h4.g-sub { margin: 18px 0 6px; font: 400 19px/1.15 var(--serif); }
 .guide .k-ref { margin: 4px 0 8px; }
+/* The guide never grows wider than the screen: its column can shrink, and a wide table scrolls inside itself */
+.guide, .g-body { grid-template-columns: minmax(0, 1fr); }
+.g-body > section { min-width: 0; }
+.guide table { display: block; max-width: 100%; overflow-x: auto; }
+.g-nav { margin: 0 -2px; padding-left: 2px; padding-right: 2px; }
+@media (min-width: 980px) { .guide { grid-template-columns: 220px minmax(0, 1fr); } .g-nav { margin: 0; padding: 0; } }

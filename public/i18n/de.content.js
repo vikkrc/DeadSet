@@ -363,7 +363,7 @@ export default {
     table: `<ol>
 <li><b>Tisch eröffnen.</b> Der Gastgeber tippt auf <em>Tisch eröffnen</em>, gibt einen Namen ein und erhält einen sechsstelligen Raumcode.</li>
 <li><b>Einladen.</b> Teilt den Code, den Link oder den QR-Code. Alle anderen tippen auf <em>Tisch beitreten</em> (oder öffnen den Link), geben einen Namen ein und wählen ein Porträt.</li>
-<li><b>Den Fernseher einschalten.</b> Tippt in der Lobby auf <em>TV-Tisch</em>, oder öffnet den Raum im Browser des Fernsehers und wählt <em>TV-Tisch öffnen</em>. Mehrere Bildschirme können den Tisch gleichzeitig zeigen.</li>
+<li><b>Den Fernseher einschalten.</b> Tippt in der Lobby auf <em>TV-Anzeige</em>, oder öffnet den Raum im Browser des Fernsehers und wählt <em>TV-Tisch öffnen</em>. Mehrere Bildschirme können den Tisch gleichzeitig zeigen.</li>
 <li><b>Plätze.</b> Die Spieler sitzen in der Reihenfolge, in der sie beitreten. Der Gastgeber kann auf einen Platz tippen, um jemanden umzusetzen oder zu entfernen.</li>
 </ol>
 <p>Dein Platz ist an deinen Browser gebunden. Fällt ein Handy aus, kann der Gastgeber dir im Raummenü einen einmaligen Wiederherstellungscode geben; wähle auf dem neuen Handy <em>Meinen Platz wiederherstellen</em> und gib ihn ein, dann zieht dein Platz (mit seinen Geheimnissen) dorthin um. Ein Handy, das die Verbindung verliert, behält seinen Platz und holt auf, sobald es zurück ist.</p>

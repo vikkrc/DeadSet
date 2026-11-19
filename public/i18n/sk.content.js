@@ -283,100 +283,6 @@ export default {
     d080: ["Dohára posledná sviečka a držať ju môže iba jeden z vás.", "Vezmeš si ju", "Ponúkneš ju niekomu inému", "Spoločne ju sfúknete"],
   },
   guide: {
-    mimicH: "Dead Set: Napodobňovač",
-    mimic: `<p>Hra otázok pre 4–12 hráčov, asi 8 minút na hru. Všetci sú na jednom <b>mieste</b> (karta príbehu) a majú tam <b>postavu</b>, okrem <b>Napodobňovača</b>, ktorý vidí len šum a tabuľu možných miest.</p>
-<ol>
-<li><b>Otázky.</b> Kto drží lampáš, nahlas sa spýta kohokoľvek na miesto a ťukne na toho, koho sa pýtal; lampáš prejde k nemu. Nesmieš sa spýtať naspäť toho, kto sa práve pýtal teba.</li>
-<li><b>Obvinenie.</b> Každý raz za hru. Hodiny sa zastavia a všetci ostatní hlasujú; odsudzuje len jednomyseľný stôl. Ak odsúdia Živého, vyhráva Napodobňovač.</li>
-<li><b>Napodobňovač</b> sa môže kedykoľvek odhaliť a pomenovať miesto: ak má pravdu, vyhráva; ak nie, vyhrávajú Živí. Chytený Napodobňovač má ešte posledný tip.</li>
-<li><b>Čas vypršal:</b> všetci ukážu na jedného podozrivého. Kto má najviac hlasov, je odsúdený; pri remíze Napodobňovač zmizne.</li>
-</ol>
-<p>Počas počúvania si prečiarkuj miesta na vlastnom telefóne: poznámky sú súkromné. Body: Živí po +1 (kto chytil Napodobňovača, ešte +1); Napodobňovač +2, za pomenovanie miesta +3.</p>`,
-    omenH: "Dead Set: Znamenie",
-    omen: `<p>Hra predpovedí pre 4–12 hráčov, asi 10 minút. Koleso ukazuje na <b>Život</b>, <b>Smrť</b> alebo <b>Znovuzrodenie</b>, v tomto poradí dookola. Sedem kôl; každý má päť <b>Vplyvov</b>.</p>
-<ol>
-<li><b>Koleso</b> ukáže, odkiaľ začína.</li>
-<li><b>Tajne</b> tipneš, kde zastaví, a môžeš ho otočiť o krok ktorýmkoľvek smerom (za jeden Vplyv).</li>
-<li><b>Všetky otočenia sa sčítajú</b> a koleso sa pohne raz. Správny tip má 3 body.</li>
-</ol>
-<p>Na konci má každý nepoužitý Vplyv jeden bod. Vyhráva najviac bodov; pri remíze sa delia.</p>`,
-    mirrorH: "Dead Set: Zrkadlo",
-    mirror: `<p>Hra čítania ľudí pre 4–12 hráčov, asi 15 minút. Osem vymyslených <b>dilem</b>, každá s tromi odpoveďami; žiadna nie je správna.</p>
-<ol>
-<li><b>Rozhovor.</b> Vidíš, koho v tomto kole čítaš. Pýtaj sa, podpichuj, zavádzaj.</li>
-<li><b>Zapečatený hlas.</b> Odpovieš za seba a tipneš odpoveď toho, koho čítaš.</li>
-<li><b>Zrkadlo</b> ukáže všetko: správny tip má 2 body, tvoja odpoveď nič.</li>
-</ol>
-<p>Dvojice sa každé kolo menia, takže každý číta každého. Vyhráva najlepší čitateľ.</p>`,
-    graveH: "Dead Set: Vykrádači hrobov",
-    grave: `<p>Tímová hra so slovami (alebo ikonami) pre 4–12 hráčov, asi 15 minút. Dve partie vykrádačov hrobov, <b>Mesiac</b> a <b>Slnko</b>, prekopávajú cintorín s 25 náhrobkami a hľadajú relikvie, ktoré privolajú ich božstvo. Partia, ktorá vyhrá hod mincou, má v zemi 9 relikvií, druhá 8; 7 hrobov je prázdnych a jeden patrí <b>Smrti</b>.</p>
-<ol>
-<li><b>Hrobári.</b> Jeden na partiu. Len oni vidia pohrebný register: čo leží pod každým kameňom.</li>
-<li><b>Znamenie.</b> Vo svojom ťahu dá Hrobár jedno slovo a jedno číslo: <i>„Oceán · 3“</i>. Slovo nesmie byť na doske. Potom už nepovie nič.</li>
-<li><b>Kopanie.</b> Kopáči sa poradia a hlasujú na telefónoch. Rozhoduje najviac hlasov; pri remíze minca. Vaša relikvia: kopte ďalej, až do čísla. Prázdny hrob alebo relikvia druhej partie (teraz je ich): ťah prechádza. Hrob Smrti: vaša partia okamžite prehráva.</li>
-<li><b>Zastavenie.</b> Partia môže odhlasovať, že prestane. Ak prestane pred dosiahnutím čísla, nechá si jedno kopanie navyše na budúci ťah (nesčítava sa).</li>
-</ol>
-<p>Vyhráva partia, ktorej relikvie sú vykopané ako prvé. Na telefóne prepínaš medzi <b>Kameňmi</b> (slová alebo ikony) a <b>Mapou</b> (doska na prvý pohľad). V predsieni: slová alebo ikony, slávne mená zapnuté či vypnuté, partie a Hrobári náhodne alebo vybraní, písané alebo vyslovené znamenia.</p>`,
-    seanceH: "Dead Set: Seansa",
-    seance: `<p>Kooperatívna vražedná záhada so zradcom. 4–10 hráčov, asi 30 minút. Jeden hráč je <b>Duch</b>: vie, kto ho zabil, kde a prečo, a nemôže hovoriť. Všetci ostatní sú čitatelia.</p>
-<ol>
-<li><b>Stôl.</b> Tri rady príbehových kariet: kto, kde a prečo. V každom rade je jedna karta pravda.</li>
-<li><b>Vízie.</b> Každé kolo dostane každý čitateľ jeden rad a Duch mu k nemu pošle víziu bez slov: dva-tri kreslené motívy na karte.</li>
-<li><b>Diskusia.</b> Vízie sa otočia pre všetkých. Opíšte ich, hádajte sa, presviedčajte. Duch mlčí, ale môže víziu zamraziť <b>studeným miestom</b>: táto nie je moja.</li>
-<li><b>Sviečky.</b> Každý čitateľ zapáli sviečku na karte vo svojom rade, alebo ju podrží. Karta s najviac sviečkami ide pred ducha. Správne: rad je vyriešený. Nesprávne: karta sa preškrtne. Každé kolo spáli jednu sviečku hodín seansy.</li>
-</ol>
-<p>Od piatich hráčov sa medzi čitateľmi skrýva <b>Klamár</b>. Pozná pravdu a niekoľkokrát za hru vymení víziu iného čitateľa za lož. Vyriešte všetky tri rady, kým sviečky dohoria, a pomenujte Klamára: správne je úplné víťazstvo, nesprávne prázdne, o ktoré sa delí aj Klamár. Ak hodiny dohoria, vyhrá Klamár (ak zostane jeden rad, najprv príde <b>posledný výdych</b>). Záverečná obrazovka prehrá každé kolo: pravé vízie, výmeny a sviečky.</p>`,
-    midnightH: "Dead Set: Polnoc",
-    midnight: `<p>Jedna noc, jedno hlasovanie, žiadna druhá šanca. 4–12 hráčov, asi 10 minút. V balíčku je jedna karta na hráča a tri ďalšie lícom nadol na stole.</p>
-<ol>
-<li><b>Jeden pohľad.</b> Každý si raz pozrie vlastnú kartu.</li>
-<li><b>Jedna noc.</b> Telefóny postupne budia postavy: Napodobňovač, Smrť, Sprisahanec, Dvojčatá, Mentalista, Dvojitý agent, Čarodejnica, Hazardný hráč, Nespavec. Každý krok trvá rovnako dlho a beží, aj keď jeho karta leží na stole, takže noc nič neprezradí. Karty sa v tme prezerajú a vymieňajú.</li>
-<li><b>Jedna hádka.</b> Za úsvitu si tou kartou, ktorá leží pred tebou, nie tou, ktorú si dostal. Prediskutujte to.</li>
-<li><b>Jedno hlasovanie.</b> Všetci ukážu naraz. Kto má najviac hlasov, zomiera, ak má aspoň dva (pri remíze všetci). Ak zomrie Mstiteľ, zomiera aj ten, na koho ukázal.</li>
-</ol>
-<p>Živí vyhrajú, ak zomrie nejaká Smrť (alebo ak žiadny hráč nie je Smrť a nikto nezomrie). Smrť a Sprisahanec vyhrajú, ak žiadna Smrť nezomrie. Šašo vyhrá sám, ak ho vyhlasujú. <b>Karty v hre</b> ukážu nočný krok každej karty. Na konci uvidíte každú kartu, ako bola rozdaná aj za úsvitu, a celú noc ako záznam.</p>`,
-    carnivalH: "Dead Set: Karneval",
-    carnival: `<p>Maškarný bál blafovania a pamäti pre 4–12 hráčov, voliteľný v lobby. Každá maska je známa karta postavy.</p>
-<ol>
-<li><b>Odhalenie.</b> Každý dostane masku (pri 4–5 hráčoch sedia nadbytočné masky na prázdnych stoličkách). Desať sekúnd sú všetky masky vidieť na TV aj na každom telefóne. Zapamätaj si ich; potom sa otočia lícom nadol.</li>
-<li><b>Tvoj ťah: jedno z troch.</b> <i>Výmena alebo predstieranie</i>: vyber inú masku a podrž Vymeniť alebo Predstierať. Tlačidlá vyzerajú rovnako a nikto, ani druhý hráč, sa nedozvie, čo si zvolil. <i>Nazretie</i>: na chvíľu sa pozrieš na svoju masku; všetci vidia, že si sa pozrel. <i>Ohlásenie</i>: pomenuj masku a použi jej schopnosť.</li>
-<li><b>Výzvy.</b> Keď niekto ohlási masku, každý iný telefón sa spýta: <i>Je to tvoja maska?</i> Ak nikto nevyzve, ohlásenie platí: schopnosť funguje, nech ohlasovateľ nosí čokoľvek. Ak niekto vyzve, ohlasovateľ a vyzývatelia odhalia masky: kto ju naozaj nosí, použije schopnosť, ostatní odhalení zaplatia Dušu do Obety.</li>
-<li><b>Úvodný tanec.</b> Prvý ťah každého hráča (dva, ak hostiteľ chce) musí byť Výmena alebo predstieranie.</li>
-<li><b>Vyhrá</b> plný mešec (13 Duší), žatva Smrti (6 Duší zožatých ohláseniami Smrti), alebo, keď niekto klesne na 0, najbohatší.</li>
-</ol>
-<p>Kedykoľvek ťukni na <b>Masky na bále</b>: každá maska v hre so schopnosťou, napísanou aj nakreslenou ako rad znakov (minca pre Duše, dar pre Obetu, kosa pre Žatvu, oko pre pohľad, skrížené šípky pre výmenu). <b>Denník bálu</b> (poznámky) je predvolene vypnutý: čo si videl, nosíš v hlave. Hostiteľ ho môže v lobby zapnúť.</p>
-<p>Body sa prenášajú medzi hrami: víťaz +3, ostatní +1 za každú Dušu nad 6.</p>`,
-    coffinsH: "Dead Set: Rakvy",
-    coffins: `<p>Rýchla blafovacia hra pre 3–10 hráčov, voliteľná v lobby. Každý má 3 Zlaté rakvy a jednu Kliatbu (v dlhšej verzii 4 a jednu).</p>
-<ol>
-<li><b>Pohreb.</b> Všetci naraz tajne zakopú jednu rakvu: ťukni na ňu a potom na Zakopať. Potom od prvého hráča kola na svojom ťahu buď zakopeš ďalšiu rakvu navrch svojej kopy, alebo vyzveš: <i>„Dokážem otvoriť N“</i>, najviac toľko, koľko je spolu zakopaných.</li>
-<li><b>Dražba.</b> Dookola každý zvýši alebo pasuje. Pas platí na celé kolo. Posledný, kto ostane, je Hrobár.</li>
-<li><b>Kopanie.</b> Hrobár najprv otvorí vlastné rakvy zhora nadol, potom vyberá iné hroby, vždy vrchnú rakvu, kým nie je otvorených N.</li>
-<li><b>Čisto, alebo prekliate.</b> Samé Zlato: čistá vykopávka a náhrobok zozlatne. Kliatba vo vlastnom hrobe: vyberieš si, ktorú rakvu stratíš. Cudzia kliatba: jej majiteľ naslepo vytiahne jednu tvoju rakvu a tá je preč. Majiteľ kliatby začína ďalšie kolo.</li>
-<li><b>Vyhráš</b> svojimi čistými vykopávkami (predvolene 2; v lobby 1 alebo 3), alebo ako posledný hráč, ktorému ostali rakvy.</li>
-</ol>
-<p><b>Rakva Smrti</b> (predvolene zapnutá): v každom kole ju má jeden skrytý hráč namiesto jednej Zlatej. Ak ju vykopeš, kopanie zlyhá a jej majiteľ ti ukradne rakvu, ktorá sa zmení na Zlatú. <b>Stávky duchov</b> (predvolene zapnuté): hráči bez rakiev stavia na každé kopanie Zlato alebo Kliatbu; po troch správnych vstanú ako Navrátilci s jednou Zlatou rakvou. <b>Relikvie</b> (predvolene vypnuté): tajný Lampáš (nazrieš do hrobu), Kľúč (otvoríš cudzí hrob pred svojím) alebo Ochrana (kliatba ťa nič nestojí), každá raz.</p>
-<p>Body sa prenášajú medzi hrami: víťaz +3, každá čistá vykopávka +1, každé vstanie +1.</p>`,
-    exorcismH: "Dead Set: Exorcizmus",
-    exorcism: `<p>Slovná hra plná blafovania pre 3–12 hráčov, vyberá sa v lobby. Na každom telefóne platí jazyk stola, aby sa slová zhodovali.</p>
-<ol>
-<li><b>Krištáľová guľa.</b> Všetci vidia kategóriu. Živí vidia aj heslo; Démon (jeden, od 7 hráčov dvaja) nie, najviac dostane nejasný šepot, ak to hostiteľ povolí.</li>
-<li><b>Žreb.</b> Žreb určí, kto začína; potom sa ide dookola podľa miest.</li>
-<li><b>Každý jedno slovo.</b> Keď si na rade, povedz jedno slovo súvisiace s heslom a podrž tlačidlo v telefóne. Dokáž, že ho poznáš, ale nedaj ho Démonovi. Voliteľne sa slová aj píšu a zobrazia na televízore.</li>
-<li><b>Označte Démona.</b> Porozprávajte sa a potom všetci hlasujú. Ak označíte Živého (alebo je nerozhodne a minca je vypnutá), Démon vyhrá.</li>
-<li><b>Posledný pokus.</b> Odhalený Démon môže raz hádať heslo, z mriežky 4×4 alebo napísaním. Ak trafí, aj tak vyhrá.</li>
-</ol>
-<p>Kolo sa končí v tom istom lobby s rovnakými nastaveniami a body sa sčítavajú: za výhru Živí +1, Démoni +2.</p>`,
-    missionsH: "Dead Set: Misie",
-    missions: `<p>Druhý režim pre 5–12 hráčov, ktorý sa vyberá v lobby. Nikto neumiera: Smrť sa vkradla do výpravy a stôl ju musí nájsť.</p>
-<ol>
-<li><b>Karta misie.</b> Každá misia začína ťahom karty, ešte pred výberom tímu. Väčšina sú <i>Bežné misie</i>; občas karta zmení tím, hlasovanie alebo odhalenie. Platí pre celú misiu.</li>
-<li><b>Návrh.</b> Vodca misie (lampáš) vyberie tím uvedenej veľkosti.</li>
-<li><b>Hlasovanie o tíme.</b> Všetci tajne schvália alebo zamietnu; hlasy sa odhalia naraz, s menami. Väčšina pošle tím na misiu. Inak navrhuje ďalší hráč vľavo. Piaty návrh vyráža bez ohľadu na hlasovanie.</li>
-<li><b>Misia.</b> Každý člen tímu tajne zahrá kartu. Živí môžu hrať iba Úspech; Smrť môže hrať Úspech alebo Sabotáž. Jedna Sabotáž misiu zmarí (na misii 4 od 7 hráčov dve). Karty sa zamiešajú a otáčajú jedna po druhej.</li>
-<li><b>Nočná prestávka.</b> Každý si vyberie tajné Podozrenie. Po misiách 2, 3 a 4 zistí držiteľ Sviečky stranu jedného hráča a Sviečka prejde k nemu. Za úsvitu môžu prísť stopy.</li>
-</ol>
-<p><b>Koniec.</b> Tri úspechy: Smrť sa odhalí a Žnec označí Médium. Ak trafí, vyhráva Smrť; ak nie, vyhrávajú Živí. Tri zlyhania: Posledný odpor. Každý označí jedného hráča. Ak je to Živý, vyhráva Smrť; ak chytíte Smrť, Žnec aj tak dostane Zúčtovanie.</p>`,
     missionCardsH: "Karty misií",
     sidesH: "Ďalšie strany a zvraty",
     sides: `<p>Voliteľné, zapínajú sa v lobby (alebo sa pridávajú počítadlami rolí vo vlastných hrách). Mesto vyhrá, až keď zmizne Smrť, Sekta aj Rozparovač.</p>
@@ -388,19 +294,9 @@ export default {
 <li><b>Hod mincou pri rovnosti</b> (voliteľné): rovnosť na čele rozhodne hod mincou namiesto toho, aby boli všetci ušetrení.</li>
 <li><b>Verejné hlasovanie</b> (karta pravidla): každý hlas je verejný hneď, ako je odovzdaný.</li>
 </ul>`,
-    kicker: 'Pravidlá, v1.0',
     title: 'Ako sa<br><i>hrá.</i>',
-    intro: 'Väčšina z vás chce prežiť. Niekoľkí z vás sú Smrť. Nikto nevie, kto je kto — okrem Smrti, ktorá pozná svojich.',
     toc: ['Základy', 'Jedno kolo', 'Víťazstvo', 'Základné roly', 'Rozšírené roly', 'Celý balík', 'Sny', 'Karty pravidiel', 'Režimy', 'Nočné poradie', 'Telefóny'],
     basicsH: 'Základy',
-    basics: `<p>Dead Set je párty hra sociálnej dedukcie pre 5–13 hráčov. Každý sa pripojí do tej istej miestnosti zo svojho telefónu a dostane tajnú <b>rolu</b>. Väčšina rol patrí k frakcii <b>Nie-Smrti</b>; jeden alebo viac hráčov je tajne <b>Smrť</b>.</p>
-<ul>
-<li><b>Roly</b> platia celú hru: tvoja príslušnosť a tvoja schopnosť.</li>
-<li><b>Sny</b> sú účinky na jednu noc: od noci 1 si každý živý hráč každú noc tajne potiahne jeden.</li>
-<li><b>Karty pravidiel</b> (1–3, ťahané pri príprave) ohýbajú celú hru — dvojité vraždy, vážené hlasy, hlasujúci duchovia.</li>
-<li><b>Scenár</b> (KTO / KDE / PREČO) je čisté rozprávanie. Nikdy nemení pravidlá.</li>
-</ul>
-<p>O svojej role môžeš hovoriť pravdu, klamať alebo mlčať. Nikdy neukazuj obrazovku. Aplikácia je rozprávač: nikto nemusí stáť bokom a hostiteľ nevidí viac tajomstiev ako ostatní.</p>`,
     roundH: 'Jedno kolo',
     round: `<ol>
 <li><b>Noc 0 — odhalenie.</b> Otoč kartu roly, prečítaj ju, ťukni na <em>Rozumiem</em>. Nič iné sa nedeje: žiadne vraždy, Sny ani schopnosti. Hráči Smrti vidia svojich spoluhráčov.</li>
@@ -436,8 +332,6 @@ export default {
     dreamsNote: `Niektoré Sny sú zriedkavejšie ako iné a Nespavosť sa v hre objaví najviac dvakrát; v režime Vlastné sa dá častosť každého Snu nastaviť. Výmeny Zlodejov snov prebehnú počas súmraku, pred otvorením akcií, v poradí miest, každý raz. Platí karta, ktorú držíš nakoniec.`,
     rulesH: 'Karty pravidiel',
     rulesP: '1–3 sa pri príprave ťahajú (alebo vyberú) a platia celú hru. Niektoré sa dajú dodržiavať len na čestné slovo, keď hráte v jednej miestnosti.',
-    modesH: 'Režimy',
-    modesTh: ['Režim', 'Hráči', 'Čo sa mení'],
     countsH: 'Počty rol',
     countsTh: ['Hráči', 'Smrť', 'Nevinný', 'Strážca · Mentalista · Psychopat', 'Rozšírené'],
     modesNote: 'Klasika / Učenie obsadí rozšírené miesta Nevinnými. Hra v jednej miestnosti či na diaľku je len otázka prenosu, nie iná hra: na diaľku pribudne stolový chat (a pri Hmle vojny šepot so susedmi).',
@@ -454,15 +348,259 @@ export default {
 <li><b>Prepojené osudy.</b> Pobehlice zomrú s navštívenou obeťou Smrti; držitelia Spoločnej nočnej mory a Námesačnosti zomrú s partnerom. Prepojenej smrti zabráni len vzkriesenie alebo Anjel strážny. Potom vyprší požičaný čas.</li>
 <li><b>Úsvit.</b> Preživší dostanú súkromné správy. Verejnosť sa dozvie len to, kto zomrel.</li>
 </ol>`,
-    phonesH: 'Hra na telefónoch',
-    phones: `<ul>
-<li>Hostiteľ vytvorí miestnosť a zdieľa šesťznakový kód alebo QR kód. Ostatní otvoria odkaz, zadajú meno a ťuknú na <em>Pripravený</em>.</li>
-<li>Tvoje miesto je viazané na prehliadač. Ak sa telefón vybije, hostiteľ môže vo svojich ovládačoch vydať jednorazový <b>kód na obnovenie</b>; po jeho zadaní na novom zariadení sa tvoje miesto presunie tam a staré zariadenie sa odhlási.</li>
-<li>Telefón hostiteľa je bežný hráčsky telefón s pár tlačidlami navyše: posunúť fázu, pridať 30 sekúnd, ukončiť hru. Hostiteľ nevidí roly, Sny ani hlasy.</li>
-<li><b>Verejnú tabuľu</b> (bez tajomstiev) môžeš zobraziť na televízore: otvor <span class="mono">/board/KÓD</span>.</li>
-<li>Ak chce niekto viesť stôl a vidieť všetko, vytvor miestnosť ako <b>dôveryhodný moderátor</b>. Nemôže mať miesto a všetci o tom vedia.</li>
-<li>Každý si jazyk vyberá sám tlačidlom jazyka na úvodnej obrazovke, v pozvánke alebo v menu miestnosti. Predvolený jazyk stola nastavuje hostiteľ v predsieni.</li>
-<li>NEMÝ, Hmla vojny a Prekliate ticho sú naživo pravidlá na čestné slovo. Na diaľku ich vynúti chat.</li>
+    kicker: "Kniha pravidiel",
+    intro: "Dead Set je rodina spoločenských hier pre jednu miestnosť. Každý hrá na vlastnom telefóne; televízor, ak ho máte, je spoločné javisko. Vyberte si hru, prečítajte si jej kapitolu a hrajte.",
+    aboutH: "Čo je Dead Set",
+    about: `<p>Dead Set je zbierka spoločenských hier (skryté roly, blafovanie, slovné hry, predpovede), ktoré zdieľajú jeden stôl. Každá hra funguje rovnako: <b>telefón každého hráča je súkromná obrazovka</b>, ktorá ukazuje len to, čo smie vedieť, a aplikácia je rozprávač, takže nikto nemusí vynechať, aby hru viedol.</p>
+<ul>
+<li><b>Bez inštalácie.</b> Beží v prehliadači. Pripojíte sa šesťmiestnym kódom, odkazom alebo QR kódom.</li>
+<li><b>3 až 25 hráčov</b>, podľa hry. Každá kapitola uvádza počet hráčov a dĺžku.</li>
+<li><b>Televízor je voliteľný, ale najlepší.</b> Ukazuje stôl, scény, body a hrá hudbu. Nikdy neukáže tajomstvo.</li>
+<li><b>Sedem jazykov.</b> Každý si vyberie svoj; slovné hry používajú na všetkých telefónoch jazyk stola, aby sa slová zhodovali.</li>
+<li><b>Jeden stôl, veľa hier.</b> Medzi kolami môžete v lobby zmeniť hru; v rámci zápasu sa body prenášajú.</li>
 </ul>`,
+    tableH: "Otvorenie stola",
+    table: `<ol>
+<li><b>Otvoriť stôl.</b> Hostiteľ ťukne na <em>Otvoriť stôl</em>, zadá meno a dostane šesťmiestny kód miestnosti.</li>
+<li><b>Pozvanie.</b> Pošlite kód, odkaz alebo QR kód. Ostatní ťuknú na <em>Pridať sa k stolu</em> (alebo otvoria odkaz), zadajú meno a vyberú si portrét.</li>
+<li><b>Zapnite televízor.</b> Ťuknite v lobby na <em>TV tabuľa</em>, alebo otvorte miestnosť v prehliadači televízora a zvoľte <em>Otvoriť stôl na TV</em>. Stôl môže naraz ukazovať viac obrazoviek.</li>
+<li><b>Miesta.</b> Hráči sedia okolo stola v poradí, v akom sa pripojili. Hostiteľ môže ťuknúť na miesto a hráča presunúť alebo odstrániť.</li>
+</ol>
+<p>Tvoje miesto je viazané na tvoj prehliadač. Ak telefón zlyhá, hostiteľ ti v menu miestnosti dá jednorazový kód na obnovenie; na novom telefóne zvoľ <em>Obnoviť moje miesto</em>, zadaj ho a tvoje miesto (aj s tajomstvami) sa presunie. Telefón, ktorý vypadne, si miesto ponechá a po návrate dobehne ostatných.</p>
+<p>Ak chce niekto hru viesť a vidieť všetko, otvorte miestnosť s <b>dôveryhodným moderátorom</b>. Moderátor nemá miesto pri stole a všetci sú o tom informovaní.</p>`,
+    setupH: "Nastavenie hry",
+    setup: `<p>Lobby prevedie hostiteľa pri každej hre rovnakými očíslovanými krokmi. Hostia vidia tie isté kroky, len na čítanie.</p>
+<ol>
+<li><b>Hra.</b> Vyberte si jednu, zoradené podľa rodín: Skryté vernosti, Karty z ruky do ruky, Čítanie ľudí, Znamenia a hádanky, Blaf a stávka.</li>
+<li><b>Ako to funguje.</b> Štyri alebo päť ilustrovaných krokov: celá hra na prvý pohľad.</li>
+<li><b>Balík.</b> Čo sa pri tomto počte hráčov rozdá: roly, masky, karty alebo miesta. Mení sa, keď sa hráči pripájajú.</li>
+<li><b>Pravidlá.</b> Vlastné prepínače hry. Predvolené nastavenia dajú dobrú prvú hru.</li>
+<li><b>Stôl.</b> Jazyk stola, hudba a jej štýl, pozadia a (kde to niečo mení) či hráte v jednej miestnosti, alebo na diaľku s chatom.</li>
+<li><b>Časovače.</b> Ako dlho trvá každý krok. Zbalené; predvolené hodnoty vyhovujú väčšine stolov.</li>
+</ol>
+<p>Keď si nastavenie prečítajú, všetci ťuknú na <b>Pripravený</b> a hostiteľ hru spustí. Problém s nastavením (napríklad málo hráčov na nejakú rolu) sa zobrazí ako poznámka pod krokmi.</p>`,
+    playH: "Ako sa hrá každá hra",
+    play: `<ul>
+<li><b>Nikdy neukazuj svoju obrazovku.</b> Tvoj telefón ukazuje tvoju rolu, karty a voľby. Všetko ostatné sa hovorí nahlas alebo ukazuje na televízore.</li>
+<li><b>Spoločné scény.</b> Veľké chvíle (odhalenie, sčítanie hlasov, noc) bežia na všetkých telefónoch aj na televízore naraz a rovnako dlho. Nedajú sa preskočiť a počas nich nebeží časovač.</li>
+<li><b>Výber hráča:</b> ťukni na jeho miesto v kruhu stola. Miesto, ktoré môžeš vybrať, pulzuje; tvoja voľba zbelie ako pergamen.</li>
+<li><b>Potvrdenie:</b> väčšina volieb je ťuknutie a dá sa zmeniť do konca kroku. Zapečatené voľby (hlas, karta zahraná lícom dolu) sú <b>podržanie</b>: drž palec, kým sa pečať nezatvorí.</li>
+<li><b>Hlavička</b> ukazuje aktuálny krok hry a jeho číslo (Noc II, Misia 3, Kolo 4…) so zostávajúcim časom.</li>
+<li><b>Pod stolom:</b> <em>Moja karta</em> (tvoja rola, kedykoľvek), prehľad hry, tvoje súkromné <em>Poznámky</em> a <em>Príbeh</em>, ak ich hra má.</li>
+<li><b>Časovače.</b> Keď vyprší čas, čo si neodovzdal, sa zmení na pas alebo zdržanie sa. Hostiteľ môže v menu miestnosti pridať 30 sekúnd, pokračovať alebo hru ukončiť.</li>
+<li><b>Upozornenia</b> na to, čo práve urobili ostatní, sa na chvíľu zobrazia v hlavičke.</li>
+<li><b>Čestné pravidlá.</b> Niektoré pravidlá (mlčanie, umlčaní hráči) vie dodržať len samotný stôl. Pri hre na diaľku ich vynúti chat.</li>
+</ul>`,
+    afterH: "Po hre",
+    after: `<p>Záverečná obrazovka vyhlási víťazov, odhalí každé tajomstvo a vo väčšine hier prehrá, čo sa naozaj stalo. Prelistuj si rekapituláciu vlastným tempom.</p>
+<p>Mnohé hry sa hrajú ako <b>zápas</b> z 1, 3 alebo 5 hier: body sa prenášajú a stôl sa vráti do tej istej lobby s rovnakým nastavením, všetci pripravení na ďalšiu hru. V lobby môže hostiteľ prepnúť aj na inú hru; stôl, miesta aj portréty zostávajú.</p>`,
+    hSetup: "Príprava",
+    hCast: "Postavy",
+    hLoop: "Priebeh hry",
+    hWin: "Víťazstvo a body",
+    hOpts: "Možnosti v lobby",
+    classicP: "Pôvodný Dead Set: skryté roly, nočné vraždy a tajné hlasovanie cez deň. Väčšina z vás chce prežiť. Niekoľkí z vás sú Smrť. Nikto nevie, kto je kto — okrem Smrti, ktorá pozná svojich spoluhráčov.",
+    presetsH: "Varianty",
+    modesTh: ['Variant', 'Hráči', 'Čo sa mení'],
+    classicSetup: `<p>5–13 hráčov (s vlastným balíkom až 25). Každý dostane tajnú <b>rolu</b>. Väčšina rol patrí na stranu <b>ne-Smrti</b>; jeden alebo viac hráčov je tajne <b>Smrť</b> a hráči Smrti sa navzájom poznajú. Noc a deň sa striedajú, kým jedna strana nevyhrá.</p>
+<ul>
+<li><b>Roly</b> sú to, kým si celú hru: tvoja strana a tvoja schopnosť.</li>
+<li><b>Sny</b> sú účinky na jednu noc: od 1. noci si každý živý hráč každú noc tajne potiahne jeden.</li>
+<li><b>Karty pravidiel</b> (1–3, ťahané pri nastavení) ohýbajú celú hru: dvojité vraždy, vážené hlasy, duchovia, ktorí hlasujú.</li>
+<li><b>Príbeh</b> (KTO / KDE / PREČO) je čisté rozprávanie. Nikdy nemení pravidlo.</li>
+</ul>
+<p>O svojej role môžeš hovoriť pravdu, klamať alebo mlčať. Hostiteľ hrá ako ostatní a nevidí viac tajomstiev.</p>`,
+    missionsSetup: `<p>5–12 hráčov. Nikto nezomiera: Smrť sa votrela do výpravy a stôl ju musí nájsť skôr, než ona nájde Médium. Každý dostane tajnú rolu. Hráči Smrti sa vidia (okrem Tuláka); Živí poznajú len seba a Médium vycíti, kto je Smrť.</p>
+<p>Stôl hrá päť misií. Každá misia potrebuje tím danej veľkosti (v lobby a na televízore); od 7 hráčov potrebuje 4. misia na neúspech dve Sabotáže.</p>`,
+    missionsLoop: `<ol>
+<li><b>Karta misie.</b> Každá misia začína kartou. Väčšina je bežných; občas niektorá zmení tím, hlasovanie alebo odhalenie tejto misie.</li>
+<li><b>Návrh.</b> Vodca misie (drží lampáš) ťuká na hráčov v kruhu a zostavuje tím.</li>
+<li><b>Hlasovanie o tíme.</b> Všetci tajne podržia Schváliť alebo Zamietnuť. Hlasy sa otočia naraz, s menami. Väčšina tím vyšle; inak lampáš prejde na ďalšieho hráča. Piaty návrh misie platí bez ohľadu na hlasovanie.</li>
+<li><b>Misia.</b> Každý člen tímu zahrá kartu lícom dolu. Živí môžu hrať len Úspech; Smrť môže hrať Úspech alebo Sabotáž. Karty sa zamiešajú a otáčajú po jednej: jedna Sabotáž misiu zmarí.</li>
+<li><b>Nočná medzihra.</b> Každý si zaznamená tajné Podozrenie, kto je Smrť. Po 2., 3. a 4. misii sa držiteľ Sviečky dozvie stranu jedného hráča a Sviečka prejde k nemu. So Stopami môže na úsvite prísť pravdivá nápoveda.</li>
+</ol>`,
+    missionsWin: `<ul>
+<li><b>Tri úspechy:</b> Smrť sa odhalí a Žnec určí, koho považuje za Médium (Smrť sa môže najprv poradiť). Správne: vyhráva Smrť. Nesprávne: vyhrávajú Živí.</li>
+<li><b>Tri neúspechy:</b> Posledný odpor. Každý označí jedného hráča. Ak stôl označí Živého, vyhráva Smrť; ak chytí Smrť, Žnec aj tak dostane Zúčtovanie: nájde Médium a Smrť ukradne víťazstvo.</li>
+<li><b>Vedľajšie misie</b> menia váhu tvojho hlasu v Poslednom odpore: dvojnásobnú, ak si svoju splnil, polovičnú, ak nie.</li>
+<li>Šašo, ak je v hre, vyhrá sám, ak ho označia v Poslednom odpore alebo Žnec.</li>
+</ul>`,
+    missionsOpts: `<ul>
+<li><b>Roly:</b> zapnúť alebo vypnúť Veriaceho, Šarlatána, Zahaleného, Tuláka, Hrobára a Šaša, a pridať Dvojčatá.</li>
+<li><b>Vedľajšie misie:</b> tajný osobný cieľ pre každého.</li>
+<li><b>Ďalší vodca misie:</b> ďalší v poradí, alebo ho vyberie posledný vodca.</li>
+<li><b>Karty misií:</b> vypnuté, zriedka alebo niekedy.</li>
+<li><b>Stopy:</b> zriedka, občas alebo často.</li>
+<li><b>Príbeh:</b> náhodné KTO / KDE / PREČO, alebo váš vlastný.</li>
+</ul>`,
+    exorcismSetup: `<p>3–12 hráčov, 5–10 minút na kolo. Živí poznajú tajné heslo, ktoré by vyhnalo Démona skrytého medzi nimi; Démon ho nepozná. Všetci vidia kategóriu. Slová sa na všetkých telefónoch zobrazujú v jazyku stola, aby sa zhodovali.</p>`,
+    exorcismLoop: `<ol>
+<li><b>Krištáľová guľa.</b> Ťukni na ňu a pozri sa dnu: kategória a (ak si Živý) heslo. Démon vidí len kategóriu a musí blafovať.</li>
+<li><b>Losovanie.</b> Žreb určí, kto hovorí prvý; potom ide ťah okolo stola podľa poradia miest.</li>
+<li><b>Každý jedno slovo.</b> Vo svojom ťahu povedz jedno slovo spojené s heslom a potom podrž tlačidlo na telefóne. Dokáž, že ho poznáš, bez toho, aby si ho prezradil Démonovi. Podľa lobby idú slová dookola raz alebo viackrát a môžu sa aj písať a ukazovať na televízore.</li>
+<li><b>Označte Démona.</b> Poraďte sa a potom všetci hlasujú za jedného hráča.</li>
+<li><b>Posledný pokus.</b> Chytený Démon môže povedať heslo, z mriežky slov alebo napísané.</li>
+</ol>`,
+    exorcismWin: `<ul>
+<li>Hlasovanie označí Živého alebo skončí nerozhodne (ak nerozhoduje minca): <b>vyhráva Démon</b>.</li>
+<li>Hlasovanie označí Démona: <b>vyhrávajú Živí</b>, pokiaľ potom Démon neuhádne heslo a neukradne víťazstvo.</li>
+<li>Body sa zbierajú kolo za kolom: každý Živý +1 za výhru, každý Démon +2.</li>
+</ul>`,
+    exorcismOpts: `<ul>
+<li><b>Démoni:</b> jeden, alebo od 7 hráčov dvaja; dvaja Démoni sa môžu, ale nemusia poznať.</li>
+<li><b>Posledný pokus:</b> zapnutý alebo vypnutý.</li>
+<li><b>Nerozhodné hlasovanie:</b> Démon unikne, alebo rozhodne minca.</li>
+<li><b>Mriežka slov:</b> 16 slov na televízore aj telefónoch; heslo je jedno z nich.</li>
+<li><b>Kolá:</b> koľkokrát idú slová okolo stola. <b>Písať slová:</b> zobrazia sa na televízore.</li>
+<li><b>Kategórie:</b> z ktorých zoznamov slov sa ťahá.</li>
+</ul>`,
+    coffinsSetup: `<p>3–10 hráčov, rýchla hra. Každý hrá sám za seba a má štyri rakvy: tri Zlaté a jednu Kliatbu (v dlhšej možnosti päť: štyri Zlaté, jedna Kliatba). Tvoje rakvy sú pred ostatnými skryté.</p>`,
+    coffinsLoop: `<ol>
+<li><b>Pochovávanie.</b> Všetci naraz tajne zakopú jednu rakvu: ťukni na rakvu a potom na Zakopať. Tvoj hrob je kôpka, najnovšia navrchu.</li>
+<li><b>Zakopať, alebo vyzvať.</b> Od prvého hráča kola vo svojom ťahu buď zakopeš ďalšiu rakvu navrch svojej kôpky, alebo vyzveš: „Otvorím N“, najviac toľko, koľko je spolu zakopaných.</li>
+<li><b>Prihadzovanie.</b> Dookola sa číslo zvyšuje, alebo sa pasuje. Pas platí na celé kolo. Posledný, kto zostane, je Kopáč.</li>
+<li><b>Kopanie.</b> Kopáč najprv otvára vlastné rakvy zhora nadol, potom vyberá iné hroby, vždy vrchnú rakvu, kým nie je otvorených N rakiev. Každá rakva sa otočí na televízore.</li>
+<li><b>Výsledok.</b> Samé Zlato: čisté kopanie a tvoj náhrobok sa pozlatí. Kliatba vo vlastnom hrobe: vyberieš rakvu, o ktorú prídeš. Kliatba niekoho iného: naslepo si potiahne jednu z tvojich rakiev a tá zmizne; majiteľ Kliatby začína ďalšie kolo.</li>
+</ol>`,
+    coffinsWin: `<ul>
+<li>Vyhráš dvoma čistými kopaniami (v lobby 1 alebo 3), alebo ako posledný hráč s rakvami.</li>
+<li>V zápase: víťaz +3, každé čisté kopanie +1, každé vstanie z mŕtvych +1.</li>
+</ul>`,
+    coffinsOpts: `<ul>
+<li><b>Rakva Smrti</b> (predvolene zapnutá): v každom kole ju drží skrytý hráč namiesto jednej Zlatej. Ak ju vykopeš, kopanie zlyhá; jej držiteľ ti ukradne rakvu, ktorá sa zmení na Zlatú.</li>
+<li><b>Stávky duchov a Navrátilci</b> (predvolene zapnuté): hráči bez rakiev pri každom kopaní stavia na Zlato alebo Kliatbu; trikrát správne a vstanú s jednou Zlatou rakvou.</li>
+<li><b>Relikvie</b> (predvolene vypnuté): tajný Lampáš (nazrieť do hrobu), Kľúč (otvoriť iný hrob pred vlastným) alebo Ochrana (kliatba nič nestojí), každá raz.</li>
+<li><b>Čisté kopania na výhru, rakvy na hráča, hier v zápase.</b></li>
+</ul>`,
+    carnivalSetup: `<p>4–12 hráčov. Každý hrá sám za seba. Každá maska je známa rola Dead Set a má schopnosť. Každý začína so 6 Dušami; Obeta, tanier uprostred stola, je na začiatku prázdna. Pri 4–5 hráčoch sedia dve masky navyše na prázdnych stoličkách: sú na bále, ale nikdy nekonajú.</p>
+<p><b>Odmaskovanie:</b> na pár sekúnd je každá maska ukázaná lícom hore, na televízore aj na každom telefóne. Zapamätajte si ich; potom sa otočia. Žreb vyberie prvého tanečníka a pokračuje sa v smere hodinových ručičiek.</p>`,
+    carnivalLoop: `<p>Vo svojom ťahu urobíš jedno z troch:</p>
+<ul>
+<li><b>Vymeniť alebo predstierať.</b> Vyber inú masku (hráča alebo prázdnu stoličku) a podrž Vymeniť alebo Predstieranie. Obe tlačidlá vyzerajú rovnako a nikto, ani druhý hráč, sa nedozvie, čo si zvolil.</li>
+<li><b>Nazrieť.</b> Na chvíľu sa pozrieš na vlastnú masku. Všetci vidia, že si sa pozrel.</li>
+<li><b>Ohlásiť.</b> Pomenuješ masku, „Som Sudca“, a použiješ jej schopnosť.</li>
+</ul>
+<p><b>Výzvy.</b> Keď niekto ohlási masku, každý iný telefón sa spýta: <em>Je to tvoja maska?</em> Ak nikto nevyzve, ohlásenie platí a schopnosť funguje, nech ohlasovateľ nosí čokoľvek. Ak niekto vyzve, ohlasovateľ a všetci vyzývatelia odhalia masky: kto ju naozaj nosí, použije schopnosť, ostatní odhalení zaplatia Dušu (alebo viac, podľa lobby) do Obety.</p>
+<p><b>Úvodný tanec.</b> Prvý ťah každého hráča (dva, ak hostiteľ chce) musí byť Vymeniť alebo predstierať, aby boli masky pochybné skôr, než niekto niečo ohlási.</p>`,
+    carnivalWin: `<ul>
+<li><b>Plný mešec:</b> 13 Duší (alebo číslo z lobby) a hneď vyhrávaš.</li>
+<li><b>Žatva Smrti:</b> vyhrá, kto ohláseniami Smrti zožal 6 Duší.</li>
+<li><b>Krach:</b> keď niekto klesne na 0 Duší, vyhráva najbohatší (pri rovnosti vyššia žatva).</li>
+<li>V zápase: víťaz +3, všetci ostatní +1 za každú Dušu nad 6.</li>
+</ul>`,
+    carnivalOpts: `<ul>
+<li><b>Masky:</b> odporúčaná sada rastie so stolom; alebo si zostavte vlastnú, jednu masku na miesto (Smrť je povinná; opakovať sa môže len Nevinný).</li>
+<li><b>Plný mešec, Žatva Smrti, trest za chybné ohlásenie, úvodný tanec, hier v zápase.</b></li>
+<li><b>Poznámky (denník z bálu):</b> predvolene vypnuté, aby ste si videné pamätali v hlave.</li>
+</ul>
+<p>Kedykoľvek ťukni na <em>Masky na bále</em>: každá maska v hre a jej schopnosť, nakreslená ako rad znamení.</p>`,
+    midnightSetup: `<p>4–12 hráčov, asi 10 minút. Jedna noc, jedno hlasovanie, žiadna druhá šanca. Balík má jednu kartu na hráča a tri lícom dolu na stole (prázdne stoličky). Balík je verejný; kto čo drží, nie. Každý vidí svoju kartu raz, pri rozdávaní.</p>
+<p>Karty v tme menia majiteľov. <b>Na úsvite si tou kartou, ktorá leží pred tebou</b>, nie tou, ktorú si dostal.</p>`,
+    midnightLoop: `<ol>
+<li><b>Rozdávanie.</b> Raz sa pozrieš na svoju kartu.</li>
+<li><b>Noc.</b> Telefóny budia roly postupne: Napodobňovač, Smrť, Sprisahanec, Dvojčatá, Mentalista, Dvojitý agent, Čarodejnica, Hazardný hráč, Nespavec. Každý krok trvá rovnako, 10 sekúnd, a beží aj vtedy, keď jeho karta leží na stole, aby noc nič neprezradila. Ovládanie dostane len ten, kto tú kartu dostal; každý iný telefón hovorí, nech máš zavreté oči. Hazardný hráč, ktorý nič neurobí, sa vymení s náhodnou kartou zo stola.</li>
+<li><b>Deň.</b> Jedna diskusia (predvolene 5 minút): tvrďte, obviňujte, klamte. Karty sa mohli presunúť; neverte nikomu, ani sebe. Hostiteľ môže hlasovanie otvoriť skôr.</li>
+<li><b>Hlasovanie.</b> Všetci naraz ukážu na iného hráča. Kto má najviac hlasov, zomiera, ak sú to aspoň dva; pri rovnosti na vrchole zomrú všetci zhodní. Ak zomrie Mstiteľ, zomrie aj ten, na koho ukázal.</li>
+</ol>`,
+    midnightWin: `<ul>
+<li>Strany sa určujú podľa kariet na úsvite (Napodobňovač sa počíta ako rola, ktorú skopíroval).</li>
+<li><b>Živí</b> vyhrávajú, ak zomrie aspoň jedna Smrť; ak medzi hráčmi nie je Smrť, ak nezomrie nikto.</li>
+<li><b>Smrť a Sprisahanec</b> vyhrávajú, ak nezomrie žiadna Smrť (a nezomrel Šašo).</li>
+<li><b>Šašo</b> vyhrá sám, ak ho vyhlasujú. Viac strán môže vyhrať spolu.</li>
+<li>V zápase: každý víťaz +1, Šašo +2. Záverečná obrazovka ukáže každú kartu, ako bola rozdaná aj na úsvite, a prehrá noc.</li>
+</ul>`,
+    midnightOpts: `<ul>
+<li><b>Karty:</b> odporúčaný balík rastie so stolom; alebo si ich vyberte sami (Smrť 1–2, Dvojčatá 0 alebo 2, Nevinný 0–4, ostatné 0–1; spolu hráči + 3).</li>
+<li><b>Osamelá Smrť nazrie:</b> Smrť, ktorá sa zobudí sama, môže pozrieť jednu kartu zo stola.</li>
+<li><b>Dĺžka diskusie, hier v zápase.</b></li>
+</ul>`,
+    seanceSetup: `<p>4–10 hráčov, asi 30 minút. Kooperatívna vražedná záhada so zradcom. Jeden hráč je Duch: vie, kto ho zabil, kde a prečo, a nemôže hovoriť. Všetci ostatní sú Médiá, ktoré čítajú jeho vízie. Od piatich hráčov sa medzi Médiami môže skrývať Klamár: druhý duch, ktorý pozná pravdu a pracuje proti stolu.</p>
+<p><b>Tabuľa:</b> tri rady kariet príbehu, KTO, KDE a PREČO. V každom rade je jedna karta pravda.</p>`,
+    seanceLoop: `<ol>
+<li><b>Vízie.</b> V každom kole dostane každé Médium jeden rad. Duch mu zo svojej ruky vyberie víziu: kartu s dvoma alebo tromi rytými motívmi, ktorá má ukázať na pravdu v tom rade.</li>
+<li><b>Odhalenie.</b> Vízie sa otočia pre všetkých. Opíšte ich, hádajte sa, presviedčajte. Duch mlčí, ale môže víziu zamraziť studeným miestom: <em>táto nie je moja</em>.</li>
+<li><b>Klamárova výmena.</b> Niekoľkokrát za hru Klamár tajne vymení víziu iného Média za jednu zo svojich lží.</li>
+<li><b>Sviečky.</b> Každé Médium zapáli sviečku na karte vo svojom rade, alebo ju podrží. Karta s najviac sviečkami ide pred ducha. Správne: rad je vyriešený. Nesprávne: karta sa preškrtne.</li>
+<li><b>Hodiny.</b> Každé kolo zhorí jedna sviečka hodín seansy (sedem pri štandardnej obtiažnosti).</li>
+</ol>`,
+    seanceWin: `<ul>
+<li>Vyriešte všetky tri rady, kým sviečky nedohoria, a potom označte Klamára. Správne: <b>úplné víťazstvo</b>. Nesprávne: <b>prázdne víťazstvo</b>, o ktoré sa delí aj Klamár.</li>
+<li>Ak hodiny dohoria, vyhráva Klamár (bez Klamára stôl prehráva). Ak zostal jeden rad, najprv na ňom každý zapáli sviečku posledného výdychu.</li>
+<li>V zápase: úplné víťazstvo +2 pre Ducha a každé Médium; prázdne +1 pre každého a +1 pre Klamára; výhra Klamára +3.</li>
+<li>Záverečná obrazovka prehrá každé kolo: pravé vízie, výmeny a sviečky.</li>
+</ul>`,
+    seanceOpts: `<ul>
+<li><b>Obtiažnosť:</b> koľko kariet v rade, vízií na Médium a sviečok na hodinách.</li>
+<li><b>Klamári:</b> žiadny, jeden alebo dvaja, a či sa dvaja poznajú; koľko výmen majú.</li>
+<li><b>Studené miesta Ducha:</b> koľko vízií smie zamraziť.</li>
+<li><b>Posledný výdych:</b> zapnutý alebo vypnutý. <b>Duch:</b> žrebom, alebo ho vyberie hostiteľ. <b>Hier v zápase.</b></li>
+</ul>`,
+    graveSetup: `<p>4–12 hráčov, asi 15 minút. Dve partie vykrádačov hrobov, Mesiac a Slnko, kopú na cintoríne s 25 náhrobkami relikvie, ktoré privolajú ich božstvo. Minca určí partiu, ktorá kope prvá: tá má v zemi 9 relikvií, druhá 8. Sedem hrobov je prázdnych a jeden patrí Smrti.</p>
+<p>Každá partia má <b>Hrobára</b>, jediného hráča, ktorý vidí pohrebný register: čo leží pod každým kameňom. Všetci ostatní kopú. Náhrobky ukazujú slová v jazyku stola alebo ceruzkové ikony.</p>`,
+    graveLoop: `<ol>
+<li><b>Znamenie.</b> V ťahu svojej partie dá Hrobár jedno slovo a jedno číslo, „Oceán · 3“: slovo, ktoré spája niekoľko hrobov jeho partie, a koľko ich je. Slovo nesmie byť na tabuli. Potom už nič nepovie.</li>
+<li><b>Kopanie.</b> Kopáči sa poradia a hlasujú na telefónoch; hrob s najviac hlasmi sa vykope (pri rovnosti rozhodne minca).</li>
+<li><b>Čo leží pod ním.</b> Relikvia vašej partie: kopte ďalej, až po číslo. Prázdny hrob alebo relikvia druhej partie (teraz patrí jej): ťah prechádza ďalej. Hrob Smrti: vaša partia okamžite prehráva.</li>
+<li><b>Zastavenie.</b> Partia môže odhlasovať, že prestane. Kto prestane pred dosiahnutím čísla, ponechá si jedno bonusové kopanie na ďalší ťah (nikdy sa nesčítava).</li>
+</ol>
+<p>Na telefóne prepínaj medzi <em>Kamene</em> (slová alebo ikony) a <em>Mapa</em> (tabuľa na prvý pohľad).</p>
+<p><b>Tri partie</b> (6–12 hráčov): Mesiac, Slnko a Hviezdy, každá tretina stola. Prvá partia skrýva 7 relikvií, ostatné po 6, s 5 prázdnymi hrobmi. Hrob Smrti vyradí partiu z hry; ostatné kopú ďalej, a keď zostane jedna partia, vyhráva.</p>`,
+    graveWin: `<ul>
+<li>Vyhráva prvá partia, ktorej sú vykopané všetky relikvie, aj keď niektoré omylom vykopala druhá partia.</li>
+<li>Partia, ktorá otvorí hrob Smrti, okamžite prehráva (pri troch partiách vypadáva).</li>
+<li>V zápase z 1, 3 alebo 5 hier: každá výhra +1. Hrobári sa medzi hrami striedajú.</li>
+</ul>`,
+    graveOpts: `<ul>
+<li><b>Počet partií:</b> dve, alebo od 6 hráčov tri.</li>
+<li><b>Na hroboch:</b> slová alebo ikony; <b>slávne mená</b> (filmy, hrdinovia, pamiatky) zapnuté alebo vypnuté.</li>
+<li><b>Partie:</b> podľa miest (presunom hráčov okolo stola meníte partiu) alebo náhodne. <b>Hrobári:</b> striedaví, náhodní alebo vybraní.</li>
+<li><b>Znamenia:</b> písané (slovo sa zobrazí na každej obrazovke) alebo vyslovené (nahlas, číslo sa ťukne). <b>Hier v zápase.</b></li>
+</ul>`,
+    mimicSetup: `<p>4–12 hráčov, asi 8 minút na hru. Všetci zdieľajú jedno tajné miesto, kartu príbehu, a hrajú tam postavu, okrem Napodobňovača, ktorý vidí len šum a tabuľu možných miest. Živí musia nájsť Napodobňovača; Napodobňovač musí prísť na miesto.</p>`,
+    mimicLoop: `<ol>
+<li><b>Otázky.</b> Kto drží lampáš, nahlas sa niekoho spýta na miesto a potom ťukne na toho, koho sa pýtal; lampáš prejde k nemu a on sa pýta ďalší. Nikdy sa nepýtaj späť toho, kto sa práve pýtal teba. Odpovedaj tak, aby ťa Živí spoznali, ale Napodobňovač sa nedozvedel miesto.</li>
+<li><b>Obvinenie.</b> Raz za hru môže každý obviniť hráča. Hodiny sa zastavia; všetci ostatní hlasujú Súhlasím alebo Nesúhlasím. Odsúdi len jednomyseľný stôl; inak hodiny bežia ďalej.</li>
+<li><b>Napodobňovač sa odhalí.</b> Kedykoľvek sa Napodobňovač môže odhaliť a povedať miesto.</li>
+<li><b>Čas vypršal.</b> Keď hodiny dobehnú (predvolene 8 minút), všetci ukážu na jedného podozrivého. Kto má najviac hlasov, je odsúdený; pri rovnosti Napodobňovač unikne.</li>
+</ol>
+<p>Počas počúvania si na telefóne škrtaj miesta: tvoje poznámky sú súkromné.</p>`,
+    mimicWin: `<ul>
+<li>Odsúďte Napodobňovača: <b>vyhrávajú Živí</b>, pokiaľ chytený Napodobňovač potom nepovie miesto a neukradne víťazstvo.</li>
+<li>Odsúďte Živého, alebo nechajte Napodobňovača uniknúť: <b>vyhráva Napodobňovač</b>.</li>
+<li>Napodobňovač povie miesto: správne, vyhráva; nesprávne, vyhrávajú Živí.</li>
+<li>V zápase (predvolene 3 hry): Živí po +1, kto chytil Napodobňovača, ešte +1; Napodobňovač +2, alebo +3 za uhádnuté miesto.</li>
+</ul>`,
+    mimicOpts: `<ul>
+<li><b>Miesta na tabuli:</b> viac miest Napodobňovačovi sťaží úlohu.</li>
+<li><b>Posledný tip:</b> chytený Napodobňovač môže ešte povedať miesto.</li>
+<li><b>Pozadie na televízore sa zaostruje:</b> možnosť pre dôveru. Televízor ukazuje pravé miesto silno rozmazané a s ubiehajúcim časom sa zaostruje. Kto otvorí odkaz na TV, mohol by ho prečítať.</li>
+<li><b>Čas na otázky, hier v zápase.</b></li>
+</ul>`,
+    omenSetup: `<p>4–12 hráčov, asi 10 minút. Každý hrá sám za seba; nie sú tu skryté strany. Okultné koleso ukazuje na jedno z troch polí: Život, Smrť a Znovuzrodenie, v tomto poradí v smere hodinových ručičiek. Každý začína s 5 Vplyvmi, viditeľnými pre všetkých.</p>`,
+    omenLoop: `<p>Sedem kôl, každé v troch krokoch:</p>
+<ol>
+<li><b>Koleso</b> ukáže, kde v tomto kole začína.</li>
+<li><b>Zapečatený hlas.</b> Tajne predpovedz, kde sa koleso zastaví, a rozhodni sa, či ho otočíš o krok späť, o krok dopredu, alebo ho necháš. Otočenie stojí jeden Vplyv; bez Vplyvu ho môžeš len nechať. Hlas môžeš meniť, kým nie sú všetci hotoví.</li>
+<li><b>Odhalenie.</b> Všetky otočenia sa sčítajú a koleso sa pohne raz, o súčet (tri kroky rovnakým smerom ho vrátia). Potom sa ukáže každá predpoveď a každé otočenie.</li>
+</ol>
+<p>Umenie je čítať stôl: kto má ešte Vplyv, kto chce koleso kde a kto ním otočí?</p>`,
+    omenWin: `<ul>
+<li>Správna predpoveď dáva 3 body. Chýbajúci hlas nič nepredpovedá a ničím neotáča.</li>
+<li>Na konci má každý nevyužitý Vplyv hodnotu 1 bodu. Vyhráva najviac bodov; pri rovnosti sa víťazstvo delí.</li>
+</ul>`,
+    omenOpts: `<p>Žiadne prepínače: len časovače pre každý krok.</p>`,
+    mirrorSetup: `<p>4–12 hráčov, asi 15 minút. Každý hrá sám za seba. Prekliate zrkadlo neukazuje tvoj odraz: ukazuje, čo si tvoji priatelia myslia, že urobíš. Osem vymyslených dilem, každá s tromi odpoveďami, A, B a C, a žiadna nie je správna.</p>
+<p>V každom kole čítaš jedného iného hráča. Dvojice sa striedajú, takže počas hry každý číta každého a každého v každom kole číta práve jeden hráč.</p>`,
+    mirrorLoop: `<ol>
+<li><b>Poraďte sa.</b> Dilema a kto koho číta sú verejné. Pýtajte sa, doberajte sa, zavádzajte.</li>
+<li><b>Zapečatený hlas.</b> Vyber svoju odpoveď a predpovedz odpoveď hráča, ktorého čítaš. Potrebné je oboje a môžeš to meniť, kým nie sú všetci hotoví.</li>
+<li><b>Zrkadlo ukáže všetko:</b> každú odpoveď a každé čítanie, správne či nesprávne.</li>
+</ol>`,
+    mirrorWin: `<ul>
+<li>Správna predpoveď dáva 2 body; tvoja vlastná odpoveď nič, takže prekvapiť svojho čitateľa je fér.</li>
+<li>Chýbajúci hlas sa zmení na náhodnú odpoveď; jej čitateľ sa aj tak hodnotí podľa nej.</li>
+<li>Vyhráva najlepší čitateľ; pri rovnosti sa víťazstvo delí.</li>
+</ul>`,
+    mirrorOpts: `<p>Okrem časovačov žiadne prepínače. Keď bude viac balíkov dilem, lobby vám dovolí vybrať, z ktorých sa osem ťahá.</p>`,
   },
 };

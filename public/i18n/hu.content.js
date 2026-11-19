@@ -283,100 +283,6 @@ export default {
     d080: ["Az utolsó gyertya is csonkig ég, és csak egyikőtök tarthatja.", "Elveszed", "Felajánlod másnak", "Közösen elfújjátok"],
   },
   guide: {
-    mimicH: "Dead Set: Utánzó",
-    mimic: `<p>Kérdezős játék 4–12 játékosnak, játékonként kb. 8 perc. Mindenki ugyanazon a <b>helyen</b> van (egy történetkártya), és ott egy <b>szereplő</b>, kivéve az <b>Utánzót</b>, aki csak zajt és a lehetséges helyek tábláját látja.</p>
-<ol>
-<li><b>Kérdések.</b> Akinél a lámpás van, hangosan kérdez bárkit a helyről, aztán rákoppint, akit kérdezett; a lámpás hozzá kerül. Azt, aki épp téged kérdezett, nem kérdezheted vissza.</li>
-<li><b>Vád.</b> Játékonként egyszer mindenkinek. Az óra megáll, és mindenki más szavaz; csak az egyhangú asztal ítél el. Ha egy Élőt ítéltek el, az Utánzó nyer.</li>
-<li><b>Az Utánzó</b> bármikor leleplezheti magát és megnevezheti a helyet: ha talál, nyer; ha nem, az Élők nyernek. Az elkapott Utánzónak még egy utolsó tipp jár.</li>
-<li><b>Lejárt az idő:</b> mindenki rámutat egy gyanúsítottra. A legtöbb szavazatot kapót elítélik; döntetlennél az Utánzó elillan.</li>
-</ol>
-<p>Hallgatás közben húzd ki a helyeket a saját telefonodon: a jegyzeteid titkosak. Pontok: az Élők +1 (aki elkapta az Utánzót, +1 még); az Utánzó +2, a hely megnevezéséért +3.</p>`,
-    omenH: "Dead Set: Az Ómen",
-    omen: `<p>Jóslós játék 4–12 játékosnak, kb. 10 perc. Egy kerék az <b>Életre</b>, a <b>Halálra</b> vagy az <b>Újjászületésre</b> mutat, ebben a sorrendben körbe. Hét kör; mindenkinek öt <b>Befolyása</b> van.</p>
-<ol>
-<li><b>A kerék</b> megmutatja, honnan indul.</li>
-<li><b>Titokban</b> megtippeled, hol áll meg, és forgathatsz rajta egyet bármelyik irányba (egy Befolyásért).</li>
-<li><b>Minden forgatás összeadódik</b>, és a kerék egyszer mozdul. A helyes tipp 3 pont.</li>
-</ol>
-<p>A végén minden fel nem használt Befolyás egy pont. A legtöbb pont nyer; holtversenyben osztoznak.</p>`,
-    mirrorH: "Dead Set: A Tükör",
-    mirror: `<p>Emberismereti játék 4–12 játékosnak, kb. 15 perc. Nyolc kitalált <b>dilemma</b>, mindegyik három válasszal; egyik sem helyes.</p>
-<ol>
-<li><b>Beszélgetés.</b> Látod, kit olvasol ebben a körben. Kérdezd, ugrasd, vezesd félre.</li>
-<li><b>Lepecsételt szavazat.</b> Válaszolsz magadért, és megtippeled annak a válaszát, akit olvasol.</li>
-<li><b>A tükör</b> mindent megmutat: a helyes tipp 2 pont, a saját válaszod semmit.</li>
-</ol>
-<p>A párok körről körre forognak, így mindenki mindenkit olvas. A legjobb olvasó nyer.</p>`,
-    graveH: "Dead Set: Sírrablók",
-    grave: `<p>Csapatjáték szavakkal (vagy ikonokkal) 4–12 játékosnak, kb. 15 perc. Két sírrabló csapat, a <b>Hold</b> és a <b>Nap</b>, egy 25 sírkőből álló temetőt ás fel az ereklyékért, amelyekkel megidézhetik istenüket. Az érmefeldobást nyerő csapatnak 9 ereklyéje van a földben, a másiknak 8; 7 sír üres, egy pedig a <b>Halálé</b>.</p>
-<ol>
-<li><b>A Sírásók.</b> Csapatonként egy. Csak ők látják a temetési lajstromot: mi fekszik minden kő alatt.</li>
-<li><b>A jel.</b> A saját körében a Sírásó egy szót és egy számot ad: <i>„Óceán · 3”</i>. A szó nem lehet a táblán. Utána egy szót sem szól.</li>
-<li><b>Az ásás.</b> A sírrablók megbeszélik, és a telefonjukon szavaznak. A legtöbb szavazat dönt; döntetlennél az érme. A ti ereklyétek: áshattok tovább, a számig. Üres sír, vagy a másik csapat ereklyéje (most már az övék): a kör továbbmegy. A Halál sírja: a csapatod azonnal veszít.</li>
-<li><b>Megállás.</b> A csapat megszavazhatja, hogy abbahagyja. Ha a szám elérése előtt áll meg, a következő körre kap egy bónusz ásást (nem halmozódik).</li>
-</ol>
-<p>Az a csapat nyer, amelyiknek előbb kerül elő minden ereklyéje. A telefonon válthatsz <b>Kövek</b> (szavak vagy ikonok) és <b>Térkép</b> (a tábla egy pillantásra) között. Az előtérben: szavak vagy ikonok, híres nevek be vagy ki, csapatok és Sírásók véletlenszerűen vagy választva, gépelt vagy kimondott jelek.</p>`,
-    seanceH: "Dead Set: Szeánsz",
-    seance: `<p>Kooperatív gyilkossági rejtély egy árulóval. 4–10 játékos, kb. 30 perc. Az egyik játékos a <b>Szellem</b>: tudja, ki ölte meg, hol és miért, de nem beszélhet. Mindenki más olvasó.</p>
-<ol>
-<li><b>A tábla.</b> Három sor történetkártya: ki, hol és miért. Minden sorban egy kártya az igazság.</li>
-<li><b>Látomások.</b> Minden körben minden olvasó kap egy sort, és a Szellem mindegyiküknek küld hozzá egy szótlan látomást: két-három rajzolt motívumot egy kártyán.</li>
-<li><b>Vita.</b> A látomások mindenki számára felfordulnak. Írjátok le őket, vitatkozzatok, győzködjetek. A Szellem hallgat, de egy <b>hideg folttal</b> bejegelhet egy látomást: ez nem az enyém.</li>
-<li><b>Gyertyák.</b> Minden olvasó gyertyát gyújt egy kártyán a sorában, vagy visszatartja. A legtöbb gyertyát kapott kártyát a szellem elé teszik. Ha igaz, a sor megfejtve. Ha nem, a kártyát kihúzzák. Minden kör leéget egy gyertyát a szeánsz órájából.</li>
-</ol>
-<p>Öt játékostól egy <b>Csaló</b> rejtőzik az olvasók között. Tudja az igazságot, és egy játékban néhányszor egy másik olvasó látomását hazugságra cseréli. Fejtsétek meg mindhárom sort, mielőtt a gyertyák leégnek, aztán nevezzétek meg a Csalót: ha jól, teljes győzelem; ha rosszul, üres győzelem, amin a Csaló is osztozik. Ha az óra leég, a Csaló nyer (ha egy sor maradt, előbb jön az <b>utolsó lehelet</b>). A végképernyő minden kört visszajátszik: az igazi látomásokat, a cseréket és a gyertyákat.</p>`,
-    midnightH: "Dead Set: Éjfél",
-    midnight: `<p>Egy éjszaka, egy szavazás, nincs második esély. 4–12 játékos, kb. 10 perc. A pakliban játékosonként egy kártya van, plusz három lefordítva az asztalon.</p>
-<ol>
-<li><b>Egy pillantás.</b> Mindenki egyszer megnézi a saját kártyáját.</li>
-<li><b>Egy éjszaka.</b> A telefonok sorban felébresztik a szerepeket: Utánzó, Halál, Összeesküvő, Ikrek, Mentalista, Kettős ügynök, Boszorkány, Szerencsejátékos, Álmatlan. Minden lépés ugyanannyi ideig tart, és akkor is lefut, ha a kártyája az asztalon fekszik, így az éjszaka semmit sem árul el. A kártyákat sötétben nézik meg és cserélik.</li>
-<li><b>Egy vita.</b> Hajnalban az vagy, ami előtted fekszik, nem amit kaptál. Beszéljétek meg.</li>
-<li><b>Egy szavazás.</b> Mindenki egyszerre mutat. A legtöbb szavazatot kapók meghalnak, ha legalább két szavazatuk van (holtversenyben mind). Ha az Önbíráskodó meghal, akire mutatott, szintén meghal.</li>
-</ol>
-<p>Az Élők nyernek, ha egy Halál meghal (vagy ha egyik játékos sem Halál, és senki sem hal meg). A Halál és az Összeesküvő nyer, ha egy Halál sem hal meg. A Bolond egyedül nyer, ha kiszavazzák. A <b>Kártyák a játékban</b> gomb megmutatja minden kártya éjszakai lépését. A végén minden kártya látszik, ahogy kiosztották és ahogy hajnalban állt, és az egész éjszaka visszajátszható.</p>`,
-    carnivalH: "Dead Set: Karnevál",
-    carnival: `<p>Álarcosbál blöffel és emlékezettel 4–12 játékosnak, a lobbiban választható. Minden maszk egy ismerős szerepkártya.</p>
-<ol>
-<li><b>A leleplezés.</b> Mindenki kap egy maszkot (4–5 játékosnál a fölösleges maszkok üres székekre kerülnek). Tíz másodpercig minden maszk látszik a tévén és minden telefonon. Jegyezd meg őket; aztán lefordulnak.</li>
-<li><b>A köröd: a három közül egy.</b> <i>Csere vagy színlelés</i>: válassz egy másik maszkot, és tartsd nyomva a Csere vagy a Színlelés gombot. A kettő egyforma, és senki, még a másik játékos sem tudja meg, melyiket választottad. <i>Bepillantás</i>: egy pillanatra megnézed a saját maszkod; mindenki látja, hogy belenéztél. <i>Állítás</i>: megnevezel egy maszkot, és használod a képességét.</li>
-<li><b>Kihívások.</b> Ha valaki állít, minden más telefon megkérdezi: <i>Ez a te maszkod?</i> Ha senki sem hív ki, az állítás áll: a képesség működik, bármit visel is valójában. Ha valaki kihív, az állító és a kihívók leveszik a maszkjukat: aki tényleg viseli, használja a képességet, a többi lelepleződött egy Lelket fizet a Perselybe.</li>
-<li><b>A nyitótánc.</b> Mindenki első köre (ha a házigazda úgy dönt, az első kettő) csak Csere vagy színlelés lehet.</li>
-<li><b>Győzelem</b> teli erszénnyel (13 Lélek), a Halál aratásával (6 Lélek Halál-állításokkal learatva), vagy abban a pillanatban, amikor valaki 0-ra fogy, a leggazdagabbként.</li>
-</ol>
-<p>Bármikor koppints a <b>Maszkok a bálban</b> gombra: minden játékban lévő maszk a képességével, leírva és jelek sorával is (érme a Lelkeknek, ajándék a Perselynek, kasza az Aratásnak, szem a betekintésnek, keresztezett nyilak a cserének). <b>A bálnapló</b> (jegyzetek) alapból ki van kapcsolva: amit láttál, fejben tartod. A házigazda a lobbiban bekapcsolhatja.</p>
-<p>A pontok játékról játékra öröklődnek: a győztes +3, mindenki más +1 minden 6 fölötti Lélekért.</p>`,
-    coffinsH: "Dead Set: Koporsók",
-    coffins: `<p>Gyors blöffjáték 3–10 játékosnak, a lobbiban választható. Mindenkinél 3 Arany koporsó és egy Átok van (a hosszabb változatban 4 és egy).</p>
-<ol>
-<li><b>A temetés.</b> Mindenki egyszerre, titokban eltemet egy koporsót: koppints rá, majd az Eltemetem gombra. Aztán a kör első játékosától kezdve a körödben vagy eltemetsz még egy koporsót a halmod tetejére, vagy kihívást teszel: <i>„Ki tudok nyitni N-et”</i>, legfeljebb annyit, ahány összesen el van temetve.</li>
-<li><b>A licit.</b> Körben mindenki emel vagy passzol. A passz az egész körre szól. Az utolsó licitáló lesz az Ásó.</li>
-<li><b>Az ásás.</b> Az Ásó előbb a saját koporsóit nyitja ki felülről lefelé, aztán más sírokat választ, mindig a legfelső koporsót, amíg N nyitva nincs.</li>
-<li><b>Tiszta vagy átkozott.</b> Csupa Arany: tiszta ásás, a sírkő bearanyozódik. Átok a saját sírodban: te választod ki, melyik koporsót veszíted el. Más átka: ő vakon húz egyet a koporsóid közül, és az elvész. Az átok gazdája kezdi a következő kört.</li>
-<li><b>Győzelem</b> a tiszta ásásaiddal (alapból 2; a lobbiban 1 vagy 3), vagy ha egyedül neked maradt koporsód.</li>
-</ol>
-<p><b>A Halál koporsója</b> (alapból bekapcsolva): minden körben egy rejtett játékosnál van, egy Arany helyett. Ha kiásod, az ásás elbukik, és a gazdája ellop tőled egy koporsót, ami Arannyá válik. <b>Szellemfogadások</b> (alapból bekapcsolva): akinek elfogyott a koporsója, minden ásásra Aranyra vagy Átokra fogad; három talált után Visszajáróként feltámad egy Arany koporsóval. <b>Ereklyék</b> (alapból kikapcsolva): titkos Lámpás (belesel egy sírba), Kulcs (előbb más sírját nyitod ki) vagy Oltalom (az átok nem kerül semmibe), mindegyik egyszer használható.</p>
-<p>A pontok játékról játékra öröklődnek: a győztes +3, minden tiszta ásás +1, minden feltámadás +1.</p>`,
-    exorcismH: "Dead Set: Ördögűzés",
-    exorcism: `<p>Blöffölős szójáték 3–12 játékosnak, a lobbiban választható. Minden telefonon az asztal nyelve szól, hogy a szavak egyezzenek.</p>
-<ol>
-<li><b>A kristálygömb.</b> Mindenki látja a kategóriát. Az Élők a jelszót is látják; a Démon (egy, 7 játékostól kettő) nem, legfeljebb halvány súgást kap, ha a házigazda engedi.</li>
-<li><b>A sorsolás.</b> Sorsolás dönti el, ki kezd; utána ülésrendben körbe megy a szó.</li>
-<li><b>Mindenki egy szót.</b> Amikor rád kerül a sor, mondj egy szót, ami a jelszóhoz kapcsolódik, aztán tartsd nyomva a gombot a telefonodon. Bizonyítsd, hogy tudod, de ne add a Démon kezébe. Kérésre a szavakat be is gépelitek, és megjelennek a tévén.</li>
-<li><b>Nevezzétek meg a Démont.</b> Beszéljétek meg, aztán mindenki szavaz. Ha egy Élőt neveztek meg (vagy döntetlen, hacsak nincs érme), a Démon nyer.</li>
-<li><b>Egy utolsó tipp.</b> A lebukott Démon egyszer tippelhet a jelszóra, a 4×4-es szórácsból vagy begépelve. Ha eltalálja, mégis ő nyer.</li>
-</ol>
-<p>A kör végén ugyanabba a lobbiba kerültök vissza, ugyanazokkal a beállításokkal, és a pontok megmaradnak: győzelemért az Élők +1, a Démonok +2.</p>`,
-    missionsH: "Dead Set: Küldetések",
-    missions: `<p>Egy második mód 5–12 játékosnak, a váróban választható. Senki sem hal meg: a Halál beférkőzött az expedícióba, és az asztalnak meg kell találnia.</p>
-<ol>
-<li><b>A küldetéskártya.</b> Minden küldetés egy kártya húzásával kezdődik, még a csapat kiválasztása előtt. A legtöbb <i>Szokásos küldetés</i>; néha egy kártya megváltoztatja a csapatot, a szavazást vagy a felfedést. Az egész küldetésre érvényes.</li>
-<li><b>A javaslat.</b> A Küldetésvezető (a lámpás) a megadott méretű csapatot választ.</li>
-<li><b>A csapatszavazás.</b> Mindenki titokban elfogad vagy elutasít; a szavazatok egyszerre, nevekkel derülnek ki. Többség esetén a csapat elindul. Különben a balra következő játékos javasol. Az ötödik javaslat a szavazástól függetlenül indul.</li>
-<li><b>A küldetés.</b> Minden csapattag titokban kijátszik egy kártyát. Az Élők csak Sikert játszhatnak; a Halál Sikert vagy Szabotázst. Egy Szabotázs elbuktatja a küldetést (7 játékostól a 4. küldetésnél kettő). A kártyákat megkeverik, és egyenként fordítják fel.</li>
-<li><b>Az éjszakai szünet.</b> Mindenki választ egy titkos Gyanút. A 2., 3. és 4. küldetés után a Gyertya birtokosa megtudja egy játékos oldalát, és a Gyertya hozzá kerül. Hajnalban nyomok érkezhetnek.</li>
-</ol>
-<p><b>A vég.</b> Három siker: a Halál leleplezi magát, és a Kaszás megnevezi a Médiumot. Ha eltalálja, a Halál győz; ha nem, az Élők. Három kudarc: az Utolsó Esély. Mindenki megnevez egy játékost. Ha az egy Élő, a Halál győz; ha elkapjátok a Halált, a Kaszás akkor is megkapja az Elszámolást.</p>`,
     missionCardsH: "Küldetéskártyák",
     sidesH: "Más oldalak és fordulatok",
     sides: `<p>Választhatók, a váróban kapcsolhatók be (vagy egyéni játékban a szerepszámlálókkal adhatók hozzá). A város csak akkor győz, ha a Halál, a Szekta és a Hasfelmetsző is eltűnt.</p>
@@ -388,19 +294,9 @@ export default {
 <li><b>Pénzfeldobás döntetlennél</b> (választható): az élen kialakult döntetlent pénzfeldobás dönti el, ahelyett hogy mindenki megmenekülne.</li>
 <li><b>Nyílt szavazás</b> (szabálykártya): minden szavazat azonnal nyilvános.</li>
 </ul>`,
-    kicker: 'A szabályok, v1.0',
     title: 'Hogyan<br><i>játssz.</i>',
-    intro: 'A legtöbben túl akartok élni. Néhányan közületek a Halál. Senki sem tudja, ki kicsoda — kivéve a Halált, aki ismeri a társait.',
     toc: ['Alapok', 'Egy kör', 'Győzelem', 'Alapszerepek', 'Kiegészítő szerepek', 'Teljes pakli', 'Álmok', 'Szabálykártyák', 'Módok', 'Éjszakai sorrend', 'Telefonok'],
     basicsH: 'Az alapok',
-    basics: `<p>A Dead Set társasági dedukciós partijáték 5–13 játékosnak. Mindenki a saját telefonjáról lép be ugyanabba a szobába, és titkos <b>szerepet</b> kap. A legtöbb szerep a <b>nem-Halál</b> frakcióhoz tartozik; egy vagy több játékos titokban a <b>Halál</b>.</p>
-<ul>
-<li>A <b>szerepek</b> az egész meccsre szólnak: a hovatartozásod és a képességed.</li>
-<li>Az <b>Álmok</b> egyéjszakás hatások: az 1. éjszakától minden élő játékos titokban húz egyet minden éjjel.</li>
-<li>A <b>szabálykártyák</b> (1–3, a beállításkor húzva) az egész meccset meghajlítják — dupla gyilkosság, súlyozott szavazatok, szavazó szellemek.</li>
-<li>A <b>történet</b> (KI / HOL / MIÉRT) tiszta mesélés. Soha nem változtat a szabályokon.</li>
-</ul>
-<p>Mondhatsz igazat a szerepedről, hazudhatsz, vagy hallgathatsz. Soha ne mutasd meg a képernyődet. Az alkalmazás a mesélő: senkinek sem kell kimaradnia, és a házigazda sem lát több titkot, mint bárki más.</p>`,
     roundH: 'Egy kör',
     round: `<ol>
 <li><b>0. éjszaka — a felfedés.</b> Fordítsd meg a szerepkártyádat, olvasd el, koppints a <em>Értem</em> gombra. Más nem történik: nincs gyilkosság, Álom vagy képesség. A Halál-játékosok látják a társaikat.</li>
@@ -436,8 +332,6 @@ export default {
     dreamsNote: `Egyes Álmok ritkábbak, mint mások, és az Álmatlanság egy meccsen legfeljebb kétszer fordul elő; Egyéni módban minden Álom gyakorisága állítható. Az Álomrablók cseréi az alkony alatt történnek, mielőtt az akciók megnyílnak, ülésrendben, mindenkinél egyszer. Az a kártya számít, amelyik végül nálad van.`,
     rulesH: 'Szabálykártyák',
     rulesP: 'A beállításkor 1–3 kártyát húzunk (vagy választunk), és ezek az egész meccs alatt érvényesek. Egyesek csak becsületbeli szabályként működnek, ha egy szobában játszotok.',
-    modesH: 'Módok',
-    modesTh: ['Mód', 'Játékosok', 'Mi változik'],
     countsH: 'Szerepek száma',
     countsTh: ['Játékosok', 'Halál', 'Ártatlan', 'Őrző · Mentalista · Pszichopata', 'Kiegészítő'],
     modesNote: 'A Klasszikus / Tanuló mód a kiegészítő helyeket Ártatlanokkal tölti fel. Az, hogy egy szobában vagy távolról játszotok, csak a lebonyolítás módja, nem másik játék: távoli módban asztali csevegés is van (és A háború ködénél szomszédsuttogás).',
@@ -454,15 +348,259 @@ export default {
 <li><b>Összekötött sorsok.</b> A Szajhák meghalnak a meglátogatott Halál-áldozattal; a Közös rémálom és az Alvajárás viselői a társukkal halnak. Összekötött halált csak a feltámasztás vagy az Őrangyal akadályoz meg. Ezután lejár a kölcsönidő.</li>
 <li><b>Hajnal.</b> A túlélők megkapják a privát jelentéseiket. A nyilvánosság csak azt tudja meg, ki halt meg.</li>
 </ol>`,
-    phonesH: 'Játék telefonon',
-    phones: `<ul>
-<li>A házigazda létrehoz egy szobát, és megosztja a hatkarakteres kódot vagy a QR-kódot. Mindenki más megnyitja a linket, beírja a nevét, és a <em>Kész</em> gombra koppint.</li>
-<li>A helyed a böngésződhöz kötődik. Ha lemerül egy telefon, a házigazda a vezérlőiből egyszer használatos <b>visszaállítási kódot</b> adhat; ha ezt egy új eszközön beírod, a helyed átkerül oda, a régi eszköz pedig kijelentkezik.</li>
-<li>A házigazda telefonja egy átlagos játékostelefon néhány extra gombbal: fázis léptetése, +30 másodperc, meccs vége. A házigazda nem látja a szerepeket, az Álmokat és a szavazatokat.</li>
-<li>Egy <b>nyilvános tábla</b> (titkok nélkül) TV-n is megjeleníthető: nyisd meg a <span class="mono">/board/KÓD</span> címet.</li>
-<li>Ha valaki vezetné az asztalt és mindent látna, hozd létre a szobát <b>megbízható moderátorként</b>. Ő nem kaphat helyet, és erről mindenki tud.</li>
-<li>Mindenki maga választja a nyelvét a nyelvi gombbal a kezdőképernyőn, a meghívón vagy a szoba menüjében. Az asztal alapértelmezett nyelvét a házigazda állítja be az előtérben.</li>
-<li>A NÉMA, A háború köde és az Átkozott csend személyesen becsületbeli szabályok. Távoli játékban a csevegés kikényszeríti őket.</li>
+    kicker: "A szabálykönyv",
+    intro: "A Dead Set egy szobára szánt társasjáték-család. Mindenki a saját telefonján játszik; a tévé, ha van, a közös színpad. Válasszatok játékot, olvassátok el a fejezetét, és játsszatok.",
+    aboutH: "Mi a Dead Set",
+    about: `<p>A Dead Set társas játékok gyűjteménye (rejtett szerepek, blöff, szójátékok, jóslás), amelyek egy asztalon osztoznak. Minden játék ugyanúgy működik: mindenki <b>telefonja privát képernyő</b>, amely csak azt mutatja, amit az adott játékos tudhat, és az alkalmazás a mesélő, így senkinek sem kell kimaradnia, hogy vezesse a játékot.</p>
+<ul>
+<li><b>Nincs telepítés.</b> Böngészőben fut. Hatjegyű kóddal, linkkel vagy QR-kóddal lehet csatlakozni.</li>
+<li><b>3–25 játékos</b>, a játéktól függően. Minden fejezet megadja a létszámot és a hosszt.</li>
+<li><b>A tévé nem kötelező, de úgy a legjobb.</b> Mutatja az asztalt, a jeleneteket, a pontokat, és szól a zene. Titkot soha nem mutat.</li>
+<li><b>Hét nyelv.</b> Mindenki a sajátját választja; a szójátékok minden telefonon az asztal nyelvét használják, hogy a szavak egyezzenek.</li>
+<li><b>Egy asztal, sok játék.</b> A körök között a lobbyban válthattok játékot; egy meccsen belül a pontok megmaradnak.</li>
 </ul>`,
+    tableH: "Asztal nyitása",
+    table: `<ol>
+<li><b>Asztal nyitása.</b> A házigazda az <em>Asztal nyitása</em> gombra koppint, megad egy nevet, és kap egy hatjegyű szobakódot.</li>
+<li><b>Meghívás.</b> Osszátok meg a kódot, a linket vagy a QR-kódot. A többiek a <em>Csatlakozás</em> gombra koppintanak (vagy megnyitják a linket), megadnak egy nevet, és választanak portrét.</li>
+<li><b>Kapcsoljátok be a tévét.</b> Koppintsatok a <em>TV-tábla</em> gombra a lobbyban, vagy nyissátok meg a szobát a tévé böngészőjében, és válasszátok a <em>TV-asztal megnyitása</em> lehetőséget. Egyszerre több képernyő is mutathatja az asztalt.</li>
+<li><b>Helyek.</b> A játékosok a csatlakozás sorrendjében ülnek körbe. A házigazda egy helyre koppintva áthelyezhet vagy eltávolíthat valakit.</li>
+</ol>
+<p>A helyed a böngésződhöz kötődik. Ha lemerül a telefon, a házigazda a szoba menüjéből egyszer használatos visszaállító kódot adhat; az új telefonon válaszd a <em>Helyem visszaállítása</em> lehetőséget, add meg a kódot, és a helyed (a titkaival együtt) átköltözik. A kiesett telefon megtartja a helyét, és visszatéréskor utoléri a többieket.</p>
+<p>Ha valaki vezetni szeretné a játékot és mindent látni, nyissátok a szobát <b>megbízható moderátorral</b>. A moderátornak nincs helye az asztalnál, és erről mindenki értesül.</p>`,
+    setupH: "Egy játék beállítása",
+    setup: `<p>A lobby minden játéknál ugyanazokon a számozott lépéseken vezeti végig a házigazdát. A vendégek ugyanezeket a lépéseket látják, csak olvasásra.</p>
+<ol>
+<li><b>A játék.</b> Válasszatok egyet, családok szerint csoportosítva: Rejtett hűség, Gazdát cserélő kártyák, Emberismeret, Jelek és rejtvények, Blöff és tét.</li>
+<li><b>Így működik.</b> Négy-öt képes lépés: az egész játék egy pillantásra.</li>
+<li><b>A pakli.</b> Mit osztanak ennél a létszámnál: szerepeket, maszkokat, kártyákat vagy helyszíneket. Frissül, ahogy a játékosok csatlakoznak.</li>
+<li><b>Szabályok.</b> A játék saját kapcsolói. Az alapbeállítások jó első játékot adnak.</li>
+<li><b>Az asztal.</b> Az asztal nyelve, a zene és a stílusa, a hátterek, és (ahol számít) hogy egy szobában vagy távolról, csevegéssel játszotok.</li>
+<li><b>Időzítők.</b> Mennyi ideig tart egy-egy lépés. Összecsukva; az alapértékek a legtöbb asztalnak megfelelnek.</li>
+</ol>
+<p>Mindenki a <b>Kész</b> gombra koppint, ha elolvasta a beállításokat, és a házigazda elindítja a játékot. A beállítások gondjai (például túl kevés játékos egy szerephez) megjegyzésként jelennek meg a lépések alatt.</p>`,
+    playH: "Így megy minden játék",
+    play: `<ul>
+<li><b>Soha ne mutasd a képernyődet.</b> A telefonod a szerepedet, a kártyáidat és a döntéseidet mutatja. Minden mást hangosan mondunk, vagy a tévén látszik.</li>
+<li><b>Közös jelenetek.</b> A nagy pillanatok (egy leleplezés, a szavazatszámlálás, az éjszaka) minden telefonon és a tévén ugyanakkor, ugyanannyi ideig futnak. Nem lehet átugrani őket, és közben nem jár az időzítő.</li>
+<li><b>Játékos választása:</b> koppints a helyére az asztal körén. A választható hely lüktet; a választásod pergamenszínű lesz.</li>
+<li><b>Megerősítés:</b> a legtöbb döntés egy koppintás, és a lépés végéig módosítható. A lepecsételt döntések (egy szavazat, egy képpel lefelé kijátszott kártya) <b>nyomva tartást</b> kérnek: tartsd rajta az ujjad, amíg a pecsét bezárul.</li>
+<li><b>A fejléc</b> megnevezi a játék aktuális lépését és sorszámát (II. éjszaka, 3. küldetés, 4. kör…), a hátralévő idővel.</li>
+<li><b>Az asztal alatt:</b> <em>A kártyám</em> (a szereped, bármikor), a játék összefoglaló lapja, a privát <em>Jegyzetek</em> és a <em>Történet</em>, ahol a játékban van ilyen.</li>
+<li><b>Időzítők.</b> Ha lejár az idő, amit nem adtál le, passz vagy tartózkodás lesz. A házigazda a szoba menüjéből adhat 30 másodpercet, továbbléphet, vagy befejezheti a játékot.</li>
+<li><b>Értesítések</b> arról, mit tettek épp a többiek, egy pillanatra a fejlécben jelennek meg.</li>
+<li><b>Becsületszabályok.</b> Néhány szabályt (hallgatás, elnémított játékosok) csak maga az asztal tud betartani. Távoli játékban a csevegés tartatja be őket.</li>
+</ul>`,
+    afterH: "Egy játék után",
+    after: `<p>A záróképernyő megnevezi a győzteseket, felfed minden titkot, és a legtöbb játékban visszajátssza, mi történt valójában. Lapozd végig a visszatekintést a saját tempódban.</p>
+<p>Sok játékot <b>meccsként</b> játszotok, 1, 3 vagy 5 játékból: a pontok megmaradnak, és az asztal ugyanazokkal a beállításokkal visszatér ugyanabba a lobbyba, mindenki készen a következőre. A lobbyban a házigazda másik játékra is válthat; az asztal, a helyek és a portrék maradnak.</p>`,
+    hSetup: "Előkészítés",
+    hCast: "A szereplők",
+    hLoop: "Egy játék menete",
+    hWin: "Győzelem és pontok",
+    hOpts: "Beállítások a lobbyban",
+    classicP: "Az eredeti Dead Set: rejtett szerepek, éjszakai gyilkosságok és titkos szavazás nappal. Legtöbben túl akartok élni. Néhányan a Halál vagytok. Senki sem tudja, ki kicsoda — kivéve a Halált, aki ismeri a társait.",
+    presetsH: "Változatok",
+    modesTh: ['Változat', 'Játékosok', 'Mi változik'],
+    classicSetup: `<p>5–13 játékos (saját paklival 25-ig). Mindenki kap egy titkos <b>szerepet</b>. A legtöbb szerep a <b>nem-Halál</b> oldalhoz tartozik; egy vagy több játékos titokban a <b>Halál</b>, és a Halál játékosai ismerik egymást. Éjszaka és nappal váltakozik, amíg az egyik oldal nem nyer.</p>
+<ul>
+<li><b>Szerepek:</b> ki vagy az egész játék alatt: az oldalad és a képességed.</li>
+<li><b>Álmok:</b> egy éjszakára szóló hatások: az 1. éjszakától minden élő játékos titokban húz egyet minden éjjel.</li>
+<li><b>Szabálykártyák</b> (1–3, a beállításkor húzva) az egész játékot hajlítják: dupla gyilkosság, súlyozott szavazatok, szavazó szellemek.</li>
+<li><b>A történet</b> (KI / HOL / MIÉRT) csak mesélés. Soha nem változtat szabályon.</li>
+</ul>
+<p>Mondhatsz igazat a szerepedről, hazudhatsz, vagy hallgathatsz. A házigazda ugyanúgy játszik, mint bárki, és nem lát több titkot.</p>`,
+    missionsSetup: `<p>5–12 játékos. Senki sem hal meg: a Halál beférkőzött az expedícióba, és az asztalnak meg kell találnia, mielőtt ő megtalálja a Médiumot. Mindenki titkos szerepet kap. A Halál játékosai látják egymást (kivéve a Kóborlót); az Élők csak magukat ismerik, a Médium pedig megérzi, ki a Halál.</p>
+<p>Az asztal öt küldetést játszik. Minden küldetéshez adott méretű csapat kell (a lobbyban és a tévén látható); 7 játékostól a 4. küldetéshez két Szabotázs kell a kudarchoz.</p>`,
+    missionsLoop: `<ol>
+<li><b>A küldetéskártya.</b> Minden küldetés egy kártyával kezdődik. A legtöbb szokványos; néha egy megváltoztatja a csapatot, a szavazást vagy a felfedést erre a küldetésre.</li>
+<li><b>A javaslat.</b> A Küldetésvezető (nála van a lámpás) a körön játékosokra koppintva tölti fel a csapatot.</li>
+<li><b>A csapatszavazás.</b> Mindenki titokban nyomva tartja az Elfogad vagy az Elutasít gombot. A szavazatok egyszerre fordulnak meg, névvel. Többség esetén a csapat indul; különben a lámpás a következő játékoshoz kerül. Egy küldetés ötödik javaslata a szavazástól függetlenül indul.</li>
+<li><b>A küldetés.</b> Minden csapattag képpel lefelé kijátszik egy kártyát. Az Élők csak Sikert játszhatnak; a Halál Sikert vagy Szabotázst. A kártyákat megkeverik és egyenként felfordítják: egy Szabotázs elbuktatja a küldetést.</li>
+<li><b>Az éjszakai közjáték.</b> Mindenki rögzít egy titkos Gyanút arról, ki a Halál. A 2., 3. és 4. küldetés után a Gyertya birtokosa megtudja egy játékos oldalát, és a Gyertya hozzá kerül. Bekapcsolt Nyomokkal hajnalban igaz utalás érkezhet.</li>
+</ol>`,
+    missionsWin: `<ul>
+<li><b>Három siker:</b> a Halál leleplezi magát, és a Kaszás megnevezi, kit tart Médiumnak (a Halál előtte tanakodhat). Ha eltalálja, a Halál nyer; ha nem, az Élők.</li>
+<li><b>Három kudarc:</b> az Utolsó Esély. Mindenki megnevez egy játékost. Ha az asztal egy Élőt nevez meg, a Halál nyer; ha elkapja a Halált, a Kaszás akkor is megkapja az Elszámolást: ha megtalálja a Médiumot, a Halál ellopja a győzelmet.</li>
+<li><b>A Mellékküldetések</b> az Utolsó Esélyben leadott szavazatod súlyát módosítják: dupla, ha teljesítetted, fele, ha elbuktad.</li>
+<li>A Bolond, ha játékban van, egyedül nyer, ha az Utolsó Esélyben vagy a Kaszás őt nevezi meg.</li>
+</ul>`,
+    missionsOpts: `<ul>
+<li><b>Szerepek:</b> a Hívő, a Sarlatán, a Fátylas, a Kóborló, a Sírásó és a Bolond be- vagy kikapcsolása, és az Ikrek hozzáadása.</li>
+<li><b>Mellékküldetések:</b> mindenkinek egy titkos személyes cél.</li>
+<li><b>A következő Küldetésvezető:</b> a sorban következő, vagy akit az előző vezető választ.</li>
+<li><b>Küldetéskártyák:</b> ki, ritkán vagy néha.</li>
+<li><b>Nyomok:</b> ritkán, időnként vagy gyakran.</li>
+<li><b>Történet:</b> véletlen KI / HOL / MIÉRT, vagy a sajátotok.</li>
+</ul>`,
+    exorcismSetup: `<p>3–12 játékos, körönként 5–10 perc. Az Élők ismerik a titkos jelszót, amely kiűzné a köztük rejtőző Démont; a Démon nem ismeri. Mindenki látja a kategóriát. A szavak minden telefonon az asztal nyelvén jelennek meg, hogy egyezzenek.</p>`,
+    exorcismLoop: `<ol>
+<li><b>A kristálygömb.</b> Koppints rá, hogy belenézz: a kategória és (ha Élő vagy) a jelszó. A Démon csak a kategóriát látja, és blöffölnie kell.</li>
+<li><b>A sorsolás.</b> Sorsolás dönti el, ki kezd; aztán ülésrendben megy körbe.</li>
+<li><b>Mindenki egy szót.</b> A körödben mondj egy szót, amely a jelszóhoz kapcsolódik, aztán tartsd nyomva a gombot a telefonodon. Bizonyítsd, hogy ismered, anélkül hogy a Démon kezére játszanád. A lobbytól függően a szavak egyszer vagy többször mennek körbe, és be is gépelhetők, ekkor a tévén is látszanak.</li>
+<li><b>Nevezzétek meg a Démont.</b> Beszéljétek meg, aztán mindenki egy játékosra szavaz.</li>
+<li><b>Egy utolsó tipp.</b> Az elkapott Démon megnevezheti a jelszót, a szórácsból vagy begépelve.</li>
+</ol>`,
+    exorcismWin: `<ul>
+<li>A szavazás egy Élőt nevez meg, vagy döntetlen (hacsak nem érme dönt): <b>a Démon nyer</b>.</li>
+<li>A szavazás a Démont nevezi meg: <b>az Élők nyernek</b>, hacsak a Démon ezután ki nem találja a jelszót, és el nem lopja a győzelmet.</li>
+<li>A pontok körről körre gyűlnek: minden Élő +1 győzelemért, minden Démon +2.</li>
+</ul>`,
+    exorcismOpts: `<ul>
+<li><b>Démonok:</b> egy, vagy 7 játékostól kettő; két Démon ismerheti egymást, vagy nem.</li>
+<li><b>Egy utolsó tipp:</b> be vagy ki.</li>
+<li><b>Döntetlen szavazás:</b> a Démon megmenekül, vagy érme dönt.</li>
+<li><b>Szórács:</b> 16 szó a tévén és a telefonokon; a jelszó az egyik.</li>
+<li><b>Körök:</b> hányszor mennek körbe a szavak. <b>Szavak begépelése:</b> a tévén is látszanak.</li>
+<li><b>Kategóriák:</b> mely szólistákból húzzon.</li>
+</ul>`,
+    coffinsSetup: `<p>3–10 játékos, gyors játék. Mindenki magáért játszik, és négy koporsója van: három Arany és egy Átok (a hosszabb változatban öt: négy Arany, egy Átok). A koporsóid mindenki más elől rejtve vannak.</p>`,
+    coffinsLoop: `<ol>
+<li><b>A temetés.</b> Mindenki egyszerre, titokban eltemet egy koporsót: koppints egy koporsóra, aztán az Eltemetem gombra. A sírod egy halom, a legújabb felül.</li>
+<li><b>Temetés vagy kihívás.</b> A kör első játékosától kezdve a körödben vagy újabb koporsót temetsz a halmod tetejére, vagy kihívást teszel: „Ki tudok nyitni N-et”, legfeljebb annyit, ahány koporsó összesen el van temetve.</li>
+<li><b>A licit.</b> Körben mindenki emel vagy passzol. A passz az egész körre szól. Az utolsó licitáló lesz az Ásó.</li>
+<li><b>Az ásás.</b> Az Ásó előbb a saját koporsóit nyitja ki, felülről lefelé, aztán más sírokat választ, mindig a legfelső koporsót, amíg N koporsó nyitva nincs. Minden koporsó a tévén fordul meg.</li>
+<li><b>Az eredmény.</b> Csupa Arany: tiszta ásás, és a sírköved aranyozott lesz. Átok a saját sírodban: választasz egy koporsót, amelyet elveszítesz. Más Átka: vakon húz egyet a koporsóid közül, és az elvész; az Átok gazdája kezdi a következő kört.</li>
+</ol>`,
+    coffinsWin: `<ul>
+<li>Nyersz két tiszta ásással (a lobbyban 1 vagy 3), vagy ha te maradsz az utolsó, akinek van koporsója.</li>
+<li>Egy meccsen: a győztes +3, minden tiszta ásás +1, minden feltámadás +1.</li>
+</ul>`,
+    coffinsOpts: `<ul>
+<li><b>A Halál koporsója</b> (alapból be): minden körben egy rejtett játékosnál van egy Arany helyett. Ha kiásod, az ásás elbukik; a gazdája ellopja egy koporsódat, amely Arannyá válik.</li>
+<li><b>Szellemfogadások és Visszajárók</b> (alapból be): a koporsó nélküli játékosok minden ásásra Aranyra vagy Átokra fogadnak; háromszor eltalálják, és egy Arany koporsóval feltámadnak.</li>
+<li><b>Ereklyék</b> (alapból ki): titkos Lámpás (bepillantás egy sírba), Kulcs (más sírt nyithatsz a sajátod előtt) vagy Oltalom (egy átok semmibe sem kerül), mindegyik egyszer használható.</li>
+<li><b>Tiszta ásások a győzelemhez, koporsók játékosonként, játék meccsenként.</b></li>
+</ul>`,
+    carnivalSetup: `<p>4–12 játékos. Mindenki magáért játszik. Minden maszk egy ismert Dead Set-szerep, mindegyiknek képessége van. Mindenki 6 Lélekkel kezd; a Persely, a tál az asztal közepén, kezdetben üres. 4–5 játékosnál két plusz maszk üres székeken ül: részt vesznek a bálban, de soha nem cselekszenek.</p>
+<p><b>A leleplezés:</b> néhány másodpercig minden maszk felfordítva látszik a tévén és minden telefonon. Jegyezzétek meg őket; aztán lefordulnak. Sorsolás választja ki az első táncost, és óramutató szerint megy tovább.</p>`,
+    carnivalLoop: `<p>A körödben a három dolog egyikét teszed:</p>
+<ul>
+<li><b>Csere vagy színlelés.</b> Válassz egy másik maszkot (játékost vagy üres széket), aztán tartsd nyomva a Csere vagy a Színlelés gombot. A két gomb ugyanúgy néz ki, és senki, még a másik játékos sem tudja meg, melyiket választottad.</li>
+<li><b>Bepillantás.</b> Egy pillanatra megnézed a saját maszkodat. Mindenki látja, hogy belenéztél.</li>
+<li><b>Állítás.</b> Megnevezel egy maszkot, „Én vagyok a Bíró”, és használod a képességét.</li>
+</ul>
+<p><b>Kihívások.</b> Ha valaki állít, minden más telefon megkérdezi: <em>Ez a te maszkod?</em> Ha senki sem hív ki, az állítás áll, és a képesség működik, bármit visel is valójában az állító. Ha valaki kihív, az állító és minden kihívó felemeli a maszkját: aki tényleg viseli, használja a képességet, a többi lelepleződött egy Lelket (vagy a lobby szerint többet) fizet a Perselybe.</p>
+<p><b>A nyitótánc.</b> Minden játékos első köre (vagy kettő, ha a házigazda így dönt) Csere vagy színlelés kell legyen, így a maszkok már kétségesek, mielőtt bárki állítana.</p>`,
+    carnivalWin: `<ul>
+<li><b>Teli erszény:</b> 13 Lélek (vagy a lobby száma), és azonnal nyersz.</li>
+<li><b>A Halál aratása:</b> aki Halál-állításokkal 6 Lelket aratott, nyer.</li>
+<li><b>Csőd:</b> amint valaki 0 Lélekre csökken, a leggazdagabb nyer (egyenlőségnél a nagyobb aratás).</li>
+<li>Egy meccsen: a győztes +3, mindenki más +1 minden 6 feletti Lélekért.</li>
+</ul>`,
+    carnivalOpts: `<ul>
+<li><b>Maszkok:</b> az ajánlott készlet nő az asztallal; vagy állítsátok össze magatok, helyenként egy maszkot (a Halál kötelező; csak az Ártatlan ismétlődhet).</li>
+<li><b>Teli erszény, a Halál aratása, büntetés téves állításért, a nyitótánc, játék meccsenként.</b></li>
+<li><b>Jegyzetek (a báli napló):</b> alapból ki, hogy fejben tartsátok, amit láttatok.</li>
+</ul>
+<p>Bármikor koppints a <em>Maszkok a bálban</em> gombra: minden játékban lévő maszk és a képessége, jelek soraként megrajzolva.</p>`,
+    midnightSetup: `<p>4–12 játékos, kb. 10 perc. Egy éjszaka, egy szavazás, nincs második esély. A pakliban játékosonként egy kártya van, plusz három képpel lefelé az asztalon (az üres székek). A pakli nyilvános; hogy kinél mi van, az nem. Mindenki egyszer, az osztáskor látja a saját kártyáját.</p>
+<p>A kártyák a sötétben gazdát cserélnek. <b>Hajnalban az vagy, ami előtted fekszik</b>, nem az, amit kaptál.</p>`,
+    midnightLoop: `<ol>
+<li><b>Az osztás.</b> Egyszer megnézed a kártyádat.</li>
+<li><b>Az éjszaka.</b> A telefonok sorban felébresztik a szerepeket: Utánzó, Halál, Összeesküvő, Ikrek, Mentalista, Kettős ügynök, Boszorkány, Szerencsejátékos, Álmatlan. Minden lépés ugyanannyi, 10 másodperc, és akkor is lefut, ha a kártyája az asztalon fekszik, így az éjszaka semmit sem árul el. Csak az kap vezérlőket, aki azt a kártyát kapta; minden más telefon azt mondja, maradjon csukva a szemed. A Szerencsejátékos, ha nem tesz semmit, egy véletlen asztali kártyával cserél.</li>
+<li><b>A nappal.</b> Egy vita (alapból 5 perc): állíts, vádolj, hazudj. A kártyák vándorolhattak; ne bízz senkiben, még magadban sem. A házigazda korábban is megnyithatja a szavazást.</li>
+<li><b>A szavazás.</b> Mindenki egyszerre mutat egy másik játékosra. A legtöbb szavazatot kapott meghal, ha az legalább kettő; holtversenynél minden holtversenyes meghal. Ha az Önbíráskodó hal meg, az is meghal, akire mutatott.</li>
+</ol>`,
+    midnightWin: `<ul>
+<li>Az oldalakat a hajnali kártyák döntik el (az Utánzó a lemásolt szerepnek számít).</li>
+<li><b>Az Élők</b> nyernek, ha legalább egy Halál meghal; ha nincs Halál a játékosok között, akkor ha senki sem hal meg.</li>
+<li><b>A Halál és az Összeesküvő</b> nyer, ha egy Halál sem hal meg (és a Bolond sem halt meg).</li>
+<li><b>A Bolond</b> egyedül nyer, ha kiszavazzák. Több oldal is nyerhet együtt.</li>
+<li>Egy meccsen: minden győztes +1, a Bolond +2. A záróképernyő minden kártyát megmutat osztáskor és hajnalban, és visszajátssza az éjszakát.</li>
+</ul>`,
+    midnightOpts: `<ul>
+<li><b>Kártyák:</b> az ajánlott pakli nő az asztallal; vagy válasszátok ki magatok (Halál 1–2, Ikrek 0 vagy 2, Ártatlan 0–4, a többi 0–1; összesen játékosok + 3).</li>
+<li><b>A magányos Halál belenéz:</b> az egyedül ébredő Halál megnézhet egy asztali kártyát.</li>
+<li><b>A vita hossza, játék meccsenként.</b></li>
+</ul>`,
+    seanceSetup: `<p>4–10 játékos, kb. 30 perc. Kooperatív gyilkossági rejtély egy árulóval. Az egyik játékos a Szellem: tudja, ki ölte meg, hol és miért, de nem tud beszélni. Mindenki más Médium, aki a látomásait olvassa. Öt játékostól egy Csaló is rejtőzhet a Médiumok között: egy második szellem, amely ismeri az igazságot, és az asztal ellen dolgozik.</p>
+<p><b>A tábla:</b> három sor történetkártya, KI, HOL és MIÉRT. Minden sorban egy kártya az igazság.</p>`,
+    seanceLoop: `<ol>
+<li><b>Látomások.</b> Minden körben minden Médium kap egy sort. A Szellem a kezéből választ mindegyiküknek egy látomást: egy kártyát két-három rajzolt motívummal, amely arra a sorra az igazság felé mutat.</li>
+<li><b>A felfedés.</b> A látomások mindenki számára felfordulnak. Írjátok le őket, vitatkozzatok, győzködjetek. A Szellem hallgat, de egy hideg folttal bejegelhet egy látomást: <em>ez nem az enyém</em>.</li>
+<li><b>A Csaló cseréje.</b> Játékonként néhányszor a Csaló titokban kicseréli egy másik Médium látomását egy saját hazugságára.</li>
+<li><b>Gyertyák.</b> Minden Médium gyertyát gyújt egy kártyán a sorában, vagy visszatartja. A legtöbb gyertyát kapott kártya a szellem elé kerül. Ha igaz, a sor megoldva; ha nem, a kártyát kihúzzák.</li>
+<li><b>Az óra.</b> Minden kör leéget egy gyertyát a szeánsz órájáról (alap nehézségen hetet).</li>
+</ol>`,
+    seanceWin: `<ul>
+<li>Oldjátok meg mindhárom sort, mielőtt leégnek a gyertyák, aztán nevezzétek meg a Csalót. Ha eltaláljátok: <b>teljes győzelem</b>. Ha nem: <b>üres győzelem</b>, amelyen a Csaló is osztozik.</li>
+<li>Ha leég az óra, a Csaló nyer (Csaló nélkül az asztal veszít). Ha csak egy sor maradt, előtte mindenki gyújt rá egy utolsó lehelet gyertyát.</li>
+<li>Egy meccsen: teljes győzelem +2 a Szellemnek és minden Médiumnak; üres győzelem +1 mindenkinek és +1 a Csalónak; a Csaló győzelme +3.</li>
+<li>A záróképernyő minden kört visszajátszik: a valódi látomásokat, a cseréket és a gyertyákat.</li>
+</ul>`,
+    seanceOpts: `<ul>
+<li><b>Nehézség:</b> hány kártya egy sorban, hány látomás jut egy Médiumra, és hány gyertya az órán.</li>
+<li><b>Csalók:</b> egy sem, egy vagy kettő, és hogy kettő ismeri-e egymást; hány cserét kapnak.</li>
+<li><b>A Szellem hideg foltjai:</b> hány látomást jegelhet be.</li>
+<li><b>Utolsó lehelet:</b> be vagy ki. <b>A Szellem:</b> sorsolással, vagy a házigazda választja. <b>Játék meccsenként.</b></li>
+</ul>`,
+    graveSetup: `<p>4–12 játékos, kb. 15 perc. Két sírrabló csapat, a Hold és a Nap, egy 25 sírkőből álló temetőben ássa ki az ereklyéket, amelyek megidézik istenségüket. Érme dönti el, melyik csapat ás először: annak 9 ereklyéje van a földben, a másiknak 8. Hét sír üres, egy pedig a Halálé.</p>
+<p>Minden csapatnak van egy <b>Sírásója</b>, az egyetlen játékos, aki látja a temetési jegyzéket: mi fekszik minden kő alatt. Mindenki más ásó. A sírköveken az asztal nyelvén szavak vagy ceruzarajzos ikonok vannak.</p>`,
+    graveLoop: `<ol>
+<li><b>A jel.</b> A csapata körében a Sírásó egy szót és egy számot ad, „Óceán · 3”: egy szót, amely a csapata több sírját összeköti, és hogy hányat. A szó nem lehet a táblán. Utána semmit sem mond.</li>
+<li><b>Az ásás.</b> Az ásók megbeszélik, és a telefonjukon szavaznak; a legtöbb szavazatot kapott sírt ássák ki (holtversenynél érme dönt).</li>
+<li><b>Ami alatta van.</b> A csapatod ereklyéje: áshattok tovább, a számig. Üres sír vagy a másik csapat ereklyéje (most már az övék): a kör továbbmegy. A Halál sírja: a csapatod azonnal veszít.</li>
+<li><b>Megállás.</b> A csapat megszavazhatja, hogy megáll. Aki a szám elérése előtt megáll, megtart egy bónuszásást a következő körre (nem halmozódik).</li>
+</ol>
+<p>A telefonodon válts a <em>Kövek</em> (szavak vagy ikonok) és a <em>Térkép</em> (a tábla egy pillantásra) között.</p>
+<p><b>Három csapat</b> (6–12 játékos): a Hold, a Nap és a Csillagok, mindegyik az asztal harmada. Az első csapat 7 ereklyét rejt, a többiek 6-6-ot, 5 üres sírral. A Halál sírja kiejti a csapatot a játékból; a többiek tovább ásnak, és ha egy csapat marad, az nyer.</p>`,
+    graveWin: `<ul>
+<li>Az a csapat nyer, amelynek először ásták ki az összes ereklyéjét, akkor is, ha néhányat a másik csapat ásott ki tévedésből.</li>
+<li>Amelyik csapat a Halál sírját nyitja ki, azonnal veszít (három csapatnál kiesik).</li>
+<li>Egy 1, 3 vagy 5 játékos meccsen: minden győzelem +1. A Sírásók játékonként cserélődnek.</li>
+</ul>`,
+    graveOpts: `<ul>
+<li><b>Csapatok száma:</b> kettő, vagy 6 játékostól három.</li>
+<li><b>A sírokon:</b> szavak vagy ikonok; <b>híres nevek</b> (filmek, hősök, nevezetességek) be vagy ki.</li>
+<li><b>Csapatok:</b> ülés szerint (a játékosok áthelyezésével vált csapatot) vagy véletlenszerűen. <b>Sírásók:</b> körbejáró, véletlen vagy választott.</li>
+<li><b>Jelek:</b> begépelve (a szó minden képernyőn megjelenik) vagy kimondva (hangosan, a számot koppintva). <b>Játék meccsenként.</b></li>
+</ul>`,
+    mimicSetup: `<p>4–12 játékos, játékonként kb. 8 perc. Mindenki egy titkos helyszínen osztozik, egy történetkártyán, és ott egy szereplőt alakít, kivéve az Utánzót, aki csak zajt és a lehetséges helyszínek tábláját látja. Az Élőknek meg kell találniuk az Utánzót; az Utánzónak ki kell találnia a helyszínt.</p>`,
+    mimicLoop: `<ol>
+<li><b>Kérdések.</b> Akinél a lámpás van, hangosan kérdez valakit a helyszínről, aztán rákoppint, kit kérdezett; a lámpás hozzá kerül, és ő kérdez következőnek. Soha ne kérdezd vissza azt, aki épp téged kérdezett. Úgy válaszolj, hogy az Élők felismerjenek, de az Utánzó ne tudja meg a helyszínt.</li>
+<li><b>Vádolás.</b> Játékonként mindenki egyszer megvádolhat egy játékost. Az óra megáll; mindenki más az Egyetértek vagy a Nem értek egyet gombbal szavaz. Csak egyhangú asztal ítél el; különben fut tovább az óra.</li>
+<li><b>Az Utánzó leleplezi magát.</b> Az Utánzó bármikor felfedheti magát, és megnevezheti a helyszínt.</li>
+<li><b>Lejárt az idő.</b> Ha lejár az óra (alapból 8 perc), mindenki egy gyanúsítottra mutat. A legtöbb szavazatot kapott elítélik; holtversenynél az Utánzó kereket old.</li>
+</ol>
+<p>Hallgatás közben húzd ki a helyszíneket a telefonodon: a jegyzeteid privátak.</p>`,
+    mimicWin: `<ul>
+<li>Ítéljétek el az Utánzót: <b>az Élők nyernek</b>, hacsak az elkapott Utánzó ezután meg nem nevezi a helyszínt, és el nem lopja a győzelmet.</li>
+<li>Ítéljetek el egy Élőt, vagy hagyjátok kereket oldani az Utánzót: <b>az Utánzó nyer</b>.</li>
+<li>Az Utánzó megnevezi a helyszínt: ha eltalálja, nyer; ha nem, az Élők nyernek.</li>
+<li>Egy meccsen (alapból 3 játék): az Élők +1-et kapnak, aki elkapta az Utánzót, még +1-et; az Utánzó +2-t, vagy +3-at a helyszín megnevezéséért.</li>
+</ul>`,
+    mimicOpts: `<ul>
+<li><b>Helyek a táblán:</b> több helyszín nehezebbé teszi az Utánzó dolgát.</li>
+<li><b>Utolsó tipp:</b> az elkapott Utánzó még megnevezheti a helyszínt.</li>
+<li><b>A tévé háttere élesedik:</b> bizalmi beállítás. A tévé erősen elmosva mutatja a valódi helyszínt, amely az idő múlásával élesedik. Aki megnyitja a TV-linket, elolvashatja.</li>
+<li><b>Kérdezési idő, játék meccsenként.</b></li>
+</ul>`,
+    omenSetup: `<p>4–12 játékos, kb. 10 perc. Mindenki magáért játszik; nincsenek rejtett oldalak. Egy okkult kerék a három mező egyikére mutat: Élet, Halál és Újjászületés, ebben a sorrendben, óramutató szerint. Mindenki 5 Befolyással kezd, mindenki számára láthatóan.</p>`,
+    omenLoop: `<p>Hét kör, mindegyik három lépésben:</p>
+<ol>
+<li><b>A kerék</b> megmutatja, honnan indul ebben a körben.</li>
+<li><b>A lepecsételt szavazat.</b> Titokban jósold meg, hol áll meg a kerék, és döntsd el, egy lépéssel vissza vagy előre forgatod, vagy hagyod. Egy forgatás egy Befolyásba kerül; ha nincs több, csak hagyhatod. A szavazatodat módosíthatod, amíg mindenki le nem adta.</li>
+<li><b>A felfedés.</b> Minden forgatást összeadnak, és a kerék egyszer mozdul, az összeggel (három lépés ugyanarra visszahozza). Utána minden jóslat és minden forgatás látható.</li>
+</ol>
+<p>A tudomány az asztal olvasása: kinek van még Befolyása, ki hová akarja a kereket, és ki fogja megforgatni?</p>`,
+    omenWin: `<ul>
+<li>Egy helyes jóslat 3 pontot ér. A hiányzó szavazat semmit sem jósol és semmit sem forgat.</li>
+<li>A végén minden fel nem használt Befolyás 1 pontot ér. A legtöbb pont nyer; egyenlőségnél osztoznak a győzelmen.</li>
+</ul>`,
+    omenOpts: `<p>Nincsenek kapcsolók: csak az egyes lépések időzítői.</p>`,
+    mirrorSetup: `<p>4–12 játékos, kb. 15 perc. Mindenki magáért játszik. Egy elátkozott tükör nem a tükörképedet mutatja: azt mutatja, mit gondolnak a barátaid, mit tennél. Nyolc kitalált dilemma, mindegyik három válasszal, A, B és C, és egyik sem helyes.</p>
+<p>Minden körben egy másik játékost olvasol. A párok váltakoznak, így a játék során mindenki mindenkit olvas, és minden körben mindenkit pontosan egy játékos olvas.</p>`,
+    mirrorLoop: `<ol>
+<li><b>Beszéljétek meg.</b> A dilemma és hogy ki kit olvas, nyilvános. Kérdezzetek, ugrassátok egymást, vezessétek félre.</li>
+<li><b>A lepecsételt szavazat.</b> Válaszd ki a saját válaszodat, és jósold meg annak a válaszát, akit olvasol. Mindkettő kell, és módosíthatod, amíg mindenki le nem adta.</li>
+<li><b>A tükör mindent megmutat:</b> minden választ és minden olvasatot, helyeset vagy tévest.</li>
+</ol>`,
+    mirrorWin: `<ul>
+<li>Egy helyes jóslat 2 pontot ér; a saját válaszod semmit, így szabad meglepni az olvasódat.</li>
+<li>A hiányzó szavazat véletlen válasszá válik; az olvasóját ehhez mérik.</li>
+<li>A legjobb olvasó nyer; egyenlőségnél osztoznak a győzelmen.</li>
+</ul>`,
+    mirrorOpts: `<p>Az időzítőkön kívül nincsenek kapcsolók. Ha több dilemmacsomag lesz, a lobbyban választhattok, melyikből húzza a nyolcat.</p>`,
   },
 };

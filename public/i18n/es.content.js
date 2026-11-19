@@ -283,100 +283,6 @@ export default {
     d080: ["La última vela se consume y solo uno de vosotros puede sostenerla.", "Cogerla", "Ofrecérsela a otro", "Apagarla juntos"],
   },
   guide: {
-    mimicH: "Dead Set: Imitador",
-    mimic: `<p>Un juego de preguntas para 4–12 jugadores, unos 8 minutos por partida. Todos comparten un <b>lugar</b> (una carta de historia) y tienen allí un <b>personaje</b>, salvo el <b>Imitador</b>, que solo ve estática y el tablero de lugares posibles.</p>
-<ol>
-<li><b>Preguntas.</b> Quien tiene el farol pregunta en voz alta a cualquiera sobre el lugar y toca a quien preguntó; el farol pasa a esa persona. Nunca devuelvas la pregunta a quien acaba de preguntarte.</li>
-<li><b>Acusar.</b> Una vez por partida cada uno. El reloj se detiene y todos los demás votan; solo una mesa unánime condena. Si condenan a un Vivo, gana el Imitador.</li>
-<li><b>El Imitador</b> puede desenmascararse cuando quiera y nombrar el lugar: si acierta, gana; si falla, ganan los Vivos. Un Imitador atrapado aún tiene un último intento.</li>
-<li><b>Se acabó el tiempo:</b> todos señalan a un sospechoso. Quien tenga más votos es condenado; con empate, el Imitador se escabulle.</li>
-</ol>
-<p>Tacha lugares en tu propio teléfono mientras escuchas: tus notas son privadas. Puntos: los Vivos +1 cada uno (quien atrapó al Imitador, +1 más); el Imitador +2, o +3 por nombrar el lugar.</p>`,
-    omenH: "Dead Set: El Presagio",
-    omen: `<p>Un juego de predicción para 4–12 jugadores, unos 10 minutos. Una rueda señala la <b>Vida</b>, la <b>Muerte</b> o el <b>Renacimiento</b>, en ese orden, en círculo. Siete rondas; cada cual tiene cinco <b>Influencias</b>.</p>
-<ol>
-<li><b>La rueda</b> muestra dónde empieza.</li>
-<li><b>En secreto</b> predices dónde se detiene, y puedes girarla un paso en cualquier sentido (por una Influencia).</li>
-<li><b>Todos los giros se suman</b> y la rueda se mueve una sola vez. Acertar vale 3.</li>
-</ol>
-<p>Al final, cada Influencia sin usar vale un punto. Gana quien tenga más puntos; los empates se comparten.</p>`,
-    mirrorH: "Dead Set: El Espejo",
-    mirror: `<p>Un juego de leer a los demás para 4–12 jugadores, unos 15 minutos. Ocho <b>dilemas</b> ficticios con tres respuestas; ninguna es la correcta.</p>
-<ol>
-<li><b>La charla.</b> Ves a quién lees esta ronda. Pregunta, provoca, despista.</li>
-<li><b>El voto sellado.</b> Respondes por ti y predices la respuesta de quien lees.</li>
-<li><b>El espejo</b> lo muestra todo: acertar vale 2, tu propia respuesta nada.</li>
-</ol>
-<p>Las parejas cambian cada ronda, así que todos leen a todos. Gana quien mejor lee.</p>`,
-    graveH: "Dead Set: Saqueadores de tumbas",
-    grave: `<p>Un juego por equipos con palabras (o iconos) para 4 a 12 jugadores, unos 15 minutos. Dos cuadrillas de saqueadores, la <b>Luna</b> y el <b>Sol</b>, excavan un cementerio de 25 lápidas en busca de las reliquias que invocarán a su deidad. La cuadrilla que gana a cara o cruz tiene 9 reliquias bajo tierra, la otra 8; 7 tumbas están vacías y una es de la <b>Muerte</b>.</p>
-<ol>
-<li><b>Los Enterradores.</b> Uno por cuadrilla. Solo ellos ven el registro de sepulturas: qué yace bajo cada piedra.</li>
-<li><b>La señal.</b> En su turno, el Enterrador da una palabra y un número: <i>«Océano · 3»</i>. La palabra no puede estar en el tablero. Después no dice nada más.</li>
-<li><b>La excavación.</b> Los saqueadores lo hablan y votan en sus móviles. Los más votos cavan; en caso de empate decide la moneda. Vuestra reliquia: seguid cavando, hasta el número. Una tumba vacía, o una reliquia de la otra cuadrilla (ahora es suya): el turno pasa. La tumba de la Muerte: vuestra cuadrilla pierde al instante.</li>
-<li><b>Parar.</b> La cuadrilla puede votar parar. Si para antes de llegar al número, guarda una excavación extra para el turno siguiente (no se acumula).</li>
-</ol>
-<p>Gana la primera cuadrilla con todas sus reliquias desenterradas. En el móvil cambias entre <b>Lápidas</b> (palabras o iconos) y <b>Mapa</b> (el tablero de un vistazo). En el vestíbulo: palabras o iconos, nombres famosos sí o no, cuadrillas y enterradores al azar o elegidos, señales escritas o habladas.</p>`,
-    seanceH: "Dead Set: Sesión",
-    seance: `<p>Un misterio de asesinato cooperativo con un traidor. De 4 a 10 jugadores, unos 30 minutos. Un jugador es el <b>Fantasma</b>: sabe quién lo mató, dónde y por qué, y no puede hablar. Todos los demás son lectores.</p>
-<ol>
-<li><b>El tablero.</b> Tres filas de cartas de historia: quién, dónde y por qué. En cada fila, una carta es la verdad.</li>
-<li><b>Visiones.</b> Cada ronda, cada lector recibe una fila, y el Fantasma le envía una visión sin palabras: dos o tres motivos grabados en una carta.</li>
-<li><b>Discusión.</b> Las visiones se revelan a todos. Describidlas, discutid, convenced. El Fantasma calla, pero puede escarchar una visión con una <b>mancha fría</b>: esta no es mía.</li>
-<li><b>Velas.</b> Cada lector enciende una vela sobre una carta de su fila, o la guarda. La carta con más velas se presenta al espíritu. Acierto: la fila queda resuelta. Error: la carta se tacha. Cada ronda consume una vela del reloj de la sesión.</li>
-</ol>
-<p>Desde cinco jugadores, un <b>Impostor</b> se esconde entre los lectores. Conoce la verdad y, unas pocas veces por partida, cambia la visión de otro lector por una mentira. Resolved las tres filas antes de que se consuman las velas y nombrad al Impostor: si acertáis, victoria completa; si no, una victoria hueca que el Impostor comparte. Si el reloj se consume, gana el Impostor (si queda una fila, antes llega el <b>último aliento</b>). La pantalla final repite cada ronda: las visiones verdaderas, los cambios y las velas.</p>`,
-    midnightH: "Dead Set: Medianoche",
-    midnight: `<p>Una noche, una votación, sin segundas oportunidades. De 4 a 12 jugadores, unos 10 minutos. El mazo tiene una carta por jugador y tres más boca abajo en la mesa.</p>
-<ol>
-<li><b>Una mirada.</b> Cada uno mira su propia carta una vez.</li>
-<li><b>Una noche.</b> Los móviles despiertan los roles por turno: Imitador, La Muerte, Conspirador, Gemelos, Mentalista, Agente doble, Bruja, Apostador, Insomne. Cada paso dura lo mismo y ocurre aunque su carta esté en la mesa, para que la noche no delate nada. Las cartas se miran e intercambian en la oscuridad.</li>
-<li><b>Una discusión.</b> Al amanecer eres la carta que tienes delante, no la que te repartieron. Habladlo.</li>
-<li><b>Una votación.</b> Todos señalan a la vez. El más votado muere si tiene al menos dos votos (en caso de empate, todos). Si muere el Justiciero, muere también a quien señaló.</li>
-</ol>
-<p>Los Vivos ganan si muere una Muerte (o, si ningún jugador es la Muerte, si nadie muere). La Muerte y el Conspirador ganan si no muere ninguna Muerte. El Bufón gana solo si lo eliminan. <b>Cartas en juego</b> muestra el paso nocturno de cada carta. Al final veréis cada carta, repartida y al amanecer, y toda la noche como relato.</p>`,
-    carnivalH: "Dead Set: Carnaval",
-    carnival: `<p>Un baile de máscaras de faroles y memoria para 4–12 jugadores, que se elige en la sala. Cada máscara es una carta de rol conocida.</p>
-<ol>
-<li><b>El desenmascaramiento.</b> Cada uno recibe una máscara (con 4–5 jugadores, las sobrantes van a sillas vacías). Durante diez segundos todas las máscaras se ven en la TV y en cada móvil. Recuérdalas; luego se ponen boca abajo.</li>
-<li><b>Tu turno: una de tres.</b> <i>Cambiar o fingir</i>: elige otra máscara y mantén Cambiar o Fingir. Los dos botones son iguales y nadie, ni siquiera el otro jugador, sabe cuál elegiste. <i>Echar un vistazo</i>: mira tu propia máscara un instante; todos ven que miraste. <i>Reclamar</i>: nombra una máscara y usa su poder.</li>
-<li><b>Desafíos.</b> Cuando alguien reclama, cada otro móvil pregunta: <i>¿Es tu máscara?</i> Si nadie desafía, la reclamación vale: el poder funciona, lleve lo que lleve. Si alguien desafía, quien reclama y quienes desafían se quitan la máscara: quien de verdad la lleva usa el poder, los demás revelados pagan un Alma a la Ofrenda.</li>
-<li><b>La danza de apertura.</b> El primer turno de cada jugador (dos, si el anfitrión quiere) debe ser Cambiar o fingir.</li>
-<li><b>Gana</b> con la bolsa llena (13 Almas), con la cosecha de la Muerte (6 Almas segadas reclamando la Muerte) o, en cuanto alguien cae a 0, siendo el más rico.</li>
-</ol>
-<p>Toca <b>Máscaras en el baile</b> cuando quieras: cada máscara en juego con su poder, escrito y dibujado como una línea de signos (la moneda para las Almas, el regalo para la Ofrenda, la guadaña para la Cosecha, un ojo para una mirada, flechas cruzadas para un cambio). <b>El diario del baile</b> (notas) está desactivado por defecto: lo que viste, lo guardas en la cabeza. El anfitrión puede activarlo en la sala.</p>
-<p>Los puntos se acumulan entre partidas: el ganador +3, los demás +1 por cada Alma por encima de 6.</p>`,
-    coffinsH: "Dead Set: Ataúdes",
-    coffins: `<p>Un juego de faroles rápido para 3–10 jugadores, que se elige en la sala. Cada cual tiene 3 ataúdes de Oro y una Maldición (4 y una con la opción larga).</p>
-<ol>
-<li><b>El entierro.</b> Todos entierran en secreto un ataúd a la vez: tócalo y luego toca Enterrarlo. Después, desde el primer jugador de la ronda, en tu turno entierras otro ataúd encima de tu pila o lanzas un desafío: <i>«Puedo abrir N»</i>, como mucho el total enterrado.</li>
-<li><b>La puja.</b> Por turnos, cada uno sube o pasa. Pasar vale para toda la ronda. El último que queda es el Sepulturero.</li>
-<li><b>La excavación.</b> El Sepulturero abre primero sus propios ataúdes de arriba abajo; luego elige otras tumbas, siempre el ataúd de arriba, hasta abrir N.</li>
-<li><b>Limpia o maldita.</b> Todo Oro: una excavación limpia, y la lápida se dora. Una maldición en tu tumba: eliges qué ataúd pierdes. La de otro: saca a ciegas uno de tus ataúdes y desaparece. El dueño de la maldición empieza la ronda siguiente.</li>
-<li><b>Gana</b> con tus excavaciones limpias (2 por defecto; 1 o 3 en la sala), o siendo el último con ataúdes.</li>
-</ol>
-<p><b>El ataúd de la Muerte</b> (activado por defecto): cada ronda lo tiene un jugador oculto en lugar de un ataúd de Oro. Desentiérralo y la excavación fracasa; su dueño te roba un ataúd, que se vuelve de Oro. <b>Apuestas de fantasmas</b> (activadas por defecto): los jugadores sin ataúdes apuestan Oro o Maldición en cada excavación; tras tres aciertos se levantan como Aparecidos con un ataúd de Oro. <b>Reliquias</b> (desactivadas por defecto): un Farol secreto (mirar en una tumba), una Llave (abrir otra tumba antes que la tuya) o una Protección (una maldición no cuesta nada), cada una de un solo uso.</p>
-<p>Los puntos se acumulan entre partidas: el ganador +3, cada excavación limpia +1, cada resurrección +1.</p>`,
-    exorcismH: "Dead Set: Exorcismo",
-    exorcism: `<p>Un juego de palabras y faroles para 3–12 jugadores, que se elige en la sala. El idioma de la mesa se impone en todos los móviles, para que las palabras coincidan.</p>
-<ol>
-<li><b>La bola de cristal.</b> Todos ven la categoría. Los Vivos ven también la contraseña; el Demonio (uno, o dos desde 7 jugadores) no, como mucho un vago susurro si el anfitrión lo permite.</li>
-<li><b>El sorteo.</b> Un sorteo elige quién empieza; luego el turno da la vuelta a la mesa por orden de asiento.</li>
-<li><b>Una palabra cada uno.</b> En tu turno, di una palabra relacionada con la contraseña y mantén el botón del móvil. Demuestra que la sabes sin dársela al Demonio. Opcionalmente las palabras se escriben y salen en la tele.</li>
-<li><b>Nombrad al Demonio.</b> Hablad y luego vota todo el mundo. Si nombráis a un Vivo (o hay empate sin moneda), gana el Demonio.</li>
-<li><b>Un último intento.</b> Un Demonio descubierto tiene un intento con la contraseña, en la cuadrícula de 4×4 o escribiéndola. Si acierta, gana igualmente.</li>
-</ol>
-<p>La ronda termina en la misma sala con los mismos ajustes, y los puntos se acumulan: Vivos +1 por victoria, Demonios +2.</p>`,
-    missionsH: "Dead Set: Misiones",
-    missions: `<p>Un segundo modo para 5–12 jugadores, que se elige en la sala. Nadie muere: la Muerte se ha colado en la expedición, y la mesa debe encontrarla.</p>
-<ol>
-<li><b>La carta de misión.</b> Cada misión empieza robando una carta, antes de elegir el equipo. La mayoría son <i>Misiones normales</i>; de vez en cuando una carta cambia el equipo, la votación o la revelación. Vale para toda la misión.</li>
-<li><b>La propuesta.</b> El Líder de la misión (el farol) elige un equipo del tamaño indicado.</li>
-<li><b>La votación del equipo.</b> Todos aprueban o rechazan en secreto; los votos se revelan todos a la vez, con nombres. Una mayoría envía al equipo. Si no, propone el siguiente jugador a la izquierda. La quinta propuesta parte sea cual sea la votación.</li>
-<li><b>La misión.</b> Cada miembro del equipo juega una carta en secreto. Los Vivos solo pueden jugar Éxito; la Muerte puede jugar Éxito o Sabotaje. Un Sabotaje hace fracasar la misión (dos en la misión 4 con 7 o más jugadores). Las cartas se barajan y se revelan una a una.</li>
-<li><b>El interludio nocturno.</b> Todos eligen una Sospecha secreta. Tras las misiones 2, 3 y 4, quien tiene la Vela conoce el bando de un jugador, y la Vela pasa a sus manos. Al amanecer pueden llegar pistas.</li>
-</ol>
-<p><b>El final.</b> Tres éxitos: la Muerte se desenmascara y el Segador nombra al Médium. Si acierta, gana la Muerte; si falla, ganan los Vivos. Tres fracasos: la Última Resistencia. Todos nombran a un jugador. Si es uno de los Vivos, gana la Muerte; si atrapáis a la Muerte, el Segador aún tiene el Ajuste de cuentas.</p>`,
     missionCardsH: "Cartas de misión",
     sidesH: "Otros bandos y giros",
     sides: `<p>Opcionales, se activan en la sala (o se añaden con los contadores de roles en partidas personalizadas). El pueblo solo gana cuando la Muerte, la Secta y el Destripador han desaparecido.</p>
@@ -388,19 +294,9 @@ export default {
 <li><b>Desempate a cara o cruz</b> (opcional): un empate en cabeza se decide a cara o cruz en lugar de perdonar a todos.</li>
 <li><b>Voto a la vista</b> (una carta de regla): cada voto es público en cuanto se emite.</li>
 </ul>`,
-    kicker: 'Las reglas, v1.0',
     title: 'Cómo<br><i>jugar.</i>',
-    intro: 'La mayoría queréis sobrevivir. Unos pocos sois la Muerte. Nadie sabe quién es quién — salvo la Muerte, que conoce a los suyos.',
     toc: ['Básico', 'Una ronda', 'Victoria', 'Roles básicos', 'Roles extendidos', 'Mazo completo', 'Sueños', 'Cartas de regla', 'Modos', 'Orden nocturno', 'Móviles'],
     basicsH: 'Lo básico',
-    basics: `<p>Dead Set es un juego de fiesta de deducción social para 5–13 jugadores. Todos entran en la misma sala desde su propio móvil y reciben un <b>rol</b> secreto. La mayoría de los roles pertenecen a la facción <b>no-Muerte</b>; uno o más jugadores son en secreto <b>la Muerte</b>.</p>
-<ul>
-<li>Los <b>roles</b> duran toda la partida: tu lealtad y tu poder.</li>
-<li>Los <b>Sueños</b> son efectos de una noche: desde la noche 1, cada jugador vivo roba uno en secreto cada noche.</li>
-<li>Las <b>cartas de regla</b> (1–3, robadas al preparar) retuercen toda la partida — asesinatos dobles, votos ponderados, fantasmas que votan.</li>
-<li>El <b>escenario</b> (QUIÉN / DÓNDE / POR QUÉ) es pura narración. Nunca cambia una regla.</li>
-</ul>
-<p>Puedes decir la verdad sobre tu rol, mentir o callar. Nunca enseñes tu pantalla. La app es el narrador: nadie tiene que quedarse fuera, y el anfitrión no ve más secretos que nadie.</p>`,
     roundH: 'Una ronda',
     round: `<ol>
 <li><b>Noche 0 — la revelación.</b> Da la vuelta a tu carta de rol, léela y toca <em>Entendido</em>. No pasa nada más: ni asesinatos, ni Sueños, ni poderes. Los jugadores Muerte ven a sus compañeros.</li>
@@ -436,8 +332,6 @@ export default {
     dreamsNote: `Algunos Sueños son más raros que otros, y el Insomnio nunca aparece más de dos veces por partida; en una partida Personalizada se puede ajustar la frecuencia de cada uno. Los intercambios de los Ladrones de sueños ocurren durante el anochecer, antes de que se abran las acciones, por orden de asiento, una vez cada uno. Cuenta la carta que tengas al final.`,
     rulesH: 'Cartas de regla',
     rulesP: 'Se roban (o eligen) 1–3 al preparar y siguen vigentes toda la partida. Algunas solo pueden cumplirse por honor cuando jugáis en la misma sala.',
-    modesH: 'Modos',
-    modesTh: ['Modo', 'Jugadores', 'Qué cambia'],
     countsH: 'Número de roles',
     countsTh: ['Jugadores', 'Muerte', 'Inocente', 'Guardián · Mentalista · Psicópata', 'Extendidos'],
     modesNote: 'Clásico / Aprender llena los asientos extendidos con Inocentes. Jugar en la misma sala o a distancia es solo cuestión de entrega, no otro juego: a distancia se añade chat de mesa en la app (y susurros entre vecinos con Niebla de guerra).',
@@ -454,15 +348,259 @@ export default {
 <li><b>Destinos ligados.</b> Las Rameras mueren con la víctima de la Muerte que visitaban; quienes tienen Pesadilla compartida o Sonambulismo mueren con su compañero. Solo la resurrección o el Ángel de la guarda evitan una muerte ligada. Después expira el tiempo prestado.</li>
 <li><b>Amanecer.</b> Los supervivientes reciben sus informes privados. El público solo sabe quién murió.</li>
 </ol>`,
-    phonesH: 'Jugar con el móvil',
-    phones: `<ul>
-<li>El anfitrión crea una sala y comparte el código de seis caracteres o el QR. Los demás abren el enlace, escriben un nombre y tocan <em>Listo</em>.</li>
-<li>Tu asiento está ligado a tu navegador. Si un móvil se apaga, el anfitrión puede emitir desde sus controles un <b>código de recuperación</b> de un solo uso; al introducirlo en otro dispositivo, tu asiento pasa allí y el antiguo se desconecta.</li>
-<li>El móvil del anfitrión es un móvil de jugador normal con algunos botones extra: avanzar la fase, añadir 30 segundos, terminar la partida. El anfitrión no ve roles, Sueños ni votos.</li>
-<li>Se puede mostrar un <b>tablero público</b> (sin secretos) en una tele: abre <span class="mono">/board/CÓDIGO</span>.</li>
-<li>Si alguien quiere dirigir la mesa y verlo todo, crea la sala como <b>moderador de confianza</b>. No puede ocupar asiento, y todos lo saben.</li>
-<li>Cada jugador elige su idioma con el botón de idioma en la pantalla de inicio, la invitación o el menú de la sala. El anfitrión fija el idioma predeterminado de la mesa en la sala de espera.</li>
-<li>MUDO, Niebla de guerra y Silencio maldito son reglas de honor en persona. A distancia, el chat las aplica.</li>
+    kicker: "El libro de reglas",
+    intro: "Dead Set es una familia de juegos de fiesta para una sola sala. Cada uno juega en su propio móvil; una tele, si la tenéis, es el escenario común. Elegid un juego, leed su capítulo y a jugar.",
+    aboutH: "Qué es Dead Set",
+    about: `<p>Dead Set es una colección de juegos sociales (roles ocultos, faroles, juegos de palabras, predicción) que comparten una misma mesa. Todos se juegan igual: el <b>móvil de cada jugador es una pantalla privada</b> que solo muestra lo que ese jugador puede saber, y la aplicación es el narrador, así que nadie tiene que quedarse fuera para dirigir la partida.</p>
+<ul>
+<li><b>Sin instalar nada.</b> Funciona en el navegador. Se entra con un código de seis caracteres, un enlace o un código QR.</li>
+<li><b>De 3 a 25 jugadores</b>, según el juego. Cada capítulo indica el número de jugadores y la duración.</li>
+<li><b>La tele es opcional, pero lo mejor.</b> Muestra la mesa, las escenas, las puntuaciones y pone la música. Nunca muestra un secreto.</li>
+<li><b>Siete idiomas.</b> Cada uno elige el suyo; los juegos de palabras usan el idioma de la mesa en todos los móviles para que las palabras coincidan.</li>
+<li><b>Una mesa, muchos juegos.</b> Cambiad de juego en la sala entre rondas; dentro de un encuentro, las puntuaciones se mantienen.</li>
 </ul>`,
+    tableH: "Abrir una mesa",
+    table: `<ol>
+<li><b>Abrir una mesa.</b> El anfitrión toca <em>Abrir una mesa</em>, escribe un nombre y recibe un código de sala de seis caracteres.</li>
+<li><b>Invitar.</b> Compartid el código, el enlace o el código QR. Los demás tocan <em>Unirse a una mesa</em> (o abren el enlace), escriben un nombre y eligen un retrato.</li>
+<li><b>Encended la tele.</b> Tocad <em>Tablero de tele</em> en la sala, o abrid la sala en el navegador de la tele y elegid <em>Abrir la mesa en la TV</em>. Varias pantallas pueden mostrar la mesa a la vez.</li>
+<li><b>Los asientos.</b> Los jugadores se sientan alrededor de la mesa en el orden en que entran. El anfitrión puede tocar un asiento para mover o quitar a un jugador.</li>
+</ol>
+<p>Tu asiento está ligado a tu navegador. Si un móvil se apaga, el anfitrión puede darte un código de recuperación de un solo uso desde el menú de la sala; en el móvil nuevo elige <em>Recuperar mi asiento</em> e introdúcelo, y tu asiento (con sus secretos) pasa allí. Un móvil que se desconecta conserva su asiento y se pone al día al volver.</p>
+<p>Si alguien quiere dirigir la partida y verlo todo, abrid la sala con un <b>moderador de confianza</b>. El moderador no ocupa asiento, y todos lo saben.</p>`,
+    setupH: "Preparar una partida",
+    setup: `<p>La sala guía al anfitrión por los mismos pasos numerados en cada juego. Los invitados ven los mismos pasos, solo para leer.</p>
+<ol>
+<li><b>El juego.</b> Elegid uno, agrupados por familias: Lealtades ocultas, Cartas de mano en mano, Leer a los demás, Señales y enigmas, Farol y apuesta.</li>
+<li><b>Cómo funciona.</b> Cuatro o cinco pasos ilustrados: todo el juego de un vistazo.</li>
+<li><b>El mazo.</b> Lo que se repartirá con este número de jugadores: roles, máscaras, cartas o lugares. Se actualiza a medida que entran jugadores.</li>
+<li><b>Reglas.</b> Los interruptores propios del juego. Los valores por defecto dan una buena primera partida.</li>
+<li><b>La mesa.</b> El idioma de la mesa, la música y su estilo, los fondos y (cuando cambia algo) si jugáis en la misma sala o a distancia con chat.</li>
+<li><b>Temporizadores.</b> Cuánto dura cada paso. Plegados; los valores por defecto sirven a la mayoría de las mesas.</li>
+</ol>
+<p>Cada uno toca <b>Listo</b> cuando ha leído la preparación, y el anfitrión empieza la partida. Cualquier problema de la preparación (pocos jugadores para un rol, por ejemplo) aparece como nota bajo los pasos.</p>`,
+    playH: "Cómo se juega cada partida",
+    play: `<ul>
+<li><b>Nunca enseñes tu pantalla.</b> Tu móvil muestra tu rol, tus cartas y tus decisiones. Todo lo demás se dice en voz alta o se ve en la tele.</li>
+<li><b>Escenas compartidas.</b> Los grandes momentos (una revelación, un recuento, la noche) se ven en todos los móviles y en la tele a la vez, durante el mismo tiempo. No se pueden saltar, y mientras duran no corre ningún temporizador.</li>
+<li><b>Elegir a un jugador:</b> toca su asiento en el círculo de la mesa. Un asiento que puedes elegir palpita; tu elección se vuelve color pergamino.</li>
+<li><b>Confirmar:</b> casi todas las decisiones son un toque y se pueden cambiar hasta que acaba el paso. Las decisiones selladas (un voto, una carta jugada boca abajo) se hacen <b>manteniendo pulsado</b>: deja el pulgar hasta que el sello se cierre.</li>
+<li><b>La cabecera</b> nombra el paso actual del juego y su número (Noche II, Misión 3, Ronda 4…), con el tiempo que queda.</li>
+<li><b>Bajo la mesa:</b> <em>Mi carta</em> (tu rol, en cualquier momento), la hoja de referencia del juego, tus <em>Notas</em> privadas y la <em>Historia</em>, si el juego las tiene.</li>
+<li><b>Temporizadores.</b> Cuando se acaba el tiempo, lo que no hayas enviado cuenta como pasar o abstenerse. El anfitrión puede añadir 30 segundos, avanzar o terminar la partida desde el menú de la sala.</li>
+<li><b>Los avisos</b> sobre lo que acaban de hacer los demás aparecen un momento en la franja de la cabecera.</li>
+<li><b>Reglas de honor.</b> Algunas reglas (el silencio, los jugadores mudos) solo puede cumplirlas la propia mesa. A distancia, el chat las hace cumplir.</li>
+</ul>`,
+    afterH: "Después de una partida",
+    after: `<p>La pantalla final nombra a los ganadores, destapa cada secreto y, en la mayoría de los juegos, repite lo que pasó de verdad. Recorre el resumen a tu ritmo.</p>
+<p>Muchos juegos se juegan como un <b>encuentro</b> de 1, 3 o 5 partidas: las puntuaciones se mantienen, y la mesa vuelve a la misma sala con los mismos ajustes, todos listos para la siguiente. Desde la sala, el anfitrión también puede cambiar a otro juego; la mesa, los asientos y los retratos se quedan.</p>`,
+    hSetup: "Preparación",
+    hCast: "Los personajes",
+    hLoop: "Cómo transcurre una partida",
+    hWin: "Victoria y puntuación",
+    hOpts: "Opciones de la sala",
+    classicP: "El Dead Set original: roles ocultos, asesinatos nocturnos y una votación secreta de día. La mayoría queréis sobrevivir. Unos pocos sois la Muerte. Nadie sabe quién es quién, salvo la Muerte, que conoce a los suyos.",
+    presetsH: "Variantes",
+    modesTh: ['Variante', 'Jugadores', 'Qué cambia'],
+    classicSetup: `<p>De 5 a 13 jugadores (hasta 25 con un mazo personalizado). Cada uno recibe un <b>rol</b> secreto. La mayoría de los roles pertenecen al bando <b>no-Muerte</b>; uno o más jugadores son en secreto <b>la Muerte</b>, y los jugadores de la Muerte se conocen entre sí. La noche y el día se alternan hasta que un bando gana.</p>
+<ul>
+<li><b>Los roles</b> son quién eres durante toda la partida: tu bando y tu poder.</li>
+<li><b>Los Sueños</b> son efectos de una noche: desde la Noche 1, cada jugador vivo roba uno en secreto cada noche.</li>
+<li><b>Las cartas de regla</b> (de 1 a 3, robadas al preparar) tuercen toda la partida: asesinatos dobles, votos con peso, fantasmas que votan.</li>
+<li><b>La historia</b> (QUIÉN / DÓNDE / POR QUÉ) es pura narración. Nunca cambia una regla.</li>
+</ul>
+<p>Puedes decir la verdad sobre tu rol, mentir o callar. El anfitrión juega como los demás y no ve más secretos.</p>`,
+    missionsSetup: `<p>De 5 a 12 jugadores. Nadie muere: la Muerte se ha colado en la expedición, y la mesa debe encontrarla antes de que ella encuentre al Médium. Cada uno recibe un rol secreto. Los jugadores de la Muerte se ven entre sí (salvo el Errante); los Vivos solo se conocen a sí mismos, y el Médium intuye quién es la Muerte.</p>
+<p>La mesa juega cinco misiones. Cada misión necesita un equipo de un tamaño dado (se ve en la sala y en la tele); desde 7 jugadores, la misión 4 necesita dos Sabotajes para fracasar.</p>`,
+    missionsLoop: `<ol>
+<li><b>La carta de misión.</b> Cada misión empieza con una carta. La mayoría son normales; de vez en cuando una cambia el equipo, la votación o la revelación de esa misión.</li>
+<li><b>La propuesta.</b> El Líder de la misión (que lleva el farol) toca jugadores en el círculo para formar el equipo.</li>
+<li><b>La votación del equipo.</b> Todos mantienen pulsado Aprobar o Rechazar en secreto. Los votos se destapan a la vez, con nombres. Una mayoría envía al equipo; si no, el farol pasa al siguiente jugador. La quinta propuesta de una misión sale adelante sea cual sea el voto.</li>
+<li><b>La misión.</b> Cada miembro del equipo juega una carta boca abajo. Los Vivos solo pueden jugar Éxito; la Muerte puede jugar Éxito o Sabotaje. Las cartas se barajan y se destapan una a una: un Sabotaje hace fracasar la misión.</li>
+<li><b>El interludio nocturno.</b> Cada uno anota una Sospecha secreta sobre quién es la Muerte. Tras las misiones 2, 3 y 4, quien tiene la Vela descubre el bando de un jugador, y la Vela pasa a ese jugador. Con las Pistas, al amanecer puede llegar una pista verdadera.</li>
+</ol>`,
+    missionsWin: `<ul>
+<li><b>Tres éxitos:</b> la Muerte se desenmascara y el Segador señala a quien cree que es el Médium (la Muerte puede deliberar antes). Si acierta, gana la Muerte. Si falla, ganan los Vivos.</li>
+<li><b>Tres fracasos:</b> la Última Resistencia. Cada uno señala a un jugador. Si la mesa señala a un Vivo, gana la Muerte; si atrapa a la Muerte, el Segador aún tiene el Ajuste de cuentas: si encuentra al Médium, la Muerte roba la victoria.</li>
+<li><b>Las Misiones secundarias</b> cambian el peso de tu voto en la Última Resistencia: doble si cumpliste la tuya, la mitad si fallaste.</li>
+<li>El Bufón, si está en juego, gana solo si lo señalan en la Última Resistencia o el Segador.</li>
+</ul>`,
+    missionsOpts: `<ul>
+<li><b>Roles:</b> activar o quitar al Creyente, el Charlatán, el Velado, el Errante, el Enterrador y el Bufón, y añadir a los Gemelos.</li>
+<li><b>Misiones secundarias:</b> un objetivo personal secreto para cada uno.</li>
+<li><b>Siguiente Líder de la misión:</b> el siguiente en orden, o elegido por el último líder.</li>
+<li><b>Cartas de misión:</b> desactivadas, raras o a veces.</li>
+<li><b>Pistas:</b> raras, ocasionales o frecuentes.</li>
+<li><b>Historia:</b> un QUIÉN / DÓNDE / POR QUÉ al azar, o el vuestro.</li>
+</ul>`,
+    exorcismSetup: `<p>De 3 a 12 jugadores, 5–10 minutos por ronda. Los Vivos conocen la contraseña secreta que desterraría al Demonio escondido entre ellos; el Demonio no la conoce. Todos ven la categoría. Las palabras aparecen en el idioma de la mesa en todos los móviles, para que coincidan.</p>`,
+    exorcismLoop: `<ol>
+<li><b>La bola de cristal.</b> Tócala para mirar dentro: la categoría y (si eres Vivo) la contraseña. El Demonio solo ve la categoría y tiene que tirarse un farol.</li>
+<li><b>El sorteo.</b> Una lotería decide quién habla primero; después el turno sigue el orden de los asientos.</li>
+<li><b>Una palabra cada uno.</b> En tu turno, di una palabra relacionada con la contraseña y después mantén pulsado el botón de tu móvil. Demuestra que la conoces sin dársela al Demonio. Según la sala, las palabras dan una o más vueltas, y pueden escribirse y mostrarse en la tele.</li>
+<li><b>Señalar al Demonio.</b> Habladlo y luego todos votan a un jugador.</li>
+<li><b>Un último intento.</b> Un Demonio descubierto puede decir la contraseña, desde la cuadrícula de palabras o escrita.</li>
+</ol>`,
+    exorcismWin: `<ul>
+<li>La votación señala a un Vivo, o acaba en empate (salvo que la moneda decida los empates): <b>gana el Demonio</b>.</li>
+<li>La votación señala al Demonio: <b>ganan los Vivos</b>, salvo que el Demonio adivine entonces la contraseña y robe la victoria.</li>
+<li>Las puntuaciones se acumulan ronda tras ronda: cada Vivo +1 por victoria, cada Demonio +2.</li>
+</ul>`,
+    exorcismOpts: `<ul>
+<li><b>Demonios:</b> uno, o dos desde 7 jugadores; dos Demonios pueden conocerse o no.</li>
+<li><b>Un último intento:</b> activado o no.</li>
+<li><b>Empate:</b> el Demonio escapa, o decide una moneda.</li>
+<li><b>Cuadrícula de palabras:</b> 16 palabras en la tele y los móviles; la contraseña es una de ellas.</li>
+<li><b>Rondas:</b> cuántas vueltas dan las palabras. <b>Escribir las palabras:</b> se muestran en la tele.</li>
+<li><b>Categorías:</b> de qué listas de palabras se roba.</li>
+</ul>`,
+    coffinsSetup: `<p>De 3 a 10 jugadores, una partida rápida. Cada uno juega por su cuenta y tiene cuatro ataúdes: tres de Oro y una Maldición (cinco con la opción larga: cuatro de Oro, una Maldición). Tus ataúdes están ocultos para los demás.</p>`,
+    coffinsLoop: `<ol>
+<li><b>El entierro.</b> Todos entierran un ataúd en secreto a la vez: toca un ataúd y luego Enterrarlo. Tu tumba es una pila, el más reciente arriba.</li>
+<li><b>Enterrar o desafiar.</b> Desde el primer jugador de la ronda, en tu turno entierras otro ataúd encima de tu pila, o desafías: «Puedo abrir N», como mucho tantos como haya enterrados en total.</li>
+<li><b>La puja.</b> Alrededor de la mesa se sube la cifra o se pasa. Pasar vale para toda la ronda. El último pujador que queda es el Excavador.</li>
+<li><b>La excavación.</b> El Excavador abre primero sus propios ataúdes, de arriba abajo, y luego elige otras tumbas, el ataúd de arriba cada vez, hasta abrir N. Cada ataúd se destapa en la tele.</li>
+<li><b>El resultado.</b> Todo Oro: una excavación limpia, y tu lápida se dora. Una Maldición en tu propia tumba: eliges un ataúd que pierdes. La Maldición de otro: roba a ciegas uno de tus ataúdes, y desaparece; el dueño de la Maldición empieza la ronda siguiente.</li>
+</ol>`,
+    coffinsWin: `<ul>
+<li>Gana con dos excavaciones limpias (1 o 3 en la sala), o siendo el último jugador con ataúdes.</li>
+<li>En un encuentro: el ganador +3, cada excavación limpia +1, cada vuelta de entre los muertos +1.</li>
+</ul>`,
+    coffinsOpts: `<ul>
+<li><b>El ataúd de la Muerte</b> (activado por defecto): en cada ronda lo tiene un jugador oculto en lugar de un ataúd de Oro. Si lo desentierras, la excavación fracasa; su dueño te roba un ataúd, que se vuelve de Oro.</li>
+<li><b>Apuestas de fantasmas y Aparecidos</b> (activado por defecto): los jugadores sin ataúdes apuestan Oro o Maldición en cada excavación; tres aciertos y vuelven con un ataúd de Oro.</li>
+<li><b>Reliquias</b> (desactivado por defecto): un Farol secreto (mirar una tumba), una Llave (abrir otra tumba antes que la tuya) o una Protección (una maldición no cuesta nada), cada una de un solo uso.</li>
+<li><b>Excavaciones limpias para ganar, ataúdes por jugador, partidas por encuentro.</b></li>
+</ul>`,
+    carnivalSetup: `<p>De 4 a 12 jugadores. Cada uno juega por su cuenta. Cada máscara es un rol conocido de Dead Set, con un poder. Todos empiezan con 6 Almas; la Ofrenda, el plato del centro de la mesa, empieza vacía. Con 4–5 jugadores hay dos máscaras más en sillas vacías: van al baile pero nunca actúan.</p>
+<p><b>El desenmascaramiento:</b> durante unos segundos todas las máscaras se muestran boca arriba, en la tele y en cada móvil. Recordadlas; luego se ponen boca abajo. Una lotería elige al primer bailarín, y se sigue en el sentido de las agujas del reloj.</p>`,
+    carnivalLoop: `<p>En tu turno, haz una de tres cosas:</p>
+<ul>
+<li><b>Intercambiar o fingir.</b> Elige otra máscara (un jugador o una silla vacía) y mantén pulsado Intercambiar o Fingir. Los dos botones son iguales, y nadie, ni siquiera el otro jugador, sabe cuál elegiste.</li>
+<li><b>Echar un vistazo.</b> Mira tu propia máscara un momento. Todos ven que has mirado.</li>
+<li><b>Reclamar.</b> Nombra una máscara, «Soy el Magistrado», y usa su poder.</li>
+</ul>
+<p><b>Desafíos.</b> Cuando alguien reclama, cada uno de los otros móviles pregunta: <em>¿Es tu máscara?</em> Si nadie desafía, la reclamación vale y el poder funciona, lleve lo que lleve en realidad quien reclama. Si alguien desafía, quien reclama y todos los que desafían levantan sus máscaras: quien de verdad la lleva usa el poder, y todos los demás descubiertos pagan un Alma (o más, según la sala) a la Ofrenda.</p>
+<p><b>La danza de apertura.</b> El primer turno de cada jugador (dos, si el anfitrión quiere) debe ser Intercambiar o fingir, para que las máscaras ya estén en duda antes de la primera reclamación.</p>`,
+    carnivalWin: `<ul>
+<li><b>Bolsa llena:</b> 13 Almas (o la cifra de la sala) y ganas al instante.</li>
+<li><b>La cosecha de la Muerte:</b> gana el jugador que ha cosechado 6 Almas con reclamaciones de la Muerte.</li>
+<li><b>La ruina:</b> en cuanto alguien baja a 0 Almas, gana el más rico (en empate, la cosecha más alta).</li>
+<li>En un encuentro: el ganador +3, todos los demás +1 por cada Alma por encima de 6.</li>
+</ul>`,
+    carnivalOpts: `<ul>
+<li><b>Máscaras:</b> el conjunto recomendado crece con la mesa; o montad el vuestro, una máscara por asiento (la Muerte es obligatoria; solo el Inocente puede repetirse).</li>
+<li><b>Bolsa llena, la cosecha de la Muerte, la penalización por reclamar mal, la danza de apertura, partidas por encuentro.</b></li>
+<li><b>Notas (el diario del baile):</b> desactivadas por defecto, para que guardéis lo que visteis en la cabeza.</li>
+</ul>
+<p>Toca <em>Máscaras en el baile</em> cuando quieras: cada máscara en juego y su poder, dibujado como una línea de signos.</p>`,
+    midnightSetup: `<p>De 4 a 12 jugadores, unos 10 minutos. Una noche, una votación, sin segundas oportunidades. El mazo tiene una carta por jugador más tres boca abajo en la mesa (las sillas vacías). El mazo es público; quién tiene qué, no. Cada uno ve su propia carta una vez, al repartir.</p>
+<p>Las cartas cambian de manos a oscuras. <b>Al amanecer eres la carta que tienes delante</b>, no la que te repartieron.</p>`,
+    midnightLoop: `<ol>
+<li><b>El reparto.</b> Mira tu carta una vez.</li>
+<li><b>La noche.</b> Los móviles despiertan cada rol por turno: Imitador, Muerte, Conspirador, Gemelos, Mentalista, Agente doble, Bruja, Apostador, Insomne. Cada paso dura los mismos 10 segundos y ocurre aunque su carta esté en la mesa, para que la noche no delate nada. Solo quien recibió esa carta tiene controles; todos los demás móviles dicen que mantengas los ojos cerrados. Un Apostador que no hace nada se cambia por una carta de la mesa al azar.</li>
+<li><b>El día.</b> Una discusión (5 minutos por defecto): afirmad, acusad, mentid. Las cartas pueden haberse movido; no os fieis de nadie, ni de vosotros mismos. El anfitrión puede abrir la votación antes.</li>
+<li><b>La votación.</b> Todos señalan a otro jugador a la vez. El más votado muere, si tiene al menos dos votos; si hay empate en cabeza, mueren todos los empatados. Si muere el Justiciero, también muere el jugador al que señaló.</li>
+</ol>`,
+    midnightWin: `<ul>
+<li>Los bandos se leen en las cartas al amanecer (un Imitador cuenta como el rol que copió).</li>
+<li><b>Los Vivos</b> ganan si muere al menos una Muerte; si no hay ninguna Muerte entre los jugadores, si no muere nadie.</li>
+<li><b>La Muerte y el Conspirador</b> ganan si no muere ninguna Muerte (y el Bufón no murió).</li>
+<li><b>El Bufón</b> gana solo si lo eliminan en la votación. Varios bandos pueden ganar a la vez.</li>
+<li>En un encuentro: cada ganador +1, el Bufón +2. La pantalla final muestra cada carta tal como se repartió y al amanecer, y repite la noche.</li>
+</ul>`,
+    midnightOpts: `<ul>
+<li><b>Cartas:</b> el mazo recomendado crece con la mesa; o elegidlas vosotros (Muerte 1–2, Gemelos 0 o 2, Inocente 0–4, el resto 0–1; en total jugadores + 3).</li>
+<li><b>Una Muerte sola echa un vistazo:</b> una Muerte que despierta sola puede mirar una carta de la mesa.</li>
+<li><b>Duración de la discusión, partidas por encuentro.</b></li>
+</ul>`,
+    seanceSetup: `<p>De 4 a 10 jugadores, unos 30 minutos. Un misterio de asesinato cooperativo con un traidor. Un jugador es el Fantasma: sabe quién lo mató, dónde y por qué, y no puede hablar. Todos los demás son Médiums que leen sus visiones. Desde cinco jugadores, un Impostor puede esconderse entre los Médiums: un segundo espíritu que conoce la verdad y juega contra la mesa.</p>
+<p><b>El tablero:</b> tres filas de cartas de historia, QUIÉN, DÓNDE y POR QUÉ. En cada fila, una carta es la verdad.</p>`,
+    seanceLoop: `<ol>
+<li><b>Visiones.</b> En cada ronda, cada Médium recibe una fila. El Fantasma elige de su mano una visión para cada uno: una carta con dos o tres motivos grabados que debe apuntar a la verdad de esa fila.</li>
+<li><b>La revelación.</b> Las visiones se destapan para todos. Describidlas, discutid, convenced. El Fantasma calla, pero puede helar una visión con una mancha fría: <em>esta no es mía</em>.</li>
+<li><b>El cambio del Impostor.</b> Unas cuantas veces por partida, el Impostor cambia en secreto la visión de otro Médium por una de sus mentiras.</li>
+<li><b>Velas.</b> Cada Médium enciende una vela sobre una carta de su fila, o se la guarda. La carta con más velas se presenta al espíritu. Si acierta, la fila queda resuelta. Si no, la carta se tacha.</li>
+<li><b>El reloj.</b> Cada ronda consume una vela del reloj de la sesión (siete en dificultad Estándar).</li>
+</ol>`,
+    seanceWin: `<ul>
+<li>Resolved las tres filas antes de que se consuman las velas y luego señalad al Impostor. Si acertáis: una <b>victoria plena</b>. Si no: una <b>victoria hueca</b>, compartida con el Impostor.</li>
+<li>Si el reloj se consume, gana el Impostor (sin Impostor, la mesa pierde). Si solo queda una fila, antes todos encienden en ella una vela del último aliento.</li>
+<li>En un encuentro: una victoria plena +2 para el Fantasma y cada Médium; una hueca +1 para cada uno y +1 para el Impostor; una victoria del Impostor +3.</li>
+<li>La pantalla final repite cada ronda: las visiones verdaderas, los cambios y las velas.</li>
+</ul>`,
+    seanceOpts: `<ul>
+<li><b>Dificultad:</b> cuántas cartas por fila, visiones por Médium y velas en el reloj.</li>
+<li><b>Impostores:</b> ninguno, uno o dos, y si dos se conocen; cuántos cambios tienen.</li>
+<li><b>Las manchas frías del Fantasma:</b> cuántas visiones puede helar.</li>
+<li><b>Último aliento:</b> activado o no. <b>El Fantasma:</b> por sorteo, o lo elige el anfitrión. <b>Partidas por encuentro.</b></li>
+</ul>`,
+    graveSetup: `<p>De 4 a 12 jugadores, unos 15 minutos. Dos cuadrillas de saqueadores de tumbas, la Luna y el Sol, excavan un cementerio de 25 lápidas en busca de las reliquias que invocarán a su deidad. Una moneda decide la cuadrilla que excava primero: tiene 9 reliquias bajo tierra, la otra 8. Siete tumbas están vacías y una es la de la Muerte.</p>
+<p>Cada cuadrilla tiene un <b>Enterrador</b>, el único jugador que ve el registro de sepulturas: qué hay bajo cada lápida. Todos los demás excavan. Las lápidas muestran palabras en el idioma de la mesa, o iconos a lápiz.</p>`,
+    graveLoop: `<ol>
+<li><b>La señal.</b> En el turno de su cuadrilla, el Enterrador da una palabra y un número, «Océano · 3»: una palabra que une varias tumbas de su cuadrilla, y cuántas. La palabra no puede estar en el tablero. Después no dice nada más.</li>
+<li><b>La excavación.</b> Los excavadores lo hablan y votan en sus móviles; se excava la tumba más votada (en empate, decide la moneda).</li>
+<li><b>Lo que hay debajo.</b> Una reliquia de tu cuadrilla: seguid excavando, hasta el número. Una tumba vacía, o una reliquia de la otra cuadrilla (ahora es suya): el turno pasa. La tumba de la Muerte: vuestra cuadrilla pierde al instante.</li>
+<li><b>Parar.</b> La cuadrilla puede votar parar. Parar antes de llegar al número guarda una excavación extra para el turno siguiente (nunca se acumula).</li>
+</ol>
+<p>Cambia tu móvil entre <em>Lápidas</em> (las palabras o iconos) y <em>Mapa</em> (el tablero de un vistazo).</p>
+<p><b>Tres cuadrillas</b> (6–12 jugadores): la Luna, el Sol y las Estrellas, un tercio de la mesa cada una. La primera cuadrilla esconde 7 reliquias, las otras 6 cada una, con 5 tumbas vacías. La tumba de la Muerte deja a una cuadrilla fuera del juego; las demás siguen excavando, y cuando queda una sola, gana.</p>`,
+    graveWin: `<ul>
+<li>Gana la primera cuadrilla con todas sus reliquias desenterradas, aunque la otra haya desenterrado algunas por error.</li>
+<li>La cuadrilla que abre la tumba de la Muerte pierde al instante (con tres cuadrillas, queda fuera).</li>
+<li>En un encuentro de 1, 3 o 5 partidas: cada victoria +1. Los Enterradores rotan entre partidas.</li>
+</ul>`,
+    graveOpts: `<ul>
+<li><b>Número de cuadrillas:</b> dos, o tres desde 6 jugadores.</li>
+<li><b>En las tumbas:</b> palabras o iconos; <b>nombres famosos</b> (películas, héroes, monumentos) activados o no.</li>
+<li><b>Cuadrillas:</b> por asiento (mueve jugadores alrededor de la mesa para cambiar de cuadrilla) o al azar. <b>Enterradores:</b> rotativos, al azar o elegidos.</li>
+<li><b>Señales:</b> escritas (la palabra aparece en todas las pantallas) o habladas (dichas en voz alta, el número tocado). <b>Partidas por encuentro.</b></li>
+</ul>`,
+    mimicSetup: `<p>De 4 a 12 jugadores, unos 8 minutos por partida. Todos comparten un lugar secreto, una carta de historia, y allí interpretan un personaje, salvo el Imitador, que solo ve estática y el tablero de lugares posibles. Los Vivos deben encontrar al Imitador; el Imitador debe averiguar el lugar.</p>`,
+    mimicLoop: `<ol>
+<li><b>Preguntas.</b> Quien tiene el farol hace en voz alta una pregunta sobre el lugar a quien quiera y luego toca a la persona preguntada; el farol pasa a ella, y es quien pregunta después. Nunca devuelvas la pregunta a quien acaba de preguntarte. Responde para que los Vivos te reconozcan, sin darle el lugar al Imitador.</li>
+<li><b>Acusar.</b> Una vez por partida, cada uno puede acusar a un jugador. El reloj se detiene; todos los demás votan De acuerdo o En desacuerdo. Solo una mesa unánime condena; si no, el reloj sigue.</li>
+<li><b>El Imitador se desenmascara.</b> En cualquier momento el Imitador puede revelarse y decir el lugar.</li>
+<li><b>Se acabó el tiempo.</b> Cuando se agota el reloj (8 minutos por defecto), todos señalan a un sospechoso. El más votado es condenado; en empate, el Imitador se escapa.</li>
+</ol>
+<p>Tacha lugares en tu móvil mientras escuchas: tus notas son privadas.</p>`,
+    mimicWin: `<ul>
+<li>Condenad al Imitador: <b>ganan los Vivos</b>, salvo que el Imitador descubierto diga entonces el lugar y robe la victoria.</li>
+<li>Condenad a un Vivo, o dejad escapar al Imitador: <b>gana el Imitador</b>.</li>
+<li>El Imitador dice el lugar: si acierta, gana; si falla, ganan los Vivos.</li>
+<li>En un encuentro (3 partidas por defecto): los Vivos +1 cada uno, y quien acusó y atrapó al Imitador +1 más; el Imitador +2, o +3 por acertar el lugar.</li>
+</ul>`,
+    mimicOpts: `<ul>
+<li><b>Lugares en el tablero:</b> más lugares se lo ponen más difícil al Imitador.</li>
+<li><b>Último intento:</b> un Imitador descubierto aún puede decir el lugar.</li>
+<li><b>El fondo de la tele se aclara:</b> una opción de confianza. La tele muestra el lugar verdadero muy desenfocado, que se aclara a medida que pasa el tiempo. Quien abra el enlace de la tele podría leerlo.</li>
+<li><b>Tiempo de preguntas, partidas por encuentro.</b></li>
+</ul>`,
+    omenSetup: `<p>De 4 a 12 jugadores, unos 10 minutos. Cada uno juega por su cuenta; no hay bandos ocultos. Una rueda oculta apunta a una de tres caras, Vida, Muerte y Renacimiento, en ese orden en el sentido de las agujas del reloj. Todos empiezan con 5 de Influencia, a la vista de todos.</p>`,
+    omenLoop: `<p>Siete rondas, cada una en tres pasos:</p>
+<ol>
+<li><b>La rueda</b> muestra dónde empieza esta ronda.</li>
+<li><b>La papeleta sellada.</b> En secreto, predice dónde se detendrá la rueda, y elige girarla un paso atrás, un paso adelante o dejarla. Un giro cuesta una Influencia; sin Influencia solo puedes dejarla. Puedes cambiar tu papeleta hasta que todos hayan votado.</li>
+<li><b>La revelación.</b> Se suman todos los giros y la rueda se mueve una sola vez, por el total (tres pasos en el mismo sentido la devuelven al inicio). Después se muestran todas las predicciones y todos los giros.</li>
+</ol>
+<p>El arte es leer la mesa: ¿quién tiene aún Influencia, quién quiere la rueda dónde, y quién la va a empujar?</p>`,
+    omenWin: `<ul>
+<li>Una predicción acertada da 3 puntos. Una papeleta que falta no predice nada y no gira nada.</li>
+<li>Al final, cada Influencia sin usar vale 1 punto. Gana quien tenga más puntos; los empates comparten la victoria.</li>
+</ul>`,
+    omenOpts: `<p>Sin interruptores: solo los temporizadores de cada paso.</p>`,
+    mirrorSetup: `<p>De 4 a 12 jugadores, unos 15 minutos. Cada uno juega por su cuenta. Un espejo embrujado no muestra tu reflejo: muestra lo que tus amigos creen que harías. Ocho dilemas inventados, cada uno con tres respuestas, A, B y C, y ninguna es la correcta.</p>
+<p>En cada ronda lees a otro jugador. Las parejas rotan, así que a lo largo de la partida todos leen a todos, y a cada uno lo lee exactamente un jugador en cada ronda.</p>`,
+    mirrorLoop: `<ol>
+<li><b>Habladlo.</b> El dilema y quién lee a quién son públicos. Preguntad, picad, despistad.</li>
+<li><b>La papeleta sellada.</b> Elige tu propia respuesta y predice la del jugador que lees. Hacen falta las dos, y puedes cambiarlas hasta que todos hayan votado.</li>
+<li><b>El espejo lo muestra todo:</b> cada respuesta y cada lectura, acertada o no.</li>
+</ol>`,
+    mirrorWin: `<ul>
+<li>Una predicción acertada da 2 puntos; tu propia respuesta no da nada, así que sorprender a tu lector es juego limpio.</li>
+<li>Una papeleta que falta se convierte en una respuesta al azar; a su lector se le puntúa igual con ella.</li>
+<li>Gana el mejor lector; los empates comparten la victoria.</li>
+</ul>`,
+    mirrorOpts: `<p>Sin interruptores aparte de los temporizadores. Cuando haya más paquetes de dilemas, la sala os dejará elegir de cuáles se roban los ocho.</p>`,
   },
 };
