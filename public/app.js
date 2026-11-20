@@ -1745,7 +1745,7 @@ function sheet(v) {
     const ok = ids.filter(fits);
     const later = ids.filter((id) => !fits(id));
     body = `<div class="mfilters" data-key="mfilters">${chips.map(([k, l]) => `<button class="mf ${F.has(k) ? 'on' : ''}" data-act="mFilter" data-id="${k}" aria-pressed="${F.has(k)}">${esc(l)}</button>`).join('')}</div>
-      <div class="mrows" data-key="mrows">${ok.map((id) => row(id, false)).join('') || `<p class="small muted center-text">${t('No game fits every filter.')}</p>`}</div>
+      ${ok.length ? FAMILIES.map((f) => { const ids = ok.filter((id) => MODES[id].family === f.id); return ids.length ? `<div class="mfam" data-key="mfam-${f.id}"><div class="rule">${t(f.title)}</div><div class="mrows">${ids.map((id) => row(id, false)).join('')}</div></div>` : ''; }).join('') : `<p class="small muted center-text">${t('No game fits every filter.')}</p>`}
       ${later.length ? `<div class="rule">${t('Needs more players')}</div><div class="mrows" data-key="mrows-later">${later.map((id) => row(id, true)).join('')}</div>` : ''}`;
   } else if (s === 'qr') {
     title = t('Scan to join');
@@ -1811,9 +1811,14 @@ function seatedStrip(v) {
 }
 /** The chosen game: its cover, and for the host a way to change it (S1). */
 function gameCard(v, isHost) {
-  return `<section class="game-card" data-key="gamecard">${cover(v.mode)}
+  // Other games' covers peek out behind the chosen one (a random few, kept while this game stays chosen), so it
+  // reads as a deck to choose from. The host taps the card to change the game.
+  if (S.ui.coverStack?.mode !== v.mode) S.ui.coverStack = { mode: v.mode, ids: MODE_IDS.filter((id) => id !== v.mode).sort(() => Math.random() - 0.5).slice(0, 2) };
+  const deck = `<div class="cover-deck ${isHost ? 'can' : ''}" data-key="coverdeck">${S.ui.coverStack.ids.map((id, i) => `<span class="cd-back b${i}" aria-hidden="true">${cover(id, { key: `cdb-${i}` })}</span>`).join('')}
+    ${isHost ? `<button type="button" class="cd-top" data-act="sheet" data-id="modes" aria-label="${esc(t('Change game'))}">${cover(v.mode)}</button>` : `<span class="cd-top">${cover(v.mode)}</span>`}</div>`;
+  return `<section class="game-card" data-key="gamecard">${deck}
     <div class="gc-side"><span class="kicker">${t(isHost ? 'Tonight\'s game' : 'The host chose this game')}</span><b>${esc(modeTitle(v.mode))}</b><small>${esc(modePitch(v.mode))}</small><i>${esc(modeMeta(v.mode))}</i>
-    ${isHost ? `<button class="btn btn-sm" data-act="sheet" data-id="modes">${t('Change game')}</button>` : ''}<a class="btn btn-sm btn-ghost" href="/guide/${esc(v.mode)}" target="_blank" rel="noopener">${t('Read the full chapter')} ${glyph('out')}</a></div></section>`;
+    ${isHost ? `<button class="btn btn-sm" data-act="sheet" data-id="modes">${t('Change game')}</button>` : ''}<a class="btn btn-sm btn-ghost" href="/guide/${esc(v.mode)}" target="_blank" rel="noopener">${glyph('scroll')}<span>${t('Read the full chapter')}</span></a></div></section>`;
 }
 
 function lobbyMain(v, me) {
