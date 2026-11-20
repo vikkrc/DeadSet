@@ -18,16 +18,21 @@ const KEYS = ['LIFE', t('DEATH'), t('REBIRTH')];
 setNamer('face', (x) => { const i = KEYS.indexOf(String(x)); return i >= 0 ? faceName(i) : String(x); });
 
 /** The wheel: three faces; the needle points at `at` (or turns from `from` by `turn` steps when animating). */
-export function wheel({ at = 0, from = null, turn = 0, size = '', mark = null, key = 'owheel' } = {}) {
+const P = (deg, r) => { const a = (deg * Math.PI) / 180; return `${(100 + r * Math.sin(a)).toFixed(1)} ${(100 - r * Math.cos(a)).toFixed(1)}`; };
+/** AT10: each face owns a sector of the dial, washed in its colour (Life gilt, Death oxblood, Rebirth blue-grey). */
+const sectors = () => [0, 1, 2].map((i) => `<path class="o-sec f-${i}" d="M100 100 L${P(i * 120 - 60, 90)} A90 90 0 0 1 ${P(i * 120 + 60, 90)} Z"/>`).join('');
+/** AT10: the seers ride the outer rim, one lozenge each; gilt once their omen is sealed. */
+const seerDots = (seers) => (seers ? Array.from({ length: seers.n }, (_, i) => `<i class="o-seer ${i < seers.done ? 'on' : ''}" style="--d:${((i + 0.5) * 360) / seers.n}deg"></i>`).join('') : '');
+export function wheel({ at = 0, from = null, turn = 0, size = '', mark = null, key = 'owheel', seers = null } = {}) {
   const spin = from != null;
   const a0 = (spin ? from : at) * 120;
   const a1 = a0 + turn * 120;
   return `<div class="o-wheel ${size} ${spin ? 'spin' : ''}" data-key="${key}" style="--a0:${a0}deg;--a1:${a1}deg">
-    <svg class="o-rim" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="96"/><circle cx="100" cy="100" r="78" stroke-dasharray="2 5"/>
+    <svg class="o-rim" viewBox="0 0 200 200" aria-hidden="true">${sectors()}<circle cx="100" cy="100" r="96"/><circle cx="100" cy="100" r="99"/><circle cx="100" cy="100" r="78" stroke-dasharray="2 5"/>
       ${[0, 120, 240].map((d) => `<path d="M100 100 L${(100 + 96 * Math.sin(((d + 60) * Math.PI) / 180)).toFixed(1)} ${(100 - 96 * Math.cos(((d + 60) * Math.PI) / 180)).toFixed(1)}"/>`).join('')}
       ${Array.from({ length: 36 }, (_, i) => { const r = (i * 10 * Math.PI) / 180; return `<path d="M${(100 + 90 * Math.sin(r)).toFixed(1)} ${(100 - 90 * Math.cos(r)).toFixed(1)}L${(100 + 96 * Math.sin(r)).toFixed(1)} ${(100 - 96 * Math.cos(r)).toFixed(1)}"/>`; }).join('')}</svg>
     ${[0, 1, 2].map((i) => `<span class="o-face f-${i} ${mark === i ? 'on' : ''}" style="--d:${i * 120}deg"><span class="o-fi">${emblem(FACE_EMB[i])}</span><b>${esc(faceName(i))}</b></span>`).join('')}
-    <span class="o-needle"><i></i></span><span class="o-hub">${emblem('oracle')}</span></div>`;
+    ${seerDots(seers)}<span class="o-needle"><i></i></span><span class="o-hub">${emblem('oracle')}</span></div>`;
 }
 
 const pips = (n, total = 5) => `<span class="o-pips" aria-label="${esc(th('{n} Influence', { n }))}">${Array.from({ length: total }, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</span>`;
@@ -58,11 +63,11 @@ export function omenMain(v, me, h) {
       const rot = UI.sel.orot ?? 0;
       const inf = a.influence ?? 0;
       stage = `${round}${doNow(t('Predict, and perhaps turn'), t('Your prediction and your turn stay secret. Every turn at the table is added up before the wheel moves.'))}
-        ${wheel({ at: O.start, mark: pred, size: 'sm' })}
+        ${wheel({ at: O.start, mark: pred, seers: v.progress ? { n: v.progress.total, done: v.progress.done } : null })}
         <div class="o-pick" data-key="opick"><span class="kicker">${t('Where will it stop?')}</span>
           <div class="o-preds">${[0, 1, 2].map((i) => `<button class="o-pred f-${i} ${pred === i ? 'on' : ''}" data-act="oPred" data-id="${i}" aria-pressed="${pred === i}"><span>${emblem(FACE_EMB[i])}</span><b>${esc(faceName(i))}</b></button>`).join('')}</div></div>
         <div class="o-pick" data-key="orot"><span class="kicker">${t('Turn the wheel?')} · ${th('{n} Influence left', { n: inf })}</span>
-          <div class="seg o-rots">${[[-1, '↺', t('Back one')], [0, '·', t('Leave it')], [1, '↻', t('On one')]].map(([r, g, l]) => `<button data-act="oRot" data-id="${r}" aria-pressed="${rot === r}" ${r !== 0 && inf < 1 ? 'disabled' : ''}><b>${g}</b> ${esc(l)}</button>`).join('')}</div>
+          <div class="seg o-rots">${[[-1, '↺', t('Back one')], [0, '◎', t('Leave it')], [1, '↻', t('On one')]].map(([r, g, l]) => `<button data-act="oRot" data-id="${r}" aria-pressed="${rot === r}" aria-label="${esc(l)} · ${esc(t(r < 0 ? 'anticlockwise' : r > 0 ? 'clockwise' : 'the needle stays'))}" ${r !== 0 && inf < 1 ? 'disabled' : ''}><b aria-hidden="true">${g}</b> ${esc(l)}</button>`).join('')}</div>
           <p class="small muted">${t('Turning costs one Influence. Unused Influence is worth one point each at the end.')}</p></div>
         ${a.ballot ? `<p class="small center-text o-sealed">${glyph('check')} ${t('Your omen is sealed. You can change it until everyone is in.')}</p>${waiting(v)}` : ''}`;
       break;

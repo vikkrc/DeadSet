@@ -5299,3 +5299,16 @@ details.more summary,
 .tseal i.v { background: var(--amethyst-2); border-color: var(--amethyst); }
 .seal-corner { position: relative; }
 .seal-corner > .tseal { position: absolute; top: 0; right: 0; z-index: 4; }
+
+/* AT10: the astrolabe — sector washes, a double rim, seers on the rim; face buttons tinted like their sectors */
+.o-sec { stroke: none; }
+.o-sec.f-0 { fill: color-mix(in srgb, var(--gilt) 13%, transparent); }
+.o-sec.f-1 { fill: color-mix(in srgb, var(--blood) 22%, transparent); }
+.o-sec.f-2 { fill: color-mix(in srgb, var(--lapis) 15%, transparent); }
+.o-seer { position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border: 1px solid var(--gilt-2); background: var(--ink);
+  transform: rotate(var(--d)) translateY(calc(var(--sz) * -0.5 - 9px)) rotate(45deg); transition: background var(--t-ui), box-shadow var(--t-ui); }
+.o-seer.on { background: var(--gilt-hi); border-color: var(--gilt-hi); box-shadow: 0 0 6px color-mix(in srgb, var(--gilt-hi) 70%, transparent); }
+.o-pred.f-0 { background: color-mix(in srgb, var(--gilt) 10%, var(--ink-2)); }
+.o-pred.f-1 { background: color-mix(in srgb, var(--blood) 16%, var(--ink-2)); }
+.o-pred.f-2 { background: color-mix(in srgb, var(--lapis) 11%, var(--ink-2)); }
+.o-pred.on { background: color-mix(in srgb, currentColor 22%, var(--ink-2)); border-color: var(--gilt-hi); }
