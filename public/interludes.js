@@ -108,7 +108,7 @@ export function scenesFor(l, batch = [], ctx = {}) {
     case 'q-time': return [['qtime']];
     case 'g-start': return [['gstart']];
     case 'g-sign': return [['gsign']];
-    case 'g-dig': return l.coin ? [['gcoin'], ['gdig']] : [['gdig']];
+    case 'g-dig': return l.coin ? [['gcoin'], ['gdig', { kind: l.kind }]] : [['gdig', { kind: l.kind }]];
     case 's-visions': return [['svisions', { n: l.count ?? 0 }]];
     case 's-cold': return [['scold']];
     case 's-verdict': return [['sverdict', { n: l.rows?.length ?? 0 }]];
@@ -139,8 +139,17 @@ export function scenesFor(l, batch = [], ctx = {}) {
   }
 }
 
-/** Total length of the shared scenes an entry opens. */
-export const interludeMs = (l, batch, ctx) => scenesFor(l, batch, ctx).reduce((s, [type, d]) => s + sceneMs(type, d), 0);
+/**
+ * P1: three scene sizes. Full scenes take both screens and hold the timeline (a death, a verdict, the deal…).
+ * Turn-level events (a swap or a claim in Carnival, a sign or a dig in Graverobbers, a dig called in Coffins, an
+ * accusation in Mimic) are banners: under Part III they drop as a public herald slip, inputs stay open, and they do
+ * not hold the timeline. Opening Death's grave stays a full scene. (Inline steps live on the table itself.)
+ */
+const BANNER = new Set(['kswap', 'kclaim', 'gsign', 'gdig', 'cdig', 'qaccuse']);
+export const sceneSize = (type, d = {}) => (type === 'gdig' && d.kind === 'D' ? 'full' : BANNER.has(type) ? 'banner' : 'full');
+
+/** Total length of the full scenes an entry opens: only those hold the shared timeline. */
+export const interludeMs = (l, batch, ctx) => scenesFor(l, batch, ctx).reduce((s, [type, d]) => s + (sceneSize(type, d) === 'full' ? sceneMs(type, d) : 0), 0);
 
 /** Commands that stay open while a shared scene plays. */
 export const OPEN_DURING_SCENES = (type) => type.startsWith('lobby.') || type === 'chat.send';

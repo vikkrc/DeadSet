@@ -6,7 +6,7 @@ import { renderGuide } from './guide.js';
 import { sound, score, haptic, burstAt, celebrate, ambient } from './fx.js';
 import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './board.js';
 import { seatLayout } from './layout.js';
-import { sceneMs, scenesFor } from './interludes.js';
+import { sceneMs, scenesFor, sceneSize } from './interludes.js';
 import { MODES, MODE_IDS, FAMILIES, COLLECTION, modeOfPhase, modeInfo } from './modes.js';
 import { explainer } from './kit.js';
 import { cardArt, roleEmblemId, roleNumber } from './cards.js';
@@ -334,7 +334,7 @@ function detectMoments(v) {
   const sharedFrom = (l, start) => {
     // Moments this entry produced that the server runs as shared scenes get its window; the rest stay personal.
     if (!l.mAt) return;
-    const types = scenesFor(l, fresh).map(([type]) => type);
+    const types = scenesFor(l, fresh).filter(([type, d]) => sceneSize(type, d) === 'full').map(([type]) => type);
     let at = l.mAt;
     const end = l.mAt + l.mDur;
     for (const m of out.slice(start)) {
@@ -357,6 +357,19 @@ function detectMoments(v) {
   for (const l of fresh) {
     const start = out.length;
     entryMoments(l);
+    // P1: a banner-sized scene becomes a public herald slip with the entry's own line; the table stays in play.
+    const banners = scenesFor(l, fresh).filter(([type, d]) => sceneSize(type, d) === 'banner').map(([type]) => type);
+    if (banners.length) {
+      for (let k = out.length - 1; k >= start; k--) {
+        const m = out[k];
+        if (!banners.includes(m.type)) continue;
+        out.splice(k, 1);
+        const snd = m.sound ?? MOMENT_SOUND[m.type];
+        if (snd) pubSound(snd);
+        const label = l.ev === 'g-dig' && l.label && !l.icon ? `${l.label} · ` : '';
+        notify(`${label}${tm(entryMsg(l))}`, 'public');
+      }
+    }
     sharedFrom(l, start);
   }
   if (v.mode === 'coffins' && v.me && !v.me.moderator) out.push(...lanternMoments(freshPriv, name));
