@@ -1836,6 +1836,37 @@ function gameCard(v, isHost) {
     ${isHost ? `<button class="btn btn-sm" data-act="sheet" data-id="modes">${t('Change game')}</button>` : ''}<a class="btn btn-sm btn-ghost" href="/guide/${esc(v.mode)}" target="_blank" rel="noopener">${glyph('scroll')}<span>${t('Read the full chapter')}</span></a></div></section>`;
 }
 
+/**
+ * S3: Classic's balance panel, pinned over the rules. A meter from the town (blue) to Death (red) with a grey
+ * "was" marker (the recommended setup) and a gilt "now" one, the estimated length, the learning load and the
+ * count of Death. A simple heuristic: honest in direction, not exact.
+ */
+function classicBalance(v, tweak = {}) {
+  const T = { ...v.table, ...tweak };
+  const n = Math.max(5, v.players.length);
+  const D = v.setup?.publicDeck?.core?.DEATH ?? v.setup?.publicDeck?.exact?.DEATH ?? Math.max(1, Math.round(n / 4));
+  let x = D / n;
+  if (T.bloodMoon) x += 0.03;
+  if (T.finalTwoDeath) x += 0.04;
+  if (T.quietFirstDay) x += 0.02;
+  if (T.clues) x -= 0.03;
+  x -= { once: 0, both: 0.01, nightly: 0.03 }[T.psycho ?? 'once'] ?? 0;
+  const pct = Math.round(Math.max(0, Math.min(100, ((x - 0.1) / 0.32) * 100)));
+  const rules = v.settings?.rules?.mode === 'random' ? v.settings.rules.count : v.settings?.rules?.selected?.length ?? 0;
+  const mins = Math.round((20 + n * 3 + (T.quietFirstDay ? 5 : 0)) / 5) * 5;
+  const load = Math.min(5, 2 + (v.settings?.dreams ? 1 : 0) + (rules > 1 ? 1 : 0) + (T.lovers || T.cult || T.ripper ? 1 : 0));
+  return { pct, mins, load, D, n };
+}
+function balancePanel(v) {
+  const now = classicBalance(v);
+  const was = classicBalance(v, { bloodMoon: true, finalTwoDeath: false, quietFirstDay: true, clues: true, psycho: 'once' });
+  const lean = now.pct - was.pct;
+  const label = Math.abs(lean) < 4 ? '' : t(lean > 12 ? 'Death much stronger' : lean > 0 ? 'Death stronger' : lean < -12 ? 'The town much stronger' : 'The town stronger');
+  return `<section class="balance" data-key="balance"><div class="bal-meter" aria-label="${esc(t('Balance'))}"><span class="bal-town">${t('Town')}</span><i class="bal-bar"><b class="bal-was" style="left:${was.pct}%"></b><b class="bal-now" style="left:${now.pct}%"></b></i><span class="bal-death">${t('Death')}</span></div>
+    <div class="bal-nums"><span><b>${esc(th('~{n} min', { n: now.mins }))}</b><small>${t('Length')}</small></span><span><b>${now.load} / 5</b><small>${t('To learn')}</small></span><span><b>${esc(th('{d} of {n}', { d: now.D, n: now.n }))}</b><small>${t('Death')}</small></span></div>
+    ${label ? `<p class="bal-effect">${esc(label)}</p>` : ''}</section>`;
+}
+
 /** S2: the recommended setup for this game and table size, as a summary; the host can return to it after changes. */
 function recCard(v, isHost) {
   const r = v.rec;
@@ -1880,9 +1911,9 @@ function lobbyMain(v, me) {
     body = `${invite}${table}<p class="small muted center-text" data-key="seathint">${t('Tap a seat to move or remove a player.')}${v.mode === 'graverobbers' && (v.settings.g?.crews ?? 'seats') === 'seats' ? ` ${t('Moving a player across the table changes their crew.')}` : ''}</p>
       ${portrait}${S.ui.botsPanel ? botsPanel(v) : ''}`;
   } else if (tab === 'game') {
-    body = `${gameCard(v, true)}${recCard(v, true)}<div class="lobby-steps" data-key="lsteps">${how}${lobbyDeck(v, true, v.mode === 'classic' || v.mode === 'missions' ? setupPresets(v) : '')}</div>`;
+    body = `${gameCard(v, true)}${recCard(v, true)}${v.mode === 'classic' ? balancePanel(v) : ''}<div class="lobby-steps" data-key="lsteps">${how}${lobbyDeck(v, true, v.mode === 'classic' || v.mode === 'missions' ? setupPresets(v) : '')}</div>`;
   } else {
-    body = `<div class="lobby-steps" data-key="lsteps">${setupForm(v) ? `<section data-key="setup">${setupForm(v)}</section>` : ''}${tableSection(v, true)}${timersForm(v)}</div>`;
+    body = `${v.mode === 'classic' ? balancePanel(v) : ''}<div class="lobby-steps" data-key="lsteps">${setupForm(v) ? `<section data-key="setup">${setupForm(v)}</section>` : ''}${tableSection(v, true)}${timersForm(v)}</div>`;
   }
   return `${head(v)}${moderated}${seatedStrip(v)}${tabs}${body}${problems}`;
 }

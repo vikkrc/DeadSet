@@ -5484,3 +5484,15 @@ button.mr-fate { cursor: pointer; }
 .rec-facts { display: flex; flex-wrap: wrap; gap: 6px; }
 .rec-fact { padding: 4px 10px; border: 1px solid var(--iron); border-radius: 20px; font: 500 14px/1.2 var(--text); color: var(--bone); }
 .rec-card .row { gap: 8px; flex-wrap: wrap; }
+/* S3: the balance panel, pinned over Classic's rules */
+.balance { position: sticky; top: 64px; z-index: 3; display: grid; gap: 8px; margin: 0 0 12px; padding: 10px 14px; border: 1px solid var(--iron); border-radius: 6px; background: color-mix(in srgb, var(--ink-2) 96%, transparent); box-shadow: 0 10px 20px -14px #000; }
+.bal-meter { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; font: 600 var(--fs-label)/1 var(--text); letter-spacing: 0.14em; text-transform: uppercase; }
+.bal-town { color: var(--lapis); } .bal-death { color: var(--blood-ink); }
+.bal-bar { position: relative; height: 8px; border-radius: 4px; background: linear-gradient(90deg, var(--lapis), var(--ash-2) 50%, var(--blood)); }
+.bal-bar b { position: absolute; top: 50%; width: 12px; height: 12px; margin-left: -6px; transform: translateY(-50%) rotate(45deg); transition: left var(--t-ui) var(--ease); }
+.bal-was { background: var(--ash); border: 1px solid var(--ink); }
+.bal-now { background: var(--gilt-hi); border: 1px solid var(--ink); box-shadow: 0 0 8px color-mix(in srgb, var(--gilt-hi) 60%, transparent); }
+.bal-nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
+.bal-nums b { display: block; font: 400 18px/1.1 var(--black); color: var(--bone); }
+.bal-nums small { font: 600 var(--fs-label)/1.2 var(--text); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash); }
+.bal-effect { margin: 0; font: 600 var(--fs-label)/1.2 var(--text); letter-spacing: 0.16em; text-transform: uppercase; color: var(--blood-ink); text-align: center; }
