@@ -8,6 +8,7 @@ import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './bo
 import { seatLayout, turnBead } from './layout.js';
 import { cover, modeTitle, modePitch, modeMeta } from './covers.js';
 import { didIWin } from './outcome.js';
+import { shareCard } from './share.js';
 import { sceneMs, scenesFor, sceneSize, paceScale } from './interludes.js';
 import { MODES, MODE_IDS, FAMILIES, COLLECTION, modeOfPhase, modeInfo } from './modes.js';
 import { explainer } from './kit.js';
@@ -2628,7 +2629,24 @@ function afterGame(v) {
   const me = v.me;
   const votes = me && !me.moderator && ev ? `<section class="end-votes" data-key="endvotes"><span class="kicker">${t('What next?')}</span>
     <div class="seg"><button data-act="endVote" data-id="again" aria-pressed="${ev.mine === 'again'}">${t('Again')}${ev.again ? ` · ${ev.again}` : ''}</button><button data-act="endVote" data-id="another" aria-pressed="${ev.mine === 'another'}">${t('Try another')}${ev.another ? ` · ${ev.another}` : ''}</button></div></section>` : '';
-  return awardsHtml(v) + votes + eveningHtml(v);
+  const share = v.players?.length ? `<section class="share-row" data-key="sharerow"><button class="btn btn-sm" data-act="shareCard">${glyph('out')} ${t('Share the story')}</button><button class="btn btn-sm btn-ghost" data-act="shareCard" data-anon="1">${t('Share without names')}</button></section>` : '';
+  return awardsHtml(v) + votes + share + eveningHtml(v);
+}
+/** V1: the end of the game as a Gazette front page, for the share card. */
+function shareCardData(v) {
+  const vd = verdict(v);
+  const plain = (s) => String(s ?? '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  const seated = v.players.filter((p) => !p.moderator);
+  return {
+    masthead: t('The Dead Set Gazette'), seatWord: t('Seat'),
+    dateLine: new Date().toLocaleDateString(getLang(), { day: 'numeric', month: 'long', year: 'numeric' }),
+    modeLine: `${modeTitle(v.mode)} · ${tp('{n} player', '{n} players', seated.length)}`,
+    kicker: plain(vd.kicker), title: plain(vd.title), reason: plain(tm(v.endReason)),
+    winnersLabel: t('The winners'), othersLabel: t('At the table'), honoursLabel: t('Honours'),
+    players: seated.map((p) => ({ name: p.name, avatar: p.avatar, alive: p.alive !== false, won: didIWin({ ...v, me: p }, v.winner) === true })),
+    awards: (v.awards ?? []).map((a) => ({ title: t(a.title), line: plain(tm(a.line)) })),
+    url: location.host,
+  };
 }
 /** F1: the game's honours, each with its emblem and the line that earned it. */
 function awardsHtml(v) {
@@ -3051,6 +3069,15 @@ const ACT = {
   seatSheet(el) { S.ui.sheet = `seat:${el.dataset.id}`; render(); },
   sound() { sound.toggle(); render(); },
   copy(el) { navigator.clipboard?.writeText(el.dataset.text).then(() => toast(t('Invite link copied')), () => notify(el.dataset.text)); burstAt(el); },
+  async shareCard(el) {
+    const v = V(); if (!v?.players?.length) return;
+    el.disabled = true;
+    try {
+      const how = await shareCard(shareCardData(v), { anon: !!el.dataset.anon });
+      if (how === 'downloaded') notify(t('The front page is saved to your downloads.'));
+      if (how === 'failed') notify(t('The front page could not be drawn.'));
+    } finally { el.disabled = false; }
+  },
   share(el) {
     if (navigator.share) navigator.share({ title: 'Dead Set', text: t('Take a seat at my Dead Set table'), url: el.dataset.text }).catch(() => {});
     else ACT.copy(el);

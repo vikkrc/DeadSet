@@ -5585,3 +5585,6 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
 .tv-paused { position: fixed; left: 50%; top: 50%; translate: -50% -50%; z-index: var(--z-toast); display: flex; align-items: center; gap: 18px; padding: 22px 40px; border: 1px solid var(--gilt-2); background: color-mix(in srgb, var(--ink) 94%, transparent); box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.45); }
 .tv-paused b { font: 400 var(--fs-h2)/1 var(--black); color: var(--bone); }
 .tv-paused .glyph { font-size: 44px; color: var(--gilt); }
+
+/* V1: the share card buttons */
+.share-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 4px 0 16px; }
