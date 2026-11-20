@@ -7,7 +7,7 @@
 import { glyph } from './icons.js';
 import { emblem } from './emblems.js';
 import { cardArt } from './cards.js';
-import { t, th, roleF, setNamer } from './i18n.js';
+import { t, th, tp, roleF, setNamer } from './i18n.js';
 import { esc, rawName, disc, doNow, scoreLedger, explainer, waiting } from './kit.js';
 
 export const isOmenPhase = (ph) => typeof ph === 'string' && ph.startsWith('O_');
@@ -146,7 +146,7 @@ export function omenLobbyDeck(v, isHost, h) {
 }
 
 // ── End ────────────────────────────────────────────────────────────────────
-export const omenTitle = (v) => { const w = v.omen?.winners ?? []; return w.length ? t('{names} wins', { names: w.map((id) => rawName(v, id)) }) : t('The End'); };
+export const omenTitle = (v) => { const w = v.omen?.winners ?? []; return w.length ? tp('{names} wins', '{names} win', w.length, { names: w.map((id) => rawName(v, id)) }) : t('The End'); };
 
 export function omenEndHtml(v) {
   const O = v.omen;

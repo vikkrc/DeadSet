@@ -5,7 +5,7 @@
 
 import { glyph } from './icons.js';
 import { emblem } from './emblems.js';
-import { t, th, dilemmaText } from './i18n.js';
+import { t, th, tp, dilemmaText } from './i18n.js';
 import { dilemmaById, DILEMMAS } from './dilemmas.js';
 import { esc, rawName, pname, disc, doNow, seatArrows, scoreLedger, explainer, waiting, settingRow } from './kit.js';
 
@@ -186,7 +186,7 @@ export function mirrorLobbyDeck(v, isHost, h) {
 }
 
 // ── End ────────────────────────────────────────────────────────────────────
-export const mirrorTitle = (v) => { const w = v.mirror?.winners ?? []; return w.length ? t('{names} wins', { names: w.map((id) => rawName(v, id)) }) : t('The End'); };
+export const mirrorTitle = (v) => { const w = v.mirror?.winners ?? []; return w.length ? tp('{names} wins', '{names} win', w.length, { names: w.map((id) => rawName(v, id)) }) : t('The End'); };
 
 export function mirrorEndHtml(v) {
   const W = v.mirror;

@@ -24,7 +24,7 @@ import { avatarSvg, randomAvatar, PARTS, COLORS } from './avatar.js';
 import { giftHtml, productIndex } from './gifts.js';
 import { gazetteHtml, frontPageHtml } from './gazette.js';
 import { isMissionPhase, missionMain, missionPicks, missionCenter, missionDock, missionActs, missionMoment, missionMomentHtml, MISSION_MOMENT_TIME, revealTime, missionEndHtml, knowledgeHtml, trackHtml, gridHtml, missionMarks, hunchArrowsSvg, hunchLegend } from './missions.js';
-import { LANGS, t, th, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, mcardF, scen, optLabel, list as tlist, loadLang, setContent, browserLang, isLang, getLang, extra as tx } from './i18n.js';
+import { LANGS, t, th, tp, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, mcardF, scen, optLabel, list as tlist, loadLang, setContent, browserLang, isLang, getLang, extra as tx } from './i18n.js';
 
 /** Each mode's client hooks, keyed by the registry's mode id (B7). Phases find their mode by prefix. */
 const CLIENT = {
@@ -517,8 +517,8 @@ function verdict(v, { winner = v?.winner, result = null, sides = null, whos = nu
   let kicker = t('The verdict');
   let title;
   switch (winner) {
-    case 'OMEN': title = whos?.length ? t('{names} wins', { names: whos }) : omenTitle(v); break;
-    case 'MIRROR': title = whos?.length ? t('{names} wins', { names: whos }) : mirrorTitle(v); break;
+    case 'OMEN': title = whos?.length ? tp('{names} wins', '{names} win', whos.length, { names: whos }) : omenTitle(v); break;
+    case 'MIRROR': title = whos?.length ? tp('{names} wins', '{names} win', whos.length, { names: whos }) : mirrorTitle(v); break;
     case 'MIMIC': title = mimicTitle(v?.mimic); break;
     case 'GRAVEROBBERS': title = graveTitle(v?.graverobbers); kicker = noStop(graveKicker(v?.graverobbers)) || kicker; break;
     case 'SEANCE': {
@@ -528,7 +528,7 @@ function verdict(v, { winner = v?.winner, result = null, sides = null, whos = nu
       break;
     }
     case 'MIDNIGHT': title = noStop(t(midnightTitle(sides ?? v?.midnight?.winners?.sides))); break;
-    case 'CARNIVAL': title = t('{names} wins', { names: whos?.length ? whos : names(v?.carnival?.winners) }); break;
+    case 'CARNIVAL': { const w = whos?.length ? whos : names(v?.carnival?.winners); title = tp('{names} wins', '{names} win', w.length, { names: w }); break; }
     case 'COFFINS': title = th('{a} wins', { a: who || names([v?.coffins?.winner])[0] }); break;
     default: title = t({ DEMON: 'The Demon wins', DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[winner] ?? 'The End');
   }

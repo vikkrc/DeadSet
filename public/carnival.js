@@ -10,7 +10,7 @@
 import { glyph } from './icons.js';
 import { emblem } from './emblems.js';
 import { cardArt, roleNumber } from './cards.js';
-import { t, th, tmh, roleF, entryMsg } from './i18n.js';
+import { t, th, tph, tmh, roleF, entryMsg } from './i18n.js';
 import { avatarSvg } from './avatar.js';
 import { backdropHtml } from './backdrops.js';
 import { seatLayout } from './layout.js';
@@ -535,7 +535,7 @@ export function carnivalBoard(v, h) {
     K_CHALLENGE: K.claim ? `${th('{a} claims the {role}.', { a: pname(v, K.claim.by), role: roleName(K.claim.mask) })} <b>${th('{done}/{total} have answered', v.progress ?? { done: 0, total: 0 })}</b>` : '',
     K_POWER: K.power ? th('{a} uses the {role}…', { a: pname(v, K.power.user), role: roleName(K.power.mask) }) : '',
     K_LOOK: K.look ? (K.look.kind === 'peek' ? th('{a} lifts their mask…', { a: pname(v, K.look.pid) }) : th('{a} reads the masks…', { a: pname(v, K.look.pid) })) : '',
-    ENDED: th('{names} wins.', { names: (K.winners ?? []).map((id) => pname(v, id)) }),
+    ENDED: tph('{names} wins.', '{names} win.', (K.winners ?? []).length, { names: (K.winners ?? []).map((id) => pname(v, id)) }),
   }[v.phase] ?? '';
   const ended = v.phase === 'ENDED';
   const marks = v.phase === 'K_CHALLENGE' && K.claim ? Object.fromEntries(K.claim.answered.map((id) => [id, glyph('check')])) : {};

@@ -156,6 +156,25 @@ export function th(tpl, p) {
   const s = look(tpl);
   return p ? fill(s, p, true) : s;
 }
+/**
+ * Plural-aware translation (UX C1). `one` and `other` are the English keys. A dictionary gives `one` as
+ * usual; for `other` it may give a plain string or an object by plural category ({ few, many, other }),
+ * chosen with Intl.PluralRules for the current language.
+ */
+const plural = new Map();
+export function tp(one, other, n, p = {}, html = false) {
+  const rules = plural.get(lang) ?? plural.set(lang, new Intl.PluralRules(lang)).get(lang);
+  const cat = rules.select(Number(n) || 0);
+  let tpl;
+  if (cat === 'one') tpl = look(one);
+  else {
+    const hit = D?.ui?.[other];
+    tpl = hit && typeof hit === 'object' ? (hit[cat] ?? hit.other ?? other) : look(other);
+  }
+  const q = { n, ...p };
+  return html ? fill(tpl, q, true) : fill(tpl, q, false);
+}
+export const tph = (one, other, n, p) => tp(one, other, n, p, true);
 /** Render a server message (string or [template, params]) as plain text. */
 export function tm(msg) {
   if (msg == null) return '';
