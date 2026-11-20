@@ -1336,7 +1336,8 @@ function centerFor(v, pick) {
     case 'DAY_VOTING': return `${tally(prog.done, prog.total)}<span class="c-sub">${t('{n}/{total} voted', { n: prog.done, total: prog.total })}</span>${hint}${clock}`;
     case 'DAY_RESOLVING': return `<span class="c-emblem">${glyph('dagger')}</span><span class="c-sub">${t('A final act')}</span>${hint}${clock}`;
     case 'NIGHT_DREAM_SWAP': return `${moon(0.08, 'c-moon')}<span class="c-sub">${t('Nightfall')}</span>${hint}${clock}`;
-    case 'NIGHT_ACTIONS': return `${moon(prog ? prog.done / Math.max(1, prog.total) : 0, 'c-moon')}<span class="c-sub">${prog ? t('{n}/{total} asleep', { n: prog.done, total: prog.total }) : ''}</span>${hint}${clock}`;
+    case 'NIGHT_ACTIONS': if (pick?.key === 'role' && V()?.me?.role?.glyph) return `<span class="c-emblem">${glyph(V().me.role.glyph)}</span>${hint}${clock}`;
+      return `${moon(prog ? prog.done / Math.max(1, prog.total) : 0, 'c-moon')}<span class="c-sub">${prog ? t('{n}/{total} asleep', { n: prog.done, total: prog.total }) : ''}</span>${hint}${clock}`;
     case 'ENDED': return `<span class="c-emblem">${glyph(WIN_GLYPH[v.winner] ?? 'scroll')}</span><span class="c-sub">${t({ DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'Jester wins', DRAW: 'Draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[v.winner] ?? '')}</span>`;
     default: return '';
   }
@@ -1660,6 +1661,9 @@ function sheet(v) {
     if (kind === 'role' && roles[id]) {
       title = roleF(id, 'name');
       body = `${roleCardHtml(roles[id], { align: roles[id].alignment, flipKey: `info-${id}`, flipped: true })}<p class="muted small card-info">${esc(roleF(id, 'detail'))}</p>`;
+    } else if (kind === 'dream') {
+      title = dreamF(id, 'name');
+      body = dreamCard({ id });
     } else if (kind === 'rule') {
       title = t('Rule card');
       body = `<div class="rule-card edict"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><div><b>${esc(ruleF(id, 'name'))}</b><p>${esc(ruleF(id, 'text'))}</p></div></div>
@@ -2407,12 +2411,18 @@ function dreamCard(d) {
   return `<div class="dream" data-key="dream-${d.id}"><span class="tarot tarot--thumb dreamsuit">${cardArt(DREAM_EMB[d.id] ?? 'moon')}</span><div><span class="kicker">${t('Tonight\'s dream')}</span><h3>${esc(dreamF(d.id, 'name'))}</h3><p>${esc(dreamF(d.id, 'text'))}</p></div></div>`;
 }
 
+/** AT1: tonight's dream as the night's context row — one vellum slip under the table; tap for the card. */
+function dreamSlip(d) {
+  if (!d) return '';
+  return `<button type="button" class="ctx-slip dream-slip" data-act="cardInfo" data-kind="dream" data-id="${d.id}" data-key="dslip-${d.id}"><span class="kicker">${t('Tonight\'s dream')}</span><b>${esc(dreamF(d.id, 'name'))}</b><small>${esc(dreamF(d.id, 'text'))}</small></button>`;
+}
+
 function actionsStage(v, me, a) {
   if (a.done) {
     return `${sleepingHtml(v, t('You are asleep.'))}${submittedSummary(a)}<div class="row center" data-key="wake"><button class="btn btn-ghost btn-sm" data-act="reopen">${t('Wake up and change my mind')}</button></div>${chatBlock(v)}`;
   }
   const { ctx, pick } = activePick(v);
-  const parts = [dreamCard(me.dream)];
+  const parts = [];
   const s = a.schema;
   const rname = s?.role ? esc(roleF(s.role.id, 'name')) : '';
   if (me.sleepwalkPartner) parts.push(`<p class="small muted center-text" data-key="sw">${th('You are bound to {name}, seated just before you.', { name: me.sleepwalkPartner })}</p>`);
@@ -2445,6 +2455,7 @@ function actionsStage(v, me, a) {
     parts.push(`<p class="small muted center-text" data-key="rolehint">${rname}${s.charges === 1 ? ` · ${t('once per game')}` : ''}${s.uses > 1 ? ` · ${t('twice tonight')}` : ''}${s.role.id === 'MIMIC' ? ` · ${t('mandatory, or you stay powerless')}` : ''}${s.kind === 'dead' ? ` · ${t('you must survive the night')}` : ''}</p>`);
   }
   if (!a.death && !ctx.length && me.role) parts.push(roleCardHtml(me.role, { align: me.alignment, mini: true }));
+  parts.push(dreamSlip(me.dream));
   parts.push(chatBlock(v));
   return parts.join('');
 }
