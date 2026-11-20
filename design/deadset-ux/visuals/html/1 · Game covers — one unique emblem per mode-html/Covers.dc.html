@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dead Set — game covers</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ds.css">
+<link rel="stylesheet" href="./workshop.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Grenze+Gotisch:wght@400;600;800&amp;family=UnifrakturCook:wght@700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="ds tv" style="width:1600px;height:1000px;padding:44px 64px;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:24px">
+    <h1 class="bl press" style="font-size:56px;font-weight:800">Every game has a face</h1>
+    <p class="it dim" style="font-size:20px;flex:1">Today Exorcism and The Omen share the Oracle emblem. One cover per game, its own emblem and accent, used everywhere the game is named.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:26px">
+    <div class="cover" style="--acc:#8e1b1f"><span class="fam">Hidden Allegiances</span><div class="win"><img src="./art/death.svg" alt=""></div><h3>Classic</h3><p>Hidden roles, night kills, a secret ballot.</p><span class="meta">5–25 · 30–60 min</span></div>
+    <div class="cover" style="--acc:#a7742a"><span class="fam">Hidden Allegiances</span><div class="win"><img src="./art/lantern.svg" alt=""></div><h3>Missions</h3><p>Pick the team; somebody sabotages it.</p><span class="meta">5–12 · 30 min</span></div>
+    <div class="cover" style="--acc:#7a1f3d"><span class="fam">Changing Hands</span><div class="win"><img src="./art/maskedvote.svg" alt=""></div><h3>Carnival</h3><p>Swap masks, claim powers, gather Souls.</p><span class="meta">4–12 · 20 min</span></div>
+    <div class="cover" style="--acc:#2c4a7a"><span class="fam">Changing Hands</span><div class="win"><img src="./art/moon.svg" alt=""></div><h3>Midnight</h3><p>One night, one vote. Who are you now?</p><span class="meta">4–12 · 10 min</span></div>
+    <div class="cover" style="--acc:#9a7b2f"><span class="fam">Reading the Room</span><div class="win"><img src="./art/p_compass.svg" alt=""></div><h3>The Omen</h3><p>Guess where the wheel stops.</p><span class="meta">4–12 · 15 min</span></div>
+    <div class="cover" style="--acc:#6f8aa8"><span class="fam">Reading the Room</span><div class="win"><img src="./art/s_self.svg" alt=""></div><h3>The Mirror</h3><p>What would your friend do?</p><span class="meta">4–12 · 20 min</span></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:26px">
+    <div class="cover" style="--acc:#6b55a8"><span class="fam">Signs &amp; Riddles</span><div class="win"><img src="./art/demon.svg" alt=""></div><h3>Exorcism</h3><p>One word each. Who doesn't know it?</p><span class="meta">3–12 · 10 min</span></div>
+    <div class="cover" style="--acc:#b88a3a"><span class="fam">Signs &amp; Riddles</span><div class="win"><img src="./art/shade.svg" alt=""></div><h3>Séance</h3><p>A silent ghost sends visions.</p><span class="meta">4–10 · 30 min</span></div>
+    <div class="cover" style="--acc:#4f6b3a"><span class="fam">Signs &amp; Riddles</span><div class="win"><img src="./art/necro.svg" alt=""></div><h3>Graverobbers</h3><p>One word and a number. Dig.</p><span class="meta">4–12 · 25 min</span></div>
+    <div class="cover" style="--acc:#6f7d74"><span class="fam">Signs &amp; Riddles</span><div class="win"><img src="./art/mimic.svg" alt=""></div><h3>Mimic</h3><p>Everyone knows the place but one.</p><span class="meta">4–12 · 10 min</span></div>
+    <div class="cover" style="--acc:#4a4f58"><span class="fam">Bluff &amp; Wager</span><div class="win"><img src="./art/undertaker.svg" alt=""></div><h3>Coffins</h3><p>Bury gold, hide a curse, bid and dig.</p><span class="meta">3–10 · 15 min</span></div>
+    <div style="display:grid;align-content:center;gap:12px;padding:0 6px">
+      <span class="lab gilt">Where a cover appears</span>
+      <p class="cap">Home page collection · lobby mode picker · rule book chapter header · TV lobby attract loop · end screen ("Play again" / "Try another")</p>
+      <span class="lab gilt" style="margin-top:8px">Rule</span>
+      <p class="cap">The accent colour is the mode's B1 mood token. Playing times are placeholders to confirm with real tables.</p>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1600,"height":1000}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>
