@@ -1599,11 +1599,11 @@ function moveBand(v, html) {
   let line = CLIENT[v.mode]?.move?.(v) ?? classicMove(v);
   if (!line) {
     // Lift the first "do now" block out of the screen.
-    const m = html.match(/<div class="(s-do|cturn)([^"]*)" data-key="[^"]*">(?:<span class="kicker">[^<]*<\/span>)?<h2>([\s\S]*?)<\/h2>(?:<p[^>]*>([\s\S]*?)<\/p>)?<\/div>/);
+    const m = html.match(/<div class="(s-do|cturn|k-slip)([^"]*)" data-key="[^"]*">(?:<span class="kicker">[^<]*<\/span>)?<h2>([\s\S]*?)<\/h2>(?:<p[^>]*>([\s\S]*?)<\/p>)?<\/div>/);
     if (m) {
       html = html.replace(m[0], '');
       // A Coffins slip says whose turn it is by its class; a "do now" block follows the action.
-      const act = m[1] === 'cturn' ? /\bme\b/.test(m[2]) : canAct(v);
+      const act = m[1] === 'cturn' ? /\bme\b/.test(m[2]) : m[1] === 'k-slip' ? /\bme\b/.test(m[2]) || canAct(v) : canAct(v);
       line = { act, main: m[3], sub: m[4] ?? '', html: true };
     }
   }
