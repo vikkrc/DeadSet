@@ -2784,6 +2784,7 @@ export default {
     "wrong candles": "hibás gyertya",
     "My card": "A kártyám",
     "Everyone wins": "Mindenki nyer",
+    "The Deceiver walks free": "A Csaló szabadon távozik",
     "Nobody wins": "Senki sem nyer",
     "Place {n} of {total}": "{n}. hely ({total} közül)",
     "The Deceiver wins": "A Csaló nyer",

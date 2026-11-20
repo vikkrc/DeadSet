@@ -523,7 +523,7 @@ function verdict(v, { winner = v?.winner, result = null, sides = null, whos = nu
     case 'GRAVEROBBERS': title = graveTitle(v?.graverobbers); kicker = noStop(graveKicker(v?.graverobbers)) || kicker; break;
     case 'SEANCE': {
       const r = result ?? v?.seance?.result;
-      title = t({ full: 'The table wins', hollow: 'Everyone wins', deceiver: 'The Deceiver wins', lost: 'Nobody wins' }[r] ?? 'The End');
+      title = t({ full: 'The table wins', hollow: 'The Deceiver walks free', deceiver: 'The Deceiver wins', lost: 'Nobody wins' }[r] ?? 'The End');
       kicker = noStop(t(seanceTitle(r)));
       break;
     }

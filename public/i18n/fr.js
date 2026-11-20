@@ -2784,6 +2784,7 @@ export default {
     "wrong candles": "bougies fausses",
     "My card": "Ma carte",
     "Everyone wins": "Tout le monde gagne",
+    "The Deceiver walks free": "L’Imposteur s’en sort",
     "Nobody wins": "Personne ne gagne",
     "Place {n} of {total}": "Place {n} sur {total}",
     "The Deceiver wins": "L’Imposteur gagne",

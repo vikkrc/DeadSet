@@ -2784,6 +2784,7 @@ export default {
     "wrong candles": "chybné svíčky",
     "My card": "Moje karta",
     "Everyone wins": "Vyhrávají všichni",
+    "The Deceiver walks free": "Lhář odchází volný",
     "Nobody wins": "Nikdo nevyhrává",
     "Place {n} of {total}": "{n}. místo z {total}",
     "The Deceiver wins": "Lhář vyhrává",
