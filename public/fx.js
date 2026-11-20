@@ -241,6 +241,12 @@ const SOUNDS = {
     bell(a, 1975.5, 1.48, 0.05, 1.5);
   },
   draw: (a) => { [[110, 0], [164.81, 0.4], [146.83, 1.2]].forEach(([f, at]) => tone(a, { freq: f, dur: 3.5, gain: 0.1, attack: 0.8, at })); },
+  // M1: the verbs' own sounds (paper, wax, the passing bell, a coin's chink, the low bell of a fall).
+  slide: (a) => noise(a, { dur: 0.22, gain: 0.07, type: 'bandpass', freq: 2200, sweep: 3600, q: 0.7, attack: 0.04 }),
+  wax: (a) => { noise(a, { dur: 0.12, gain: 0.3, freq: 520, q: 1.4 }); tone(a, { freq: 140, dur: 0.18, gain: 0.22, to: 80 }); },
+  passBell: (a) => bell(a, 1174.7, 0, 0.05, 0.9),
+  chink: (a) => { tone(a, { freq: 3300, type: 'triangle', dur: 0.06, gain: 0.04 }); bell(a, 2349.3, 0.04, 0.035, 0.7); },
+  lowBell: (a) => bell(a, 98, 0, 0.14, 3.2),
 };
 
 export const sound = {
@@ -577,6 +583,31 @@ export const score = {
     if (ctx && tense) { const old = tense; tense = null; dropLayer(ctx, old); }
   },
 };
+
+/**
+ * M1 + M4: the seven motion verbs, defined once. Each has one sound and one buzz; every animation that plays a
+ * verb calls cue(verb), so sound, haptics and motion cannot drift apart. The buzz is for the player's own phone
+ * (own card, own turn, own seal); the app routes the sound (TV audio, quiet night screens) through setCueRoute.
+ */
+export const VERBS = {
+  deal: { sound: 'slide', buzz: null },
+  turn: { sound: 'flip', buzz: 8, mineOnly: true },
+  seal: { sound: 'wax', buzz: [20, 30, 40] },
+  stamp: { sound: 'thud', buzz: 30 },
+  pass: { sound: 'passBell', buzz: [15, 60, 15], mineOnly: true },
+  gain: { sound: 'chink', buzz: null },
+  fall: { sound: 'lowBell', buzz: null },
+};
+let cueRoute = { play: (n) => sound.play(n), quiet: () => false };
+export const setCueRoute = (r) => { cueRoute = { ...cueRoute, ...r }; };
+/** Play a verb's sound and (for the owner) its buzz. `mine`: it is this player's own card, turn or seal. */
+export function cue(verb, { mine = false, silent = false } = {}) {
+  const v = VERBS[verb];
+  if (!v || cueRoute.quiet()) return;
+  // The passing bell rings only on the phone whose turn it now is (and on the TV, which passes mine: true).
+  if (!silent && (verb !== 'pass' || mine)) cueRoute.play(v.sound);
+  if (v.buzz && (!v.mineOnly || mine)) haptic(v.buzz);
+}
 
 export function haptic(pattern = 8) {
   if (calm.matches) return;

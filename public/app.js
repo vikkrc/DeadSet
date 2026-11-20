@@ -3,7 +3,7 @@
 import { glyph, dreamGlyph } from './icons.js';
 import { qrSvg } from './qr.js';
 import { renderGuide } from './guide.js';
-import { sound, score, haptic, burstAt, celebrate, ambient } from './fx.js';
+import { sound, score, haptic, burstAt, celebrate, ambient, cue, setCueRoute } from './fx.js';
 import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './board.js';
 import { seatLayout } from './layout.js';
 import { sceneMs, scenesFor, sceneSize, paceScale } from './interludes.js';
@@ -138,7 +138,7 @@ function heraldTurn(v) {
   S.movePrev = m;
   if (m.act && was && !was.act && was.phaseId === m.phaseId && !SECRET(v) && !S.moment) {
     notify(m.main, 'turn');
-    haptic([15, 60, 15]);
+    cue('pass', { mine: true });
   }
 }
 function heraldShow(n) {
@@ -188,6 +188,8 @@ function pubSound(name, arg) {
 const secretPhase = () => { const v = V(); return !!v && isNight(v.phase); };
 function uiSound(name) { if (!secretPhase()) sound.play(name); }
 function uiHaptic(p) { if (!secretPhase()) haptic(p); }
+// M4: verb cues follow the table's sound route and stay silent on night and secret screens.
+setCueRoute({ play: (n) => pubSound(n), quiet: () => !onBoard() && !!V() && SECRET(V()) });
 
 async function api(path, body) {
   const res = await fetch(path, { method: body ? 'POST' : 'GET', headers: { 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
@@ -500,14 +502,14 @@ function nextMoment() {
     const snd = m.sound ?? MOMENT_SOUND[m.type];
     if (snd) pubSound(snd);
     if (m.type === 'dawn' && onBoard()) setTimeout(() => pubSound('page'), 300);
-    if (m.type === 'dawn' && (m.killed.length || m.expired.length)) { setTimeout(() => pubSound('death'), 900); haptic([30, 80, 120]); }
-    if (m.type === 'tally') setTimeout(() => { pubSound(m.sentenced || m.goat ? 'gavel' : 'tap'); if (m.sentenced) haptic([40, 50, 90]); }, 1700);
-    if (m.type === 'death') haptic([30, 80, 120]);
+    if (m.type === 'dawn' && (m.killed.length || m.expired.length)) setTimeout(() => { pubSound('death'); cue('fall', { silent: true }); }, 900);
+    if (m.type === 'tally') setTimeout(() => { pubSound(m.sentenced || m.goat ? 'gavel' : 'tap'); if (m.sentenced) cue('stamp', { silent: true }); }, 1700);
+    if (m.type === 'death') cue('fall', { silent: true }); // the scene's own sound carries it; Fall has no buzz
     if (m.type === 'mreveal') {
       const n = m.cards ? m.cards.length : m.count;
       pubSound('heart');
-      for (let i = 0; i < n; i++) setTimeout(() => { pubSound(m.cards ? (m.cards[i] === 'F' ? 'badCard' : 'goodCard') : 'flip'); if (m.cards?.[i] === 'F') haptic([40, 30, 60]); }, (2.2 + i * 1.15) * 1000 + 350);
-      setTimeout(() => { pubSound(m.failed ? 'missionFail' : 'missionOk'); haptic(m.failed ? [60, 40, 120] : [20, 30, 20]); }, (2.2 + n * 1.15 + 0.4) * 1000);
+      for (let i = 0; i < n; i++) setTimeout(() => { if (m.cards) pubSound(m.cards[i] === 'F' ? 'badCard' : 'goodCard'); else cue('turn'); }, (2.2 + i * 1.15) * 1000 + 350);
+      setTimeout(() => { pubSound(m.failed ? 'missionFail' : 'missionOk'); cue('stamp', { silent: true }); }, (2.2 + n * 1.15 + 0.4) * 1000);
     }
     if (m.type === 'mlottery') {
       // A tick for every seat the lantern passes, slowing down as it settles.
@@ -523,7 +525,7 @@ function nextMoment() {
       setTimeout(() => { pubSound('approve'); haptic([30, 40, 30]); }, 400 + dur + 150);
     }
     if (m.type === 'mvotes') setTimeout(() => pubSound(m.approved ? 'approve' : m.goes ? 'knock' : 'unpick'), 1300);
-    if (m.type === 'mcard') setTimeout(() => pubSound('flip'), 700);
+    if (m.type === 'mcard') setTimeout(() => cue('turn'), 700);
     if (m.type === 'mnamed') setTimeout(() => pubSound(m.death ? 'gavel' : 'death'), 2400);
     if (m.type === 'mreckon') setTimeout(() => pubSound(m.hit ? 'death' : 'gavel'), 2800);
     if (m.type === 'nightfall' || m.type === 'night0') haptic(20);
@@ -534,7 +536,7 @@ function nextMoment() {
         pubSound(END_THEME[m.winner] ?? 'draw');
         // Your own result follows the table's theme, on your own phone only.
         if (!onBoard() && won !== null && !V()?.boardAudio) setTimeout(() => sound.play(won ? 'win' : 'lose'), 3200);
-        haptic([40, 60, 40, 60, 120]);
+        cue('stamp', { silent: true });
       }, 500);
     }
     if (m.at) S.momentTimer = window.setTimeout(nextMoment, Math.max(50, m.at + m.dur - now));
@@ -2783,7 +2785,7 @@ const ACT = {
     const k = el.dataset.key;
     if (k === 'sheet') return;
     S.ui.flipped[k] = !S.ui.flipped[k];
-    if (S.ui.flipped[k]) { uiSound('reveal'); uiHaptic(12); }
+    if (S.ui.flipped[k]) cue('turn', { mine: true }); // M1 Turn: your own card
     render();
   },
   ack(el) { burstAt(el); send(V().mode === 'missions' ? 'm.ack' : 'role.ack'); },
@@ -2797,7 +2799,7 @@ const ACT = {
   async vote(el) {
     if (!S.sel.vote) return;
     const ok = await send('day.ballot', { target: S.sel.vote });
-    if (ok) { sound.play('stamp'); haptic([15, 30, 25]); burstAt(el, { colors: ['#e2585e', '#ece5d5'], count: 18 }); S.sel.vote = undefined; render(); }
+    if (ok) { cue('stamp', { mine: true }); burstAt(el, { colors: ['#e2585e', '#ece5d5'], count: 18 }); S.sel.vote = undefined; render(); }
   },
   pickRetaliate(el) { picked(el, true); S.sel.retaliate = el.dataset.id; render(); },
   retaliate(el) { send('day.retaliate', { target: el.dataset.none ? null : S.sel.retaliate }); },
@@ -2966,6 +2968,7 @@ function cancelHold() {
   clearTimeout(holdTimer); holdTimer = null;
   if (S.ui.holding) { document.querySelectorAll('.hold.holding').forEach((b) => b.classList.remove('holding')); S.ui.holding = null; }
 }
+const HOLD_MS = 650; // = --t-seal
 document.addEventListener('pointerdown', (e) => {
   sound.unlock();
   const el = e.target.closest('[data-hold]');
@@ -2979,9 +2982,9 @@ document.addEventListener('pointerdown', (e) => {
   uiHaptic(8);
   holdTimer = setTimeout(() => {
     holdTimer = null; S.ui.holding = null; el.classList.remove('holding');
-    if (el.dataset.hold !== 'openSeal') { uiHaptic([20, 30, 40]); uiSound('stamp'); burstAt(el); }
+    if (el.dataset.hold !== 'openSeal') { cue('seal', { mine: true }); burstAt(el); }
     ACT[el.dataset.hold]?.(el);
-  }, calm.matches ? 450 : el.dataset.hold === 'openSeal' ? 900 : 750);
+  }, calm.matches ? 450 : HOLD_MS); // M1 Seal: one hold length for every hold-to-confirm
 });
 ['pointerup', 'pointercancel'].forEach((t) => document.addEventListener(t, () => { if (holdTimer) cancelHold(); }, true));
 document.addEventListener('pointerout', (e) => { if (holdTimer && e.target.closest?.('[data-hold]') && !e.target.closest('[data-hold]').contains(e.relatedTarget)) cancelHold(); }, true);

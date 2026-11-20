@@ -60,6 +60,15 @@
   --t-stamp: 500ms;  /* every stamp and seal */
   --t-scene: 900ms;  /* scene titles in and out */
   --t-phase: 1.2s;   /* palette change between phases */
+  /* M1: the seven verbs. Deal (--t-card, --t-stagger), Turn (--t-card), Seal (--t-seal hold, --t-tap set),
+     Stamp (--t-stamp, --spring), Pass (--t-pass), Gain (--t-gain fly, --t-tick count), Fall (--t-crack, --t-fade). */
+  --t-stagger: 60ms;
+  --t-seal: 650ms;
+  --t-pass: 600ms;
+  --t-gain: 500ms;
+  --t-tick: 400ms;
+  --t-crack: 400ms;
+  --t-fade: 800ms;
   /* B6: the global layers, bottom to top. Inside a component, small literals (-1 to 9) stack its own
      parts; anything that has to sit over the page uses one of these names (scripts/check-styles.mjs). */
   --z-dock: 20;      /* the bottom action dock */
@@ -203,7 +212,7 @@ em { font-family: var(--serif); font-style: italic; font-size: 1.08em; }
 /* hold-to-confirm */
 .hold .hold-fill { position: absolute; inset: 0; transform: scaleX(0); transform-origin: left; background: rgba(236, 229, 213, 0.22); transition: transform var(--t-ui) var(--ease); }
 .hold.btn-solid .hold-fill, .hold.btn-host .hold-fill { background: rgba(179, 36, 45, 0.55); }
-.hold.holding .hold-fill { transform: scaleX(1); transition: transform 0.75s linear; } /* literal-ok: follows a clock or a hold */
+.hold.holding .hold-fill { transform: scaleX(1); transition: transform var(--t-seal) linear; }
 .hold.holding { transform: scale(0.98); }
 .hold-label { position: relative; z-index: 1; }
 
@@ -790,6 +799,8 @@ body.has-sheet { overflow: hidden; }
    are instant. No other rule in this file targets prefers-reduced-motion. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; transition-delay: 0s !important; scroll-behavior: auto !important; }
+  /* M1: every verb becomes a short fade (the bead jumps). */
+  [data-verb] { animation: v-fade 200ms var(--ease) both !important; } /* literal-ok: the reduced-motion fade */
 }
 
 /* ════════════════════════════════════════════════════════════════════════
@@ -850,7 +861,7 @@ body.has-sheet { overflow: hidden; }
 .wax-btn { position: relative; margin-top: calc(min(84vw, 330px) / -1.5 * 0.56 - 50px); width: 112px; height: 112px; border: 0; background: none; padding: 0; cursor: pointer; display: grid; place-items: center; touch-action: none; -webkit-user-select: none; user-select: none; animation: tokIn 0.7s 0.5s var(--spring) both; z-index: 2; }
 .wax-ring { position: absolute; inset: 0; transform: rotate(-90deg); overflow: visible; }
 .wax-ring circle { fill: none; stroke: rgba(255, 228, 218, 0.7); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 100; transition: stroke-dashoffset var(--t-ui); }
-.wax-btn.holding .wax-ring circle { stroke-dashoffset: 0; transition: stroke-dashoffset 0.9s linear; } /* literal-ok: follows a clock or a hold */
+.wax-btn.holding .wax-ring circle { stroke-dashoffset: 0; transition: stroke-dashoffset var(--t-seal) linear; }
 .wax-btn.holding .wax { transform: scale(0.94); }
 .wax { width: 78px; height: 78px; border-radius: 46% 54% 50% 50% / 52% 48% 52% 48%; background: radial-gradient(circle at 38% 34%, #d0444c, var(--rubric) 60%, #6a1118); box-shadow: 0 6px 14px rgba(0, 0, 0, 0.45), inset 0 -4px 8px rgba(0, 0, 0, 0.35); display: grid; place-items: center; position: relative; transition: transform var(--t-ui) var(--spring); animation: waxPulse 2.6s ease-in-out infinite; }
 .wax::before { content: ''; position: absolute; inset: 9px; border-radius: 50%; border: 1px solid rgba(255, 220, 210, 0.25); }
@@ -5200,3 +5211,18 @@ details.more summary,
 .tseal i.g { background: var(--gilt-2); border-color: var(--gilt-hi); }
 .tseal.mine .c { animation: breathe 2.6s ease-in-out infinite; }
 .table-sheet { display: grid; justify-items: center; padding: 8px 0 16px; }
+
+/* ══ M1: the seven verbs ══════════════════════════════════════════════════
+   Every animation is one of these; app.js plays the same verb's cue() (sound + buzz) from fx.js.
+   Mark an element with data-verb="deal|turn|stamp|gain|fall" (Seal is the hold button, Pass the turn bead).
+   Deal staggers by --i. */
+[data-verb="deal"] { animation: tarot-deal var(--t-card) var(--ease) both; animation-delay: calc(var(--i, 0) * var(--t-stagger)); }
+[data-verb="turn"] { animation: tarot-turn var(--t-card) var(--ease) both; }
+[data-verb="stamp"] { animation: stamp-in var(--t-stamp) var(--spring) both; }
+[data-verb="gain"] { animation: v-gain var(--t-tick) var(--ease) both; }
+[data-verb="fall"] { animation: v-fall calc(var(--t-crack) + var(--t-fade)) var(--ease-in) both; }
+@keyframes v-gain { 0% { transform: scale(1); } 40% { transform: scale(1.25); color: var(--gilt-hi, var(--gilt)); } 100% { transform: scale(1); } }
+@keyframes v-fall { 0% { filter: none; opacity: 1; } 33% { filter: grayscale(1) contrast(1.4); transform: rotate(-2deg); } 100% { filter: grayscale(1); opacity: 0.55; transform: rotate(0); } }
+@keyframes v-fade { from { opacity: 0; } }
+/* Gain's flying token (built by app.js flyGain) */
+.gain-fly { position: fixed; z-index: var(--z-fx); pointer-events: none; font: 600 18px/1 var(--text); color: var(--gilt); text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6); }
