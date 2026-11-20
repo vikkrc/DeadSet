@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dead Set — where the table lives</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ds.css">
+<link rel="stylesheet" href="./workshop.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Grenze+Gotisch:wght@400;600;800&amp;family=UnifrakturCook:wght@700&amp;display=swap">
+<style>
+body{margin:0}
+
+.mx{display:grid;grid-template-columns:200px repeat(5,1fr) 210px;border-top:1px solid var(--iron)}
+.mx>div{padding:8px 10px;border-bottom:1px solid var(--iron);border-right:1px solid rgba(59,48,39,.5);display:flex;align-items:center;gap:8px;font:400 14.5px/1.2 var(--text);color:var(--bone-2);min-height:66px}
+.mx .hd{min-height:40px;font:600 11px/1.1 var(--text);letter-spacing:.2em;text-transform:uppercase;color:var(--gilt);border-bottom-color:var(--gilt-2)}
+.mx .md{gap:10px;font:600 21px/1 var(--black);color:var(--bone)}
+.mx .md img{width:38px;height:38px;filter:invert(1) hue-rotate(180deg) sepia(.4);opacity:.9}
+.mx .md span small{display:block;font:italic 400 12.5px/1.1 var(--text);color:var(--ash);margin-top:3px}
+.g{flex:none;width:22px;height:22px;border-radius:50%;position:relative}
+.g.t{background:radial-gradient(circle,var(--ink-3) 40%,transparent 42%),conic-gradient(var(--gilt) 70%,var(--gilt-2) 0);box-shadow:0 0 10px -2px var(--gilt)}
+.g.s{border:1.5px solid var(--gilt-2);background:radial-gradient(circle,var(--gilt-2) 2px,transparent 2.5px)}
+.g.o{border-radius:3px;background:var(--vellum);width:16px;height:22px;transform:rotate(-6deg)}
+.g.n{opacity:.25;border:1px dashed var(--ash)}
+.mx b{color:var(--bone);font-weight:500}
+.key{font:italic 400 15px/1.2 var(--text)!important;color:var(--gilt-hi)!important}
+.lg{display:flex;gap:26px;align-items:center;font:400 16px/1 var(--text);color:var(--bone-2)}
+.lg span{display:flex;gap:8px;align-items:center}
+
+</style>
+</helmet>
+<div class="ds tv" style="width:1600px;height:1000px;padding:34px 40px">
+
+<div style="display:flex;align-items:baseline;gap:24px;margin-bottom:14px">
+  <h1 class="bl press" style="font-size:50px;font-weight:800">Where the table lives</h1>
+  <p class="it dim" style="font-size:18px;flex:1">Every mode is set up at the table. After that, the table is either the thing you touch, or a seal beside the thing you touch. Never both at once.</p>
+</div>
+<div class="lg" style="margin-bottom:14px"><span><i class="g t"></i>Playing table (tap seats)</span><span><i class="g s"></i>Seal only (indicator)</span><span><i class="g o"></i>The mode's own object (+ seal)</span><span><i class="g n"></i>No step</span></div>
+<div class="mx"><div class="hd">Mode</div><div class="hd">Setup</div><div class="hd">First look</div><div class="hd">Main play</div><div class="hd">The decision</div><div class="hd">Reveal &amp; end</div><div class="hd">Key surface</div><div class="md"><img src="./art/death.svg" alt=""><span>Classic<small>Hidden Allegiances</small></span></div><div><span class="g t"></span><span><b>Seating</b></span></div><div><span class="g o"></span><span><b>Role card</b> · seal</span></div><div><span class="g t"></span><span><b>Night</b>: tap your target · <b>Day</b>: accuse</span></div><div><span class="g t"></span><span><b>Vote</b>: tap a seat, hold</span></div><div><span class="g t"></span><span>Dead struck through · front page</span></div><div class="key">The table</div><div class="md"><img src="./art/lantern.svg" alt=""><span>Missions<small>Hidden Allegiances</small></span></div><div><span class="g t"></span><span><b>Seating</b> · lottery hand</span></div><div><span class="g o"></span><span><b>Role card</b> · seal</span></div><div><span class="g t"></span><span><b>Leader</b> taps the team</span></div><div><span class="g o"></span><span><b>Approve / Reject</b>, then <b>Succeed / Sabotage</b></span></div><div><span class="g t"></span><span>Mission seal lands in the disc</span></div><div class="key">Table + mission seals</div><div class="md"><img src="./art/veiled.svg" alt=""><span>Carnival<small>Changing Hands</small></span></div><div><span class="g t"></span><span><b>Seating</b> · empty chairs</span></div><div><span class="g t"></span><span><b>Unmasking</b>: masks face up</span></div><div><span class="g t"></span><span>Tap a seat's <b>mask</b> · Swap / Pretend</span></div><div><span class="g t"></span><span><b>Challenge</b> a claim at a seat</span></div><div><span class="g t"></span><span>Mask turns at its seat</span></div><div class="key">Table of masks, Offering</div><div class="md"><img src="./art/moon.svg" alt=""><span>Midnight<small>Changing Hands</small></span></div><div><span class="g t"></span><span><b>Seating</b> · 3 table cards</span></div><div><span class="g o"></span><span><b>Your card</b> once</span></div><div><span class="g t"></span><span><b>Waking role</b> taps seats / table cards; others see the seal</span></div><div><span class="g t"></span><span><b>Dawn vote</b>: one seat</span></div><div><span class="g t"></span><span>Cards turn at every seat</span></div><div class="key">Table of cards</div><div class="md"><img src="./art/undertaker.svg" alt=""><span>Coffins<small>Bluff &amp; Wager</small></span></div><div><span class="g t"></span><span><b>Seating</b></span></div><div><span class="g o"></span><span><b>Your coffins</b> · bury one</span></div><div><span class="g s"></span><span><b>Bid dial</b> · plots on the seal</span></div><div><span class="g t"></span><span><b>Dig</b>: tap plots on the graveyard table</span></div><div><span class="g o"></span><span>Coffin opens</span></div><div class="key">Graveyard table</div><div class="md"><img src="./art/mimic.svg" alt=""><span>Mimic<small>Signs &amp; Riddles</small></span></div><div><span class="g t"></span><span><b>Seating</b></span></div><div><span class="g o"></span><span><b>Place card</b> or static</span></div><div><span class="g o"></span><span><b>Board of places</b> · lantern on the seal</span></div><div><span class="g t"></span><span><b>Accuse</b>: tap a seat; all vote</span></div><div><span class="g o"></span><span>Mimic names a place</span></div><div class="key">Board of places</div><div class="md"><img src="./art/demon.svg" alt=""><span>Exorcism<small>Signs &amp; Riddles</small></span></div><div><span class="g t"></span><span><b>Seating</b> · wheel draw</span></div><div><span class="g o"></span><span><b>Crystal ball</b> reveal</span></div><div><span class="g o"></span><span><b>Ball</b> · words on its rim · seal</span></div><div><span class="g t"></span><span><b>Name the Demon</b>: ball sits in the disc</span></div><div><span class="g t"></span><span>Password at the table's heart</span></div><div class="key">Crystal ball → table</div><div class="md"><img src="./art/shade.svg" alt=""><span>Séance<small>Signs &amp; Riddles</small></span></div><div><span class="g t"></span><span><b>Seating</b> · the Ghost's seat</span></div><div><span class="g o"></span><span><b>Story cards</b></span></div><div><span class="g o"></span><span><b>Visions</b> on vellum · seal</span></div><div><span class="g o"></span><span><b>Candle board</b>: light candidates</span></div><div><span class="g o"></span><span>The spirit answers</span></div><div class="key">Candle board</div><div class="md"><img src="./art/skeleton.svg" alt=""><span>Graverobbers<small>Signs &amp; Riddles</small></span></div><div><span class="g t"></span><span><b>Seating</b> · crew arcs</span></div><div><span class="g o"></span><span><b>Coin</b>: who digs first</span></div><div><span class="g o"></span><span><b>Undertaker's sign</b> pad</span></div><div><span class="g o"></span><span><b>Cemetery</b>: tap a stone · crews on the seal</span></div><div><span class="g o"></span><span>Grave opens</span></div><div class="key">Cemetery of 25</div><div class="md"><img src="./art/sun.svg" alt=""><span>The Omen<small>Reading the Room</small></span></div><div><span class="g t"></span><span><b>Seating</b></span></div><div><span class="g n"></span><span>—</span></div><div><span class="g o"></span><span><b>Wheel</b>: predict a face · seers seal</span></div><div><span class="g o"></span><span><b>Turn</b> back / leave / on</span></div><div><span class="g o"></span><span>Needle turns once (TV)</span></div><div class="key">The wheel</div><div class="md"><img src="./art/s_self.svg" alt=""><span>The Mirror<small>Reading the Room</small></span></div><div><span class="g t"></span><span><b>Seating</b> · who reads whom</span></div><div><span class="g n"></span><span>—</span></div><div><span class="g o"></span><span><b>Dilemma card</b> · the glass pairs you</span></div><div><span class="g o"></span><span><b>Fate cards</b> · two seals</span></div><div><span class="g t"></span><span>Arrows across the table (TV)</span></div><div class="key">Dilemma arcana</div></div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:20px" class="cap"><p><b style="color:var(--gilt)">The key surface owns the stage band.</b> It is the largest thing on the phone and the hero on the TV; everything else is smaller.</p><p><b style="color:var(--gilt)">Where it is an object, the seal sits top right</b> of the stage, 104 px, always in the same spot, so who-has-acted is answered at a glance in every mode.</p><p><b style="color:var(--gilt)">Choosing a player is always on the table.</b> Any step that targets a person (accuse, vote, swap, ask, dig a player's plot) brings the playing table back.</p></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1600,"height":1000}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>

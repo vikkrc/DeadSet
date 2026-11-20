@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dead Set — the living table</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ds.css">
+<link rel="stylesheet" href="./workshop.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Grenze+Gotisch:wght@400;600;800&amp;family=UnifrakturCook:wght@700&amp;display=swap">
+<style>
+body{margin:0}
+
+.mood{position:absolute;left:50%;top:-22px;transform:translateX(-50%);z-index:3;white-space:nowrap;font:600 11px/1 var(--text);letter-spacing:.14em;text-transform:uppercase;background:var(--ink);border:1px solid var(--iron);padding:4px 7px;color:var(--bone-2)}
+.talk i{border-color:var(--gilt-hi)!important;box-shadow:0 0 0 4px var(--ink),0 0 0 5px var(--gilt-hi),0 0 0 14px rgba(236,210,143,.12),0 0 60px rgba(236,210,143,.55)!important}
+.cand{position:relative;width:26px;height:64px;margin-bottom:6px}
+.cand::before{content:'';position:absolute;left:6px;top:24px;width:14px;height:40px;background:linear-gradient(90deg,#cbbd9c,#efe4c8,#bfae8a)}
+.cand::after{content:'';position:absolute;left:4px;top:0;width:18px;height:28px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:radial-gradient(circle at 50% 70%,#fff3c4,#e8a23a 60%,transparent 70%);box-shadow:0 0 60px 26px rgba(232,162,58,.22)}
+.ann{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;padding:12px 0;border-bottom:1px solid var(--iron)}
+.ann p{margin:0;font:400 17px/1.35 var(--text);color:var(--bone-2)} .ann p b{color:var(--bone);font-weight:500}
+.tv .seat.lg b{font-size:13px}
+.table .threads{z-index:2!important;opacity:1;filter:drop-shadow(0 0 4px rgba(228,93,80,.6)) drop-shadow(0 1px 2px #000)}
+.table .seat{z-index:3}
+
+</style>
+</helmet>
+<div class="ds tv" style="width:1600px;height:900px;position:relative">
+
+<div style="position:absolute;left:48px;top:30px;right:48px;display:flex;align-items:baseline;gap:24px"><h1 class="bl press" style="font-size:50px;font-weight:800">The living table</h1><p class="it dim" style="font-size:19px">Day III, discussion, 0:09 left. The ornate table, as on every screen: only its state changes.</p></div>
+<div style="position:absolute;left:110px;top:170px;--blood-rim:1"><div class="table " style="width:640px;--t:0.97;">
+  <div class="orbit"></div>
+  <div class="disc"><div class="cand"></div><span class="bit" style="font-size:64px;color:var(--blood-ink);text-shadow:0 0 30px rgba(228,93,80,.6)">0:09</span><span class="lab" style="font-size:12px">to the vote</span></div>
+  <svg class="threads" viewBox="0 0 640 640" aria-hidden="true"><defs><marker id="ah" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#e45d50"></path></marker></defs><line x1="320" y1="64" x2="520" y2="160" stroke-width="3.4" opacity="1" marker-end="url(#ah)"></line><line x1="431" y1="551" x2="70" y2="377" stroke-width="2.6" opacity="0.9" marker-end="url(#ah)"></line><line x1="320" y1="64" x2="70" y2="377" stroke-width="2" opacity="0.75" marker-end="url(#ah)"></line></svg>
+  <div class="seat talk lg" style="left:50.0%;top:10.0%"><span class="mood" style="color:var(--gilt-hi);border-color:var(--gilt-2)">speaking</span><i>I</i><b>Ilka</b></div>
+<div class="seat acc lg" style="left:81.3%;top:25.1%"><span class="mood" style="color:var(--blood-ink);border-color:var(--blood)">accused ×2</span><i>T</i><b>Tomi</b></div>
+<div class="seat lg" style="left:89.0%;top:58.9%"><i>Z</i><b>Zsófi</b></div>
+<div class="seat you lg" style="left:67.4%;top:86.0%"><span class="mood">nervous</span><i>V</i><b>Viktor</b></div>
+<div class="seat dead lg" style="left:32.6%;top:86.0%"><i>M</i><b>Mara</b></div>
+<div class="seat acc lg" style="left:11.0%;top:58.9%"><i>D</i><b>Dani</b></div>
+<div class="seat dead lg" style="left:18.7%;top:25.1%"><i>B</i><b>Bram</b></div>
+</div></div>
+<style>.tv .table::after{background:conic-gradient(var(--blood-ink) calc(var(--t)*360deg),var(--iron) 0)}</style>
+<span class="pin" style="position:absolute;z-index:10;left:300px;top:140px">1</span><span class="pin" style="position:absolute;z-index:10;left:505px;top:262px">2</span><span class="pin" style="position:absolute;z-index:10;left:690px;top:230px">3</span><span class="pin" style="position:absolute;z-index:10;left:490px;top:450px">4</span><span class="pin" style="position:absolute;z-index:10;left:560px;top:600px">5</span><span class="pin" style="position:absolute;z-index:10;left:190px;top:700px">6</span>
+<div style="position:absolute;right:48px;top:150px;width:600px"><div class="ann"><span class="pin">1</span><p><b>Speaker spotlight.</b> A warm halo on whoever holds the floor (the host taps a seat, or a player taps “I’m speaking”). In 400 ms, out 800 ms.</p></div><div class="ann"><span class="pin">2</span><p><b>Threads of suspicion.</b> A red thread with an arrowhead from accuser to accused, thicker with repeats; it fades at dawn and becomes the vote line.</p></div><div class="ann"><span class="pin">3</span><p><b>Faces that react.</b> Four moods from state: calm, speaking, accused, dead. A player may show “nervous” once a day.</p></div><div class="ann"><span class="pin">4</span><p><b>The candle.</b> The only always-moving thing on the table: a slow flicker in the disc that shrinks with the time left and gutters out at the vote.</p></div><div class="ann"><span class="pin">5</span><p><b>Tension at ten seconds.</b> The rim turns red, the clock grows, a 60 bpm heartbeat (TV only), and the edges vignette. Never earlier.</p></div><div class="ann"><span class="pin">6</span><p><b>The dead stay seated.</b> Struck through and still, their role shown once revealed.</p></div><p class="cap" style="font-size:15px;margin-top:10px">Reduced motion: spotlight and threads stay as states; candle and heartbeat stop; the clock just turns red.</p></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1600,"height":900}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>

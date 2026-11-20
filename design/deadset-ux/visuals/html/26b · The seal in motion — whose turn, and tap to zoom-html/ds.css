@@ -1,0 +1,242 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   DEAD SET — "The Codex" visual system (gothic redesign reference)
+   An illuminated grimoire laid on a séance table: ink-black ground, aged
+   vellum for anything you hold (cards, letters, the Gazette), tarnished gilt
+   line-work, oxblood wax for anything you commit to. Blackletter speaks for
+   the game; Garamond speaks for the players.
+   Every board root carries .ds (+ .night / .bloodmoon / .mist / .tv).
+   ───────────────────────────────────────────────────────────────────────── */
+.ds{
+  /* ground */
+  --ink:#0c0a09; --ink-2:#15110e; --ink-3:#221b15; --iron:#3b3027;
+  /* text on ground */
+  --bone:#e8dcc0; --bone-2:#c2b496; --ash:#93866e;
+  /* metal */
+  --gilt:#c9a35a; --gilt-2:#8a6d35; --gilt-hi:#ecd28f;
+  /* blood */
+  --blood:#9c1c22; --blood-ink:#e45d50; --wax:#6f1016;
+  /* vellum (light surfaces) */
+  --vellum:#dccba4; --vellum-2:#c6b185; --sepia:#1d1510; --sepia-2:#5a4632; --rubric:#8e1b1f;
+  --glow:rgba(214,150,92,.11);
+  --orb:#8f7bd0;
+  /* type */
+  --black:'Grenze Gotisch','UnifrakturCook',Georgia,serif;
+  --mark:'UnifrakturCook','Grenze Gotisch',Georgia,serif;
+  --text:'EB Garamond','Iowan Old Style','Palatino Linotype',Georgia,serif;
+  --bit:'EB Garamond','Iowan Old Style',Georgia,serif;
+  --arch:polygon(50% 0,60% 5.5%,69% 12%,77% 19.5%,84% 28%,90% 37.5%,95% 48%,98.5% 59%,100% 70%,100% 100%,0 100%,0 70%,1.5% 59%,5% 48%,10% 37.5%,16% 28%,23% 19.5%,31% 12%,40% 5.5%);
+  position:relative; overflow:hidden; box-sizing:border-box; isolation:isolate;
+  color:var(--bone); font:400 16px/1.42 var(--text); -webkit-font-smoothing:antialiased;
+  background:
+    radial-gradient(120% 70% at 50% -10%,var(--glow),transparent 62%),
+    radial-gradient(130% 100% at 50% 50%,transparent 52%,rgba(0,0,0,.62)),
+    var(--ink);
+}
+.ds *{box-sizing:border-box}
+.ds p,.ds h1,.ds h2,.ds h3{margin:0;font-weight:inherit}
+.ds.tv{font-size:20px}
+/* Night: the same book by moonlight. Gilt tarnishes to silver; blood stays. */
+.ds.night{--ink:#06080d;--ink-2:#0d111a;--ink-3:#161c29;--iron:#2a3242;--bone:#dbe1ec;--bone-2:#a9b2c4;--ash:#7f899b;--gilt:#b9c4d8;--gilt-2:#5d6a82;--gilt-hi:#eef3fb;--glow:rgba(110,145,215,.14)}
+.ds.bloodmoon{--ink:#0d0607;--ink-2:#180b0c;--ink-3:#261112;--iron:#47201f;--bone:#ecd9cf;--bone-2:#c4a79c;--ash:#9b7f76;--gilt:#e08a78;--gilt-2:#8c3a35;--gilt-hi:#ffc9b8;--glow:rgba(200,40,40,.22)}
+/* Exorcism: amethyst mist */
+.ds.mist{--ink:#09070f;--ink-2:#120f1c;--ink-3:#1c172b;--iron:#342c4a;--bone:#e3dcf0;--bone-2:#b3a9c9;--ash:#8a80a3;--gilt:#c3b3ee;--gilt-2:#6a5b96;--gilt-hi:#efe8ff;--glow:rgba(143,123,208,.17)}
+/* Press grain over everything */
+.ds::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:90;opacity:.38;mix-blend-mode:overlay;
+  background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='.33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 0 1'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+
+/* ── Type ──────────────────────────────────────────────────────────────── */
+.bl{font-family:var(--black);font-weight:600;line-height:.95;letter-spacing:.005em}
+.mark{font-family:var(--mark);font-weight:700;line-height:.82}
+.bit{font-family:var(--bit);font-weight:500;line-height:1;font-variant-numeric:tabular-nums lining-nums;letter-spacing:.01em}
+.lab{font:600 11px/1.25 var(--text);letter-spacing:.24em;text-transform:uppercase;color:var(--ash)}
+.tv .lab{font-size:14px}
+.it{font-style:italic}
+.gilt{color:var(--gilt)} .red{color:var(--blood-ink)} .dim{color:var(--bone-2)} .ash{color:var(--ash)}
+/* failed-press misregistration: a blood ghost behind display type */
+.press{text-shadow:.035em .025em 0 rgba(156,28,34,.7)}
+.drop::first-letter{font:800 3.5em/.78 var(--black);float:left;padding:.05em .09em 0 0;color:var(--rubric)}
+
+/* ── Ornament ──────────────────────────────────────────────────────────── */
+/* divider: hairline · lozenges · hairline */
+.orn{display:flex;align-items:center;gap:9px;color:var(--gilt)}
+.orn::before,.orn::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gilt-2))}
+.orn::after{transform:scaleX(-1)}
+.loz{width:7px;height:7px;flex:none;transform:rotate(45deg);background:currentColor}
+.loz.o{background:none;border:1px solid currentColor;width:5px;height:5px}
+/* nine-slice ornate frame (bitten corners, jewel, twin curls) */
+.fr{border:1px solid var(--gilt-2);border-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='%23c9a35a'><defs><g id='c'><path d='M32 2.5H17A14.5 14.5 0 0 1 2.5 17V32'/><path d='M32 6.5H20.5A18.4 18.4 0 0 1 6.5 20.5V32' stroke-width='.6'/><path d='M6.5 2l4.5 4.5-4.5 4.5L2 6.5z' fill='%23c9a35a' stroke='none'/><path d='M15.5 15.5c4 5 10.5 4.5 10.5.5 0-2.6-3.6-2.8-3.8-.4M15.5 15.5c5 4 4.5 10.5.5 10.5-2.6 0-2.8-3.6-.4-3.8' stroke-width='.8'/><circle cx='27' cy='11' r='.9' fill='%23c9a35a' stroke='none'/><circle cx='11' cy='27' r='.9' fill='%23c9a35a' stroke='none'/></g></defs><use href='%23c'/><use href='%23c' transform='matrix(-1 0 0 1 96 0)'/><use href='%23c' transform='matrix(1 0 0 -1 0 96)'/><use href='%23c' transform='matrix(-1 0 0 -1 96 96)'/><path d='M32 2.5H64M32 93.5H64M2.5 32V64M93.5 32V64'/><path d='M32 6.5H64M32 89.5H64M6.5 32V64M89.5 32V64' stroke-width='.6'/></svg>") 32 / 32px stretch}
+.fr.k{border-color:var(--sepia-2);border-image-source:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='%231d1510'><defs><g id='c'><path d='M32 2.5H17A14.5 14.5 0 0 1 2.5 17V32'/><path d='M32 6.5H20.5A18.4 18.4 0 0 1 6.5 20.5V32' stroke-width='.6'/><path d='M6.5 2l4.5 4.5-4.5 4.5L2 6.5z' fill='%238e1b1f' stroke='none'/><path d='M15.5 15.5c4 5 10.5 4.5 10.5.5 0-2.6-3.6-2.8-3.8-.4M15.5 15.5c5 4 4.5 10.5.5 10.5-2.6 0-2.8-3.6-.4-3.8' stroke-width='.8'/><circle cx='27' cy='11' r='.9' fill='%231d1510' stroke='none'/><circle cx='11' cy='27' r='.9' fill='%231d1510' stroke='none'/></g></defs><use href='%23c'/><use href='%23c' transform='matrix(-1 0 0 1 96 0)'/><use href='%23c' transform='matrix(1 0 0 -1 0 96)'/><use href='%23c' transform='matrix(-1 0 0 -1 96 96)'/><path d='M32 2.5H64M32 93.5H64M2.5 32V64M93.5 32V64'/><path d='M32 6.5H64M32 89.5H64M6.5 32V64M89.5 32V64' stroke-width='.6'/></svg>")}
+.fr.s{border-color:#5d6a82;border-image-source:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='%23b9c4d8'><defs><g id='c'><path d='M32 2.5H17A14.5 14.5 0 0 1 2.5 17V32'/><path d='M32 6.5H20.5A18.4 18.4 0 0 1 6.5 20.5V32' stroke-width='.6'/><path d='M6.5 2l4.5 4.5-4.5 4.5L2 6.5z' fill='%23b9c4d8' stroke='none'/><path d='M15.5 15.5c4 5 10.5 4.5 10.5.5 0-2.6-3.6-2.8-3.8-.4M15.5 15.5c5 4 4.5 10.5.5 10.5-2.6 0-2.8-3.6-.4-3.8' stroke-width='.8'/><circle cx='27' cy='11' r='.9' fill='%23b9c4d8' stroke='none'/><circle cx='11' cy='27' r='.9' fill='%23b9c4d8' stroke='none'/></g></defs><use href='%23c'/><use href='%23c' transform='matrix(-1 0 0 1 96 0)'/><use href='%23c' transform='matrix(1 0 0 -1 0 96)'/><use href='%23c' transform='matrix(-1 0 0 -1 96 96)'/><path d='M32 2.5H64M32 93.5H64M2.5 32V64M93.5 32V64'/><path d='M32 6.5H64M32 89.5H64M6.5 32V64M89.5 32V64' stroke-width='.6'/></svg>")}
+.fr.b{border-color:var(--blood);border-image-source:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='%23d0483f'><defs><g id='c'><path d='M32 2.5H17A14.5 14.5 0 0 1 2.5 17V32'/><path d='M32 6.5H20.5A18.4 18.4 0 0 1 6.5 20.5V32' stroke-width='.6'/><path d='M6.5 2l4.5 4.5-4.5 4.5L2 6.5z' fill='%23d0483f' stroke='none'/><path d='M15.5 15.5c4 5 10.5 4.5 10.5.5 0-2.6-3.6-2.8-3.8-.4M15.5 15.5c5 4 4.5 10.5.5 10.5-2.6 0-2.8-3.6-.4-3.8' stroke-width='.8'/><circle cx='27' cy='11' r='.9' fill='%23d0483f' stroke='none'/><circle cx='11' cy='27' r='.9' fill='%23d0483f' stroke='none'/></g></defs><use href='%23c'/><use href='%23c' transform='matrix(-1 0 0 1 96 0)'/><use href='%23c' transform='matrix(1 0 0 -1 0 96)'/><use href='%23c' transform='matrix(-1 0 0 -1 96 96)'/><path d='M32 2.5H64M32 93.5H64M2.5 32V64M93.5 32V64'/><path d='M32 6.5H64M32 89.5H64M6.5 32V64M89.5 32V64' stroke-width='.6'/></svg>")}
+.fr.lg{border-image-width:48px}
+.fr.sm{border-image-width:22px}
+
+/* aged vellum: anything a player holds in the hand */
+.vellum{color:var(--sepia);
+  background:
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='s'><feTurbulence type='fractalNoise' baseFrequency='.011 .019' numOctaves='4' stitchTiles='stitch' seed='7'/><feColorMatrix values='0 0 0 0 .36 0 0 0 0 .22 0 0 0 0 .08 0 0 0 .75 -.3'/></filter><rect width='100%' height='100%' filter='url(%23s)'/></svg>"),
+    radial-gradient(120% 120% at 50% 50%,transparent 62%,rgba(96,62,22,.22)),
+    var(--vellum);
+  background-size:100% 100%,auto,auto;
+  box-shadow:inset 0 0 30px rgba(84,54,18,.22)}
+.vellum .lab{color:var(--sepia-2)} .vellum .red{color:var(--rubric)} .vellum .dim{color:var(--sepia-2)}
+.vellum .press{text-shadow:.03em .022em 0 rgba(142,27,31,.42)}
+.vellum .orn{color:var(--sepia)} .vellum .orn::before,.vellum .orn::after{background:linear-gradient(90deg,transparent,var(--sepia-2))}
+/* art: ink engravings; multiply onto vellum, .inv screens them onto ink */
+.art-img{display:block;mix-blend-mode:multiply}
+.inv{filter:invert(1) hue-rotate(180deg);mix-blend-mode:screen}
+
+/* ── Controls ──────────────────────────────────────────────────────────── */
+.btn{appearance:none;position:relative;display:flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 30px;margin:0;
+  border:1px solid var(--gilt-2);outline:1px solid color-mix(in srgb,var(--gilt-2) 50%,transparent);outline-offset:-5px;border-radius:1px;
+  background:linear-gradient(var(--ink-3),var(--ink-2));color:var(--bone);
+  font:600 13px/1 var(--text);letter-spacing:.22em;text-transform:uppercase;text-decoration:none;cursor:pointer}
+.btn::before,.btn::after{content:'';position:absolute;top:50%;width:6px;height:6px;border:1px solid var(--gilt);transform:translateY(-50%) rotate(45deg)}
+.btn::before{left:13px} .btn::after{right:13px}
+.btn.wide{width:100%}
+.btn.seal{background:radial-gradient(120% 170% at 50% 0,#b3272c,var(--wax));border-color:#c8534a;outline-color:rgba(246,231,210,.28);color:#f8ead6;box-shadow:0 12px 26px -14px rgba(190,30,36,.95)}
+.btn.seal::before,.btn.seal::after{border-color:#f0c9b4}
+.btn.bone{background:var(--vellum);border-color:var(--vellum-2);outline-color:rgba(29,21,16,.4);color:var(--sepia)}
+.btn.bone::before,.btn.bone::after{border-color:var(--sepia)}
+.btn.ghost{background:none;border-color:transparent;outline:none;color:var(--bone-2)}
+.btn.ghost::before,.btn.ghost::after{display:none}
+.btn.sm{min-height:44px;font-size:11.5px;padding:0 24px}
+.tv .btn{min-height:56px;font-size:15px}
+.ico{appearance:none;width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--iron);border-radius:50%;background:none;color:var(--bone-2);padding:0}
+.ico svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;border:1px solid var(--gilt-2);padding:3px;gap:3px}
+.seg button{appearance:none;min-height:44px;border:0;background:none;color:var(--bone-2);font:600 12px/1 var(--text);letter-spacing:.2em;text-transform:uppercase}
+.seg .on{background:var(--vellum);color:var(--sepia)}
+.field{display:grid;gap:4px}
+.field input{appearance:none;height:48px;width:100%;padding:0 2px;border:0;border-bottom:1px solid var(--gilt-2);background:none;color:var(--bone);font:italic 400 23px/1 var(--text)}
+.field input::placeholder{color:var(--ash)}
+.chip{display:inline-flex;align-items:center;gap:7px;min-height:28px;padding:0 12px;border:1px solid var(--iron);font:italic 400 15px/1 var(--text);color:var(--bone-2);background:var(--ink-2)}
+.chip.red{border-color:var(--blood);color:var(--blood-ink)}
+.chip.g{border-color:var(--gilt-2);color:var(--gilt)}
+.tv .chip{min-height:34px;font-size:18px;padding:0 14px}
+/* rule card in play: an edict nailed to the wall */
+.plaque{display:inline-flex;align-items:center;gap:10px;padding:9px 16px 9px 12px;border:1px solid var(--iron);background:var(--ink-2);color:var(--bone-2);font:600 12px/1.1 var(--text);letter-spacing:.2em;text-transform:uppercase}
+.plaque::before{content:'';width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#c8363a,var(--wax))}
+.plaque.live{border-color:var(--gilt);color:var(--gilt-hi);box-shadow:0 0 24px -6px var(--gilt)}
+.plaque small{font:italic 400 14px/1 var(--text);letter-spacing:0;text-transform:none;color:var(--bone-2)}
+.tv .plaque{font-size:14px;padding:12px 20px 12px 14px} .tv .plaque small{font-size:18px}
+.stamp{display:inline-block;padding:.12em .42em .2em;border:.07em double currentColor;outline:.03em solid currentColor;outline-offset:.06em;color:var(--blood-ink);font:800 46px/1 var(--black);letter-spacing:.03em;transform:rotate(-7deg)}
+.vellum .stamp{color:var(--rubric);mix-blend-mode:multiply}
+.seal-wax{display:grid;place-items:center;width:104px;aspect-ratio:1;border-radius:47% 53% 50% 50%/52% 47% 53% 48%;
+  background:radial-gradient(circle at 36% 28%,#cf3d40,#8f1a20 46%,#4a090d);color:#3a0609;font:700 50px/1 var(--mark);text-shadow:0 1px 0 rgba(255,170,150,.4);
+  box-shadow:inset 0 0 0 7px rgba(0,0,0,.13),inset 0 0 0 8px rgba(255,180,160,.2),inset 0 -8px 14px rgba(0,0,0,.35),0 12px 24px -8px #000}
+
+/* ── The table: an astrolabe ──────────────────────────────────────────── */
+.table{position:relative;aspect-ratio:1;border-radius:50%}
+/* outer edge burns down as the phase timer: set --t 0..1 */
+.table::after{content:'';position:absolute;inset:-16px;border-radius:50%;background:conic-gradient(var(--gilt) calc(var(--t,.62)*360deg),var(--iron) 0);
+  -webkit-mask:radial-gradient(closest-side,transparent calc(100% - 3px),#000 calc(100% - 2.5px));mask:radial-gradient(closest-side,transparent calc(100% - 3px),#000 calc(100% - 2.5px))}
+.table::before{content:'';position:absolute;inset:-9px;border-radius:50%;background:repeating-conic-gradient(var(--gilt-2) 0 .5deg,transparent .5deg 6deg);
+  -webkit-mask:radial-gradient(closest-side,transparent calc(100% - 8px),#000 calc(100% - 7px));mask:radial-gradient(closest-side,transparent calc(100% - 8px),#000 calc(100% - 7px))}
+.table .orbit{position:absolute;inset:9%;border-radius:50%;border:1px solid var(--iron)}
+.table .disc{position:absolute;inset:21%;border-radius:50%;border:1px solid var(--gilt-2);display:grid;place-content:center;justify-items:center;text-align:center;gap:2px;
+  background:radial-gradient(circle at 50% 40%,var(--ink-3),var(--ink) 72%);box-shadow:0 0 0 5px var(--ink),0 0 0 6px var(--iron),inset 0 0 50px #000}
+.table .disc::before{content:'';position:absolute;inset:0;border-radius:50%;background:repeating-conic-gradient(color-mix(in srgb,var(--gilt) 13%,transparent) 0 1.5deg,transparent 1.5deg 9deg);
+  -webkit-mask:radial-gradient(closest-side,transparent 52%,#000 54%,#000 95%,transparent 96%);mask:radial-gradient(closest-side,transparent 52%,#000 54%,#000 95%,transparent 96%)}
+.table .disc>*{position:relative}
+/* a seat: a struck medallion; the portrait sits inside as a cameo */
+.seat{position:absolute;transform:translate(-50%,-50%);display:grid;justify-items:center;gap:6px;width:80px;text-align:center;z-index:2}
+.seat i{position:relative;display:grid;place-items:center;width:54px;height:54px;border-radius:50%;font:600 27px/1 var(--black);font-style:normal;color:var(--bone);
+  background:radial-gradient(circle at 50% 32%,var(--ink-3),var(--ink) 78%);border:1px solid var(--gilt-2);box-shadow:0 0 0 3px var(--ink),0 0 0 4px var(--gilt-2),0 8px 18px -6px #000}
+.seat i::before{content:'';position:absolute;inset:-9px;border-radius:50%;border:1px dotted var(--gilt-2);opacity:.75}
+.seat b{font:600 10.5px/1 var(--text);letter-spacing:.2em;text-indent:.2em;text-transform:uppercase;color:var(--bone-2);background:var(--ink);padding:3px 5px 2px;border-radius:1px}
+.seat.pick i{border-color:var(--gilt);box-shadow:0 0 0 3px var(--ink),0 0 0 4px var(--gilt),0 0 24px color-mix(in srgb,var(--gilt) 55%,transparent)}
+.seat.sel i{background:var(--vellum);color:var(--sepia);border-color:var(--vellum);box-shadow:0 0 0 3px var(--ink),0 0 0 4px var(--gilt-hi),0 0 26px color-mix(in srgb,var(--gilt) 60%,transparent)}
+.seat.acc i{border-color:var(--blood-ink);color:#f6d3c8;background:radial-gradient(circle at 50% 32%,#641519,#1c0809 82%);box-shadow:0 0 0 3px var(--ink),0 0 0 4px var(--blood),0 0 28px rgba(210,40,40,.6)}
+.seat.acc i::before{border-color:var(--blood-ink)}
+.seat.acc b{color:var(--blood-ink)}
+.seat.dead{opacity:.55}
+.seat.dead i{color:var(--ash);border-style:dashed;box-shadow:0 0 0 3px var(--ink),0 0 0 4px var(--iron)}
+.seat.dead i::after{content:'';position:absolute;inset:16%;background:linear-gradient(45deg,transparent calc(50% - 1px),var(--blood-ink) calc(50% - 1px) calc(50% + 1px),transparent calc(50% + 1px)),linear-gradient(-45deg,transparent calc(50% - 1px),var(--blood-ink) calc(50% - 1px) calc(50% + 1px),transparent calc(50% + 1px))}
+.seat.dead b{text-decoration:line-through}
+.seat.you b{color:var(--gilt)}
+.seat.you b::before{content:'◆';font-size:.7em;letter-spacing:0;margin-right:.7em;vertical-align:.1em}
+.seat.lg{width:124px;gap:9px} .seat.lg i{width:84px;height:84px;font-size:42px} .seat.lg i::before{inset:-12px} .seat.lg b{font-size:14px}
+
+/* ── Cards: one tarot deck ─────────────────────────────────────────────── */
+/* size a card with width + font-size (all inner sizes are em) */
+.card{position:relative;flex:none;aspect-ratio:11/18;display:flex;flex-direction:column;align-items:center;gap:.55em;padding:1.5em 1.35em 1.25em;text-align:center;border-radius:.4em;
+  font-size:16px;color:var(--sepia);box-shadow:0 0 0 1px #77633f,0 1.8em 3em -1.4em #000,inset 0 0 2em rgba(84,54,18,.24);
+  background:
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='s'><feTurbulence type='fractalNoise' baseFrequency='.011 .019' numOctaves='4' stitchTiles='stitch' seed='7'/><feColorMatrix values='0 0 0 0 .36 0 0 0 0 .22 0 0 0 0 .08 0 0 0 .75 -.3'/></filter><rect width='100%' height='100%' filter='url(%23s)'/></svg>"),
+    var(--vellum)}
+.card::before{content:'';position:absolute;inset:.42em;pointer-events:none;border:1px solid var(--sepia-2);border-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='%231d1510'><defs><g id='c'><path d='M32 2.5H17A14.5 14.5 0 0 1 2.5 17V32'/><path d='M32 6.5H20.5A18.4 18.4 0 0 1 6.5 20.5V32' stroke-width='.6'/><path d='M6.5 2l4.5 4.5-4.5 4.5L2 6.5z' fill='%238e1b1f' stroke='none'/><path d='M15.5 15.5c4 5 10.5 4.5 10.5.5 0-2.6-3.6-2.8-3.8-.4M15.5 15.5c5 4 4.5 10.5.5 10.5-2.6 0-2.8-3.6-.4-3.8' stroke-width='.8'/></g></defs><use href='%23c'/><use href='%23c' transform='matrix(-1 0 0 1 96 0)'/><use href='%23c' transform='matrix(1 0 0 -1 0 96)'/><use href='%23c' transform='matrix(-1 0 0 -1 96 96)'/><path d='M32 2.5H64M32 93.5H64M2.5 32V64M93.5 32V64'/><path d='M32 6.5H64M32 89.5H64M6.5 32V64M89.5 32V64' stroke-width='.6'/></svg>") 32 / 1.5em stretch}
+.card .num{font:600 .74em/1 var(--text);letter-spacing:.34em;text-indent:.34em;color:var(--rubric);text-transform:uppercase}
+.card .art{position:relative;flex:1;min-height:0;width:86%;clip-path:var(--arch);background:var(--sepia)}
+.card .art::before{content:'';position:absolute;inset:1.5px;clip-path:var(--arch);
+  background:linear-gradient(var(--vellum) 30%,transparent 95%),radial-gradient(circle,rgba(29,21,16,.6) .9px,transparent 1.4px) 0 0/5px 5px,var(--vellum-2)}
+.card .art img{position:relative;width:100%;height:100%;object-fit:contain;display:block;mix-blend-mode:multiply;padding:19% 4% 3%}
+.card .ttl{font:600 2em/.9 var(--black)}
+.card .sub{font:italic 400 .84em/1.22 var(--text);color:var(--sepia-2);max-width:21ch}
+.card .fac{font:600 .6em/1 var(--text);letter-spacing:.3em;text-transform:uppercase;color:var(--sepia-2)}
+/* noir: Death's own card, the one black card in a vellum deck */
+.card.noir,.card.dream,.card.back{color:var(--bone);box-shadow:0 0 0 1px var(--gilt-2),0 1.8em 3em -1.4em #000;background:radial-gradient(120% 90% at 50% 20%,#2a0c0e,#0c0707 70%)}
+.card.noir::before,.card.back::before{border-image-source:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='%23c9a35a'><defs><g id='c'><path d='M32 2.5H17A14.5 14.5 0 0 1 2.5 17V32'/><path d='M32 6.5H20.5A18.4 18.4 0 0 1 6.5 20.5V32' stroke-width='.6'/><path d='M6.5 2l4.5 4.5-4.5 4.5L2 6.5z' fill='%23d0483f' stroke='none'/><path d='M15.5 15.5c4 5 10.5 4.5 10.5.5 0-2.6-3.6-2.8-3.8-.4M15.5 15.5c5 4 4.5 10.5.5 10.5-2.6 0-2.8-3.6-.4-3.8' stroke-width='.8'/></g></defs><use href='%23c'/><use href='%23c' transform='matrix(-1 0 0 1 96 0)'/><use href='%23c' transform='matrix(1 0 0 -1 0 96)'/><use href='%23c' transform='matrix(-1 0 0 -1 96 96)'/><path d='M32 2.5H64M32 93.5H64M2.5 32V64M93.5 32V64'/><path d='M32 6.5H64M32 89.5H64M6.5 32V64M89.5 32V64' stroke-width='.6'/></svg>")}
+.card.noir .num{color:var(--blood-ink)} .card.noir .sub,.card.noir .fac{color:#c2b496}
+.card.noir .ttl{color:#f1e4c8;text-shadow:.04em .03em 0 rgba(190,30,36,.8)}
+.card.noir .art{background:#c9a35a}
+.card.noir .art::before{background:linear-gradient(#150809 30%,transparent 95%),radial-gradient(circle,rgba(201,163,90,.5) .9px,transparent 1.4px) 0 0/5px 5px,#1d0b0c}
+.card.noir .art img,.card.dream .art img{filter:invert(1) hue-rotate(180deg);mix-blend-mode:screen}
+/* dream: the night suit, silver on indigo */
+.card.dream{color:#dbe1ec;box-shadow:0 0 0 1px #5d6a82,0 1.8em 3em -1.4em #000;background:radial-gradient(120% 90% at 50% 20%,#18213a,#070a12 72%)}
+.card.dream::before{border-image-source:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='%23b9c4d8'><defs><g id='c'><path d='M32 2.5H17A14.5 14.5 0 0 1 2.5 17V32'/><path d='M32 6.5H20.5A18.4 18.4 0 0 1 6.5 20.5V32' stroke-width='.6'/><path d='M6.5 2l4.5 4.5-4.5 4.5L2 6.5z' fill='%23b9c4d8' stroke='none'/><path d='M15.5 15.5c4 5 10.5 4.5 10.5.5 0-2.6-3.6-2.8-3.8-.4M15.5 15.5c5 4 4.5 10.5.5 10.5-2.6 0-2.8-3.6-.4-3.8' stroke-width='.8'/></g></defs><use href='%23c'/><use href='%23c' transform='matrix(-1 0 0 1 96 0)'/><use href='%23c' transform='matrix(1 0 0 -1 0 96)'/><use href='%23c' transform='matrix(-1 0 0 -1 96 96)'/><path d='M32 2.5H64M32 93.5H64M2.5 32V64M93.5 32V64'/><path d='M32 6.5H64M32 89.5H64M6.5 32V64M89.5 32V64' stroke-width='.6'/></svg>")}
+.card.dream .num{color:#9fb0d2} .card.dream .sub,.card.dream .fac{color:#a9b2c4}
+.card.dream .art{background:#b9c4d8}
+.card.dream .art::before{background:linear-gradient(#0a0e18 30%,transparent 95%),radial-gradient(circle,rgba(185,196,216,.45) .9px,transparent 1.4px) 0 0/5px 5px,#101627}
+/* back: every card in the game shares one back */
+.card.back{justify-content:center;background:
+    repeating-linear-gradient(45deg,transparent 0 .62em,rgba(201,163,90,.34) .62em .68em),
+  repeating-linear-gradient(-45deg,transparent 0 .62em,rgba(201,163,90,.34) .62em .68em),
+  radial-gradient(120% 90% at 50% 50%,#2a0c0e,#0c0707 75%)}
+.card.back .sig{display:grid;place-items:center;width:3.4em;height:3.4em;border-radius:50%;border:1px solid #c9a35a;box-shadow:0 0 0 .2em #0c0707,0 0 0 .24em #8a6d35;font:700 2.6em/1 var(--mark);letter-spacing:-.02em;color:#c9a35a;background:#0c0707}
+/* edict: a rule card, a red-letter decree */
+.card.edict{background:
+  url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='s'><feTurbulence type='fractalNoise' baseFrequency='.011 .019' numOctaves='4' stitchTiles='stitch' seed='3'/><feColorMatrix values='0 0 0 0 .36 0 0 0 0 .22 0 0 0 0 .08 0 0 0 .75 -.3'/></filter><rect width='100%' height='100%' filter='url(%23s)'/></svg>"),
+  linear-gradient(#cdb98c,#cdb98c)}
+.card .wax{position:absolute;bottom:-.5em;right:.6em;width:3.2em;font-size:1em}
+.card .wax.seal-wax{font-size:1.5em;width:2.3em}
+
+/* ── Exorcism: the crystal ball. --orb sets the mist (violet, .gold, .red) ── */
+.ball{position:relative;aspect-ratio:1;border-radius:50%;display:grid;place-content:center;justify-items:center;text-align:center;border:1px solid color-mix(in srgb,var(--orb) 70%,#fff);
+  background:radial-gradient(circle at 33% 25%,rgba(255,255,255,.55) 0 2.5%,rgba(255,255,255,.13) 9%,transparent 22%),radial-gradient(circle at 62% 80%,color-mix(in srgb,var(--orb) 55%,transparent),transparent 55%),radial-gradient(circle,color-mix(in srgb,var(--orb) 36%,#07060c),#07060c 76%);
+  box-shadow:0 0 70px color-mix(in srgb,var(--orb) 42%,transparent),inset 0 0 46px color-mix(in srgb,var(--orb) 55%,transparent),inset 0 -34px 60px rgba(0,0,0,.8)}
+.ball.gold{--orb:#d9a441} .ball.red{--orb:#d23a35}
+.stand{position:relative;width:52%;height:30px;margin:-8px auto 0;border:1px solid var(--gilt-2);border-top:0;border-radius:0 0 46% 46%/0 0 100% 100%;background:linear-gradient(var(--ink-3),var(--ink))}
+.stand::after{content:'';position:absolute;left:-18%;right:-18%;bottom:-9px;height:8px;border:1px solid var(--gilt-2);background:var(--ink-2)}
+/* votes as beads on a string */
+.beads{display:flex;gap:7px;align-items:center}
+.beads i{width:11px;height:11px;transform:rotate(45deg);background:var(--blood-ink)}
+.beads i.o{background:none;border:1px solid var(--ash)}
+.beads.g i{background:var(--gilt)}
+/* mission track */
+.trk{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;border:1px dashed var(--gilt-2);font:600 15px/1 var(--text);letter-spacing:.08em;text-indent:.08em;color:var(--ash)}
+.trk.ok{border:1px solid var(--gilt);background:var(--gilt);color:var(--ink)}
+.trk.no{border:1px solid var(--blood-ink);background:var(--blood);color:#f8ead6}
+.trk.now{border:1px solid var(--gilt-hi);color:var(--gilt-hi);box-shadow:0 0 0 4px var(--ink),0 0 0 5px var(--gilt-2),0 0 22px color-mix(in srgb,var(--gilt) 55%,transparent)}
+.tv .trk{width:64px;height:64px;font-size:21px}
+.vellum .chip{background:rgba(29,21,16,.06);border-color:rgba(29,21,16,.45);color:var(--sepia)}
+.vellum .chip.red{border-color:var(--rubric);color:var(--rubric)}
+/* TV header: wordmark · phase · timer */
+.tvh{display:flex;align-items:flex-end;gap:26px}
+.tvh>*{white-space:nowrap}
+.tvh .mark{font-size:44px;padding-bottom:6px}
+.tvh h1{font:800 76px/.9 var(--black)}
+.tvh .bit{margin-left:auto;font-size:76px;color:var(--gilt)}
+/* threads of suspicion */
+.threads{position:absolute;inset:0;width:100%;height:100%;z-index:1;fill:none;stroke:var(--blood-ink);stroke-width:2;opacity:.85}
+/* the sun or moon rides the timer ring */
+.rider{position:absolute;z-index:3;width:30px;height:30px;margin:-15px;border-radius:50%;background:var(--gilt-hi);box-shadow:0 0 0 5px var(--ink),0 0 0 6px var(--gilt),0 0 30px var(--gilt)}
+/* rubric: how Death's card looks on a PHONE. Same vellum, same brightness as every
+   other role, so the glow of a screen never gives a player away. Only the ink turns red. */
+.card.rubric .ttl,.card.rubric .fac{color:var(--rubric)}
+.card.rubric{box-shadow:0 0 0 1px #77633f,0 0 0 2px var(--rubric),0 1.8em 3em -1.4em #000,inset 0 0 2em rgba(84,54,18,.24)}
+/* the timer ring sits outside the seats, so names never collide with it; threads pass under the centre */
+.table .disc{z-index:1}
+.threads{z-index:0}
+.rider{left:calc(50% + (50% + 16px)*sin(var(--t,.6)*360deg));top:calc(50% - (50% + 16px)*cos(var(--t,.6)*360deg))}
+.card .wax.seal-wax{position:static;flex:none;font-size:1.2em;width:2.1em;margin-top:.15em}
