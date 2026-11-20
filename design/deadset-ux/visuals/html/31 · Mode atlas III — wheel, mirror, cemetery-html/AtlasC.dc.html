@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dead Set — mode atlas III</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ds.css">
+<link rel="stylesheet" href="./workshop.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Grenze+Gotisch:wght@400;600;800&amp;family=UnifrakturCook:wght@700&amp;display=swap">
+<style>
+body{margin:0}
+
+.dcard{position:relative;background:#e6d8b6;color:#1a120c;padding:16px 20px 20px;display:grid;justify-items:center;gap:8px;text-align:center;border-radius:6px;box-shadow:0 0 0 1px #77633f,0 18px 30px -16px #000}
+.dcard::before{content:'';position:absolute;inset:6px;border:1px solid rgba(90,70,50,.55);border-radius:3px;pointer-events:none}
+.dcard .top{display:flex;align-items:center;gap:12px}
+.dcard .rd{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;border:1px solid #6f8aa8;box-shadow:0 0 0 3px #e6d8b6,0 0 0 4px rgba(111,138,168,.6);background:radial-gradient(circle,#eef0ea,#dccba4 75%)}
+.dcard .rd img{width:80%;mix-blend-mode:multiply}
+.dcard .num{display:block;font:600 10px/1 var(--text);letter-spacing:.28em;text-transform:uppercase;color:var(--rubric)}
+.dcard h2{font:600 24px/1 var(--black);margin:3px 0 0;color:#2a1d12;text-align:left}
+.dcard .rule{width:60%;height:1px;background:linear-gradient(90deg,transparent,#8a6d35,transparent)}
+.dcard .q{margin:0;font:500 21px/1.32 var(--text);color:#1a120c;max-width:22ch;text-wrap:balance;letter-spacing:.005em}
+.dcard.lg{padding:22px 24px 26px;gap:12px} .dcard.lg .rd{width:64px;height:64px} .dcard.lg h2{font-size:28px} .dcard.lg .q{font-size:25px;max-width:16ch}
+
+.dlm{position:relative;align-self:stretch;margin:0 16px;background:var(--vellum);color:var(--sepia);padding:12px 14px 12px;display:grid;grid-template-columns:86px 1fr;gap:12px;align-items:center;box-shadow:0 0 0 1px #77633f,0 18px 30px -16px #000,inset 0 0 2em rgba(84,54,18,.22)}
+.dlm::before{content:'';position:absolute;inset:5px;border:1px solid var(--sepia-2);pointer-events:none}
+.dlm .win{height:112px;clip-path:var(--arch);background:#6f8aa8;position:relative}
+.dlm .win::before{content:'';position:absolute;inset:1.5px;clip-path:var(--arch);background:radial-gradient(circle at 50% 60%,#c9d3dc,#dccba4 70%)}
+.dlm .win img{position:relative;width:100%;height:100%;object-fit:contain;padding:26% 8% 6%;mix-blend-mode:multiply}
+.dlm .num{font:600 9.5px/1 var(--text);letter-spacing:.3em;text-transform:uppercase;color:var(--rubric)}
+.dlm h2{font:600 26px/.95 var(--black);margin:4px 0 6px}
+.dlm p{font:italic 400 16px/1.28 var(--text);color:var(--sepia)}
+.fates{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;align-self:stretch;margin:0 16px}
+.fate{position:relative;min-height:128px;background:linear-gradient(var(--ink-3),var(--ink-2));border:1px solid var(--gilt-2);display:grid;grid-template-rows:auto 1fr;justify-items:center;align-items:center;padding:12px 8px 16px;text-align:center;gap:6px;border-radius:4px}
+.fate::before{content:'';position:absolute;inset:4px;border:1px solid rgba(201,163,90,.22);border-radius:2px;pointer-events:none}
+.fate .rn{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;border:1px solid var(--gilt-2);font:600 12px/1 var(--text);letter-spacing:.06em;color:var(--gilt)}
+.fate img{width:52%;align-self:center;filter:invert(1) hue-rotate(180deg) sepia(.4);opacity:.9}
+.fate b{font:500 16.5px/1.22 var(--text);color:var(--bone);text-wrap:balance}
+.fate.mine{background:var(--vellum);border-color:var(--vellum)} .fate.mine .rn{color:var(--rubric);border-color:var(--rubric)} .fate.mine img{filter:none;mix-blend-mode:multiply} .fate.mine b{color:var(--sepia)}
+.fate.theirs{border-color:#a9c3d6;box-shadow:0 0 0 1px #a9c3d6,0 0 18px -4px #a9c3d6}
+.wx{position:absolute;bottom:-12px;width:34px;height:34px;display:grid;place-items:center;border-radius:47% 53% 50% 50%/52% 47% 53% 48%;font:700 16px/1 var(--black);box-shadow:0 4px 8px -2px #000}
+.wx.me{right:-6px;background:radial-gradient(circle at 35% 30%,#c8363a,var(--wax));color:#f6d3c8}
+.wx.th{left:-6px;background:radial-gradient(circle at 35% 30%,#dfe8ee,#7d93a6);color:#1b2530}
+.glass{align-self:stretch;margin:10px 16px 12px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:8px 12px;border-radius:40px;border:1px solid #6f8aa8;background:radial-gradient(120% 140% at 50% 0,rgba(111,138,168,.22),rgba(13,16,22,.9))}
+.glass .md{display:flex;align-items:center;gap:8px;font:600 11px/1 var(--text);letter-spacing:.18em;text-transform:uppercase;color:var(--bone-2)}
+.glass .md i{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;border:1px solid var(--gilt);font:600 17px/1 var(--black);font-style:normal;background:var(--ink-3);color:var(--gilt)}
+.glass .md.t i{border-color:#a9c3d6;color:#dfe8ee}
+.glass .ar{height:1px;background:linear-gradient(90deg,var(--gilt),#a9c3d6);position:relative}
+.glass .ar::after{content:'';position:absolute;right:-1px;top:-4px;width:8px;height:8px;border-top:1px solid #a9c3d6;border-right:1px solid #a9c3d6;transform:rotate(45deg)}
+
+</style>
+</helmet>
+<div class="ds tv" style="width:1360px;height:1080px;">
+<div class="atlas" style="--n:3"><div class="ph"><div class="ds phn" style="">
+  <header><div><h1>Turn<sup>5</sup></h1><span class="sub">The Sun digs · 2 digs left</span></div><button class="ico" aria-label="Room menu"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 9h22M5 16h22M5 23h14"></path></svg></button></header>
+  <div class="mv"><div class="move"><span class="dot"></span><span class="what">Choose a grave for the Sun<small>Talk it over, then tap</small></span><span class="clk">0:51</span></div></div>
+  <div class="stage"><div class="sealtr"><div class="tseal" style="--s:78px;--t:0.6" role="img" aria-label="The table"><div class="c"><span style="font-size:11px">☉ 3</span></div><i class="g" style="left:50.0%;top:0.0%"></i><i class="g" style="left:93.3%;top:25.0%"></i><i class="n" style="left:93.3%;top:75.0%"></i><i class="b" style="left:50.0%;top:100.0%"></i><i class="b" style="left:6.7%;top:75.0%"></i><i class="y" style="left:6.7%;top:25.0%"></i></div></div><div style="align-self:stretch;margin:14px 104px 14px 14px;display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--gilt);background:linear-gradient(90deg,rgba(201,163,90,.2),transparent)"><span class="lab gilt" style="font-size:9.5px">The sign</span><span class="bl" style="font-size:24px">“workshop”</span><span class="trk now" style="width:30px;height:30px">2</span></div><div class="cem"><div class="stone s">magnet</div><div class="stone ">scarf</div><div class="stone s">guitar</div><div class="stone m">mine</div><div class="stone open">saw</div><div class="stone ">church</div><div class="stone ">wall</div><div class="stone s">nail</div><div class="stone ">mask</div><div class="stone m">pirate</div><div class="stone ">pearl</div><div class="stone ">oracle</div><div class="stone pick">cinema</div><div class="stone ">engine</div><div class="stone ">sail</div><div class="stone k">cactus</div><div class="stone ">gardener</div><div class="stone m">doctor</div><div class="stone ">willow</div><div class="stone ">stove</div><div class="stone ">boot</div><div class="stone ">whistle</div><div class="stone ">cellar</div><div class="stone ">rope</div><div class="stone m">blue</div></div><p class="cap" style="font-size:13px;margin:10px 14px 0;align-self:stretch">Your vote: <b style="color:var(--gilt-hi)">Cinema</b> · 2 of 3 Sun diggers agree</p></div>
+  <nav class="tray" aria-label="Your things"><button><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="9" y="4" width="14" height="24" rx="1.5"></rect><path d="M16 11l3 5-3 5-3-5z"></path></svg>My crew</button><button><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11"></circle><circle cx="16" cy="16" r="4"></circle></svg>The map</button><button><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 6h14v20H10a2 2 0 0 1-2-2zM12 12h6M12 16h6"></path></svg>Notes</button><button class="off"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 8h20v16H6zM6 13h20"></path></svg>Story</button></nav>
+  <div class="dock"><button class="btn seal wide">Hold to dig Cinema</button></div>
+  
+</div><div class="cp"><h3><img src="./art/skeleton.svg" alt="">Graverobbers</h3><p><b>Surface</b>The cemetery: 25 headstones; dug graves keep their crew's colour, the black grave glows only on the Undertaker's map.</p><p><b>Seal</b>Crews as blue and gold dots; the bead on the crew that digs.</p><p><b>Sign</b>The Undertaker's word and number sit as a plaque above the stones all turn.</p></div></div><div class="ph"><div class="ds phn" style="">
+  <header><div><h1>Round<sup>4</sup></h1><span class="sub">The wheel starts at Life · 3 of 6 sealed</span></div><button class="ico" aria-label="Room menu"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 9h22M5 16h22M5 23h14"></path></svg></button></header>
+  <div class="mv"><div class="move"><span class="dot"></span><span class="what">Where will it stop?<small>Then turn it, if you dare</small></span><span class="clk">0:33</span></div></div>
+  <div class="stage"><div style="margin-top:40px"><div class="ow " style="--w:270px"><svg class="sx" viewBox="0 0 100 100" aria-hidden="true"><g stroke="#c9a35a" stroke-width=".35" fill="none">
+<circle cx="50" cy="50" r="46.5" stroke-dasharray=".4 1.2"></circle><circle cx="50" cy="50" r="38" stroke="#8a6d35"></circle>
+<line x1="43.1" y1="46.0" x2="10.2" y2="27.0"></line><line x1="56.9" y1="46.0" x2="89.8" y2="27.0"></line><line x1="50.0" y1="58.0" x2="50.0" y2="96.0"></line></g><g fill="#ecd28f"><path transform="translate(17.1 31.0) rotate(-60)" d="M0-2.2L1.2 0L0 2.2L-1.2 0Z"></path><path transform="translate(82.9 31.0) rotate(60)" d="M0-2.2L1.2 0L0 2.2L-1.2 0Z"></path><path transform="translate(50.0 88.0) rotate(180)" d="M0-2.2L1.2 0L0 2.2L-1.2 0Z"></path></g></svg><span class="fc " style="left:50.0%;top:21.0%"><span class="rd"><img src="./art/sun.svg" alt=""></span><b>Life</b></span><span class="fc " style="left:75.1%;top:64.5%"><span class="rd"><img src="./art/death.svg" alt=""></span><b>Death</b></span><span class="fc " style="left:24.9%;top:64.5%"><span class="rd"><img src="./art/angel.svg" alt=""></span><b>Rebirth</b></span><svg class="ndl2" viewBox="0 0 100 100" style="transform:rotate(0deg)" aria-hidden="true">
+<defs><linearGradient id="nga" x1="0" x2="1"><stop offset="0" stop-color="#8a6d35"></stop><stop offset=".5" stop-color="#f4e2a8"></stop><stop offset="1" stop-color="#8a6d35"></stop></linearGradient></defs>
+<g fill="url(#nga)" stroke="#4a3816" stroke-width=".25">
+<path d="M50 9 L52.2 17.5 L51.1 17.5 L51.6 44 L50 47.5 L48.4 44 L48.9 17.5 L47.8 17.5Z"></path>
+<path d="M50 4.2 L52.6 9 L50 13.8 L47.4 9Z"></path>
+<path d="M45.2 25 Q50 21.5 54.8 25 Q50 23.6 45.2 25Z"></path>
+<path d="M50 52.5 L51.2 60 L50 61.5 L48.8 60Z"></path>
+<path d="M50 61 a5.6 5.6 0 1 0 0.01 0Z M50 63.2 a3.6 3.6 0 1 1 -0.01 0Z" fill-rule="evenodd"></path>
+</g>
+<g transform="translate(50 50)">
+<circle r="7.2" fill="#1a130c" stroke="#c9a35a" stroke-width=".6"></circle>
+<path d="M0-6 L1.3-1.3 L6 0 L1.3 1.3 L0 6 L-1.3 1.3 L-6 0 L-1.3-1.3Z" fill="url(#nga)"></path>
+<path d="M0-3.6 L.7-.7 L3.6 0 L.7 .7 L0 3.6 L-.7 .7 L-3.6 0 L-.7-.7Z" fill="#1a130c" transform="rotate(45)"></path>
+<circle r="1.3" fill="#f4e2a8"></circle>
+</g></svg><span class="sr d" style="left:77.2%;top:2.8%"></span><span class="sr d" style="left:104.5%;top:50.0%"></span><span class="sr " style="left:77.2%;top:97.2%"></span><span class="sr y" style="left:22.8%;top:97.2%"></span><span class="sr d" style="left:-4.5%;top:50.0%"></span><span class="sr " style="left:22.7%;top:2.8%"></span></div></div><div style="height:34px"></div><div class="face3"><button class="life"><img src="./art/sun.svg" alt="">Life</button><button class="death on"><img src="./art/death.svg" alt="">Death</button><button class="reb"><img src="./art/angel.svg" alt="">Rebirth</button></div><div style="align-self:stretch;margin:12px 14px 0;display:grid;gap:6px"><div style="display:flex;justify-content:space-between"><span class="lab">Turn the wheel</span><span class="beads g"><i></i><i></i><i class="o"></i></span></div><div class="seg turn"><button aria-label="Back one, anticlockwise"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 15.5A7.5 7.5 0 1 0 9 5.6"></path><path d="M8.4 1.8l.6 3.8-3.8.6"></path></svg>Back one</button><button class="on" aria-label="Leave it"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.5"></circle><path d="M12 12V5.5"></path><circle cx="12" cy="12" r="1.4" fill="currentColor"></circle></svg>Leave it</button><button aria-label="On one, clockwise"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.5 15.5A7.5 7.5 0 1 1 15 5.6"></path><path d="M15.6 1.8l-.6 3.8 3.8.6"></path></svg>On one</button></div></div></div>
+  
+  <div class="dock"><button class="btn seal wide">Seal my omen</button></div>
+  
+</div><div class="cp"><h3><img src="./art/sun.svg" alt="">The Omen</h3><p><b>Surface</b>The ornate astrolabe: three etched faces, a gilt needle with crescent counterweight. The result is shown only after the needle stops (board 31b).</p><p><b>Seal</b>The seers ride the wheel's rim: a gilt dot when sealed. No separate table.</p><p><b>Choose</b>Three face cards, then Back / Leave / On with your Influence beads.</p></div></div><div class="ph"><div class="ds phn" style="">
+  <header><div><h1>Dilemma<sup>3</sup></h1><span class="sub">Seal your ballot · 4 of 6 sealed</span></div><button class="ico" aria-label="Room menu"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 9h22M5 16h22M5 23h14"></path></svg></button></header>
+  <div class="mv"><div class="move"><span class="dot"></span><span class="what">Place both seals<small>Reading Ash right scores 2</small></span><span class="clk">0:24</span></div></div>
+  <div class="stage"><div class="glass"><span class="md"><i>V</i>You</span><span class="ar"></span><span class="md t">Ash<i>A</i></span></div>
+<div class="dcard " style="align-self:stretch;margin:0 16px"><div class="top"><span class="rd"><img src="./art/s_self.svg" alt=""></span><span style="text-align:left"><span class="num">Dilemma · III</span><h2>The Salesman</h2></span></div><span class="rule"></span><p class="q">A travelling salesman sells bottled luck.</p></div>
+<div style="align-self:stretch;margin:16px 16px 8px"><div class="seg"><button class="on">Your seal</button><button>Ash’s seal</button></div></div>
+{fh}
+<p class="cap" style="align-self:stretch;margin:26px 16px 0;font-size:14px;text-align:center">Tap a fate to place the seal you’re holding. Both seals can move until everyone has sealed.</p></div>
+  
+  <div class="dock"><button class="btn seal wide">Seal my ballot</button></div>
+  
+</div><div class="cp"><h3><img src="./art/s_self.svg" alt="">The Mirror</h3><p><b>Surface</b>The dilemma as an arcana card; the three answers as fate cards.</p><p><b>Seals</b>Place your wax seal and Ash's silver seal: two tokens, three cards, one screen.</p><p><b>The glass</b>A slim mirror band shows who reads whom.</p></div></div></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1360,"height":1080}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>
