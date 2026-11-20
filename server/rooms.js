@@ -338,7 +338,7 @@ export class RoomManager {
     if (!this.interludes || !batch.length) return;
     const before = Math.max(now, m.holdUntil ?? 0);
     let cursor = before;
-    const ctx = { rules: m.activeRules?.length ?? 0 };
+    const ctx = { rules: m.activeRules?.length ?? 0, pace: m.settings?.pace };
     for (const l of batch) {
       const ms = interludeMs(l, batch, ctx);
       if (!ms) continue;

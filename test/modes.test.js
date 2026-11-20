@@ -103,3 +103,18 @@ test('every mode has its own emblem (UX R4)', () => {
   const emblems = Object.values(MODES).map((m) => m.emblem);
   assert.equal(new Set(emblems).size, emblems.length);
 });
+
+test('P1/P3: banners hold no time; Brisk plays full scenes at 0.6', async () => {
+  const { interludeMs, sceneSize } = await import('../public/interludes.js');
+  assert.equal(sceneSize('kswap'), 'banner');
+  assert.equal(sceneSize('gdig', { kind: 'D' }), 'full');
+  assert.equal(interludeMs({ ev: 'k-swap' }, []), 0);
+  const full = interludeMs({ ev: 'tally' }, []);
+  assert.equal(full, 5200);
+  assert.equal(interludeMs({ ev: 'tally' }, [], { pace: 'brisk' }), Math.round(5200 * 0.6));
+  const m = newMatch({ mode: 'classic' });
+  updateSettings(m, { pace: 'brisk' });
+  assert.equal(m.settings.pace, 'brisk');
+  updateSettings(m, { pace: 'warp' });
+  assert.equal(m.settings.pace, 'brisk');
+});

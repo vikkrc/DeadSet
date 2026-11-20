@@ -67,6 +67,7 @@ export function defaultSettings() {
     lang: 'en',
     score: true,
     scoreTheme: 'classic',
+    pace: 'cinematic',  // P3: Brisk shortens the shared scenes
     dreamWeights: { ...DREAM_WEIGHTS },
     customRoles: {},
     deckMode: 'auto',
@@ -213,6 +214,7 @@ export function applySettingsPatch(settings, patch = {}) {
   if (patch.clueOdds !== undefined) s.clueOdds = clampInt(patch.clueOdds, 1, 3, 1);
   if (['none', 'coin'].includes(patch.tieBreak)) s.tieBreak = patch.tieBreak;
   if (SCORE_THEMES.includes(patch.scoreTheme)) s.scoreTheme = patch.scoreTheme;
+  if (['cinematic', 'brisk'].includes(patch.pace)) s.pace = patch.pace;
   for (const k of ['revealOnDeath', 'endReveal', 'selfNomination', 'selfVote', 'threads', 'score', 'bloodMoon', 'finalTwoDeath', 'clues', 'lovers', 'cult', 'ripper', 'backdrops']) {
     if (typeof patch[k] === 'boolean') s[k] = patch[k];
   }

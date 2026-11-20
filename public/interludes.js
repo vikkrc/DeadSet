@@ -148,8 +148,14 @@ export function scenesFor(l, batch = [], ctx = {}) {
 const BANNER = new Set(['kswap', 'kclaim', 'gsign', 'gdig', 'cdig', 'qaccuse']);
 export const sceneSize = (type, d = {}) => (type === 'gdig' && d.kind === 'D' ? 'full' : BANNER.has(type) ? 'banner' : 'full');
 
+/**
+ * P3: the table's pace. Brisk plays every full scene at 0.6 of its length (the client speeds the scene's
+ * animations and cues up to match) and drops banners to inline: no slip, just the table and its sound.
+ */
+export const paceScale = (pace) => (pace === 'brisk' ? 0.6 : 1);
+
 /** Total length of the full scenes an entry opens: only those hold the shared timeline. */
-export const interludeMs = (l, batch, ctx) => scenesFor(l, batch, ctx).reduce((s, [type, d]) => s + (sceneSize(type, d) === 'full' ? sceneMs(type, d) : 0), 0);
+export const interludeMs = (l, batch, ctx = {}) => Math.round(scenesFor(l, batch, ctx).reduce((s, [type, d]) => s + (sceneSize(type, d) === 'full' ? sceneMs(type, d) : 0), 0) * paceScale(ctx.pace));
 
 /** Commands that stay open while a shared scene plays. */
 export const OPEN_DURING_SCENES = (type) => type.startsWith('lobby.') || type === 'chat.send';

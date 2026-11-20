@@ -6,7 +6,7 @@ import { renderGuide } from './guide.js';
 import { sound, score, haptic, burstAt, celebrate, ambient } from './fx.js';
 import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './board.js';
 import { seatLayout } from './layout.js';
-import { sceneMs, scenesFor, sceneSize } from './interludes.js';
+import { sceneMs, scenesFor, sceneSize, paceScale } from './interludes.js';
 import { MODES, MODE_IDS, FAMILIES, COLLECTION, modeOfPhase, modeInfo } from './modes.js';
 import { explainer } from './kit.js';
 import { cardArt, roleEmblemId, roleNumber } from './cards.js';
@@ -339,7 +339,7 @@ function detectMoments(v) {
     const end = l.mAt + l.mDur;
     for (const m of out.slice(start)) {
       if (!types.includes(m.type)) continue;
-      const dur = Math.min(sceneMs(m.type, sceneData(m)), end - at);
+      const dur = Math.min(Math.round(sceneMs(m.type, sceneData(m)) * paceScale(v.table?.pace)), end - at);
       if (dur <= 0) continue;
       Object.assign(m, { at, dur, tapOnly: false });
       at += dur;
@@ -366,6 +366,7 @@ function detectMoments(v) {
         out.splice(k, 1);
         const snd = m.sound ?? MOMENT_SOUND[m.type];
         if (snd) pubSound(snd);
+        if (v.table?.pace === 'brisk') continue; // P3: Brisk keeps banners inline (the table and its sound only)
         const label = l.ev === 'g-dig' && l.label && !l.icon ? `${l.label} · ` : '';
         notify(`${label}${tm(entryMsg(l))}`, 'public');
       }
@@ -466,8 +467,21 @@ const sceneData = (m) => ({ coin: m.coin ?? null, rules: m.rules?.length ?? 0, d
 const MOMENT_SOUND = { night0: 'night', day1: 'dawn', nightfall: 'night', dawn: 'dawn', tally: 'knock', death: 'death', revive: 'revive', bloodmoon: 'bloodmoon' };
 const END_THEME = { OMEN: 'winLiving', MIRROR: 'winLiving', MIMIC: 'winLiving', GRAVEROBBERS: 'winLiving', SEANCE: 'winLiving', MIDNIGHT: 'winLiving', CARNIVAL: 'winJester', COFFINS: 'winLiving', DEMON: 'winDeath', DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester', LOVERS: 'winLovers', CULT: 'winCult', RIPPER: 'winRipper' };
 const MOMENT_TIME = { end: 9000, private: 6000, gift: 5600, mside: 5200, coin: 5200, night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 5200, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
-const momentTime = (m) => (m.type === 'mreveal' ? revealTime(m) : O_MOMENT_TIME[m.type] ? O_MOMENT_TIME[m.type] : W_MOMENT_TIME[m.type] ? W_MOMENT_TIME[m.type] : Q_MOMENT_TIME[m.type] ? Q_MOMENT_TIME[m.type] : S_MOMENT_TIME[m.type] ? S_MOMENT_TIME[m.type] : G_MOMENT_TIME[m.type] ? G_MOMENT_TIME[m.type] : N_MOMENT_TIME[m.type] ? N_MOMENT_TIME[m.type] : K_MOMENT_TIME[m.type] ? K_MOMENT_TIME[m.type] : C_MOMENT_TIME[m.type] ? C_MOMENT_TIME[m.type] : X_MOMENT_TIME[m.type] ? X_MOMENT_TIME[m.type] : MISSION_MOMENT_TIME[m.type] ? MISSION_MOMENT_TIME[m.type] : !onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : (MOMENT_TIME[m.type] ?? 6000) + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
+const momentBase = (m) => (m.type === 'mreveal' ? revealTime(m) : O_MOMENT_TIME[m.type] ? O_MOMENT_TIME[m.type] : W_MOMENT_TIME[m.type] ? W_MOMENT_TIME[m.type] : Q_MOMENT_TIME[m.type] ? Q_MOMENT_TIME[m.type] : S_MOMENT_TIME[m.type] ? S_MOMENT_TIME[m.type] : G_MOMENT_TIME[m.type] ? G_MOMENT_TIME[m.type] : N_MOMENT_TIME[m.type] ? N_MOMENT_TIME[m.type] : K_MOMENT_TIME[m.type] ? K_MOMENT_TIME[m.type] : C_MOMENT_TIME[m.type] ? C_MOMENT_TIME[m.type] : X_MOMENT_TIME[m.type] ? X_MOMENT_TIME[m.type] : MISSION_MOMENT_TIME[m.type] ? MISSION_MOMENT_TIME[m.type] : !onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : (MOMENT_TIME[m.type] ?? 6000) + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
 
+/** P3: the table's pace as a scale on scene time (1 cinematic, 0.6 brisk). */
+const pace = () => paceScale(V()?.table?.pace);
+/** P3: play the open scene's animations at the table's pace (its timer bar already runs on the scaled window). */
+function paceMoment() {
+  const k = pace();
+  const el = document.querySelector('.moment');
+  if (!el || k === 1 || !el.getAnimations) return;
+  for (const a of el.getAnimations({ subtree: true })) {
+    if (a.effect?.target?.closest?.('.m-timer')) continue;
+    if (a.playbackRate !== 1 / k) a.playbackRate = 1 / k;
+  }
+}
+const momentTime = (m) => Math.round(momentBase(m) * pace());
 function nextMoment() {
   clearTimeout(S.momentTimer);
   const prev = S.moment;
@@ -477,6 +491,9 @@ function nextMoment() {
   const k = S.moments.findIndex((x) => x.at);
   S.moment = (k >= 0 ? S.moments.splice(k, 1)[0] : S.moments.shift()) ?? null;
   const m = S.moment;
+  // P3: on a Brisk table every cue inside the scene comes sooner, in step with its sped-up animations.
+  const k2 = pace();
+  const setTimeout = (fn, ms) => window.setTimeout(fn, ms * k2);
   // R5: a scene that follows another keeps its ground; only its content fades in (no black frame between).
   if (m) m.chained = !!prev;
   if (m) {
@@ -520,8 +537,8 @@ function nextMoment() {
         haptic([40, 60, 40, 60, 120]);
       }, 500);
     }
-    if (m.at) S.momentTimer = setTimeout(nextMoment, Math.max(50, m.at + m.dur - now));
-    else if (!m.tapOnly) S.momentTimer = setTimeout(nextMoment, calm.matches ? Math.min(momentTime(m), 2500) : momentTime(m));
+    if (m.at) S.momentTimer = window.setTimeout(nextMoment, Math.max(50, m.at + m.dur - now));
+    else if (!m.tapOnly) S.momentTimer = window.setTimeout(nextMoment, calm.matches ? Math.min(momentTime(m), 2500) : momentTime(m));
   }
   render();
 }
@@ -797,6 +814,7 @@ function render() {
   app.querySelectorAll('[data-scroll]').forEach((el) => { if (bottoms[el.dataset.scroll] !== false) el.scrollTop = el.scrollHeight; });
   tickClock();
   syncWake();
+  paceMoment();
   heraldTurn(v);
 }
 
@@ -1982,11 +2000,17 @@ function tableSection(v, isHost) {
         ${on ? `<select class="input lang-select" data-set-str="scoreTheme" data-key="music-style" aria-label="${esc(t('Music style'))}">${MUSIC_STYLES.map(([k, l]) => `<option value="${k}" ${k === cur ? 'selected' : ''}>${t(l)}</option>`).join('')}</select>` : ''}
         <input type="checkbox" class="switch" data-set-bool="score" ${on ? 'checked' : ''} aria-label="${esc(t('Atmospheric score'))}"></div>`
     : `<div class="toggle-row"><span><b>${t('Atmospheric score')}</b><small>${t(on ? style[2] : 'Music and effects play on the TV board')}</small></span><span class="tag ${on ? 'solid' : ''}">${on ? t(style[1]) : t('Off')}</span></div>`;
+  // P3: the pace. Brisk shortens every shared scene and keeps turn-level events on the table.
+  const brisk = v.table?.pace === 'brisk';
+  const paceSub = t(brisk ? 'Shorter scenes, for a table that knows the game.' : 'Every scene plays in full.');
+  const pace = isHost
+    ? `<div class="toggle-row"><span><b>${t('Pace')}</b><small>${paceSub}</small></span><div class="seg" role="group" aria-label="${esc(t('Pace'))}"><button data-act="pace" data-id="cinematic" aria-pressed="${!brisk}">${t('Cinematic')}</button><button data-act="pace" data-id="brisk" aria-pressed="${brisk}">${t('Brisk')}</button></div></div>`
+    : `<div class="toggle-row"><span><b>${t('Pace')}</b><small>${paceSub}</small></span><span class="tag ${brisk ? 'solid' : ''}">${t(brisk ? 'Brisk' : 'Cinematic')}</span></div>`;
   const backdrops = info.story ? (isHost
     ? `<label class="toggle-row"><span><b>${t('Location backdrops')}</b><small>${t('The TV board shows a scene for the story\'s WHERE card.')}</small></span><input type="checkbox" class="switch" data-set-bool="backdrops" ${v.table?.backdrops ? 'checked' : ''}></label>`
     : `<div class="toggle-row"><span><b>${t('Location backdrops')}</b><small>${t('The TV board shows a scene for the story\'s WHERE card.')}</small></span><span class="tag ${v.table?.backdrops ? 'solid' : ''}">${t(v.table?.backdrops ? 'On' : 'Off')}</span></div>`) : '';
   const transport = info.remote && isHost ? `<div class="seg" role="group"><button data-act="transport" data-mode="in-person" aria-pressed="${s.transport === 'in-person'}">${t('Same room')}</button><button data-act="transport" data-mode="remote" aria-pressed="${s.transport === 'remote'}">${t('Remote · chat')}</button></div>` : '';
-  return `<section class="lobby-table" data-key="ltable"><div class="rule lstep">${t('The table')}</div>${v.mode === 'exorcism' ? '' : lang}${music}${backdrops}${transport}</section>`;
+  return `<section class="lobby-table" data-key="ltable"><div class="rule lstep">${t('The table')}</div>${v.mode === 'exorcism' ? '' : lang}${music}${pace}${backdrops}${transport}</section>`;
 }
 const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
 
@@ -2665,6 +2689,7 @@ const picked = (el, kill = false, secret = false) => {
 };
 
 const ACT = {
+  pace: (el) => send('host.settings', { pace: el.dataset.id }),
   async create() {
     const name = (S.drafts.createName ?? '').trim();
     if (!name) return toast('Enter your name first.', 'err');
