@@ -230,8 +230,10 @@ export function seanceMain(v, me, h) {
       const title = !candle ? t('Describe your vision') : v.phase === 'S_LAST' ? t('One last candle') : s.lit != null ? (s.lit === 'abstain' ? t('Your candle stays dark.') : th('Your candle burns on {card}.', { card: cardName(row, s.lit) })) : t('Light your candle');
       const hint = !candle ? t('Tell the table what you see and which card it points to. Tap any card to see it large.') : t('Tap the card your row\'s visions point to, then light the candle. The most candles are put to the spirit.');
       const tabs = `<nav class="s-tabs" data-key="stabs"><button class="${tab === 'mine' ? 'on' : ''}" data-act="sTab" data-id="mine">${esc(t(ROW_Q[row]))}</button><button class="${tab === 'table' ? 'on' : ''}" data-act="sTab" data-id="table">${t('The whole table')}</button></nav>`;
+      // AT8: the seal beside your visions — the Ghost's seat in red, the candles left in the disc.
+      const sSeal = h.seal(v, { marks: S.ghost ? { [S.ghost]: 'r' } : {}, center: `<span class="c-big">${Math.max(0, S.candles - S.burnt)}<small>/${S.candles}</small></span>`, key: 'sseal', size: 78 });
       const minePanel = `<div class="s-mine" data-key="smine">
-          <div class="sm-yours">${mine.map((x) => vcard(x, { cls: 'big', frost: S.frosted.includes(me?.id), act: 'sZoomV', label: x })).join('')}<small>${t('Your vision')}</small></div>
+          ${h.sealRow(`<div class="sm-yours">${mine.map((x) => vcard(x, { cls: 'big', frost: S.frosted.includes(me?.id), act: 'sZoomV', label: x })).join('')}<small>${t('Your vision')}</small></div>`, sSeal)}
           ${others.length ? `<div class="sm-others"><small>${t('Also on this row')}</small>${others.map((id) => `<figure>${S.shown[id].map((x) => vcard(x, { cls: 'thumb', frost: S.frosted.includes(id), act: 'sZoomV', label: x })).join('')}<figcaption>${pname(v, id)}</figcaption></figure>`).join('')}</div>` : ''}
         </div>${rowCards(v, row, candle ? { act: 'sPickCard', sel: pick, zoom: false } : {})}`;
       stage = `${doNow(title, hint)}${tabs}${tab === 'mine' ? minePanel : tableRows(v)}`;

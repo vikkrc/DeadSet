@@ -5307,3 +5307,4 @@ button.mr-fate { cursor: pointer; }
 .mr-results li.miss { border-color: color-mix(in srgb, var(--blood) 60%, transparent); background: color-mix(in srgb, var(--blood) 14%, transparent); color: var(--blood-ink); }
 .mr-results .k-disc { flex: none; width: 28px; height: 28px; }
 .mr-card.tv .mr-n, .mr-card.scene .mr-n { font-size: 14px; }
+.tseal .c .c-big { font: 400 22px/1 var(--black); } .tseal .c .c-big small { font-size: 12px; }
