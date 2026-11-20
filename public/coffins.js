@@ -10,7 +10,7 @@ import { t, th } from './i18n.js';
 import { avatarSvg } from './avatar.js';
 import { backdropHtml } from './backdrops.js';
 import { cardArt } from './cards.js';
-import { seatLayout } from './layout.js';
+import { seatLayout, turnBead } from './layout.js';
 
 export const isCoffinsPhase = (ph) => typeof ph === 'string' && ph.startsWith('C_');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -104,6 +104,7 @@ export function graveyard(v, { pick = () => null, selected = null, big = false, 
     <svg class="ring-fuse off" viewBox="0 0 100 100" data-ringfuse aria-hidden="true"><circle class="track" cx="50" cy="50" r="49"/><circle class="burn" cx="50" cy="50" r="49" pathLength="100"/></svg>
     <div class="ring-table" aria-hidden="true"></div>
     ${seats}
+    ${(v.phase === 'C_TURN' || v.phase === 'C_BID') ? turnBead(pos[plots.findIndex((pl) => pl.id === C.turn)]) : ''}
     <div class="ring-center" data-key="center">${centre(v)}</div>
   </div></div>`;
 }

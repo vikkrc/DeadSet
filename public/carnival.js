@@ -13,7 +13,7 @@ import { cardArt, roleNumber } from './cards.js';
 import { t, th, tph, tmh, roleF, entryMsg } from './i18n.js';
 import { avatarSvg } from './avatar.js';
 import { backdropHtml } from './backdrops.js';
-import { seatLayout } from './layout.js';
+import { seatLayout, turnBead } from './layout.js';
 
 export const isCarnivalPhase = (ph) => typeof ph === 'string' && ph.startsWith('K_');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -145,6 +145,7 @@ export function ballroom(v, { pick = null, open = false, center = '', marks = {}
     <svg class="ring-fuse off" viewBox="0 0 100 100" data-ringfuse aria-hidden="true"><circle class="track" cx="50" cy="50" r="49"/><circle class="burn" cx="50" cy="50" r="49" pathLength="100"/></svg>
     <div class="ring-table" aria-hidden="true"></div>
     ${out}
+    ${['K_TURN', 'K_CHALLENGE', 'K_POWER'].includes(v.phase) ? turnBead(pos[seats.findIndex((s) => s.id === K.turn)]) : ''}
     <div class="ring-center" data-key="center">${center || offering(v)}</div>
   </div></div>`;
 }

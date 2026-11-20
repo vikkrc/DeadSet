@@ -23,3 +23,20 @@ function polar(deg, R, inner = false) {
   const a = (deg * Math.PI) / 180;
   return { x: 50 + R * Math.cos(a), y: 50 + R * Math.sin(a), inner };
 }
+
+/**
+ * M2: the turn bead. One gilt bead that travels along the table's arc to the seat whose turn it is (Pass,
+ * --t-pass), the same in every turn-based mode, phone and TV. `p` is the seat's position from seatLayout;
+ * `inner` lets the mode's own object (lantern, Candle) ride on it. The bead always travels forward, clockwise,
+ * the way turns pass, so it is unwrapped against the last angle it showed.
+ */
+let beadLast = null;
+export function turnBead(p, inner = '') {
+  if (!p) return '';
+  const deg = (Math.atan2(p.y - 50, p.x - 50) * 180) / Math.PI + 90; // 0 at the top, clockwise
+  let a = deg;
+  if (beadLast !== null) a = beadLast + ((((deg - beadLast) % 360) + 360) % 360);
+  beadLast = a;
+  const r = Math.hypot(p.x - 50, p.y - 50);
+  return `<div class="bead-arm" data-key="bead" style="--a:${a.toFixed(1)}deg;--r:${r.toFixed(2)}%" aria-hidden="true"><i class="bead">${inner}</i></div>`;
+}

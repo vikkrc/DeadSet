@@ -5226,3 +5226,15 @@ details.more summary,
 @keyframes v-fade { from { opacity: 0; } }
 /* Gain's flying token (built by app.js flyGain) */
 .gain-fly { position: fixed; z-index: var(--z-fx); pointer-events: none; font: 600 18px/1 var(--text); color: var(--gilt); text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6); }
+
+/* ══ M2: the turn bead ═══════════════════════════════════════════════════
+   One gilt bead on the table's arc, just inside the seat whose turn it is. The arm turns about the table's
+   centre, so the bead travels along the arc (Pass), always clockwise. */
+.bead-arm { position: absolute; inset: 0; pointer-events: none; transform: rotate(var(--a)); transition: transform var(--t-pass) var(--ease); z-index: 3; }
+.bead { position: absolute; left: 50%; top: calc(50% - var(--r) + var(--tok, 56px) * 0.62 + 6px); width: 14px; height: 14px; margin-left: -7px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--gilt-hi), var(--gilt) 55%, var(--gilt-2)); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 0 12px rgba(201, 163, 90, 0.55);
+  animation: bead-glow 2.4s var(--ease) infinite alternate; } /* literal-ok: ambient glow */
+.bead svg { position: absolute; inset: -6px; width: 26px; height: 26px; color: var(--ink); transform: rotate(calc(var(--a) * -1)); }
+.ring.dense .bead { width: 11px; height: 11px; margin-left: -5.5px; }
+.board2 .bead { width: 20px; height: 20px; margin-left: -10px; }
+@keyframes bead-glow { from { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 0 6px rgba(201, 163, 90, 0.35); } to { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 0 16px rgba(201, 163, 90, 0.7); } }

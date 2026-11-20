@@ -526,7 +526,7 @@ export function exorcismBoard(v, h) {
     const orb = ballHtml({ key: 'tvball', kicker: esc(t('The category')), title: esc(catName(X.category)), tint: VOTE_TINT, speed: 2.4, cls: 'in-ring vote' });
     return `<main class="board2 xboard" data-key="board-x">${header}
     <div class="x-cols">
-      <section class="x-left">${ring(v, { center: '', orb, marks })}${now}</section>
+      <section class="x-left">${ring(v, { center: '', orb, marks, turn: v.phase === 'X_CLUES' ? X.speaker : null })}${now}</section>
       <aside class="x-right">${X.grid ? `<div class="b-grid"><span class="kicker">${t('The grid')}</span>${wordGrid(v)}</div>` : ''}${scoreboard(v)}</aside>
     </div></main>`;
   }

@@ -5,7 +5,7 @@ import { qrSvg } from './qr.js';
 import { renderGuide } from './guide.js';
 import { sound, score, haptic, burstAt, celebrate, ambient, cue, setCueRoute } from './fx.js';
 import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './board.js';
-import { seatLayout } from './layout.js';
+import { seatLayout, turnBead } from './layout.js';
 import { sceneMs, scenesFor, sceneSize, paceScale } from './interludes.js';
 import { MODES, MODE_IDS, FAMILIES, COLLECTION, modeOfPhase, modeInfo } from './modes.js';
 import { explainer } from './kit.js';
@@ -525,6 +525,14 @@ function flyGain(el, label) {
   const dy = f.top + f.height / 2 - (to.top + to.height / 2);
   tok.animate([{ transform: `translate(-50%, -50%) translate(${dx}px, ${dy}px) scale(1.4)`, opacity: 0 }, { opacity: 1, offset: 0.2 }, { transform: 'translate(-50%, -50%) scale(1)', opacity: 1, offset: 0.85 }, { transform: 'translate(-50%, -50%) scale(0.8)', opacity: 0 }], { duration: 600, easing: 'cubic-bezier(.2,.7,.2,1)' }).finished.then(() => tok.remove(), () => tok.remove());
 }
+// M2: on the TV the passing bell rings each time the bead moves on (phones ring only for their own turn).
+let beadAt = null;
+function beadPass(root) {
+  const arm = root.querySelector('.bead-arm');
+  const a = arm?.style.getPropertyValue('--a') ?? null;
+  if (a && beadAt && a !== beadAt && onBoard()) cue('pass', { mine: true });
+  beadAt = a;
+}
 // TV ledgers re-sort with a 400 ms FLIP so a lead change is visible (lists marked data-flip).
 function flipFirst(root) {
   if (!onBoard() || calm.matches) return null;
@@ -891,6 +899,7 @@ function render() {
   syncWake();
   paceMoment();
   gainPass(app);
+  beadPass(app);
   heraldTurn(v);
 }
 
@@ -1222,7 +1231,7 @@ function seal(v, { turn = null, sealed = [], center = '', marks = {}, size = 104
   return `<button type="button" class="tseal ${turn && turn === mine ? 'mine' : ''}" style="--s:${size}px" data-act="sheet" data-id="table" data-form="seal" data-key="${key}" aria-label="${esc(t('The table'))}">${mid}${dots}</button>`;
 }
 
-function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = {}, lobby = false, crack = false, extra = '', orb = '', crews = null } = {}) {
+function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = {}, lobby = false, crack = false, extra = '', orb = '', crews = null, turn = undefined } = {}) {
   const players = [...v.players].sort((a, b) => a.seat - b.seat);
   const n = Math.max(players.length, slots);
   const { pos, tok, dense } = seatLayout(n);
@@ -1271,12 +1280,16 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
   const crewRays = crews ? crewSectors(pos, n, players, crews) : '';
   // the orbit line runs through the seat centres; small seats drop their bead ring
   const orbitInset = dense ? 0 : (50 - Math.hypot(pos[0].x - 50, pos[0].y - 50)).toFixed(2);
+  // M2: the turn bead (Classic: the accused who is speaking; other modes pass `turn`).
+  const turnId = turn !== undefined ? turn : v.phase === 'DAY_DEFENSE' ? d?.speaking : null;
+  const beadFor = turnId ? turnBead(pos[players.findIndex((p) => p.id === turnId)]) : '';
   return `<div class="ring-wrap" data-key="ring-wrap" data-form="${lobby ? 'seat' : 'play'}"><div class="ring ${dense ? 'dense' : ''} ${tok < 44 ? 'small-tok' : ''} ${pick ? 'picking' : ''} ${pick?.tone === 'kill' ? 'kill' : ''} ${orb ? 'orb' : ''} ${crewRays ? 'crewed' : ''}" style="--tok:${tok}px;--orbit:${orbitInset}%${crewRays ? `;--crewrays:${crewRays}` : ''}" data-key="ring">
     <svg class="ring-fuse off" viewBox="0 0 100 100" data-ringfuse aria-hidden="true"><circle class="track" cx="50" cy="50" r="49"/><circle class="burn" cx="50" cy="50" r="49" pathLength="100"/></svg>
     <div class="ring-table" aria-hidden="true"></div>
     ${orb ? `<div class="ring-orb" data-key="ring-orb">${orb}</div>` : ''}
     ${extra}
     ${seats.join('')}
+    ${beadFor}
     <div class="ring-center" data-key="center">${center}</div>
   </div></div>`;
 }

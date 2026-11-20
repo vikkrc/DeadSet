@@ -131,7 +131,7 @@ export function mimicMain(v, me, h) {
         hint = t('Ask aloud about the place, then tap who you asked. The lantern passes to them.');
       }
       stage = `${lantern(v)}${doNow(title, hint, accusing ? 'blood' : a.asker ? 'gilt' : '')}
-        ${ring(v, { pick, center: '', extra: askArrows(v) })}
+        ${ring(v, { pick, center: '', extra: askArrows(v), turn: Q.asker ?? null })}
         ${myCard(v, me, UI)}
         <div class="rule">${t('The possible places')}</div>${placesBoard(v, { act: 'qStrike', struck })}${notes}`;
       break;
@@ -383,7 +383,7 @@ export function mimicBoard(v, h) {
   if (ended) return `<main class="board2 qboard is-ended" data-key="board-q">${header}<div class="qt-end">${mimicEndHtml(v)}</div></main>`;
   return `<main class="board2 qboard" data-key="board-q">${header}
     <div class="qt-cols">
-      <section class="qt-table">${ring(v, { center, orb: hint, extra: ended ? '' : askArrows(v, 5), marks: A && v.phase === 'Q_VOTE' ? { [A.target]: '?' } : {} })}
+      <section class="qt-table">${ring(v, { center, orb: hint, turn: v.phase === 'Q_ASK' ? Q.asker ?? null : null, extra: ended ? '' : askArrows(v, 5), marks: A && v.phase === 'Q_VOTE' ? { [A.target]: '?' } : {} })}
         ${ended ? '' : `<div class="qt-banner ${['Q_VOTE', 'Q_GUESS', 'Q_FINAL'].includes(v.phase) ? 'blood' : ''}" data-key="qtban"><b>${esc(title)}</b><span>${esc(sub)}</span>${votes}</div>`}</section>
       <section class="qt-places" style="--cols:${shape[0]};--rows:${shape[1]}">${ended ? mimicEndHtml(v) : `<div class="rule">${t('The possible places')}</div>${placesBoard(v, { size: 'tv' })}`}</section>
     </div></main>`;
