@@ -2613,7 +2613,12 @@ function afterGame(v) {
   const me = v.me;
   const votes = me && !me.moderator && ev ? `<section class="end-votes" data-key="endvotes"><span class="kicker">${t('What next?')}</span>
     <div class="seg"><button data-act="endVote" data-id="again" aria-pressed="${ev.mine === 'again'}">${t('Again')}${ev.again ? ` · ${ev.again}` : ''}</button><button data-act="endVote" data-id="another" aria-pressed="${ev.mine === 'another'}">${t('Try another')}${ev.another ? ` · ${ev.another}` : ''}</button></div></section>` : '';
-  return votes + eveningHtml(v);
+  return awardsHtml(v) + votes + eveningHtml(v);
+}
+/** F1: the game's honours, each with its emblem and the line that earned it. */
+function awardsHtml(v) {
+  if (!v.awards?.length) return '';
+  return `<section class="awards" data-key="awards"><div class="rule">${t('Honours')}</div><ul>${v.awards.map((a) => `<li class="${a.pid === v.me?.id ? 'me' : ''}"><span class="aw-emb">${emblem(a.emblem)}</span><span><b>${t(a.title)}</b><small>${tmh(a.line)}</small></span></li>`).join('')}</ul></section>`;
 }
 function eveningHtml(v, { host = false } = {}) {
   const e = v.evening;

@@ -16,6 +16,7 @@ import { botDecide, botAvatar, BOT_NAMES } from './bots.js';
 import { interludeMs, OPEN_DURING_SCENES } from '../public/interludes.js';
 import { recommend } from '../engine/recommend.js';
 import { didIWin } from '../public/outcome.js';
+import { awardsFor } from '../engine/awards.js';
 import { REMATCH_READY } from '../public/modes.js';
 import { redrawExorcism } from '../engine/exorcism.js';
 
@@ -293,7 +294,7 @@ export class RoomManager {
   viewFor(room, client) {
     const m = room.match;
     const now = this.clock();
-    if (client.board) { const hint = mimicBoardHint(m); return { ...publicView(m, now), boardAudio: this.boardAudio(room), evening: this.eveningView(room), endVotes: this.endVotesView(room), ...(hint ? { mimicHint: hint } : {}) }; }
+    if (client.board) { const hint = mimicBoardHint(m); return { ...publicView(m, now), boardAudio: this.boardAudio(room), evening: this.eveningView(room), endVotes: this.endVotesView(room), awards: m.phase === 'ENDED' ? room.awards ?? null : null, ...(hint ? { mimicHint: hint } : {}) }; }
     if (m.moderated && client.pid === m.moderatorId) {
       const v = moderatorView(m, now);
       v.moderatorName = room.moderatorName;
@@ -318,6 +319,7 @@ export class RoomManager {
     v.boardAudio = this.boardAudio(room);
     v.evening = this.eveningView(room);
     v.endVotes = this.endVotesView(room, client.pid);
+    v.awards = room.match.phase === 'ENDED' ? room.awards ?? null : null;
     v.moderatorName = m.moderated ? room.moderatorName : null;
     if (v.host && room.lastRecovery?.forHost === client.pid && room.lastRecovery.expires > this.clock()) {
       v.host.recovery = { playerId: room.lastRecovery.playerId, code: room.lastRecovery.code };
@@ -414,13 +416,14 @@ export class RoomManager {
       const row = (ev.rows[p.id] ||= { name: p.name, pts: 0, games: 0, wins: 0 });
       row.name = p.name; row.avatar = p.avatar ?? null; row.games++; row.pts += pts; if (won) { row.wins++; winners.push(p.name); }
     }
+    room.awards = awardsFor(m, mode);
     ev.games.push({ mode, winner: m.winner, winners });
   }
 
   changed(room) {
     this.syncRecommended(room);
     this.recordEvening(room);
-    if (room.match.phase !== 'ENDED' && room.match.phase !== 'LOBBY') room.endVotes = {};
+    if (room.match.phase !== 'ENDED' && room.match.phase !== 'LOBBY') { room.endVotes = {}; room.awards = null; }
     this.stampScenes(room);
     this.syncPresence(room);
     this.arm(room);

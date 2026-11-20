@@ -5568,3 +5568,11 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
 .ev-rows b { font: 500 16px/1.15 var(--text); color: var(--bone); overflow-wrap: anywhere; }
 .ev-rows small { font: italic 400 13px/1 var(--text); color: var(--ash); }
 .ev-rows em { font: 400 22px/1 var(--black); font-style: normal; color: var(--gilt-hi); min-width: 24px; text-align: right; }
+/* F1: honours */
+.awards ul { list-style: none; margin: 6px 0 12px; padding: 0; display: grid; gap: 8px; }
+.awards li { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border: 1px solid var(--gilt-2); border-radius: 6px; background: color-mix(in srgb, var(--gilt) 7%, var(--ink-2)); }
+.awards li.me { border-color: var(--gilt-hi); box-shadow: 0 0 14px color-mix(in srgb, var(--gilt) 30%, transparent); }
+.aw-emb { width: 44px; height: 44px; flex: none; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--gilt); color: var(--gilt-hi); --paper: var(--ink-2); }
+.aw-emb .emblem { width: 80%; height: auto; }
+.awards b { display: block; font: 400 18px/1.1 var(--black); color: var(--bone); }
+.awards small { font: italic 400 14px/1.3 var(--text); color: var(--bone-2); }
