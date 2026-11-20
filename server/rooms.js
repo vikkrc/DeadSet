@@ -191,7 +191,7 @@ export class RoomManager {
         if (payload.playerId === pid) throw new GameError('You cannot remove yourself.');
         removePlayer(m, payload.playerId);
         for (const [h, id] of room.sessions) if (id === payload.playerId) room.sessions.delete(h);
-        for (const c of room.clients) if (c.pid === payload.playerId) { c.res.write('event: revoked\ndata: {}\n\n'); c.res.end(); }
+        for (const c of room.clients) if (c.pid === payload.playerId) { c.res.write('event: revoked\ndata: {"reason":"kicked"}\n\n'); c.res.end(); }
         break;
       }
       case 'host.seat': moveSeat(m, payload.playerId, Number(payload.dir)); break;

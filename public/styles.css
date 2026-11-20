@@ -5636,3 +5636,11 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
 .hunches { display: grid; gap: 8px; margin: 10px 0; padding: 12px 14px; border: 1px dashed var(--gilt-2); }
 .hunch-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .practice-btn .glyph { width: 18px; height: 18px; }
+
+/* Z: edge states */
+.edge .code-tiles { margin: 14px 0 10px; }
+.edge .stack { margin-top: 18px; }
+.edge-head { margin: 28px 0 0; }
+.edge-head h1 { font: 400 var(--fs-h1, 40px)/1.05 var(--black); color: var(--bone); margin: 0; }
+.edge-head h1 i { color: var(--blood-ink); font-style: normal; }
+.edge-head p { margin: 10px 0 0; font: 400 17px/1.45 var(--text); }

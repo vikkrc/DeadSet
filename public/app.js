@@ -256,7 +256,7 @@ function boot() {
   if (r.name === 'room') {
     if (S.code !== r.code || !S.es) {
       disconnect();
-      S.code = r.code;
+      S.code = r.code; S.conn = null;
       const sess = loadSession(r.code);
       S.token = sess?.token ?? null;
       S.pid = sess?.playerId ?? null;
@@ -302,11 +302,14 @@ function connect(board = false) {
     S.board.key = JSON.parse(ev.data).key;
     if (S.board.audio) reportBoardAudio(true); // reconnected: tell the server again
   });
-  es.addEventListener('revoked', () => {
+  es.addEventListener('revoked', (e) => {
     es.close();
     clearSession(S.code);
     S.token = null; S.view = null; S.es = null;
-    toast(t('This seat was opened on another device, or you were removed.'), 'err');
+    let why = {}; try { why = JSON.parse(e.data || '{}'); } catch { /* old server */ }
+    // Z6: removed by the host — a quiet page of its own, no reason given.
+    if (why.reason === 'kicked') S.conn = 'kicked';
+    else toast(t('This seat was opened on another device.'), 'err');
     render();
   });
   es.onerror = async () => {
@@ -955,6 +958,7 @@ function view() {
   else if (r.name === 'board') html = boardView();
   else if (r.name === 'room') {
     if (S.conn === 'gone') html = goneScreen();
+    else if (S.conn === 'kicked') html = kickedScreen();
     else if (!S.token) html = joinScreen();
     else if (!V()) html = loadingScreen();
     else html = roomScreen();
@@ -1227,7 +1231,13 @@ function joinScreen() {
   </main>`;
 }
 const loadingScreen = () => `<main class="main narrow" data-key="load">${wordmark()}<div class="loading"><span class="pulse-dot"></span> ${t('Finding your seat…')}</div></main>`;
-const goneScreen = () => `<main class="main narrow" data-key="gone">${wordmark()}<header class="phase-head"><h1>${t('No such <i>table.</i>')}</h1><p class="muted">${th('Room {code} doesn\'t exist, or it has been cleared away.', { code: S.code })}</p></header><a class="btn" href="/" data-link>${t('Back to start')}</a></main>`;
+// Z7, Z9: what happened, what happens next, one way forward. The code is shown in the TV's own tiles.
+const goneScreen = () => `<main class="main narrow edge" data-key="gone">${wordmark()}<header class="edge-head"><h1>${t('No such <i>table.</i>')}</h1>
+    <p class="code-tiles">${codeTiles(S.code ?? '')}</p>
+    <p class="muted">${t('No table has this code. Check the letters on the TV; if the table has closed, its candles are out.')}</p></header>
+    <div class="stack"><button class="btn btn-solid" data-act="edgeHome" data-id="join">${t('Enter another code')}</button><button class="btn btn-ghost" data-act="edgeHome" data-id="host">${t('Start a new table')}</button></div></main>`;
+const kickedScreen = () => `<main class="main narrow edge" data-key="kicked">${wordmark()}<header class="edge-head"><h1>${t('You left the <i>table.</i>')}</h1>
+    <p class="muted">${t('The host removed you from this table.')}</p></header><a class="btn" href="/" data-link>${t('Back to start')}</a></main>`;
 /** A mode's "How it works" steps (the lobby's step 2), reused at the head of its guide chapter. */
 const HOW = { carnival: how_carnival, coffins: how_coffins, midnight: how_midnight, seance: how_seance, graverobbers: how_graverobbers, mimic: how_mimic, omen: how_omen, mirror: how_mirror, exorcism: how_exorcism };
 /** The guide's cast for the games whose cast is the whole deck: every Carnival mask, every Midnight card. */
@@ -3167,6 +3177,7 @@ const ACT = {
       go(`/r/${r.code}`);
     } catch (e) { toast(e.message, 'err'); } finally { S.pending = false; render(); }
   },
+  edgeHome(el) { S.ui.homeTab = el.dataset.id; S.conn = null; go('/'); },
   toggleModerated() { S.ui.moderated = !S.ui.moderated; render(); },
   gotoRoom() {
     const code = (S.drafts.joinCode ?? '').trim().toUpperCase();
