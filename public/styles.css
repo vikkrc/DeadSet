@@ -5605,3 +5605,27 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
 .stand { margin: 12px 0 4px; padding: 12px 14px; border: 1px solid var(--paper-edge); background: var(--vellum); color: var(--sepia); }
 .stand .kicker { color: var(--rubric); }
 .stand p { margin: 4px 0 0; font: italic 400 16px/1.4 var(--text); }
+
+/* G3: dossiers and this phone's private marks (red, blue, grey: never the only signal, each has its mark) */
+.dossiers { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 2px; }
+.dz-row { display: flex; align-items: center; gap: 10px; width: 100%; padding: 6px 2px; border: 0; border-bottom: 1px solid var(--iron); background: none; color: var(--bone); font: 500 16px/1.2 var(--text); text-align: left; cursor: pointer; }
+.dz-row.dead { color: var(--ash); }
+.dz-row b { flex: 1; font-weight: 500; }
+.dz-face { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 1px solid var(--gilt-2); background: var(--ink-3); font: 600 13px/1 var(--text); }
+.dz-face .avatar { width: 100%; height: 100%; }
+.dz-face.big { width: 64px; height: 64px; font-size: 22px; }
+.dz-mark { display: inline-flex; align-items: center; gap: 4px; font: 600 11px/1 var(--text); letter-spacing: 0.08em; text-transform: uppercase; }
+.dz-mark .glyph, .dz-marks .glyph { width: 14px; height: 14px; }
+.glyph.q { display: inline-grid; place-items: center; font: 700 13px/1 var(--text); }
+.mk-suspect.dz-mark, .dz-marks .mk-suspect[aria-pressed="true"] { color: var(--no); }
+.mk-trust.dz-mark, .dz-marks .mk-trust[aria-pressed="true"] { color: var(--ok); }
+.mk-unsure.dz-mark, .dz-marks .mk-unsure[aria-pressed="true"] { color: var(--bone-2); }
+.dz-note .glyph { width: 16px; height: 16px; color: var(--ash); }
+.dz-head { display: flex; align-items: center; gap: 14px; margin: 0 0 12px; }
+.dz-head p { margin: 0; font: italic 400 16px/1.3 var(--text); color: var(--bone-2); }
+.dz-marks { margin: 0 0 12px; }
+.dz-text { min-height: 72px; resize: vertical; }
+.tok.mk-suspect .tok-disc { box-shadow: 0 0 0 3px color-mix(in srgb, var(--no) 70%, transparent); }
+.tok.mk-trust .tok-disc { box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 70%, transparent); }
+.tok.mk-unsure .tok-disc { box-shadow: 0 0 0 3px color-mix(in srgb, var(--ash) 70%, transparent); }
+.dz-marks button[aria-pressed="true"] { background: var(--ink-3); box-shadow: inset 0 0 0 1px currentColor; }

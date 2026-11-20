@@ -1301,6 +1301,7 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
       me?.candleSeen?.some((x) => x.id === p.id && !x.death) || me?.twin?.id === p.id ? 'known-living' : '',
       me?.candles?.some((x) => x.id === p.id) ? 'known-candle' : '',
       crews?.[p.id] ? `crew c-${crews[p.id]}` : '',
+      !onBoard() && !lobby && myNotes(v)[p.id]?.mark ? `mk-${myNotes(v)[p.id].mark}` : '',
     ].filter(Boolean).join(' ');
     const badges = [];
     if (ni >= 0) badges.push(`<b class="bdg b-nom" data-key="nom">${roman(ni + 1)}</b>`);
@@ -1698,7 +1699,7 @@ function sheet(v) {
       inner = `<section class="menu-sec" data-key="msec-device"><div class="rule">${t('This device')}</div>${langRow(v)}${awakeToggle()}${phoneMusicToggle()}${v.me?.moderator ? '' : tutorialToggle()}</section>
         <section class="menu-sec menu-actions" data-key="msec-leave">${holdBtn('backHome', t('Hold to go back to the start'), 'btn-sm btn-wide', { key: 'backhome' })}<p class="small muted">${t('Your seat stays; rejoin from the start page.')}</p></section>`;
     } else if (tab === 'table') {
-      inner = `<section class="menu-sec" data-key="msec-record">${recordBlock(v)}</section>${eveningHtml(v, { host: !!v.host })}
+      inner = `${inPlay(v) || v.phase === 'ENDED' ? dossierList(v) : ''}<section class="menu-sec" data-key="msec-record">${recordBlock(v)}</section>${eveningHtml(v, { host: !!v.host })}
         <section class="menu-sec" data-key="msec-invite"><div class="row"><button class="btn btn-sm" data-act="share" data-text="${esc(`${location.origin}/r/${v.code}`)}">${t('Invite')}</button><a class="btn btn-sm btn-ghost" href="/board/${esc(v.code)}" target="_blank" rel="noopener">${esc(t('TV board ↗').replace('↗', '').trim())} ${glyph('out')}</a></div></section>`;
     } else if (tab === 'host') {
       const pause = inPlay(v) || v.paused ? holdBtn('pause', v.paused ? t('Hold to resume') : t('Hold to pause the table'), v.paused ? 'btn-solid btn-sm btn-wide' : 'btn-sm btn-wide', { key: 'hpause' }) : '';
@@ -1708,6 +1709,10 @@ function sheet(v) {
       inner = `<section class="menu-sec menu-actions" data-key="msec-help"><div class="menu-links"><a class="btn btn-sm" href="/guide/${esc(v.mode)}" data-link>${t('This game\'s chapter')}</a><a class="btn btn-sm btn-ghost" href="/guide" data-link>${t('Rule book')}</a></div></section>`;
     }
     body = nav + inner;
+  } else if (s === 'dossier' && player(S.ui.dossier)) {
+    const p = player(S.ui.dossier);
+    title = esc(p.name);
+    body = dossierHtml(v, p);
   } else if (s === 'table') {
     // Y1: the seal opens the full table, read-only.
     title = t('The table');
@@ -1804,6 +1809,50 @@ function sheet(v) {
 /** Public record: the Gazette by default, a plain list when toggled. */
 /** The Gazette is printed only where the game runs one: Classic and Missions, once the match is under way. */
 const usesGazette = (v) => ['classic', 'missions'].includes(v?.mode) && v?.phase !== 'LOBBY';
+/** G3: this phone's private notes on the table, per game. Never sent anywhere, never on the TV. */
+const notesKey = (v) => `deadset:notes:${v.code}:${v.evening?.games?.length ?? 0}`;
+function myNotes(v) {
+  if (!v?.code) return {};
+  const k = notesKey(v);
+  if (S.notesCache?.k !== k) { let d = {}; try { d = JSON.parse(localStorage.getItem(k) || '{}'); } catch { d = {}; } S.notesCache = { k, d }; }
+  return S.notesCache.d;
+}
+function saveNote(v, pid, patch) {
+  const d = myNotes(v);
+  d[pid] = { ...d[pid], ...patch };
+  if (!d[pid].mark && !d[pid].text) delete d[pid];
+  try { localStorage.setItem(notesKey(v), JSON.stringify(d)); } catch { /* full or private mode */ }
+}
+const MARKS = [['suspect', 'Suspect', 'close'], ['trust', 'Trust', 'check'], ['unsure', 'Unsure', null]];
+const markGlyph = (g) => (g ? glyph(g) : '<b class="glyph q" aria-hidden="true">?</b>');
+/** G3: does this public line involve the player? Looks only at the ids a public line carries. */
+function mentions(l, pid, everyone = Infinity) {
+  // A list of the whole table (a speaking order, a deal) is about nobody in particular.
+  const seen = (x) => (x === pid) || (Array.isArray(x) ? x.length < everyone && x.some(seen) : x && typeof x === 'object' ? Object.entries(x).some(([k, y]) => k === pid || seen(y)) : false);
+  return Object.entries(l).some(([k, x]) => !['i', 'at', 'kind', 'ev', 'text', 'msg', 'lines'].includes(k) && seen(x));
+}
+function dossierList(v) {
+  const notes = myNotes(v);
+  const rows = v.players.filter((p) => !p.moderator && p.id !== v.me?.id);
+  if (!rows.length) return '';
+  return `<section class="menu-sec" data-key="msec-dossiers"><div class="rule">${t('Dossiers')}</div><ul class="dossiers">${rows.map((p) => {
+    const mk = MARKS.find(([k]) => k === notes[p.id]?.mark);
+    return `<li><button class="dz-row ${p.alive ? '' : 'dead'}" data-act="dossier" data-pid="${p.id}"><span class="dz-face">${p.avatar ? avatarSvg(p.avatar, 'tok-av') : esc(initials(p.name))}</span><b>${esc(p.name)}</b>${mk ? `<span class="dz-mark mk-${mk[0]}">${markGlyph(mk[2])} ${t(mk[1])}</span>` : ''}${notes[p.id]?.text ? `<span class="dz-note" aria-label="${esc(t('Has a note'))}">${glyph('scroll')}</span>` : ''}</button></li>`;
+  }).join('')}</ul><p class="small muted">${t('Marks and notes stay on this phone.')}</p></section>`;
+}
+function dossierHtml(v, p) {
+  const n = myNotes(v)[p.id] ?? {};
+  const seat = v.players.indexOf(p) + 1;
+  const role = p.role && (v.phase === 'ENDED' || !p.alive) ? roleF(p.role.id, 'name') : t('role unknown');
+  const lines = (v.log ?? []).filter((l) => l.at !== 'Lobby' && mentions(l, p.id, v.players.length - 1));
+  return `<div class="dz-head"><span class="dz-face big">${p.avatar ? avatarSvg(p.avatar, 'tok-av') : esc(initials(p.name))}</span>
+      <p>${esc([p.alive ? t('Alive') : t('Dead'), th('seat {n}', { n: seat }), role].join(' · '))}</p></div>
+    <div class="seg dz-marks">${MARKS.map(([k, l, g]) => `<button class="mk-${k}" data-act="noteMark" data-pid="${p.id}" data-id="${k}" aria-pressed="${n.mark === k}">${markGlyph(g)} ${t(l)}</button>`).join('')}</div>
+    <label class="field"><span>${t('Private note')}</span><textarea class="input dz-text" rows="3" data-note="${p.id}" placeholder="${esc(t('Only you can read this.'))}">${esc(n.text ?? '')}</textarea></label>
+    <div class="rule">${t('Public record')}</div>
+    ${lines.length ? `<ul class="feed">${lines.map((l) => `<li data-key="dz-${l.i}"><span class="at">${esc(stamp(l.at))}</span><span class="txt">${reportHtml(entryMsg(l), l.lines)}</span></li>`).join('')}</ul>` : `<p class="small muted">${t('Nothing on the record yet.')}</p>`}`;
+}
+
 function recordBlock(v) {
   const gz = usesGazette(v);
   const view = gz && S.ui.gview === 'front' ? 'front' : 'timeline';
@@ -3096,6 +3145,8 @@ const ACT = {
   poolToggle(el) { const pool = new Set(V().settings.extendedPool); if (pool.has(el.dataset.id)) pool.delete(el.dataset.id); else pool.add(el.dataset.id); send('host.settings', { extendedPool: [...pool] }); },
   ruleToggle(el) { const sel = V().settings.rules.selected.filter((x) => x !== el.dataset.id); send('host.settings', { rules: { selected: sel } }); if (S.ui.sheet === 'card') { S.ui.sheet = null; render(); } },
   gview(el) { S.ui.gview = el.dataset.id; localStorage.setItem('deadset:record', el.dataset.id === 'front' ? 'gazette' : 'timeline'); render(); },
+  dossier(el) { S.ui.dossier = el.dataset.pid; S.ui.sheet = 'dossier'; uiSound('whoosh'); render(); },
+  noteMark(el) { const v = V(); const cur = myNotes(v)[el.dataset.pid]?.mark; saveNote(v, el.dataset.pid, { mark: cur === el.dataset.id ? null : el.dataset.id }); render(); },
   gfilter(el) { S.ui.gfilter = el.dataset.id; render(); },
   homeTab(el) { S.ui.homeTab = el.dataset.id; render(); },
   openSeal(el) { S.ui.invite = true; sound.play('crack'); setTimeout(() => sound.play('unfold'), 250); haptic([25, 40, 25]); burstAt(el, { colors: ['#c33a43', '#7d151d', '#ece5d5'], count: 22, power: 4 }); render(); },
@@ -3444,6 +3495,7 @@ document.addEventListener('input', (e) => {
     if (el.dataset.draft === 'joinCode') render(); // a full code shows two ways on: join, or open the TV table
     if (el.dataset.draft === 'gWord') render(); // the dock's Give the sign follows the word
   }
+  if (el.dataset.note) { saveNote(V(), el.dataset.note, { text: el.value.slice(0, 600) }); return; }
   if (el.dataset.setText) {
     const path = el.dataset.setText;
     clearTimeout(textTimers[path]);
