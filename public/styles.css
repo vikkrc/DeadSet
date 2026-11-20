@@ -5338,3 +5338,13 @@ button.mr-fate { cursor: pointer; }
 .nwake li .nic { width: 20px; height: 20px; }
 .ndawn-row { display: flex; gap: 12px; align-items: flex-start; }
 .ndawn-row .nreport { flex: 1; margin: 0; }
+
+/* AT5: coffin faces read at 48 px by colour, emblem and word — Gold on gilt paper with the coin, Curse on oxblood
+   (above), Death in black and silver with the skull. The kind is named in small caps. */
+.coff.f-G { background: radial-gradient(120% 90% at 50% 18%, var(--gilt-hi), var(--gilt) 62%, var(--gilt-2)); box-shadow: 0 0 0 1px var(--gilt-hi), 0 1.8em 3em -1.4em #000; }
+.coff.f-G:not(.back) .arc-art::before { background: radial-gradient(circle, rgba(255, 246, 214, 0.2) 0.9px, transparent 1.4px) 0 0 / 5px 5px, linear-gradient(180deg, var(--gilt), var(--gilt-2)); }
+.coff.f-G:not(.back) .arc-art .emblem { color: var(--ink); --paper: var(--gilt-hi); }
+.coff.f-G .nm { color: var(--ink); }
+.coff.f-D { box-shadow: 0 0 0 1px #b8c2cf, 0 1.8em 3em -1.4em #000; } /* literal-ok: Death's silver */
+.coff.f-D:not(.back) .arc-art .emblem { color: #dfe6ef; } /* literal-ok: silver */
+.coff:not(.back) .nm { font-variant: small-caps; letter-spacing: 0.08em; }
