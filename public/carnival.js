@@ -541,7 +541,7 @@ export function carnivalBoard(v, h) {
   const marks = v.phase === 'K_CHALLENGE' && K.claim ? Object.fromEntries(K.claim.answered.map((id) => [id, glyph('check')])) : {};
   const backdrop = v.table?.backdrops !== false && K.where >= 0 ? backdropHtml(K.where, true) : '';
   const purses = [...K.seats].filter((s) => !s.chair).map((s) => `<li data-key="kpl-${s.id}" class="${s.id === K.turn ? 'now' : ''}"><b>${esc(pname(v, s.id))}</b>
-    <span class="k-pips" aria-label="${esc(th('{n} Souls', { n: s.souls }))}">${Array.from({ length: Math.min(s.souls, 20) }, () => '<i></i>').join('')}<em>${s.souls}</em></span>
+    <span class="k-pips" aria-label="${esc(th('{n} Souls', { n: s.souls }))}">${Array.from({ length: Math.min(s.souls, 20) }, () => '<i></i>').join('')}<em data-gain="ks-${s.id}" data-n="${s.souls}">${s.souls}</em></span>
     ${K.harvestTarget ? `<span class="k-harv">${Array.from({ length: K.harvestTarget / 2 }, (_, i) => `<i class="${i < s.harvest / 2 ? 'on' : ''}">${ico('harvest')}</i>`).join('')}</span>` : ''}</li>`).join('');
   return `<main class="board2 kboard ${ended ? 'is-ended' : ''} ${backdrop ? 'has-backdrop' : ''}" data-key="board-k">${backdrop}${header}
     <div class="k-cols">

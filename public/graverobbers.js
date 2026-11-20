@@ -80,7 +80,7 @@ function altar(R, c, cls = '') {
   const out = (R.out ?? []).includes(c);
   return `<div class="g-altar c-${c} ${R.turn === c ? 'turn' : ''} ${out ? 'out' : ''} ${cls}" data-key="galt-${c}">${out ? `<i class="ga-out" title="${esc(t('Out of the game'))}">${emblem('death')}</i>` : ''}<span class="ga-sig">${emblem(CREW_EMB[c])}</span>
     <span class="ga-beads">${Array.from({ length: need }, (_, i) => `<i class="${i < found ? 'on' : ''}"></i>`).join('')}</span>
-    <b>${found}<small>/${need}</small></b>${R.bonus?.[c] ? `<span class="ga-bonus" title="${esc(t('A bonus dig next turn'))}">${glyph('lantern')}</span>` : ''}</div>`;
+    <b data-gain="ga-${c}" data-n="${found}">${found}<small>/${need}</small></b>${R.bonus?.[c] ? `<span class="ga-bonus" title="${esc(t('A bonus dig next turn'))}">${glyph('lantern')}</span>` : ''}</div>`;
 }
 
 /** The sign, as everyone sees it. */

@@ -48,7 +48,7 @@ export function seatArrows(v, pairs, key = 'karrows') {
  */
 export function scoreLedger(v, scores, { extra = null, winners = null, title = '', key = 'kledger', note = '' } = {}) {
   const list = v.players.map((p) => ({ p, s: scores?.[p.id] ?? 0 })).sort((a, b) => b.s - a.s || a.p.seat - b.p.seat);
-  return `<section class="k-ledger" data-key="${key}">${title ? `<div class="rule">${title}</div>` : ''}<ol>${list.map(({ p, s }, i) => `<li class="${winners?.includes(p.id) ? 'won' : ''}" data-key="${key}-${p.id}"><span class="kl-n">${i + 1}</span>${disc(v, p.id, 'sm')}<b class="kl-name">${esc(p.name)}</b>${extra ? `<span class="kl-x">${extra(p.id)}</span>` : ''}<span class="kl-s">${s}</span></li>`).join('')}</ol>${note ? `<p class="small muted">${note}</p>` : ''}</section>`;
+  return `<section class="k-ledger" data-key="${key}">${title ? `<div class="rule">${title}</div>` : ''}<ol data-flip>${list.map(({ p, s }, i) => `<li class="${winners?.includes(p.id) ? 'won' : ''}" data-key="${key}-${p.id}"><span class="kl-n">${i + 1}</span>${disc(v, p.id, 'sm')}<b class="kl-name">${esc(p.name)}</b>${extra ? `<span class="kl-x">${extra(p.id)}</span>` : ''}<span class="kl-s" data-gain="${key}-${p.id}" data-n="${s}">${s}</span></li>`).join('')}</ol>${note ? `<p class="small muted">${note}</p>` : ''}</section>`;
 }
 
 /** Lobby setting rows: hosts get the control, everyone else the current value. */

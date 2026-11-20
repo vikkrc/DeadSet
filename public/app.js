@@ -471,6 +471,77 @@ const END_THEME = { OMEN: 'winLiving', MIRROR: 'winLiving', MIMIC: 'winLiving', 
 const MOMENT_TIME = { end: 9000, private: 6000, gift: 5600, mside: 5200, coin: 5200, night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 5200, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
 const momentBase = (m) => (m.type === 'mreveal' ? revealTime(m) : O_MOMENT_TIME[m.type] ? O_MOMENT_TIME[m.type] : W_MOMENT_TIME[m.type] ? W_MOMENT_TIME[m.type] : Q_MOMENT_TIME[m.type] ? Q_MOMENT_TIME[m.type] : S_MOMENT_TIME[m.type] ? S_MOMENT_TIME[m.type] : G_MOMENT_TIME[m.type] ? G_MOMENT_TIME[m.type] : N_MOMENT_TIME[m.type] ? N_MOMENT_TIME[m.type] : K_MOMENT_TIME[m.type] ? K_MOMENT_TIME[m.type] : C_MOMENT_TIME[m.type] ? C_MOMENT_TIME[m.type] : X_MOMENT_TIME[m.type] ? X_MOMENT_TIME[m.type] : MISSION_MOMENT_TIME[m.type] ? MISSION_MOMENT_TIME[m.type] : !onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : (MOMENT_TIME[m.type] ?? 6000) + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
 
+// ── M3: Gain — things that count move ───────────────────────────────────
+// A number marked data-gain="<key>" data-n="<value>" that rises between renders ticks up, its row glows, and a
+// small "+n" token flies in from the table (data-gain-from on any ancestor names the source; else the main
+// table). One chink per pass. Web Animations, so the DOM morph cannot cut them short.
+const gainSeen = new Map();
+function gainPass(root) {
+  if (S.moment) return; // count after the scene, when the table is in view again
+  const els = root.querySelectorAll('[data-gain]');
+  if (!els.length) return;
+  let any = false;
+  for (const el of els) {
+    const k = el.dataset.gain;
+    const n = Number(el.dataset.n);
+    const was = gainSeen.get(k);
+    gainSeen.set(k, n);
+    if (was === undefined || !(n > was)) continue;
+    any = true;
+    if (calm.matches) continue;
+    const row = el.closest('li, .g-altar') ?? el;
+    row.animate([{ boxShadow: '0 0 0 0 transparent' }, { boxShadow: '0 0 0 2px var(--gilt), 0 0 18px rgba(201, 163, 90, 0.45)', offset: 0.3 }, { boxShadow: '0 0 0 0 transparent' }], { duration: 640, easing: 'ease-out' });
+    el.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.3)', offset: 0.4 }, { transform: 'scale(1)' }], { duration: 400, delay: 500, easing: 'ease-out' });
+    tickNumber(el, was, n);
+    flyGain(el, `+${n - was}`);
+  }
+  if (any) cue('gain');
+}
+function tickNumber(el, from, to) {
+  const node = [...el.childNodes].find((c) => c.nodeType === 3 && c.nodeValue.trim() !== '');
+  if (!node) return;
+  const t0 = performance.now() + 500;
+  const step = (now) => {
+    const k = Math.min(1, Math.max(0, (now - t0) / 400));
+    node.nodeValue = String(Math.round(from + (to - from) * k));
+    if (k < 1) requestAnimationFrame(step);
+  };
+  node.nodeValue = String(from);
+  requestAnimationFrame(step);
+}
+function flyGain(el, label) {
+  const to = el.getBoundingClientRect();
+  if (!to.width) return;
+  const src = el.closest('[data-gain-from]')?.dataset.gainFrom;
+  const fromEl = (src && document.querySelector(src)) || document.querySelector('.ring, .k-main, .c-yard, .g-grid, .ot-wheel, main');
+  const f = fromEl?.getBoundingClientRect() ?? { left: innerWidth / 2, top: innerHeight / 2, width: 0, height: 0 };
+  const tok = document.createElement('div');
+  tok.className = 'gain-fly';
+  tok.textContent = label;
+  tok.style.left = `${to.left + to.width / 2}px`;
+  tok.style.top = `${to.top + to.height / 2}px`;
+  document.body.append(tok);
+  const dx = f.left + f.width / 2 - (to.left + to.width / 2);
+  const dy = f.top + f.height / 2 - (to.top + to.height / 2);
+  tok.animate([{ transform: `translate(-50%, -50%) translate(${dx}px, ${dy}px) scale(1.4)`, opacity: 0 }, { opacity: 1, offset: 0.2 }, { transform: 'translate(-50%, -50%) scale(1)', opacity: 1, offset: 0.85 }, { transform: 'translate(-50%, -50%) scale(0.8)', opacity: 0 }], { duration: 600, easing: 'cubic-bezier(.2,.7,.2,1)' }).finished.then(() => tok.remove(), () => tok.remove());
+}
+// TV ledgers re-sort with a 400 ms FLIP so a lead change is visible (lists marked data-flip).
+function flipFirst(root) {
+  if (!onBoard() || calm.matches) return null;
+  const m = new Map();
+  for (const li of root.querySelectorAll('[data-flip] > li[data-key]')) m.set(li.dataset.key, li.getBoundingClientRect().top);
+  return m;
+}
+function flipPlay(root, before) {
+  if (!before?.size) return;
+  for (const li of root.querySelectorAll('[data-flip] > li[data-key]')) {
+    const was = before.get(li.dataset.key);
+    if (was === undefined) continue;
+    const dy = was - li.getBoundingClientRect().top;
+    if (Math.abs(dy) > 2) li.animate([{ transform: `translateY(${dy}px)` }, { transform: 'none' }], { duration: 400, easing: 'cubic-bezier(.2,.7,.2,1)' });
+  }
+}
+
 /** P3: the table's pace as a scale on scene time (1 cinematic, 0.6 brisk). */
 const pace = () => paceScale(V()?.table?.pace);
 /** P3: play the open scene's animations at the table's pace (its timer bar already runs on the scaled window). */
@@ -810,13 +881,16 @@ function render() {
   if (phoneMusic || (onBoard() && v && S.board.audio && v.table?.score !== false)) { score.setTheme(v.table?.scoreTheme ?? 'classic'); score.play(moodFor(v)); score.tension(tenseFor(v)); } else score.stop();
   document.body.classList.toggle('has-sheet', !!S.ui.sheet && (S.route?.name === 'room' || S.ui.sheet === 'lang' || S.ui.sheet === 'avatar'));
   ambient(night ? 'night' : null);
+  const flips = flipFirst(app);
   morph(app, view());
+  flipPlay(app, flips);
   mountBalls(app);
   legibility();
   app.querySelectorAll('[data-scroll]').forEach((el) => { if (bottoms[el.dataset.scroll] !== false) el.scrollTop = el.scrollHeight; });
   tickClock();
   syncWake();
   paceMoment();
+  gainPass(app);
   heraldTurn(v);
 }
 

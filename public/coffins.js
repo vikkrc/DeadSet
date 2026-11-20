@@ -48,8 +48,8 @@ function candles(n, of) {
   return `<span class="c-candles" aria-label="${esc(th('{n} of {m} candles', { n, m: of }))}">${Array.from({ length: of }, (_, i) => `<i class="${i < n ? 'lit' : ''}"></i>`).join('')}</span>`;
 }
 /** Clean digs as gilt lozenges (the Codex beads). */
-function winMarks(w, of) {
-  return `<span class="c-wins" aria-label="${esc(th('{n} of {m} clean digs', { n: w, m: of }))}">${Array.from({ length: of }, (_, i) => `<i class="${i < w ? 'on' : ''}"></i>`).join('')}</span>`;
+function winMarks(w, of, id = '') {
+  return `<span class="c-wins" ${id ? `data-gain="cw-${id}" data-n="${w}"` : ''} aria-label="${esc(th('{n} of {m} clean digs', { n: w, m: of }))}">${Array.from({ length: of }, (_, i) => `<i class="${i < w ? 'on' : ''}"></i>`).join('')}</span>`;
 }
 
 // ── The churchyard: the astrolabe table, a grave at every seat ────────────
@@ -494,7 +494,7 @@ export function coffinsBoard(v, h) {
         <div class="c-ledger fr" data-key="cledger"><span class="kicker">${th(C.toWin === 1 ? 'One clean dig wins.' : '{n} clean digs win.', { n: C.toWin })}</span>
           <ul>${C.plots.map((pl) => `<li class="${pl.out ? 'out' : ''} ${C.turn === pl.id && ['C_TURN', 'C_BID'].includes(v.phase) ? 'now' : ''}" data-key="cl-${pl.id}"><b>${esc(name(v, pl.id))}</b>
             ${pl.out ? (C.wagersOn ? candles(pl.candles, C.rise) : `<small>${t('Out')}</small>`) : `<span class="cl-coffins" aria-label="${esc(th('{n} in hand', { n: pl.held }))}">${Array.from({ length: pl.held }, () => `<i>${emblem('undertaker')}</i>`).join('')}</span>`}
-            ${winMarks(pl.wins, C.toWin)}</li>`).join('')}</ul>
+            ${winMarks(pl.wins, C.toWin, pl.id)}</li>`).join('')}</ul>
           <p class="small muted">${t('Or be the last one with coffins.')}</p></div>
         ${legend}${scoreboard(v)}</aside>
     </div></main>`;
