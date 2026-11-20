@@ -2858,7 +2858,11 @@ function boardView() {
   if (!v) return loadingScreen();
   tvChrome();
   const hint = !document.fullscreenElement && !S.board.fsAsked && localStorage.getItem(FS_KEY) !== 'off' ? `<div class="tv-fs-hint" data-key="tvfs">${t('Press F or tap for full screen')}</div>` : '';
-  return boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark }) + hint;
+  // T3: the lobby teaches while people join — the game's cover, and its How it works turning a step every 8 s.
+  if (v.phase === 'LOBBY' && !S.board.howTimer) S.board.howTimer = setInterval(() => { if (onBoard() && V()?.phase === 'LOBBY') { S.board.howStep = (S.board.howStep ?? 0) + 1; render(); } }, 8000);
+  const how = v.phase === 'LOBBY' ? guideHow(v.mode) : '';
+  const steps = (how.match(/<li /g) || []).length || 1;
+  return boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark, cover, how, howStep: (S.board.howStep ?? 0) % steps, avatar: (p) => (p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`) }) + hint;
 }
 
 // ── Dock (primary action) ──────────────────────────────────────────────────

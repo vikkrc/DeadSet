@@ -5504,3 +5504,35 @@ button.mr-fate { cursor: pointer; }
 body.tv-idle, body.tv-idle * { cursor: none !important; }
 body.is-board .board2 { translate: var(--drift, 0 0); transition: translate 8s linear; } /* literal-ok: a slow burn-in drift */
 .tv-fs-hint { position: fixed; top: 18px; left: 50%; translate: -50% 0; z-index: var(--z-toast); padding: 8px 16px; border: 1px solid var(--gilt-2); border-radius: 20px; background: var(--ink-2); color: var(--bone-2); font: 600 12px/1 var(--text); letter-spacing: 0.14em; text-transform: uppercase; pointer-events: none; animation: noteIn 0.4s var(--spring) both, noteOut 0.6s 8s var(--ease) forwards; }
+
+/* ══ T3: the TV lobby as an attract loop — join, the game teaching itself, who is at the table ══ */
+.board2.lobby .b-lobby { display: grid; grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.4fr) minmax(300px, 1fr); gap: clamp(24px, 3vw, 56px); align-items: start; }
+.b-attract { display: grid; justify-items: center; gap: 22px; }
+.ba-cover .tarot--cover { font-size: clamp(16px, 1.5vw, 24px); }
+.tv-how { width: 100%; min-height: 9em; }
+.tv-how .rule { justify-content: center; }
+.tv-how .x-steps { list-style: none; padding: 0; margin: 0; }
+.tv-how .x-steps li { display: none; grid-template-columns: auto 1fr; gap: 20px; align-items: center; animation: fadeUp 0.8s var(--ease) both; }
+.tv-how[data-step="0"] .x-steps li:nth-child(1) { display: grid; }
+.tv-how[data-step="1"] .x-steps li:nth-child(2) { display: grid; }
+.tv-how[data-step="2"] .x-steps li:nth-child(3) { display: grid; }
+.tv-how[data-step="3"] .x-steps li:nth-child(4) { display: grid; }
+.tv-how[data-step="4"] .x-steps li:nth-child(5) { display: grid; }
+.tv-how[data-step="5"] .x-steps li:nth-child(6) { display: grid; }
+.tv-how[data-step="6"] .x-steps li:nth-child(7) { display: grid; }
+.tv-how[data-step="7"] .x-steps li:nth-child(8) { display: grid; }
+.tv-how .x-steps .xs-g { width: clamp(64px, 5vw, 92px); height: clamp(64px, 5vw, 92px); }
+.tv-how .xs-g .glyph { font-size: clamp(32px, 2.6vw, 48px); }
+.tv-how .x-steps b { display: block; font: 400 var(--fs-h2)/1.05 var(--black); color: var(--bone); }
+.tv-how .x-steps small { display: block; margin-top: 6px; font: 400 var(--fs-lead)/1.3 var(--text); color: var(--bone-2); }
+.b-atable { display: grid; gap: 14px; }
+.ba-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.ba-list li { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 12px; padding: 6px 10px; border: 1px solid var(--iron); border-radius: 6px; background: var(--ink-2); }
+.ba-list li.ok { border-color: var(--gilt-2); }
+.ba-face { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: var(--ink-3); }
+.ba-face .tok-av { width: 100%; height: 100%; }
+.ba-list b { font: 500 var(--fs-body)/1.1 var(--text); color: var(--bone); }
+.ba-list small { font: italic 400 var(--fs-small)/1.2 var(--text); color: var(--ash); }
+.ba-list li.ok small { color: var(--gilt-hi); font-style: normal; }
+.ba-count { margin: 0; font: 600 var(--fs-label)/1.3 var(--text); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash); }
+.b-atable .b-deck { margin-top: 10px; }

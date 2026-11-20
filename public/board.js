@@ -164,8 +164,11 @@ export function boardScreen(v, h) {
           <div class="code-tiles big">${codeTiles(v.code)}</div>
           <span class="small muted">${esc(location.host)}</span>
         </section>
-        <section class="b-table">${ring(v, { center: v.mode === 'graverobbers' ? graveLobbyCenter(v) : centerFor(v), lobby: true, slots: Math.max(5, v.players.length), orb: v.mode === 'exorcism' ? lobbyOrb() : '', crews: v.mode === 'graverobbers' ? lobbyCrews(v) : null })}</section>
-        <section class="b-deck">
+        <section class="b-attract" data-key="battract">${h.cover ? `<div class="ba-cover">${h.cover(v.mode)}</div>` : ''}${h.how ? `<div class="tv-how" data-step="${h.howStep ?? 0}" data-key="tvhow">${h.how}</div>` : ''}</section>
+        <section class="b-atable" data-key="batable"><span class="kicker">${t('At the table')}</span>
+          <ul class="ba-list">${v.players.map((p) => `<li class="${p.ready ? 'ok' : ''}" data-key="ba-${p.id}"><span class="ba-face">${h.avatar(p)}</span><b>${esc(p.name)}</b><small>${p.ready ? glyph('check') : esc(t(p.connected === false ? 'Away' : 'Getting ready'))}</small></li>`).join('')}</ul>
+          <p class="ba-count">${esc(th('Starting when everyone is ready · {n} of {m}', { n: v.players.filter((p) => p.ready).length, m: v.players.length }))}</p>
+          <div class="b-deck">
           <span class="kicker">${t('Tonight\'s deck')} · ${esc(presetF(s.preset, 'name'))}</span>
           <div class="deckrow">${deckHtml}</div>
           ${deck?.extended ? `<p class="small muted">${th('Extended seats are drawn secretly from: {names}.', { names: deck.pool.map((id) => roleF(id, 'name')) })}</p>` : ''}
@@ -174,6 +177,7 @@ export function boardScreen(v, h) {
           ${v.mode === 'coffins' ? `<div class="c-lobbyhand">${Array.from({ length: s.c?.coffins ?? 4 }, (_, i) => coffinCard(i === (s.c?.coffins ?? 4) - 1 ? 'C' : 'G')).join('')}</div><p class="small muted">${th('Each player: {g} Gold and one Curse.', { g: (s.c?.coffins ?? 4) - 1 })}</p>` : ''}
           ${!modeInfo(v.mode).story ? '' : `<span class="kicker">${t('Story')}</span>`}
           ${!modeInfo(v.mode).story ? '' : `<p class="scenario">${s.scenario.mode === 'manual' && s.scenario.who ? esc(`${scen('WHO', s.scenario.who)} · ${scen('WHERE', s.scenario.where)} · ${scen('WHY', s.scenario.why)}`) : t('Dealt when the match begins.')}</p>`}
+          </div>
         </section>
       </div></main>`;
   }
