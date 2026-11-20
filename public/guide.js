@@ -87,6 +87,8 @@ export const GUIDE_EN = {
 <li>If a night ever leaves nobody alive, the match is a <b>draw</b>.</li>
 <li>With the <b>Doomsday Clock</b>, Death also wins if nobody has won when the final Day closes.</li>
 <li><b>Blood Moon</b> (on by default): after two nights in a row without a death, the next night no protection holds and nothing can block Death's kill. It ends stalemates such as a lone Guardian shielding themself against a lone Death.</li>
+<li><b>A quiet first day</b> (on by default): Day 1 is for talking only. Nobody can be nominated and there is no vote; the first sentence can come on Day 2.</li>
+<li><b>The Psycho</b>: how often the Psycho may mark a player. Once per game (default); one Mute and one No Vote, in either order; or one mark every night.</li>
 <li><b>Death wins in the final two</b> (optional): if a Death is among the last two alive, Death wins at once.</li>
 </ul>
 <p>Victory is checked after every complete resolution — never halfway through a night.</p>`,

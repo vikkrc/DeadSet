@@ -4,6 +4,7 @@
 import { ROLES, DREAMS, RULE_CARDS, PRESETS, modeOf, roleInMode } from './content.js';
 import {
   byId, nameOf, hasRule, deathTeam, upcomingNight, isDayPhase,
+  quietDay,
 } from './state.js';
 import { setupReport, nominees, chatChannels, ballotWeight } from './game.js';
 import { exorcismPublic, exorcismAction, exorcismProgress, exorcismSecrets, xKnowledge, isExorcismPhase, X_ADVANCE_LABEL, X_REDRAW_PHASES } from './exorcism.js';
@@ -85,7 +86,7 @@ export function publicView(m, now = Date.now()) {
     hostId: m.hostId, moderated: m.moderated,
     preset: m.config?.preset ?? m.settings.preset,
     transport: m.settings.transport,
-    table: { threads: !!m.settings.threads, score: m.settings.score !== false, scoreTheme: m.settings.scoreTheme ?? 'classic', pace: m.settings.pace === 'brisk' ? 'brisk' : 'cinematic', lang: m.settings.lang || 'en', bloodMoon: m.config ? m.config.bloodMoon : m.settings.bloodMoon !== false, finalTwoDeath: m.config ? m.config.finalTwoDeath : !!m.settings.finalTwoDeath, tieBreak: m.config?.tieBreak ?? m.settings.tieBreak ?? 'none', backdrops: m.settings.backdrops !== false, clues: m.settings.clues !== false, clueOdds: m.settings.clueOdds ?? 1, lovers: !!m.settings.lovers, cult: !!m.settings.cult, ripper: !!m.settings.ripper, leaderMode: m.config?.leaderMode ?? m.settings.leaderMode ?? 'next' },
+    table: { threads: !!m.settings.threads, score: m.settings.score !== false, scoreTheme: m.settings.scoreTheme ?? 'classic', pace: m.settings.pace === 'brisk' ? 'brisk' : 'cinematic', lang: m.settings.lang || 'en', bloodMoon: m.config ? m.config.bloodMoon : m.settings.bloodMoon !== false, finalTwoDeath: m.config ? m.config.finalTwoDeath : !!m.settings.finalTwoDeath, tieBreak: m.config?.tieBreak ?? m.settings.tieBreak ?? 'none', psycho: m.config?.psycho ?? m.settings.psycho ?? 'once', quietFirstDay: m.config ? m.config.quietFirstDay : m.settings.quietFirstDay !== false, backdrops: m.settings.backdrops !== false, clues: m.settings.clues !== false, clueOdds: m.settings.clueOdds ?? 1, lovers: !!m.settings.lovers, cult: !!m.settings.cult, ripper: !!m.settings.ripper, leaderMode: m.config?.leaderMode ?? m.settings.leaderMode ?? 'next' },
     bloodMoon: !!m.night?.bloodMoon,
     doomsday: m.config?.doomsday ? m.config.doomsdayDays : null,
     scenario: m.scenario, activeRules: m.activeRules.map((id) => RULE_CARDS[id]),
@@ -276,6 +277,7 @@ function actionFor(m, p) {
     }
     case 'DAY_DISCUSSION': {
       if (!p.alive) return { type: 'spectate' };
+      if (quietDay(m)) return { type: 'talk' };
       const mine = d.nominations.find((x) => x.by === p.id);
       return {
         type: 'nominate', mine: mine?.target ?? null,

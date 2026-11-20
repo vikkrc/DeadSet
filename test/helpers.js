@@ -13,7 +13,7 @@ export function setup(roles, { rules = [], settings = {}, script = {}, seed = 7,
   const rng = seededRng(seed, script);
   const m = newMatch({ id: 'm1', code: 'TEST01', hostId: 'p0' });
   roles.forEach((_, i) => addPlayer(m, { id: `p${i}`, name: NAMES[i] }));
-  updateSettings(m, { preset: 'custom', dreams, rules: { mode: 'manual', selected: rules }, ...settings });
+  updateSettings(m, { preset: 'custom', dreams, quietFirstDay: false, rules: { mode: 'manual', selected: rules }, ...settings });
   m.players.forEach((p) => { p.ready = true; });
   let now = 1_000_000;
   startMatch(m, rng, now, { forceRoles: roles });

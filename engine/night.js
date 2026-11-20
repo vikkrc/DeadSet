@@ -2,7 +2,7 @@
 // All inputs were collected while NIGHT_ACTIONS was open; this function stages
 // every consequence in local sets and commits them atomically at the end.
 import { ROLES, DREAMS, PRODUCTS, CLUE_ODDS } from './content.js';
-import { byId, nameOf, hasRule, priv, pub } from './state.js';
+import { byId, nameOf, hasRule, priv, pub, psychoCharges } from './state.js';
 import { pick } from './rng.js';
 
 const roleName = (id) => ROLES[id]?.name ?? id;
@@ -39,6 +39,7 @@ export function resolveNight(m, rng) {
     // Charge consumption on a valid submitted attempt (§15).
     const def = ROLES[schema.roleId]?.night;
     if (def?.charges && uses.length) p.charges[schema.roleId] = Math.max(0, (p.charges[schema.roleId] ?? 0) - 1);
+    if (schema.roleId === 'PSYCHO' && uses.length && uses[0].option) (p.psychoUsed ||= []).push(uses[0].option);
   }
   const fail = (it, why) => { if (it.ok) { it.ok = false; it.why = why; } };
 
@@ -134,7 +135,7 @@ export function resolveNight(m, rng) {
       const tAlign = alignNow(it.target);
       const charges = {};
       const def = ROLES[tRole];
-      if (def.night?.charges) charges[tRole] = def.night.charges;
+      if (def.night?.charges) charges[tRole] = tRole === 'PSYCHO' ? psychoCharges(m) : def.night.charges;
       if (def.day?.charges) charges[tRole] = def.day.charges;
       staged[p.id] = {
         roleId: tRole, alignment: tAlign, charges, copiedFrom: it.target, daSettled: true,

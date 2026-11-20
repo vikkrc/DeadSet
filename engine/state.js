@@ -61,3 +61,12 @@ export function stamp(m) {
   if (m.phase === 'ENDED') return 'End';
   return `Day ${m.dayNumber}`;
 }
+
+/** The Psycho's charges for this match: 1 (once per game), 2 (one Mute and one No Vote) or unlimited (one a night). */
+export function psychoCharges(m) {
+  const k = m.config?.psycho ?? m.settings?.psycho;
+  return k === 'nightly' ? 99 : k === 'both' ? 2 : 1;
+}
+
+/** The quiet first day (on by default): Day 1 is talk only. */
+export const quietDay = (m) => m.config?.quietFirstDay !== false && m.config?.mode === 'classic' && m.dayNumber === 1;

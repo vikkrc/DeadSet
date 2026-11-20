@@ -630,3 +630,38 @@ test('random full matches N=5…13 always terminate and keep invariants', () => 
     assert.ok(['DEATH', 'NON_DEATH', 'JESTER', 'DRAW'].includes(m.winner));
   }
 });
+
+// ── Table settings: the quiet first day, the Psycho's charges ──────────────
+test('quiet first day: Day 1 has no nominations and no vote; Day 2 votes as usual', () => {
+  const t = setup(['DEATH', 'INNOCENT', 'GUARDIAN', 'MENTALIST', 'PSYCHO', 'INNOCENT', 'INNOCENT'], { settings: { quietFirstDay: true } });
+  if (t.m.phase === 'DAY_PREP') t.advance();
+  assert.equal(t.m.phase, 'DAY_DISCUSSION');
+  assert.equal(playerView(t.m, t.id('Bo')).action.type, 'talk');
+  assert.throws(() => t.cmd('Bo', 'day.nominate', { target: t.id('Ada') }), /first day/);
+  t.advance();
+  assert.ok(['NIGHT_DREAM_SWAP', 'NIGHT_ACTIONS'].includes(t.m.phase), 'Day 1 ends without a vote');
+  runNight(t, {});
+  runDay(t, { nominate: [['Bo', 'Ada']], votes: { Bo: 'Ada', Cy: 'Ada', Di: 'Ada', Ed: 'Ada' } });
+  assert.equal(t.m.winner, 'NON_DEATH', 'Day 2 sentences as usual');
+});
+
+test('Psycho: one of each — a Mute and a No Vote, never the same option twice', () => {
+  const t = setup(['DEATH', 'INNOCENT', 'GUARDIAN', 'MENTALIST', 'PSYCHO', 'INNOCENT', 'INNOCENT'], { settings: { psycho: 'both' } });
+  assert.equal(t.P('Ed').charges.PSYCHO, 2);
+  runDay(t, {});
+  runNight(t, { actions: { Ed: [{ target: 'Fay', option: 'MUTE' }] } });
+  assert.equal(t.P('Ed').charges.PSYCHO, 1);
+  runDay(t, {});
+  const opts = playerView(t.m, t.id('Ed')).action.schema.options.map((o) => o.id);
+  assert.deepEqual(opts, ['NO_VOTE'], 'only the unused mark is left');
+});
+
+test('Psycho: every night — the mark is never spent', () => {
+  const t = setup(['DEATH', 'INNOCENT', 'GUARDIAN', 'MENTALIST', 'PSYCHO', 'INNOCENT', 'INNOCENT'], { settings: { psycho: 'nightly' } });
+  runDay(t, {});
+  runNight(t, { actions: { Ed: [{ target: 'Fay', option: 'MUTE' }] } });
+  runDay(t, {});
+  runNight(t, { actions: { Ed: [{ target: 'Fay', option: 'MUTE' }] } });
+  runDay(t, {});
+  assert.ok(playerView(t.m, t.id('Ed')).action.schema, 'the Psycho can still act');
+});

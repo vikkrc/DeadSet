@@ -8,6 +8,7 @@ import {
 } from './setup.js';
 import {
   GameError, byId, living, nameOf, hasRule, deathTeam, pub, priv, isDayPhase, isNightPhase,
+  psychoCharges, quietDay,
 } from './state.js';
 import { shuffle } from './rng.js';
 import { resolveNight } from './night.js';
@@ -188,7 +189,11 @@ export function startMatch(m, rng, now, { forceRoles = null, forceWord = null } 
     clueOdds: m.settings.clueOdds ?? 1,
     lovers: !!m.settings.lovers,
     tieBreak: m.settings.tieBreak === 'coin' ? 'coin' : 'none',
+    psycho: ['both', 'nightly'].includes(m.settings.psycho) ? m.settings.psycho : 'once',
+    quietFirstDay: m.settings.quietFirstDay !== false,
   };
+  // The Psycho's charges follow the table's setting: once, one of each option, or every night.
+  for (const p of m.players) if (p.roleId === 'PSYCHO') p.charges.PSYCHO = psychoCharges(m);
   m.history = [];
   m.calm = 0;
   m.deadSnap = [];
@@ -301,7 +306,8 @@ function closeMorning(m, now) {
     victims.push(...heartbreak(m, victims));
   }
   if (victims.length && victoryOrNull(m, now)) return;
-  pub(m, ['Day {n}: discussion and nominations are open.', { n: m.dayNumber }], 'phase', { ev: 'discussion' });
+  if (quietDay(m)) pub(m, 'Day 1 is for talking: there are no nominations and no vote today.', 'phase', { ev: 'discussion', quiet: true });
+  else pub(m, ['Day {n}: discussion and nominations are open.', { n: m.dayNumber }], 'phase', { ev: 'discussion' });
   enterPhase(m, 'DAY_DISCUSSION', now, T(m, 'discussion'));
 }
 
@@ -335,6 +341,7 @@ export function nominees(m) {
 }
 
 function closeDiscussion(m, now) {
+  if (quietDay(m)) { resolveDay(m, now, { noVote: true }); return; }
   const list = nominees(m);
   if (!list.length) {
     pub(m, 'Nobody was nominated. There is no vote today.', 'vote', { ev: 'novote' });
@@ -585,7 +592,10 @@ function baseSchema(m, p, n, team) {
   if (def.kind === 'target' || def.kind === 'chat') targets = alive.filter((id) => def.self || id !== p.id);
   if (def.kind === 'dead') targets = m.players.filter((x) => !x.alive && !x.revivedOnce && x.id !== p.id).map((x) => x.id);
   if ((def.kind === 'target' || def.kind === 'dead' || def.kind === 'chat') && targets.length === 0) return null;
-  return { kind: def.kind, roleId: p.roleId, targets, options: def.options ?? null, verb: def.verb };
+  let options = def.options ?? null;
+  // One of each: an option the Psycho has already used is gone.
+  if (p.roleId === 'PSYCHO' && m.config?.psycho === 'both' && options) options = options.filter((o) => !(p.psychoUsed ?? []).includes(o.id));
+  return { kind: def.kind, roleId: p.roleId, targets, options, verb: def.verb };
 }
 
 function buildSchema(m, p, n, team) {
@@ -875,6 +885,7 @@ export function playerCommand(m, actorId, cmd, rng, now) {
 
     case 'day.nominate': {
       need(m, 'DAY_DISCUSSION');
+      if (quietDay(m)) throw new GameError('There are no nominations on the first day.');
       mustLive(m, p);
       const t = byId(m, payload.target);
       if (!t || !t.alive) throw new GameError('You can only nominate a living player.');

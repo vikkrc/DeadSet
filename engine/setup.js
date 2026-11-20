@@ -74,6 +74,8 @@ export function defaultSettings() {
     suggestSeed: 0,
     bloodMoon: true,
     finalTwoDeath: false,
+    psycho: 'once',       // how often the Psycho may act: once, one of each (Mute, No Vote) or every night
+    quietFirstDay: true,  // Day 1 is for talking: no nominations and no vote
     clues: true,
     clueOdds: 1,
     lovers: false,
@@ -215,7 +217,8 @@ export function applySettingsPatch(settings, patch = {}) {
   if (['none', 'coin'].includes(patch.tieBreak)) s.tieBreak = patch.tieBreak;
   if (SCORE_THEMES.includes(patch.scoreTheme)) s.scoreTheme = patch.scoreTheme;
   if (['cinematic', 'brisk'].includes(patch.pace)) s.pace = patch.pace;
-  for (const k of ['revealOnDeath', 'endReveal', 'selfNomination', 'selfVote', 'threads', 'score', 'bloodMoon', 'finalTwoDeath', 'clues', 'lovers', 'cult', 'ripper', 'backdrops']) {
+  if (['once', 'both', 'nightly'].includes(patch.psycho)) s.psycho = patch.psycho;
+  for (const k of ['revealOnDeath', 'endReveal', 'selfNomination', 'selfVote', 'threads', 'score', 'bloodMoon', 'finalTwoDeath', 'clues', 'lovers', 'cult', 'ripper', 'backdrops', 'quietFirstDay']) {
     if (typeof patch[k] === 'boolean') s[k] = patch[k];
   }
   return s;

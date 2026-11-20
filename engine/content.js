@@ -47,9 +47,9 @@ export const ROLES = {
   },
   PSYCHO: {
     id: 'PSYCHO', name: 'Psycho', set: 'core', alignment: 'NON_DEATH', glyph: 'psycho',
-    when: 'Once per game, at night',
+    when: 'At night (once per game by default)',
     summary: 'Once: Mute a player or strip their vote for the next Day.',
-    detail: 'MUTE: may not speak in discussion but can still nominate and vote. NO VOTE: may speak but cannot cast a ballot. Guardian, Guardian Angel and Witch Bless block it. The charge is spent even if blocked.',
+    detail: 'MUTE: may not speak in discussion but can still nominate and vote. NO VOTE: may speak but cannot cast a ballot. Guardian, Guardian Angel and Witch Bless block it. The charge is spent even if blocked. How often depends on the table: once per game by default; the host may allow one Mute and one No Vote, or one mark every night.',
     night: { kind: 'target', self: false, charges: 1, verb: 'Mark',
       options: [{ id: 'MUTE', label: 'Mute' }, { id: 'NO_VOTE', label: 'No Vote' }] },
   },

@@ -1567,6 +1567,7 @@ function classicMove(v) {
     }
     case 'DAY_DISCUSSION':
       if (dead) return L(false, t('Watch in silence'), t('The dead may not speak'));
+      if (a.type === 'talk') return L(false, t('Talk it over'), t('Day 1 is for talking: no nominations, no vote.'));
       // U9: the rule that matters now lives in the strip, not under the table.
       return a.mine ? L(false, t('Talk it over'), t(v.day?.nominees?.length ? 'When nominations close, each nominee defends themselves.' : 'You have accused today'))
         : L(true, t('Talk, or tap a seat to accuse'), t(v.day?.nominees?.length ? 'When nominations close, each nominee defends themselves.' : 'One accusation each today'));
@@ -1621,7 +1622,7 @@ function tray(v) {
  * `move(v)` -> { act, main, sub }; until it does, the mode's own "do now" block is lifted out of its screen into
  * the strip, so no screen says it twice. On secret steps every role sees the same line.
  */
-const IDLE = new Set(['none', 'wait', 'spectate', 'defense', 'morning', 'moderator', 'ready', 'ack']);
+const IDLE = new Set(['none', 'wait', 'spectate', 'defense', 'morning', 'moderator', 'ready', 'ack', 'talk']);
 const canAct = (v) => { const a = v.action; return !!a && !IDLE.has(a.type) && !a.done && !a.played && !a.ghost; };
 function moveBand(v, html) {
   if (!inPlay(v) || !v.me || v.me.moderator) return { strip: '', html };
@@ -1980,6 +1981,10 @@ function lobbyDeck(v, isHost, top = '') {
     ${isHost ? `<label class="toggle-row"><span><b>${t('Coin-toss tiebreak')}</b><small>${t('A tied vote is settled by a coin toss instead of sparing everyone.')}</small></span><input type="checkbox" class="switch" data-act-change="tieBreak" ${v.table?.tieBreak === 'coin' ? 'checked' : ''}></label>`
       : `<div class="toggle-row"><span><b>${t('Coin-toss tiebreak')}</b><small>${t('A tied vote is settled by a coin toss instead of sparing everyone.')}</small></span><span class="tag ${v.table?.tieBreak === 'coin' ? 'solid' : ''}">${t(v.table?.tieBreak === 'coin' ? 'On' : 'Off')}</span></div>`}
     ${toggle('bloodMoon', 'Blood Moon', 'After two nights in a row without a death, no protection holds for a night.')}
+    ${toggle('quietFirstDay', 'A quiet first day', 'Day 1 is for talking only: no nominations and no vote.')}
+    ${(() => { const cur = v.table?.psycho ?? 'once'; const opts = [['once', 'Once per game'], ['both', 'One Mute and one No Vote'], ['nightly', 'Every night']]; const sub = 'How often the Psycho may mark a player.';
+      return isHost ? `<label class="toggle-row"><span><b>${esc(roleF('PSYCHO', 'name'))}</b><small>${t(sub)}</small></span><select class="input lang-select" data-set-str="psycho" data-key="psycho-sel">${opts.map(([k, l]) => `<option value="${k}" ${cur === k ? 'selected' : ''}>${t(l)}</option>`).join('')}</select></label>`
+        : `<div class="toggle-row"><span><b>${esc(roleF('PSYCHO', 'name'))}</b><small>${t(sub)}</small></span><span class="tag">${t(opts.find(([k]) => k === cur)[1])}</span></div>`; })()}
     ${toggle('finalTwoDeath', 'Death wins in the final two', 'If a Death is among the last two players alive, Death wins at once.')}
     ${toggle('threads', 'Threads of suspicion', 'Draws who accused whom across the table')}
   </section>`;
@@ -2343,7 +2348,7 @@ function discussionStage(v) {
   const a = v.action;
   return `<section class="stack" data-key="disc">${nominationList(v)}
     ${a.type === 'nominate' && a.mine ? `<p class="small muted center-text">${th('You accused <b>{name}</b>. One nomination per Day.', { name: rawName(a.mine) })}</p>` : ''}
-    ${v.day.nominees.length ? '' : `<p class="small muted center-text">${t('No nominations means no vote — and no sentence.')}</p>`}</section>`;
+    ${v.day.nominees.length || a.type === 'talk' ? '' : `<p class="small muted center-text">${t('No nominations means no vote — and no sentence.')}</p>`}</section>`;
 }
 
 function defenseStage(v, me) {
