@@ -12,22 +12,44 @@ import { esc, rawName, pname, disc, doNow, seatArrows, scoreLedger, explainer, w
 export const isMirrorPhase = (ph) => typeof ph === 'string' && ph.startsWith('W_');
 const LETTERS = ['A', t('B'), t('C')];
 
+const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+const NUM = ['I', 'II', 'III'];
+/** An answer's letter (A/B/C, the data) as its fate numeral (I/II/III, what players see). */
+const numOf = (x) => NUM[LETTERS.indexOf(x)] ?? x;
+const initial = (v, id) => esc([...(rawName(v, id) || '?')][0] ?? '?');
+
 /**
- * The dilemma card: a haunted mirror. Dark silvered glass in a gilt arch, the prompt in the glass, the three
- * answers as plaques. At the reveal each plaque carries the portraits of everyone who chose it (`who`).
+ * MR1: every dilemma is a card of the Arcana of Dilemmas — flat vellum, the Mirror's one sigil, the numeral, the
+ * title in blackletter, a gilt rule, and the question as the hero. MR2: the three answers are fate cards beneath
+ * it (`fates`): idle ink, or vellum with your red seal, silver with the seal you placed for the player you read,
+ * and at the reveal the count and the portraits of who chose it. Sizes: '' (ballot), 'talk', 'tv', 'scene'.
  */
-export function dilemmaCard(id, { size = '', counts = null, picks = {}, who = null, v = null, auto = {} } = {}) {
+export function dilemmaCard(id, { size = '', round = null, card = true, fates = true, who = null, v = null, auto = {}, seals = {}, act = '', theirs = null } = {}) {
   const d = dilemmaText(dilemmaById(id));
-  const row = (c, i) => {
+  const fate = (c, i) => {
     const x = LETTERS[i];
     const ids = who?.[x] ?? [];
-    const faces = who ? `<span class="w-faces">${ids.map((pid) => `<span class="w-face ${auto[pid] ? 'auto' : ''}" title="${esc(rawName(v, pid))}">${disc(v, pid, 'xs')}</span>`).join('')}</span>` : '';
-    return `<li class="${(picks[x] ?? []).join(' ')} ${who && !ids.length ? 'empty' : ''}"><b class="w-l">${x}</b><span class="w-a">${esc(c)}</span>${faces}${counts && !who ? `<em>${counts[x] ?? 0}</em>` : who ? `<em>${ids.length}</em>` : ''}</li>`;
+    const mine = seals.own === x;
+    const pred = seals.pred === x;
+    const cls = [mine ? 'yours' : '', pred ? 'theirs' : '', theirs === x ? 'truth' : '', who ? 'shown' : '', who && !ids.length ? 'empty' : ''].filter(Boolean).join(' ');
+    const wax = `${mine ? `<i class="mr-seal mr-wax" aria-hidden="true">${esc(seals.me ?? '')}</i>` : ''}${pred ? `<i class="mr-seal mr-silver" aria-hidden="true">${esc(seals.them ?? '')}</i>` : ''}`;
+    const faces = who ? `<span class="mr-who">${ids.map((pid) => `<span class="w-face ${auto[pid] ? 'auto' : ''}" title="${esc(rawName(v, pid))}">${disc(v, pid, 'xs')}</span>`).join('')}</span><em class="mr-count">${ids.length}</em>` : '';
+    const tag = act ? 'button' : 'li';
+    return `<${tag} class="mr-fate ${cls}" ${act ? `type="button" data-act="${act}" data-id="${x}" aria-pressed="${mine || pred}"` : ''} data-key="mrf-${x}"><b class="mr-num">${NUM[i]}</b><span class="mr-ans">${esc(c)}</span>${wax}${faces}</${tag}>`;
   };
-  return `<article class="w-card ${size}" data-key="wcard-${id}-${size}">
-    <span class="w-crest" aria-hidden="true">${emblem('maskedvote')}</span><span class="w-sheen" aria-hidden="true"></span>
-    <p class="w-prompt">${esc(d.prompt)}</p>
-    <ol class="w-choices">${d.choices.map(row).join('')}</ol></article>`;
+  const list = fates ? `<${act ? 'div' : 'ol'} class="fates ${size}" data-key="fates-${id}">${d.choices.map(fate).join('')}</${act ? 'div' : 'ol'}>` : '';
+  if (!card) return list;
+  return `<article class="mr-card ${size}" data-key="mrcard-${id}-${size}">
+    <span class="mr-sigil" aria-hidden="true">${emblem('s_self')}</span>
+    ${round ? `<span class="mr-n">${esc(t('Dilemma'))} · ${ROMAN[round] ?? round}</span>` : ''}
+    ${d.title ? `<b class="mr-title">${esc(d.title)}</b>` : ''}<i class="mr-rule" aria-hidden="true"></i>
+    <p class="mr-q">${esc(d.prompt)}</p></article>${list}`;
+}
+
+/** MR4: the glass — a slim silvered band pairing you with the player you read. */
+function glass(v, me, target) {
+  if (!me || !target) return '';
+  return `<div class="mr-glass" data-key="mrglass"><span class="mr-g-you">${disc(v, me, 'sm')}<b>${esc(t('You'))}</b></span><i class="mr-g-line" aria-hidden="true"></i><span class="mr-g-them"><b>${esc(rawName(v, target))}</b>${disc(v, target, 'sm')}</span></div>`;
 }
 
 /** Who chose what, from a round's answers: { A: [ids], B: [...], C: [...] } in seat order. */
@@ -36,12 +58,6 @@ const chosenBy = (v, answers) => {
   for (const p of [...v.players].sort((a, b) => a.seat - b.seat)) if (answers?.[p.id]) out[answers[p.id]].push(p.id);
   return out;
 };
-
-/** You and the player you read, face to face in the glass. */
-function facing(v, me, target) {
-  return `<div class="w-facing" data-key="wfacing">${disc(v, me, 'lg')}<span class="w-frame">${emblem('maskedvote')}</span>${disc(v, target, 'lg')}
-    <p>${th('You read {a}', { a: rawName(v, target) })}</p></div>`;
-}
 
 const counts = (answers) => { const c = { A: 0, B: 0, C: 0 }; for (const x of Object.values(answers ?? {})) c[x]++; return c; };
 
@@ -57,22 +73,24 @@ export function mirrorMain(v, me, h) {
   let stage = '';
   switch (v.phase) {
     case 'W_PROMPT':
-      stage = `${round}${dilemmaCard(W.dilemma)}${target ? facing(v, me.id, target) : ''}
-        ${doNow(t('Talk it over'), th('Ask {a} what they would do, tease, mislead. In a moment you answer for yourself, and predict {a}.', { a: rawName(v, target) }))}`;
+      // MR5: talk — a large card, the answers as chips under it.
+      stage = `${glass(v, me?.id, target)}${dilemmaCard(W.dilemma, { size: 'talk', round: W.round, fates: false })}
+        <div class="mr-chips" data-key="mrchips">${dilemmaText(dilemmaById(W.dilemma)).choices.map((c, i) => `<span class="mr-chip"><b>${NUM[i]}</b>${esc(c)}</span>`).join('')}</div>`;
       break;
     case 'W_CHOOSE': {
-      const d = dilemmaText(dilemmaById(W.dilemma));
-      const row = (act, sel, label) => `<div class="w-pick" data-key="wp-${act}"><span class="kicker">${label}</span><div class="w-opts">${d.choices.map((c, i) => `<button class="w-opt ${sel === LETTERS[i] ? 'on' : ''}" data-act="${act}" data-id="${LETTERS[i]}" aria-pressed="${sel === LETTERS[i]}"><b>${LETTERS[i]}</b><span>${esc(c)}</span></button>`).join('')}</div></div>`;
-      stage = `${round}<article class="w-card sm" data-key="wcard-sm"><p class="w-prompt">${esc(d.prompt)}</p></article>
-        ${doNow(t('Seal your ballot'), th('Your own answer scores nothing; reading {a} right scores 2.', { a: rawName(v, target) }))}
-        ${row('wOwn', UI.sel.wown, t('You would…'))}
-        ${row('wPred', UI.sel.wpred, th('{a} would…', { a: rawName(v, target) }))}
-        ${a.ballot ? `<p class="small center-text w-sealed">${glyph('check')} ${t('Sealed. You can change it until everyone is in.')}</p>${waiting(v)}` : ''}`;
+      // MR3: two seals instead of two columns. Choose which seal you hold, then tap a fate to place it.
+      const holding = UI.sel.wseal ?? 'own';
+      const seg = `<div class="seg mr-seg" role="group" data-key="mrseg"><button data-act="wHold" data-id="own" aria-pressed="${holding === 'own'}"><i class="mr-seal mr-wax sm" aria-hidden="true">${initial(v, me?.id)}</i>${t('Your seal')}</button><button data-act="wHold" data-id="pred" aria-pressed="${holding === 'pred'}"><i class="mr-seal mr-silver sm" aria-hidden="true">${initial(v, target)}</i>${esc(th('{a}\'s seal', { a: rawName(v, target) }))}</button></div>`;
+      stage = `${glass(v, me?.id, target)}${dilemmaCard(W.dilemma, { round: W.round, fates: false })}${seg}
+        ${dilemmaCard(W.dilemma, { card: false, act: 'wFate', seals: { own: UI.sel.wown, pred: UI.sel.wpred, me: initial(v, me?.id), them: initial(v, target) } })}
+        <p class="small muted center-text" data-key="mrhint">${t('Tap a fate to place the seal you are holding. Both seals can move until everyone has sealed.')}</p>
+        ${a.ballot ? `${waiting(v)}` : ''}`;
       break;
     }
     case 'W_REVEAL': {
       const L = W.last;
-      stage = `${round}${dilemmaCard(L.dilemma, { who: chosenBy(v, L.answers), v, auto: L.auto, picks: myPicks(L, me?.id) })}${myReading(v, L, me?.id)}${readingsGrid(v, L, me?.id)}`;
+      const tg = L.targets?.[me?.id];
+      stage = `${dilemmaCard(L.dilemma, { round: W.round, who: chosenBy(v, L.answers), v, auto: L.auto, theirs: tg ? L.answers[tg] : null, seals: { own: L.answers[me?.id], pred: L.preds[me?.id], me: initial(v, me?.id), them: tg ? initial(v, tg) : '' } })}${resultRows(v, L, me?.id)}${readingsGrid(v, L, me?.id)}`;
       break;
     }
     default: break;
@@ -89,17 +107,21 @@ function myPicks(L, id) {
   return p;
 }
 
-/** Your own reading this round, spelled out: what you predicted, what they chose. */
-function myReading(v, L, me) {
-  if (!me || !L.targets[me]) return '';
+/** MR6: two result rows — how you read your target, and how you were read. */
+function resultRows(v, L, me) {
+  if (!me) return '';
+  const rows = [];
   const tg = L.targets[me];
-  const pred = L.preds[me];
-  const hit = pred && pred === L.answers[tg];
-  return `<section class="w-mine ${hit ? 'hit' : pred ? 'miss' : 'none'}" data-key="wmine">
-    <span class="w-mine-who">${disc(v, tg, 'lg')}</span>
-    <span class="w-mine-txt"><small>${esc(th('You read {a}', { a: rawName(v, tg) }))}</small>
-      <b>${pred ? esc(th('You said {x}; they chose {y}.', { x: pred, y: L.answers[tg] })) : esc(t('You made no prediction.'))}</b></span>
-    <span class="w-mine-res">${hit ? '+2' : glyph(pred ? 'close' : 'scroll')}</span></section>`;
+  if (tg) {
+    const hit = L.preds[me] && L.preds[me] === L.answers[tg];
+    rows.push(`<li class="${hit ? 'hit' : 'miss'}">${disc(v, tg, 'sm')}<span>${esc(th('You read {a}', { a: rawName(v, tg) }))} · ${esc(t(hit ? 'right' : 'wrong'))}</span><b>${hit ? '+2' : '+0'}</b></li>`);
+  }
+  const by = Object.keys(L.targets).find((id) => L.targets[id] === me);
+  if (by) {
+    const hit = L.preds[by] && L.preds[by] === L.answers[me];
+    rows.push(`<li class="${hit ? 'hit' : 'miss'}">${disc(v, by, 'sm')}<span>${esc(th('{a} read you', { a: rawName(v, by) }))} · ${esc(t(hit ? 'right' : 'wrong'))}</span><b>${hit ? esc(th('+2 to {a}', { a: rawName(v, by) })) : '+0'}</b></li>`);
+  }
+  return rows.length ? `<ul class="mr-results" data-key="mrres">${rows.join('')}</ul>` : '';
 }
 
 /** Every reading at the table as a tile: reader → target, the call and the truth, right or wrong. */
@@ -110,7 +132,7 @@ function readingsGrid(v, L, me) {
     const pred = L.preds[id];
     const hit = pred && pred === L.answers[tg];
     return `<li class="${hit ? 'hit' : pred ? 'miss' : 'none'}">${disc(v, id, 'sm')}<i class="w-arrow">→</i>${disc(v, tg, 'sm')}
-      <span class="w-call"><b>${pred ?? '—'}</b><small>${esc(L.answers[tg])}</small></span><span class="w-names">${esc(rawName(v, id))}<small>${esc(rawName(v, tg))}</small></span></li>`;
+      <span class="w-call"><b>${pred ? numOf(pred) : '—'}</b><small>${esc(numOf(L.answers[tg]))}</small></span><span class="w-names">${esc(rawName(v, id))}<small>${esc(rawName(v, tg))}</small></span></li>`;
   }).join('')}</ul></section>`;
 }
 
@@ -128,6 +150,13 @@ export function mirrorActs(h) {
   return {
     wOwn(el) { UI.sel.wown = el.dataset.id; haptic(6); render(); },
     wPred(el) { UI.sel.wpred = el.dataset.id; haptic(6); render(); },
+    wHold(el) { UI.sel.wseal = el.dataset.id; haptic(4); render(); },
+    // Place the seal you hold; after your own, the hand moves to your target's seal if it is still unplaced.
+    wFate(el) {
+      const x = el.dataset.id;
+      if ((UI.sel.wseal ?? 'own') === 'own') { UI.sel.wown = x; if (!UI.sel.wpred) UI.sel.wseal = 'pred'; } else UI.sel.wpred = x;
+      haptic(8); render();
+    },
     async wSeal() { if (UI.sel.wown && UI.sel.wpred) await send('w.ballot', { own: UI.sel.wown, pred: UI.sel.wpred }); },
     wSet(el) {
       const packs = [...document.querySelectorAll('[data-act-change="wSet"][data-id="pack"]')].filter((x) => x.checked).map((x) => x.value);
@@ -136,7 +165,7 @@ export function mirrorActs(h) {
     },
   };
 }
-export const MIRROR_QUIET = ['wOwn', 'wPred'];
+export const MIRROR_QUIET = ['wOwn', 'wPred', 'wHold', 'wFate'];
 
 // ── Scenes ─────────────────────────────────────────────────────────────────
 export function mirrorMoment(l) {
@@ -149,10 +178,10 @@ export const W_MOMENT_TIME = { wprompt: 4800, wreveal: 3200 };
 export function mirrorMomentHtml(m, h) {
   const { letters, V } = h;
   if (m.type === 'wprompt') return `<div class="m-art w-mart">${emblem('maskedvote')}</div><span class="kicker">${esc(th('Dilemma {n} of {m}', { n: m.round, m: V()?.mirror?.rounds ?? 8 }))}</span>
-    ${dilemmaCard(m.dilemma, { size: 'scene' })}`;
+    ${dilemmaCard(m.dilemma, { size: 'scene', round: m.round })}`;
   const c = counts(m.answers);
   return `<div class="m-art w-mart crack">${emblem('maskedvote')}</div><span class="kicker">${esc(t('The mirror shows'))}</span><h1 class="m-title">${letters(t('Every answer'))}</h1>
-    <p class="m-sub">${LETTERS.map((x) => `${x} · ${c[x]}`).join('   ')}</p>`;
+    <p class="m-sub">${LETTERS.map((x) => `${numOf(x)} · ${c[x]}`).join('   ')}</p>`;
 }
 
 // ── Lobby ──────────────────────────────────────────────────────────────────
@@ -196,7 +225,7 @@ export function mirrorEndHtml(v) {
   // How well each player was read: how many of their readers got them right.
   const read = Object.fromEntries(ids.map((id) => [id, 0]));
   for (const r of W.history ?? []) for (const id of ids) if (r.preds[id] && r.preds[id] === r.answers[r.targets[id]]) read[r.targets[id]]++;
-  const rounds = (W.history ?? []).map((r) => { const c = counts(r.answers); const top = LETTERS.reduce((x, y) => (c[y] > c[x] ? y : x), 'A'); const d = dilemmaText(dilemmaById(r.dilemma)); return `<li><p>${esc(d.prompt)}</p><small>${th('Most chose {x}: {answer}', { x: top, answer: d.choices[LETTERS.indexOf(top)] })}</small></li>`; }).join('');
+  const rounds = (W.history ?? []).map((r) => { const c = counts(r.answers); const top = LETTERS.reduce((x, y) => (c[y] > c[x] ? y : x), 'A'); const d = dilemmaText(dilemmaById(r.dilemma)); return `<li><p>${esc(d.prompt)}</p><small>${th('Most chose {x}: {answer}', { x: numOf(top), answer: d.choices[LETTERS.indexOf(top)] })}</small></li>`; }).join('');
   return `${back}${scoreLedger(v, W.scores, { title: t('The best readers'), key: 'wend', winners: W.winners,
     extra: (id) => `<small>${th('read right {n}×', { n: read[id] })}</small>` })}
     <section data-key="wrounds"><div class="rule">${t('Every dilemma')}</div><ol class="w-hist">${rounds}</ol></section>`;
@@ -210,13 +239,13 @@ export function mirrorBoard(v, h) {
   const ended = v.phase === 'ENDED';
   const L = v.phase === 'W_REVEAL' ? W.last : null;
   const pairs = Object.entries(L ? L.targets : W.targets ?? {}).map(([from, to]) => ({ from, to, cls: L ? (L.preds[from] && L.preds[from] === L.answers[to] ? 'hit' : 'miss') : 'plain' }));
-  const marks = L ? Object.fromEntries(Object.entries(L.answers).map(([id, x]) => [id, x])) : v.phase === 'W_CHOOSE' ? Object.fromEntries(W.locked.map((id) => [id, '✓'])) : {};
+  const marks = L ? Object.fromEntries(Object.entries(L.answers).map(([id, x]) => [id, numOf(x)])) : v.phase === 'W_CHOOSE' ? Object.fromEntries(W.locked.map((id) => [id, '✓'])) : {};
   const title = v.phase === 'W_PROMPT' ? t('Talk it over') : v.phase === 'W_CHOOSE' ? t('Seal your ballots') : L ? t('The mirror shows every answer') : '';
   const sub = v.phase === 'W_CHOOSE' ? th('Ballots sealed · {done}/{total}', v.progress ?? { done: 0, total: 0 }) : v.phase === 'W_PROMPT' ? t('Each arrow: who reads whom this round.') : '';
   return `<main class="board2 wboard ${ended ? 'is-ended' : ''}" data-key="board-w">${header}
     <div class="wt-cols">
       <section class="wt-table">${ended ? '' : ring(v, { center: `<span class="c-sub">${esc(th('Dilemma {n} of {m}', { n: W.round, m: W.rounds }))}</span>`, extra: seatArrows(v, pairs, `warr-${W.round}-${v.phase}`), marks })}
         ${ended ? '' : `<div class="ot-banner"><b>${esc(title)}</b>${sub ? `<span>${esc(sub)}</span>` : ''}</div>`}</section>
-      <section class="wt-side">${ended ? mirrorEndHtml(v) : `${dilemmaCard(W.dilemma, L ? { size: 'tv', who: chosenBy(v, L.answers), v, auto: L.auto } : { size: 'tv' })}${scoreLedger(v, W.scores, { title: t('The readers'), key: 'wtled' })}`}</section>
+      <section class="wt-side">${ended ? mirrorEndHtml(v) : `${dilemmaCard(W.dilemma, L ? { size: 'tv', round: W.round, who: chosenBy(v, L.answers), v, auto: L.auto } : { size: 'tv', round: W.round })}${scoreLedger(v, W.scores, { title: t('The readers'), key: 'wtled' })}`}</section>
     </div></main>`;
 }
