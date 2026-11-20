@@ -342,7 +342,7 @@ export const GUIDE_EN = {
 const GAME_KEY = { graverobbers: 'grave' };
 const PLAIN_CAST = { missions: 'missions', exorcism: 'exorcism', seance: 'seance', graverobbers: 'graverobbers', mimic: 'mimic' };
 
-export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF, presetF, tx, mcardF, FAMILIES, MODES, howFor = () => '', castFor = () => '' }) {
+export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF, presetF, tx, mcardF, FAMILIES, MODES, howFor = () => '', castFor = () => '', chapter = 'basics', cover = null }) {
   const G = { ...GUIDE_EN, ...(tx('guide', null) ?? {}) };
   const name = (id) => (MODES[id]?.name ? t(MODES[id].name) : presetF(id, 'name')).replace(/^Dead Set\s*:\s*/, '');
   // E3: two groups, the basics and the games by family (as in the lobby). Classic's own sections are
@@ -351,7 +351,8 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   const classicParts = [['c-round', G.toc[1]], ['c-win', G.toc[2]], ['c-core', G.toc[3]], ['c-ext', G.toc[4]], ['c-full', G.toc[5]], ['c-dreams', G.toc[6]], ['c-rules', G.toc[7]], ['c-presets', G.presetsH], ['c-order', G.toc[9]], ['c-sides', G.sidesH]];
   const families = FAMILIES.map((f) => [t(f.title), Object.keys(MODES).filter((id) => MODES[id].family === f.id)]).filter(([, ms]) => ms.length);
   const opt = ([id, label], sub) => `<option value="${id}">${sub ? '— ' : ''}${esc(String(label).replace(/<[^>]+>/g, ''))}</option>`;
-  const link = ([id, label], sub) => `<a href="#${id}" class="${sub ? 'sub' : ''}">${label}</a>`;
+  const to = (id) => (id.startsWith('m-') ? `/guide/${id.slice(2)}` : id.startsWith('c-') ? `/guide/classic#${id}` : `/guide#${id}`);
+  const link = ([id, label], sub) => `<a href="${to(id)}" data-link class="${sub ? 'sub' : ''}">${label}</a>`;
   const gameOpts = (id) => opt([`m-${id}`, name(id)]) + (id === 'classic' ? classicParts.map((x) => opt(x, true)).join('') : '');
   const gameLinks = (id) => link([`m-${id}`, esc(name(id))]) + (id === 'classic' ? classicParts.map((x) => link(x, true)).join('') : '');
   const nav = `<nav class="g-nav" aria-label="${esc(t('Chapters'))}">
@@ -401,15 +402,23 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
       <p class="small">${G.modesNote}</p>`)}
     ${part('c-order', G.orderH, G.order)}
     ${part('c-sides', G.sidesH, `${G.sides}${bySet('side').map(entry).join('')}`)}</section>`;
-  return `<div class="guide">
-  <header class="phase-head"><span class="kicker">${G.kicker}</span><h1>${G.title}</h1>
-    <p class="scenario">${G.intro}</p></header>
-  ${nav}<div class="g-body">
-  <section id="b-about"><h2>${G.aboutH}</h2>${G.about}</section>
+  // U7: one page per chapter — the basics at /guide, each game at /guide/<mode> with its cover on top and
+  // Previous / Next at the bottom. The chapter select stays a sticky header.
+  const order = ['basics', ...FAMILIES.flatMap((f) => Object.keys(MODES).filter((id) => MODES[id].family === f.id))];
+  const at = Math.max(0, order.indexOf(chapter));
+  const href = (id) => (id === 'basics' ? '/guide' : `/guide/${id}`);
+  const label = (id) => (id === 'basics' ? G.basicsH : esc(name(id)));
+  const pager = `<nav class="g-pager" data-key="gpager">${at > 0 ? `<a href="${href(order[at - 1])}" data-link class="g-prev"><small>${t('Previous')}</small><b>${label(order[at - 1])}</b></a>` : '<span></span>'}${at < order.length - 1 ? `<a href="${href(order[at + 1])}" data-link class="g-next"><small>${t('Next')}</small><b>${label(order[at + 1])}</b></a>` : '<span></span>'}</nav>`;
+  const basicsBody = `<section id="b-about"><h2>${G.aboutH}</h2>${G.about}</section>
   <section id="b-table"><h2>${G.tableH}</h2>${G.table}</section>
   <section id="b-setup"><h2>${G.setupH}</h2>${G.setup}</section>
   <section id="b-play"><h2>${G.playH}</h2>${G.play}</section>
   <section id="b-after"><h2>${G.afterH}</h2>${G.after}</section>
-  ${FAMILIES.flatMap((f) => Object.keys(MODES).filter((id) => MODES[id].family === f.id)).map((id) => (id === 'classic' ? classic : game(id))).join('\n')}
-  </div></div>`;
+  ${cover ? `<section id="b-games"><h2>${t('The modes')}</h2><div class="g-covers">${order.slice(1).map((id) => `<a href="${href(id)}" data-link>${cover(id, { size: 'mini' })}<small>${esc(name(id))}</small></a>`).join('')}</div></section>` : ''}`;
+  const chapterBody = chapter === 'basics' ? basicsBody : `${cover ? `<div class="g-cover" data-key="gcover-${chapter}">${cover(chapter)}</div>` : ''}${chapter === 'classic' ? classic : game(chapter)}`;
+  const sel = nav.replace(`value="${chapter === 'basics' ? 'b-about' : `m-${chapter}`}"`, `value="${chapter === 'basics' ? 'b-about' : `m-${chapter}`}" selected`);
+  return `<div class="guide" data-key="guide-${chapter}">
+  ${chapter === 'basics' ? `<header class="phase-head"><span class="kicker">${G.kicker}</span><h1>${G.title}</h1>
+    <p class="scenario">${G.intro}</p></header>` : ''}
+  ${sel}<div class="g-body">${chapterBody}${pager}</div></div>`;
 }

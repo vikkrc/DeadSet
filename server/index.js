@@ -152,7 +152,7 @@ async function compressed(file, etag, enc) {
 
 async function staticFile(req, res, url) {
   let path = decodeURIComponent(url.pathname);
-  if (path === '/' || path.startsWith('/r/') || path.startsWith('/board/') || path === '/guide') path = '/index.html';
+  if (path === '/' || path.startsWith('/r/') || path.startsWith('/board/') || path === '/guide' || /^\/guide\/[a-z]+$/.test(path)) path = '/index.html';
   const file = normalize(join(PUBLIC, path));
   if (!file.startsWith(PUBLIC)) { res.writeHead(403); return res.end(); }
   try {
