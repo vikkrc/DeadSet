@@ -5171,3 +5171,32 @@ details.more summary,
 /* U10: a refused tap (a scene still playing) shakes the button instead of raising an error */
 .shake { animation: shake 0.4s var(--ease) both; }
 @keyframes shake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+/* Y1: the table seal. The ornate table, small, as an indicator: ticks, a gilt rim, a ray disc, one dot per seat. */
+.tseal { position: relative; flex: none; width: var(--s, 104px); aspect-ratio: 1; padding: 0; border: 0; border-radius: 50%; cursor: pointer;
+  background: radial-gradient(circle, var(--ink-2) 55%, var(--ink) 72%); }
+.tseal::before { content: ''; position: absolute; inset: -5px; border-radius: 50%; pointer-events: none;
+  background: repeating-conic-gradient(var(--gilt-2) 0 1deg, transparent 1deg 10deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px)); mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px)); }
+.tseal::after { content: ''; position: absolute; inset: 0; border-radius: 50%; pointer-events: none; background: var(--gilt);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px)); mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px)); }
+.tseal .c { position: absolute; inset: 26%; display: grid; place-content: center; border: 1px solid var(--gilt-2); border-radius: 50%; text-align: center;
+  font: 600 15px/1 var(--bit); font-variant-numeric: lining-nums; color: var(--gilt);
+  background: repeating-conic-gradient(color-mix(in srgb, var(--gilt) 14%, transparent) 0 1.5deg, transparent 1.5deg 9deg), radial-gradient(circle, var(--ink-3), var(--ink));
+  box-shadow: 0 0 0 4px var(--ink), 0 0 0 5px var(--iron); }
+.tseal .c .glyph { font-size: calc(var(--s) * 0.22); }
+.tseal .c.who { inset: 20%; border-color: var(--gilt); font: 600 calc(var(--s) * 0.26)/1 var(--black); color: var(--bone);
+  background: radial-gradient(circle at 50% 32%, var(--ink-3), var(--ink) 80%); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--gilt-hi), 0 0 18px var(--gilt);
+  animation: seal-flip var(--t-turn) var(--ease) both; }
+@keyframes seal-flip { from { transform: scaleX(0.08); filter: brightness(1.4); } }
+.tseal .nm { position: absolute; left: 50%; top: 100%; z-index: 2; transform: translate(-50%, 8px); padding: 3px 6px; border: 1px solid var(--gilt-2); background: var(--ink);
+  white-space: nowrap; font: 600 var(--fs-label)/1 var(--text); letter-spacing: 0.2em; text-transform: uppercase; color: var(--gilt-hi); }
+.tseal i { position: absolute; z-index: 1; width: 12px; height: 12px; margin: -6px; border: 1px solid var(--gilt-2); border-radius: 50%; background: var(--ink-3); box-shadow: 0 0 0 2px var(--ink); }
+.tseal i.d { background: var(--gilt); border-color: var(--gilt); }
+.tseal i.x { opacity: 0.4; border-style: dashed; }
+.tseal i.y { background: var(--bone); border-color: var(--bone); box-shadow: 0 0 0 2px var(--ink), 0 0 0 3px var(--gilt); }
+.tseal i.n { width: 14px; height: 14px; margin: -7px; background: var(--gilt-hi); border-color: var(--gilt-hi); box-shadow: 0 0 10px var(--gilt-hi); }
+.tseal i.r { background: var(--blood); border-color: var(--blood-ink); }
+.tseal i.b { background: var(--lapis-2); border-color: var(--lapis); }
+.tseal i.g { background: var(--gilt-2); border-color: var(--gilt-hi); }
+.tseal.mine .c { animation: breathe 2.6s ease-in-out infinite; }
+.table-sheet { display: grid; justify-items: center; padding: 8px 0 16px; }

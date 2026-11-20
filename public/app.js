@@ -1089,6 +1089,32 @@ function langChip() {
  * Seats drawn around a table in seating order. When `pick` is set, the
  * selectable seats become buttons: tapping a seat is how you target anyone.
  */
+/**
+ * Y1: the table seal. The same ornate table, small (104 px; 78 beside a large object), as an indicator only: whose
+ * turn it is (the bright bead), who has sealed (gilt), the dead (dashed), you (bone with a gilt ring), crews (blue,
+ * gold), the Séance Ghost (red). The centre shows `center` (the round, "4/7"), or, for 2.4 s after the turn passes,
+ * the new player's letter and name (Y1b). One tap opens the full table, read-only. It never selects a player.
+ */
+function seal(v, { turn = null, sealed = [], center = '', marks = {}, size = 104, key = 'seal' } = {}) {
+  const ps = v.players ?? [];
+  const n = Math.max(ps.length, 1);
+  const done = new Set(sealed);
+  if (turn && S.sealTurn?.id !== turn) S.sealTurn = { id: turn, at: Date.now() };
+  const flip = turn && S.sealTurn?.id === turn && Date.now() - S.sealTurn.at < 2400;
+  if (flip && !S.sealTimer) S.sealTimer = setTimeout(() => { S.sealTimer = null; render(); }, 2450 - (Date.now() - S.sealTurn.at));
+  const mine = v.me?.id;
+  const dots = ps.map((p, i) => {
+    const a = -Math.PI / 2 + (i / n) * Math.PI * 2;
+    const cls = [p.id === turn ? 'n' : '', done.has(p.id) ? 'd' : '', p.alive === false ? 'x' : '', p.id === mine ? 'y' : '', marks[p.id] ?? ''].filter(Boolean).join(' ');
+    return `<i class="${cls}" style="left:${50 + 50 * Math.cos(a)}%;top:${50 + 50 * Math.sin(a)}%" data-key="sd-${p.id}"></i>`;
+  }).join('');
+  const who = flip ? ps.find((p) => p.id === turn) : null;
+  const mid = who
+    ? `<span class="c who" data-key="sc-who-${who.id}">${esc([...(who.name ?? '?')][0] ?? '?')}</span><span class="nm">${esc(turn === mine ? t('You') : who.name)}</span>`
+    : `<span class="c" data-key="sc-mid">${center}</span>`;
+  return `<button type="button" class="tseal ${turn && turn === mine ? 'mine' : ''}" style="--s:${size}px" data-act="sheet" data-id="table" data-form="seal" data-key="${key}" aria-label="${esc(t('The table'))}">${mid}${dots}</button>`;
+}
+
 function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = {}, lobby = false, crack = false, extra = '', orb = '', crews = null } = {}) {
   const players = [...v.players].sort((a, b) => a.seat - b.seat);
   const n = Math.max(players.length, slots);
@@ -1138,7 +1164,7 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
   const crewRays = crews ? crewSectors(pos, n, players, crews) : '';
   // the orbit line runs through the seat centres; small seats drop their bead ring
   const orbitInset = dense ? 0 : (50 - Math.hypot(pos[0].x - 50, pos[0].y - 50)).toFixed(2);
-  return `<div class="ring-wrap" data-key="ring-wrap"><div class="ring ${dense ? 'dense' : ''} ${tok < 44 ? 'small-tok' : ''} ${pick ? 'picking' : ''} ${pick?.tone === 'kill' ? 'kill' : ''} ${orb ? 'orb' : ''} ${crewRays ? 'crewed' : ''}" style="--tok:${tok}px;--orbit:${orbitInset}%${crewRays ? `;--crewrays:${crewRays}` : ''}" data-key="ring">
+  return `<div class="ring-wrap" data-key="ring-wrap" data-form="${lobby ? 'seat' : 'play'}"><div class="ring ${dense ? 'dense' : ''} ${tok < 44 ? 'small-tok' : ''} ${pick ? 'picking' : ''} ${pick?.tone === 'kill' ? 'kill' : ''} ${orb ? 'orb' : ''} ${crewRays ? 'crewed' : ''}" style="--tok:${tok}px;--orbit:${orbitInset}%${crewRays ? `;--crewrays:${crewRays}` : ''}" data-key="ring">
     <svg class="ring-fuse off" viewBox="0 0 100 100" data-ringfuse aria-hidden="true"><circle class="track" cx="50" cy="50" r="49"/><circle class="burn" cx="50" cy="50" r="49" pathLength="100"/></svg>
     <div class="ring-table" aria-hidden="true"></div>
     ${orb ? `<div class="ring-orb" data-key="ring-orb">${orb}</div>` : ''}
@@ -1488,6 +1514,10 @@ function sheet(v) {
       <section class="menu-sec" data-key="msec-record">${recordBlock(v)}</section>
       <section class="menu-sec menu-actions" data-key="msec-actions"><div class="rule">${t('Leave or learn')}</div><div class="menu-links"><a class="btn btn-sm btn-ghost" href="/guide" data-link>${t('How to play')}</a><button class="btn btn-sm btn-ghost" data-act="leave">${glyph('out')} ${t('Leave this device')}</button></div>
       ${holdBtn('backHome', t('Hold to go back to the start'), 'btn-sm btn-wide', { key: 'backhome' })}</section>`;
+  } else if (s === 'table') {
+    // Y1: the seal opens the full table, read-only.
+    title = t('The table');
+    body = `<div class="table-sheet" data-key="tsheet">${ring(v, { center: centerFor(v) })}</div>`;
   } else if (s === 'avatar') {
     title = t('Your portrait');
     body = avatarEditor();
@@ -2369,7 +2399,7 @@ function moderatorMain(v) {
 /** Translation and markup helpers shared with the board, Gazette and guide. */
 const H = { esc, glyph, dreamGlyph, t, th, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, scen, tlist, tx, getLang, mcardF };
 /** Helpers for the Missions screens (public/missions.js). */
-const MH = { S, ring, head: (...a) => head(...a), chips: (...a) => chips(...a), activePick: (...a) => activePick(...a), pickTabs: (...a) => pickTabs(...a), chatBlock: (...a) => chatBlock(...a), render: () => render(), sound };
+const MH = { S, ring, seal: (...a) => seal(...a), head: (...a) => head(...a), chips: (...a) => chips(...a), activePick: (...a) => activePick(...a), pickTabs: (...a) => pickTabs(...a), chatBlock: (...a) => chatBlock(...a), render: () => render(), sound };
 
 // ── First-game tips ────────────────────────────────────────────────────────
 const TIPS_KEY = 'deadset:tutorial';
