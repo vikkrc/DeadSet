@@ -5308,3 +5308,15 @@ button.mr-fate { cursor: pointer; }
 .mr-results .k-disc { flex: none; width: 28px; height: 28px; }
 .mr-card.tv .mr-n, .mr-card.scene .mr-n { font-size: 14px; }
 .tseal .c .c-big { font: 400 22px/1 var(--black); } .tseal .c .c-big small { font-size: 12px; }
+
+/* U9: per-mode fixes */
+/* Exorcism: the category reads as words on the ball, not tracked capitals; the hint sits below it */
+.xb-k { font: 500 var(--fs-h3)/1.1 var(--text); letter-spacing: 0; text-transform: none; }
+.xball.personal .xb-tap { top: auto; bottom: 22%; transform: none; font: 400 var(--fs-small)/1.2 var(--text); letter-spacing: 0.02em; text-transform: none; }
+/* Graverobbers: grave words in mixed case, never broken mid-word; long words shrink before they wrap */
+.gs-word { text-transform: capitalize; overflow-wrap: normal; word-break: normal; }
+.gs-word.xlong { hyphens: auto; -webkit-hyphens: auto; }
+/* The Omen: the reveal ledger has column headers; the turn reads at 20 px */
+.kl-head { background: none !important; border: 0 !important; padding-block: 0 !important; min-height: 0 !important; }
+.kl-head b, .kl-head span { font: 600 var(--fs-label)/1.2 var(--text); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ash); }
+.o-rot { font-size: 20px; }

@@ -89,6 +89,7 @@ function revealLedger(v) {
   const L = O.last;
   return scoreLedger(v, O.scores, {
     key: 'oled',
+    cols: [t('Seer'), t('Prediction · Turn'), t('Points')],
     extra: (id) => { const b = L.ballots[id] ?? {}; const d = L.deltas[id] ?? 0; return `${faceChip(b.pred)}<span class="o-rot r${b.rot ?? 0}">${rotGlyph(b.rot ?? 0)}</span>${d ? `<em class="o-plus">+${d}</em>` : ''}`; },
   });
 }

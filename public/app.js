@@ -1540,7 +1540,9 @@ function classicMove(v) {
     }
     case 'DAY_DISCUSSION':
       if (dead) return L(false, t('Watch in silence'), t('The dead may not speak'));
-      return a.mine ? L(false, t('Talk it over'), t('You have accused today')) : L(true, t('Talk, or tap a seat to accuse'), t('One accusation each today'));
+      // U9: the rule that matters now lives in the strip, not under the table.
+      return a.mine ? L(false, t('Talk it over'), t(v.day?.nominees?.length ? 'When nominations close, each nominee defends themselves.' : 'You have accused today'))
+        : L(true, t('Talk, or tap a seat to accuse'), t(v.day?.nominees?.length ? 'When nominations close, each nominee defends themselves.' : 'One accusation each today'));
     case 'DAY_DEFENSE': {
       const sp = v.day?.speaking;
       if (sp && sp === me.id) return L(true, t('Your turn to speak'), t('Make your case to the table'));
@@ -2294,7 +2296,7 @@ function discussionStage(v) {
   const a = v.action;
   return `<section class="stack" data-key="disc">${nominationList(v)}
     ${a.type === 'nominate' && a.mine ? `<p class="small muted center-text">${th('You accused <b>{name}</b>. One nomination per Day.', { name: rawName(a.mine) })}</p>` : ''}
-    <p class="small muted center-text">${v.day.nominees.length ? t('When nominations close, each nominee defends themselves.') : t('No nominations means no vote — and no sentence.')}</p></section>`;
+    ${v.day.nominees.length ? '' : `<p class="small muted center-text">${t('No nominations means no vote — and no sentence.')}</p>`}</section>`;
 }
 
 function defenseStage(v, me) {
