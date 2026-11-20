@@ -15,6 +15,7 @@ import { byId, pub } from '../engine/state.js';
 import { botDecide, botAvatar, BOT_NAMES } from './bots.js';
 import { interludeMs, OPEN_DURING_SCENES } from '../public/interludes.js';
 import { recommend } from '../engine/recommend.js';
+import { didIWin } from '../public/outcome.js';
 import { REMATCH_READY } from '../public/modes.js';
 import { redrawExorcism } from '../engine/exorcism.js';
 
@@ -126,7 +127,11 @@ export class RoomManager {
     const payload = cmd.payload && typeof cmd.payload === 'object' ? cmd.payload : {};
     if (!type.startsWith('host.') && !OPEN_DURING_SCENES(type) && this.holding(room)) throw new GameError('Wait for the scene to finish.', 'HOLD');
     if (type.startsWith('host.')) this.hostCommand(room, pid, type, payload, cmd.phaseId);
-    else playerCommand(m, pid, { type, payload, phaseId: cmd.phaseId }, this.rng, this.clock());
+    else if (type === 'end.vote') {
+      // F3: after a game every player can say what they want next; the host still decides.
+      if (!['again', 'another'].includes(payload.choice)) throw new GameError('Choose Again or Try another.');
+      (room.endVotes ||= {})[pid] = payload.choice;
+    } else playerCommand(m, pid, { type, payload, phaseId: cmd.phaseId }, this.rng, this.clock());
     this.changed(room);
     return { ok: true };
   }
@@ -155,6 +160,7 @@ export class RoomManager {
       case 'host.advance': hostAdvance(m, this.rng, now, { skipAll: !!payload.skipAll }); break;
       case 'host.extend': extendDeadline(m, Math.max(10, Math.min(300, Number(payload.seconds) || 30)), now); break;
       case 'host.end': abortMatch(m, now); break;
+      case 'host.eveningClear': room.evening = { games: [], rows: {} }; break;
       case 'host.xredraw': if (!m.X) throw new GameError('Nothing to redraw.'); redrawExorcism(m, this.rng, now); break;
       case 'host.rematch': { const x = REMATCH_READY.includes(m.config?.mode); rematch(m, { ready: x }); m.players.forEach((p) => { p.ready = x || p.bot || p.id === m.hostId; p.connected = this.isConnected(room, p.id); }); break; }
       case 'host.kick': {
@@ -287,7 +293,7 @@ export class RoomManager {
   viewFor(room, client) {
     const m = room.match;
     const now = this.clock();
-    if (client.board) { const hint = mimicBoardHint(m); return { ...publicView(m, now), boardAudio: this.boardAudio(room), ...(hint ? { mimicHint: hint } : {}) }; }
+    if (client.board) { const hint = mimicBoardHint(m); return { ...publicView(m, now), boardAudio: this.boardAudio(room), evening: this.eveningView(room), endVotes: this.endVotesView(room), ...(hint ? { mimicHint: hint } : {}) }; }
     if (m.moderated && client.pid === m.moderatorId) {
       const v = moderatorView(m, now);
       v.moderatorName = room.moderatorName;
@@ -297,9 +303,21 @@ export class RoomManager {
     return this.decorate(room, client, playerView(m, client.pid, now));
   }
 
+  eveningView(room) {
+    const ev = room.evening;
+    if (!ev?.games?.length) return null;
+    return { games: ev.games.slice(-12), rows: Object.entries(ev.rows).map(([id, r]) => ({ id, ...r })).sort((a, b) => b.pts - a.pts || b.wins - a.wins || a.name.localeCompare(b.name)) };
+  }
+  endVotesView(room, pid = null) {
+    const votes = Object.values(room.endVotes ?? {});
+    return { again: votes.filter((x) => x === 'again').length, another: votes.filter((x) => x === 'another').length, total: room.match.players.filter((p) => !p.bot).length, mine: pid ? room.endVotes?.[pid] ?? null : null };
+  }
+
   decorate(room, client, v) {
     const m = room.match;
     v.boardAudio = this.boardAudio(room);
+    v.evening = this.eveningView(room);
+    v.endVotes = this.endVotesView(room, client.pid);
     v.moderatorName = m.moderated ? room.moderatorName : null;
     if (v.host && room.lastRecovery?.forHost === client.pid && room.lastRecovery.expires > this.clock()) {
       v.host.recovery = { playerId: room.lastRecovery.playerId, code: room.lastRecovery.code };
@@ -371,8 +389,38 @@ export class RoomManager {
     if (Object.keys(patch).length) { try { updateSettings(m, patch); } catch { /* a recommendation never blocks the lobby */ } }
   }
 
+  /**
+   * F2: the evening ledger. Each finished game gives every player 0–2 evening points (a win 2; a place in the
+   * top half of a scored game, or surviving a game of elimination, 1), so a ten-minute game and an hour-long one
+   * weigh the same. Kept on the room, so it survives rematches and changes of game; the host can clear it.
+   */
+  recordEvening(room) {
+    const m = room.match;
+    if (m.phase !== 'ENDED' || !m.winner || m.winner === 'ABORTED' || room.eveningFor === m.phaseId) return;
+    room.eveningFor = m.phaseId;
+    const ev = (room.evening ||= { games: [], rows: {} });
+    const mode = modeOf(m.settings.preset);
+    const now = this.clock();
+    const ranked = ['omen', 'mirror', 'carnival', 'coffins'].includes(mode);
+    const scores = (v) => (mode === 'omen' ? v.omen?.scores : mode === 'mirror' ? v.mirror?.scores : mode === 'carnival' ? Object.fromEntries((v.carnival?.seats ?? []).filter((x) => !x.chair).map((x) => [x.id, x.souls ?? 0])) : mode === 'coffins' ? Object.fromEntries((v.coffins?.plots ?? []).map((x) => [x.id, x.wins ?? 0])) : null);
+    const winners = [];
+    for (const p of m.players) {
+      let v;
+      try { v = playerView(m, p.id, now); } catch { continue; }
+      const won = didIWin(v, m.winner);
+      let pts = won ? 2 : 0;
+      if (!won && ranked) { const sc = scores(v) ?? {}; const sorted = Object.values(sc).sort((a, b) => b - a); if ((sc[p.id] ?? 0) >= (sorted[Math.floor((sorted.length - 1) / 2)] ?? Infinity)) pts = 1; }
+      else if (!won && p.alive && ['classic', 'midnight'].includes(mode)) pts = 1;
+      const row = (ev.rows[p.id] ||= { name: p.name, pts: 0, games: 0, wins: 0 });
+      row.name = p.name; row.avatar = p.avatar ?? null; row.games++; row.pts += pts; if (won) { row.wins++; winners.push(p.name); }
+    }
+    ev.games.push({ mode, winner: m.winner, winners });
+  }
+
   changed(room) {
     this.syncRecommended(room);
+    this.recordEvening(room);
+    if (room.match.phase !== 'ENDED' && room.match.phase !== 'LOBBY') room.endVotes = {};
     this.stampScenes(room);
     this.syncPresence(room);
     this.arm(room);

@@ -7,6 +7,7 @@ import { sound, score, haptic, burstAt, celebrate, ambient, cue, setCueRoute } f
 import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './board.js';
 import { seatLayout, turnBead } from './layout.js';
 import { cover, modeTitle, modePitch, modeMeta } from './covers.js';
+import { didIWin } from './outcome.js';
 import { sceneMs, scenesFor, sceneSize, paceScale } from './interludes.js';
 import { MODES, MODE_IDS, FAMILIES, COLLECTION, modeOfPhase, modeInfo } from './modes.js';
 import { explainer } from './kit.js';
@@ -668,25 +669,6 @@ function midnightTitle(sides = []) {
   if (sides.includes('JESTER') && sides.includes('LIVING')) return 'The Jester and the Living win.';
   return { LIVING: 'The Living win.', DEATH: 'Death wins.', JESTER: 'The Jester wins.' }[sides[0]];
 }
-function didIWin(v, winner) {
-  const me = v?.me;
-  if (!me || me.moderator || winner === 'DRAW' || winner === 'ABORTED') return null;
-  if (winner === 'COFFINS') return v.coffins?.winner === me.id;
-  if (winner === 'CARNIVAL') return !!v.carnival?.winners?.includes(me.id);
-  if (winner === 'MIDNIGHT') return !!v.midnight?.winners?.players?.includes(me.id);
-  if (winner === 'SEANCE') return !!v.seance?.winners?.includes(me.id);
-  if (winner === 'OMEN') return !!v.omen?.winners?.includes(me.id);
-  if (winner === 'MIRROR') return !!v.mirror?.winners?.includes(me.id);
-  if (winner === 'MIMIC') { const r = v.mimic?.result; return r ? (r.side === 'LIVING') !== (r.mimic === me.id) : null; }
-  if (winner === 'GRAVEROBBERS') return !!v.graverobbers?.crews?.[v.graverobbers?.winner]?.includes(me.id);
-  if (winner === 'JESTER') return v.jesterId === me.id;
-  if (winner === 'LOVERS') return !!me.lover;
-  if (winner === 'RIPPER') return me.alignment === 'RIPPER';
-  if (winner === 'CULT') return me.alignment === 'CULT';
-  if (winner === 'DEMON') return me.alignment === 'DEATH';
-  return (winner === 'DEATH' && me.alignment === 'DEATH') || (winner === 'NON_DEATH' && me.alignment === 'NON_DEATH');
-}
-
 const noStop = (x) => String(x ?? '').replace(/[.。]\s*$/, '');
 /** Scores for the rank-based modes (C6), by player id: the viewer's place replaces 'Defeat'. */
 function rankScores(v) {
@@ -1920,7 +1902,7 @@ function lobbyMain(v, me) {
     // U5: a guest sees one screen — the game, how it works, their own face, and Ready in the dock.
     return `${head(v)}${moderated}${seatedStrip(v)}${gameCard(v, false)}${recCard(v, false)}${portrait}
       <div class="lobby-steps guest" data-key="lsteps">${how}${lobbyDeck(v, false, v.mode === 'classic' || v.mode === 'missions' ? setupSummary(v) : '')}</div>
-      ${invite}${problems}`;
+      ${invite}${eveningHtml(v)}${problems}`;
   }
   // U4: the host's lobby in three tabs — the table, the game, the rules.
   const tab = S.ui.ltab ?? 'table';
@@ -1928,7 +1910,7 @@ function lobbyMain(v, me) {
   let body = '';
   if (tab === 'table') {
     body = `${invite}${table}<p class="small muted center-text" data-key="seathint">${t('Tap a seat to move or remove a player.')}${v.mode === 'graverobbers' && (v.settings.g?.crews ?? 'seats') === 'seats' ? ` ${t('Moving a player across the table changes their crew.')}` : ''}</p>
-      ${portrait}${S.ui.botsPanel ? botsPanel(v) : ''}`;
+      ${portrait}${S.ui.botsPanel ? botsPanel(v) : ''}${eveningHtml(v, { host: true })}`;
   } else if (tab === 'game') {
     body = `${gameCard(v, true)}${recCard(v, true)}${v.mode === 'classic' ? balancePanel(v) : ''}<div class="lobby-steps" data-key="lsteps">${how}${lobbyDeck(v, true, v.mode === 'classic' || v.mode === 'missions' ? setupPresets(v) : '')}</div>`;
   } else {
@@ -2625,6 +2607,22 @@ function deathRoom(v, me, D) {
 }
 
 // ── End ────────────────────────────────────────────────────────────────────
+/** F3 + F2: after a game, every phone says what it wants next (Again / Try another), and the evening ledger. */
+function afterGame(v) {
+  const ev = v.endVotes;
+  const me = v.me;
+  const votes = me && !me.moderator && ev ? `<section class="end-votes" data-key="endvotes"><span class="kicker">${t('What next?')}</span>
+    <div class="seg"><button data-act="endVote" data-id="again" aria-pressed="${ev.mine === 'again'}">${t('Again')}${ev.again ? ` · ${ev.again}` : ''}</button><button data-act="endVote" data-id="another" aria-pressed="${ev.mine === 'another'}">${t('Try another')}${ev.another ? ` · ${ev.another}` : ''}</button></div></section>` : '';
+  return votes + eveningHtml(v);
+}
+function eveningHtml(v, { host = false } = {}) {
+  const e = v.evening;
+  if (!e?.rows?.length) return '';
+  return `<section class="evening" data-key="evening"><div class="rule">${t('Tonight\'s ledger')} · ${esc(tp('{n} game', '{n} games', e.games.length))}</div>
+    <ol class="ev-rows">${e.rows.map((r, i) => `<li class="${r.id === v.me?.id ? 'me' : ''}"><span class="ev-n">${i + 1}</span><span class="ev-face">${r.avatar ? avatarSvg(r.avatar, 'tok-av') : esc(initials(r.name))}</span><b>${esc(r.name)}</b><small>${esc(th('{w}/{g} won', { w: r.wins, g: r.games }))}</small><em>${r.pts}</em></li>`).join('')}</ol>
+    ${host ? `<button class="btn btn-sm btn-ghost" data-act="eveningClear">${t('Clear the ledger')}</button>` : ''}</section>`;
+}
+
 function endMain(v, me) {
   const vd = verdict(v);
   const revealed = !!modeInfo(v.mode).rolesAtEnd && v.players.some((p) => p.role);
@@ -2634,6 +2632,7 @@ function endMain(v, me) {
       <span class="tags">${p.lover ? `<span class="tag love" title="${esc(t('Lovers'))}">${glyph('heart')}</span>` : ''}<span class="tag ${p.alignment === 'DEATH' ? 'blood' : ''}">${esc(ALIGN[p.alignment] ?? '')}</span></span></li>`).join('')}</ul>` : `<p class="muted">${t('The host chose not to reveal roles.')}</p>`}</section>`;
   return `<section class="verdict ${v.winner === 'DEATH' || v.winner === 'DEMON' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<span class="kicker">${esc(vd.kicker)}</span><h1>${letters(vd.title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
       ${stampHtml(vd.stamp)}</section>
+    ${afterGame(v)}
     <div class="end-next" data-key="endnext">${v.host?.rematch ? `<button class="btn btn-solid btn-wide" data-act="rematch">${glyph('scroll')} ${t('Play again, same table')}</button>` : `<p class="small muted center-text">${t('Waiting for the host to start the next round.')}</p>`}</div>
     ${revealed ? ring(v, { reveal: true, center: v.mode === 'exorcism' ? '' : centerFor(v), marks: v.mode === 'missions' ? missionMarks(v) : {}, extra: v.mode === 'missions' ? hunchArrowsSvg(v) : '', orb: v.mode === 'exorcism' ? endOrb(v) : '' }) : ''}
     ${revealed && v.missions?.hunches?.length ? hunchLegend() : ''}
@@ -2879,7 +2878,7 @@ function boardView() {
   if (v.phase === 'LOBBY' && !S.board.howTimer) S.board.howTimer = setInterval(() => { if (onBoard() && V()?.phase === 'LOBBY') { S.board.howStep = (S.board.howStep ?? 0) + 1; render(); } }, 8000);
   // T1: the caption strip along the bottom of every TV board in play: a small join QR and the code for anyone
   // late or rejoining, the progress count at the right; news ribbons cross it in the middle (J6).
-  const caption = v.phase === 'LOBBY' ? '' : `<div class="tv-caption" data-key="tvcap"><span class="tc-join">${qrSvg(`${location.origin}/r/${v.code}`)}<span><small>${t('Join or rejoin')}</small><b>${esc(v.code)}</b></span></span><span class="tc-prog">${v.progress?.total ? esc(th('{done} of {total} done', v.progress)) : ''}</span></div>`;
+  const caption = v.phase === 'LOBBY' ? '' : `<div class="tv-caption" data-key="tvcap"><span class="tc-join">${qrSvg(`${location.origin}/r/${v.code}`)}<span><small>${t('Join or rejoin')}</small><b>${esc(v.code)}</b></span></span><span class="tc-prog">${v.phase === 'ENDED' && v.endVotes?.total ? esc(th('Again? {n} of {m} say yes', { n: v.endVotes.again, m: v.endVotes.total })) : v.progress?.total ? esc(th('{done} of {total} done', v.progress)) : ''}</span></div>`;
   const how = v.phase === 'LOBBY' ? guideHow(v.mode) : '';
   const steps = (how.match(/<li /g) || []).length || 1;
   return boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark, cover, how, howStep: (S.board.howStep ?? 0) % steps, avatar: (p) => (p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`) }) + caption + hint;
@@ -3042,6 +3041,8 @@ const ACT = {
   mFilter(el) { const F = S.ui.mfilter ?? (S.ui.mfilter = new Set(['count'])); const k = el.dataset.id; if (F.has(k)) F.delete(k); else F.add(k); render(); },
   ltab(el) { S.ui.ltab = el.dataset.id; render(); },
   recUse() { send('host.settings', { recommended: true }); },
+  endVote(el) { send('end.vote', { choice: el.dataset.id }); if (el.dataset.id === 'another' && V()?.host && V()?.phase === 'LOBBY') { S.ui.sheet = 'modes'; render(); } },
+  eveningClear() { send('host.eveningClear'); },
   gameMode(el) {
     if (S.ui.sheet === 'modes') { S.ui.sheet = null; render(); }
     if (el.dataset.mode === V().mode) return;
