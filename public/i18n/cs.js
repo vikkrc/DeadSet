@@ -1564,7 +1564,7 @@ export default {
     "Bury": "Pohřeb",
     "Bury another coffin, or challenge": "Zakopej další rakev, nebo vyzvi",
     "Bury another coffin, or challenge?": "Další rakev, nebo výzva?",
-    "Bury for the slow ones": "Zakopat za pomalé",
+    "Bury for anyone still choosing": "Zakopat za ty, kdo ještě vybírají",
     "Bury or challenge": "Zakopat, nebo vyzvat",
     "Bury your first coffin": "Zakopej svou první rakev",
     "Cancel": "Zrušit",

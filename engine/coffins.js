@@ -569,7 +569,7 @@ export function coffinsAdvance(m, rng, now) {
 }
 
 export const C_ADVANCE_LABEL = {
-  C_LOTTERY: 'Skip the draw', C_BURY: 'Bury for the slow ones', C_TURN: 'Skip this turn', C_BID: 'Pass for them', C_WAGER: 'Close the wagers', C_DIG: 'Dig for them', C_LOSE: 'Choose for them',
+  C_LOTTERY: 'Skip the draw', C_BURY: 'Bury for anyone still choosing', C_TURN: 'Skip this turn', C_BID: 'Pass for them', C_WAGER: 'Close the wagers', C_DIG: 'Dig for them', C_LOSE: 'Choose for them',
 };
 
 // ── Views ──────────────────────────────────────────────────────────────────

@@ -1564,7 +1564,7 @@ export default {
     "Bury": "Enterrar",
     "Bury another coffin, or challenge": "Entierra otro ataúd o desafía",
     "Bury another coffin, or challenge?": "¿Otro ataúd o un desafío?",
-    "Bury for the slow ones": "Enterrar por los lentos",
+    "Bury for anyone still choosing": "Enterrar por quien aún elige",
     "Bury or challenge": "Enterrar o desafiar",
     "Bury your first coffin": "Entierra tu primer ataúd",
     "Cancel": "Cancelar",

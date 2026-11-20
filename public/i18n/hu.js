@@ -1564,7 +1564,7 @@ export default {
     "Bury": "Temetés",
     "Bury another coffin, or challenge": "Temess még egy koporsót, vagy hívj ki",
     "Bury another coffin, or challenge?": "Még egy koporsó, vagy kihívás?",
-    "Bury for the slow ones": "Temess a lassúk helyett",
+    "Bury for anyone still choosing": "Temess azok helyett, akik még választanak",
     "Bury or challenge": "Temetés vagy kihívás",
     "Bury your first coffin": "Temesd el az első koporsód",
     "Cancel": "Mégse",

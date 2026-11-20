@@ -1564,7 +1564,7 @@ export default {
     "Bury": "Begraben",
     "Bury another coffin, or challenge": "Noch einen Sarg vergraben oder herausfordern",
     "Bury another coffin, or challenge?": "Noch ein Sarg oder herausfordern?",
-    "Bury for the slow ones": "Für die Langsamen vergraben",
+    "Bury for anyone still choosing": "Für alle vergraben, die noch wählen",
     "Bury or challenge": "Vergraben oder herausfordern",
     "Bury your first coffin": "Vergrabe deinen ersten Sarg",
     "Cancel": "Abbrechen",
