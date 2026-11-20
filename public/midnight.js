@@ -10,6 +10,7 @@ import { emblem } from './emblems.js';
 import { cardArt, roleNumber } from './cards.js';
 import { t, th, tmh, roleF } from './i18n.js';
 import { avatarSvg } from './avatar.js';
+import { seatLayout } from './layout.js';
 
 export const isMidnightPhase = (ph) => typeof ph === 'string' && ph.startsWith('N_');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -62,10 +63,19 @@ const slip = (kicker, title, sub = '', cls = '') => `<div class="k-slip ${cls} r
  * Choosing on the table ring (C2), like every other pick: the choosable seats breathe, the chosen one turns to
  * vellum, the rest dim. When the step may pick table cards, they lie face down in the ring's centre disc.
  */
+/** AT4: the silver table of cards — one face-down card beside every seat, just inside it. */
+function seatCards(v) {
+  const seated = [...v.players].sort((a, b) => a.seat - b.seat);
+  const { pos } = seatLayout(seated.length);
+  return `<div class="nseat-cards" aria-hidden="true" data-key="nseatc">${seated.map((p, i) => { const q = pos[i]; const x = 50 + (q.x - 50) * 0.66; const y = 50 + (q.y - 50) * 0.66; return `<i class="nsc" style="left:${x.toFixed(2)}%;top:${y.toFixed(2)}%">${ncard(null, { back: true, cls: 'mini' })}</i>`; }).join('')}</div>`;
+}
+/** The three table cards, face down in the disc. */
+const tableDisc = () => `<div class="ntable in-ring still" data-key="ntable-still">${TABLE.map(() => `<span class="ntc">${ncard(null, { back: true })}</span>`).join('')}</div>`;
+
 function picker(v, ids, h, { selected = [], act = 'nPick', tables = false } = {}) {
   const sel = new Set(selected);
   const tbl = tables ? `<div class="ntable in-ring" data-key="ntable">${TABLE.map((c, i) => `<button class="ntc ${sel.has(c) ? 'sel' : ''}" data-act="${act}" data-id="${c}" aria-pressed="${sel.has(c)}" aria-label="${esc(th('Table card {n}', { n: ROMAN[i + 1] }))}">${ncard(null)}<small>${ROMAN[i + 1]}</small></button>`).join('')}</div>` : '';
-  return h.ring(v, { pick: { ids, selected: [...sel].filter((x) => !isTable(x)), act }, center: tbl });
+  return h.ring(v, { pick: { ids, selected: [...sel].filter((x) => !isTable(x)), act }, center: tbl || tableDisc(), extra: seatCards(v) });
 }
 
 /** What you have seen tonight, as a vellum report. */
@@ -118,8 +128,9 @@ export function midnightMain(v, me, h) {
     }
     case 'N_DAY':
       stage = `${slip(t('Dawn'), t('Who are you now?'), t('Your card may have changed hands in the night. Talk it over; the vote comes when the time runs out.'))}
-        ${report(me?.n?.seen)}
-        <div class="ndealt" data-key="ndealt"><span class="kicker">${t('You were dealt')}</span>${ncard(me?.n?.dealt, { cls: 'thumb' })}<b>${esc(rname(me?.n?.dealt))}</b></div>`;
+        ${h.ring(v, { center: tableDisc(), extra: seatCards(v) })}
+        <div class="ndawn-row" data-key="ndawnrow"><div class="ndealt big" data-key="ndealt"><span class="kicker">${t('You were dealt')}</span>${ncard(me?.n?.dealt, { cls: 'dealt' })}</div>${report(me?.n?.seen)}</div>
+        ${N.steps?.length ? `<div class="nwake" data-key="nwake"><span class="kicker">${t('Wake order')}</span><ol>${N.steps.map((r) => `<li>${nicon(r)}<span>${esc(rname(r))}</span></li>`).join('')}</ol></div>` : ''}`;
       break;
     case 'N_VOTE':
       stage = `${slip(t('The vote'), t(a.choice ? 'Your finger is pointed' : 'Point at one player'), a.choice ? th('You point at {name}. {done}/{total} have pointed.', { name: pname(v, a.choice), ...(v.progress ?? { done: 0, total: 0 }) }) : t('The most voted die, if they have two votes or more. If a Death dies, the Living win.'))}

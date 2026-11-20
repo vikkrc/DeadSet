@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Drei Missionen gescheitert",
     "Use the Candle": "Benutze die Kerze",
     "Game mode": "Spielmodus",
+    "Wake order": "Weckreihenfolge",
     "Seer": "Seher",
     "Prediction · Turn": "Vorhersage · Drehung",
     "Points": "Punkte",

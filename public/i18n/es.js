@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tres misiones fracasaron",
     "Use the Candle": "Usa la Vela",
     "Game mode": "Modo de juego",
+    "Wake order": "Orden del despertar",
     "Seer": "Vidente",
     "Prediction · Turn": "Predicción · Giro",
     "Points": "Puntos",

@@ -5320,3 +5320,21 @@ button.mr-fate { cursor: pointer; }
 .kl-head { background: none !important; border: 0 !important; padding-block: 0 !important; min-height: 0 !important; }
 .kl-head b, .kl-head span { font: 600 var(--fs-label)/1.2 var(--text); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ash); }
 .o-rot { font-size: 20px; }
+
+/* AT4: Midnight's silver table of cards — a face-down card just inside every seat, the table cards in the disc */
+.nseat-cards { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+.nsc { position: absolute; transform: translate(-50%, -50%); }
+.nsc .ncard { font-size: 3.2px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); }
+.ring.dense .nsc .ncard { font-size: 2.4px; }
+.ntable.still { pointer-events: none; gap: 6px; margin: 0; }
+.ntable.still .ncard { font-size: 4.2px; }
+/* U9: the dawn screen — what you were dealt at 118 px, what only you know, the deck in wake order */
+.ndealt.big { flex-direction: row; gap: 12px; justify-content: flex-start; }
+.ndealt.big .kicker { writing-mode: vertical-rl; transform: rotate(180deg); }
+.ndealt .ncard.dealt { font-size: 11.5px; }
+.nwake { margin: 10px 0 4px; }
+.nwake ol { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 10px; }
+.nwake li { display: inline-flex; align-items: center; gap: 5px; font: 500 13px/1.2 var(--text); color: var(--bone-2); }
+.nwake li .nic { width: 20px; height: 20px; }
+.ndawn-row { display: flex; gap: 12px; align-items: flex-start; }
+.ndawn-row .nreport { flex: 1; margin: 0; }

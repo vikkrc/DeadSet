@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tri misie zlyhali",
     "Use the Candle": "Použi Sviečku",
     "Game mode": "Herný režim",
+    "Wake order": "Poradie prebúdzania",
     "Seer": "Veštec",
     "Prediction · Turn": "Predpoveď · Otočenie",
     "Points": "Body",

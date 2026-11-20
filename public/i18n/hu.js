@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "Wake order": "Ébredési sorrend",
     "Seer": "Látó",
     "Prediction · Turn": "Jóslat · Forgatás",
     "Points": "Pontok",
