@@ -128,7 +128,7 @@ export function boardScreen(v, h) {
   const place = v.scenario ? scen('WHERE', v.scenario.where).replace(/^(a|an|the)\s+/i, '') : '';
   const soundCtl = !v.table?.score ? `<span class="b-sound off">${t('Score off')}</span>`
     : !audio ? `<button class="b-sound start" data-act="boardScore">${glyph('bell')} ${t('Start the score')}</button>`
-      : `<button class="b-sound on" data-act="boardMute">${glyph('bell')}<span class="eq"><i></i><i></i><i></i><i></i></span> ${night ? t('Night score') : t('Day score')}</button>`;
+      : `<button class="b-sound on icon" data-act="boardMute" aria-label="${esc(night ? t('Night score') : t('Day score'))}" title="${esc(night ? t('Night score') : t('Day score'))}">${glyph('bell')}<span class="eq"><i></i><i></i><i></i><i></i></span></button>`;
   const header = `<header class="b-head" data-key="bhead">
     <span class="b-brand">${wordmark()}${v.phase === 'LOBBY' || v.mode === 'classic' ? '' : `<span class="b-mode">${esc(modeName(v).replace(/^Dead Set\s*[:·–-]\s*/i, ''))}</span>`}</span>
     <span class="b-phase">${pw.night ? `<i>${esc(pw.word)}</i>` : esc(pw.word)}${pw.num ? `<sup>${esc(pw.num)}</sup>` : ''}</span>

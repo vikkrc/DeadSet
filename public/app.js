@@ -2831,11 +2831,32 @@ function recapHtml(v) {
 }
 
 // ── Board (public TV display) ──────────────────────────────────────────────
+/**
+ * T4: TV chrome. Offer full screen once (F, or the first tap anywhere) and remember the choice; hide the cursor
+ * after three still seconds; drift the whole board a few pixels every few minutes against burn-in.
+ */
+const FS_KEY = 'deadset:tvfull';
+let tvChromeOn = false;
+function tvChrome() {
+  if (tvChromeOn) return;
+  tvChromeOn = true;
+  const want = () => localStorage.getItem(FS_KEY) !== 'off';
+  const full = () => { if (!document.fullscreenElement && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().then(() => localStorage.setItem(FS_KEY, 'on')).catch(() => {}); };
+  document.addEventListener('keydown', (e) => { if (onBoard() && (e.key === 'f' || e.key === 'F') && !e.target.closest?.('input,textarea')) { if (document.fullscreenElement) { document.exitFullscreen?.(); localStorage.setItem(FS_KEY, 'off'); } else full(); } });
+  document.addEventListener('pointerdown', () => { if (onBoard() && want() && !document.fullscreenElement && !S.board.fsAsked) { S.board.fsAsked = true; full(); } }, { capture: true });
+  document.addEventListener('fullscreenchange', () => { if (onBoard()) render(); });
+  let idle = null;
+  document.addEventListener('mousemove', () => { if (!onBoard()) return; document.body.classList.remove('tv-idle'); clearTimeout(idle); idle = setTimeout(() => document.body.classList.add('tv-idle'), 3000); });
+  setInterval(() => { if (!onBoard()) return; const r = () => Math.round((Math.random() - 0.5) * 8); document.body.style.setProperty('--drift', `${r()}px ${r()}px`); }, 180000);
+}
+
 function boardView() {
   const v = V();
   if (S.conn === 'gone') return goneScreen();
   if (!v) return loadingScreen();
-  return boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark });
+  tvChrome();
+  const hint = !document.fullscreenElement && !S.board.fsAsked && localStorage.getItem(FS_KEY) !== 'off' ? `<div class="tv-fs-hint" data-key="tvfs">${t('Press F or tap for full screen')}</div>` : '';
+  return boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark }) + hint;
 }
 
 // ── Dock (primary action) ──────────────────────────────────────────────────

@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tres misiones fracasaron",
     "Use the Candle": "Usa la Vela",
     "Game mode": "Modo de juego",
+    "Press F or tap for full screen": "Pulsa F o toca para pantalla completa",
     "Death much stronger": "La Muerte mucho más fuerte",
     "Death stronger": "La Muerte más fuerte",
     "The town much stronger": "El pueblo mucho más fuerte",

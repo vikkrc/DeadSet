@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tři mise selhaly",
     "Use the Candle": "Použij Svíčku",
     "Game mode": "Herní režim",
+    "Press F or tap for full screen": "Stiskni F nebo klepni pro celou obrazovku",
     "Death much stronger": "Smrt mnohem silnější",
     "Death stronger": "Smrt silnější",
     "The town much stronger": "Město mnohem silnější",

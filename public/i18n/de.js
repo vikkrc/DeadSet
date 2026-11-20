@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Drei Missionen gescheitert",
     "Use the Candle": "Benutze die Kerze",
     "Game mode": "Spielmodus",
+    "Press F or tap for full screen": "F drücken oder tippen für Vollbild",
     "Death much stronger": "Tod viel stärker",
     "Death stronger": "Tod stärker",
     "The town much stronger": "Die Stadt viel stärker",

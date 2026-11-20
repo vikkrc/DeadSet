@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "Press F or tap for full screen": "Nyomd meg az F-et vagy koppints a teljes képernyőhöz",
     "Death much stronger": "A Halál sokkal erősebb",
     "Death stronger": "A Halál erősebb",
     "The town much stronger": "A város sokkal erősebb",
