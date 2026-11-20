@@ -1228,13 +1228,14 @@ function seal(v, { turn = null, sealed = [], center = '', marks = {}, size = 104
   const mid = who
     ? `<span class="c who" data-key="sc-who-${who.id}">${esc([...(who.name ?? '?')][0] ?? '?')}</span><span class="nm">${esc(turn === mine ? t('You') : who.name)}</span>`
     : `<span class="c" data-key="sc-mid">${center}</span>`;
-  return `<button type="button" class="tseal ${turn && turn === mine ? 'mine' : ''}" style="--s:${size}px" data-act="sheet" data-id="table" data-form="seal" data-key="${key}" aria-label="${esc(t('The table'))}">${mid}${dots}</button>`;
+  return `<button type="button" class="tseal ${n >= 13 ? 'many' : ''} ${turn && turn === mine ? 'mine' : ''}" style="--s:${size}px" data-act="sheet" data-id="table" data-form="seal" data-key="${key}" aria-label="${esc(t('The table'))}">${mid}${dots}</button>`;
 }
 
 function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = {}, lobby = false, crack = false, extra = '', orb = '', crews = null, turn = undefined } = {}) {
   const players = [...v.players].sort((a, b) => a.seat - b.seat);
   const n = Math.max(players.length, slots);
-  const { pos, tok, dense } = seatLayout(n);
+  const { pos, tok, dense, step } = seatLayout(n);
+  const crowded = step === 'crowded';
   const me = v.me;
   const d = v.day;
   const nomIdx = (id) => (d?.nominees ?? []).indexOf(id);
@@ -1254,7 +1255,7 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
       isSel ? 'sel' : '', selectable ? 'can' : pick ? 'mute' : '', pick?.tone === 'kill' ? 'kill' : '',
       ni >= 0 ? 'accused' : '', d?.speaking === p.id ? 'speaking' : '', p.immune ? 'immune' : '',
       lobby ? (p.ready ? 'ready' : 'unready') : '', reveal && p.alignment === 'DEATH' ? 'death' : '',
-      me?.teammates?.some((t) => t.id === p.id) ? 'mate' : '', pos[i].inner ? 'inner' : '',
+      me?.teammates?.some((t) => t.id === p.id) ? 'mate' : '', pos[i].inner ? 'inner' : dense && pos[i].y < 50 ? 'up' : '',
       // What this phone privately knows (Missions): Death seen by the Medium or by Candlelight, the Believer's candles.
       me?.seesDeath?.some((x) => x.id === p.id) || me?.candleSeen?.some((x) => x.id === p.id && x.death) ? 'known-death' : '',
       me?.candleSeen?.some((x) => x.id === p.id && !x.death) || me?.twin?.id === p.id ? 'known-living' : '',
@@ -1270,7 +1271,8 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     if (crews?.[p.id]) badges.push(`<b class="bdg b-crew" data-key="crew-${crews[p.id]}">${glyph(crews[p.id] === 'B' ? 'moon' : 'sun')}</b>`);
     if (marks[p.id]) badges.push(`<b class="bdg b-mark" data-key="mark">${marks[p.id]}</b>`);
     if (pick?.stamp === p.id) badges.push(`<b class="bdg b-stamp" data-key="stamp-${p.id}">${glyph('check')}</b>`);
-    const inner = reveal && p.role ? glyph(p.role.glyph) : p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${initials(p.name)}</span>`;
+    // Y-scale: from 19 seats the medallions carry letters; the lens shows the portrait and name.
+    const inner = reveal && p.role ? glyph(p.role.glyph) : p.avatar && !(crowded && !onBoard()) ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${initials(p.name)}</span>`;
     if (p.bot && (lobby || v.phase === 'LOBBY')) badges.push(`<b class="bdg b-bot" data-key="bot">${glyph('bot')}</b>`);
     const label = `${esc(p.name)}${p.alive ? '' : `, ${t('dead')}`}${isSel ? `, ${t('selected')}` : ''}`;
     seats.push(`<button type="button" class="${cls}" data-key="tok-${p.id}" style="left:${x}%;top:${y}%" ${selectable ? `data-act="${pick.act}" data-id="${p.id}"` : 'tabindex="-1"'} aria-pressed="${isSel}" aria-label="${label}">
@@ -1283,7 +1285,11 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
   // M2: the turn bead (Classic: the accused who is speaking; other modes pass `turn`).
   const turnId = turn !== undefined ? turn : v.phase === 'DAY_DEFENSE' ? d?.speaking : null;
   const beadFor = turnId ? turnBead(pos[players.findIndex((p) => p.id === turnId)]) : '';
-  return `<div class="ring-wrap" data-key="ring-wrap" data-form="${lobby ? 'seat' : 'play'}"><div class="ring ${dense ? 'dense' : ''} ${tok < 44 ? 'small-tok' : ''} ${pick ? 'picking' : ''} ${pick?.tone === 'kill' ? 'kill' : ''} ${orb ? 'orb' : ''} ${crewRays ? 'crewed' : ''}" style="--tok:${tok}px;--orbit:${orbitInset}%${crewRays ? `;--crewrays:${crewRays}` : ''}" data-key="ring">
+  // Y7: the lens — press and slide over a crowded table; the seat under the finger rises with its name.
+  const lensP = crowded && S.ui.lens ? players.find((p) => p.id === S.ui.lens) : null;
+  const lensI = lensP ? players.indexOf(lensP) : -1;
+  const lens = lensP ? `<div class="lens" data-key="lens" style="left:clamp(46px, ${pos[lensI].x.toFixed(2)}%, calc(100% - 46px));top:${pos[lensI].y.toFixed(2)}%" aria-hidden="true"><span class="lens-disc">${lensP.avatar ? avatarSvg(lensP.avatar, 'tok-av') : `<span class="tok-ini">${initials(lensP.name)}</span>`}</span><b>${esc(lensP.name)}</b></div>` : '';
+  return `<div class="ring-wrap" data-key="ring-wrap" data-form="${lobby ? 'seat' : 'play'}"><div class="ring step-${step} ${dense ? 'dense' : ''} ${tok < 44 ? 'small-tok' : ''} ${pick ? 'picking' : ''} ${pick?.tone === 'kill' ? 'kill' : ''} ${orb ? 'orb' : ''} ${crewRays ? 'crewed' : ''}" style="--tok:${tok}px;--orbit:${orbitInset}%${crewRays ? `;--crewrays:${crewRays}` : ''}" data-key="ring">
     <svg class="ring-fuse off" viewBox="0 0 100 100" data-ringfuse aria-hidden="true"><circle class="track" cx="50" cy="50" r="49"/><circle class="burn" cx="50" cy="50" r="49" pathLength="100"/></svg>
     <div class="ring-table" aria-hidden="true"></div>
     ${orb ? `<div class="ring-orb" data-key="ring-orb">${orb}</div>` : ''}
@@ -1291,6 +1297,7 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     ${seats.join('')}
     ${beadFor}
     <div class="ring-center" data-key="center">${center}</div>
+    ${lens}
   </div></div>`;
 }
 
@@ -3037,6 +3044,49 @@ Object.assign(ACT, coffinsActs({ S, V, send: (...a) => send(...a), render: () =>
 Object.assign(ACT, missionActs({ S, V, send: (...a) => send(...a), render: () => render(), picked, burstAt, sound, haptic }));
 
 const QUIET = new Set([...OMEN_QUIET, ...MIRROR_QUIET, ...MIMIC_QUIET, ...GRAVE_QUIET, ...SEANCE_QUIET, ...MIDNIGHT_QUIET, ...CARNIVAL_QUIET, ...COFFINS_QUIET, 'xPickVote', 'xPickGuess', 'xFlip', 'xPeek', 'xGrid', 'mPickLantern', 'mPickTeam', 'mPickWard', 'mPickHunch', 'mPickCandle', 'mPickWitness', 'mPickHaunt', 'mPickAccuse', 'mPickReckon', 'mPickCard', 'avPart', 'avRandom', 'codeTap', 'boardScore', 'boardMute', 'pickNominate', 'pickVote', 'pickRetaliate', 'pickSwap', 'pickTarget', 'pickOption', 'pickNightmare', 'pickConspire', 'pickDeath', 'shoot', 'sound', 'pickUseOption', 'momentNext']);
+// Y7: the lens on a crowded table (19+ seats). Press and slide: the selectable seat nearest the finger rises
+// in the lens; lift to pick it (the dock then names it again before you confirm). A plain tap still works.
+let lensDrag = null;
+function lensNearest(ring, x, y) {
+  let best = null; let bd = 1e9;
+  for (const b of ring.querySelectorAll('.tok.can')) {
+    const r = b.querySelector('.tok-disc').getBoundingClientRect();
+    const d = Math.hypot(r.left + r.width / 2 - x, r.top + r.height / 2 - y);
+    if (d < bd) { bd = d; best = b; }
+  }
+  return bd < 56 ? best : null;
+}
+function lensAt(e) {
+  const b = lensNearest(lensDrag.ring, e.clientX, e.clientY);
+  const id = b?.dataset.id ?? null;
+  if (id !== S.ui.lens) { S.ui.lens = id; if (id) uiHaptic(4); render(); }
+}
+document.addEventListener('pointerdown', (e) => {
+  const ring = e.target.closest?.('.ring.step-crowded.picking');
+  if (!ring) return;
+  lensDrag = { ring, moved: false, x: e.clientX, y: e.clientY };
+  lensAt(e);
+}, true);
+document.addEventListener('pointermove', (e) => {
+  if (!lensDrag) return;
+  if (Math.hypot(e.clientX - lensDrag.x, e.clientY - lensDrag.y) > 6) lensDrag.moved = true;
+  lensDrag.ring = document.querySelector('.ring.step-crowded.picking') ?? lensDrag.ring;
+  lensAt(e);
+}, true);
+let lensSwallow = false;
+['pointerup', 'pointercancel'].forEach((type) => document.addEventListener(type, (e) => {
+  if (!lensDrag) return;
+  const { moved } = lensDrag;
+  lensDrag = null;
+  const id = S.ui.lens;
+  S.ui.lens = null;
+  if (type === 'pointerup' && moved && id) {
+    const b = document.querySelector(`.ring.step-crowded .tok.can[data-id="${CSS.escape(id)}"]`);
+    if (b) { lensSwallow = true; setTimeout(() => { lensSwallow = false; }, 400); ACT[b.dataset.act]?.(b, e); }
+  }
+  render();
+}, true));
+document.addEventListener('click', (e) => { if (lensSwallow) { lensSwallow = false; e.preventDefault(); e.stopPropagation(); } }, true);
 document.addEventListener('click', (e) => {
   const link = e.target.closest('a[data-link]');
   if (link && link.origin === location.origin && !e.metaKey && !e.ctrlKey) { e.preventDefault(); go(link.pathname); return; }
