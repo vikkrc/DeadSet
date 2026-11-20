@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dead Set — TV end and the night's ledger</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ds.css">
+<link rel="stylesheet" href="./workshop.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Grenze+Gotisch:wght@400;600;800&amp;family=UnifrakturCook:wght@700&amp;display=swap">
+<style>
+body{margin:0}
+.aw{display:grid;justify-items:center;gap:10px;text-align:center;padding:22px 18px;border:1px solid #3b3027;background:#15110e}
+.aw img{width:110px;height:110px}
+.aw b{font:600 30px/1 'Grenze Gotisch',serif}
+.aw .who{font:600 22px/1 'EB Garamond',serif;color:#c9a35a}
+.aw span.c{font:italic 400 18px/1.25 'EB Garamond',serif;color:#c2b496}
+.lt{width:100%;border-collapse:collapse}
+.lt th{font:600 12px/1 'EB Garamond',serif;letter-spacing:.18em;text-transform:uppercase;color:#93866e;text-align:right;padding:0 8px 10px}
+.lt th:first-child{text-align:left}
+.lt td{padding:9px 8px;border-top:1px solid #3b3027;font-size:21px;text-align:right;font-variant-numeric:tabular-nums}
+.lt td:first-child{text-align:left}
+.lt td:last-child{color:#ecd28f;font-weight:500}
+.lt tr.top td{color:#ecd28f}
+</style>
+</helmet>
+<div class="ds tv" style="width:1600px;height:900px;display:grid;grid-template-rows:96px 1fr 76px;--glow:rgba(107,85,168,.2)">
+  <div style="display:flex;align-items:center;gap:22px;padding:0 48px;border-bottom:1px solid #3b3027">
+    <span class="mark" style="font-size:30px">Dead <span class="red">Set</span></span>
+    <span class="lab gilt">Exorcism</span>
+    <h1 class="bl" style="font-size:52px">The End</h1>
+    <span class="lab">The Demon wins · the password was Pumpkin</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 470px;gap:48px;padding:32px 48px">
+    <div style="display:grid;gap:18px;align-content:start">
+      <span class="lab gilt">From this game</span>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px">
+        <div class="aw"><img class="inv" src="./art/s_restless.svg" alt=""><b>First to suspect</b><span class="who">Edda</span><span class="c">voted for the Demon before anyone else</span></div>
+        <div class="aw"><img class="inv" src="./art/s_against.svg" alt=""><b>Red herring</b><span class="who">Cass</span><span class="c">three votes, and Living all along</span></div>
+        <div class="aw"><img class="inv" src="./art/p_feather.svg" alt=""><b>Silver tongue</b><span class="who">Bram</span><span class="c">the Demon's word fooled the table</span></div>
+      </div>
+      <p class="cap">Awards are computed from what happened (votes, words, reads, sabotage); two or three per game, chosen from a per-mode list, never revealing anything the end screen does not already reveal.</p>
+    </div>
+
+    <div class="fr" style="padding:26px 28px;display:grid;align-content:start;gap:14px">
+      <span class="lab gilt">Tonight's ledger</span>
+      <table class="lt">
+        <tr><th>Player</th><th>Classic</th><th>Mirror</th><th>Exorc.</th><th>Total</th></tr>
+        <tr class="top"><td>Bram</td><td>1</td><td>4</td><td>2</td><td>7</td></tr>
+        <tr><td>Edda</td><td>1</td><td>3</td><td>1</td><td>5</td></tr>
+        <tr><td>Viktor</td><td>1</td><td>3</td><td>0</td><td>4</td></tr>
+        <tr><td>Ash</td><td>0</td><td>4</td><td>0</td><td>4</td></tr>
+        <tr><td>Cass</td><td>1</td><td>2</td><td>0</td><td>3</td></tr>
+        <tr><td>Dorian</td><td>0</td><td>2</td><td>1</td><td>3</td></tr>
+      </table>
+      <p class="cap" style="font-size:16px">Each game converts to 0–2 evening points (win 2, place 1), so a ten-minute game and an hour-long one weigh the same. The host can clear it.</p>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:24px;padding:0 48px;border-top:1px solid #3b3027">
+    <span style="font-size:24px">Again? 4 of 6 say yes.</span>
+    <span class="it dim" style="font-size:20px">The host can also pick another game; the table and portraits stay.</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1600,"height":900}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>
