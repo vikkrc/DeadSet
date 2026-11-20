@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Tři mise selhaly",
     "Use the Candle": "Použij Svíčku",
     "Game mode": "Herní režim",
+    "Keep this screen awake": "Nechat obrazovku zapnutou",
+    "Stops this phone dimming during a game.": "Telefon během hry neztmavne.",
     "Chapters": "Kapitoly",
     "The modes": "Herní režimy",
     "Classic Dead Set": "Klasický Dead Set",

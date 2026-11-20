@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Tres misiones fracasaron",
     "Use the Candle": "Usa la Vela",
     "Game mode": "Modo de juego",
+    "Keep this screen awake": "Mantener la pantalla encendida",
+    "Stops this phone dimming during a game.": "El móvil no se apaga durante una partida.",
     "Chapters": "Capítulos",
     "The modes": "Los modos de juego",
     "Classic Dead Set": "Dead Set clásico",

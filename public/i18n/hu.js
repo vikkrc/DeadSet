@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "Keep this screen awake": "A képernyő ébren tartása",
+    "Stops this phone dimming during a game.": "A telefon nem sötétül el játék közben.",
     "Chapters": "Fejezetek",
     "The modes": "A játékmódok",
     "Classic Dead Set": "Klasszikus Dead Set",

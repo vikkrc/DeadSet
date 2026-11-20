@@ -727,6 +727,7 @@ function render() {
   legibility();
   app.querySelectorAll('[data-scroll]').forEach((el) => { if (bottoms[el.dataset.scroll] !== false) el.scrollTop = el.scrollHeight; });
   tickClock();
+  syncWake();
 }
 
 /**
@@ -1327,7 +1328,7 @@ function sheet(v) {
   let body = '';
   if (s === 'record') {
     title = `${esc(modeName(v))} · ${th('Room {code}', { code: '%CODE%' }).replace('%CODE%', `<span class="code-txt">${esc(v.code)}</span>`)}`;
-    body = `${hostBox()}<section class="menu-sec" data-key="msec-device"><div class="rule">${t('This device')}</div>${langRow(v)}${phoneMusicToggle()}${v.me?.moderator ? '' : tutorialToggle()}</section>
+    body = `${hostBox()}<section class="menu-sec" data-key="msec-device"><div class="rule">${t('This device')}</div>${langRow(v)}${awakeToggle()}${phoneMusicToggle()}${v.me?.moderator ? '' : tutorialToggle()}</section>
       <section class="menu-sec" data-key="msec-record">${recordBlock(v)}</section>
       <section class="menu-sec menu-actions" data-key="msec-actions"><div class="rule">${t('Leave or learn')}</div><div class="menu-links"><a class="btn btn-sm btn-ghost" href="/guide" data-link>${t('How to play')}</a><button class="btn btn-sm btn-ghost" data-act="leave">${glyph('out')} ${t('Leave this device')}</button></div>
       ${holdBtn('backHome', t('Hold to go back to the start'), 'btn-sm btn-wide', { key: 'backhome' })}</section>`;
@@ -2221,6 +2222,31 @@ const tipsOn = () => localStorage.getItem(TIPS_KEY) === '1';
 const tipsSeen = () => { try { return new Set(JSON.parse(localStorage.getItem(TIPS_SEEN) || '[]')); } catch { return new Set(); } };
 const MUSIC_KEY = 'deadset:phoneMusic';
 function phoneMusicOn() { try { return localStorage.getItem(MUSIC_KEY) === '1'; } catch { return false; } }
+// R3: keep the screen awake during play (and always on the TV), so phones don't dim mid-discussion.
+const AWAKE_KEY = 'deadset:awake';
+const awakeOn = () => { try { return localStorage.getItem(AWAKE_KEY) !== '0'; } catch { return true; } };
+let wakeLock = null;
+let wakeWanted = false;
+let wakeBusy = false;
+async function syncWake() {
+  const v = V();
+  const want = awakeOn() && !!v && ((S.route?.name === 'room' && v.phase !== 'LOBBY') || S.route?.name === 'board') && document.visibilityState === 'visible';
+  wakeWanted = want;
+  if (!('wakeLock' in navigator)) return;
+  if (wakeBusy) return;
+  wakeBusy = true;
+  try {
+    if (want && !wakeLock) {
+      wakeLock = await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener?.('release', () => { wakeLock = null; });
+      if (!wakeWanted) { const l = wakeLock; wakeLock = null; await l.release(); }
+    } else if (!want && wakeLock) { const l = wakeLock; wakeLock = null; await l.release(); }
+  } catch { wakeLock = null; /* unsupported, denied or not visible: fail silently */ } finally { wakeBusy = false; }
+}
+document.addEventListener('visibilitychange', () => { syncWake(); });
+function awakeToggle() {
+  return `<label class="toggle-row" data-key="awake"><span><b>${t('Keep this screen awake')}</b><small>${t('Stops this phone dimming during a game.')}</small></span><input type="checkbox" class="switch" data-act="awakeToggle" ${awakeOn() ? 'checked' : ''}></label>`;
+}
 function phoneMusicToggle() {
   return `<label class="toggle-row" data-key="pmusic"><span><b>${t('Music on this phone')}</b><small>${t('Play the table\'s score here too, in the host\'s chosen style. Off by default.')}</small></span><input type="checkbox" class="switch" data-act="phoneMusicToggle" ${phoneMusicOn() ? 'checked' : ''}></label>`;
 }
@@ -2633,6 +2659,10 @@ const ACT = {
     localStorage.setItem(TIPS_KEY, on ? '1' : '0');
     if (on) localStorage.removeItem(TIPS_SEEN);
     render();
+  },
+  awakeToggle(el) {
+    try { localStorage.setItem(AWAKE_KEY, el.checked ? '1' : '0'); } catch { /* private mode */ }
+    syncWake(); render();
   },
   tutorialOff() { localStorage.setItem(TIPS_KEY, '0'); render(); },
   phoneMusicToggle(el) {

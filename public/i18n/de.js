@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Drei Missionen gescheitert",
     "Use the Candle": "Benutze die Kerze",
     "Game mode": "Spielmodus",
+    "Keep this screen awake": "Bildschirm wach halten",
+    "Stops this phone dimming during a game.": "Das Handy wird während eines Spiels nicht dunkel.",
     "Chapters": "Kapitel",
     "The modes": "Die Spielmodi",
     "Classic Dead Set": "Klassisches Dead Set",
