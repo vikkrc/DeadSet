@@ -141,7 +141,8 @@ export class RoomManager {
     if (phaseBound.includes(type) && phaseId && phaseId !== m.phaseId) throw new GameError('The phase already moved on.', 'STALE');
     switch (type) {
       case 'host.settings': updateSettings(m, payload); break;
-      case 'host.start': startMatch(m, this.rng, now); break;
+      // S4: "Start anyway" seats everyone as ready (their phones get the role reveal like everyone else).
+      case 'host.start': if (payload.anyway) m.players.forEach((p) => { p.ready = true; }); startMatch(m, this.rng, now); break;
       case 'host.advance': hostAdvance(m, this.rng, now, { skipAll: !!payload.skipAll }); break;
       case 'host.extend': extendDeadline(m, Math.max(10, Math.min(300, Number(payload.seconds) || 30)), now); break;
       case 'host.end': abortMatch(m, now); break;

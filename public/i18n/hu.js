@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "Hold to start anyway · {n} not ready": "Tartsd lenyomva az indításhoz · {n} nem kész",
     "Menu": "Menü",
     "A quiet first day": "Csendes első nap",
     "Day 1 is for talking only: no nominations and no vote.": "Az első nap csak beszélgetésre való: nincs jelölés és szavazás.",

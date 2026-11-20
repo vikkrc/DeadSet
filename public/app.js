@@ -2797,7 +2797,9 @@ function dock(v) {
     switch (v.phase) {
       case 'LOBBY': {
         const need = (v.presets.find((p) => p.id === v.settings.preset)?.min ?? 5) - v.players.length;
-        if (v.host) parts.push(holdBtn('start', need > 0 ? (need === 1 ? t('Need 1 more player') : th('Need {n} more players', { n: need })) : startLabel(), `btn-solid ${v.setup.ok && !v.setup.notReady ? 'glow' : ''}`, { dis: !v.setup.ok || !!v.setup.notReady }));
+        // S4: never a dead button — it names what is missing; with players not ready, a long press starts anyway.
+        if (v.host && need <= 0 && v.setup.ok && v.setup.notReady) parts.push(holdBtn('startAnyway', th('Hold to start anyway · {n} not ready', { n: v.setup.notReady }), 'btn-solid'));
+        else if (v.host) parts.push(holdBtn('start', need > 0 ? (need === 1 ? t('Need 1 more player') : th('Need {n} more players', { n: need })) : startLabel(), `btn-solid ${v.setup.ok && !v.setup.notReady ? 'glow' : ''}`, { dis: !v.setup.ok || !!v.setup.notReady }));
         else parts.push(btn(me.ready ? `${glyph('check')} ${t('Ready')}` : t('I\'m ready'), 'ready', me.ready ? 'is-on' : 'btn-solid glow'));
         break;
       }
@@ -2933,6 +2935,7 @@ const ACT = {
   },
   ready(el) { if (!V().me.ready) burstAt(el); send('lobby.ready', { ready: !V().me.ready }); },
   async start() { await send('host.start'); },
+  async startAnyway() { await send('host.start', { anyway: true }); },
   preset(el) { send('host.settings', { preset: el.dataset.id }); },
   mFilter(el) { const F = S.ui.mfilter ?? (S.ui.mfilter = new Set(['count'])); const k = el.dataset.id; if (F.has(k)) F.delete(k); else F.add(k); render(); },
   ltab(el) { S.ui.ltab = el.dataset.id; render(); },

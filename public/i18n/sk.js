@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tri misie zlyhali",
     "Use the Candle": "Použi Sviečku",
     "Game mode": "Herný režim",
+    "Hold to start anyway · {n} not ready": "Podrž a začni aj tak · nepripravení: {n}",
     "Menu": "Ponuka",
     "A quiet first day": "Pokojný prvý deň",
     "Day 1 is for talking only: no nominations and no vote.": "Prvý deň sa len rozpráva: žiadne nominácie ani hlasovanie.",
