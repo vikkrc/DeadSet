@@ -2829,7 +2829,7 @@ body.is-dead { --gilt: #8f97a3; --gilt-2: #4b5363; --gilt-hi: #c9ced6; }
 .dock:has(> .btn:nth-child(3 of .btn)) .btn { letter-spacing: 0.12em; padding-inline: 10px; }
 
 /* ── Exorcism: the lettered ring, a gilt stand, the password in blackletter ── */
-.xb-letters { position: absolute; z-index: 2; left: 50%; top: calc(var(--size) * -0.11); width: calc(var(--size) * 1.22); height: calc(var(--size) * 1.22); transform: translateX(-50%); overflow: visible; pointer-events: none; animation: xbTurn 120s linear infinite; }
+.xb-letters { position: absolute; z-index: 2; left: 50%; top: calc(var(--size) * -0.11); width: calc(var(--size) * 1.22); height: calc(var(--size) * 1.22); translate: -50% 0; overflow: visible; pointer-events: none; animation: xbTurn 120s linear infinite; }
 .xb-letters text { font: 600 4.6px var(--text); letter-spacing: 0.9px; fill: var(--gilt); opacity: 0.85; }
 .xb-letters .xbl-dots { fill: none; stroke: var(--gilt); stroke-width: 0.35; stroke-dasharray: 0.4 1.6; opacity: 0.55; }
 .xball.small .xb-letters, .xball.in-ring .xb-letters { display: none; }
