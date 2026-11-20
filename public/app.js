@@ -6,6 +6,7 @@ import { renderGuide } from './guide.js';
 import { sound, score, haptic, burstAt, celebrate, ambient, cue, setCueRoute } from './fx.js';
 import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './board.js';
 import { seatLayout, turnBead } from './layout.js';
+import { cover, modeTitle, modePitch, modeMeta } from './covers.js';
 import { sceneMs, scenesFor, sceneSize, paceScale } from './interludes.js';
 import { MODES, MODE_IDS, FAMILIES, COLLECTION, modeOfPhase, modeInfo } from './modes.js';
 import { explainer } from './kit.js';
@@ -1702,6 +1703,22 @@ function sheet(v) {
   } else if (s === 'story') {
     title = t('The story');
     body = `<p class="scenario">${storyLine(v.scenario)}</p><p class="small muted">${t('Pure flavour — it never changes the rules. Play it up.')}</p>`;
+  } else if (s === 'modes') {
+    // S1: the game picker — filters, then one row per game; games that need more players sink to the bottom.
+    title = t('Choose a game');
+    const n = v.players.length;
+    const F = S.ui.mfilter ?? (S.ui.mfilter = new Set(['count']));
+    const chips = [['count', th('{n} at the table', { n })], ['quick', t('Under 15 min')], ['nodeath', t('Nobody dies')], ['easy', t('New players')]];
+    const keep = (id) => { const m = MODES[id]; return (!F.has('quick') || m.minutes < 15) && (!F.has('nodeath') || m.tags?.includes('nodeath')) && (!F.has('easy') || m.tags?.includes('easy')); };
+    const fits = (id) => !F.has('count') || (n >= MODES[id].min && n <= MODES[id].max);
+    const row = (id, dim) => `<button type="button" class="mrow ${dim ? 'dim' : ''} ${v.mode === id ? 'on' : ''}" data-act="gameMode" data-mode="${id}" data-key="mrow-${id}">${cover(id, { size: 'mini' })}
+      <span class="mr-txt"><b>${esc(modeTitle(id))}${v.mode === id ? ` <em class="tag solid">${t('Chosen')}</em>` : ''}</b><small>${esc(dim ? th(n < MODES[id].min ? 'Needs {n} or more players' : 'Up to {n} players', { n: n < MODES[id].min ? MODES[id].min : MODES[id].max }) : modePitch(id))}</small><i>${esc(modeMeta(id))}</i></span></button>`;
+    const ids = MODE_IDS.filter(keep);
+    const ok = ids.filter(fits);
+    const later = ids.filter((id) => !fits(id));
+    body = `<div class="mfilters" data-key="mfilters">${chips.map(([k, l]) => `<button class="mf ${F.has(k) ? 'on' : ''}" data-act="mFilter" data-id="${k}" aria-pressed="${F.has(k)}">${esc(l)}</button>`).join('')}</div>
+      <div class="mrows" data-key="mrows">${ok.map((id) => row(id, false)).join('') || `<p class="small muted center-text">${t('No game fits every filter.')}</p>`}</div>
+      ${later.length ? `<div class="rule">${t('Needs more players')}</div><div class="mrows" data-key="mrows-later">${later.map((id) => row(id, true)).join('')}</div>` : ''}`;
   } else if (s === 'qr') {
     title = t('Scan to join');
     body = `<div class="qr-big">${qrSvg(`${location.origin}/r/${v.code}`)}</div><p class="code-tiles big">${codeTiles(v.code)}</p>`;
@@ -1758,37 +1775,59 @@ function codeTiles(code) {
 }
 
 // ── Lobby ──────────────────────────────────────────────────────────────────
+/** U4: the seated strip — overlapping cameos with ready glows, "6 seated · 5 ready". Always above the tabs. */
+function seatedStrip(v) {
+  const ready = v.players.filter((p) => p.ready).length;
+  return `<div class="seated" data-key="seated"><span class="seated-faces">${v.players.slice(0, 12).map((p) => `<i class="${p.ready ? 'ok' : ''}" title="${esc(p.name)}">${p.avatar ? avatarSvg(p.avatar, 'tok-av') : esc(initials(p.name))}</i>`).join('')}</span>
+    <small>${esc(th('{n} seated', { n: v.players.length }))} · ${esc(th('{n} ready', { n: ready }))}</small></div>`;
+}
+/** The chosen game: its cover, and for the host a way to change it (S1). */
+function gameCard(v, isHost) {
+  return `<section class="game-card" data-key="gamecard">${cover(v.mode)}
+    <div class="gc-side"><span class="kicker">${t(isHost ? 'Tonight\'s game' : 'The host chose this game')}</span><b>${esc(modeTitle(v.mode))}</b><small>${esc(modePitch(v.mode))}</small><i>${esc(modeMeta(v.mode))}</i>
+    ${isHost ? `<button class="btn btn-sm" data-act="sheet" data-id="modes">${t('Change game')}</button>` : ''}<a class="btn btn-sm btn-ghost" href="/guide#m-${esc(v.mode)}" target="_blank" rel="noopener">${t('Read the full chapter')} ${glyph('out')}</a></div></section>`;
+}
+
 function lobbyMain(v, me) {
   const url = `${location.origin}/r/${v.code}`;
   const isHost = !!v.host;
   const report = v.setup;
   const pick = isHost ? { act: 'seatSheet', ids: v.players.map((p) => p.id), selected: [] } : null;
-  return `${head(v)}
-    ${v.moderated ? `<div class="banner blood" data-key="mod">${glyph('mentalist')}<div><b>${th('Trusted moderator: {a}', { a: v.moderatorName ?? '' })}</b><p>${t('A non-playing moderator can see every role, dream and vote.')}</p></div></div>` : ''}
-    <section class="invite" data-key="invite">
+  const moderated = v.moderated ? `<div class="banner blood" data-key="mod">${glyph('mentalist')}<div><b>${th('Trusted moderator: {a}', { a: v.moderatorName ?? '' })}</b><p>${t('A non-playing moderator can see every role, dream and vote.')}</p></div></div>` : '';
+  const invite = `<section class="invite" data-key="invite">
       <button class="code-tiles" data-act="${isHost ? 'codeTap' : 'copy'}" data-text="${esc(url)}" aria-label="${esc(t('Copy invite link'))}">${codeTiles(v.code)}</button>
       <div class="row center">
         <button class="btn btn-sm" data-act="share" data-text="${esc(url)}">${t('Invite')}</button>
         <button class="btn btn-sm" data-act="sheet" data-id="qr">${t('Show QR')}</button>
         <a class="btn btn-sm btn-ghost" href="/board/${esc(v.code)}" target="_blank" rel="noopener">${esc(t('TV board ↗').replace('↗', '').trim())} ${glyph('out')}</a>
       </div>
-    </section>
-    ${ring(v, { pick, slots: Math.max(5, v.players.length), lobby: true, center: v.mode === 'graverobbers' ? graveLobbyCenter(v) : centerFor(v), orb: v.mode === 'exorcism' ? lobbyOrb() : '', crews: v.mode === 'graverobbers' ? lobbyCrews(v) : null })}
-    ${isHost ? `<p class="small muted center-text" data-key="seathint">${t('Tap a seat to move or remove a player.')}${v.mode === 'graverobbers' && (v.settings.g?.crews ?? 'seats') === 'seats' ? ` ${t('Moving a player across the table changes their crew.')}` : ''}</p>` : ''}
-    ${me && !me.moderator ? portraitRow(v.players.find((p) => p.id === me.id)?.avatar) : ''}
-    ${isHost && S.ui.botsPanel ? botsPanel(v) : ''}
-    <div class="lobby-steps" data-key="lsteps">
-    ${modeChooser(v, isHost)}
-    ${v.mode === 'classic' || v.mode === 'missions' ? howItWorks(v) : ''}
-    ${lobbyDeck(v, isHost, v.mode === 'classic' || v.mode === 'missions' ? (isHost ? setupPresets(v) : setupSummary(v)) : '')}
-    ${isHost && setupForm(v) ? `<section data-key="setup">${setupForm(v)}</section>` : ''}
-    ${tableSection(v, isHost)}
-    ${isHost ? timersForm(v) : ''}
-    </div>
-    <section class="stack" data-key="report">
+    </section>`;
+  const table = `${ring(v, { pick, slots: Math.max(5, v.players.length), lobby: true, center: v.mode === 'graverobbers' ? graveLobbyCenter(v) : centerFor(v), orb: v.mode === 'exorcism' ? lobbyOrb() : '', crews: v.mode === 'graverobbers' ? lobbyCrews(v) : null })}`;
+  const problems = `<section class="stack" data-key="report">
       ${report.errors.map((e, i) => `<div class="banner blood" data-key="err-${i}">${glyph('dagger')}<div><p>${tmh(e)}</p></div></div>`).join('')}
       ${report.warnings.map((w, i) => `<div class="banner" data-key="warn-${i}">${glyph('scroll')}<div><p>${tmh(w)}</p></div></div>`).join('')}
     </section>`;
+  const portrait = me && !me.moderator ? portraitRow(v.players.find((p) => p.id === me.id)?.avatar) : '';
+  const how = v.mode === 'classic' || v.mode === 'missions' ? howItWorks(v) : '';
+  if (!isHost) {
+    // U5: a guest sees one screen — the game, how it works, their own face, and Ready in the dock.
+    return `${head(v)}${moderated}${seatedStrip(v)}${gameCard(v, false)}${portrait}
+      <div class="lobby-steps guest" data-key="lsteps">${how}${lobbyDeck(v, false, v.mode === 'classic' || v.mode === 'missions' ? setupSummary(v) : '')}</div>
+      ${invite}${problems}`;
+  }
+  // U4: the host's lobby in three tabs — the table, the game, the rules.
+  const tab = S.ui.ltab ?? 'table';
+  const tabs = `<nav class="seg ltabs" role="tablist" data-key="ltabs">${[['table', t('Table')], ['game', t('Game')], ['rules', t('Rules')]].map(([k, l]) => `<button role="tab" data-act="ltab" data-id="${k}" aria-selected="${tab === k}" aria-pressed="${tab === k}">${l}</button>`).join('')}</nav>`;
+  let body = '';
+  if (tab === 'table') {
+    body = `${invite}${table}<p class="small muted center-text" data-key="seathint">${t('Tap a seat to move or remove a player.')}${v.mode === 'graverobbers' && (v.settings.g?.crews ?? 'seats') === 'seats' ? ` ${t('Moving a player across the table changes their crew.')}` : ''}</p>
+      ${portrait}${S.ui.botsPanel ? botsPanel(v) : ''}`;
+  } else if (tab === 'game') {
+    body = `${gameCard(v, true)}<div class="lobby-steps" data-key="lsteps">${how}${lobbyDeck(v, true, v.mode === 'classic' || v.mode === 'missions' ? setupPresets(v) : '')}</div>`;
+  } else {
+    body = `<div class="lobby-steps" data-key="lsteps">${setupForm(v) ? `<section data-key="setup">${setupForm(v)}</section>` : ''}${tableSection(v, true)}${timersForm(v)}</div>`;
+  }
+  return `${head(v)}${moderated}${seatedStrip(v)}${tabs}${body}${problems}`;
 }
 
 // ── Portraits ──────────────────────────────────────────────────────────────
@@ -1964,24 +2003,6 @@ function missionLobbyDeck(v, isHost, cards, top = '') {
 }
 
 /** The top-line choice: classic Dead Set or Dead Set: Missions. Everything below follows it. */
-function modeChooser(v, isHost) {
-  const card = (mode, glyphName, title, sub) => {
-    const on = v.mode === mode;
-    const inner = `${glyph(glyphName)}<span><b>${esc(title)}</b><small>${esc(sub)}</small></span>`;
-    return isHost
-      ? `<button class="mode-card ${on ? 'on' : ''}" data-act="gameMode" data-mode="${mode}" aria-pressed="${on}" data-key="mode-${mode}">${inner}</button>`
-      : `<div class="mode-card ${on ? 'on' : 'off'}" data-key="mode-${mode}">${inner}</div>`;
-  };
-  // Modes grouped by their core mechanic, from the registry (B7): a new mode joins its family there.
-  // A guest cannot change the mode, so they see only the chosen one (with its family), not the whole list.
-  const families = FAMILIES.filter((f) => isHost || MODES[v.mode]?.family === f.id).map((f) => [t(f.title), t(f.sub), MODE_IDS.filter((id) => MODES[id].family === f.id && (isHost || id === v.mode))
-    .map((id) => card(id, MODES[id].emblem, MODES[id].name ? t(MODES[id].name) : presetF(id, 'name'), t(MODES[id].blurb)))]);
-  return `<section class="mode-pick" data-key="modepick">
-    <div class="rule lstep">${t('Game mode')}</div>
-    ${families.map(([title, sub, cards], i) => `<div class="mode-family" data-key="mf-${i}"><div class="mf-head"><span class="kicker">${title}</span><small>${sub}</small></div><div class="mode-cards">${cards.join('')}</div></div>`).join('')}
-  </section>`;
-}
-
 function setupSummary(v) {
   const s = v.settings;
   const preset = v.presets.find((p) => p.id === s.preset);
@@ -2876,7 +2897,10 @@ const ACT = {
   ready(el) { if (!V().me.ready) burstAt(el); send('lobby.ready', { ready: !V().me.ready }); },
   async start() { await send('host.start'); },
   preset(el) { send('host.settings', { preset: el.dataset.id }); },
+  mFilter(el) { const F = S.ui.mfilter ?? (S.ui.mfilter = new Set(['count'])); const k = el.dataset.id; if (F.has(k)) F.delete(k); else F.add(k); render(); },
+  ltab(el) { S.ui.ltab = el.dataset.id; render(); },
   gameMode(el) {
+    if (S.ui.sheet === 'modes') { S.ui.sheet = null; render(); }
     if (el.dataset.mode === V().mode) return;
     if (el.dataset.mode !== 'classic') burstAt(el);
     // The server remembers each mode's own last settings.

@@ -5348,3 +5348,45 @@ button.mr-fate { cursor: pointer; }
 .coff.f-D { box-shadow: 0 0 0 1px #b8c2cf, 0 1.8em 3em -1.4em #000; } /* literal-ok: Death's silver */
 .coff.f-D:not(.back) .arc-art .emblem { color: #dfe6ef; } /* literal-ok: silver */
 .coff:not(.back) .nm { font-variant: small-caps; letter-spacing: 0.08em; }
+
+/* ══ A1: the game cover — a tarot card per game on its accent (--cv) ══ */
+.tarot--cover { width: 9.4em; aspect-ratio: 11 / 18; font-size: 13px; padding: 1em 0.8em 0.9em; gap: 0.35em; flex: none; text-align: center;
+  background: radial-gradient(120% 80% at 50% 18%, color-mix(in srgb, var(--cv) 26%, var(--ink-2)), var(--ink) 78%); color: var(--bone);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cv) 70%, transparent), inset 0 0 0 4px var(--ink), inset 0 0 0 5px color-mix(in srgb, var(--cv) 45%, transparent), 0 14px 28px -14px #000; }
+.tarot--cover .arc-art { color: var(--cv); }
+.tarot--cover .arc-art .emblem { color: var(--cv); --paper: var(--ink-2); }
+.cv-fam { font: 600 0.62em/1.1 var(--text); letter-spacing: 0.2em; text-transform: uppercase; color: color-mix(in srgb, var(--cv) 80%, var(--bone)); }
+.cv-title { font: 400 1.18em/1.02 var(--black); color: var(--bone); text-wrap: balance; }
+.cv-pitch { font: italic 400 0.74em/1.2 var(--text); color: var(--bone-2); text-wrap: balance; }
+.cv-meta { margin-top: auto; font: 600 0.6em/1 var(--text); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash); }
+.tarot--cover.mini { font-size: 6.2px; width: 9.4em; }
+.tarot--cover.mini .cv-fam { display: none; }
+
+/* ══ U4: the seated strip, the host's tabs, the game card ══ */
+.seated { display: flex; align-items: center; gap: 10px; margin: 4px 0 8px; }
+.seated-faces { display: flex; }
+.seated-faces i { width: 28px; height: 28px; margin-right: -8px; border-radius: 50%; display: grid; place-items: center; overflow: hidden; background: var(--ink-2); border: 1px solid var(--iron); font: 600 11px/1 var(--text); font-style: normal; color: var(--bone-2); }
+.seated-faces i.ok { border-color: var(--gilt-hi); box-shadow: 0 0 6px color-mix(in srgb, var(--gilt-hi) 55%, transparent); }
+.seated-faces i .tok-av { width: 100%; height: 100%; }
+.seated small { margin-left: 10px; font: 600 var(--fs-label)/1.2 var(--text); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash); }
+.ltabs { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0 0 12px; }
+.game-card { display: flex; gap: 14px; align-items: stretch; margin: 6px 0 12px; }
+.game-card .gc-side { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.game-card .gc-side > b { font: 400 22px/1.05 var(--black); }
+.game-card .gc-side > small { font: italic 400 15px/1.3 var(--text); color: var(--bone-2); }
+.game-card .gc-side > i { font: 600 var(--fs-label)/1.2 var(--text); font-style: normal; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash); }
+.game-card .gc-side .btn { align-self: flex-start; margin-top: 6px; }
+
+/* ══ S1: the game picker ══ */
+.mfilters { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
+.mf { padding: 7px 12px; border: 1px solid var(--gilt-2); border-radius: 20px; background: none; color: var(--bone-2); font: 500 14px/1.1 var(--text); cursor: pointer; }
+.mf.on { background: var(--bone); color: var(--ink); border-color: var(--bone); }
+.mrows { display: grid; gap: 8px; margin-bottom: 10px; }
+.mrow { display: flex; gap: 12px; align-items: center; width: 100%; padding: 8px; text-align: left; border: 1px solid var(--iron); border-radius: 6px; background: var(--ink-2); color: var(--bone); font: inherit; cursor: pointer; transition: border-color var(--t-ui), background var(--t-ui); }
+.mrow.on { border-color: var(--gilt); background: color-mix(in srgb, var(--gilt) 10%, var(--ink-2)); }
+.mrow.dim { opacity: 0.6; }
+.mr-txt { display: grid; gap: 3px; min-width: 0; }
+.mr-txt b { font: 400 18px/1.1 var(--black); }
+.mr-txt b .tag { font-size: 9px; vertical-align: middle; }
+.mr-txt small { font: 400 14px/1.25 var(--text); color: var(--bone-2); }
+.mr-txt i { font: 600 var(--fs-label)/1.2 var(--text); font-style: normal; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash); }
