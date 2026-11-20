@@ -1,0 +1,21 @@
+code PGEM7L
+phases:
+LOBBY:0
+X_REVEAL:0:1
+X_LOTTERY:0:2
+X_CLUES:0:3
+X_CLUES:1:4
+X_CLUES:2:5
+X_CLUES:3:6
+X_CLUES:4:7
+X_CLUES:5:8
+X_DISCUSS:6:9
+X_VOTE:6:10
+ENDED:6:11
+LOBBY:12
+
+errors:
+phone warning: [.WebGL-0x3bfc017c9400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+phone warning: [.WebGL-0x3bfc017c9400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)
+tv warning: [.WebGL-0x3bfc0018e200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+advance: Nothing to advance.
