@@ -5631,3 +5631,7 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
 .dz-marks button[aria-pressed="true"] { background: var(--ink-3); box-shadow: inset 0 0 0 1px currentColor; }
 .tl-secret { color: var(--bone); background: linear-gradient(90deg, var(--blood-wash), transparent 70%); }
 .tl-secret .tl-tag { color: var(--blood-ink); }
+
+/* D1: a ghost's hunches */
+.hunches { display: grid; gap: 8px; margin: 10px 0; padding: 12px 14px; border: 1px dashed var(--gilt-2); }
+.hunch-chips { display: flex; flex-wrap: wrap; gap: 6px; }

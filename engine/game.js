@@ -147,6 +147,7 @@ export function startMatch(m, rng, now, { forceRoles = null, forceWord = null } 
   if (PRESETS[m.settings.preset]?.omen) { startOmen(m, rng, now); return; }
   if (PRESETS[m.settings.preset]?.mirror) { startMirror(m, rng, now); return; }
   if (PRESETS[m.settings.preset]?.graverobbers) { m.S = null; m.N = null; startGrave(m, rng, now); return; }
+  m.ghostHunches = [];
   m.N = null;
   m.S = null;
   m.G = null;
@@ -782,6 +783,21 @@ export function playerCommand(m, actorId, cmd, rng, now) {
       const a = cleanAvatar(payload.avatar);
       if (!a) throw new GameError('Invalid portrait.');
       p.avatar = a;
+      break;
+    }
+
+    // D1: a dead player's hunch about who is Death. Private until the end; it feeds only the awards and the ledger.
+    case 'ghost.hunch': {
+      if (m.config?.mode !== 'classic' || m.phase === 'LOBBY' || m.phase === 'ENDED' || m.phase === 'NIGHT_0_REVEAL') throw new GameError('There is nothing to guess at now.');
+      if (p.alive) throw new GameError('Only the dead may lay hunches.');
+      const target = m.players.find((x) => x.id === payload.target);
+      if (!target || !target.alive) throw new GameError('Pick a living player.');
+      const list = (m.ghostHunches ||= []);
+      const today = list.filter((h) => h.by === p.id && h.day === m.dayNumber);
+      const same = today.find((h) => h.target === target.id);
+      if (same) { list.splice(list.indexOf(same), 1); break; } // tap again to take it back
+      if (today.length >= 2) throw new GameError('Two hunches a day. Take one back first.');
+      list.push({ by: p.id, target: target.id, day: m.dayNumber, at: now });
       break;
     }
 

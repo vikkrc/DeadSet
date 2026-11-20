@@ -2513,7 +2513,16 @@ const isGhostTable = (v) => v.activeRules?.some((r) => r.id === 'VENGEFUL_GHOSTS
 /** The dead see a ghostly screen; "ghost" wording only where ghosts can act. */
 function deadBanner(v) {
   const ghost = isGhostTable(v);
-  return `<div class="banner dead-banner" data-key="st-dead">${glyph('death')}<div><b>${t(ghost ? 'You are a ghost.' : 'You are dead.')}</b><p>${t(ghost ? 'Vengeful Ghosts: you cast a ghost ballot each Day. You cannot speak or use powers.' : 'Watch in silence, and don\'t help the living.')}</p></div></div>`;
+  return `<div class="banner dead-banner" data-key="st-dead">${glyph('death')}<div><b>${t(ghost ? 'You are a ghost.' : 'You are dead.')}</b><p>${t(ghost ? 'Vengeful Ghosts: you cast a ghost ballot each Day. You cannot speak or use powers.' : 'Watch in silence, and don\'t help the living.')}</p></div></div>${hunchPanel(v)}`;
+}
+/** D1: the ghost's hunches — who is Death? Two a day, private, scored only at the end (awards and the ledger). */
+function hunchPanel(v) {
+  if (v.mode !== 'classic' || !Array.isArray(v.me?.hunches) || v.phase === 'NIGHT_0_REVEAL') return '';
+  const mine = new Set(v.me.hunches);
+  const living = v.players.filter((p) => p.alive && !p.moderator);
+  return `<section class="hunches" data-key="hunches"><span class="kicker">${t('Your hunch: who is Death?')}</span>
+    <div class="hunch-chips">${living.map((p) => `<button class="mf ${mine.has(p.id) ? 'on' : ''}" data-act="hunch" data-id="${p.id}" aria-pressed="${mine.has(p.id)}">${esc(p.name)}</button>`).join('')}</div>
+    <p class="small muted">${th('{n} of 2 today. Nobody sees them until the end; a right one before the table finds out earns a point.', { n: mine.size })}</p></section>`;
 }
 
 function statusBanners(v, me) {
@@ -3168,6 +3177,7 @@ const ACT = {
   gview(el) { S.ui.gview = el.dataset.id; localStorage.setItem('deadset:record', el.dataset.id === 'front' ? 'gazette' : 'timeline'); render(); },
   dossier(el) { S.ui.dossier = el.dataset.pid; S.ui.sheet = 'dossier'; uiSound('whoosh'); render(); },
   noteMark(el) { const v = V(); const cur = myNotes(v)[el.dataset.pid]?.mark; saveNote(v, el.dataset.pid, { mark: cur === el.dataset.id ? null : el.dataset.id }); render(); },
+  hunch(el) { send('ghost.hunch', { target: el.dataset.id }); },
   gfilter(el) { S.ui.gfilter = el.dataset.id; render(); },
   homeTab(el) { S.ui.homeTab = el.dataset.id; render(); },
   openSeal(el) { S.ui.invite = true; sound.play('crack'); setTimeout(() => sound.play('unfold'), 250); haptic([25, 40, 25]); burstAt(el, { colors: ['#c33a43', '#7d151d', '#ece5d5'], count: 22, power: 4 }); render(); },

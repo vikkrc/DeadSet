@@ -5,6 +5,11 @@
 const nameOf = (m, id) => m.players.find((p) => p.id === id)?.name ?? '';
 const alignOf = (m, id) => m.players.find((p) => p.id === id)?.alignment;
 
+/** D1: correct ghost hunches, earliest first: the target was Death and was still alive when the hunch was laid. */
+export function calledIt(m) {
+  return [...(m.ghostHunches ?? [])].filter((h) => alignOf(m, h.target) === 'DEATH' && alignOf(m, h.by) !== 'DEATH').sort((a, b) => a.at - b.at);
+}
+
 export function awardsFor(m, mode) {
   const out = [];
   const taken = new Set();
@@ -19,6 +24,9 @@ export function awardsFor(m, mode) {
     for (const l of log) if (l.ev === 'tally') for (const [id, n] of Object.entries(l.totals ?? {})) votes[id] = (votes[id] ?? 0) + (Number(n) || 0);
     const herring = Object.entries(votes).filter(([id]) => alignOf(m, id) && alignOf(m, id) !== 'DEATH').sort((a, b) => b[1] - a[1])[0];
     if (herring && herring[1] > 0) give('herring', herring[0], 'scapegoat', 'Red herring', [herring[1] === 1 ? '{a} drew a vote and was never Death.' : '{a} drew {n} votes and was never Death.', { a: nameOf(m, herring[0]), n: herring[1] }]);
+    // Called it (D1): the first ghost whose hunch named Death while that Death still walked.
+    const called = calledIt(m)[0];
+    if (called) give('called', called.by, 'veiled', 'Called it', ['{a} named {b} from beyond the grave on Day {n}.', { a: nameOf(m, called.by), b: nameOf(m, called.target), n: called.day }]);
     // Last breath: a living player still standing at the end, when Death won.
     if (m.winner === 'DEATH') { const s = m.players.find((p) => p.alive && p.alignment !== 'DEATH'); if (s) give('breath', s.id, 'candle', 'Last breath', ['{a} was still standing when Death took the town.', { a: s.name }]); }
   }

@@ -16,7 +16,7 @@ import { botDecide, botAvatar, BOT_NAMES } from './bots.js';
 import { interludeMs, OPEN_DURING_SCENES } from '../public/interludes.js';
 import { recommend } from '../engine/recommend.js';
 import { didIWin } from '../public/outcome.js';
-import { awardsFor } from '../engine/awards.js';
+import { awardsFor, calledIt } from '../engine/awards.js';
 import { REMATCH_READY } from '../public/modes.js';
 import { redrawExorcism } from '../engine/exorcism.js';
 
@@ -430,6 +430,7 @@ export class RoomManager {
     const ranked = ['omen', 'mirror', 'carnival', 'coffins'].includes(mode);
     const scores = (v) => (mode === 'omen' ? v.omen?.scores : mode === 'mirror' ? v.mirror?.scores : mode === 'carnival' ? Object.fromEntries((v.carnival?.seats ?? []).filter((x) => !x.chair).map((x) => [x.id, x.souls ?? 0])) : mode === 'coffins' ? Object.fromEntries((v.coffins?.plots ?? []).map((x) => [x.id, x.wins ?? 0])) : null);
     const winners = [];
+    const called = new Set(calledIt(m).map((h) => h.by));
     for (const p of m.players) {
       let v;
       try { v = playerView(m, p.id, now); } catch { continue; }
@@ -437,6 +438,7 @@ export class RoomManager {
       let pts = won ? 2 : 0;
       if (!won && ranked) { const sc = scores(v) ?? {}; const sorted = Object.values(sc).sort((a, b) => b - a); if ((sc[p.id] ?? 0) >= (sorted[Math.floor((sorted.length - 1) / 2)] ?? Infinity)) pts = 1; }
       else if (!won && p.alive && ['classic', 'midnight'].includes(mode)) pts = 1;
+      if (mode === 'classic' && called.has(p.id)) pts += 1; // D1: a ghost who called it earns a point for the ledger
       const row = (ev.rows[p.id] ||= { name: p.name, pts: 0, games: 0, wins: 0 });
       row.name = p.name; row.avatar = p.avatar ?? null; row.games++; row.pts += pts; if (won) { row.wins++; winners.push(p.name); }
     }

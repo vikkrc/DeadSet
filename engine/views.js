@@ -216,6 +216,8 @@ export function playerView(m, pid, now = Date.now()) {
   }
   if (N?.sleepwalk[p.id] && m.phase === 'NIGHT_ACTIONS') me.sleepwalkPartner = nameOf(m, N.sleepwalk[p.id]);
 
+  // D3: a ghost sees only their own hunches until the end.
+  if (m.config?.mode === 'classic' && !p.alive && m.phase !== 'ENDED') me.hunches = (m.ghostHunches ?? []).filter((h) => h.by === p.id && h.day === m.dayNumber).map((h) => h.target);
   const v = { ...base, me, private: (m.K && m.phase !== 'LOBBY' ? carnivalPrivate(m, p, m.privateLog[p.id] || []) : (m.privateLog[p.id] || [])).slice(-120), action: actionFor(m, p), chats: chatsFor(m, p) };
   if (me.isHost) v.host = hostControls(m);
   return v;
