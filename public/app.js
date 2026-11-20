@@ -50,7 +50,7 @@ const S = {
   pending: false, drafts: {}, sel: {}, selPhase: null,
   moments: [], moment: null, momentTimer: null, notes: [],
   seenLog: null, seenPriv: null, peek: null, board: { key: null, audio: false },
-  ui: { sheet: null, veiled: {}, flipped: {}, chat: null, recover: false, moderated: false, tab: null, holding: null, homeTab: 'host', invite: false, recordList: localStorage.getItem('deadset:record') === 'list' },
+  ui: { sheet: null, veiled: {}, flipped: {}, chat: null, recover: false, moderated: false, tab: null, holding: null, homeTab: 'host', invite: false, gview: localStorage.getItem('deadset:record') === 'gazette' ? 'front' : 'timeline', gfilter: 'all' },
 };
 
 // ── Utilities ──────────────────────────────────────────────────────────────
@@ -1806,8 +1806,63 @@ function sheet(v) {
 const usesGazette = (v) => ['classic', 'missions'].includes(v?.mode) && v?.phase !== 'LOBBY';
 function recordBlock(v) {
   const gz = usesGazette(v);
-  return `<div class="rec-head" data-key="rechead"><span class="kicker">${t('Public record')}</span>${gz ? `<button class="chip" data-act="recordMode">${t(S.ui.recordList ? 'Gazette view' : 'List view')}</button>` : ''}</div>
-    ${gz && !S.ui.recordList ? gazetteHtml(v, H) : feed(v.log)}`;
+  const view = gz && S.ui.gview === 'front' ? 'front' : 'timeline';
+  const seg = gz ? `<div class="seg gviews">${[['timeline', t('Timeline')], ['front', t('Front page')]].map(([k, l]) => `<button data-act="gview" data-id="${k}" aria-pressed="${view === k}">${l}</button>`).join('')}</div>` : '';
+  return `<div class="rec-head" data-key="rechead"><span class="kicker">${t('Public record')}</span>${seg}</div>
+    ${view === 'front' ? gazetteHtml(v, H) : timelineHtml(v)}`;
+}
+
+/** G1: what each public line is about, for the timeline's filters. */
+const G_VOTES = new Set(['tally', 'vote-open', 'nosentence', 'novote', 'sentence', 'cancelled', 'coinflip', 'm-propose', 'm-votes', 'm-named', 'x-vote', 'x-votes', 'n-vote', 'q-time', 'q-verdict', 's-verdict', 'w-reveal', 'exchange-none', 'final-act']);
+const G_SAID = new Set(['nominate', 'immunity', 'm-propose', 'm-candle', 'x-clue', 'k-claim', 'k-unchallenged', 'c-bid', 'g-sign']);
+const G_DEATHS = new Set(['sentence', 'heartbreak', 'scapegoat', 'exchange', 'shot', 'm-unmask', 'm-reckon', 'c-out', 'x-votes']);
+function logCats(l) {
+  const out = [];
+  if (G_VOTES.has(l.ev) || l.kind === 'vote') out.push('votes');
+  if (l.kind === 'death' || l.kind === 'sentence' || G_DEATHS.has(l.ev)) out.push('deaths');
+  if (G_SAID.has(l.ev) || l.kind === 'nominate') out.push('said');
+  return out;
+}
+/** G1: the public record as a timeline, grouped by phase, with filters and a line for now. */
+function timelineHtml(v) {
+  // Lines written as the game starts carry the lobby's stamp: they open the story.
+  const startAt = (at) => at === 'Lobby';
+  const log = (v.log ?? []).filter((l) => !(l.at === 'Lobby' && l.kind === 'host'));
+  const cats = log.map(logCats);
+  const filters = [['all', t('Everything')], ['votes', t('Votes')], ['deaths', t('Deaths')], ['said', t('Who said what')]].filter(([k]) => k === 'all' || cats.some((c) => c.includes(k)));
+  const f = filters.some(([k]) => k === S.ui.gfilter) ? S.ui.gfilter : 'all';
+  const tag = { votes: t('Vote'), deaths: t('Death'), said: t('Said') };
+  const groups = [];
+  log.forEach((l, i) => {
+    if (f !== 'all' && !cats[i].includes(f)) return;
+    const at = startAt(l.at) ? 'Lobby' : l.at;
+    if (groups.at(-1)?.at !== at) groups.push({ at, rows: [] });
+    const c = cats[i].includes('deaths') ? 'deaths' : cats[i][0];
+    groups.at(-1).rows.push(`<li class="tl-row ${c ? `tl-${c}` : ''}" data-key="tl-${l.i}">${c ? `<span class="tl-tag">${esc(tag[c])}</span>` : '<span class="tl-tag"></span>'}<span class="txt">${reportHtml(entryMsg(l), l.lines)}</span></li>`);
+  });
+  const stand = whereWeStand(v);
+  const now = v.phase !== 'ENDED' ? `<li class="tl-row tl-now" data-key="tl-now"><span class="tl-tag">${t('Now')}</span><span class="txt">${esc([[phaseWord(v).word, phaseWord(v).num].filter(Boolean).join(' '), stepOf(v)].filter(Boolean).join(' · '))}</span></li>` : '';
+  return `${filters.length > 1 ? `<div class="mfilters tl-filters">${filters.map(([k, l]) => `<button class="mf ${f === k ? 'on' : ''}" data-act="gfilter" data-id="${k}" aria-pressed="${f === k}">${esc(l)}</button>`).join('')}</div>` : ''}
+    <div class="timeline">${groups.length ? groups.map((g) => `<section class="tl-group" data-key="tlg-${esc(g.at)}"><h4 class="tl-at">${esc(startAt(g.at) ? t('The start') : stamp(g.at))}</h4><ul>${g.rows.join('')}</ul></section>`).join('') : `<p class="small muted">${t('Nothing yet.')}</p>`}
+    ${now ? `<ul class="tl-nowlist">${now}</ul>` : ''}</div>
+    ${stand ? `<div class="stand" data-key="stand"><span class="kicker">${t('Where we stand')}</span><p>${esc(stand)}</p></div>` : ''}`;
+}
+/** G2: one or two sentences, from public state only, on what is at stake. */
+function whereWeStand(v) {
+  if (!v || v.phase === 'LOBBY' || v.phase === 'ENDED') return '';
+  const seated = v.players.filter((p) => !p.moderator);
+  const alive = seated.filter((p) => p.alive).length;
+  const living = th('{a} of {b} still alive.', { a: alive, b: seated.length });
+  if (v.mode === 'missions' && v.missions) {
+    const { S: s = 0, F: fl = 0 } = v.missions.score ?? {};
+    return th('Missions won {s}, lost {f}. Three of either ends it.', { s, f: fl });
+  }
+  if (v.mode === 'exorcism' && v.exorcism) {
+    const x = v.exorcism;
+    return `${th('Round {r} of {n}.', { r: Math.max(1, x.round ?? 1), n: x.rounds ?? 1 })} ${tp('One Demon hides at the table.', '{n} Demons hide at the table.', x.demonCount ?? 1)}`;
+  }
+  if (v.mode === 'classic') return `${living} ${t('Death wins once it matches the living; the town wins when Death is gone.')}${v.doomsday ? ` ${th('Doom after Day {n}', { n: roman(v.doomsday) })}.` : ''}`;
+  return seated.some((p) => !p.alive) ? living : '';
 }
 
 /** "We are …, in …, trying to …" in the player's language. */
@@ -3040,7 +3095,8 @@ const ACT = {
   toggleRecover() { S.ui.recover = !S.ui.recover; render(); },
   poolToggle(el) { const pool = new Set(V().settings.extendedPool); if (pool.has(el.dataset.id)) pool.delete(el.dataset.id); else pool.add(el.dataset.id); send('host.settings', { extendedPool: [...pool] }); },
   ruleToggle(el) { const sel = V().settings.rules.selected.filter((x) => x !== el.dataset.id); send('host.settings', { rules: { selected: sel } }); if (S.ui.sheet === 'card') { S.ui.sheet = null; render(); } },
-  recordMode() { S.ui.recordList = !S.ui.recordList; localStorage.setItem('deadset:record', S.ui.recordList ? 'list' : 'gazette'); render(); },
+  gview(el) { S.ui.gview = el.dataset.id; localStorage.setItem('deadset:record', el.dataset.id === 'front' ? 'gazette' : 'timeline'); render(); },
+  gfilter(el) { S.ui.gfilter = el.dataset.id; render(); },
   homeTab(el) { S.ui.homeTab = el.dataset.id; render(); },
   openSeal(el) { S.ui.invite = true; sound.play('crack'); setTimeout(() => sound.play('unfold'), 250); haptic([25, 40, 25]); burstAt(el, { colors: ['#c33a43', '#7d151d', '#ece5d5'], count: 22, power: 4 }); render(); },
   recoverInvite() { S.ui.invite = true; S.ui.recover = true; render(); },

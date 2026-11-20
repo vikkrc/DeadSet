@@ -58,6 +58,10 @@ export function stamp(m) {
   if (m.G && m.phase.startsWith('G_')) return m.G.turnNo ? `Turn ${m.G.turnNo}` : 'Lobby';
   if (m.S && m.phase.startsWith('S_')) return m.S.round ? `Round ${m.S.round}` : 'Lobby';
   if (m.N && m.phase.startsWith('N_')) return m.phase === 'N_DEAL' || m.phase === 'N_NIGHT' ? 'Night' : 'Day';
+  if (m.X && m.phase.startsWith('X_')) return `Round ${m.X.round}`;
+  if (m.O && m.phase.startsWith('O_') && m.O.round) return `Round ${m.O.round}`;
+  if (m.W && m.phase.startsWith('W_') && m.W.round) return `Round ${m.W.round}`;
+  if (m.Q && m.phase.startsWith('Q_')) return 'Day';
   if (m.phase === 'ENDED') return 'End';
   return `Day ${m.dayNumber}`;
 }
