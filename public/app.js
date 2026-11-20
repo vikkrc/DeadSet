@@ -1452,7 +1452,8 @@ function roomScreen() {
       ${fuse()}
       ${hostBox()}
       <div class="timeline" data-scroll="side-tl"><div class="rule">${t('Public record')}</div>${feed(v.log)}</div>
-      <div class="row">${langChip()}<button class="btn btn-ghost btn-sm" data-act="sound">${glyph(sound.on ? 'bell' : 'bellOff')} ${t(sound.on ? 'Sound on' : 'Sound off')}</button></div>
+      <div class="row side-foot">${langChip()}<button class="btn btn-ghost btn-sm" data-act="sound">${glyph(sound.on ? 'bell' : 'bellOff')} ${t(sound.on ? 'Sound on' : 'Sound off')}</button>
+        <button class="btn btn-sm side-menu" data-act="sheet" data-id="record" data-key="side-menu" aria-label="${esc(t('Open match record'))}">${glyph('menu')} ${t('Menu')}</button></div>
     </aside>`;
   const move = moveBand(v, mainFor(v, v.me));
   const top = `<header class="topbar" data-key="top">

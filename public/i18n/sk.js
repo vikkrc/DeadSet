@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tri misie zlyhali",
     "Use the Candle": "Použi Sviečku",
     "Game mode": "Herný režim",
+    "Menu": "Ponuka",
     "A quiet first day": "Pokojný prvý deň",
     "Day 1 is for talking only: no nominations and no vote.": "Prvý deň sa len rozpráva: žiadne nominácie ani hlasovanie.",
     "How often the Psycho may mark a player.": "Ako často smie Psychopat niekoho označiť.",

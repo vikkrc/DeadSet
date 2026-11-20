@@ -5415,3 +5415,4 @@ button.mr-fate { cursor: pointer; }
 .g-covers a { display: grid; justify-items: center; gap: 4px; text-decoration: none; color: var(--bone-2); font: 500 12px/1.15 var(--text); text-align: center; }
 .g-covers .tarot--cover { font-size: 7.5px; }
 .h-panel { min-width: 0; } .h-games { max-width: 100%; min-width: 0; }
+.side-foot { flex-wrap: wrap; gap: 8px; } .side-menu { margin-left: auto; }

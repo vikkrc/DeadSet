@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tres misiones fracasaron",
     "Use the Candle": "Usa la Vela",
     "Game mode": "Modo de juego",
+    "Menu": "Menú",
     "A quiet first day": "Un primer día tranquilo",
     "Day 1 is for talking only: no nominations and no vote.": "El día 1 es solo para hablar: sin nominaciones ni votación.",
     "How often the Psycho may mark a player.": "Con qué frecuencia el Psicópata puede marcar a alguien.",
