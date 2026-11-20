@@ -4,6 +4,7 @@
 //              one audience-filtered snapshot per change)
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
+import { brotliCompressSync, gzipSync, constants as zlibC } from 'node:zlib';
 import { join, extname, normalize, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { RoomManager } from './rooms.js';
@@ -132,6 +133,23 @@ async function api(req, res, url) {
   return json(res, 404, { error: 'Not found' });
 }
 
+const COMPRESSIBLE = /^(text\/|application\/(json|manifest\+json)|image\/svg)/;
+const packed = new Map(); // file -> { etag, br, gzip }
+function pickEncoding(accept = '') {
+  if (/\bbr\b/.test(accept)) return 'br';
+  if (/\bgzip\b/.test(accept)) return 'gzip';
+  return null;
+}
+async function compressed(file, etag, enc) {
+  let e = packed.get(file);
+  if (!e || e.etag !== etag) { e = { etag }; packed.set(file, e); }
+  if (!e[enc]) {
+    const raw = await readFile(file);
+    e[enc] = enc === 'br' ? brotliCompressSync(raw, { params: { [zlibC.BROTLI_PARAM_QUALITY]: 9, [zlibC.BROTLI_PARAM_SIZE_HINT]: raw.length } }) : gzipSync(raw, { level: 9 });
+  }
+  return e[enc];
+}
+
 async function staticFile(req, res, url) {
   let path = decodeURIComponent(url.pathname);
   if (path === '/' || path.startsWith('/r/') || path.startsWith('/board/') || path === '/guide') path = '/index.html';
@@ -144,14 +162,24 @@ async function staticFile(req, res, url) {
     // new scripts with stale styles on a phone.
     const etag = `"${s.size.toString(36)}-${Math.floor(s.mtimeMs).toString(36)}"`;
     if (req.headers['if-none-match'] === etag) { res.writeHead(304, { etag, 'cache-control': 'no-cache' }); return res.end(); }
-    const data = await readFile(file);
-    res.writeHead(200, {
-      'content-type': TYPES[extname(file)] || 'application/octet-stream',
-      'cache-control': 'no-cache',
+    const type = TYPES[extname(file)] || 'application/octet-stream';
+    const headers = {
+      'content-type': type,
+      // Fonts have content hashes in their names, so they never change; everything else revalidates.
+      'cache-control': extname(file) === '.woff2' ? 'public, max-age=31536000, immutable' : 'no-cache',
       etag,
       'x-content-type-options': 'nosniff',
       'referrer-policy': 'no-referrer',
-    });
+    };
+    // Q1: text files go out compressed (brotli, else gzip), compressed once per version and kept.
+    const enc = COMPRESSIBLE.test(type) ? pickEncoding(req.headers['accept-encoding']) : null;
+    if (enc) {
+      const body = await compressed(file, etag, enc);
+      res.writeHead(200, { ...headers, 'content-encoding': enc, vary: 'accept-encoding' });
+      return res.end(body);
+    }
+    const data = await readFile(file);
+    res.writeHead(200, COMPRESSIBLE.test(type) ? { ...headers, vary: 'accept-encoding' } : headers);
     res.end(data);
   } catch {
     res.writeHead(404, { 'content-type': 'text/plain' });
