@@ -356,7 +356,10 @@ export function exorcismMain(v, me, h) {
   }
   // The vote: the ball takes the middle of the table, red and restless.
   const table = v.phase === 'X_VOTE' ? ring(v, { pick, center: '', orb: myBall(v, { key: 'peekball', open: peek, act: 'xPeek', tint: VOTE_TINT, speed: 2.4, cls: 'in-ring vote' }) }) : '';
-  const small = ['X_CLUES', 'X_LOTTERY', 'X_GUESS'].includes(v.phase) ? ballSmall : '';
+  // AT7: during the turns the ball owns the stage, with the seal at its top right: speaking order, a bead on the speaker.
+  const sealed = X?.order?.filter((id) => X.clues.some((c) => c.pid === id && c.round === X.round)) ?? [];
+  const small = v.phase === 'X_CLUES' && ballSmall ? h.sealCorner(ballSmall, h.seal(v, { turn: X.speaker, sealed, key: 'xseal', size: 78 }))
+    : ['X_LOTTERY', 'X_GUESS'].includes(v.phase) ? ballSmall : '';
   return `${head(v)}${tools}${small}${grid}${pickTabs(ctx, pick)}${table}${stage}${h.chatBlock(v)}${chips(v)}`;
 }
 
