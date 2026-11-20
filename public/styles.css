@@ -5635,3 +5635,4 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
 /* D1: a ghost's hunches */
 .hunches { display: grid; gap: 8px; margin: 10px 0; padding: 12px 14px; border: 1px dashed var(--gilt-2); }
 .hunch-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.practice-btn .glyph { width: 18px; height: 18px; }
