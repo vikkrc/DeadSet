@@ -5536,3 +5536,9 @@ body.is-board .board2 { translate: var(--drift, 0 0); transition: translate 8s l
 .ba-list li.ok small { color: var(--gilt-hi); font-style: normal; }
 .ba-count { margin: 0; font: 600 var(--fs-label)/1.3 var(--text); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash); }
 .b-atable .b-deck { margin-top: 10px; }
+
+/* ══ P2: TV scenes fill the TV ══ The scene is the phone's scene, drawn larger: scaled up to fill the frame's
+   height and centred in it, with the display size for its title. */
+.is-board .moment { align-items: center; }
+.is-board .moment .m-body { max-width: 760px; }
+.is-board .moment .m-title { font-size: clamp(56px, 4.6vw, 84px); }

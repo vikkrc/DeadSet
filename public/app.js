@@ -556,6 +556,22 @@ function flipPlay(root, before) {
   }
 }
 
+/** P2: on the TV a scene fills the frame — its body is scaled up to the largest size that fits (at most 1.8×). */
+function fitMoment() {
+  if (!onBoard()) return;
+  const body = document.querySelector('.moment .m-body');
+  if (!body) return;
+  const fit = () => {
+    body.style.zoom = '1';
+    const r = body.getBoundingClientRect();
+    if (!r.height) return;
+    const z = Math.max(1, Math.min(1.8, (innerHeight * 0.8) / r.height, (innerWidth * 0.86) / r.width));
+    body.style.zoom = z.toFixed(3);
+  };
+  fit();
+  clearTimeout(fitMoment.t);
+  fitMoment.t = setTimeout(fit, 900); // again once the scene's cards have been dealt
+}
 /** P3: the table's pace as a scale on scene time (1 cinematic, 0.6 brisk). */
 const pace = () => paceScale(V()?.table?.pace);
 /** P3: play the open scene's animations at the table's pace (its timer bar already runs on the scaled window). */
@@ -912,6 +928,7 @@ function render() {
   tickClock();
   syncWake();
   paceMoment();
+  fitMoment();
   gainPass(app);
   beadPass(app);
   heraldTurn(v);
