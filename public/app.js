@@ -1008,6 +1008,8 @@ function tickClock() {
   });
   document.querySelectorAll('[data-secs]').forEach((el) => { el.textContent = secs == null ? '' : String(secs); });
   if (secs != null && secs <= 5 && secs > 0 && secs !== lastTick && S.route?.name === 'room' && !S.moment && v.phase !== 'NIGHT_DREAM_SWAP') pubSound('tick');
+  // L5: ten seconds left — one buzz on each phone, once per phase, never on a secret screen.
+  if (secs === 10 && lastTick !== 10 && S.route?.name === 'room' && !S.moment && !SECRET(v) && S.buzz10 !== v.phaseId) { S.buzz10 = v.phaseId; haptic(25); }
   lastTick = secs;
 }
 setInterval(tickClock, 250);
