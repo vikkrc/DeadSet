@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Drei Missionen gescheitert",
     "Use the Candle": "Benutze die Kerze",
     "Game mode": "Spielmodus",
+    "of": "von",
+    "on the team": "im Team",
     "Pace": "Tempo",
     "Cinematic": "Filmisch",
     "Brisk": "Zügig",

@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Tres misiones fracasaron",
     "Use the Candle": "Usa la Vela",
     "Game mode": "Modo de juego",
+    "of": "de",
+    "on the team": "en el equipo",
     "Pace": "Ritmo",
     "Cinematic": "Cinematográfico",
     "Brisk": "Ágil",

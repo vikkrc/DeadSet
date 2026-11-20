@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "of": "/",
+    "on the team": "a csapatban",
     "Pace": "Tempó",
     "Cinematic": "Filmszerű",
     "Brisk": "Pörgős",

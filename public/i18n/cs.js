@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Tři mise selhaly",
     "Use the Candle": "Použij Svíčku",
     "Game mode": "Herní režim",
+    "of": "z",
+    "on the team": "v týmu",
     "Pace": "Tempo",
     "Cinematic": "Filmové",
     "Brisk": "Svižné",

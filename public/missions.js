@@ -30,7 +30,7 @@ export function sideHtml(side) {
 
 // ── Track, card, grid ──────────────────────────────────────────────────────
 /** Five mission discs + the proposal pips. */
-export function trackHtml(v, { big = false } = {}) {
+export function trackHtml(v, { big = false, compact = false } = {}) {
   const M = v.missions;
   if (!M) return '';
   const discs = M.sizes.map((s, k) => {
@@ -44,6 +44,7 @@ export function trackHtml(v, { big = false } = {}) {
   const pips = v.phase === 'ENDED' || !['M_PROPOSE', 'M_VOTE'].includes(v.phase) ? '' : `<div class="pips" data-key="pips" aria-label="${esc(t('Proposal {k} of {n}', { k: M.attempt, n: M.maxAttempts }))}">
     ${Array.from({ length: M.maxAttempts }, (_, i) => `<i class="${i < M.attempt - 1 ? 'used' : i === M.attempt - 1 ? 'now' : ''} ${i === M.maxAttempts - 1 ? 'hammer' : ''}"></i>`).join('')}
     <span class="kicker">${M.forced ? t('This proposal goes ahead whatever the vote') : t('Proposal {k} of {n}', { k: M.attempt, n: M.maxAttempts })}</span></div>`;
+  if (compact) return pips ? `<section class="mtrack compact" data-key="mtrack">${pips}</section>` : '';
   return `<section class="mtrack ${big ? 'big' : ''}" data-key="mtrack">
     <div class="mscore"><span class="ok">${glyph('succeed')}<b>${M.score.S}</b></span><ol class="discs">${discs}</ol><span class="fail"><b>${M.score.F}</b>${glyph('sabotage')}</span></div>
     ${pips}</section>`;
@@ -156,6 +157,16 @@ export function missionPicks(v, S) {
   return out;
 }
 
+/** AT2: the five mission seals in the table's disc (done gilt, failed red, the current one glowing). */
+function discSeals(v) {
+  const M = v.missions;
+  if (!M?.sizes) return '';
+  return `<span class="c-seals" data-key="cseals">${M.sizes.map((s, k) => {
+    const r = M.results.find((x) => x.mission === k);
+    return `<i class="${r ? (r.failed ? 'fail' : 'ok') : k === M.mission ? 'now' : ''}">${ROMAN[k + 1]}</i>`;
+  }).join('')}</span>`;
+}
+
 export function missionCenter(v, pick) {
   const M = v.missions;
   const prog = v.progress;
@@ -164,9 +175,13 @@ export function missionCenter(v, pick) {
   switch (v.phase) {
     case 'M_LOTTERY': return `<span class="c-emblem lantern">${glyph('lantern')}</span><span class="c-sub">${t('Drawing the first leader')}</span>`;
     case 'M_REVEAL': return `<span class="c-emblem">${glyph('mission')}</span><span class="c-sub">${t('{n}/{total} have seen their role', { n: prog.done, total: prog.total })}</span>`;
-    case 'M_PROPOSE': return `<span class="c-emblem lantern">${glyph('lantern')}</span><span class="c-name">${esc(name(v, M.leader))}</span><span class="c-sub">${t('leads')}</span>${hint}${clock}`;
-    case 'M_VOTE': return `<span class="c-big">${prog.done}<small>/${prog.total}</small></span><span class="c-sub">${t('votes in')}</span>${hint}${clock}`;
-    case 'M_MISSION': return `<span class="c-emblem">${glyph('mission')}</span><span class="c-sub">${t('{n}/{total} cards played', { n: prog.done, total: prog.total })}</span>${clock}`;
+    case 'M_PROPOSE': {
+      const size = M.sizes[M.mission]?.size ?? 0;
+      if (pick?.act === 'mPickTeam' || v.action?.type === 'mpropose') return `${discSeals(v)}<span class="c-big">${(pick?.selected ?? []).filter(Boolean).length}<small> ${esc(t('of'))} ${size}</small></span><span class="c-sub">${t('on the team')}</span>${clock}`;
+      return `${discSeals(v)}<span class="c-name">${esc(name(v, M.leader))}</span><span class="c-sub">${t('leads')}</span>${clock}`;
+    }
+    case 'M_VOTE': return `${discSeals(v)}<span class="c-big">${prog.done}<small>/${prog.total}</small></span><span class="c-sub">${t('votes in')}</span>${hint}${clock}`;
+    case 'M_MISSION': return `${discSeals(v)}<span class="c-sub">${t('{n}/{total} cards played', { n: prog.done, total: prog.total })}</span>${clock}`;
     case 'M_RESULT': { const r = M.results.at(-1); return `<span class="c-emblem ${r?.failed ? 'blood' : 'gold'}">${glyph(r?.failed ? 'sabotage' : 'succeed')}</span><span class="c-sub">${t(r?.failed ? 'Failed' : 'Succeeded')}</span>`; }
     case 'M_NIGHT': return `<span class="c-emblem">${glyph('moon')}</span><span class="c-sub">${t('{n}/{total} asleep', { n: prog.done, total: prog.total })}</span>${hint}${clock}`;
     case 'M_LAST_STAND': return `<span class="c-big">${prog.done}<small>/${prog.total}</small></span><span class="c-sub">${t('have named someone')}</span>${hint}${clock}`;
@@ -220,7 +235,8 @@ export function missionMain(v, me, h) {
   }
   // On the mission, your cards come first: the table is just context.
   if (a.type === 'mplay') return `${head(v)}${trackHtml(v)}${stage}${cardBanner(v)}${table}${h.chatBlock(v)}${chips(v)}`;
-  return `${head(v)}${trackHtml(v)}${cardBanner(v)}${pickTabs(ctx, pick)}${table}${stage}${h.chatBlock(v)}${chips(v)}`;
+  // AT2: the table owns the stage (the mission seals sit in its disc); the context row follows: proposals, the mission card.
+  return `${head(v)}${pickTabs(ctx, pick)}${table}${trackHtml(v, { compact: true })}${cardBanner(v)}${stage}${h.chatBlock(v)}${chips(v)}`;
 }
 
 function playStage(v, a, S) {

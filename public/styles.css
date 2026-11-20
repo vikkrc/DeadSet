@@ -5281,3 +5281,13 @@ details.more summary,
 .ctx-slip .kicker { color: var(--blood); font-size: 9.5px; }
 .ctx-slip b { font: 600 15px/1.2 var(--black); }
 .ctx-slip small { font: italic 400 13px/1.3 var(--text); color: color-mix(in srgb, var(--ink) 75%, transparent); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* AT2: the five mission seals in the table's disc; the mission card and proposals form the context row */
+.c-seals { display: flex; gap: 3px; margin-bottom: 4px; }
+.c-seals i { width: 17px; height: 17px; border-radius: 50%; display: grid; place-items: center; border: 1px dashed var(--gilt-2); font: 600 7.5px/1 var(--text); font-style: normal; color: var(--ash); }
+.c-seals i.ok { background: var(--gilt); border: 1px solid var(--gilt-hi); color: var(--ink); }
+.c-seals i.fail { background: var(--blood); border: 1px solid var(--blood-ink); color: var(--on-blood); }
+.c-seals i.now { border: 1px solid var(--gilt-hi); color: var(--bone); box-shadow: 0 0 8px rgba(201, 163, 90, 0.6); }
+.ring.dense .c-seals i { width: 13px; height: 13px; font-size: 6px; }
+.mtrack.compact { margin: 6px 0 2px; }
+.mode-missions .mc-banner, .main .mc-banner { margin-top: 4px; }
