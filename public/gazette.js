@@ -21,6 +21,37 @@ export function scenarioWords(sc, h) {
   return { who, theWho, where, place, why, goal };
 }
 
+/**
+ * G4: headlines that name people, chosen by public events, each with a plain fallback.
+ * Roles appear only where the table has already seen them (revealed on death, or the end).
+ */
+function sentenceHeadline(v, h, s, list) {
+  const { t, roleF } = h;
+  const p = v.players.find((x) => x.id === s.victims?.[0]);
+  const name = p?.name ?? t('Someone');
+  if (p?.role) {
+    const role = roleF(p.role.id, 'name');
+    return p.role.alignment === 'DEATH' ? t('The town finds Death: {name} hangs', { name }) : t('The town sentences its own {role}, {name}', { role, name });
+  }
+  const tally = list.find((x) => x.ev === 'tally');
+  const votes = Object.values(tally?.totals ?? {});
+  if (votes.length === 1 && votes[0] >= 3) return t('Without a doubt: {name} sentenced {n}–0', { name, n: votes[0] });
+  if (list.some((x) => x.ev === 'coinflip')) return t('A coin seals {name}\'s fate', { name });
+  if (votes.length > 1 && votes.sort((a, b) => b - a)[0] - votes[1] <= 1) return t('By a single vote, {name} is sentenced', { name });
+  return t('The town sentences {name}', { name });
+}
+function nightHeadline(v, h, ids) {
+  const { t, roleF } = h;
+  const ps = ids.map((id) => v.players.find((x) => x.id === id)).filter(Boolean);
+  const names = ps.map((p) => p.name);
+  if (ps.length === 1 && ps[0].role) return t('The {role}, {name}, found dead', { role: roleF(ps[0].role.id, 'name'), name: names[0] });
+  if (ps.length >= 3) return t('A bloody night: {names} found dead', { names });
+  // Accused yesterday, dead this morning: the table will talk about it.
+  const day = v.log.filter((l) => l.ev === 'nominate').map((l) => l.target);
+  if (ps.length === 1 && day.includes(ps[0].id)) return t('{name}, accused yesterday, found dead', { name: names[0] });
+  return t('{names} found dead', { names });
+}
+
 /** Group public events into editions (newest first). */
 export function editions(v, h) {
   const { t, tm, tlist, scen, ruleF } = h;
@@ -96,7 +127,7 @@ export function editions(v, h) {
       const dawn = has('dawn');
       const killed = (dawn?.killed ?? []).map(name);
       if (!dawn) ed.title = t('The town sleeps');
-      else if (killed.length) { ed.title = t('{names} found dead', { names: killed }); ed.tone = 'dead'; } else ed.title = t('A quiet night');
+      else if (killed.length) { ed.title = nightHeadline(v, h, dawn.killed ?? []); ed.tone = 'dead'; } else ed.title = t('A quiet night');
     } else if (ed.kind === 'mission') {
       const r = has('m-result');
       ed.title = r ? t(r.failed ? 'Mission {n} fails' : 'Mission {n} succeeds', { n: num }) : t('Mission {n} sets out', { n: num });
@@ -106,7 +137,7 @@ export function editions(v, h) {
       ed.tone = 'dead';
     } else if (ed.kind === 'day') {
       const s = has('sentence'); const g = has('scapegoat'); const shot = has('shot'); const ex = has('exchange');
-      if (s) { ed.title = t('The town sentences {name}', { name: name(s.victims[0]) }); ed.tone = 'dead'; } else if (g) { ed.title = t('The Scapegoat pays'); ed.tone = 'dead'; } else if (has('cancelled')) ed.title = t('Fate intervenes');
+      if (s) { ed.title = sentenceHeadline(v, h, s, list); ed.tone = 'dead'; } else if (g) { ed.title = t('The Scapegoat pays'); ed.tone = 'dead'; } else if (has('cancelled')) ed.title = t('Fate intervenes');
       else if (has('nosentence') || has('novote')) ed.title = t('No one is sentenced');
       else if (accused.length) ed.title = t(accused.length > 1 ? '{names} stand accused' : '{names} stands accused', { names: accused.map(name) });
       else if (shot?.victims?.length) { ed.title = t('A shot rings out'); ed.tone = 'dead'; } else ed.title = num === 1 ? t('The first morning') : t('The floor is open');
@@ -159,7 +190,9 @@ export function frontPageHtml(v, m, h) {
   const dead = killed.length;
   const alive = v.players.filter((p) => p.alive).length;
   const total = v.players.length;
-  const headline = dead === 0 ? t('A quiet night in {place}', { place: w.place }) : dead === 1 ? t('{name} found dead', { name: killed[0] }) : dead === 2 ? t('{a} and {b} found dead', { a: killed[0], b: killed[1] }) : t('{n} found dead', { n: word(dead) });
+  const victimP = dead === 1 ? v.players.find((x) => x.name === killed[0]) : null;
+  const accusedYesterday = v.log.some((l) => l.ev === 'nominate' && l.at === `Day ${m.day - 1}`);
+  const headline = dead === 0 ? (accusedYesterday ? t('A quiet night; accusations fly') : t('A quiet night in {place}', { place: w.place })) : dead === 1 && victimP?.role ? t('The {role}, {name}, found dead', { role: h.roleF(victimP.role.id, 'name'), name: killed[0] }) : dead === 1 ? t('{name} found dead', { name: killed[0] }) : dead === 2 ? t('{a} and {b} found dead', { a: killed[0], b: killed[1] }) : t('{n} found dead', { n: word(dead) });
   const others = Math.max(0, alive - (m.revived?.length ?? 0));
   const p = { theWho: w.theWho, place: w.place, wh: w.where, goal: w.goal };
   const dek = dead === 0
