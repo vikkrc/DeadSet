@@ -1836,6 +1836,15 @@ function gameCard(v, isHost) {
     ${isHost ? `<button class="btn btn-sm" data-act="sheet" data-id="modes">${t('Change game')}</button>` : ''}<a class="btn btn-sm btn-ghost" href="/guide/${esc(v.mode)}" target="_blank" rel="noopener">${glyph('scroll')}<span>${t('Read the full chapter')}</span></a></div></section>`;
 }
 
+/** S2: the recommended setup for this game and table size, as a summary; the host can return to it after changes. */
+function recCard(v, isHost) {
+  const r = v.rec;
+  if (!r || !r.facts?.length) return '';
+  return `<section class="rec-card ${r.tuned ? 'tuned' : ''}" data-key="rec"><span class="kicker">${esc(r.tuned ? t('Changed by the host') : th('Recommended for {n}', { n: r.n }))}</span>
+    <div class="rec-facts">${r.facts.map((f) => `<span class="rec-fact">${tmh(f)}</span>`).join('')}</div>
+    ${isHost ? `<div class="row">${r.tuned ? `<button class="btn btn-sm" data-act="recUse">${esc(th('Use the recommended setup for {n}', { n: r.n }))}</button>` : ''}<button class="btn btn-sm btn-ghost" data-act="ltab" data-id="rules">${t('Customise')}</button></div>` : ''}</section>`;
+}
+
 function lobbyMain(v, me) {
   const url = `${location.origin}/r/${v.code}`;
   const isHost = !!v.host;
@@ -1859,7 +1868,7 @@ function lobbyMain(v, me) {
   const how = v.mode === 'classic' || v.mode === 'missions' ? howItWorks(v) : '';
   if (!isHost) {
     // U5: a guest sees one screen — the game, how it works, their own face, and Ready in the dock.
-    return `${head(v)}${moderated}${seatedStrip(v)}${gameCard(v, false)}${portrait}
+    return `${head(v)}${moderated}${seatedStrip(v)}${gameCard(v, false)}${recCard(v, false)}${portrait}
       <div class="lobby-steps guest" data-key="lsteps">${how}${lobbyDeck(v, false, v.mode === 'classic' || v.mode === 'missions' ? setupSummary(v) : '')}</div>
       ${invite}${problems}`;
   }
@@ -1871,7 +1880,7 @@ function lobbyMain(v, me) {
     body = `${invite}${table}<p class="small muted center-text" data-key="seathint">${t('Tap a seat to move or remove a player.')}${v.mode === 'graverobbers' && (v.settings.g?.crews ?? 'seats') === 'seats' ? ` ${t('Moving a player across the table changes their crew.')}` : ''}</p>
       ${portrait}${S.ui.botsPanel ? botsPanel(v) : ''}`;
   } else if (tab === 'game') {
-    body = `${gameCard(v, true)}<div class="lobby-steps" data-key="lsteps">${how}${lobbyDeck(v, true, v.mode === 'classic' || v.mode === 'missions' ? setupPresets(v) : '')}</div>`;
+    body = `${gameCard(v, true)}${recCard(v, true)}<div class="lobby-steps" data-key="lsteps">${how}${lobbyDeck(v, true, v.mode === 'classic' || v.mode === 'missions' ? setupPresets(v) : '')}</div>`;
   } else {
     body = `<div class="lobby-steps" data-key="lsteps">${setupForm(v) ? `<section data-key="setup">${setupForm(v)}</section>` : ''}${tableSection(v, true)}${timersForm(v)}</div>`;
   }
@@ -2954,6 +2963,7 @@ const ACT = {
   preset(el) { send('host.settings', { preset: el.dataset.id }); },
   mFilter(el) { const F = S.ui.mfilter ?? (S.ui.mfilter = new Set(['count'])); const k = el.dataset.id; if (F.has(k)) F.delete(k); else F.add(k); render(); },
   ltab(el) { S.ui.ltab = el.dataset.id; render(); },
+  recUse() { send('host.settings', { recommended: true }); },
   gameMode(el) {
     if (S.ui.sheet === 'modes') { S.ui.sheet = null; render(); }
     if (el.dataset.mode === V().mode) return;

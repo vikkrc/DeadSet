@@ -14,6 +14,7 @@ import { ROLES, PRESETS, LANGS, modeOf, roleInMode } from '../engine/content.js'
 import { byId, pub } from '../engine/state.js';
 import { botDecide, botAvatar, BOT_NAMES } from './bots.js';
 import { interludeMs, OPEN_DURING_SCENES } from '../public/interludes.js';
+import { recommend } from '../engine/recommend.js';
 import { REMATCH_READY } from '../public/modes.js';
 import { redrawExorcism } from '../engine/exorcism.js';
 
@@ -140,7 +141,15 @@ export class RoomManager {
     if (type === 'host.advance' && this.holding(room)) throw new GameError('Wait for the scene to finish.', 'HOLD');
     if (phaseBound.includes(type) && phaseId && phaseId !== m.phaseId) throw new GameError('The phase already moved on.', 'STALE');
     switch (type) {
-      case 'host.settings': updateSettings(m, payload); break;
+      case 'host.settings': {
+        // S2: the room follows the recommended setup until the host changes a game setting themselves. Table
+        // settings (language, music, pace, backdrops) do not count; choosing a game starts from its recommendation.
+        const COSMETIC = ['lang', 'score', 'scoreTheme', 'backdrops', 'threads', 'pace', 'transport'];
+        if (payload.recommended) { m.recTuned = false; m.recN = null; break; }
+        updateSettings(m, payload);
+        if (payload.mode) { m.recTuned = false; m.recN = null; } else if (Object.keys(payload).some((k) => !COSMETIC.includes(k))) m.recTuned = true;
+        break;
+      }
       // S4: "Start anyway" seats everyone as ready (their phones get the role reveal like everyone else).
       case 'host.start': if (payload.anyway) m.players.forEach((p) => { p.ready = true; }); startMatch(m, this.rng, now); break;
       case 'host.advance': hostAdvance(m, this.rng, now, { skipAll: !!payload.skipAll }); break;
@@ -353,7 +362,17 @@ export class RoomManager {
     else m.deadline += phaseMoved ? cursor - now : cursor - before;
   }
 
+  /** S2: keep an untuned lobby on the recommended setup for its game and table size. */
+  syncRecommended(room) {
+    const m = room.match;
+    if (m.phase !== 'LOBBY' || m.recTuned || m.recN === m.players.length) return;
+    m.recN = m.players.length;
+    const { patch } = recommend(modeOf(m.settings.preset), m.players.length);
+    if (Object.keys(patch).length) { try { updateSettings(m, patch); } catch { /* a recommendation never blocks the lobby */ } }
+  }
+
   changed(room) {
+    this.syncRecommended(room);
     this.stampScenes(room);
     this.syncPresence(room);
     this.arm(room);

@@ -7,6 +7,7 @@ import {
   quietDay,
 } from './state.js';
 import { setupReport, nominees, chatChannels, ballotWeight } from './game.js';
+import { recommend } from './recommend.js';
 import { exorcismPublic, exorcismAction, exorcismProgress, exorcismSecrets, xKnowledge, isExorcismPhase, X_ADVANCE_LABEL, X_REDRAW_PHASES } from './exorcism.js';
 import { coffinsPublic, coffinsAction, coffinsProgress, coffinsSecrets, coffinsMe, isCoffinsPhase, C_ADVANCE_LABEL } from './coffins.js';
 import { midnightPublic, midnightAction, midnightProgress, midnightSecrets, midnightMe, isMidnightPhase, N_ADVANCE_LABEL } from './midnight.js';
@@ -86,6 +87,7 @@ export function publicView(m, now = Date.now()) {
     hostId: m.hostId, moderated: m.moderated,
     preset: m.config?.preset ?? m.settings.preset,
     transport: m.settings.transport,
+    rec: m.phase === 'LOBBY' ? { n: m.players.length, tuned: !!m.recTuned, facts: recommend(modeOf(m.settings.preset), m.players.length).facts } : null,
     table: { threads: !!m.settings.threads, score: m.settings.score !== false, scoreTheme: m.settings.scoreTheme ?? 'classic', pace: m.settings.pace === 'brisk' ? 'brisk' : 'cinematic', lang: m.settings.lang || 'en', bloodMoon: m.config ? m.config.bloodMoon : m.settings.bloodMoon !== false, finalTwoDeath: m.config ? m.config.finalTwoDeath : !!m.settings.finalTwoDeath, tieBreak: m.config?.tieBreak ?? m.settings.tieBreak ?? 'none', psycho: m.config?.psycho ?? m.settings.psycho ?? 'once', quietFirstDay: m.config ? m.config.quietFirstDay : m.settings.quietFirstDay !== false, backdrops: m.settings.backdrops !== false, clues: m.settings.clues !== false, clueOdds: m.settings.clueOdds ?? 1, lovers: !!m.settings.lovers, cult: !!m.settings.cult, ripper: !!m.settings.ripper, leaderMode: m.config?.leaderMode ?? m.settings.leaderMode ?? 'next' },
     bloodMoon: !!m.night?.bloodMoon,
     doomsday: m.config?.doomsday ? m.config.doomsdayDays : null,

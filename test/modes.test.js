@@ -118,3 +118,19 @@ test('P1/P3: banners hold no time; Brisk plays full scenes at 0.6', async () => 
   updateSettings(m, { pace: 'warp' });
   assert.equal(m.settings.pace, 'brisk');
 });
+
+test('S2: every recommended setup is valid at every table size', async () => {
+  const { recommend } = await import('../engine/recommend.js');
+  const { setupReport } = await import('../engine/game.js');
+  for (const mode of Object.keys(MODES)) {
+    for (let n = MODES[mode].min; n <= Math.min(MODES[mode].max, 18); n++) {
+      const m = newMatch({ id: 'r', code: 'REC001', hostId: 'p0' });
+      updateSettings(m, { mode });
+      for (let i = 0; i < n; i++) addPlayer(m, { id: `p${i}`, name: NAMES[i] });
+      const { patch } = recommend(mode, n);
+      updateSettings(m, patch);
+      const r = setupReport(m);
+      assert.ok(r.ok, `${mode} at ${n}: ${JSON.stringify(r.errors)}`);
+    }
+  }
+});

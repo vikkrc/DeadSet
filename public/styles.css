@@ -5478,3 +5478,9 @@ button.mr-fate { cursor: pointer; }
   .notes-slot { top: 0; left: 0; right: 0; margin-top: 0; height: 62px; }
   .notes-slot .herald-slip { border-width: 0 0 1px; }
 }
+/* S2: the recommended setup, as a summary card */
+.rec-card { display: grid; gap: 8px; margin: 0 0 14px; padding: 12px 14px; border: 1px solid var(--gilt-2); border-radius: 6px; background: color-mix(in srgb, var(--gilt) 6%, var(--ink-2)); }
+.rec-card.tuned { border-style: dashed; }
+.rec-facts { display: flex; flex-wrap: wrap; gap: 6px; }
+.rec-fact { padding: 4px 10px; border: 1px solid var(--iron); border-radius: 20px; font: 500 14px/1.2 var(--text); color: var(--bone); }
+.rec-card .row { gap: 8px; flex-wrap: wrap; }
