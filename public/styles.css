@@ -5416,3 +5416,23 @@ button.mr-fate { cursor: pointer; }
 .g-covers .tarot--cover { font-size: 7.5px; }
 .h-panel { min-width: 0; } .h-games { max-width: 100%; min-width: 0; }
 .side-foot { flex-wrap: wrap; gap: 8px; } .side-menu { margin-left: auto; }
+/* Covers: the arch is a dark window with a light outline, so the mode's coloured emblem stands out (no rays) */
+.tarot--cover .arc-art { background: color-mix(in srgb, var(--cv) 55%, var(--bone)); }
+.tarot--cover .arc-art::before { inset: 1.5px; background: radial-gradient(circle at 50% 62%, color-mix(in srgb, var(--cv) 16%, var(--ink-2)), var(--ink) 78%); }
+.tarot--cover .arc-art .emblem { color: var(--cv); --paper: var(--ink); padding: 26% 12% 12%; filter: drop-shadow(0 0 6px color-mix(in srgb, var(--cv) 45%, transparent)); stroke-width: 2.4; }
+.tarot--cover .arc-art { align-items: center; }
+.tarot--cover .arc-art .emblem { padding: 22% 3% 6%; }
+.tarot--cover.mini .cv-title { display: none; }
+.tarot--cover.mini .arc-art { flex: 1; width: 92%; }
+/* The lobby's game card is the top of a small deck; the host taps it to change the game */
+.cover-deck { position: relative; flex: none; margin: 6px 14px 10px 4px; }
+.cover-deck .cd-top { position: relative; z-index: 2; display: block; padding: 0; border: 0; background: none; cursor: default; }
+.cover-deck.can .cd-top { cursor: pointer; transition: transform var(--t-ui) var(--ease); }
+.cover-deck.can .cd-top:hover, .cover-deck.can .cd-top:focus-visible { transform: translateY(-3px); }
+.cover-deck.can .cd-top:active { transform: scale(0.98); }
+.cd-back { position: absolute; inset: 0; z-index: 1; pointer-events: none; filter: brightness(0.55); }
+.cd-back.b0 { transform: translate(9px, -5px) rotate(5deg); }
+.cd-back.b1 { transform: translate(-8px, 2px) rotate(-6deg); z-index: 0; }
+.game-card .gc-side > .btn, .game-card .gc-side > a.btn { align-self: flex-start; margin-left: 0; }
+.game-card .gc-side > a.btn-ghost { padding-left: 0; padding-right: 0; }
+.game-card .gc-side > a.btn { display: inline-flex; align-items: center; gap: 8px; width: auto; justify-content: flex-start; text-align: left; }

@@ -18,7 +18,7 @@ export const roleEmblemId = (role) => ROLE_EMBLEM[role?.id] ?? role?.glyph ?? 'i
 export const roleNumber = (role, t) => ROLE_NUM[role?.id] ?? (role?.set === 'missions' ? t('Mission') : role?.set === 'exorcism' ? t('Exorcism') : '★');
 
 /** Card art: the emblem inside its ray ring, in a lancet-arched window. */
-export const cardArt = (id) => `<span class="arc-art" aria-hidden="true">${emblem(id, { rays: true, cls: 'arc-emb' })}</span>`;
+export const cardArt = (id, { rays = true } = {}) => `<span class="arc-art" aria-hidden="true">${emblem(id, { rays, cls: 'arc-emb' })}</span>`;
 
 const MCARD_EMBLEM = {
   REGULAR: 'regular', LANTERN: 'lantern', FRESH_FACES: 'fresh', EXTRA_HAND: 'extra', SKELETON_CREW: 'skeleton', MASKED_VOTE: 'maskedvote',
