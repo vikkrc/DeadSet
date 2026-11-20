@@ -29,8 +29,8 @@ for (const code of LANGS.filter((c) => c !== 'en')) {
   // The Mirror: every dilemma id, as [prompt, A, B, C], all non-empty and the three answers distinct.
   for (const x of DILEMMAS) {
     const tr = d.dilemmas?.[x.id];
-    if (!Array.isArray(tr) || tr.length !== 4 || tr.some((y) => !y)) err(`dilemma ${x.id} missing or malformed`);
-    else if (new Set(tr.slice(1)).size !== 3) err(`dilemma ${x.id}: answers not distinct`);
+    if (!Array.isArray(tr) || tr.length !== 5 || tr.some((y) => !y)) err(`dilemma ${x.id} missing or malformed (prompt, three answers, title)`);
+    else if (new Set(tr.slice(1, 4)).size !== 3) err(`dilemma ${x.id}: answers not distinct`);
   }
   if (!d.and) err('and missing');
 }

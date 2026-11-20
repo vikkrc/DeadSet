@@ -95,7 +95,7 @@ test('omen: timeouts mean no prediction and no turn; after seven rounds unused I
 test('mirror: the bank holds at least 75 distinct dilemmas, three answers each', () => {
   assert.ok(DILEMMAS.length >= 75);
   assert.equal(new Set(DILEMMAS.map((d) => d.id)).size, DILEMMAS.length);
-  for (const d of DILEMMAS) { assert.equal(d.choices.length, 3); assert.equal(new Set(d.choices).size, 3); }
+  for (const d of DILEMMAS) { assert.equal(d.choices.length, 3); assert.equal(new Set(d.choices).size, 3); assert.match(d.title ?? '', /^The \S/, `${d.id} has a title (MR7)`); }
 });
 
 test('mirror: targets are a permutation with no self-reads; over n − 1 rounds everyone reads everyone', () => {
