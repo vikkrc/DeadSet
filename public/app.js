@@ -2877,9 +2877,12 @@ function boardView() {
   const hint = !document.fullscreenElement && !S.board.fsAsked && localStorage.getItem(FS_KEY) !== 'off' ? `<div class="tv-fs-hint" data-key="tvfs">${t('Press F or tap for full screen')}</div>` : '';
   // T3: the lobby teaches while people join — the game's cover, and its How it works turning a step every 8 s.
   if (v.phase === 'LOBBY' && !S.board.howTimer) S.board.howTimer = setInterval(() => { if (onBoard() && V()?.phase === 'LOBBY') { S.board.howStep = (S.board.howStep ?? 0) + 1; render(); } }, 8000);
+  // T1: the caption strip along the bottom of every TV board in play: a small join QR and the code for anyone
+  // late or rejoining, the progress count at the right; news ribbons cross it in the middle (J6).
+  const caption = v.phase === 'LOBBY' ? '' : `<div class="tv-caption" data-key="tvcap"><span class="tc-join">${qrSvg(`${location.origin}/r/${v.code}`)}<span><small>${t('Join or rejoin')}</small><b>${esc(v.code)}</b></span></span><span class="tc-prog">${v.progress?.total ? esc(th('{done} of {total} done', v.progress)) : ''}</span></div>`;
   const how = v.phase === 'LOBBY' ? guideHow(v.mode) : '';
   const steps = (how.match(/<li /g) || []).length || 1;
-  return boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark, cover, how, howStep: (S.board.howStep ?? 0) % steps, avatar: (p) => (p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`) }) + hint;
+  return boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark, cover, how, howStep: (S.board.howStep ?? 0) % steps, avatar: (p) => (p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`) }) + caption + hint;
 }
 
 // ── Dock (primary action) ──────────────────────────────────────────────────

@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "Join or rejoin": "Csatlakozás vagy visszatérés",
     "At the table": "Az asztalnál",
     "Getting ready": "Készülődik",
     "Away": "Távol",

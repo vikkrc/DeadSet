@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tři mise selhaly",
     "Use the Candle": "Použij Svíčku",
     "Game mode": "Herní režim",
+    "Join or rejoin": "Připoj se nebo se vrať",
     "At the table": "U stolu",
     "Getting ready": "Chystá se",
     "Away": "Mimo",

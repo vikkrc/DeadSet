@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Drei Missionen gescheitert",
     "Use the Candle": "Benutze die Kerze",
     "Game mode": "Spielmodus",
+    "Join or rejoin": "Beitreten oder zurückkehren",
     "At the table": "Am Tisch",
     "Getting ready": "Macht sich bereit",
     "Away": "Abwesend",
