@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dead Set — TV layout system</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+<link rel="stylesheet" href="./ds.css">
+<link rel="stylesheet" href="./workshop.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Grenze+Gotisch:wght@400;600;800&amp;family=UnifrakturCook:wght@700&amp;display=swap">
+<style>
+body{margin:0}
+.zl{position:absolute;display:flex;align-items:center;gap:8px;font:600 13px/1 'EB Garamond',serif;letter-spacing:.2em;text-transform:uppercase;color:#e45d50}
+.sr{display:grid;grid-template-columns:34px 1fr 90px 70px 60px;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid #3b3027;font-size:20px}
+.sr i{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;border:1px solid #8a6d35;font:600 16px/1 'Grenze Gotisch',serif;font-style:normal;background:#221b15}
+.sr .pips{color:#c9a35a;letter-spacing:2px;font-size:16px}
+.sr b{font:500 24px/1 'EB Garamond',serif;text-align:right;color:#e8dcc0}
+.sr .seal{font:italic 400 16px/1 'EB Garamond',serif;color:#93866e}
+.hd{display:grid;grid-template-columns:34px 1fr 90px 70px 60px;gap:12px;font:600 12px/1 'EB Garamond',serif;letter-spacing:.2em;text-transform:uppercase;color:#93866e;padding-bottom:8px;border-bottom:1px solid #8a6d35}
+</style>
+</helmet>
+<div class="ds tv" style="width:1600px;height:900px;display:grid;grid-template-rows:96px 1fr 76px;--glow:rgba(154,123,47,.18)">
+  <div style="position:relative;display:flex;align-items:center;gap:22px;padding:0 48px;border-bottom:1px solid #3b3027">
+    <span class="mark" style="font-size:30px">Dead <span class="red">Set</span></span>
+    <span class="lab gilt">The Omen</span>
+    <h1 class="bl" style="font-size:52px">Round 3</h1>
+    <span class="lab">Predict and turn</span>
+    <span class="bit gilt" style="margin-left:auto;font-size:56px">0:39</span>
+    <button class="ico" aria-label="Score on" style="width:52px;height:52px"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M9 22V14a7 7 0 0 1 14 0v8l2 3H7z"></path></svg></button>
+    <span class="zl" style="left:12px;bottom:-14px"><span class="pin">1</span>Header strip · 96</span>
+  </div>
+
+  <div style="position:relative;display:grid;grid-template-columns:900px 1fr;gap:48px;padding:28px 48px">
+    <div class="ghostbox" style="position:relative;display:grid;place-items:center">
+      <div class="ow " style="--w:500px"><svg class="sx" viewBox="0 0 100 100" aria-hidden="true"><g stroke="#c9a35a" stroke-width=".35" fill="none">
+<circle cx="50" cy="50" r="46.5" stroke-dasharray=".4 1.2"></circle><circle cx="50" cy="50" r="38" stroke="#8a6d35"></circle>
+<line x1="43.1" y1="46.0" x2="10.2" y2="27.0"></line><line x1="56.9" y1="46.0" x2="89.8" y2="27.0"></line><line x1="50.0" y1="58.0" x2="50.0" y2="96.0"></line></g><g fill="#ecd28f"><path transform="translate(17.1 31.0) rotate(-60)" d="M0-2.2L1.2 0L0 2.2L-1.2 0Z"></path><path transform="translate(82.9 31.0) rotate(60)" d="M0-2.2L1.2 0L0 2.2L-1.2 0Z"></path><path transform="translate(50.0 88.0) rotate(180)" d="M0-2.2L1.2 0L0 2.2L-1.2 0Z"></path></g></svg><span class="fc " style="left:50.0%;top:21.0%"><span class="rd"><img src="./art/sun.svg" alt=""></span><b>Life</b></span><span class="fc " style="left:75.1%;top:64.5%"><span class="rd"><img src="./art/death.svg" alt=""></span><b>Death</b></span><span class="fc " style="left:24.9%;top:64.5%"><span class="rd"><img src="./art/angel.svg" alt=""></span><b>Rebirth</b></span><svg class="ndl2" viewBox="0 0 100 100" style="transform:rotate(0deg)" aria-hidden="true">
+<defs><linearGradient id="ngtv" x1="0" x2="1"><stop offset="0" stop-color="#8a6d35"></stop><stop offset=".5" stop-color="#f4e2a8"></stop><stop offset="1" stop-color="#8a6d35"></stop></linearGradient></defs>
+<g fill="url(#ngtv)" stroke="#4a3816" stroke-width=".25">
+<path d="M50 9 L52.2 17.5 L51.1 17.5 L51.6 44 L50 47.5 L48.4 44 L48.9 17.5 L47.8 17.5Z"></path>
+<path d="M50 4.2 L52.6 9 L50 13.8 L47.4 9Z"></path>
+<path d="M45.2 25 Q50 21.5 54.8 25 Q50 23.6 45.2 25Z"></path>
+<path d="M50 52.5 L51.2 60 L50 61.5 L48.8 60Z"></path>
+<path d="M50 61 a5.6 5.6 0 1 0 0.01 0Z M50 63.2 a3.6 3.6 0 1 1 -0.01 0Z" fill-rule="evenodd"></path>
+</g>
+<g transform="translate(50 50)">
+<circle r="7.2" fill="#1a130c" stroke="#c9a35a" stroke-width=".6"></circle>
+<path d="M0-6 L1.3-1.3 L6 0 L1.3 1.3 L0 6 L-1.3 1.3 L-6 0 L-1.3-1.3Z" fill="url(#ngtv)"></path>
+<path d="M0-3.6 L.7-.7 L3.6 0 L.7 .7 L0 3.6 L-.7 .7 L-3.6 0 L-.7-.7Z" fill="#1a130c" transform="rotate(45)"></path>
+<circle r="1.3" fill="#f4e2a8"></circle>
+</g></svg><span class="sr d" style="left:77.2%;top:2.8%"></span><span class="sr d" style="left:104.5%;top:50.0%"></span><span class="sr " style="left:77.2%;top:97.2%"></span><span class="sr y" style="left:22.8%;top:97.2%"></span><span class="sr d" style="left:-4.5%;top:50.0%"></span><span class="sr d" style="left:22.7%;top:2.8%"></span></div>
+      <span class="zl" style="left:12px;top:12px"><span class="pin">2</span>Stage · the mode's picture, as big as it can be</span>
+    </div>
+    <div class="ghostbox" style="position:relative;padding:20px 22px;display:flex;flex-direction:column;gap:6px">
+      <span class="lab gilt" style="margin-bottom:8px">The seers</span>
+      <div class="hd"><span></span><span>Seer</span><span>Influence</span><span>Ballot</span><span style="text-align:right">Pts</span></div>
+      <div class="sr"><i>C</i><span>Cass</span><span class="pips">◆◆◆◆</span><span class="seal">sealed</span><b>6</b></div>
+      <div class="sr"><i>B</i><span>Bram</span><span class="pips">◆◆◆◆◆</span><span class="seal">sealed</span><b>3</b></div>
+      <div class="sr"><i>E</i><span>Edda</span><span class="pips">◆◆◆</span><span class="seal">—</span><b>3</b></div>
+      <div class="sr"><i>V</i><span>Viktor</span><span class="pips">◆◆◆◆◆</span><span class="seal">sealed</span><b>0</b></div>
+      <div class="sr"><i>A</i><span>Ash</span><span class="pips">◆◆</span><span class="seal">—</span><b>0</b></div>
+      <div class="sr" style="border-bottom:0"><i>D</i><span>Dorian</span><span class="pips">◆◆◆◆</span><span class="seal">sealed</span><b>0</b></div>
+      <span class="zl" style="left:12px;bottom:12px"><span class="pin">3</span>Ledger · 520, scores and who is in</span>
+    </div>
+  </div>
+
+  <div style="position:relative;display:flex;align-items:center;gap:24px;padding:0 48px;border-top:1px solid #3b3027">
+    <span style="font-size:24px">Predict where the wheel stops, and perhaps turn it.</span>
+    <span class="it dim" style="font-size:20px">4 of 6 sealed</span>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:12px"><span class="it dim" style="font-size:16px;text-align:right">Join or rejoin<br>U96LWF</span><span class="qrph" style="width:56px;height:56px;display:block"></span></div>
+    <span class="zl" style="left:12px;top:-14px"><span class="pin">4</span>Caption strip · 76, the one line everyone reads</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1600,"height":900}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>

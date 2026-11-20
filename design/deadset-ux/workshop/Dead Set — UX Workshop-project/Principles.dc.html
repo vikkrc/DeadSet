@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dead Set — what makes it feel good</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+<link rel="stylesheet" href="./ds.css">
+<link rel="stylesheet" href="./workshop.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Grenze+Gotisch:wght@400;600;800&amp;family=UnifrakturCook:wght@700&amp;display=swap">
+<style>
+body{margin:0}
+.q{display:flex;flex-direction:column;gap:12px;padding:24px 26px;border:1px solid #3b3027;background:#15110e}
+.q h2{margin:0;font:600 30px/1.05 'Grenze Gotisch',serif;color:#e8dcc0}
+.q .k{font:600 12px/1 'EB Garamond',serif;letter-spacing:.22em;text-transform:uppercase;color:#e45d50}
+.q ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.q li{display:grid;grid-template-columns:14px 1fr;gap:10px;font:400 17px/1.32 'EB Garamond',serif;color:#c2b496}
+.q li::before{content:'';width:7px;height:7px;margin-top:8px;transform:rotate(45deg);background:#c9a35a}
+.q li b{color:#e8dcc0;font-weight:500}
+</style>
+</helmet>
+<div class="ds tv" style="width:1600px;height:1000px;padding:44px 56px;display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;align-items:baseline;gap:24px">
+    <h1 class="bl press" style="font-size:56px;font-weight:800">The questions, answered</h1>
+    <p class="it dim" style="font-size:20px;flex:1">Four tests every screen, scene and setting in Dead Set should pass. Part II of the guide applies them to the lobby, the rule book, the Gazette and the rest.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:22px;flex:1">
+    <div class="q"><span class="k">What counts as good UI and UX here</span><h2>The phone is a private hand; the TV is the table</h2><ul>
+      <li><span><b>One decision per screen.</b> The move strip names it; the dock confirms it; nothing else asks for a tap.</span></li>
+      <li><span><b>Eyes up, not down.</b> A good phone screen can be read in two seconds and put face down; the game happens between people.</span></li>
+      <li><span><b>Same place, every game.</b> Header, move strip, stage, tray, dock. Learning one game teaches the controls of all eleven.</span></li>
+      <li><span><b>Recover from anything.</b> A dropped phone, a late friend, a host who leaves: every state has a way back.</span></li></ul></div>
+    <div class="q"><span class="k">What makes it feel alive and fun</span><h2>Anticipation, consequence, recognition</h2><ul>
+      <li><span><b>Anticipation:</b> reveals that take a breath (a held beat before a card turns, beads landing one by one, a heartbeat at ten seconds).</span></li>
+      <li><span><b>Consequence:</b> every action leaves a mark: a crack, a thread of suspicion, a token flying to the ledger.</span></li>
+      <li><span><b>Recognition:</b> your face on the table, your name in the Gazette's headline, an award for your best moment, the evening's ledger.</span></li>
+      <li><span><b>Life at rest:</b> a candle that flickers, a speaker spotlight, faces that react when accused. Small, slow, never in the way.</span></li></ul></div>
+    <div class="q"><span class="k">The right amount of information</span><h2>A ladder of five, from scene to whisper</h2><ul>
+      <li><span><b>Interrupt</b> (full scene) only when the game changes; <b>Announce</b> (banner) for a turn; <b>Inform</b> (move strip, caption) for what to do; <b>Ambient</b> (ring, ledger) for state; <b>Private</b> (slip) for your secret.</span></li>
+      <li><span>Each piece of news appears <b>once, at the right rung</b>, and leaves a trace in the Gazette for anyone who missed it.</span></li>
+      <li><span><b>The TV tells the room; the phone tells you.</b> Never make six people read the same paragraph on six phones.</span></li></ul></div>
+    <div class="q"><span class="k">Easy, but not bland</span><h2>Plain controls, rich world</h2><ul>
+      <li><span><b>Controls are plain</b>: Garamond labels, one action, big targets. <b>The world is rich</b>: blackletter, vellum, wax, etchings, music.</span></li>
+      <li><span><b>Defaults that play well</b>: a recommended setup per player count, so a new host never needs the settings.</span></li>
+      <li><span><b>Depth on request</b>: rules a tap away, customisation one level down, the full record in the Gazette.</span></li>
+      <li><span><b>Character in the copy</b>: "Bram did not wake" beats "Player eliminated". Clear first, then flavour.</span></li></ul></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1600,"height":1000}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>

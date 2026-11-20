@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dead Set — the Mirror on the phone</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+<link rel="stylesheet" href="./ds.css">
+<link rel="stylesheet" href="./workshop.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Grenze+Gotisch:wght@400;600;800&amp;family=UnifrakturCook:wght@700&amp;display=swap">
+<style>
+body{margin:0}
+
+.dcard{position:relative;background:#e6d8b6;color:#1a120c;padding:16px 20px 20px;display:grid;justify-items:center;gap:8px;text-align:center;border-radius:6px;box-shadow:0 0 0 1px #77633f,0 18px 30px -16px #000}
+.dcard::before{content:'';position:absolute;inset:6px;border:1px solid rgba(90,70,50,.55);border-radius:3px;pointer-events:none}
+.dcard .top{display:flex;align-items:center;gap:12px}
+.dcard .rd{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;border:1px solid #6f8aa8;box-shadow:0 0 0 3px #e6d8b6,0 0 0 4px rgba(111,138,168,.6);background:radial-gradient(circle,#eef0ea,#dccba4 75%)}
+.dcard .rd img{width:80%;mix-blend-mode:multiply}
+.dcard .num{display:block;font:600 10px/1 var(--text);letter-spacing:.28em;text-transform:uppercase;color:var(--rubric)}
+.dcard h2{font:600 24px/1 var(--black);margin:3px 0 0;color:#2a1d12;text-align:left}
+.dcard .rule{width:60%;height:1px;background:linear-gradient(90deg,transparent,#8a6d35,transparent)}
+.dcard .q{margin:0;font:500 21px/1.32 var(--text);color:#1a120c;max-width:22ch;text-wrap:balance;letter-spacing:.005em}
+.dcard.lg{padding:22px 24px 26px;gap:12px} .dcard.lg .rd{width:64px;height:64px} .dcard.lg h2{font-size:28px} .dcard.lg .q{font-size:25px;max-width:16ch}
+
+.dlm{position:relative;align-self:stretch;margin:0 16px;background:var(--vellum);color:var(--sepia);padding:12px 14px 12px;display:grid;grid-template-columns:86px 1fr;gap:12px;align-items:center;box-shadow:0 0 0 1px #77633f,0 18px 30px -16px #000,inset 0 0 2em rgba(84,54,18,.22)}
+.dlm::before{content:'';position:absolute;inset:5px;border:1px solid var(--sepia-2);pointer-events:none}
+.dlm .win{height:112px;clip-path:var(--arch);background:#6f8aa8;position:relative}
+.dlm .win::before{content:'';position:absolute;inset:1.5px;clip-path:var(--arch);background:radial-gradient(circle at 50% 60%,#c9d3dc,#dccba4 70%)}
+.dlm .win img{position:relative;width:100%;height:100%;object-fit:contain;padding:26% 8% 6%;mix-blend-mode:multiply}
+.dlm .num{font:600 9.5px/1 var(--text);letter-spacing:.3em;text-transform:uppercase;color:var(--rubric)}
+.dlm h2{font:600 26px/.95 var(--black);margin:4px 0 6px}
+.dlm p{font:italic 400 16px/1.28 var(--text);color:var(--sepia)}
+.fates{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;align-self:stretch;margin:0 16px}
+.fate{position:relative;min-height:128px;background:linear-gradient(var(--ink-3),var(--ink-2));border:1px solid var(--gilt-2);display:grid;grid-template-rows:auto 1fr;justify-items:center;align-items:center;padding:12px 8px 16px;text-align:center;gap:6px;border-radius:4px}
+.fate::before{content:'';position:absolute;inset:4px;border:1px solid rgba(201,163,90,.22);border-radius:2px;pointer-events:none}
+.fate .rn{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;border:1px solid var(--gilt-2);font:600 12px/1 var(--text);letter-spacing:.06em;color:var(--gilt)}
+.fate img{width:52%;align-self:center;filter:invert(1) hue-rotate(180deg) sepia(.4);opacity:.9}
+.fate b{font:500 16.5px/1.22 var(--text);color:var(--bone);text-wrap:balance}
+.fate.mine{background:var(--vellum);border-color:var(--vellum)} .fate.mine .rn{color:var(--rubric);border-color:var(--rubric)} .fate.mine img{filter:none;mix-blend-mode:multiply} .fate.mine b{color:var(--sepia)}
+.fate.theirs{border-color:#a9c3d6;box-shadow:0 0 0 1px #a9c3d6,0 0 18px -4px #a9c3d6}
+.wx{position:absolute;bottom:-12px;width:34px;height:34px;display:grid;place-items:center;border-radius:47% 53% 50% 50%/52% 47% 53% 48%;font:700 16px/1 var(--black);box-shadow:0 4px 8px -2px #000}
+.wx.me{right:-6px;background:radial-gradient(circle at 35% 30%,#c8363a,var(--wax));color:#f6d3c8}
+.wx.th{left:-6px;background:radial-gradient(circle at 35% 30%,#dfe8ee,#7d93a6);color:#1b2530}
+.glass{align-self:stretch;margin:10px 16px 12px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:8px 12px;border-radius:40px;border:1px solid #6f8aa8;background:radial-gradient(120% 140% at 50% 0,rgba(111,138,168,.22),rgba(13,16,22,.9))}
+.glass .md{display:flex;align-items:center;gap:8px;font:600 11px/1 var(--text);letter-spacing:.18em;text-transform:uppercase;color:var(--bone-2)}
+.glass .md i{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;border:1px solid var(--gilt);font:600 17px/1 var(--black);font-style:normal;background:var(--ink-3);color:var(--gilt)}
+.glass .md.t i{border-color:#a9c3d6;color:#dfe8ee}
+.glass .ar{height:1px;background:linear-gradient(90deg,var(--gilt),#a9c3d6);position:relative}
+.glass .ar::after{content:'';position:absolute;right:-1px;top:-4px;width:8px;height:8px;border-top:1px solid #a9c3d6;border-right:1px solid #a9c3d6;transform:rotate(45deg)}
+
+.whos{display:flex;flex-wrap:wrap;gap:3px;justify-content:center}
+.whos i{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1px solid var(--gilt-2);background:var(--ink-3);font:600 11px/1 var(--black);font-style:normal;color:var(--gilt)}
+.fate.mine .whos i{background:#efe4c8;color:var(--sepia);border-color:var(--sepia-2)}
+.fate .ct{font:600 22px/1 var(--black);color:var(--gilt-hi)} .fate.mine .ct{color:var(--rubric)}
+
+</style>
+</helmet>
+<div class="ds" style="width:860px;height:1000px;background:#0c0a09">
+<div style="display:grid;grid-template-columns:390px 390px;gap:80px;padding:0">
+<div style="display:grid;gap:12px"><div class="ds phn" style="">
+  <header><div><h1>Dilemma<sup>3</sup></h1><span class="sub">Talk it over · 3 of 8</span></div><button class="ico" aria-label="Room menu"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 9h22M5 16h22M5 23h14"></path></svg></button></header>
+  <div class="mv"><div class="move"><span class="dot"></span><span class="what">Talk it over<small>Ask Ash what they’d do</small></span><span class="clk">1:05</span></div></div>
+  <div class="stage"><div class="glass"><span class="md"><i>V</i>You</span><span class="ar"></span><span class="md t">Ash<i>A</i></span></div>
+<div class="dcard lg" style="width:330px;margin-top:6px"><div class="top"><span class="rd"><img src="./art/s_self.svg" alt=""></span><span style="text-align:left"><span class="num">Dilemma · III</span><h2>The Salesman</h2></span></div><span class="rule"></span><p class="q">A travelling salesman sells bottled luck.</p></div>
+<div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;justify-content:center"><span class="chip">I · Buy a bottle</span><span class="chip">II · Buy the whole case</span><span class="chip">III · Run him out of town</span></div></div>
+  
+  <div class="dock"><button class="btn wide">Ready to seal</button></div>
+  
+</div><p class="cap" style="font-size:15px;padding:0 6px"><b style="color:var(--gilt)">Talk.</b> The dilemma is dealt as a card (Turn verb) on TV and every phone; answers wait as chips until the ballot.</p></div>
+<div style="display:grid;gap:12px"><div class="ds phn" style="">
+  <header><div><h1>Dilemma<sup>3</sup></h1><span class="sub">The reveal · 3 of 8</span></div><button class="ico" aria-label="Room menu"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 9h22M5 16h22M5 23h14"></path></svg></button></header>
+  <div class="mv"><div class="move"><span class="dot" style="background:#5a4a36;box-shadow:none"></span><span class="what">Ash chose I · Buy a bottle<small>You read them as II</small></span><span class="clk">0:09</span></div></div>
+  <div class="stage"><div class="dcard " style="align-self:stretch;margin:10px 16px 0"><div class="top"><span class="rd"><img src="./art/s_self.svg" alt=""></span><span style="text-align:left"><span class="num">Dilemma · III</span><h2>The Salesman</h2></span></div><span class="rule"></span><p class="q">A travelling salesman sells bottled luck.</p></div><div style="height:14px"></div><div class="fates" style="grid-auto-rows:auto"><div class="fate theirs"><span class="rn">I</span><span class="ct">2</span><b>Buy a bottle</b><div class="whos"><i>A</i><i>B</i></div></div><div class="fate mine"><span class="rn">II</span><span class="ct">3</span><b>Buy the whole case</b><div class="whos"><i>V</i><i>M</i><i>T</i></div><span class="wx me" style="bottom:auto;top:-10px">V</span></div><div class="fate "><span class="rn">III</span><span class="ct">1</span><b>Run him out of town</b><div class="whos"><i>I</i></div></div></div><div style="align-self:stretch;margin:22px 16px 0;display:grid;gap:8px"><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--blood);background:rgba(156,28,34,.12)"><span style="font:500 16px/1.2 var(--text)">You read Ash · <i>wrong</i></span><span class="bl" style="font-size:24px;color:var(--blood-ink)">+0</span></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--gilt);background:rgba(201,163,90,.12)"><span style="font:500 16px/1.2 var(--text)">Mara read you · <i>right</i></span><span class="bl" style="font-size:24px;color:var(--gilt-hi)">+2 to Mara</span></div></div></div>
+  
+  <div class="dock"><button class="btn wide" style="opacity:.6">Next dilemma in 9 s</button></div>
+  
+</div><p class="cap" style="font-size:15px;padding:0 6px"><b style="color:var(--gilt)">Reveal.</b> The fates turn face up with the portraits of who chose them; your reading and the reading of you, scored.</p></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":860,"height":1000}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>

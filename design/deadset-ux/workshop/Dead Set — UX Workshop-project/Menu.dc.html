@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dead Set — room menu</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+<link rel="stylesheet" href="./ds.css">
+<link rel="stylesheet" href="./workshop.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Grenze+Gotisch:wght@400;600;800&amp;family=UnifrakturCook:wght@700&amp;display=swap">
+<style>
+body{margin:0}
+
+.it2{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;min-height:52px;border-bottom:1px solid var(--iron);font:400 17px/1.2 var(--text)}
+.it2 small{display:block;font:italic 400 13.5px/1.2 var(--text);color:var(--ash)}
+.seg.sm button{min-height:34px;font-size:10px;letter-spacing:.14em;padding:0 8px}
+.tabs4{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--iron)}
+.tabs4 button{appearance:none;min-height:48px;border:0;background:none;color:var(--ash);font:600 11.5px/1 var(--text);letter-spacing:.18em;text-transform:uppercase;border-bottom:2px solid transparent;position:relative}
+.tabs4 .on{color:var(--bone);border-bottom-color:var(--gilt)} .tabs4 .on::after{content:'';position:absolute;left:50%;bottom:-5px;width:8px;height:8px;margin-left:-4px;transform:rotate(45deg);background:var(--gilt)}
+
+</style>
+</helmet>
+<div class="ds phn" style="width:390px;height:844px;">
+
+<div class="fr" style="margin:10px;flex:1;padding:16px 18px;display:flex;flex-direction:column;gap:12px;overflow:hidden;background:var(--ink-2)">
+  <div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;gap:12px;align-items:center"><div class="tseal" style="--s:54px;--t:0.6" role="img" aria-label="The table"><div class="c"></div><i class="d" style="left:50.0%;top:0.0%"></i><i class="d" style="left:89.1%;top:18.8%"></i><i class="x" style="left:98.7%;top:61.1%"></i><i class="" style="left:71.7%;top:95.0%"></i><i class="y" style="left:28.3%;top:95.0%"></i><i class="d" style="left:1.3%;top:61.1%"></i><i class="n" style="left:10.9%;top:18.8%"></i></div><div><h1 class="bl" style="font-size:27px">Classic · Day II</h1><span class="it dim" style="font-size:14px">Table HB4BR3 · you are Viktor</span></div></div><button class="ico" aria-label="Close"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 8l16 16M24 8L8 24"></path></svg></button></div>
+  <nav class="tabs4" aria-label="Menu"><button class="on">You</button><button>Table</button><button>Host</button><button>Help</button></nav>
+  <div class="fr b sm" style="padding:12px 14px;display:grid;gap:10px;background:rgba(156,28,34,.08)">
+    <div style="display:flex;justify-content:space-between"><span class="lab red">Host · this phase</span><span class="it dim" style="font-size:13px">only you see this</span></div>
+    <button class="btn seal wide">Hold to open the vote</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="btn sm">+30 s</button><button class="btn sm">Pause</button></div>
+  </div>
+  <div>
+    <div class="it2"><span>Keep screen awake<small>So you never miss a scene</small></span><button class="hsw on" aria-pressed="true" aria-label="Keep screen awake"></button></div>
+    <div class="it2"><span>Text size</span><div class="seg sm" style="width:170px"><button class="on">Aa</button><button>Aa+</button><button>Aa++</button></div></div>
+    <div class="it2"><span>Sound and buzz</span><div class="seg sm" style="width:170px"><button>All</button><button class="on">Taps</button><button>Off</button></div></div>
+    <div class="it2"><span>First-game tips</span><button class="hsw" aria-pressed="false" aria-label="First-game tips"></button></div>
+    <div class="it2"><span>Language</span><span class="it gilt" style="font-size:16px">English ›</span></div>
+    <div class="it2" style="border-bottom:0"><span>Leave the table<small>Your seat stays; rejoin from home</small></span><span class="it gilt" style="font-size:16px">›</span></div>
+  </div>
+  <p class="cap" style="margin-top:auto;font-size:13.5px"><b style="color:var(--bone)">Table</b>: Gazette, story, ledger, invite · <b style="color:var(--bone)">Host</b>: recover a seat, move seats, end the match · <b style="color:var(--bone)">Help</b>: this game's chapter.</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>

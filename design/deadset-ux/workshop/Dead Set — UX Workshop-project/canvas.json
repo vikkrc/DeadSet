@@ -1,0 +1,413 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 1000,
+      "title": "0 · The workshop map — seven principles"
+    },
+    {
+      "file": "Covers.dc.html",
+      "x": 1680,
+      "y": 0,
+      "w": 1600,
+      "h": 1000,
+      "title": "1 · Game covers — one unique emblem per mode"
+    },
+    {
+      "file": "Home.dc.html",
+      "x": 0,
+      "y": 1320,
+      "w": 390,
+      "h": 844,
+      "title": "2 · Phone home — the collection and rejoin"
+    },
+    {
+      "file": "LobbyHost.dc.html",
+      "x": 470,
+      "y": 1320,
+      "w": 390,
+      "h": 844,
+      "title": "3 · Host lobby — three tabs, not 5,600 px"
+    },
+    {
+      "file": "LobbyGuest.dc.html",
+      "x": 940,
+      "y": 1320,
+      "w": 390,
+      "h": 844,
+      "title": "4 · Guest lobby — one screen"
+    },
+    {
+      "file": "Anatomy.dc.html",
+      "x": 1410,
+      "y": 1320,
+      "w": 960,
+      "h": 844,
+      "title": "5 · In-game phone anatomy — the move strip and the tray"
+    },
+    {
+      "file": "Mirror.dc.html",
+      "x": 2450,
+      "y": 1320,
+      "w": 390,
+      "h": 844,
+      "title": "6 · The Mirror ballot — fate cards and two seals (see 32–33)"
+    },
+    {
+      "file": "Midnight.dc.html",
+      "x": 2920,
+      "y": 1320,
+      "w": 390,
+      "h": 844,
+      "title": "7 · Midnight dawn — what you know"
+    },
+    {
+      "file": "PEnd.dc.html",
+      "x": 3390,
+      "y": 1320,
+      "w": 390,
+      "h": 844,
+      "title": "8 · Phone end — awards and the next game"
+    },
+    {
+      "file": "TGrid.dc.html",
+      "x": 0,
+      "y": 2584,
+      "w": 1600,
+      "h": 900,
+      "title": "9 · TV layout system (The Omen as the example)"
+    },
+    {
+      "file": "TScenes.dc.html",
+      "x": 1680,
+      "y": 2584,
+      "w": 1600,
+      "h": 900,
+      "title": "10 · Three scene sizes (Carnival's swap)"
+    },
+    {
+      "file": "TLobby.dc.html",
+      "x": 3360,
+      "y": 2584,
+      "w": 1600,
+      "h": 900,
+      "title": "11 · TV lobby — the attract loop"
+    },
+    {
+      "file": "TEnd.dc.html",
+      "x": 0,
+      "y": 3604,
+      "w": 1600,
+      "h": 900,
+      "title": "12 · TV end — the night's ledger"
+    },
+    {
+      "file": "Motion.dc.html",
+      "x": 1680,
+      "y": 3604,
+      "w": 1600,
+      "h": 900,
+      "title": "13 · Motion vocabulary — seven verbs"
+    },
+    {
+      "file": "Principles.dc.html",
+      "x": 3360,
+      "y": 0,
+      "w": 1600,
+      "h": 1000,
+      "title": "14 · What makes Dead Set feel good — the questions, answered"
+    },
+    {
+      "file": "Picker.dc.html",
+      "x": 0,
+      "y": 5124,
+      "w": 390,
+      "h": 844,
+      "title": "15 · Game picker — chosen by the table you have"
+    },
+    {
+      "file": "Customise.dc.html",
+      "x": 470,
+      "y": 5124,
+      "w": 390,
+      "h": 844,
+      "title": "16 · Customise — every switch shows its effect"
+    },
+    {
+      "file": "Menu.dc.html",
+      "x": 940,
+      "y": 5124,
+      "w": 390,
+      "h": 844,
+      "title": "17 · Room menu — You, Table, Host, Help"
+    },
+    {
+      "file": "Rulebook.dc.html",
+      "x": 1410,
+      "y": 5124,
+      "w": 860,
+      "h": 844,
+      "title": "18 · Rule book — teach in a minute, look up in a second"
+    },
+    {
+      "file": "Gazette.dc.html",
+      "x": 2350,
+      "y": 5124,
+      "w": 860,
+      "h": 844,
+      "title": "19 · The Gazette as the case file"
+    },
+    {
+      "file": "Coach.dc.html",
+      "x": 3290,
+      "y": 5124,
+      "w": 390,
+      "h": 844,
+      "title": "20 · First game — learn by playing"
+    },
+    {
+      "file": "Ghost.dc.html",
+      "x": 3760,
+      "y": 5124,
+      "w": 390,
+      "h": 844,
+      "title": "21 · Ghost seat — the dead still play"
+    },
+    {
+      "file": "Notices.dc.html",
+      "x": 0,
+      "y": 6488,
+      "w": 1600,
+      "h": 900,
+      "title": "22 · The notice ladder — noticeable, never disruptive"
+    },
+    {
+      "file": "Living.dc.html",
+      "x": 1680,
+      "y": 6488,
+      "w": 1600,
+      "h": 900,
+      "title": "23 · The living table — small signs of life"
+    },
+    {
+      "file": "Edges.dc.html",
+      "x": 3360,
+      "y": 6488,
+      "w": 1600,
+      "h": 900,
+      "title": "24 · Edge states — late, lost, alone, ended"
+    },
+    {
+      "file": "Share.dc.html",
+      "x": 5040,
+      "y": 6488,
+      "w": 1080,
+      "h": 1350,
+      "title": "25 · The share card — how parties spread"
+    },
+    {
+      "file": "TableForms.dc.html",
+      "x": 0,
+      "y": 8438,
+      "w": 1600,
+      "h": 1000,
+      "title": "26 · The table — one icon, three forms"
+    },
+    {
+      "file": "SealMotion.dc.html",
+      "x": 5040,
+      "y": 8438,
+      "w": 1600,
+      "h": 1000,
+      "title": "26b · The seal in motion — whose turn, and tap to zoom"
+    },
+    {
+      "file": "TableMap.dc.html",
+      "x": 1680,
+      "y": 8438,
+      "w": 1600,
+      "h": 1000,
+      "title": "27 · Where the table lives — every mode, every phase"
+    },
+    {
+      "file": "Herald.dc.html",
+      "x": 3360,
+      "y": 8438,
+      "w": 1600,
+      "h": 1000,
+      "title": "28 · Instant news — one place, never in the way"
+    },
+    {
+      "file": "AtlasA.dc.html",
+      "x": 0,
+      "y": 9738,
+      "w": 1780,
+      "h": 1080,
+      "title": "29 · Mode atlas I — the table is the game"
+    },
+    {
+      "file": "AtlasB.dc.html",
+      "x": 1860,
+      "y": 9738,
+      "w": 1780,
+      "h": 1080,
+      "title": "30 · Mode atlas II — an object takes the stage"
+    },
+    {
+      "file": "CoffinsReveal.dc.html",
+      "x": 6840,
+      "y": 9738,
+      "w": 1600,
+      "h": 1000,
+      "title": "30b · Coffins — the opening, in the arcana style"
+    },
+    {
+      "file": "AtlasC.dc.html",
+      "x": 3720,
+      "y": 9738,
+      "w": 1360,
+      "h": 1080,
+      "title": "31 · Mode atlas III — wheel, mirror, cemetery"
+    },
+    {
+      "file": "OmenReveal.dc.html",
+      "x": 5160,
+      "y": 9738,
+      "w": 1600,
+      "h": 1000,
+      "title": "31b · The Omen reveal — the result waits for the needle"
+    },
+    {
+      "file": "MirrorPrompt.dc.html",
+      "x": 0,
+      "y": 11078,
+      "w": 1600,
+      "h": 1000,
+      "title": "32 · The Mirror — style guide for the Arcana of Dilemmas"
+    },
+    {
+      "file": "MirrorPhone.dc.html",
+      "x": 1680,
+      "y": 11078,
+      "w": 860,
+      "h": 1000,
+      "title": "33 · The Mirror — the dilemma on the phone"
+    },
+    {
+      "file": "Coherence.dc.html",
+      "x": 2620,
+      "y": 11078,
+      "w": 1600,
+      "h": 1000,
+      "title": "34 · One family — the rules every mode follows"
+    },
+    {
+      "file": "ScaleTable.dc.html",
+      "x": 0,
+      "y": 12378,
+      "w": 1600,
+      "h": 860,
+      "title": "35 · The table at every size — 3 to 25 players"
+    },
+    {
+      "file": "ScaleModes.dc.html",
+      "x": 1680,
+      "y": 12378,
+      "w": 3140,
+      "h": 1080,
+      "title": "36 · Full tables, mode by mode — what changes past 10"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "t1",
+      "x": 0,
+      "y": -300,
+      "w": 240,
+      "maxW": 4960,
+      "text": "I · Principles and covers",
+      "kind": "title1"
+    },
+    {
+      "id": "t2",
+      "x": 0,
+      "y": 1020,
+      "w": 240,
+      "maxW": 3780,
+      "text": "II · On the phone",
+      "kind": "title1"
+    },
+    {
+      "id": "t3",
+      "x": 0,
+      "y": 2284,
+      "w": 240,
+      "maxW": 4960,
+      "text": "III · On the television",
+      "kind": "title1"
+    },
+    {
+      "id": "s1",
+      "x": 3360,
+      "y": 3604,
+      "w": 420,
+      "text": "Workshop canvas for the third pass. Boards are proposals, not final art: they reuse the Codex stylesheet and emblems already in the game. Comment on any board; the implementation guide (UX-PASS.md) refers to them by number."
+    },
+    {
+      "id": "t4",
+      "x": 0,
+      "y": 4824,
+      "w": 240,
+      "maxW": 4150,
+      "text": "IV · Setup, rule book, Gazette, first game, ghosts",
+      "kind": "title1"
+    },
+    {
+      "id": "t5",
+      "x": 0,
+      "y": 6188,
+      "w": 240,
+      "maxW": 6120,
+      "text": "V · Alive, informed, shared",
+      "kind": "title1"
+    },
+    {
+      "id": "s2",
+      "x": 5040,
+      "y": 4824,
+      "w": 420,
+      "text": "Part II of the workshop (boards 14–25). UX-PASS.md, Part II, refers to them by number."
+    },
+    {
+      "id": "t6",
+      "x": 0,
+      "y": 8138,
+      "w": 240,
+      "maxW": 4960,
+      "text": "VI · The table, every mode, one voice",
+      "kind": "title1"
+    },
+    {
+      "id": "s3",
+      "x": 6720,
+      "y": 8438,
+      "w": 240,
+      "text": "Part III of UX-PASS.md. Boards 15–25 were redrawn to this standard: the ornate table everywhere a table appears, the game's hexagon switches, the herald for news."
+    },
+    {
+      "id": "t7",
+      "x": 0,
+      "y": 12078,
+      "w": 240,
+      "maxW": 3460,
+      "text": "VII · Many players, few players",
+      "kind": "title1"
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

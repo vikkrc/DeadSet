@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dead Set — three scene sizes</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+<link rel="stylesheet" href="./ds.css">
+<link rel="stylesheet" href="./workshop.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Grenze+Gotisch:wght@400;600;800&amp;family=UnifrakturCook:wght@700&amp;display=swap">
+<style>
+body{margin:0}
+.fx{width:464px;height:261px}
+.mring{position:absolute;left:40px;top:40px;width:190px;height:190px;border-radius:50%;border:1px solid #8a6d35;background:repeating-conic-gradient(rgba(201,163,90,.12) 0 1.5deg,transparent 1.5deg 9deg),radial-gradient(circle,#221b15,#0c0a09);box-shadow:0 0 0 5px #0c0a09,0 0 0 7px #c9a35a,inset 0 0 0 26px #15110e,inset 0 0 0 27px #3b3027}
+.mring::before{content:"";position:absolute;inset:-14px;border-radius:50%;background:repeating-conic-gradient(#8a6d35 0 1deg,transparent 1deg 8deg);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px))}
+.ms{position:absolute;width:28px;height:28px;margin:-14px;border-radius:50%;border:1px solid #8a6d35;background:#221b15;display:grid;place-items:center;font:600 13px/1 'Grenze Gotisch',serif;color:#e8dcc0}
+.ms.hi{border-color:#ecd28f;box-shadow:0 0 14px rgba(236,210,143,.8)}
+.mledger{position:absolute;right:28px;top:40px;width:170px;display:grid;gap:9px}
+.mledger i{display:block;height:9px;background:#3b3027}
+.tier{display:grid;gap:10px}
+.tier h3{font:600 30px/1 'Grenze Gotisch',serif;margin:0}
+.rows td{padding:8px 12px;border-bottom:1px solid #3b3027;font-size:18px;vertical-align:top}
+.rows th{padding:8px 12px;text-align:left;font:600 12px/1 'EB Garamond',serif;letter-spacing:.2em;text-transform:uppercase;color:#c9a35a;border-bottom:1px solid #8a6d35}
+</style>
+</helmet>
+<div class="ds tv" style="width:1600px;height:900px;padding:40px 56px;display:flex;flex-direction:column;gap:24px;--glow:rgba(122,31,61,.18)">
+  <div style="display:flex;align-items:baseline;gap:22px"><h1 class="bl press" style="font-size:54px;font-weight:800">Three scene sizes</h1><p class="it dim" style="font-size:20px">Today every shared event takes the whole screen. In Carnival that is a full-screen scene on almost every turn.</p></div>
+
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:36px">
+    <div class="tier">
+      <div class="frame fx" style="display:grid;place-items:center;text-align:center;background:radial-gradient(80% 80% at 50% 50%,rgba(122,31,61,.35),#0c0a09)">
+        <div style="display:grid;gap:8px;justify-items:center"><span class="lab gilt" style="font-size:11px">The unmasking</span><span class="bl" style="font-size:40px">Bram was the Death</span><span class="stamp" style="font-size:22px">Unmasked</span></div>
+      </div>
+      <h3>Full · 3–7 s</h3>
+      <p class="cap">Covers both screens; inputs lock. Only for what changes the game: the deal, a death or unmasking, a vote's result, a mission's cards, the verdict.</p>
+    </div>
+    <div class="tier">
+      <div class="frame fx">
+        <div class="mring"></div>
+        <span class="ms" style="left:135px;top:45px">V</span><span class="ms" style="left:215px;top:95px">A</span><span class="ms" style="left:215px;top:185px">B</span><span class="ms" style="left:135px;top:225px">C</span><span class="ms" style="left:55px;top:185px">D</span><span class="ms" style="left:55px;top:95px">E</span>
+        <div class="mledger"><i></i><i></i><i></i><i></i><i></i></div>
+        <div style="position:absolute;left:0;right:0;top:96px;height:70px;display:grid;place-items:center;background:linear-gradient(90deg,transparent,rgba(12,10,9,.94) 15%,rgba(12,10,9,.94) 85%,transparent);border-top:1px solid #8a6d35;border-bottom:1px solid #8a6d35">
+          <span class="bl" style="font-size:30px">Cass · Dorian</span>
+        </div>
+      </div>
+      <h3>Banner · 1.5–2 s</h3>
+      <p class="cap">A strip across the board; the board stays visible and inputs stay open. For turn-level events everyone should notice: a swap, a claim, a sign, a dig.</p>
+    </div>
+    <div class="tier">
+      <div class="frame fx">
+        <div class="mring"></div>
+        <span class="ms" style="left:135px;top:45px">V</span><span class="ms" style="left:215px;top:95px">A</span><span class="ms" style="left:215px;top:185px">B</span><span class="ms hi" style="left:135px;top:225px">C</span><span class="ms" style="left:55px;top:185px">D</span><span class="ms hi" style="left:55px;top:95px">E</span>
+        <svg viewBox="0 0 464 261" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%"><path d="M135 225Q70 160 55 95" fill="none" stroke="#ecd28f" stroke-width="2" stroke-dasharray="5 4"></path><path d="M50 103l5-8 5 8" fill="none" stroke="#ecd28f" stroke-width="2"></path></svg>
+        <div class="mledger"><i></i><i style="background:#8a6d35"></i><i></i><i></i><i></i></div>
+        <span class="cap" style="position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:14px">Cass passes the lantern to Edda</span>
+      </div>
+      <h3>Inline · 0.6–1 s</h3>
+      <p class="cap">Plays on the ring and ledger themselves: an arc between seats, a bead that moves, a number that ticks. For routine steps: the lantern, a pass, a sealed ballot, points.</p>
+    </div>
+  </div>
+
+  <table class="rows" style="border-collapse:collapse;width:100%">
+    <tr><th>Mode</th><th>Full</th><th>Banner</th><th>Inline</th></tr>
+    <tr><td>Carnival</td><td>unmasking, a won challenge, the end</td><td>swap or pretend, claim</td><td>peek, passing the turn, Souls moving</td></tr>
+    <tr><td>Graverobbers · Coffins</td><td>Death grave, their own Death coffin, the end</td><td>the sign, a relic found, a curse</td><td>a vote in, a clean dig, a pass</td></tr>
+  </table>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1600,"height":900}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>

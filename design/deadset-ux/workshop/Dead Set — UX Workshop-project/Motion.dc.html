@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dead Set — motion vocabulary</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+<link rel="stylesheet" href="./ds.css">
+<link rel="stylesheet" href="./workshop.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Grenze+Gotisch:wght@400;600;800&amp;family=UnifrakturCook:wght@700&amp;display=swap">
+<style>
+body{margin:0}
+.verb{display:grid;gap:10px;padding:18px 20px;border:1px solid #3b3027;background:#15110e}
+.verb h3{margin:0;font:600 32px/1 'Grenze Gotisch',serif}
+.strip{display:flex;align-items:center;gap:14px;height:90px}
+.strip .ar{color:#8a6d35;font-size:20px}
+.k{width:40px;height:62px;border-radius:4px;border:1px solid #8a6d35}
+.k.back{background:repeating-linear-gradient(45deg,#2a0c0e 0 5px,#3a1a14 5px 7px)}
+.k.face{background:#dccba4}
+.spec{display:grid;grid-template-columns:78px 1fr;gap:4px 10px;font-size:15px}
+.spec span:nth-child(odd){font:600 11px/1.6 'EB Garamond',serif;letter-spacing:.18em;text-transform:uppercase;color:#93866e}
+.bead{width:16px;height:16px;border-radius:50%;background:#ecd28f;box-shadow:0 0 12px #ecd28f}
+.sd{width:36px;height:36px;border-radius:50%;border:1px solid #8a6d35;background:#221b15}
+</style>
+</helmet>
+<div class="ds tv" style="width:1600px;height:900px;padding:40px 56px;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:22px"><h1 class="bl press" style="font-size:54px;font-weight:800">Seven verbs</h1><p class="it dim" style="font-size:20px">Every animation in every mode is one of these, with one timing, one sound and (on your own phone) one buzz.</p></div>
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px">
+    <div class="verb"><h3>Deal</h3><div class="strip"><div class="k back" style="opacity:.3;transform:translateY(-20px) rotate(-8deg)"></div><span class="ar">›</span><div class="k back" style="transform:rotate(-3deg)"></div><span class="ar">›</span><div class="k back"></div></div><div class="spec"><span>Time</span><span>--t-card 700 ms, 60 ms stagger</span><span>Sound</span><span>paper slide</span><span>Buzz</span><span>none</span></div></div>
+    <div class="verb"><h3>Turn</h3><div class="strip"><div class="k back"></div><span class="ar">›</span><div class="k back" style="transform:scaleX(.15)"></div><span class="ar">›</span><div class="k face"></div></div><div class="spec"><span>Time</span><span>--t-card, 3D rotateY</span><span>Sound</span><span>soft flip</span><span>Buzz</span><span>8 ms, own card only</span></div></div>
+    <div class="verb"><h3>Seal</h3><div class="strip"><span class="seal-wax" style="width:52px;font-size:24px;opacity:.5">D</span><span class="ar">›</span><span class="seal-wax" style="width:52px;font-size:24px;box-shadow:0 0 0 4px #0c0a09,0 0 0 6px #c9a35a">D</span><span class="ar">›</span><span class="seal-wax" style="width:52px;font-size:24px;transform:scale(.92)">D</span></div><div class="spec"><span>Time</span><span>hold 650 ms, set 180 ms</span><span>Sound</span><span>wax press on set</span><span>Buzz</span><span>rising, then 20 ms</span></div></div>
+    <div class="verb"><h3>Stamp</h3><div class="strip"><span class="stamp" style="font-size:22px;transform:scale(1.6) rotate(-14deg);opacity:.3">Defeat</span><span class="ar">›</span><span class="stamp" style="font-size:22px">Defeat</span></div><div class="spec"><span>Time</span><span>--t-stamp 500 ms, --spring</span><span>Sound</span><span>thud</span><span>Buzz</span><span>30 ms</span></div></div>
+    <div class="verb"><h3>Pass</h3><div class="strip"><span class="sd"></span><span class="bead"></span><span style="flex:1;border-top:1px dashed #8a6d35"></span><span class="sd" style="border-color:#ecd28f;box-shadow:0 0 12px rgba(236,210,143,.6)"></span></div><div class="spec"><span>Time</span><span>600 ms along the ring's arc</span><span>Sound</span><span>bell tick</span><span>Buzz</span><span>"your turn": 2 × 15 ms</span></div><p class="cap" style="font-size:14px">The turn, the lantern, the leader, the speaker: one gilt bead travels seat to seat in every turn-based mode.</p></div>
+    <div class="verb"><h3>Gain</h3><div class="strip"><span class="bit gilt" style="font-size:26px">+3</span><span class="ar">›</span><span class="bit" style="font-size:40px">6</span><span class="ar">›</span><span class="bit gilt" style="font-size:40px">9</span></div><div class="spec"><span>Time</span><span>token flies 500 ms, number ticks 400 ms</span><span>Sound</span><span>coin</span><span>Buzz</span><span>none</span></div><p class="cap" style="font-size:14px">Points, Souls, Influence, relics: a token leaves the source and lands on the ledger. Today numbers just change.</p></div>
+    <div class="verb"><h3>Fall</h3><div class="strip"><span class="sd" style="width:52px;height:52px"></span><span class="ar">›</span><span class="sd" style="width:52px;height:52px;background:linear-gradient(45deg,transparent 47%,#e45d50 47% 53%,transparent 53%),linear-gradient(-45deg,transparent 47%,#e45d50 47% 53%,transparent 53%),#221b15;filter:grayscale(.6)"></span></div><div class="spec"><span>Time</span><span>crack 400 ms, fade 800 ms</span><span>Sound</span><span>low bell</span><span>Buzz</span><span>none (deaths are public)</span></div></div>
+    <div class="verb" style="background:none;border-style:dashed"><h3 class="gilt">Rules</h3><p class="cap" style="font-size:16px">Night and secret screens use none of these sounds or buzzes. Reduced motion: every verb becomes a 200 ms fade and the bead jumps. A phase change never shows an empty frame: the next screen fades in over the last one.</p></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1600,"height":900}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>

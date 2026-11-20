@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dead Set — phone home</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+<link rel="stylesheet" href="./ds.css">
+<link rel="stylesheet" href="./workshop.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Grenze+Gotisch:wght@400;600;800&amp;family=UnifrakturCook:wght@700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="ds" style="width:390px;height:844px;padding:16px 20px 20px;display:flex;flex-direction:column;gap:14px">
+  <header style="display:flex;justify-content:space-between;align-items:center">
+    <span class="mark" style="font-size:28px">Dead <span class="red">Set</span></span>
+    <div style="display:flex;gap:8px"><button class="btn sm" style="padding:0 16px">EN</button><button class="btn sm" style="padding:0 16px">Rule book</button></div>
+  </header>
+
+  <a href="#rejoin" class="fr b sm" style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:14px 16px;text-decoration:none;color:inherit;background:rgba(156,28,34,.12)">
+    <span style="display:grid;gap:2px"><span class="lab red">Your seat is waiting</span><span style="font-size:18px">Table HB4BR3 · Day II</span><span class="it dim" style="font-size:14px">Classic · 7 alive · you are seated as Viktor</span></span>
+    <span class="btn seal sm" style="padding:0 18px">Return</span>
+  </a>
+
+  <p class="it dim" style="font-size:18px;text-align:center">Eleven games of bluff and deduction. One phone each.</p>
+  <div class="seg"><button class="on">Host a table</button><button>Join a table</button></div>
+  <label class="field"><span class="lab">Your name</span><input value="Viktor" aria-label="Your name"></label>
+  <button class="btn bone wide">Pull up a chair</button>
+
+  <div style="display:grid;gap:10px;margin-top:4px">
+    <div class="orn"><span class="lab gilt">Tonight's games</span></div>
+    <div style="display:flex;gap:12px;overflow:hidden;padding:4px 2px 10px;-webkit-mask:linear-gradient(90deg,#000 80%,transparent);mask:linear-gradient(90deg,#000 80%,transparent)">
+      <div class="cover" style="--acc:#8e1b1f;width:116px;font-size:7.4px;flex:none"><span class="fam">Hidden</span><div class="win"><img src="./art/death.svg" alt=""></div><h3>Classic</h3><span class="meta">5–25</span></div>
+      <div class="cover" style="--acc:#6b55a8;width:116px;font-size:7.4px;flex:none"><span class="fam">Signs</span><div class="win"><img src="./art/demon.svg" alt=""></div><h3>Exorcism</h3><span class="meta">3–12</span></div>
+      <div class="cover" style="--acc:#4a4f58;width:116px;font-size:7.4px;flex:none"><span class="fam">Wager</span><div class="win"><img src="./art/undertaker.svg" alt=""></div><h3>Coffins</h3><span class="meta">3–10</span></div>
+      <div class="cover" style="--acc:#6f8aa8;width:116px;font-size:7.4px;flex:none"><span class="fam">Reading</span><div class="win"><img src="./art/s_self.svg" alt=""></div><h3>Mirror</h3><span class="meta">4–12</span></div>
+    </div>
+    <p class="cap" style="font-size:14px;text-align:center">Tap a cover for its one-page rules and a 30-second preview.</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>
