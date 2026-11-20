@@ -1466,7 +1466,11 @@ function roomScreen() {
   const move = moveBand(v, mainFor(v, v.me));
   const top = `<header class="topbar" data-key="top">
       <span class="tb-emblem">${isNight(v.phase) ? glyph('moon') : glyph('sun')}</span>
-      <div class="phase-mini"><strong class="${pw.night ? 'night' : ''}">${esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</strong>${S.heraldLast && !herald.cur && Date.now() < S.heraldLast.until ? `<span class="herald-echo">${esc(S.heraldLast.text)}</span>` : `<span>${esc(stepOf(v))}${v.phase === 'LOBBY' ? ` · ${t('{n} seated', { n: v.players.length })}` : !modeInfo(v.mode).aliveCount ? '' : ` · ${t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}`}</span>`}</div>
+      ${move.line ? `<div class="phase-mini with-move ${move.line.act ? 'act' : 'wait'}" role="status" aria-live="polite">
+        <span class="pm-kick"><b>${esc(pw.word)}${pw.num ? ` ${esc(pw.num)}` : ''}</b>${S.heraldLast && !herald.cur && Date.now() < S.heraldLast.until ? ` · <span class="herald-echo">${esc(S.heraldLast.text)}</span>` : stepOf(v) && stepOf(v) !== S.moveNow?.main ? ` · ${esc(stepOf(v))}` : ''}</span>
+        <span class="pm-move"><i class="move-dot" aria-hidden="true"></i><span>${move.line.main}</span></span>
+        ${move.line.act && move.line.sub ? `<small class="pm-sub">${move.line.sub}</small>` : ''}</div>
+      <span class="clock tb-clock" data-clock></span>` : `<div class="phase-mini"><strong class="${pw.night ? 'night' : ''}">${esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</strong>${S.heraldLast && !herald.cur && Date.now() < S.heraldLast.until ? `<span class="herald-echo">${esc(S.heraldLast.text)}</span>` : `<span>${esc(stepOf(v))}${v.phase === 'LOBBY' ? ` · ${t('{n} seated', { n: v.players.length })}` : !modeInfo(v.mode).aliveCount ? '' : ` · ${t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}`}</span>`}</div>`}
       ${v.host && inPlay(v) ? `<button class="host-pill" data-act="sheet" data-id="record" data-key="hostpill">${t('Host')}</button>` : ''}
       <button class="btn btn-ghost icon-btn" data-act="sheet" data-id="record" aria-label="${esc(t('Open match record'))}">${glyph('menu')}</button>
       ${fuse()}
@@ -1642,8 +1646,10 @@ function moveBand(v, html) {
     if (m) {
       html = html.replace(m[0], '');
       // A Coffins slip says whose turn it is by its class; a "do now" block follows the action.
-      const act = m[1] === 'cturn' ? /\bme\b/.test(m[2]) : m[1] === 'k-slip' ? /\bme\b/.test(m[2]) || canAct(v) : canAct(v);
-      line = { act, main: m[3], sub: m[4] ?? '', html: true };
+      const act = m[1] === 'cturn' || m[1] === 'x-turn' ? /\bme\b/.test(m[2]) : m[1] === 'k-slip' ? /\bme\b/.test(m[2]) || canAct(v) : canAct(v);
+      // Exorcism's slip carries its point in the kicker ("Now speaking"), so the strip keeps it: "Now speaking: Ash".
+      const kick = m[1] === 'x-turn' ? (m[0].match(/<span class="kicker[^"]*">([^<]*)<\/span>/)?.[1] ?? '') : '';
+      line = { act, main: kick && !act ? `${kick}: ${m[3]}` : m[3], sub: m[4] ?? '', html: true };
     }
   }
   if (!line) line = { act: canAct(v), main: esc(stepOf(v)), sub: '', html: true };
@@ -1652,6 +1658,7 @@ function moveBand(v, html) {
   const wait = !line.act && v.progress?.total ? th('{done} of {total} done', v.progress) : '';
   return {
     html,
+    line: { act: !!line.act, main: txt(line.main), sub: line.sub ? txt(line.sub) : wait },
     strip: `<div class="move ${line.act ? 'act' : 'wait'}" data-key="move" role="status" aria-live="polite">
       <i class="move-dot" aria-hidden="true"></i>
       <div class="move-txt"><b>${txt(line.main)}</b>${line.sub || wait ? `<small>${line.sub ? txt(line.sub) : wait}</small>` : ''}</div>

@@ -5452,3 +5452,29 @@ button.mr-fate { cursor: pointer; }
 /* Results always show names in full: they wrap rather than end in an ellipsis */
 .ledger .who b, .kl-name { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
 .ledger .who { min-width: 0; flex: 1; }
+
+/* ══ The top bar carries the move (phones) ══
+   One compact bar: the phase and step as a kicker, your move beneath with its dot (lit when it is yours), the timer
+   at the right. The separate move strip stays on wide screens, where the top bar gives way to the sidebar. */
+@media (max-width: 979.98px) {
+  .move { display: none; }
+  .topbar { height: auto; min-height: 56px; padding-top: 6px; padding-bottom: 6px; gap: 6px; }
+  .topbar .phase-mini.with-move { gap: 2px; padding-left: 4px; }
+  .topbar .phase-mini .pm-kick { font: 600 10.5px/1.2 var(--text); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ash); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .topbar .phase-mini .pm-kick b { font-weight: 600; color: var(--bone-2); }
+  .topbar .phase-mini .pm-kick .herald-echo { text-transform: none; letter-spacing: 0; font-style: italic; color: var(--gilt-hi); }
+  .pm-move { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .topbar .phase-mini .pm-move > span { font: 500 16.5px/1.2 var(--text); color: var(--bone); overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+  .pm-move > span * { font: inherit; }
+  .pm-move .move-dot { flex: none; width: 8px; height: 8px; }
+  .with-move.act .move-dot { background: var(--gilt-hi); box-shadow: 0 0 10px color-mix(in srgb, var(--gilt-hi) 70%, transparent); animation: breathe 2.6s ease-in-out infinite; }
+  .with-move.act .pm-move > span { color: var(--gilt-hi); }
+  .topbar .phase-mini .pm-sub { font: italic 400 13px/1.25 var(--text); color: var(--bone-2); overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+  .tb-clock { flex: none; font: 500 20px/1 var(--bit); font-variant-numeric: tabular-nums lining-nums; color: var(--bone); padding: 0 2px; }
+  .tb-clock:empty { display: none; }
+  .host-pill { min-height: 28px; padding: 0 8px; letter-spacing: 0.12em; }
+  .topbar .icon-btn { width: 40px; height: 40px; }
+  /* the herald drops over the top bar now, the move's place */
+  .notes-slot { top: 0; left: 0; right: 0; margin-top: 0; height: 62px; }
+  .notes-slot .herald-slip { border-width: 0 0 1px; }
+}
