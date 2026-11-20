@@ -94,6 +94,14 @@ function signBanner(v) {
     <span class="gsn-digs">${Array.from({ length: R.digs }, (_, i) => `<i class="${i < R.used ? 'used' : ''} ${i >= s.n ? 'bonus' : ''}"></i>`).join('')}<small>${th(left === 1 ? '{n} dig left' : '{n} digs left', { n: left })}</small></span></div>`;
 }
 
+/** AT9: the seal for the cemetery — every player a dot in their crew's colour; the digging crew's dots glow. */
+function crewSeal(v, h) {
+  const R = v.graverobbers;
+  const marks = {};
+  for (const c of crewsIn(R)) for (const id of R.crews[c] ?? []) marks[id] = `${c.toLowerCase()} ${c === R.turn ? 'n' : ''}`;
+  return h.seal(v, { marks, center: emblem(CREW_EMB[R.turn] ?? 'necro'), key: 'gseal', size: 82 });
+}
+
 // ── Phone ──────────────────────────────────────────────────────────────────
 function statusBar(v, me) {
   const R = v.graverobbers;
@@ -149,7 +157,8 @@ export function graveMain(v, me, h) {
       const mine = voting ? (UI.sel.gpick ?? (typeof a.choice === 'number' ? a.choice : null)) : null;
       const title = voting ? (a.choice === 'stop' ? t('You vote to stop digging') : typeof a.choice === 'number' ? th('Your vote: {word}', { word: R.tiles[a.choice].w ?? t('a carved stone') }) : t('Vote for a grave')) : g.captain && g.crew === R.turn ? t('Your crew is digging. Not a word.') : (R.turn === 'V' ? t('The Stars are digging') : th('{crew} is digging', { crew: turnName }));
       const hint = voting ? t('Talk it over, then tap a grave. The most votes digs; a tie goes to the coin. You can change your vote until it closes.') : th('Votes in · {done}/{total}', v.progress ?? { done: 0, total: 0 });
-      stage = `${signBanner(v)}${doNow(title, hint)}${toggle}${cemetery(v, { register: reg, act: voting ? 'gVote' : '', mine, view })}`;
+      // AT9: the sign is the plaque above the stones, with the seal at its top right: crews as coloured dots, the digging crew lit.
+      stage = `${h.sealRow(signBanner(v), crewSeal(v, h))}${doNow(title, hint)}${toggle}${cemetery(v, { register: reg, act: voting ? 'gVote' : '', mine, view })}`;
       break;
     }
     default: break;
