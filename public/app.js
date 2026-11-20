@@ -1468,7 +1468,7 @@ function roomScreen() {
   const top = `<header class="topbar" data-key="top">
       <span class="tb-emblem">${isNight(v.phase) ? glyph('moon') : glyph('sun')}</span>
       ${move.line ? `<div class="phase-mini with-move ${move.line.act ? 'act' : 'wait'}" role="status" aria-live="polite">
-        <span class="pm-kick"><b>${esc(pw.word)}${pw.num ? ` ${esc(pw.num)}` : ''}</b>${S.heraldLast && !herald.cur && Date.now() < S.heraldLast.until ? ` · <span class="herald-echo">${esc(S.heraldLast.text)}</span>` : stepOf(v) && stepOf(v) !== S.moveNow?.main ? ` · ${esc(stepOf(v))}` : ''}</span>
+        <span class="pm-kick">${v.paused ? `<span class="pm-paused">${esc(th('Paused by {a}', { a: v.paused.by }))}</span> · ` : ''}<b>${esc(pw.word)}${pw.num ? ` ${esc(pw.num)}` : ''}</b>${S.heraldLast && !herald.cur && Date.now() < S.heraldLast.until ? ` · <span class="herald-echo">${esc(S.heraldLast.text)}</span>` : stepOf(v) && stepOf(v) !== S.moveNow?.main ? ` · ${esc(stepOf(v))}` : ''}</span>
         <span class="pm-move"><i class="move-dot" aria-hidden="true"></i><span>${move.line.main}</span></span>
         ${move.line.act && move.line.sub ? `<small class="pm-sub">${move.line.sub}</small>` : ''}</div>
       <span class="clock tb-clock" data-clock></span>` : `<div class="phase-mini"><strong class="${pw.night ? 'night' : ''}">${esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</strong>${S.heraldLast && !herald.cur && Date.now() < S.heraldLast.until ? `<span class="herald-echo">${esc(S.heraldLast.text)}</span>` : `<span>${esc(stepOf(v))}${v.phase === 'LOBBY' ? ` · ${t('{n} seated', { n: v.players.length })}` : !modeInfo(v.mode).aliveCount ? '' : ` · ${t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}`}</span>`}</div>`}
@@ -1687,11 +1687,26 @@ function sheet(v) {
   let title = '';
   let body = '';
   if (s === 'record') {
+    // H: one room menu in tabs — You (this phone), Table (the record, the evening, invite), Host, Help.
     title = `${esc(modeName(v))} · ${th('Room {code}', { code: '%CODE%' }).replace('%CODE%', `<span class="code-txt">${esc(v.code)}</span>`)}`;
-    body = `${hostBox()}<section class="menu-sec" data-key="msec-device"><div class="rule">${t('This device')}</div>${langRow(v)}${awakeToggle()}${phoneMusicToggle()}${v.me?.moderator ? '' : tutorialToggle()}</section>
-      <section class="menu-sec" data-key="msec-record">${recordBlock(v)}</section>
-      <section class="menu-sec menu-actions" data-key="msec-actions"><div class="rule">${t('Leave or learn')}</div><div class="menu-links"><a class="btn btn-sm btn-ghost" href="/guide" data-link>${t('How to play')}</a><button class="btn btn-sm btn-ghost" data-act="leave">${glyph('out')} ${t('Leave this device')}</button></div>
-      ${holdBtn('backHome', t('Hold to go back to the start'), 'btn-sm btn-wide', { key: 'backhome' })}</section>`;
+    const tabs = [['you', t('You')], ['table', t('Table')], ...(v.host ? [['host', t('Host')]] : []), ['help', t('Help')]];
+    const tab = tabs.some(([k]) => k === S.ui.mtab) ? S.ui.mtab : v.host && inPlay(v) ? 'host' : 'you';
+    const nav = `<nav class="seg mtabs" role="tablist" data-key="mtabs">${tabs.map(([k, l]) => `<button role="tab" data-act="mtab" data-id="${k}" aria-selected="${tab === k}" aria-pressed="${tab === k}">${l}</button>`).join('')}</nav>`;
+    let inner = '';
+    if (tab === 'you') {
+      inner = `<section class="menu-sec" data-key="msec-device"><div class="rule">${t('This device')}</div>${langRow(v)}${awakeToggle()}${phoneMusicToggle()}${v.me?.moderator ? '' : tutorialToggle()}</section>
+        <section class="menu-sec menu-actions" data-key="msec-leave">${holdBtn('backHome', t('Hold to go back to the start'), 'btn-sm btn-wide', { key: 'backhome' })}<p class="small muted">${t('Your seat stays; rejoin from the start page.')}</p></section>`;
+    } else if (tab === 'table') {
+      inner = `<section class="menu-sec" data-key="msec-record">${recordBlock(v)}</section>${eveningHtml(v, { host: !!v.host })}
+        <section class="menu-sec" data-key="msec-invite"><div class="row"><button class="btn btn-sm" data-act="share" data-text="${esc(`${location.origin}/r/${v.code}`)}">${t('Invite')}</button><a class="btn btn-sm btn-ghost" href="/board/${esc(v.code)}" target="_blank" rel="noopener">${esc(t('TV board ↗').replace('↗', '').trim())} ${glyph('out')}</a></div></section>`;
+    } else if (tab === 'host') {
+      const pause = inPlay(v) || v.paused ? holdBtn('pause', v.paused ? t('Hold to resume') : t('Hold to pause the table'), v.paused ? 'btn-solid btn-sm btn-wide' : 'btn-sm btn-wide', { key: 'hpause' }) : '';
+      inner = `${hostBox()}<section class="menu-sec" data-key="msec-pause">${pause}</section>
+        <section class="menu-sec" data-key="msec-names"><div class="rule">${t('Players')}</div><ul class="name-list">${v.players.map((p) => `<li><span>${esc(p.name)}</span><button class="btn btn-sm btn-ghost" data-act="renamePlayer" data-pid="${p.id}">${t('Rename')}</button></li>`).join('')}</ul></section>`;
+    } else {
+      inner = `<section class="menu-sec menu-actions" data-key="msec-help"><div class="menu-links"><a class="btn btn-sm" href="/guide/${esc(v.mode)}" data-link>${t('This game\'s chapter')}</a><a class="btn btn-sm btn-ghost" href="/guide" data-link>${t('Rule book')}</a></div></section>`;
+    }
+    body = nav + inner;
   } else if (s === 'table') {
     // Y1: the seal opens the full table, read-only.
     title = t('The table');
@@ -2883,10 +2898,11 @@ function boardView() {
   if (v.phase === 'LOBBY' && !S.board.howTimer) S.board.howTimer = setInterval(() => { if (onBoard() && V()?.phase === 'LOBBY') { S.board.howStep = (S.board.howStep ?? 0) + 1; render(); } }, 8000);
   // T1: the caption strip along the bottom of every TV board in play: a small join QR and the code for anyone
   // late or rejoining, the progress count at the right; news ribbons cross it in the middle (J6).
+  const paused = v.paused ? `<div class="tv-paused" data-key="tvpaused"><span>${glyph('candle')}</span><b>${esc(th('Paused by {a}', { a: v.paused.by }))}</b></div>` : '';
   const caption = v.phase === 'LOBBY' ? '' : `<div class="tv-caption" data-key="tvcap"><span class="tc-join">${qrSvg(`${location.origin}/r/${v.code}`)}<span><small>${t('Join or rejoin')}</small><b>${esc(v.code)}</b></span></span><span class="tc-prog">${v.phase === 'ENDED' && v.endVotes?.total ? esc(th('Again? {n} of {m} say yes', { n: v.endVotes.again, m: v.endVotes.total })) : v.progress?.total ? esc(th('{done} of {total} done', v.progress)) : ''}</span></div>`;
   const how = v.phase === 'LOBBY' ? guideHow(v.mode) : '';
   const steps = (how.match(/<li /g) || []).length || 1;
-  return boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark, cover, how, howStep: (S.board.howStep ?? 0) % steps, avatar: (p) => (p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`) }) + caption + hint;
+  return boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark, cover, how, howStep: (S.board.howStep ?? 0) % steps, avatar: (p) => (p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`) }) + caption + paused + hint;
 }
 
 // ── Dock (primary action) ──────────────────────────────────────────────────
@@ -3046,6 +3062,9 @@ const ACT = {
   mFilter(el) { const F = S.ui.mfilter ?? (S.ui.mfilter = new Set(['count'])); const k = el.dataset.id; if (F.has(k)) F.delete(k); else F.add(k); render(); },
   ltab(el) { S.ui.ltab = el.dataset.id; render(); },
   recUse() { send('host.settings', { recommended: true }); },
+  mtab(el) { S.ui.mtab = el.dataset.id; render(); },
+  pause() { send('host.pause'); },
+  renamePlayer(el) { const p = player(el.dataset.pid); const name = p ? prompt(t('A new name for {a}', { a: p.name }), p.name) : null; if (name && name.trim()) send('host.rename', { playerId: el.dataset.pid, name: name.trim() }); },
   endVote(el) { send('end.vote', { choice: el.dataset.id }); if (el.dataset.id === 'another' && V()?.host && V()?.phase === 'LOBBY') { S.ui.sheet = 'modes'; render(); } },
   eveningClear() { send('host.eveningClear'); },
   gameMode(el) {

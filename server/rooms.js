@@ -162,6 +162,29 @@ export class RoomManager {
       case 'host.extend': extendDeadline(m, Math.max(10, Math.min(300, Number(payload.seconds) || 30)), now); break;
       case 'host.end': abortMatch(m, now); break;
       case 'host.eveningClear': room.evening = { games: [], rows: {} }; break;
+      // H: Pause freezes the phase's clock (for doorbells and pizza); Resume gives back exactly what was left.
+      case 'host.pause': {
+        if (room.paused) {
+          if (room.paused.left != null) m.deadline = now + room.paused.left;
+          room.paused = null;
+          pub(m, 'The table resumes.', 'host', { ev: 'resume' });
+        } else {
+          if (m.phase === 'LOBBY' || m.phase === 'ENDED') throw new GameError('There is nothing to pause.');
+          room.paused = { phaseId: m.phaseId, by: byId(m, pid)?.name ?? '', left: m.deadline ? Math.max(1000, m.deadline - now) : null };
+          m.deadline = null;
+          pub(m, ['Paused by {a}.', { a: room.paused.by }], 'host', { ev: 'pause' });
+        }
+        break;
+      }
+      // Safety: the host can rename a player (a typo, or a name that does not belong at the table).
+      case 'host.rename': {
+        const p = byId(m, payload.playerId);
+        const name = String(payload.name ?? '').replace(/\s+/g, ' ').trim().slice(0, 20);
+        if (!p) throw new GameError('No such player.');
+        if (!name) throw new GameError('Enter a name.');
+        p.name = name;
+        break;
+      }
       case 'host.xredraw': if (!m.X) throw new GameError('Nothing to redraw.'); redrawExorcism(m, this.rng, now); break;
       case 'host.rematch': { const x = REMATCH_READY.includes(m.config?.mode); rematch(m, { ready: x }); m.players.forEach((p) => { p.ready = x || p.bot || p.id === m.hostId; p.connected = this.isConnected(room, p.id); }); break; }
       case 'host.kick': {
@@ -294,7 +317,7 @@ export class RoomManager {
   viewFor(room, client) {
     const m = room.match;
     const now = this.clock();
-    if (client.board) { const hint = mimicBoardHint(m); return { ...publicView(m, now), boardAudio: this.boardAudio(room), evening: this.eveningView(room), endVotes: this.endVotesView(room), awards: m.phase === 'ENDED' ? room.awards ?? null : null, ...(hint ? { mimicHint: hint } : {}) }; }
+    if (client.board) { const hint = mimicBoardHint(m); return { ...publicView(m, now), boardAudio: this.boardAudio(room), paused: room.paused ? { by: room.paused.by } : null, evening: this.eveningView(room), endVotes: this.endVotesView(room), awards: m.phase === 'ENDED' ? room.awards ?? null : null, ...(hint ? { mimicHint: hint } : {}) }; }
     if (m.moderated && client.pid === m.moderatorId) {
       const v = moderatorView(m, now);
       v.moderatorName = room.moderatorName;
@@ -320,6 +343,7 @@ export class RoomManager {
     v.evening = this.eveningView(room);
     v.endVotes = this.endVotesView(room, client.pid);
     v.awards = room.match.phase === 'ENDED' ? room.awards ?? null : null;
+    v.paused = room.paused ? { by: room.paused.by } : null;
     v.moderatorName = m.moderated ? room.moderatorName : null;
     if (v.host && room.lastRecovery?.forHost === client.pid && room.lastRecovery.expires > this.clock()) {
       v.host.recovery = { playerId: room.lastRecovery.playerId, code: room.lastRecovery.code };
@@ -423,6 +447,7 @@ export class RoomManager {
   changed(room) {
     this.syncRecommended(room);
     this.recordEvening(room);
+    if (room.paused && room.paused.phaseId !== room.match.phaseId) room.paused = null; // the host moved the table on
     if (room.match.phase !== 'ENDED' && room.match.phase !== 'LOBBY') { room.endVotes = {}; room.awards = null; }
     this.stampScenes(room);
     this.syncPresence(room);
@@ -443,7 +468,7 @@ export class RoomManager {
         let move = null;
         try { move = botDecide(m, p.id, this.rng); } catch { move = null; }
         if (!move) return;
-        if (move.wait || this.holding(room)) { this.wakeBots(room); return; }
+        if (move.wait || this.holding(room) || room.paused) { this.wakeBots(room); return; }
         try {
           playerCommand(m, p.id, { ...move.cmd, phaseId: m.phaseId }, this.rng, this.clock());
           this.changed(room);
