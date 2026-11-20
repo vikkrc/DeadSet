@@ -108,11 +108,53 @@ function letters(text) {
   return text.split(' ').map((w) => `<span class="w" style="--wl:${[...w].length}">${[...w].map((c) => `<span class="l" style="--i:${i++}">${esc(c)}</span>`).join('')}</span>`).join(' ');
 }
 
+/**
+ * J: the herald. One place for every instant notice: a slip that drops over the move strip (phones) and the TV's
+ * notice strip. Kinds: 'turn' (it became your move), 'public', 'bad' (a death, a failure, an error), 'private'
+ * (yours alone: shown only while held). A slip holds 2.5 s (4 s for bad news); a newer one replaces it after at
+ * least 1.2 s; three or more waiting collapse to one line pointing at the Gazette, which keeps everything anyway.
+ * During discussion (quiet hours) only bad news drops a slip. The latest line stays in the header for 10 s.
+ */
+const TALK = new Set(['DAY_DISCUSSION', 'N_DAY', 'X_DISCUSS', 'W_PROMPT', 'Q_ASK', 'S_DISCUSS']);
+const herald = { cur: null, shownAt: 0, queue: [], timer: null };
 function notify(text, kind = '') {
-  const id = uid();
-  S.notes = [...S.notes.slice(-2), { id, text, kind }];
+  kind = kind === 'err' ? 'bad' : kind === 'accuse' ? 'public accuse' : kind || 'public';
+  const v = V();
+  if (v && TALK.has(v.phase) && !/\b(bad|private)\b/.test(kind) && S.route?.name === 'room') return;
+  const n = { id: uid(), text, kind };
+  const since = Date.now() - herald.shownAt;
+  if (!herald.cur || since >= 1200) return heraldShow(n);
+  herald.queue.push(n);
+  clearTimeout(herald.timer);
+  herald.timer = setTimeout(heraldNext, 1200 - since);
+}
+/** J2: when it becomes your move in the middle of a phase (a turn passes to you), a gold slip and one short buzz.
+ *  Never on secret steps, where a buzz could tell a role apart. */
+const SECRET = (v) => isNight(v.phase) || ['N_NIGHT', 'N_DEAL', 'M_NIGHT'].includes(v.phase);
+function heraldTurn(v) {
+  const m = S.moveNow;
+  if (!v || !m || S.route?.name !== 'room') return;
+  const was = S.movePrev;
+  S.movePrev = m;
+  if (m.act && was && !was.act && was.phaseId === m.phaseId && !SECRET(v) && !S.moment) {
+    notify(m.main, 'turn');
+    haptic([15, 60, 15]);
+  }
+}
+function heraldShow(n) {
+  herald.cur = n; herald.shownAt = Date.now();
+  S.notes = [n];
+  if (!/\bprivate\b/.test(n.kind)) { S.heraldLast = { text: n.text, until: Date.now() + 10000 }; setTimeout(() => { if (S.heraldLast && Date.now() >= S.heraldLast.until) { S.heraldLast = null; render(); } }, 10050); }
+  else S.trayDot = true;
+  clearTimeout(herald.timer);
+  herald.timer = setTimeout(heraldNext, /\bbad\b/.test(n.kind) ? 4000 : /\bprivate\b/.test(n.kind) ? 6000 : 2500);
   render();
-  setTimeout(() => { S.notes = S.notes.filter((n) => n.id !== id); render(); }, 3400);
+}
+function heraldNext() {
+  const q = herald.queue;
+  if (q.length >= 3) { herald.queue = []; return heraldShow({ id: uid(), text: tp('{n} new · see the Gazette', '{n} new · see the Gazette', q.length), kind: 'public more' }); }
+  if (q.length) return heraldShow(q.shift());
+  herald.cur = null; S.notes = []; render();
 }
 const toast = (text, kind = '') => notify(t(text), kind === 'err' ? 'err' : kind);
 
@@ -154,6 +196,14 @@ async function api(path, body) {
   return data;
 }
 
+let lastPressed = null;
+document.addEventListener('pointerdown', (e) => { lastPressed = e.target.closest?.('button, [data-act]') ?? null; }, true);
+function shakeLast() {
+  const el = lastPressed;
+  if (!el?.isConnected) return;
+  el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
+  setTimeout(() => el.classList.remove('shake'), 450);
+}
 async function send(type, payload = {}, { quiet = false } = {}) {
   if (!S.token) return false;
   S.pending = true; render();
@@ -161,7 +211,10 @@ async function send(type, payload = {}, { quiet = false } = {}) {
     await api(`/api/rooms/${S.code}/cmd`, { t: S.token, type, payload, phaseId: V()?.phaseId, key: uid() });
     return true;
   } catch (e) {
-    if (!quiet) { toast(e.message, 'err'); haptic([20, 40, 20]); }
+    // U10: a scene still playing or a phase that just moved on is not the player's mistake: shake the button
+    // they pressed instead of a red notice.
+    if (e.code === 'HOLD' || e.code === 'STALE') shakeLast();
+    else if (!quiet) { toast(e.message, 'err'); haptic([20, 40, 20]); }
     return false;
   } finally {
     S.pending = false; render();
@@ -731,6 +784,7 @@ function render() {
   app.querySelectorAll('[data-scroll]').forEach((el) => { if (bottoms[el.dataset.scroll] !== false) el.scrollTop = el.scrollHeight; });
   tickClock();
   syncWake();
+  heraldTurn(v);
 }
 
 /**
@@ -753,7 +807,9 @@ function legibility() {
   });
 }
 
-const toastsHtml = (cls) => `<div class="${cls}" data-key="${cls}" aria-live="polite">${S.notes.map((n) => `<div class="toast ${n.kind}" data-key="n-${n.id}"><span>${esc(n.text)}</span></div>`).join('')}</div>`;
+const toastsHtml = (cls) => `<div class="${cls}" data-key="${cls}" aria-live="polite">${S.notes.map((n) => /\bprivate\b/.test(n.kind)
+  ? `<div class="toast herald-slip ${n.kind}" data-key="n-${n.id}"><span class="h-only">${t('Only you · hold to read')}</span><span class="h-peek">${esc(n.text)}</span></div>`
+  : `<button type="button" class="toast herald-slip ${n.kind}" data-act="sheet" data-id="record" data-key="n-${n.id}"><span>${esc(n.text)}</span></button>`).join('')}</div>`;
 const inRoomView = () => S.route.name === 'room' && S.conn !== 'gone' && !!S.token && !!V();
 
 /** The collection at a glance, for the home page (E1), from the registry. */
@@ -1217,7 +1273,7 @@ function roomScreen() {
   const move = moveBand(v, mainFor(v, v.me));
   const top = `<header class="topbar" data-key="top">
       <span class="tb-emblem">${isNight(v.phase) ? glyph('moon') : glyph('sun')}</span>
-      <div class="phase-mini"><strong class="${pw.night ? 'night' : ''}">${esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</strong><span>${esc(stepOf(v))}${v.phase === 'LOBBY' ? ` · ${t('{n} seated', { n: v.players.length })}` : !modeInfo(v.mode).aliveCount ? '' : ` · ${t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}`}</span></div>
+      <div class="phase-mini"><strong class="${pw.night ? 'night' : ''}">${esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</strong>${S.heraldLast && !herald.cur && Date.now() < S.heraldLast.until ? `<span class="herald-echo">${esc(S.heraldLast.text)}</span>` : `<span>${esc(stepOf(v))}${v.phase === 'LOBBY' ? ` · ${t('{n} seated', { n: v.players.length })}` : !modeInfo(v.mode).aliveCount ? '' : ` · ${t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}`}</span>`}</div>
       ${v.host && inPlay(v) ? `<button class="host-pill" data-act="sheet" data-id="record" data-key="hostpill">${t('Host')}</button>` : ''}
       <button class="btn btn-ghost icon-btn" data-act="sheet" data-id="record" aria-label="${esc(t('Open match record'))}">${glyph('menu')}</button>
       ${fuse()}
@@ -1367,7 +1423,7 @@ function tray(v) {
   const board = u.board ? BOARD_SHEET[u.board] : null;
   const rules = u.rules && v.activeRules?.length;
   return `<nav class="tray" data-key="tray" aria-label="${esc(t('Your things'))}">
-    ${slot('role', glyph(me.role?.glyph ?? 'scroll'), t('My card'), !!(u.card && me.role))}
+    ${slot('role', glyph(me.role?.glyph ?? 'scroll'), t('My card'), !!(u.card && me.role), 0, S.trayDot ? 'dot' : '')}
     ${board ? slot(u.board, glyph(board.glyph), t('The board'), true) : slot('rules', glyph('magistrate'), t('The board'), !!rules, 0, Object.keys(activeRuleNotes(v)).length ? 'live' : '')}
     ${slot('notes', glyph('scroll'), t('Notes'), notesOn, unread)}
     ${slot('story', glyph('whispers'), t('Story'), !!(u.story && v.scenario))}</nav>`;
@@ -1396,6 +1452,7 @@ function moveBand(v, html) {
   }
   if (!line) line = { act: canAct(v), main: esc(stepOf(v)), sub: '', html: true };
   const txt = (x) => (line.html ? x : esc(x));
+  S.moveNow = { act: !!line.act, main: line.html ? String(line.main).replace(/<[^>]+>/g, '') : line.main, phaseId: v.phaseId };
   const wait = !line.act && v.progress?.total ? th('{done} of {total} done', v.progress) : '';
   return {
     html,
@@ -2621,6 +2678,7 @@ const ACT = {
   xRedraw() { S.ui.sheet = null; send('host.xredraw'); },
   sheet(el) {
     const id = el.dataset.id; S.ui.sheet = id && S.ui.sheet !== id ? id : null;
+    if (S.ui.sheet === 'role') S.trayDot = false;
     if (S.ui.sheet === 'notes') { const v = V(); (S.notesSeen ??= {})[v.code] = (v.private || []).length; }
     if (S.ui.sheet) uiSound('whoosh'); render();
   },

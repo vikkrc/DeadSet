@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Tres misiones fracasaron",
     "Use the Candle": "Usa la Vela",
     "Game mode": "Modo de juego",
+    "{n} new · see the Gazette": "{n} nuevas · mira la Gaceta",
+    "Only you · hold to read": "Solo tú · mantén para leer",
     "Host · {x}": "Anfitrión · {x}",
     "Your things": "Tus cosas",
     "{done} of {total} done": "{done} de {total} listos",

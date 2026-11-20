@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Tři mise selhaly",
     "Use the Candle": "Použij Svíčku",
     "Game mode": "Herní režim",
+    "{n} new · see the Gazette": "{n} nové · viz Noviny",
+    "Only you · hold to read": "Jen pro tebe · podrž a čti",
     "Host · {x}": "Hostitel · {x}",
     "Your things": "Tvoje věci",
     "{done} of {total} done": "{done} z {total} hotovo",

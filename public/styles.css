@@ -5153,3 +5153,21 @@ details.more summary,
 .tray-badge { position: absolute; top: 5px; left: calc(50% + 8px); min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--gilt-hi); color: var(--ink); font: 600 11px/18px var(--bit); letter-spacing: 0; }
 .dock:not(:has(> .btn, > .host-slot, > .dock-note)) { padding-bottom: max(8px, var(--safe-b)); }
 .main.has-move { padding-bottom: calc(190px + var(--safe-b)); }
+/* J: the herald's kinds. Gilt for public news, brighter gilt with a lozenge for your turn, oxblood for bad news,
+   vellum for a private slip (its text only shows while held). */
+.notes-slot .herald-slip { width: 100%; border: 1px solid var(--gilt-2); color: var(--bone); cursor: pointer; text-align: center; font-style: italic;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--gilt) 16%, var(--ink-2)), var(--ink-2)); }
+.notes-slot .herald-slip.turn { border-color: var(--gilt-hi); font-style: normal; font-weight: 500; }
+.notes-slot .herald-slip.turn::before { content: ''; flex: none; width: 9px; height: 9px; margin-right: 10px; transform: rotate(45deg); background: var(--gilt-hi); }
+.notes-slot .herald-slip.bad { border-color: var(--blood); background: linear-gradient(180deg, var(--wax), color-mix(in srgb, var(--wax) 70%, var(--ink-2))); color: var(--on-blood); font-style: normal; }
+.notes-slot .herald-slip.private { border-color: var(--paper-edge); background: var(--vellum); color: var(--sepia); font-style: normal; cursor: default; user-select: none; -webkit-user-select: none; }
+.notes-slot .herald-slip.private .h-peek { display: none; }
+.notes-slot .herald-slip.private:active .h-only { display: none; }
+.notes-slot .herald-slip.private:active .h-peek { display: block; }
+.notes-slot .herald-slip.more { color: var(--bone-2); }
+.topbar .phase-mini .herald-echo { font: italic 400 14px/1.2 var(--text); color: var(--gilt-hi); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* a private slip leaves a wax dot on the tray slot it belongs to */
+.tray-slot.dot::after { content: ''; position: absolute; top: 7px; left: calc(50% + 10px); width: 9px; height: 9px; border-radius: 50%; background: var(--blood); box-shadow: 0 0 6px var(--blood); }
+/* U10: a refused tap (a scene still playing) shakes the button instead of raising an error */
+.shake { animation: shake 0.4s var(--ease) both; }
+@keyframes shake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }

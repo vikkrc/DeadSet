@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "{n} new · see the Gazette": "{n} új · lásd a Hírlapot",
+    "Only you · hold to read": "Csak neked · tartsd lenyomva",
     "Host · {x}": "Házigazda · {x}",
     "Your things": "A dolgaid",
     "{done} of {total} done": "{done}/{total} kész",

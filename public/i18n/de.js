@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Drei Missionen gescheitert",
     "Use the Candle": "Benutze die Kerze",
     "Game mode": "Spielmodus",
+    "{n} new · see the Gazette": "{n} neu · siehe das Tageblatt",
+    "Only you · hold to read": "Nur für dich · halten zum Lesen",
     "Host · {x}": "Gastgeber · {x}",
     "Your things": "Deine Sachen",
     "{done} of {total} done": "{done} von {total} fertig",
