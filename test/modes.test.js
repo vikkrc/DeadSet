@@ -6,6 +6,7 @@ import { moderatorView } from '../engine/views.js';
 import { seededRng } from '../engine/rng.js';
 import { ROLES, modeOf, roleInMode } from '../engine/content.js';
 import { RoomManager } from '../server/rooms.js';
+import { MODES } from '../public/modes.js';
 import { NAMES } from './helpers.js';
 
 function lobby(n = 6) {
@@ -96,4 +97,9 @@ test('shared interludes: inputs wait for the scene, and the next timer starts af
   rm.command(host.code, host.token, { type: 'host.advance', phaseId: m.phaseId });
   assert.equal(m.phase, 'DAY_DISCUSSION');
   assert.equal(m.deadline - now, 60_000);
+});
+
+test('every mode has its own emblem (UX R4)', () => {
+  const emblems = Object.values(MODES).map((m) => m.emblem);
+  assert.equal(new Set(emblems).size, emblems.length);
 });
