@@ -5110,3 +5110,8 @@ details.more summary,
 .guide table { display: block; max-width: 100%; overflow-x: auto; }
 .g-nav { margin: 0 -2px; padding-left: 2px; padding-right: 2px; }
 @media (min-width: 980px) { .guide { grid-template-columns: 220px minmax(0, 1fr); } .g-nav { margin: 0; padding: 0; } }
+/* R5: a scene that follows another never fades through the bare ground: its backdrop is there at once,
+   and only its content fades in. */
+.moment.chained { animation: none; }
+.moment.chained > * { transition: opacity var(--t-ui) var(--ease); }
+@starting-style { .moment.chained > * { opacity: 0; } }

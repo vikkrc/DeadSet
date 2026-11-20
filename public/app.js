@@ -404,12 +404,15 @@ const momentTime = (m) => (m.type === 'mreveal' ? revealTime(m) : O_MOMENT_TIME[
 
 function nextMoment() {
   clearTimeout(S.momentTimer);
+  const prev = S.moment;
   const now = Date.now() + clockSkew;
   // Shared scenes run on the server's clock: drop any that already ended, and play them before personal ones.
   S.moments = S.moments.filter((x) => !x.at || x.at + x.dur > now);
   const k = S.moments.findIndex((x) => x.at);
   S.moment = (k >= 0 ? S.moments.splice(k, 1)[0] : S.moments.shift()) ?? null;
   const m = S.moment;
+  // R5: a scene that follows another keeps its ground; only its content fades in (no black frame between).
+  if (m) m.chained = !!prev;
   if (m) {
     const snd = m.sound ?? MOMENT_SOUND[m.type];
     if (snd) pubSound(snd);
@@ -646,7 +649,7 @@ function momentHtml(m) {
   }
   const auto = !m.tapOnly;
   const left = m.at ? Math.max(0, m.at + m.dur - (Date.now() + clockSkew)) : momentTime(m);
-  return `<div class="moment ${m.at ? 'shared' : ''} m-${m.type} ${m.winner === 'DEATH' || m.winner === 'DEMON' || m.type === 'death' || m.type === 'munmask' ? 'grim' : ''} ${m.type === 'end' ? WIN_CLASS[m.winner] ?? '' : ''} ${onBoard() && m.type === 'dawn' ? 'front' : ''}" data-key="moment-${m.id}" data-act="momentNext" role="dialog" aria-live="assertive">
+  return `<div class="moment ${m.chained ? 'chained' : ''} ${m.at ? 'shared' : ''} m-${m.type} ${m.winner === 'DEATH' || m.winner === 'DEMON' || m.type === 'death' || m.type === 'munmask' ? 'grim' : ''} ${m.type === 'end' ? WIN_CLASS[m.winner] ?? '' : ''} ${onBoard() && m.type === 'dawn' ? 'front' : ''}" data-key="moment-${m.id}" data-act="momentNext" role="dialog" aria-live="assertive">
     ${m.type === 'end' && WIN_CLASS[m.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<div class="m-body">${body}</div>
     <div class="m-foot">${auto ? `<span class="m-timer" style="--t:${left}ms"><i></i></span>` : ''}${onBoard() ? '' : `<span class="kicker">${t(m.at ? 'Everyone sees this together' : auto ? 'Tap to skip' : 'Tap to continue')}${S.moments.length ? ` · ${t('{n} more', { n: S.moments.length })}` : ''}</span>`}</div>
   </div>`;
