@@ -5436,3 +5436,19 @@ button.mr-fate { cursor: pointer; }
 .game-card .gc-side > .btn, .game-card .gc-side > a.btn { align-self: flex-start; margin-left: 0; }
 .game-card .gc-side > a.btn-ghost { padding-left: 0; padding-right: 0; }
 .game-card .gc-side > a.btn { display: inline-flex; align-items: center; gap: 8px; width: auto; justify-content: flex-start; text-align: left; }
+/* A word to type sits in the dock above its button, never below the fold or under the keyboard */
+.dock .dock-input { flex: 0 0 100%; max-width: 420px; margin: 0 auto 6px; text-align: center; font-size: 18px; }
+.dock:has(.dock-input) { flex-wrap: wrap; }
+.x-toprow { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 4px; }
+.x-toprow .chips { margin: 0; }
+/* Exorcism's end: who named whom, one full-width row each, names in full */
+.x-named { list-style: none; margin: 6px 0 12px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+.x-named li { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--iron); border-radius: 4px; background: var(--ink-2); }
+.x-named li b { font: 500 16px/1.15 var(--text); color: var(--bone); white-space: normal; overflow-wrap: anywhere; }
+.x-named li b:last-child { color: var(--bone-2); }
+.x-named li i { font-style: normal; color: var(--ash); flex: none; }
+.x-named li.hit { border-color: var(--gilt-2); }
+.x-named li.hit b:last-child { color: var(--gilt-hi); }
+/* Results always show names in full: they wrap rather than end in an ellipsis */
+.ledger .who b, .kl-name { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
+.ledger .who { min-width: 0; flex: 1; }

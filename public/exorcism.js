@@ -330,7 +330,7 @@ export function exorcismMain(v, me, h) {
       if (a.type === 'xspeak') {
         stage = `<div class="x-turn me rise-in" data-key="xturn-me"><span class="kicker">${t('Your turn')}</span><h2>${t('Say one word linked to the password')}</h2>
           <p class="small muted">${t(me.x?.demon ? 'You do not know it. Listen, guess, blend in.' : 'Close enough to prove you know it. Not so close that the Demon learns it.')}</p>
-          ${a.typed ? `<input class="input x-input" data-draft="xword" maxlength="32" placeholder="${esc(t('Your word'))}" value="${esc(S.drafts?.xword ?? '')}" autocomplete="off">` : ''}</div>`;
+</div>`;
       } else {
         stage = `<div class="x-turn" data-key="xturn"><span class="kicker">${t('Now speaking')}</span><h2>${esc(name(v, X.speaker))}</h2><p class="small muted">${t('Listen closely. Who knows the password, and who is only pretending?')}</p></div>`;
       }
@@ -347,7 +347,7 @@ export function exorcismMain(v, me, h) {
     case 'X_GUESS':
       if (a.type === 'xguess') {
         stage = `<div class="x-turn me demon rise-in" data-key="xguess-me"><span class="kicker blood">${t('Caught')}</span><h2>${t('One guess at the password')}</h2></div>
-          ${a.grid ? wordGrid(v, { act: 'xPickGuess', selected: S.sel.xguess ?? null }) : `<input class="input x-input" data-draft="xguess" maxlength="40" placeholder="${esc(t('The password'))}" value="${esc(S.drafts?.xguess ?? '')}" autocomplete="off">`}`;
+          ${a.grid ? wordGrid(v, { act: 'xPickGuess', selected: S.sel.xguess ?? null }) : ''}`;
         return `${head(v)}${stage}${chips(v)}`;
       }
       stage = `<div class="x-turn" data-key="xguess"><span class="kicker blood">${t('Caught')}</span><h2>${esc(name(v, X.named))}</h2><p class="small muted">${t('The Demon gets one guess at the password…')}</p></div>`;
@@ -358,9 +358,11 @@ export function exorcismMain(v, me, h) {
   const table = v.phase === 'X_VOTE' ? ring(v, { pick, center: '', orb: myBall(v, { key: 'peekball', open: peek, act: 'xPeek', tint: VOTE_TINT, speed: 2.4, cls: 'in-ring vote' }) }) : '';
   // AT7: during the turns the ball owns the stage, with the seal at its top right: speaking order, a bead on the speaker.
   const sealed = X?.order?.filter((id) => X.clues.some((c) => c.pid === id && c.round === X.round)) ?? [];
-  const small = v.phase === 'X_CLUES' && ballSmall ? h.sealCorner(ballSmall, h.seal(v, { turn: X.speaker, sealed, key: 'xseal', size: 78 }))
-    : ['X_LOTTERY', 'X_GUESS'].includes(v.phase) ? ballSmall : '';
-  return `${head(v)}${tools}${small}${grid}${pickTabs(ctx, pick)}${table}${stage}${h.chatBlock(v)}${chips(v)}`;
+  const small = ['X_CLUES', 'X_LOTTERY', 'X_GUESS'].includes(v.phase) ? ballSmall : '';
+  // The seal sits in the top row beside the word grid, never over the words on the ball.
+  const sealHtml = v.phase === 'X_CLUES' && ballSmall ? h.seal(v, { turn: X.speaker, sealed, key: 'xseal', size: 64 }) : '';
+  const top = tools || sealHtml ? `<div class="x-toprow" data-key="xtoprow">${tools || '<span></span>'}${sealHtml}</div>` : '';
+  return `${head(v)}${top}${small}${grid}${pickTabs(ctx, pick)}${table}${stage}${h.chatBlock(v)}${chips(v)}`;
 }
 
 export function exorcismPicks(v, S) {
@@ -375,7 +377,11 @@ export function exorcismDock(v, h) {
   const parts = [];
   switch (a.type) {
     case 'xack': if (!a.done) parts.push(btn(t('I have seen it'), 'xAck', 'btn-solid x-late')); break;
-    case 'xspeak': parts.push(holdBtn('xDone', t('Hold when you have said it'), 'btn-solid')); break;
+    case 'xspeak':
+      // The word is typed in the dock, above the button, so the keyboard never hides it (and nothing to scroll for).
+      if (a.typed) parts.push(`<input class="input x-input dock-input" data-draft="xword" maxlength="32" placeholder="${esc(t('Your word'))}" value="${esc(S.drafts?.xword ?? '')}" autocomplete="off" data-key="xword-in">`);
+      parts.push(holdBtn('xDone', t('Hold when you have said it'), 'btn-solid'));
+      break;
     case 'xready': parts.push(btn(a.ready ? `${glyph('check')} ${t('Ready to vote')}` : t('Ready to vote'), 'xReady', a.ready ? 'btn-ghost is-on' : 'btn-solid')); break;
     case 'xvote': {
       const sel = S.sel.xvote ?? null;
@@ -385,6 +391,7 @@ export function exorcismDock(v, h) {
     }
     case 'xguess': {
       const ready = a.grid ? S.sel.xguess != null : !!(S.drafts?.xguess ?? '').trim();
+      if (!a.grid) parts.push(`<input class="input x-input dock-input" data-draft="xguess" maxlength="40" placeholder="${esc(t('The password'))}" value="${esc(S.drafts?.xguess ?? '')}" autocomplete="off" data-key="xguess-in">`);
       parts.push(holdBtn('xGuess', ready ? t('Hold to guess') : t(a.grid ? 'Pick a word' : 'Type the password'), 'btn-blood', { dis: !ready }));
       break;
     }
@@ -487,7 +494,7 @@ export function exorcismEndHtml(v) {
   return `${back}
     ${X.grid ? `<section data-key="endgrid"><div class="rule">${t('The grid')}</div>${wordGrid(v, { mark: X.word, selected: X.guess?.index ?? null })}</section>` : ''}
     ${X.clues.length ? `<section data-key="endclues"><div class="rule">${t('What was said')}</div>${orderStrip(v)}</section>` : ''}
-    ${votes.length ? `<section data-key="endvotes"><div class="rule">${t('Who named whom')}</div><ul class="ledger">${votes.map(([a, b]) => `<li><span class="who"><b>${esc(name(v, a))}</b><small>${glyph('magistrate')} ${esc(name(v, b))}</small></span></li>`).join('')}</ul></section>` : ''}
+    ${votes.length ? `<section data-key="endvotes"><div class="rule">${t('Who named whom')}</div><ul class="x-named">${votes.map(([a, b]) => `<li class="${(v.exorcism?.demons ?? []).includes(b) ? 'hit' : ''}"><b>${esc(name(v, a))}</b><i aria-label="${esc(t('named'))}">${glyph('magistrate')}</i><b>${esc(name(v, b))}</b></li>`).join('')}</ul></section>` : ''}
     ${scoreboard(v)}`;
 }
 

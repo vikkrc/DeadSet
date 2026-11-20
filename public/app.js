@@ -703,8 +703,16 @@ function verdict(v, { winner = v?.winner, result = null, sides = null, whos = nu
     case 'MIDNIGHT': title = noStop(t(midnightTitle(sides ?? v?.midnight?.winners?.sides))); break;
     case 'CARNIVAL': { const w = whos?.length ? whos : names(v?.carnival?.winners); title = tp('{names} wins', '{names} win', w.length, { names: w }); break; }
     case 'COFFINS': title = th('{a} wins', { a: who || names([v?.coffins?.winner])[0] }); break;
+    case 'DEMON': {
+      // Exorcism names its Demon: "Hollis, the Demon, wins".
+      const ds = names(v?.exorcism?.demons);
+      title = ds.length ? tp('{names}, the Demon, wins', '{names}, the Demons, win', ds.length, { names: ds }) : t('The Demon wins');
+      break;
+    }
     default: title = t({ DEMON: 'The Demon wins', DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'The Jester wins', DRAW: 'A draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[winner] ?? 'The End');
   }
+  // When the Living win Exorcism, the kicker names who was cast out.
+  if (winner === 'NON_DEATH' && v?.mode === 'exorcism' && v.exorcism?.demons?.length) kicker = noStop(tp('The Demon was {names}', 'The Demons were {names}', v.exorcism.demons.length, { names: names(v.exorcism.demons) }));
   const me = v?.me;
   let won = didIWin(v, winner);
   if (won == null && pids && me && !me.moderator) won = pids.includes(me.id);
