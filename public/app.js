@@ -1214,15 +1214,15 @@ function roomScreen() {
       <div class="timeline" data-scroll="side-tl"><div class="rule">${t('Public record')}</div>${feed(v.log)}</div>
       <div class="row">${langChip()}<button class="btn btn-ghost btn-sm" data-act="sound">${glyph(sound.on ? 'bell' : 'bellOff')} ${t(sound.on ? 'Sound on' : 'Sound off')}</button></div>
     </aside>`;
+  const move = moveBand(v, mainFor(v, v.me));
   const top = `<header class="topbar" data-key="top">
       <span class="tb-emblem">${isNight(v.phase) ? glyph('moon') : glyph('sun')}</span>
       <div class="phase-mini"><strong class="${pw.night ? 'night' : ''}">${esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</strong><span>${esc(stepOf(v))}${v.phase === 'LOBBY' ? ` · ${t('{n} seated', { n: v.players.length })}` : !modeInfo(v.mode).aliveCount ? '' : ` · ${t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}`}</span></div>
-      <span class="clock" data-clock></span>
-      <button class="btn btn-ghost icon-btn" data-act="sound" aria-label="${esc(t(sound.on ? 'Mute sounds' : 'Turn sounds on'))}">${glyph(sound.on ? 'bell' : 'bellOff')}</button>
+      ${v.host && inPlay(v) ? `<button class="host-pill" data-act="sheet" data-id="record" data-key="hostpill">${t('Host')}</button>` : ''}
       <button class="btn btn-ghost icon-btn" data-act="sheet" data-id="record" aria-label="${esc(t('Open match record'))}">${glyph('menu')}</button>
       ${fuse()}
     </header>`;
-  return `<div class="shell" data-key="shell">${side}<div class="col">${top}${toastsHtml('notes-slot')}<main class="main" id="main" data-key="main-${v.phase === 'LOBBY' ? 'lobby' : 'game'}">${coachCard(v)}${mainFor(v, v.me)}</main></div></div>${dock(v)}${sheet(v)}`;
+  return `<div class="shell" data-key="shell">${side}<div class="col">${top}${move.strip}${toastsHtml('notes-slot')}<main class="main ${move.strip ? 'has-move' : ''}" id="main" data-key="main-${v.phase === 'LOBBY' ? 'lobby' : 'game'}">${coachCard(v)}${move.html}</main></div></div>${dock(v)}${sheet(v)}`;
 }
 
 function hostBox() {
@@ -1308,7 +1308,103 @@ function utilityRow(v) {
   if (u.rules && v.activeRules?.length) out.push(slot('rules', glyph('magistrate'), t('Rules'), v.activeRules.length, Object.keys(activeRuleNotes(v)).length ? 'live' : ''));
   return out.length ? `<nav class="chips util-row" data-key="chips">${out.join('')}</nav>` : '';
 }
-const chips = utilityRow;
+const chips = () => ''; // U2: the tray (above the dock) replaced the per-screen utility row
+
+/**
+ * Classic's move strip (U1). Night lines are the same for every role, so the strip never tells a role apart.
+ */
+function classicMove(v) {
+  if (v.mode !== 'classic' || CLIENT[modeOfPhase(v.phase)]) return null;
+  const a = v.action ?? {};
+  const me = v.me;
+  const dead = me && !me.alive;
+  const L = (act, main, sub = '') => ({ act, main, sub });
+  switch (v.phase) {
+    case 'NIGHT_0_REVEAL': return me.acknowledged ? L(false, t('Waiting for the others'), '') : L(true, t('Turn your card and read it'), t('Then tap Understood'));
+    case 'DAY_PREP': {
+      const ab = (a.abilities ?? []).filter((x) => !x.used);
+      return ab.length ? L(true, t('Use your power, or wait'), t('The dawn news is read aloud')) : L(false, t('The dawn news is read'), t('The host opens the discussion'));
+    }
+    case 'DAY_DISCUSSION':
+      if (dead) return L(false, t('Watch in silence'), t('The dead may not speak'));
+      return a.mine ? L(false, t('Talk it over'), t('You have accused today')) : L(true, t('Talk, or tap a seat to accuse'), t('One accusation each today'));
+    case 'DAY_DEFENSE': {
+      const sp = v.day?.speaking;
+      if (sp && sp === me.id) return L(true, t('Your turn to speak'), t('Make your case to the table'));
+      return L(false, sp ? th('{name} has the floor', { name: rawName(sp) }) : t('The accused defend themselves'), t('Each accused speaks in turn'));
+    }
+    case 'DAY_VOTING':
+      if (a.type !== 'ballot') return L(false, t('The town votes'), t('You have no vote today'));
+      return a.choice ? L(false, t('Your vote is in'), t('You can change it until it locks')) : L(true, t('Vote for one accused, or abstain'), t('Secret until it locks'));
+    case 'DAY_RESOLVING':
+      return a.type === 'retaliate' ? L(true, t('Choose who you take with you'), t('Or go quietly')) : L(false, t('The verdict stands'), '');
+    case 'NIGHT_DREAM_SWAP': return L(false, t('Night falls: turn your Dream'), t('Dream Snatchers may swap now'));
+    case 'NIGHT_ACTIONS':
+      if (a.type !== 'night') return L(false, t('The town sleeps'), t('Watch in silence'));
+      return a.done ? L(false, t('You are asleep'), '') : L(false, t('Your night: choose, then sleep'), t('Pass if you have nothing to do'));
+    default: return null;
+  }
+}
+
+/** The game is being played (not the lobby, not the end screen). */
+const inPlay = (v) => !!v && v.phase !== 'LOBBY' && v.phase !== 'ENDED';
+
+/**
+ * U2: the tray. Four fixed slots above the dock in every mode: My card · The board · Notes · Story. A slot the mode
+ * does not have stays in place, dimmed and inert, so muscle memory carries across games. Notes counts unread notes.
+ * Classic's active Rule cards live under The board.
+ */
+function tray(v) {
+  const me = v.me;
+  if (!me || me.moderator || !inPlay(v) || !V().me) return '';
+  const u = MODES[v.mode]?.utility ?? {};
+  const slot = (id, icon, label, on, badge = 0, cls = '') => on
+    ? `<button class="tray-slot ${cls}" data-act="sheet" data-id="${id}" data-key="ts-${id}">${icon}<span>${label}</span>${badge ? `<b class="tray-badge">${badge}</b>` : ''}</button>`
+    : `<span class="tray-slot off" data-key="ts-off-${label}" aria-hidden="true">${icon}<span>${label}</span></span>`;
+  const notesOn = !!u.notes && (!u.notesIf || u.notesIf.split('.').reduce((o, k) => o?.[k], v));
+  const notes = (v.private || []).filter((e) => u.notes === '*' || e.kind === u.notes).length;
+  const unread = Math.max(0, notes - (S.notesSeen?.[v.code] ?? 0));
+  const board = u.board ? BOARD_SHEET[u.board] : null;
+  const rules = u.rules && v.activeRules?.length;
+  return `<nav class="tray" data-key="tray" aria-label="${esc(t('Your things'))}">
+    ${slot('role', glyph(me.role?.glyph ?? 'scroll'), t('My card'), !!(u.card && me.role))}
+    ${board ? slot(u.board, glyph(board.glyph), t('The board'), true) : slot('rules', glyph('magistrate'), t('The board'), !!rules, 0, Object.keys(activeRuleNotes(v)).length ? 'live' : '')}
+    ${slot('notes', glyph('scroll'), t('Notes'), notesOn, unread)}
+    ${slot('story', glyph('whispers'), t('Story'), !!(u.story && v.scenario))}</nav>`;
+}
+
+/**
+ * U1: the move strip, one line under the header on every in-game phone screen: what you can do now (or who you are
+ * waiting for), one reminder, and the phase clock (the only clock printed on a phone). A mode can supply
+ * `move(v)` -> { act, main, sub }; until it does, the mode's own "do now" block is lifted out of its screen into
+ * the strip, so no screen says it twice. On secret steps every role sees the same line.
+ */
+const IDLE = new Set(['none', 'wait', 'spectate', 'defense', 'morning', 'moderator', 'ready', 'ack']);
+const canAct = (v) => { const a = v.action; return !!a && !IDLE.has(a.type) && !a.done && !a.played && !a.ghost; };
+function moveBand(v, html) {
+  if (!inPlay(v) || !v.me || v.me.moderator) return { strip: '', html };
+  let line = CLIENT[v.mode]?.move?.(v) ?? classicMove(v);
+  if (!line) {
+    // Lift the first "do now" block out of the screen.
+    const m = html.match(/<div class="(s-do|cturn)([^"]*)" data-key="[^"]*">(?:<span class="kicker">[^<]*<\/span>)?<h2>([\s\S]*?)<\/h2>(?:<p[^>]*>([\s\S]*?)<\/p>)?<\/div>/);
+    if (m) {
+      html = html.replace(m[0], '');
+      // A Coffins slip says whose turn it is by its class; a "do now" block follows the action.
+      const act = m[1] === 'cturn' ? /\bme\b/.test(m[2]) : canAct(v);
+      line = { act, main: m[3], sub: m[4] ?? '', html: true };
+    }
+  }
+  if (!line) line = { act: canAct(v), main: esc(stepOf(v)), sub: '', html: true };
+  const txt = (x) => (line.html ? x : esc(x));
+  const wait = !line.act && v.progress?.total ? th('{done} of {total} done', v.progress) : '';
+  return {
+    html,
+    strip: `<div class="move ${line.act ? 'act' : 'wait'}" data-key="move" role="status" aria-live="polite">
+      <i class="move-dot" aria-hidden="true"></i>
+      <div class="move-txt"><b>${txt(line.main)}</b>${line.sub || wait ? `<small>${line.sub ? txt(line.sub) : wait}</small>` : ''}</div>
+      <span class="clock move-clock" data-clock></span></div>`,
+  };
+}
 
 function mainFor(v, me) {
   if (me?.moderator) return moderatorMain(v);
@@ -2440,9 +2536,12 @@ function dock(v) {
         break;
     }
   }
-  if (hostNext) parts.unshift(`<span class="mobile-only host-slot" data-key="hostslot">${hostNext}</span>`);
-  if (!parts.length) return '';
-  return `<div class="dock" data-key="dock">${parts.join('')}</div>`;
+  // U3: in play the host's advance lives in the room menu (the Host pill), unless it is the only thing to do,
+  // then it sits in the dock, labelled as a host action.
+  if (hostNext && (!inPlay(v) || !parts.length)) parts.unshift(`<span class="mobile-only host-slot" data-key="hostslot">${inPlay(v) ? holdBtn('advance', th('Host · {x}', { x: t(v.host.advance) }), 'btn-host', { key: 'dock-adv' }) : hostNext}</span>`);
+  const tr = tray(v);
+  if (!parts.length && !tr) return '';
+  return `<div class="dock ${tr ? 'has-tray' : ''}" data-key="dock">${tr}${parts.join('')}</div>`;
 }
 
 function commitReady(a) {
@@ -2520,7 +2619,11 @@ const ACT = {
   back() { if (history.length > 1) history.back(); else go('/'); },
   backHome() { S.ui.sheet = null; go('/'); },
   xRedraw() { S.ui.sheet = null; send('host.xredraw'); },
-  sheet(el) { const id = el.dataset.id; S.ui.sheet = id && S.ui.sheet !== id ? id : null; if (S.ui.sheet) uiSound('whoosh'); render(); },
+  sheet(el) {
+    const id = el.dataset.id; S.ui.sheet = id && S.ui.sheet !== id ? id : null;
+    if (S.ui.sheet === 'notes') { const v = V(); (S.notesSeen ??= {})[v.code] = (v.private || []).length; }
+    if (S.ui.sheet) uiSound('whoosh'); render();
+  },
   cardInfo(el) { S.ui.cardInfo = { kind: el.dataset.kind, id: el.dataset.id }; S.ui.sheet = 'card'; uiSound('whoosh'); render(); },
   seatSheet(el) { S.ui.sheet = `seat:${el.dataset.id}`; render(); },
   sound() { sound.toggle(); render(); },
