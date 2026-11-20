@@ -5291,3 +5291,11 @@ details.more summary,
 .ring.dense .c-seals i { width: 13px; height: 13px; font-size: 6px; }
 .mtrack.compact { margin: 6px 0 2px; }
 .mode-missions .mc-banner, .main .mc-banner { margin-top: 4px; }
+
+/* AT-common: the seal row — the mode's object (a slip, the sign, your visions) with the seal at its top right */
+.seal-row { display: flex; gap: 10px; align-items: center; margin: 4px 0 8px; }
+.seal-row > .seal-obj { flex: 1; min-width: 0; }
+.seal-row > .tseal { --s: 82px; }
+.tseal i.v { background: var(--amethyst-2); border-color: var(--amethyst); }
+.seal-corner { position: relative; }
+.seal-corner > .tseal { position: absolute; top: 0; right: 0; z-index: 4; }

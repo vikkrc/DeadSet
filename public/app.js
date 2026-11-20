@@ -1599,7 +1599,7 @@ function moveBand(v, html) {
   let line = CLIENT[v.mode]?.move?.(v) ?? classicMove(v);
   if (!line) {
     // Lift the first "do now" block out of the screen.
-    const m = html.match(/<div class="(s-do|cturn|k-slip)([^"]*)" data-key="[^"]*">(?:<span class="kicker">[^<]*<\/span>)?<h2>([\s\S]*?)<\/h2>(?:<p[^>]*>([\s\S]*?)<\/p>)?<\/div>/);
+    const m = html.match(/<div class="(s-do|cturn|k-slip|x-turn)([^"]*)" data-key="[^"]*">(?:<span class="kicker">[^<]*<\/span>)?<h2>([\s\S]*?)<\/h2>(?:<p[^>]*>([\s\S]*?)<\/p>)?<\/div>/);
     if (m) {
       html = html.replace(m[0], '');
       // A Coffins slip says whose turn it is by its class; a "do now" block follows the action.
@@ -2546,7 +2546,10 @@ function moderatorMain(v) {
 /** Translation and markup helpers shared with the board, Gazette and guide. */
 const H = { esc, glyph, dreamGlyph, t, th, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, scen, tlist, tx, getLang, mcardF };
 /** Helpers for the Missions screens (public/missions.js). */
-const MH = { S, ring, seal: (...a) => seal(...a), head: (...a) => head(...a), chips: (...a) => chips(...a), activePick: (...a) => activePick(...a), pickTabs: (...a) => pickTabs(...a), chatBlock: (...a) => chatBlock(...a), render: () => render(), sound };
+/** AT-common: the mode's object with the seal at its top right. */
+const sealRow = (obj, sealHtml) => `<div class="seal-row" data-key="seal-row"><div class="seal-obj">${obj}</div>${sealHtml}</div>`;
+const sealCorner = (obj, sealHtml) => `<div class="seal-corner" data-key="seal-corner">${obj}${sealHtml}</div>`;
+const MH = { S, ring, sealRow, sealCorner, seal: (...a) => seal(...a), head: (...a) => head(...a), chips: (...a) => chips(...a), activePick: (...a) => activePick(...a), pickTabs: (...a) => pickTabs(...a), chatBlock: (...a) => chatBlock(...a), render: () => render(), sound };
 
 // ── First-game tips ────────────────────────────────────────────────────────
 const TIPS_KEY = 'deadset:tutorial';
