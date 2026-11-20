@@ -230,10 +230,15 @@ function parseRoute() {
   let m;
   if ((m = p.match(/^\/r\/([A-Za-z0-9]{6})$/))) return { name: 'room', code: m[1].toUpperCase() };
   if ((m = p.match(/^\/board\/([A-Za-z0-9]{6})$/))) return { name: 'board', code: m[1].toUpperCase() };
-  if (p === '/guide') return { name: 'guide' };
+  if (p === '/guide') return { name: 'guide', chapter: 'basics' };
+  if ((m = p.match(/^\/guide\/([a-z]+)$/))) return { name: 'guide', chapter: MODES[m[1]] ? m[1] : 'basics' };
   return { name: 'home' };
 }
-function go(path) { history.pushState({}, '', path); boot(); }
+function go(path) {
+  history.pushState({}, '', path); boot();
+  // U7: a chapter link may carry a section (/guide/classic#c-rules); otherwise a new page starts at the top.
+  requestAnimationFrame(() => { const h = location.hash.slice(1); const el = h && document.getElementById(h); if (el) el.scrollIntoView({ block: 'start' }); else if (S.route?.name === 'guide') window.scrollTo(0, 0); });
+}
 window.addEventListener('popstate', boot);
 
 function disconnect() {
@@ -1090,6 +1095,25 @@ function seatXY(i, n, R) {
 }
 
 // ── A · The Empty Table (home) ─────────────────────────────────────────────
+/**
+ * U6: a seat that is still waiting. On the home page, look for this device's saved seats (deadset:<code>) whose
+ * room still exists, and offer the newest one back: "Your seat is waiting · Table HB4BR3 · Return".
+ */
+function scanRejoin() {
+  if (S.rejoinScan) return;
+  S.rejoinScan = true;
+  const codes = [];
+  for (let i = 0; i < localStorage.length; i++) { const m = /^deadset:([A-Z0-9]{6})$/.exec(localStorage.key(i) ?? ''); if (m) codes.push(m[1]); }
+  Promise.all(codes.slice(0, 8).map(async (code) => { try { const p = await api(`/api/rooms/${code}/peek`); return p.exists ? { code, ...p, name: loadSession(code)?.name ?? '' } : null; } catch { return null; } }))
+    .then((list) => { S.rejoin = list.filter(Boolean).sort((a, b) => (a.phase === 'LOBBY') - (b.phase === 'LOBBY')); if (S.rejoin.length && S.route?.name === 'home') render(); });
+}
+function rejoinCard() {
+  scanRejoin();
+  const r = S.rejoin?.[0];
+  if (!r) return '';
+  return `<a class="rejoin" href="/r/${esc(r.code)}" data-link data-key="rejoin-${esc(r.code)}">${cover(r.mode, { size: 'mini' })}<span><span class="kicker">${t('Your seat is waiting')}</span><b>${esc(th('Table {code}', { code: r.code }))}</b><small>${esc(modeTitle(r.mode))} · ${esc(r.phase === 'LOBBY' ? t('In the lobby') : t('In play'))}</small></span><em class="btn btn-sm btn-solid">${t('Return')}</em></a>`;
+}
+
 function homeScreen() {
   const d = S.drafts;
   const tab = S.ui.homeTab;
@@ -1105,7 +1129,7 @@ function homeScreen() {
   }).join('');
   const code = (d.joinCode ?? '').toUpperCase();
   return `<main class="home2" data-key="home">
-    <div class="h-top">${wordmark()}<div class="row" style="gap:6px">${langChip()}<button class="chip" data-act="sound" aria-label="${t(sound.on ? 'Mute' : 'Sound on')}">${glyph(sound.on ? 'bell' : 'bellOff')}</button><a class="chip" href="/guide" data-link>${t('How to play')}</a></div></div>
+    <div class="h-top">${wordmark()}<div class="row" style="gap:6px">${langChip()}<button class="chip" data-act="sound" aria-label="${t(sound.on ? 'Mute' : 'Sound on')}">${glyph(sound.on ? 'bell' : 'bellOff')}</button><a class="chip" href="/guide" data-link>${t('Rule book')}</a></div></div>
     <div class="h-grid">
       <section class="h-table" aria-hidden="true">
         <div class="h-ring"><div class="h-tabletop"></div>${chairs}
@@ -1114,6 +1138,7 @@ function homeScreen() {
         <p class="whisper" data-key="wh-${S.whisper ?? 0}">“${esc(line)}”</p>
       </section>
       <section class="h-panel">
+        ${rejoinCard()}
         <p class="h-tag">${t('{n} games of bluff and deduction. One phone each.', { n: HOME.modes })}</p>
         <div class="seg" role="tablist"><button role="tab" data-act="homeTab" data-id="host" aria-pressed="${tab === 'host'}">${t('Host a table')}</button><button role="tab" data-act="homeTab" data-id="join" aria-pressed="${tab === 'join'}">${t('Join a table')}</button></div>
         ${tab === 'host' ? `<div class="stack" data-key="h-host">
@@ -1132,6 +1157,7 @@ function homeScreen() {
           <p class="foot">${t('Or scan the QR code on the host\'s screen')}</p>
         </div>`}
         <p class="foot">${t('{a}–{b} players · one phone each · no app to install', { a: HOME.min, b: HOME.max })}</p>
+        <div class="h-games" data-key="hgames"><span class="kicker">${t('Tonight\'s games')}</span><div class="h-strip">${MODE_IDS.map((id) => `<a class="h-cover" href="/guide/${id}" data-link aria-label="${esc(modeTitle(id))}">${cover(id, { size: 'mini' })}<small>${esc(modeTitle(id).replace(/^Dead Set: /, ''))}</small></a>`).join('')}</div></div>
       </section>
     </div>
   </main>`;
@@ -1197,7 +1223,7 @@ const allOf = (powers) => ({ setup: { publicDeck: { exact: Object.fromEntries(Ob
 const guideCast = (id) => (id === 'carnival' ? masksSheet(allOf(K_POWER)) : id === 'midnight' ? cardsSheet(allOf(NPOWER)) : '');
 const guideHow = (id) => (id === 'classic' || id === 'missions' ? howItWorks({ mode: id }) : HOW[id]?.() ?? '');
 // E3: the guide closes with the room menu's own control (an icon button), not a diamond button.
-const guideScreen = () => `<main class="main guide-main" data-key="guide"><div class="row between">${wordmark()}<div class="row">${langChip()}<button class="btn btn-ghost icon-btn" data-act="back" aria-label="${esc(t('Back'))}">${glyph('close')}</button></div></div>${renderGuide(S.content, { ...H, FAMILIES, MODES, howFor: guideHow, castFor: guideCast })}</main>`;
+const guideScreen = () => `<main class="main guide-main" data-key="guide"><div class="row between">${wordmark()}<div class="row">${langChip()}<button class="btn btn-ghost icon-btn" data-act="back" aria-label="${esc(t('Back'))}">${glyph('close')}</button></div></div>${renderGuide(S.content, { ...H, FAMILIES, MODES, howFor: guideHow, castFor: guideCast, chapter: S.route?.chapter ?? 'basics', cover })}</main>`;
 
 /** Language picker chip (opens the language sheet). */
 function langChip() {
@@ -1785,7 +1811,7 @@ function seatedStrip(v) {
 function gameCard(v, isHost) {
   return `<section class="game-card" data-key="gamecard">${cover(v.mode)}
     <div class="gc-side"><span class="kicker">${t(isHost ? 'Tonight\'s game' : 'The host chose this game')}</span><b>${esc(modeTitle(v.mode))}</b><small>${esc(modePitch(v.mode))}</small><i>${esc(modeMeta(v.mode))}</i>
-    ${isHost ? `<button class="btn btn-sm" data-act="sheet" data-id="modes">${t('Change game')}</button>` : ''}<a class="btn btn-sm btn-ghost" href="/guide#m-${esc(v.mode)}" target="_blank" rel="noopener">${t('Read the full chapter')} ${glyph('out')}</a></div></section>`;
+    ${isHost ? `<button class="btn btn-sm" data-act="sheet" data-id="modes">${t('Change game')}</button>` : ''}<a class="btn btn-sm btn-ghost" href="/guide/${esc(v.mode)}" target="_blank" rel="noopener">${t('Read the full chapter')} ${glyph('out')}</a></div></section>`;
 }
 
 function lobbyMain(v, me) {
@@ -3132,7 +3158,7 @@ let lensSwallow = false;
 document.addEventListener('click', (e) => { if (lensSwallow) { lensSwallow = false; e.preventDefault(); e.stopPropagation(); } }, true);
 document.addEventListener('click', (e) => {
   const link = e.target.closest('a[data-link]');
-  if (link && link.origin === location.origin && !e.metaKey && !e.ctrlKey) { e.preventDefault(); go(link.pathname); return; }
+  if (link && link.origin === location.origin && !e.metaKey && !e.ctrlKey) { e.preventDefault(); go(link.pathname + link.hash); return; }
   const el = e.target.closest('[data-act]');
   if (!el || el.tagName === 'SELECT' || (el.tagName === 'INPUT' && el.type !== 'checkbox')) return;
   if (el.tagName === 'INPUT') { ACT[el.dataset.act]?.(el); return; }
@@ -3214,7 +3240,12 @@ document.addEventListener('change', (e) => {
   if (el.dataset.set) send('host.settings', nest(el.dataset.set, Number(el.value)));
   if (el.dataset.setBool) send('host.settings', { [el.dataset.setBool]: el.checked });
   if (el.dataset.setStr) send('host.settings', { [el.dataset.setStr]: el.value });
-  if (el.dataset.actChange === 'guideJump') { document.getElementById(el.value)?.scrollIntoView({ behavior: calm.matches ? 'auto' : 'smooth', block: 'start' }); return; }
+  if (el.dataset.actChange === 'guideJump') {
+    // U7: basics sections stay on /guide; a game opens its own chapter; Classic's parts are sections of it.
+    const v = el.value;
+    go(v.startsWith('m-') ? `/guide/${v.slice(2)}` : v.startsWith('c-') ? `/guide/classic#${v}` : `/guide#${v}`);
+    return;
+  }
   if (el.dataset.actChange === 'pool' && s) {
     const pool = new Set(s.extendedPool);
     if (el.checked) pool.add(el.dataset.id); else pool.delete(el.dataset.id);

@@ -5390,3 +5390,28 @@ button.mr-fate { cursor: pointer; }
 .mr-txt b .tag { font-size: 9px; vertical-align: middle; }
 .mr-txt small { font: 400 14px/1.25 var(--text); color: var(--bone-2); }
 .mr-txt i { font: 600 var(--fs-label)/1.2 var(--text); font-style: normal; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash); }
+
+/* U6: home — the waiting seat, and tonight's games as a strip of covers */
+.rejoin { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; padding: 10px 12px; border: 1px solid var(--gilt); border-radius: 6px; background: color-mix(in srgb, var(--gilt) 9%, var(--ink-2)); color: var(--bone); text-decoration: none; }
+.rejoin > span { display: grid; gap: 2px; flex: 1; min-width: 0; }
+.rejoin b { font: 400 20px/1.1 var(--black); }
+.rejoin small { font: 400 13px/1.2 var(--text); color: var(--bone-2); }
+.rejoin em { font-style: normal; }
+.h-games { margin-top: 18px; }
+.h-strip { display: flex; gap: 10px; overflow-x: auto; padding: 8px 2px 6px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+.h-strip::-webkit-scrollbar { display: none; }
+.h-cover { display: grid; justify-items: center; gap: 4px; flex: none; scroll-snap-align: start; text-decoration: none; color: var(--bone-2); }
+.h-cover .tarot--cover { font-size: 7.5px; }
+.h-cover small { font: 500 12px/1.1 var(--text); max-width: 76px; text-align: center; }
+
+/* U7: the rule book, one chapter per page */
+.g-cover { display: flex; justify-content: center; margin: 4px 0 14px; }
+.g-pager { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 28px 0 10px; }
+.g-pager a { display: grid; gap: 2px; padding: 12px 14px; border: 1px solid var(--iron); border-radius: 6px; text-decoration: none; color: var(--bone); background: var(--ink-2); }
+.g-pager .g-next { text-align: right; }
+.g-pager small { font: 600 var(--fs-label)/1.2 var(--text); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ash); }
+.g-pager b { font: 400 18px/1.15 var(--black); }
+.g-covers { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 12px; }
+.g-covers a { display: grid; justify-items: center; gap: 4px; text-decoration: none; color: var(--bone-2); font: 500 12px/1.15 var(--text); text-align: center; }
+.g-covers .tarot--cover { font-size: 7.5px; }
+.h-panel { min-width: 0; } .h-games { max-width: 100%; min-width: 0; }

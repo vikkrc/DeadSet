@@ -240,7 +240,7 @@ export class RoomManager {
     const host = m.moderated ? r.moderatorName : m.players.find((p) => p.id === m.hostId)?.name;
     const preset = PRESETS[m.settings.preset];
     const rules = m.phase === 'LOBBY' ? (m.settings.rules.mode === 'random' ? m.settings.rules.count : m.settings.rules.selected.length) : m.activeRules.length;
-    return { exists: true, phase: m.phase, players: m.players.length, host: host ?? null, seated: m.players.length, max: preset.max, preset: preset.id, rules, moderated: !!m.moderated, lang: m.settings.lang || 'en' };
+    return { exists: true, phase: m.phase, mode: m.phase === 'LOBBY' || !m.config ? modeOf(m.settings.preset) : m.config.mode ?? (m.config.missions ? 'missions' : 'classic'), players: m.players.length, host: host ?? null, seated: m.players.length, max: preset.max, preset: preset.id, rules, moderated: !!m.moderated, lang: m.settings.lang || 'en' };
   }
 
   // ── Streams ──────────────────────────────────────────────────────────────
