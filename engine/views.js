@@ -43,12 +43,13 @@ function progress(m) {
     case 'M_MISSION': return { label: 'cards played', done: Object.keys(m.M.plays).length, total: m.M.proposal.team.length };
     case 'M_NIGHT': return { label: 'asleep', done: Object.keys(m.M.night.done).length, total: m.players.length };
     case 'M_LAST_STAND': return { label: 'votes in', done: Object.keys(m.M.stand.votes).length, total: m.players.length };
-    case 'NIGHT_0_REVEAL': return { label: 'have seen their role', done: m.players.filter((p) => p.acknowledged).length, total: m.players.length };
+    // N3: who the table is waiting for, where that is no secret (reading your card; having voted). Never at night.
+    case 'NIGHT_0_REVEAL': return { label: 'have seen their role', done: m.players.filter((p) => p.acknowledged).length, total: m.players.length, waiting: m.players.filter((p) => !p.acknowledged).map((p) => p.id) };
     case 'NIGHT_ACTIONS': return { label: 'asleep', done: N.aliveAtOpen.filter((id) => N.done[id]).length, total: N.aliveAtOpen.length };
     case 'DAY_VOTING': {
       const d = m.day;
       const ghosts = d.ghostVoters.length ? { ghostDone: Object.keys(d.ghostBallots).length, ghostTotal: d.ghostVoters.length } : {};
-      return { label: 'ballots recorded', done: Object.keys(d.ballots).length, total: d.eligibleVoters.length, ...ghosts };
+      return { label: 'ballots recorded', done: Object.keys(d.ballots).length, total: d.eligibleVoters.length, waiting: d.eligibleVoters.filter((id) => !(id in d.ballots)), ...ghosts };
     }
     default: return null;
   }

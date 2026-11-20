@@ -1462,7 +1462,7 @@ function roomScreen() {
       <div class="row between"><span class="kicker">${t('Room')} <span class="mono">${esc(v.code)}</span></span><span class="clock" data-clock></span></div>
       ${fuse()}
       ${hostBox()}
-      <div class="timeline" data-scroll="side-tl"><div class="rule">${t('Public record')}</div>${feed(v.log)}</div>
+      <div class="timeline" data-scroll="side-tl"><div class="rule">${t('Public record')}</div>${timelineHtml(v)}</div>
       <div class="row side-foot">${langChip()}<button class="btn btn-ghost btn-sm" data-act="sound">${glyph(sound.on ? 'bell' : 'bellOff')} ${t(sound.on ? 'Sound on' : 'Sound off')}</button>
         <button class="btn btn-sm side-menu" data-act="sheet" data-id="record" data-key="side-menu" aria-label="${esc(t('Open match record'))}">${glyph('menu')} ${t('Menu')}</button></div>
     </aside>`;
@@ -1566,6 +1566,13 @@ function utilityRow(v) {
 }
 const chips = () => ''; // U2: the tray (above the dock) replaced the per-screen utility row
 
+/** N3: waiting is information. Names who the table waits for, never just "please wait". */
+function waitingFor(v) {
+  const ids = (v.progress?.waiting ?? []).filter((id) => id !== v.me?.id);
+  if (!ids.length) return t('Everyone is in');
+  const first = rawName(ids[0]);
+  return ids.length === 1 ? th('Waiting for {a}', { a: first }) : tp('Waiting for {a} and one other', 'Waiting for {a} and {n} others', ids.length - 1, { a: first });
+}
 /**
  * Classic's move strip (U1). Night lines are the same for every role, so the strip never tells a role apart.
  */
@@ -1576,7 +1583,7 @@ function classicMove(v) {
   const dead = me && !me.alive;
   const L = (act, main, sub = '') => ({ act, main, sub });
   switch (v.phase) {
-    case 'NIGHT_0_REVEAL': return me.acknowledged ? L(false, t('Waiting for the others'), '') : L(true, t('Turn your card and read it'), t('Then tap Understood'));
+    case 'NIGHT_0_REVEAL': return me.acknowledged ? L(false, waitingFor(v), '') : L(true, t('Turn your card and read it'), t('Then tap Understood'));
     case 'DAY_PREP': {
       const ab = (a.abilities ?? []).filter((x) => !x.used);
       return ab.length ? L(true, t('Use your power, or wait'), t('The dawn news is read aloud')) : L(false, t('The dawn news is read'), t('The host opens the discussion'));
@@ -1594,7 +1601,7 @@ function classicMove(v) {
     }
     case 'DAY_VOTING':
       if (a.type !== 'ballot') return L(false, t('The town votes'), t('You have no vote today'));
-      return a.choice ? L(false, t('Your vote is in'), t('You can change it until it locks')) : L(true, t('Vote for one accused, or abstain'), t('Secret until it locks'));
+      return a.choice ? L(false, t('Your vote is in'), `${t('You can change it until it locks')} · ${waitingFor(v)}`) : L(true, t('Vote for one accused, or abstain'), t('Secret until it locks'));
     case 'DAY_RESOLVING':
       return a.type === 'retaliate' ? L(true, t('Choose who you take with you'), t('Or go quietly')) : L(false, t('The verdict stands'), '');
     case 'NIGHT_DREAM_SWAP': return L(false, t('Night falls: turn your Dream'), t('Dream Snatchers may swap now'));
@@ -1889,10 +1896,24 @@ function timelineHtml(v) {
     const c = cats[i].includes('deaths') ? 'deaths' : cats[i][0];
     groups.at(-1).rows.push(`<li class="tl-row ${c ? `tl-${c}` : ''}" data-key="tl-${l.i}">${c ? `<span class="tl-tag">${esc(tag[c])}</span>` : '<span class="tl-tag"></span>'}<span class="txt">${reportHtml(entryMsg(l), l.lines)}</span></li>`);
   });
+  // G5: after the game, the nights are filled in with what really happened (Classic's recap).
+  if (v.phase === 'ENDED' && f === 'all') {
+    for (const h of v.recap ?? []) {
+      if (h.kind === 'day' || !h.lines?.length) continue;
+      const at = `Night ${h.n}`;
+      const rows = h.lines.map((l, k) => `<li class="tl-row tl-secret" data-key="tls-${h.n}-${k}"><span class="tl-tag">${t('Secret')}</span><span class="txt">${tmh(l)}</span></li>`);
+      const gi = groups.findIndex((g) => g.at === at);
+      if (gi >= 0) groups[gi].rows.unshift(...rows);
+      else {
+        const next = groups.findIndex((g) => g.at === `Day ${h.n + 1}`);
+        groups.splice(next >= 0 ? next : groups.length, 0, { at, rows });
+      }
+    }
+  }
   const stand = whereWeStand(v);
   const now = v.phase !== 'ENDED' ? `<li class="tl-row tl-now" data-key="tl-now"><span class="tl-tag">${t('Now')}</span><span class="txt">${esc([[phaseWord(v).word, phaseWord(v).num].filter(Boolean).join(' '), stepOf(v)].filter(Boolean).join(' · '))}</span></li>` : '';
   return `${filters.length > 1 ? `<div class="mfilters tl-filters">${filters.map(([k, l]) => `<button class="mf ${f === k ? 'on' : ''}" data-act="gfilter" data-id="${k}" aria-pressed="${f === k}">${esc(l)}</button>`).join('')}</div>` : ''}
-    <div class="timeline">${groups.length ? groups.map((g) => `<section class="tl-group" data-key="tlg-${esc(g.at)}"><h4 class="tl-at">${esc(startAt(g.at) ? t('The start') : stamp(g.at))}</h4><ul>${g.rows.join('')}</ul></section>`).join('') : `<p class="small muted">${t('Nothing yet.')}</p>`}
+    <div class="tl-list">${groups.length ? groups.map((g) => `<section class="tl-group" data-key="tlg-${esc(g.at)}"><h4 class="tl-at">${esc(startAt(g.at) ? t('The start') : stamp(g.at))}</h4><ul>${g.rows.join('')}</ul></section>`).join('') : `<p class="small muted">${t('Nothing yet.')}</p>`}
     ${now ? `<ul class="tl-nowlist">${now}</ul>` : ''}</div>
     ${stand ? `<div class="stand" data-key="stand"><span class="kicker">${t('Where we stand')}</span><p>${esc(stand)}</p></div>` : ''}`;
 }
