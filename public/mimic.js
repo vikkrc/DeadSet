@@ -130,10 +130,14 @@ export function mimicMain(v, me, h) {
         title = t('Ask someone a question');
         hint = t('Ask aloud about the place, then tap who you asked. The lantern passes to them.');
       }
-      stage = `${lantern(v)}${doNow(title, hint, accusing ? 'blood' : a.asker ? 'gilt' : '')}
+      // AT6: the board of places owns the stage. Your card sits above it with the seal at its top right (the lantern
+      // bead on the asker). The playing table comes back only when you must tap a seat: to ask, or to accuse.
+      stage = pick ? `${lantern(v)}${doNow(title, hint, accusing ? 'blood' : 'gilt')}
         ${ring(v, { pick, center: '', extra: askArrows(v), turn: Q.asker ?? null })}
         ${myCard(v, me, UI)}
-        <div class="rule">${t('The possible places')}</div>${placesBoard(v, { act: 'qStrike', struck })}${notes}`;
+        <div class="rule">${t('The possible places')}</div>${placesBoard(v, { act: 'qStrike', struck })}${notes}`
+        : `${doNow(title, hint)}${h.sealRow(myCard(v, me, UI), h.seal(v, { turn: Q.asker ?? null, key: 'qseal', size: 82 }))}
+        ${placesBoard(v, { act: 'qStrike', struck })}${notes}`;
       break;
     }
     case 'Q_VOTE': {
