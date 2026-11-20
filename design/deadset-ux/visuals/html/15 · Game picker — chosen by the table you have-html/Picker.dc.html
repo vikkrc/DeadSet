@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dead Set — game picker</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ds.css">
+<link rel="stylesheet" href="./workshop.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Grenze+Gotisch:wght@400;600;800&amp;family=UnifrakturCook:wght@700&amp;display=swap">
+<style>
+body{margin:0}
+
+.gr{appearance:none;width:100%;display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;padding:8px 10px;border:1px solid var(--iron);background:var(--ink-2);color:inherit;font:inherit;text-align:left}
+.gr .cover{width:44px;font-size:3px;padding:.7em .5em}
+.gr .cover h3,.gr .cover .meta,.gr .cover .fam{display:none}
+.gr b{display:block;font:600 22px/1.05 var(--black)}
+.gr span.p{font:italic 400 14.5px/1.2 var(--text);color:var(--bone-2)}
+.gr span.m{display:block;margin-top:4px;font:600 10px/1 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--ash)}
+.gr.on{border-color:var(--gilt);box-shadow:inset 0 0 0 1px var(--gilt),0 0 24px -10px var(--gilt)}
+.gr.off{opacity:.5}
+.tag{font:600 9.5px/1 var(--text);letter-spacing:.14em;text-transform:uppercase;padding:5px 7px;border:1px solid var(--gilt);color:var(--gilt-hi);white-space:nowrap}
+.fl{display:flex;gap:6px;flex-wrap:wrap}
+.fl button{appearance:none;min-height:34px;padding:0 11px;border:1px solid var(--iron);background:none;color:var(--bone-2);font:italic 400 15px/1 var(--text);display:inline-flex;gap:7px;align-items:center}
+.fl .on{border-color:var(--gilt);color:var(--gilt-hi);background:rgba(201,163,90,.1)} .fl .on::before{content:'';width:6px;height:6px;transform:rotate(45deg);background:var(--gilt)}
+.peek{height:150px;position:relative;overflow:hidden;opacity:.45}
+
+</style>
+</helmet>
+<div class="ds phn" style="width:390px;height:844px;position:relative">
+<div class="peek"><div class="table " style="width:300px;--t:0.9;margin:20px auto 0">
+  <div class="orbit"></div>
+  <div class="disc"><span class="bit gilt" style="font-size:30px">6</span></div>
+  
+  <div class="seat you" style="left:50.0%;top:10.0%"><i>V</i><b>Viktor</b></div>
+<div class="seat " style="left:84.6%;top:30.0%"><i>I</i><b>Ilka</b></div>
+<div class="seat " style="left:84.6%;top:70.0%"><i>T</i><b>Tomi</b></div>
+<div class="seat " style="left:50.0%;top:90.0%"><i>M</i><b>Mara</b></div>
+<div class="seat " style="left:15.4%;top:70.0%"><i>B</i><b>Bram</b></div>
+<div class="seat " style="left:15.4%;top:30.0%"><i>D</i><b>Dani</b></div>
+</div></div>
+<div class="fr" style="position:absolute;left:0;right:0;top:96px;bottom:0;background:var(--ink-2);display:flex;flex-direction:column;box-shadow:0 -20px 40px -10px #000">
+ <div style="padding:16px 18px 10px;display:grid;gap:10px;border-bottom:1px solid var(--iron)">
+  <div style="width:44px;height:4px;border-radius:2px;background:var(--iron);margin:-6px auto 2px"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center"><h1 class="bl" style="font-size:30px">Choose a game</h1><button class="ico" aria-label="Close"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 8l16 16M24 8L8 24"></path></svg></button></div>
+  <div class="fl" role="group" aria-label="Filters"><button class="on">6 at the table</button><button>Under 15 min</button><button>Nobody dies</button><button>New players</button></div>
+ </div>
+ <div style="flex:1;overflow:hidden;padding:12px 14px;display:grid;align-content:start;gap:8px">
+  <div class="orn"><span class="lab gilt">Plays well with 6</span></div><button class="gr on"><span class="cover" style="--acc:#6b55a8"><span class="win"><img src="./art/demon.svg" alt=""></span></span><span><b>Exorcism</b><span class="p">One word each. Who doesn’t know it?</span><span class="m">3–12 · 10 min · word game</span></span><span class="tag">Chosen</span></button><button class="gr "><span class="cover" style="--acc:#8e1b1f"><span class="win"><img src="./art/death.svg" alt=""></span></span><span><b>Classic</b><span class="p">Hidden roles, night kills, a secret ballot.</span><span class="m">5–25 · 45 min · elimination</span></span><span class="tag">Best first</span></button><button class="gr "><span class="cover" style="--acc:#6f8aa8"><span class="win"><img src="./art/s_self.svg" alt=""></span></span><span><b>The Mirror</b><span class="p">What would your friend do?</span><span class="m">4–12 · 20 min · nobody dies</span></span></button><button class="gr "><span class="cover" style="--acc:#2c4a7a"><span class="win"><img src="./art/moon.svg" alt=""></span></span><span><b>Midnight</b><span class="p">One night, one vote.</span><span class="m">4–12 · 10 min · cards move</span></span></button><button class="gr "><span class="cover" style="--acc:#4a4f58"><span class="win"><img src="./art/undertaker.svg" alt=""></span></span><span><b>Coffins</b><span class="p">Bury gold, hide a curse, bid and dig.</span><span class="m">3–10 · 15 min · bluffing</span></span></button>
+  <div class="orn" style="margin-top:4px"><span class="lab">Needs more players</span></div>
+  <button class="gr off" aria-disabled="true"><span class="cover" style="--acc:#a7742a"><span class="win"><img src="./art/lantern.svg" alt=""></span></span><span><b>Missions</b><span class="p">Best from 7; playable at 5–6.</span><span class="m">5–12 · 30 min</span></span><span></span></button>
+ </div>
+ <div style="padding:10px 16px 16px;border-top:1px solid var(--iron);display:grid;gap:6px">
+  <p class="cap" style="font-size:13px;text-align:center">Played tonight: Classic, The Mirror</p>
+  <button class="btn bone wide">Play Exorcism</button>
+ </div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>

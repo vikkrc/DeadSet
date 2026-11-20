@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dead Set — first game coach</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ds.css">
+<link rel="stylesheet" href="./workshop.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Grenze+Gotisch:wght@400;600;800&amp;family=UnifrakturCook:wght@700&amp;display=swap">
+<style>
+body{margin:0}
+
+.spot{position:absolute;z-index:6;border:2px solid var(--gilt-hi);box-shadow:0 0 0 2000px rgba(6,5,4,.66),0 0 22px rgba(236,210,143,.55)}
+.coach{position:absolute;z-index:7;left:16px;right:16px;padding:16px 18px 14px;display:grid;gap:10px}
+.coach p{margin:0;font:400 17px/1.36 var(--text);color:var(--sepia)}
+.coach::before{content:'';position:absolute;top:-9px;left:var(--ax,60px);width:16px;height:16px;transform:rotate(45deg);background:var(--vellum);border-left:1px solid #77633f;border-top:1px solid #77633f}
+.stepdots{display:flex;gap:7px} .stepdots i{width:8px;height:8px;transform:rotate(45deg);background:#b8a988} .stepdots i.on{background:var(--rubric)}
+.later{position:absolute;z-index:7;left:16px;right:16px;bottom:16px;padding:12px 14px;display:grid;gap:8px}
+.later .t{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.later .t span{display:grid;justify-items:center;gap:4px;font:600 9.5px/1.1 var(--text);letter-spacing:.12em;text-transform:uppercase;color:var(--bone-2);text-align:center}
+.later .t span i{width:22px;height:22px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--gilt-2);font:600 12px/1 var(--text);font-style:normal;color:var(--gilt)}
+.later .t span.on i{background:var(--gilt);color:var(--ink)}
+
+</style>
+</helmet>
+<div class="ds night phn" style="width:390px;height:844px;">
+
+  <header><div><h1>Night<sup>I</sup></h1><span class="sub">The Guardian wakes · first game</span></div><button class="ico" aria-label="Room menu"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 9h22M5 16h22M5 23h14"></path></svg></button></header>
+  <div class="mv"><div class="move"><span class="dot"></span><span class="what">Choose who to shield<small>You may pick yourself</small></span><span class="clk">1:42</span></div></div>
+  <div class="stage"><div class="table " style="width:300px;--t:0.7;margin:30px auto 0">
+  <div class="orbit"></div>
+  <div class="disc"><img src="./art/guardian.svg" alt="" style="width:62px;filter:invert(1) hue-rotate(180deg) sepia(.3)"><span class="lab" style="font-size:9.5px">shield one</span></div>
+  
+  <div class="seat " style="left:50.0%;top:10.0%"><i>I</i><b>Ilka</b></div>
+<div class="seat sel" style="left:81.3%;top:25.1%"><i>M</i><b>Mara</b></div>
+<div class="seat " style="left:89.0%;top:58.9%"><i>T</i><b>Tomi</b></div>
+<div class="seat " style="left:67.4%;top:86.0%"><i>B</i><b>Bram</b></div>
+<div class="seat " style="left:32.6%;top:86.0%"><i>Z</i><b>Zsófi</b></div>
+<div class="seat you" style="left:11.0%;top:58.9%"><i>V</i><b>You</b></div>
+<div class="seat " style="left:18.7%;top:25.1%"><i>D</i><b>Dani</b></div>
+</div></div>
+  <nav class="tray" aria-label="Your things"><button><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="9" y="4" width="14" height="24" rx="1.5"></rect><path d="M16 11l3 5-3 5-3-5z"></path></svg>My card</button><button><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11"></circle><circle cx="16" cy="16" r="4"></circle></svg>The board</button><button><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 6h14v20H10a2 2 0 0 1-2-2zM12 12h6M12 16h6"></path></svg>Notes</button><button><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 8h20v16H6zM6 13h20"></path></svg>Story</button></nav>
+  <div class="dock"><button class="btn bone wide">Shield Mara</button></div>
+  <div class="spot" style="left:12px;right:12px;top:58px;height:62px"></div>
+<div class="coach vellum fr k sm" style="top:134px;--ax:40px">
+ <div style="display:flex;justify-content:space-between;align-items:center"><span class="lab red">First game · tip 2 of 4</span><div class="stepdots"><i></i><i class="on"></i><i></i><i></i></div></div>
+ <p><b>This line always says what to do now.</b> A bright dot means it's your move; a dim one means you're waiting, so put the phone down and watch the table.</p>
+ <div style="display:flex;justify-content:space-between;align-items:center"><button class="btn sm ghost notips" style="color:var(--sepia-2)">Skip tips</button><button class="btn sm seal notips">Got it</button></div>
+</div>
+<div class="later fr sm" style="background:var(--ink-2)">
+ <span class="lab gilt">Four tips, each once, when it first matters</span>
+ <div class="t"><span><i>1</i>Your card</span><span class="on"><i>2</i>The move strip</span><span><i>3</i>The table</span><span><i>4</i>The dock</span></div>
+ <span class="it dim" style="font-size:13.5px">Never during a timer under 20 s. Off in the room menu.</span>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>

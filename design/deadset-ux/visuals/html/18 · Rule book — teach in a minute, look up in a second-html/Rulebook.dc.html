@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dead Set — rule book</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ds.css">
+<link rel="stylesheet" href="./workshop.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&amp;family=Grenze+Gotisch:wght@400;600;800&amp;family=UnifrakturCook:wght@700&amp;display=swap">
+<style>
+body{margin:0}
+
+.acc{display:grid;grid-template-columns:14px 1fr auto;gap:12px;align-items:center;min-height:50px;border-bottom:1px solid var(--iron);font:500 17px/1.2 var(--text)}
+.acc::before{content:'';width:7px;height:7px;transform:rotate(45deg);border:1px solid var(--gilt)}
+.acc span:last-child{font:400 20px/1 var(--text);color:var(--gilt)}
+.ix{display:grid;grid-template-columns:24px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--iron);font:400 15.5px/1.3 var(--text)}
+.ix img{width:24px;filter:invert(1) hue-rotate(180deg) sepia(.4)} .ix b{font-weight:600;color:var(--bone)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 16px}
+.steps div{display:grid;justify-items:center;gap:6px;padding:10px 4px;border:1px solid var(--iron);text-align:center;font:400 13.5px/1.2 var(--text);color:var(--bone-2)}
+.steps img{width:34px;filter:invert(1) hue-rotate(180deg) sepia(.4)}
+.steps b{font:600 10px/1 var(--text);letter-spacing:.16em;color:var(--gilt)}
+
+</style>
+</helmet>
+<div class="ds" style="width:860px;height:844px;display:grid;grid-template-columns:390px 390px;gap:80px;background:#0c0a09">
+<div class="ds phn" style="border-right:1px solid var(--iron)"><header><div><span class="lab gilt">Rule book · Signs &amp; Riddles</span><h1 style="margin-top:4px;font-size:38px">Exorcism</h1><span class="sub">3–12 players · 10 minutes · word game</span></div>
+<div class="cover" style="--acc:#6b55a8;width:64px;font-size:4.2px"><span class="fam">Signs</span><div class="win"><img src="./art/demon.svg" alt=""></div><h3>Exorcism</h3></div></header>
+<div class="vellum fr k sm" style="margin:4px 14px 12px;padding:16px 18px;display:grid;gap:8px">
+ <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="lab red">Teach it in a minute</span><span class="lab">Read aloud</span></div>
+ <p class="drop" style="font-size:16.5px;line-height:1.36;color:var(--sepia)">Everyone but the Demon sees a secret word. Each of you says one word linked to it. Then vote: who never knew? If you catch the Demon, it gets one guess at the word.</p>
+</div>
+<div class="steps"><div><b>I</b><img src="./art/oracle.svg" alt="">Look into the ball</div><div><b>II</b><img src="./art/whispers.svg" alt="">One word each</div><div><b>III</b><img src="./art/demon.svg" alt="">Name the Demon</div></div>
+<div style="padding:8px 18px;display:grid">
+ <div class="acc"><span>Your first round, step by step</span><span>›</span></div>
+ <div class="acc"><span>What you’ll see on your phone</span><span>›</span></div>
+ <div class="acc"><span>Settings, and what they change</span><span>›</span></div>
+ <div class="acc"><span>Tips for each side</span><span>›</span></div>
+ <div class="acc" style="border:0"><span>Questions people ask</span><span>›</span></div>
+</div>
+<div style="margin-top:auto;padding:12px 16px 16px;display:grid;grid-template-columns:1fr 1fr;gap:8px;border-top:1px solid var(--iron)"><button class="btn sm">‹ Classic</button><button class="btn sm">Séance ›</button></div></div><div class="ds phn" style="position:relative"><div class="ds night phn" style="position:absolute;inset:0;opacity:.35">
+  <header><div><h1>Night<sup>II</sup></h1><span class="sub">The Guardian wakes</span></div><button class="ico" aria-label="Room menu"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 9h22M5 16h22M5 23h14"></path></svg></button></header>
+  <div class="mv"><div class="move"><span class="dot"></span><span class="what">Choose who to shield</span><span class="clk">1:42</span></div></div>
+  <div class="stage"><div class="table " style="width:280px;--t:0.7;margin:20px auto 0">
+  <div class="orbit"></div>
+  <div class="disc"></div>
+  
+  <div class="seat " style="left:50.0%;top:10.0%"><i>I</i><b>Ilka</b></div>
+<div class="seat sel" style="left:81.3%;top:25.1%"><i>M</i><b>Mara</b></div>
+<div class="seat " style="left:89.0%;top:58.9%"><i>T</i><b>Tomi</b></div>
+<div class="seat dead" style="left:67.4%;top:86.0%"><i>B</i><b>Bram</b></div>
+<div class="seat " style="left:32.6%;top:86.0%"><i>Z</i><b>Zsófi</b></div>
+<div class="seat you" style="left:11.0%;top:58.9%"><i>V</i><b>You</b></div>
+<div class="seat " style="left:18.7%;top:25.1%"><i>D</i><b>Dani</b></div>
+</div></div>
+  
+  <div class="dock"></div>
+  
+</div><div class="fr" style="position:absolute;left:0;right:0;bottom:0;top:250px;background:var(--ink-2);padding:18px 18px 16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 -20px 40px -10px #000">
+ <div style="width:44px;height:4px;border-radius:2px;background:var(--iron);margin:-8px auto 0"></div>
+ <div style="display:grid;grid-template-columns:92px 1fr;gap:14px;align-items:start">
+  <div class="card" style="width:92px;font-size:6.1px"><span class="num">VII</span><div class="art"><img src="./art/guardian.svg" alt=""></div><h3 class="ttl">Guardian</h3></div>
+  <div style="display:grid;gap:6px"><span class="lab gilt">What does this do?</span><h2 class="bl" style="font-size:28px">Guardian</h2><p style="font-size:16px;line-height:1.3">Each night, shield one player (yourself too) from Death and the Psycho.</p></div>
+ </div>
+ <div style="display:grid"><span class="lab">Does not stop</span>
+  <div class="ix"><img src="./art/vigilante.svg" alt=""><span><b>The Vigilante’s shot</b> or a bomb</span></div>
+  <div class="ix"><img src="./art/s_heart.svg" alt=""><span><b>A broken heart</b> (the Lovers)</span></div>
+  <div class="ix" style="border:0"><img src="./art/moon.svg" alt=""><span><b>Blood Moon is on</b> in this game: that night, no shield holds.</span></div></div>
+ <label class="field" style="margin-top:auto"><span class="lab">Search this game’s rules</span><input placeholder="tie, revive, Blood Moon…" aria-label="Search the rules"></label>
+</div></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":860,"height":844}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>
