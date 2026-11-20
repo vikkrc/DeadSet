@@ -923,6 +923,8 @@ function legibility() {
   });
 }
 
+/** J6: on the TV the herald is the caption band: news crosses the bottom of the screen as a ribbon in its kind's colour, holds, and goes. It never covers the table or the ledger. */
+const ribbonHtml = () => `<div class="tv-ribbon-band" data-key="tv-ribbon" aria-live="polite">${S.notes.filter((n) => !/\bprivate\b/.test(n.kind)).map((n) => `<div class="tv-ribbon ${n.kind}" data-key="r-${n.id}"><span>${esc(n.text)}</span></div>`).join('')}</div>`;
 const toastsHtml = (cls) => `<div class="${cls}" data-key="${cls}" aria-live="polite">${S.notes.map((n) => /\bprivate\b/.test(n.kind)
   ? `<div class="toast herald-slip ${n.kind}" data-key="n-${n.id}"><span class="h-only">${t('Only you · hold to read')}</span><span class="h-peek">${esc(n.text)}</span></div>`
   : `<button type="button" class="toast herald-slip ${n.kind}" data-act="sheet" data-id="record" data-key="n-${n.id}"><span>${esc(n.text)}</span></button>`).join('')}</div>`;
@@ -949,7 +951,8 @@ function view() {
   if (S.conn === 'lost' && S.code) html += `<div class="conn" data-key="conn" role="status"><span class="pulse-dot"></span>${t('Reconnecting… your choices are safe on the server.')}</div>`;
   // In a room, notices sit in their own slot under the header (they push the page down, never cover
   // it); elsewhere, and on the TV, they float in the toast column.
-  if (!inRoomView()) html += toastsHtml('toasts');
+  if (onBoard()) html += ribbonHtml();
+  else if (!inRoomView()) html += toastsHtml('toasts');
   return html;
 }
 
