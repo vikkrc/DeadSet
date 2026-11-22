@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "Reconnecting… choices you already sent are kept; anything not sent yet was not.": "Újracsatlakozás… az elküldött döntéseid megmaradnak; ami még nem ment el, az nem.",
     "{part} option {n}": "{part}, {n}. lehetőség",
     "No prediction": "Nincs jóslat",
     "Predicted {x}": "Jóslat: {x}",

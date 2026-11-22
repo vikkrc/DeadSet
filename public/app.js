@@ -1033,7 +1033,7 @@ function view() {
   if ((S.ui.sheet === 'lang' || S.ui.sheet === 'avatar') && !(r.name === 'room' && S.token && V())) html += sheet(V());
   if (S.ui.recap && V()?.recap) html += recapHtml(V());
   if (S.moment) html += momentHtml(S.moment);
-  if (S.conn === 'lost' && S.code) html += `<div class="conn" data-key="conn" role="status"><span class="pulse-dot"></span>${t('Reconnecting… your choices are safe on the server.')}</div>`;
+  if (S.conn === 'lost' && S.code) html += `<div class="conn" data-key="conn" role="status"><span class="pulse-dot"></span>${t('Reconnecting… choices you already sent are kept; anything not sent yet was not.')}</div>`;
   // In a room, notices sit in their own slot under the header (they push the page down, never cover
   // it); elsewhere, and on the TV, they float in the toast column.
   if (onBoard()) html += ribbonHtml();

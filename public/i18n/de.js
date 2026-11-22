@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Drei Missionen gescheitert",
     "Use the Candle": "Benutze die Kerze",
     "Game mode": "Spielmodus",
+    "Reconnecting… choices you already sent are kept; anything not sent yet was not.": "Verbinde neu… Bereits gesendete Entscheidungen bleiben; noch nicht Gesendetes wurde nicht übernommen.",
     "{part} option {n}": "{part}, Option {n}",
     "No prediction": "Keine Vorhersage",
     "Predicted {x}": "Vorhergesagt: {x}",

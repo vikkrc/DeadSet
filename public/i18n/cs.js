@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tři mise selhaly",
     "Use the Candle": "Použij Svíčku",
     "Game mode": "Herní režim",
+    "Reconnecting… choices you already sent are kept; anything not sent yet was not.": "Znovu se připojuji… odeslané volby zůstávají; co ještě odesláno nebylo, uloženo není.",
     "{part} option {n}": "{part}, možnost {n}",
     "No prediction": "Bez předpovědi",
     "Predicted {x}": "Předpověď: {x}",
