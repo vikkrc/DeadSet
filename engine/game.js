@@ -97,6 +97,17 @@ export function normaliseName(name) {
   return String(name ?? '').replace(/[\u0000-\u001f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 20);
 }
 
+/** DS-007: renaming follows the same rules as joining: clean, non-empty, and unique ignoring case. */
+export function renamePlayer(m, pid, name) {
+  const p = m.players.find((x) => x.id === pid);
+  if (!p) throw new GameError('No such player.');
+  const clean = normaliseName(name);
+  if (!clean) throw new GameError('Enter a display name.');
+  if (m.players.some((x) => x.id !== pid && normaliseName(x.name).toLowerCase() === clean.toLowerCase())) throw new GameError('That name is already taken in this room.');
+  p.name = clean;
+  m.stateVersion++;
+}
+
 export function removePlayer(m, pid) {
   if (m.phase !== 'LOBBY') throw new GameError('Players can only be removed in the lobby.');
   m.players = m.players.filter((p) => p.id !== pid);

@@ -5,7 +5,7 @@ import { mkdirSync, readFileSync, writeFileSync, renameSync, existsSync } from '
 import { dirname } from 'node:path';
 import {
   newMatch, addPlayer, removePlayer, moveSeat, updateSettings, startMatch, playerCommand,
-  hostAdvance, onDeadline, extendDeadline, abortMatch, rematch, normaliseName, GameError, MANUAL_MODES,
+  hostAdvance, onDeadline, extendDeadline, abortMatch, rematch, normaliseName, GameError, MANUAL_MODES, renamePlayer,
 } from '../engine/game.js';
 import { playerView, publicView, moderatorView } from '../engine/views.js';
 import { mimicBoardHint } from '../engine/mimic.js';
@@ -215,14 +215,7 @@ export class RoomManager {
         break;
       }
       // Safety: the host can rename a player (a typo, or a name that does not belong at the table).
-      case 'host.rename': {
-        const p = byId(m, payload.playerId);
-        const name = String(payload.name ?? '').replace(/\s+/g, ' ').trim().slice(0, 20);
-        if (!p) throw new GameError('No such player.');
-        if (!name) throw new GameError('Enter a name.');
-        p.name = name;
-        break;
-      }
+      case 'host.rename': renamePlayer(m, payload.playerId, payload.name); break;
       case 'host.xredraw': if (!m.X) throw new GameError('Nothing to redraw.'); redrawExorcism(m, this.rng, now); break;
       case 'host.rematch': { const x = REMATCH_READY.includes(m.config?.mode); rematch(m, { ready: x }); m.players.forEach((p) => { p.ready = x || p.bot || p.id === m.hostId; p.connected = this.isConnected(room, p.id); }); break; }
       case 'host.kick': {

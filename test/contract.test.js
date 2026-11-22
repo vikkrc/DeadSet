@@ -95,3 +95,15 @@ test('DS-041: a host who comes back voids the old takeover votes', () => {
   assert.equal(room.transferVotes.size, 0);
   clearTimeout(room.hostTimer);
 });
+
+test('DS-007: rename follows the joining rules', () => {
+  const t = setup({ mode: null });
+  const m = t.room().match;
+  const g = m.players.find((p) => p.name === 'G1');
+  assert.throws(() => t.cmd(t.host, 'host.rename', { playerId: g.id, name: 'ada' }), /taken/);
+  assert.throws(() => t.cmd(t.host, 'host.rename', { playerId: g.id, name: '   ' }), /name/);
+  t.cmd(t.host, 'host.rename', { playerId: g.id, name: ' <Gi>\u0007lda ' });
+  assert.equal(g.name, 'Gilda');
+  t.cmd(t.host, 'host.rename', { playerId: g.id, name: 'GILDA' }); // a change of case of your own name is fine
+  assert.equal(g.name, 'GILDA');
+});
