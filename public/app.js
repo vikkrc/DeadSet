@@ -108,7 +108,8 @@ function tally(n, total) {
 function letters(text) {
   let i = 0;
   // Each word knows its length, so a long one shrinks to fit the screen instead of spilling past the edge.
-  return text.split(' ').map((w) => `<span class="w" style="--wl:${[...w].length}">${[...w].map((c) => `<span class="l" style="--i:${i++}">${esc(c)}</span>`).join('')}</span>`).join(' ');
+  // DS-009: the animated letters are decoration; the heading's name is the whole text, read once.
+  return `<span class="sr-only">${esc(text)}</span><span aria-hidden="true">${text.split(' ').map((w) => `<span class="w" style="--wl:${[...w].length}">${[...w].map((c) => `<span class="l" style="--i:${i++}">${esc(c)}</span>`).join('')}</span>`).join(' ')}</span>`;
 }
 
 /**
@@ -2166,7 +2167,7 @@ function avatarEditor() {
     ${AV_ROWS.map(([k, label]) => `<div class="av-row"><span class="kicker">${t(label)}</span><div class="av-opts">${Array.from({ length: PARTS[k] }, (_, i) => {
       const sample = { ...a, [k]: i };
       const inner = k === 'c' ? `<i style="background:${COLORS[i]}"></i>` : avatarSvg(sample, 'av-mini');
-      return `<button class="av-opt ${a[k] === i ? 'on' : ''}" data-act="avPart" data-k="${k}" data-v="${i}" aria-pressed="${a[k] === i}">${inner}</button>`;
+      return `<button class="av-opt ${a[k] === i ? 'on' : ''}" data-act="avPart" data-k="${k}" data-v="${i}" aria-pressed="${a[k] === i}" aria-label="${esc(th('{part} option {n}', { part: t(label), n: i + 1 }))}">${inner}</button>`;
     }).join('')}</div></div>`).join('')}
     <div class="row center"><button class="btn btn-sm" data-act="avRandom">${glyph('gambler')} ${t('Surprise me')}</button><button class="btn btn-sm btn-solid" data-act="sheet">${t('Done')}</button></div>
   </div>`;

@@ -50,7 +50,9 @@ export function scard(row, idx, { cls = '', act = '', sel = false, key = '', sta
   const attrs = `${act ? `data-act="${act}" data-id="${idx}" aria-pressed="${sel}"` : ''} ${key ? `data-key="${key}"` : ''}`;
   const art = row === 'WHERE' ? `<span class="s-bd" aria-hidden="true">${backdropSvg(idx, 'card')}</span>`
     : `<span class="s-ic" aria-hidden="true">${emblem(STORY_ICONS[row]?.[idx] ?? ROW_EMB[row])}</span>`;
-  return `<${tag} class="tarot scard row-${row} ${STATE_CLS[state] ?? state} ${sel ? 'is-chosen' : ''} ${cls}" ${attrs}>
+  // DS-009: the card's name stays readable for assistive technology even when it is too small to print.
+  const label = `${t(ROW_LABEL[row])}: ${cardName(row, idx)}${state === 'struck' ? ` (${t('struck out')})` : ''}`;
+  return `<${tag} class="tarot scard row-${row} ${STATE_CLS[state] ?? state} ${sel ? 'is-chosen' : ''} ${cls}" ${attrs} aria-label="${esc(label)}">
     <span class="arc-num">${esc(t(ROW_LABEL[row]))}</span>${art}<span class="nm" style="--nl:${[...cardName(row, idx)].length}">${esc(cardName(row, idx))}</span>${state === 'struck' ? '<i class="s-x" aria-hidden="true"></i>' : ''}${state === 'solved' ? `<i class="s-ok" aria-hidden="true">${glyph('check')}</i>` : ''}</${tag}>`;
 }
 
@@ -186,7 +188,7 @@ export function seanceMain(v, me, h) {
         MEDIUM: ['Each round you read one row: who, where or why.', 'The Ghost sends you a vision. Describe it, argue, then light a candle on the card it points to.', 'Solve all three rows before the candles burn out, then name the Deceiver.'],
       }[s.role] ?? [];
       stage = `${doNow(open ? esc(roleF(id, 'name')) : th('{a} is the Ghost', { a: rawName(v, S.ghost) }), open ? '' : t('Shield your screen. Tap the card to turn it over.'))}
-        <div class="s-intro ${open ? 'open' : ''}" data-key="sintro"><button class="nflip ${open ? 'open' : ''}" data-act="sFlip" data-key="sflip-${open ? 'o' : 'c'}">${open ? rcard(id, 'big') : '<span class="tarot back srole big"><span class="sig">DS</span></span>'}</button>
+        <div class="s-intro ${open ? 'open' : ''}" data-key="sintro"><button class="nflip ${open ? 'open' : ''}" aria-label="${esc(t(open ? 'Hide your card' : 'Reveal your role'))}" data-act="sFlip" data-key="sflip-${open ? 'o' : 'c'}">${open ? rcard(id, 'big') : '<span class="tarot back srole big"><span class="sig">DS</span></span>'}</button>
         ${open ? `<ol class="s-how">${how.map((x) => `<li>${esc(t(x))}</li>`).join('')}</ol>` : ''}</div>
         ${open && s.truth ? truthStrip(S, s.truth) : ''}${open && s.fellows?.length ? `<p class="npow">${th('The other Deceiver: {names}.', { names: s.fellows.map((x) => rawName(v, x)) })}</p>` : ''}
         ${a.done ? `<p class="small muted center-text">${waitText(v)}</p>` : ''}`;

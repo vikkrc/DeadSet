@@ -13,7 +13,7 @@ import { esc, rawName, disc, doNow, scoreLedger, explainer, waiting } from './ki
 export const isOmenPhase = (ph) => typeof ph === 'string' && ph.startsWith('O_');
 /** The faces' names, in the reader's language. */
 const faceName = (i) => [t('Life'), t('Death'), t('Rebirth')][i] ?? '';
-const FACE_EMB = ['innocent', t('death'), t('necro')];
+const FACE_EMB = ['innocent', 'death', 'necro']; // emblem ids, never translated
 const KEYS = ['LIFE', t('DEATH'), t('REBIRTH')];
 setNamer('face', (x) => { const i = KEYS.indexOf(String(x)); return i >= 0 ? faceName(i) : String(x); });
 
@@ -36,8 +36,9 @@ export function wheel({ at = 0, from = null, turn = 0, size = '', mark = null, k
 }
 
 const pips = (n, total = 5) => `<span class="o-pips" aria-label="${esc(th('{n} Influence', { n }))}">${Array.from({ length: total }, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</span>`;
-const rotGlyph = (r) => (r > 0 ? '↻' : r < 0 ? '↺' : '·');
-const faceChip = (i) => (i == null ? '<span class="o-chip none">—</span>' : `<span class="o-chip f-${i}">${emblem(FACE_EMB[i])}</span>`);
+const rotGlyph = (r) => `<span role="img" aria-label="${esc(t(r > 0 ? 'Turned clockwise' : r < 0 ? 'Turned anticlockwise' : 'Did not turn'))}">${r > 0 ? '↻' : r < 0 ? '↺' : '·'}</span>`;
+// DS-009: a predicted face and a turn are named for assistive technology, not only drawn.
+const faceChip = (i) => (i == null ? `<span class="o-chip none" role="img" aria-label="${esc(t('No prediction'))}">—</span>` : `<span class="o-chip f-${i}" role="img" aria-label="${esc(th('Predicted {x}', { x: faceName(i) }))}">${emblem(FACE_EMB[i])}</span>`);
 
 // ── Phone ──────────────────────────────────────────────────────────────────
 export function omenMain(v, me, h) {
