@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tri misie zlyhali",
     "Use the Candle": "Použi Sviečku",
     "Game mode": "Herný režim",
+    "Your power": "Tvoja schopnosť",
     "End the discussion": "Ukončiť diskusiu",
     "There are no nominations today; the night follows.": "Dnes nie sú žiadne nominácie; nasleduje noc.",
     "Room menu (you are the host)": "Menu miestnosti (si hostiteľ)",

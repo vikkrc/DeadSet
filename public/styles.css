@@ -5671,3 +5671,6 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
   .ctx-slip small { display: none; }
   .ctx-slip b::after { content: ' ›'; color: var(--blood); }
 }
+/* ST3: the role line under the ring is a caption of the ring, labelled as your power */
+.role-hint { margin-top: -10px; }
+.role-hint .kicker { margin-right: 4px; color: var(--gilt); }

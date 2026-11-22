@@ -2774,7 +2774,7 @@ function actionsStage(v, me, a) {
   } else if (s.kind === 'chat' && (a.conspire || v.chats?.some((c) => c.id.startsWith(`consp:${v.nightNumber}:${me.id}`)))) {
     parts.push(`<p class="small muted center-text" data-key="wh">${t('Your whisper is open below. Your partner sees only "Stranger".')}</p>`);
   } else {
-    parts.push(`<p class="small muted center-text" data-key="rolehint">${rname}${s.charges === 1 ? ` · ${t('once per game')}` : ''}${s.uses > 1 ? ` · ${t('twice tonight')}` : ''}${s.role.id === 'MIMIC' ? ` · ${t('mandatory, or you stay powerless')}` : ''}${s.kind === 'dead' ? ` · ${t('you must survive the night')}` : ''}</p>`);
+    parts.push(`<p class="small muted center-text role-hint" data-key="rolehint"><span class="kicker">${t('Your power')}</span> ${rname}${s.charges === 1 ? ` · ${t('once per game')}` : ''}${s.uses > 1 ? ` · ${t('twice tonight')}` : ''}${s.role.id === 'MIMIC' ? ` · ${t('mandatory, or you stay powerless')}` : ''}${s.kind === 'dead' ? ` · ${t('you must survive the night')}` : ''}</p>`);
   }
   if (!a.death && !ctx.length && me.role) parts.push(roleCardHtml(me.role, { align: me.alignment, mini: true }));
   parts.push(dreamSlip(me.dream));
