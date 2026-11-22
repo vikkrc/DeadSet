@@ -6,6 +6,7 @@
 // everyone else sees only stone until a grave is opened.
 
 import { glyph } from './icons.js';
+import { waitText } from './kit.js';
 import { emblem } from './emblems.js';
 import { cardArt } from './cards.js';
 import { t, th, roleF } from './i18n.js';
@@ -135,7 +136,7 @@ export function graveMain(v, me, h) {
           : three ? t('Your Undertaker gives a word and a number. Talk it over, vote for graves, dig up your relics. One grave is Death\'s: it puts your crew out of the game.') : t('Your Undertaker gives a word and a number. Talk it over, vote for graves, dig up your relics. One grave is Death\'s.'))}
         <div class="g-crews ${three ? 'three' : ''}" data-key="gcrews">${crewsIn(R).map((x) => `<section class="c-${x} ${x === c ? 'mine' : ''}"><header>${emblem(CREW_EMB[x])}<b>${t(CREW_NAME[x])}</b>${R.first === x ? `<small>${t('digs first')}</small>` : ''}</header>
           <ul>${R.crews[x].map((id) => `<li>${disc(v, id, 'xs')}<span>${pname(v, id)}</span>${R.caps[x] === id ? `<em>${esc(roleF('G_UNDERTAKER', 'name'))}</em>` : ''}</li>`).join('')}</ul></section>`).join('')}</div>
-        ${a.done ? `<p class="small muted center-text">${th('Waiting for the others · {done}/{total}', v.progress ?? { done: 0, total: 0 })}</p>` : ''}`;
+        ${a.done ? `<p class="small muted center-text">${waitText(v)}</p>` : ''}`;
       break;
     }
     case 'G_SIGN': {

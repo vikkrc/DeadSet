@@ -25,7 +25,31 @@ const roleCard = (id) => {
   return { id: r.id, name: r.name, alias: r.alias ?? null, glyph: r.glyph, alignment: r.alignment, when: r.when, summary: r.summary, detail: r.detail };
 };
 
+/**
+ * N3, DS-026: who the table is waiting for, only in steps every player takes alike (reading a card, a vote or ballot
+ * everyone casts), so a name says nothing about a role. Never at night, never for a team or a secret subset.
+ */
+const notIn = (m, obj) => m.players.filter((p) => !(obj && p.id in obj)).map((p) => p.id);
+const WAITING = {
+  X_REVEAL: (m) => m.players.filter((p) => !p.acknowledged).map((p) => p.id),
+  M_REVEAL: (m) => m.players.filter((p) => !p.acknowledged).map((p) => p.id),
+  X_VOTE: (m) => notIn(m, m.X?.votes),
+  M_VOTE: (m) => notIn(m, m.M?.votes),
+  N_DEAL: (m) => notIn(m, m.N?.acks),
+  N_VOTE: (m) => notIn(m, m.N?.votes),
+  Q_INTRO: (m) => notIn(m, m.Q?.acks),
+  Q_FINAL: (m) => notIn(m, m.Q?.finalVotes),
+  O_SECRET: (m) => notIn(m, m.O?.ballots),
+  W_CHOOSE: (m) => notIn(m, m.W?.ballots),
+  S_INTRO: (m) => notIn(m, m.S?.acks),
+  G_INTRO: (m) => notIn(m, m.G?.acks),
+};
 function progress(m) {
+  const p = progressOf(m);
+  if (p && !p.waiting && WAITING[m.phase]) { try { p.waiting = WAITING[m.phase](m); } catch { /* no list */ } }
+  return p;
+}
+function progressOf(m) {
   if (isExorcismPhase(m.phase)) return exorcismProgress(m);
   if (isCoffinsPhase(m.phase)) return coffinsProgress(m);
   if (isCarnivalPhase(m.phase)) return carnivalProgress(m);

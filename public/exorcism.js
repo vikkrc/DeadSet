@@ -2,6 +2,7 @@
 // Pure renderers over the filtered view; the shell (app.js) passes its helpers
 // in `h` and merges `exorcismActs` into its action table.
 import { glyph } from './icons.js';
+import { waitText } from './kit.js';
 import { t, th, getLang, setNamer } from './i18n.js';
 import { avatarSvg } from './avatar.js';
 
@@ -320,7 +321,7 @@ export function exorcismMain(v, me, h) {
         setTimeout(() => { if (S.ui.xopen[v.phaseId] === false && !S.ui.xtouched?.[v.phaseId]) { S.ui.xopen[v.phaseId] = true; h.sound?.play('reveal'); h.render?.(); } }, 1500);
       }
       return `${head(v)}
-        <p class="muted center-text x-hint" data-key="xrhint">${me.acknowledged ? th('Waiting for the others · {done}/{total}', v.progress) : t('Shield your screen. Remember what you see.')}</p>
+        <p class="muted center-text x-hint" data-key="xrhint">${me.acknowledged ? waitText(v) : t('Shield your screen. Remember what you see.')}</p>
         ${myBall(v, { key: 'revealball', open: !!open, big: true, act: 'xFlip' })}
         <p class="small muted center-text x-hint" data-key="xrhint2">${t(open ? 'Tap the ball to cloud it again.' : 'Tap the ball to look inside.')}</p>
         ${chips(v)}`;

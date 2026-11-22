@@ -7,6 +7,7 @@
 // Deceiver's false visions live in the same drawer every reader has.
 
 import { glyph } from './icons.js';
+import { waitText } from './kit.js';
 import { emblem } from './emblems.js';
 import { cardArt } from './cards.js';
 import { t, th, tmh, roleF, scenAt, setNamer } from './i18n.js';
@@ -188,7 +189,7 @@ export function seanceMain(v, me, h) {
         <div class="s-intro ${open ? 'open' : ''}" data-key="sintro"><button class="nflip ${open ? 'open' : ''}" data-act="sFlip" data-key="sflip-${open ? 'o' : 'c'}">${open ? rcard(id, 'big') : '<span class="tarot back srole big"><span class="sig">DS</span></span>'}</button>
         ${open ? `<ol class="s-how">${how.map((x) => `<li>${esc(t(x))}</li>`).join('')}</ol>` : ''}</div>
         ${open && s.truth ? truthStrip(S, s.truth) : ''}${open && s.fellows?.length ? `<p class="npow">${th('The other Deceiver: {names}.', { names: s.fellows.map((x) => rawName(v, x)) })}</p>` : ''}
-        ${a.done ? `<p class="small muted center-text">${th('Waiting for the others · {done}/{total}', v.progress ?? { done: 0, total: 0 })}</p>` : ''}`;
+        ${a.done ? `<p class="small muted center-text">${waitText(v)}</p>` : ''}`;
       break;
     }
     case 'S_VISION': {

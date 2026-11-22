@@ -1,7 +1,7 @@
 // Shared client pieces for the round-and-ballot modes (Beta 9 onwards): portraits, the "do now"
 // header, arrows between seats, the score ledger and lobby setting rows.
 
-import { t, th } from './i18n.js';
+import { t, th, tph } from './i18n.js';
 import { avatarSvg } from './avatar.js';
 import { seatLayout } from './layout.js';
 
@@ -63,4 +63,15 @@ export function explainer(title, steps, glyph, key) {
 }
 
 /** "Waiting for the others · 3/5", from the view's progress. */
-export const waiting = (v) => `<p class="small muted center-text" data-key="kwait">${th('Waiting for the others · {done}/{total}', v.progress ?? { done: 0, total: 0 })}</p>`;
+export const waiting = (v) => `<p class="small muted center-text" data-key="kwait">${waitText(v)}</p>`;
+/**
+ * N3, DS-026: your choice is in; now name who the table waits for where the server says it is safe to, otherwise
+ * give the count. Never 'everyone is in' unless the list says so.
+ */
+export function waitText(v) {
+  const ids = (v.progress?.waiting ?? null)?.filter((id) => id !== v.me?.id);
+  if (!ids) return th('Waiting for the others · {done}/{total}', v.progress ?? { done: 0, total: 0 });
+  if (!ids.length) return t('Everyone is in');
+  const a = v.players.find((p) => p.id === ids[0])?.name ?? '';
+  return ids.length === 1 ? th('Waiting for {a}', { a }) : tph('Waiting for {a} and one other', 'Waiting for {a} and {n} others', ids.length - 1, { a });
+}

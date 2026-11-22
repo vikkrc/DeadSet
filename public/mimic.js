@@ -5,6 +5,7 @@
 // each question; the board of possible places sits under everything, with private strike-outs.
 
 import { glyph } from './icons.js';
+import { waitText } from './kit.js';
 import { emblem } from './emblems.js';
 import { cardArt } from './cards.js';
 import { t, th, roleF, scenAt, scen, setNamer } from './i18n.js';
@@ -112,7 +113,7 @@ export function mimicMain(v, me, h) {
     case 'Q_INTRO':
       stage = `${doNow(t('Look at your card'), t('One of you is the Mimic. Read your card, keep a straight face, then tap Ready.'))}
         ${myCard(v, me, UI)}
-        ${a.done ? `<p class="small muted center-text">${th('Waiting for the others · {done}/{total}', v.progress ?? { done: 0, total: 0 })}</p>` : ''}
+        ${a.done ? `<p class="small muted center-text">${waitText(v)}</p>` : ''}
         <div class="rule">${t('The possible places')}</div>${placesBoard(v, { struck })}`;
       break;
     case 'Q_ASK': {

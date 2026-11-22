@@ -11,7 +11,7 @@ import { didIWin } from './outcome.js';
 import { shareCard } from './share.js';
 import { sceneMs, scenesFor, sceneSize, paceScale } from './interludes.js';
 import { MODES, MODE_IDS, FAMILIES, COLLECTION, modeOfPhase, modeInfo } from './modes.js';
-import { explainer } from './kit.js';
+import { explainer, waitText } from './kit.js';
 import { cardArt, roleEmblemId, roleNumber } from './cards.js';
 import { emblem } from './emblems.js';
 import { isGravePhase, graveMain, graveDock, graveActs, graveMoment, graveMomentHtml, G_MOMENT_TIME, graveEndHtml, graveLobbyDeck, GRAVE_QUIET, graveTitle, graveKicker, lobbyCrews, graveLobbyCenter, explainerHtml as how_graverobbers } from './graverobbers.js';
@@ -1619,12 +1619,7 @@ function utilityRow(v) {
 const chips = () => ''; // U2: the tray (above the dock) replaced the per-screen utility row
 
 /** N3: waiting is information. Names who the table waits for, never just "please wait". */
-function waitingFor(v) {
-  const ids = (v.progress?.waiting ?? []).filter((id) => id !== v.me?.id);
-  if (!ids.length) return t('Everyone is in');
-  const first = rawName(ids[0]);
-  return ids.length === 1 ? th('Waiting for {a}', { a: first }) : tp('Waiting for {a} and one other', 'Waiting for {a} and {n} others', ids.length - 1, { a: first });
-}
+function waitingFor(v) { return waitText(v); }
 /**
  * Classic's move strip (U1). Night lines are the same for every role, so the strip never tells a role apart.
  */
@@ -2539,7 +2534,7 @@ function deathTeam(me) {
 function revealMain(v, me) {
   const key = `n0-${v.phaseId}`;
   return `${head(v)}
-    <p class="muted center-text" data-key="n0hint">${me.acknowledged ? th('Waiting for the others · {done}/{total}', v.progress) : t('Shield your screen, then tap the card.')}</p>
+    <p class="muted center-text" data-key="n0hint">${me.acknowledged ? waitText(v) : t('Shield your screen, then tap the card.')}</p>
     ${roleCardHtml(me.role, { align: me.alignment, flipKey: key })}
     ${S.ui.flipped[key] ? `<div data-key="n0notes" class="rise-in">${roleNotes(me)}</div>` : ''}
     ${chips(v)}`;

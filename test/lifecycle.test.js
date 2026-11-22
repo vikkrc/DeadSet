@@ -61,3 +61,13 @@ test('DS-043: a hand-dealt Exorcism Demon is the Demon; games that deal their ow
   o.manualRoles.p0 = 'X_LIVING';
   assert.throws(() => startMatch(o, seededRng(1), 1000), /deals its own cards/);
 });
+
+test('N3/DS-026: names are given only for steps everyone takes alike, never at night', () => {
+  const m = table(7);
+  updateSettings(m, { preset: 'standard', quietFirstDay: false });
+  startMatch(m, seededRng(2), 1000);
+  assert.ok(Array.isArray(publicView(m, 1000).progress.waiting), 'card reading names who has not read');
+  for (const p of m.players) p.acknowledged = true;
+  m.phase = 'NIGHT_ACTIONS'; m.night = { aliveAtOpen: m.players.map((p) => p.id), done: {} };
+  assert.equal(publicView(m, 1000).progress?.waiting, undefined, 'no names at night');
+});

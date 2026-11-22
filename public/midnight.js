@@ -6,6 +6,7 @@
 // Privacy: during the night every phone shows the same step screen; only the
 // waking player's has controls. Nothing at night makes a sound or a buzz.
 import { glyph } from './icons.js';
+import { waitText } from './kit.js';
 import { emblem } from './emblems.js';
 import { cardArt, roleNumber } from './cards.js';
 import { t, th, tmh, roleF } from './i18n.js';
@@ -106,7 +107,7 @@ export function midnightMain(v, me, h) {
         <div class="ndeal" data-key="ndeal"><button class="nflip ${open ? 'open' : ''}" data-act="nFlip" data-key="nflip-${open ? 'o' : 'c'}" aria-label="${esc(t('Turn over your card'))}">${open ? ncard(a.card, { cls: 'big' }) : ncard(null, { cls: 'big' })}</button>
           <p class="small muted center-text">${t(open ? 'Tap to hide it again.' : 'Tap to turn over')}</p></div>
         ${open ? `<p class="npow">${esc(t(NPOWER[a.card] ?? ''))}</p>` : ''}
-        ${a.done ? `<p class="small muted center-text">${th('Waiting for the others · {done}/{total}', v.progress ?? { done: 0, total: 0 })}</p>` : ''}`;
+        ${a.done ? `<p class="small muted center-text">${waitText(v)}</p>` : ''}`;
       break;
     }
     case 'N_NIGHT': {
