@@ -87,3 +87,82 @@ They feed the end screen, the share card and the ledger, like Classic and Exorci
 - Z2, Z3, Z5, Z8, Z10 edge states.
 - B2/B3 "?" explainers.
 - X accessibility.
+
+---
+
+# Status after the audit pass (2026-11-22)
+
+Source: `Dead_Set_QA_and_Design_Audit_2026-11-21.md` (rev. 2, 45 findings), plus this file's own list. One commit per finding.
+
+## Done
+
+- **Pass 0, lifecycle and authorisation:**
+  - DS-035 (stream teardown; real HTTP/SSE test)
+  - DS-036 (moderator kept through rematch)
+  - DS-037 (pause survives a restart)
+  - DS-038 (ledger survives a restart)
+  - DS-039 (retry receipts survive a restart)
+  - DS-040 (host-away is pushed)
+  - DS-041 (claim votes voided when the host returns)
+  - DS-042 (a removed seat's codes die)
+  - DS-043 (manual deals only in Classic, Missions and Exorcism; the Exorcism Demon is honoured)
+  - DS-044 (clean mode state; all 121 pairs tested)
+  - DS-045 (a failed Start anyway leaves readiness alone)
+- **Pass A, rules and behaviour:**
+  - DS-001 (the win line)
+  - DS-002 (settings-aware explainers: Carnival, Exorcism, Mimic, Mirror, Séance)
+  - DS-003 (tap/hold copy, 7 languages)
+  - DS-004 (per-phase timeout notes)
+  - DS-005 (paused tables refuse moves; scenes freeze)
+  - DS-006 (failed retries stay failures)
+  - DS-007 (rename rules)
+  - DS-011 (whole preset names)
+  - DS-012 (too big vs too small)
+- **This file:**
+  - TB1–TB5 and ST1–ST3 (DS-019, DS-020)
+  - N3 extended (DS-026)
+  - V2 (the evening card)
+  - F1 (honours for all 11 games)
+- **Pass B–D:**
+  - DS-008 (modal focus)
+  - DS-009 (accessible names: headings, portrait, story cards, Omen)
+  - DS-010 (covered secrets absent; reveal by choice; Mimic starts covered)
+  - DS-013 (notices scoped to the game)
+  - DS-014 (unread per game)
+  - DS-015 (share card accounts for everyone)
+  - DS-016 (evening points named and explained)
+  - DS-017 (counts follow the registry)
+  - DS-018 (inline field errors)
+  - DS-021 (quieter host override)
+  - DS-022 (part: one introduction for AT)
+  - DS-023 (preview below the minimum; rough-guide label)
+  - DS-027 (last result kept in the lobby)
+  - DS-028 (part: six-character codes, page titles)
+  - DS-030 (honest reconnect line)
+  - DS-033 (Mirror emblem)
+- **Tests added:**
+  - `test/http.test.js` (child server, real SSE)
+  - `test/contract.test.js`
+  - `test/lifecycle.test.js`
+  - `test/messages.test.js`
+  - `test/hunches.test.js`
+  - `test/gazette.test.js`
+  - `test/share.test.js`
+
+## Still open
+
+- **N1 / N5:** a `level` on every engine message, one notify path, a harness count of Interrupts per phase, and sound by rung. Quiet hours (N4) already exist.
+- **DS-022 (rest):** restructure the Game/Rules tabs so a default host never meets the long form.
+- **DS-024:** a synchronised roster/lens for picking targets at 13–25 seats.
+- **DS-025:** compact readable boards (Graverobbers grid, Mimic places, Séance cards), and a separate inspect action that does not commit.
+- **DS-028 (rest):** in-game quick help and a card reference. This is the "?" explainers, deferred at your request.
+- **DS-029:** semantic rendering tests for more messages (DS-011's test is the pattern), and native-language review.
+- **DS-031, DS-032, DS-034:** real phones (iOS Safari, Android Chrome), VoiceOver/TalkBack, performance and audio passes, and a reproducible browser suite. These need devices and people; nothing here claims them.
+- **§5:** the mode-specific notes beyond the fixes above, e.g.:
+  - the Missions proposal summary
+  - the Carnival status line
+  - Omen's modular-turn explanation
+  - The Mirror's two-seal labels
+  - Graverobbers' Stones/Map naming
+- **Edge states** Z2, Z3, Z5, Z8, Z10.
+- **X:** accessibility settings (text size and the rest).
