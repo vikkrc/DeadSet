@@ -177,10 +177,10 @@ export const W_MOMENT_TIME = { wprompt: 4800, wreveal: 3200 };
 
 export function mirrorMomentHtml(m, h) {
   const { letters, V } = h;
-  if (m.type === 'wprompt') return `<div class="m-art w-mart">${emblem('maskedvote')}</div><span class="kicker">${esc(th('Dilemma {n} of {m}', { n: m.round, m: V()?.mirror?.rounds ?? 8 }))}</span>
+  if (m.type === 'wprompt') return `<div class="m-art w-mart">${emblem('s_self')}</div><span class="kicker">${esc(th('Dilemma {n} of {m}', { n: m.round, m: V()?.mirror?.rounds ?? 8 }))}</span>
     ${dilemmaCard(m.dilemma, { size: 'scene', round: m.round })}`;
   const c = counts(m.answers);
-  return `<div class="m-art w-mart crack">${emblem('maskedvote')}</div><span class="kicker">${esc(t('The mirror shows'))}</span><h1 class="m-title">${letters(t('Every answer'))}</h1>
+  return `<div class="m-art w-mart crack">${emblem('s_self')}</div><span class="kicker">${esc(t('The mirror shows'))}</span><h1 class="m-title">${letters(t('Every answer'))}</h1>
     <p class="m-sub">${LETTERS.map((x) => `${numOf(x)} · ${c[x]}`).join('   ')}</p>`;
 }
 

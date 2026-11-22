@@ -1523,7 +1523,7 @@ function roomScreen() {
       ${wordmark()}
       <div class="count">
         <div><b>${esc(pw.word)} ${esc(pw.num)}</b><span>${esc(stepOf(v))}</span></div>
-        <div>${v.phase === 'LOBBY' ? `<b>${v.players.length}</b><span>${t('Seated')}</span>` : `<b>${aliveCount}<span class="muted">/${v.players.length}</span></b><span>${t('Alive')}</span>`}</div>
+        <div>${v.phase === 'LOBBY' || !modeInfo(v.mode).aliveCount ? `<b>${v.players.length}</b><span>${v.phase === 'LOBBY' ? t('Seated') : t('Players')}</span>` : `<b>${aliveCount}<span class="muted">/${v.players.length}</span></b><span>${t('Alive')}</span>`}</div>
       </div>
       <div class="row between"><span class="kicker">${t('Room')} <span class="mono">${esc(v.code)}</span></span><span class="clock" data-clock></span></div>
       ${fuse()}
