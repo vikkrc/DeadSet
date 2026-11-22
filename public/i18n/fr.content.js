@@ -386,10 +386,10 @@ export default {
 <li><b>Ne montre jamais ton écran.</b> Ton téléphone montre ton rôle, tes cartes et tes choix. Tout le reste se dit à voix haute, ou s’affiche sur la télé.</li>
 <li><b>Scènes communes.</b> Les grands moments (une révélation, un dépouillement, la nuit) passent sur tous les téléphones et la télé au même instant, pendant la même durée. On ne peut pas les passer, et aucun minuteur ne tourne pendant ce temps.</li>
 <li><b>Choisir un joueur :</b> touche sa place sur le cercle de la table. Une place que tu peux choisir respire ; ton choix devient couleur vélin.</li>
-<li><b>Valider :</b> la plupart des choix sont une simple touche et peuvent changer jusqu’à la fin de l’étape. Les choix scellés (un vote, une carte jouée face cachée) demandent un <b>appui long</b> : garde le pouce posé jusqu’à ce que le sceau se ferme.</li>
+<li><b>Valider :</b> un choix privé (un vote, une carte jouée face cachée, une prédiction) est une simple <b>touche</b> et peut changer jusqu’à la fin de l’étape. <b>Maintenir</b> ne sert qu’aux coups publics qu’on ne peut pas reprendre, et le bouton le dit toujours : garde le doigt posé jusqu’à ce que le remplissage doré soit complet.</li>
 <li><b>L’en-tête</b> nomme l’étape en cours et son numéro (Nuit II, Mission 3, Tour 4…), avec le temps restant.</li>
 <li><b>Sous la table :</b> <em>Ma carte</em> (ton rôle, à tout moment), la fiche de référence du jeu, tes <em>Notes</em> privées et l’<em>Histoire</em>, quand le jeu en a.</li>
-<li><b>Minuteurs.</b> Quand le temps est écoulé, ce que tu n’as pas envoyé devient un passe ou une abstention. L’hôte peut ajouter 30 secondes, passer à la suite ou terminer la partie depuis le menu de la salle.</li>
+<li><b>Minuteurs.</b> Quand le temps est écoulé, le jeu agit pour ceux qui n’ont rien fait : le plus souvent un passe ou une abstention, mais certains jeux choisissent pour toi (Cercueils enterre par exemple un cercueil au hasard). L’hôte peut ajouter 30 secondes, passer à la suite ou finir la partie depuis le menu de la salle.</li>
 <li><b>Les annonces</b> sur ce que les autres viennent de faire apparaissent un instant dans le bandeau d’en-tête.</li>
 <li><b>Règles d’honneur.</b> Quelques règles (le silence, les joueurs muets) ne peuvent être tenues que par la table elle-même. À distance, le chat les fait respecter.</li>
 </ul>`,
@@ -417,7 +417,7 @@ export default {
     missionsLoop: `<ol>
 <li><b>La carte mission.</b> Chaque mission commence par une carte. La plupart sont ordinaires ; de temps en temps, une carte change l’équipe, le vote ou la révélation de cette mission.</li>
 <li><b>La proposition.</b> Le Meneur de mission (qui tient la lanterne) touche des joueurs sur le cercle pour former l’équipe.</li>
-<li><b>Le vote d’équipe.</b> Chacun maintient Approuver ou Rejeter en secret. Les votes se retournent tous à la fois, avec les noms. Une majorité envoie l’équipe ; sinon la lanterne passe au joueur suivant. La cinquième proposition d’une mission part quel que soit le vote.</li>
+<li><b>Le vote d’équipe.</b> Chacun touche Approuver ou Rejeter en secret. Les votes se retournent tous à la fois, avec les noms. Une majorité envoie l’équipe ; sinon la lanterne passe au joueur suivant. La cinquième proposition d’une mission part quel que soit le vote.</li>
 <li><b>La mission.</b> Chaque membre de l’équipe joue une carte face cachée. Les Vivants ne peuvent jouer que Réussite ; la Mort peut jouer Réussite ou Sabotage. Les cartes sont mélangées et retournées une à une : un Sabotage fait échouer la mission.</li>
 <li><b>L’intermède nocturne.</b> Chacun note un Soupçon secret sur qui est la Mort. Après les missions 2, 3 et 4, le porteur de la Bougie apprend le camp d’un joueur, et la Bougie passe à ce joueur. Avec les Indices, un vrai indice peut arriver à l’aube.</li>
 </ol>`,

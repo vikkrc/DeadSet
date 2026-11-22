@@ -386,10 +386,10 @@ export default {
 <li><b>Nikdy neukazuj svoju obrazovku.</b> Tvoj telefón ukazuje tvoju rolu, karty a voľby. Všetko ostatné sa hovorí nahlas alebo ukazuje na televízore.</li>
 <li><b>Spoločné scény.</b> Veľké chvíle (odhalenie, sčítanie hlasov, noc) bežia na všetkých telefónoch aj na televízore naraz a rovnako dlho. Nedajú sa preskočiť a počas nich nebeží časovač.</li>
 <li><b>Výber hráča:</b> ťukni na jeho miesto v kruhu stola. Miesto, ktoré môžeš vybrať, pulzuje; tvoja voľba zbelie ako pergamen.</li>
-<li><b>Potvrdenie:</b> väčšina volieb je ťuknutie a dá sa zmeniť do konca kroku. Zapečatené voľby (hlas, karta zahraná lícom dolu) sú <b>podržanie</b>: drž palec, kým sa pečať nezatvorí.</li>
+<li><b>Potvrdenie:</b> súkromná voľba (hlas, karta zahraná lícom dolu, predpoveď) je <b>ťuknutie</b> a dá sa zmeniť do konca kroku. <b>Podržanie</b> je len pre verejné ťahy, ktoré sa nedajú vziať späť, a tlačidlo to vždy povie: drž prst, kým sa zlatá výplň nedokončí.</li>
 <li><b>Hlavička</b> ukazuje aktuálny krok hry a jeho číslo (Noc II, Misia 3, Kolo 4…) so zostávajúcim časom.</li>
 <li><b>Pod stolom:</b> <em>Moja karta</em> (tvoja rola, kedykoľvek), prehľad hry, tvoje súkromné <em>Poznámky</em> a <em>Príbeh</em>, ak ich hra má.</li>
-<li><b>Časovače.</b> Keď vyprší čas, čo si neodovzdal, sa zmení na pas alebo zdržanie sa. Hostiteľ môže v menu miestnosti pridať 30 sekúnd, pokračovať alebo hru ukončiť.</li>
+<li><b>Časovače.</b> Keď vyprší čas, hra koná za každého, kto ešte nekonal: väčšinou pas alebo zdržanie sa, ale niektoré hry volia za teba (Rakvy napríklad zakopú náhodnú rakvu). Hostiteľ môže v menu miestnosti pridať 30 sekúnd, pokračovať alebo hru ukončiť.</li>
 <li><b>Upozornenia</b> na to, čo práve urobili ostatní, sa na chvíľu zobrazia v hlavičke.</li>
 <li><b>Čestné pravidlá.</b> Niektoré pravidlá (mlčanie, umlčaní hráči) vie dodržať len samotný stôl. Pri hre na diaľku ich vynúti chat.</li>
 </ul>`,
@@ -417,7 +417,7 @@ export default {
     missionsLoop: `<ol>
 <li><b>Karta misie.</b> Každá misia začína kartou. Väčšina je bežných; občas niektorá zmení tím, hlasovanie alebo odhalenie tejto misie.</li>
 <li><b>Návrh.</b> Vodca misie (drží lampáš) ťuká na hráčov v kruhu a zostavuje tím.</li>
-<li><b>Hlasovanie o tíme.</b> Všetci tajne podržia Schváliť alebo Zamietnuť. Hlasy sa otočia naraz, s menami. Väčšina tím vyšle; inak lampáš prejde na ďalšieho hráča. Piaty návrh misie platí bez ohľadu na hlasovanie.</li>
+<li><b>Hlasovanie o tíme.</b> Všetci tajne ťuknú na Schváliť alebo Zamietnuť. Hlasy sa otočia naraz, s menami. Väčšina tím vyšle; inak lampáš prejde na ďalšieho hráča. Piaty návrh misie platí bez ohľadu na hlasovanie.</li>
 <li><b>Misia.</b> Každý člen tímu zahrá kartu lícom dolu. Živí môžu hrať len Úspech; Smrť môže hrať Úspech alebo Sabotáž. Karty sa zamiešajú a otáčajú po jednej: jedna Sabotáž misiu zmarí.</li>
 <li><b>Nočná medzihra.</b> Každý si zaznamená tajné Podozrenie, kto je Smrť. Po 2., 3. a 4. misii sa držiteľ Sviečky dozvie stranu jedného hráča a Sviečka prejde k nemu. So Stopami môže na úsvite prísť pravdivá nápoveda.</li>
 </ol>`,

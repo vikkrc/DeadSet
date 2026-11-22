@@ -386,10 +386,10 @@ export default {
 <li><b>Soha ne mutasd a képernyődet.</b> A telefonod a szerepedet, a kártyáidat és a döntéseidet mutatja. Minden mást hangosan mondunk, vagy a tévén látszik.</li>
 <li><b>Közös jelenetek.</b> A nagy pillanatok (egy leleplezés, a szavazatszámlálás, az éjszaka) minden telefonon és a tévén ugyanakkor, ugyanannyi ideig futnak. Nem lehet átugrani őket, és közben nem jár az időzítő.</li>
 <li><b>Játékos választása:</b> koppints a helyére az asztal körén. A választható hely lüktet; a választásod pergamenszínű lesz.</li>
-<li><b>Megerősítés:</b> a legtöbb döntés egy koppintás, és a lépés végéig módosítható. A lepecsételt döntések (egy szavazat, egy képpel lefelé kijátszott kártya) <b>nyomva tartást</b> kérnek: tartsd rajta az ujjad, amíg a pecsét bezárul.</li>
+<li><b>Megerősítés:</b> egy titkos döntés (egy szavazat, egy képpel lefelé kijátszott kártya, egy jóslat) egy <b>koppintás</b>, és a lépés végéig módosítható. <b>Nyomva tartás</b> csak a vissza nem vonható, nyilvános lépésekhez kell, és a gomb mindig kiírja: tartsd rajta az ujjad, amíg az arany sáv megtelik.</li>
 <li><b>A fejléc</b> megnevezi a játék aktuális lépését és sorszámát (II. éjszaka, 3. küldetés, 4. kör…), a hátralévő idővel.</li>
 <li><b>Az asztal alatt:</b> <em>A kártyám</em> (a szereped, bármikor), a játék összefoglaló lapja, a privát <em>Jegyzetek</em> és a <em>Történet</em>, ahol a játékban van ilyen.</li>
-<li><b>Időzítők.</b> Ha lejár az idő, amit nem adtál le, passz vagy tartózkodás lesz. A házigazda a szoba menüjéből adhat 30 másodpercet, továbbléphet, vagy befejezheti a játékot.</li>
+<li><b>Időzítők.</b> Ha lejár az idő, a játék dönt helyetted, ha még nem léptél: többnyire passz vagy tartózkodás, de egyes játékok választanak helyetted (a Koporsók például véletlenszerű koporsót temetnek el). A házigazda a szoba menüjében hozzáadhat 30 másodpercet, továbbléphet vagy befejezheti a játékot.</li>
 <li><b>Értesítések</b> arról, mit tettek épp a többiek, egy pillanatra a fejlécben jelennek meg.</li>
 <li><b>Becsületszabályok.</b> Néhány szabályt (hallgatás, elnémított játékosok) csak maga az asztal tud betartani. Távoli játékban a csevegés tartatja be őket.</li>
 </ul>`,
@@ -417,7 +417,7 @@ export default {
     missionsLoop: `<ol>
 <li><b>A küldetéskártya.</b> Minden küldetés egy kártyával kezdődik. A legtöbb szokványos; néha egy megváltoztatja a csapatot, a szavazást vagy a felfedést erre a küldetésre.</li>
 <li><b>A javaslat.</b> A Küldetésvezető (nála van a lámpás) a körön játékosokra koppintva tölti fel a csapatot.</li>
-<li><b>A csapatszavazás.</b> Mindenki titokban nyomva tartja az Elfogad vagy az Elutasít gombot. A szavazatok egyszerre fordulnak meg, névvel. Többség esetén a csapat indul; különben a lámpás a következő játékoshoz kerül. Egy küldetés ötödik javaslata a szavazástól függetlenül indul.</li>
+<li><b>A csapatszavazás.</b> Mindenki titokban az Elfogad vagy az Elutasít gombra koppint. A szavazatok egyszerre fordulnak meg, névvel. Többség esetén a csapat indul; különben a lámpás a következő játékoshoz kerül. Egy küldetés ötödik javaslata a szavazástól függetlenül indul.</li>
 <li><b>A küldetés.</b> Minden csapattag képpel lefelé kijátszik egy kártyát. Az Élők csak Sikert játszhatnak; a Halál Sikert vagy Szabotázst. A kártyákat megkeverik és egyenként felfordítják: egy Szabotázs elbuktatja a küldetést.</li>
 <li><b>Az éjszakai közjáték.</b> Mindenki rögzít egy titkos Gyanút arról, ki a Halál. A 2., 3. és 4. küldetés után a Gyertya birtokosa megtudja egy játékos oldalát, és a Gyertya hozzá kerül. Bekapcsolt Nyomokkal hajnalban igaz utalás érkezhet.</li>
 </ol>`,

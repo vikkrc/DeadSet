@@ -40,10 +40,10 @@ export const GUIDE_EN = {
 <li><b>Never show your screen.</b> Your phone shows your role, your cards and your choices. Everything else is said aloud, or shown on the TV.</li>
 <li><b>Shared scenes.</b> Big moments (a reveal, a vote count, nightfall) play on every phone and the TV at the same moment, for the same time. They cannot be skipped, and no timer runs during them.</li>
 <li><b>Choosing a player:</b> tap their seat on the table ring. A seat you can choose breathes; your choice turns to vellum.</li>
-<li><b>Committing:</b> most choices are a tap and can be changed until the step ends. Sealed choices (a vote, a card played face down) are a <b>hold</b>: keep your thumb down until the seal closes.</li>
+<li><b>Committing:</b> a private choice (a vote, a card played face down, a prediction) is a <b>tap</b>, and you can change it until the step ends. A <b>hold</b> is only for public moves that cannot be taken back, and the button always says so: keep your thumb down until the gold fill completes.</li>
 <li><b>The header</b> names the game's current step and its number (Night II, Mission 3, Round 4…), with the time left.</li>
 <li><b>Under the table:</b> <em>My card</em> (your role, any time), the game's reference sheet, your private <em>Notes</em> and the <em>Story</em>, where the game has them.</li>
-<li><b>Timers.</b> When time runs out, anything you have not submitted becomes a pass or an abstention. The host can add 30 seconds, move on, or end the game from the room menu.</li>
+<li><b>Timers.</b> When time runs out, the game acts for anyone who has not: usually a pass or an abstention, but some games choose for you (Coffins buries a random coffin, for example). The host can add 30 seconds, move on, or end the game from the room menu.</li>
 <li><b>Notices</b> about what others just did appear for a moment in the header strip.</li>
 <li><b>Honour rules.</b> A few rules (silence, muted players) can only be kept by the table in person. Remote play enforces them in the chat.</li>
 </ul>`,
@@ -140,7 +140,7 @@ export const GUIDE_EN = {
   missionsLoop: `<ol>
 <li><b>The mission card.</b> Each mission starts with a card. Most are Regular; now and then one changes the team, the vote or the reveal for this mission.</li>
 <li><b>The proposal.</b> The Mission Leader (who holds the lantern) taps players on the ring to fill the team.</li>
-<li><b>The team vote.</b> Everyone holds Approve or Reject in secret. The votes turn over all at once, with names. A majority sends the team; otherwise the lantern passes to the next player. The fifth proposal of a mission goes ahead whatever the vote.</li>
+<li><b>The team vote.</b> Everyone taps Approve or Reject in secret. The votes turn over all at once, with names. A majority sends the team; otherwise the lantern passes to the next player. The fifth proposal of a mission goes ahead whatever the vote.</li>
 <li><b>The mission.</b> Each team member plays a card face down. The Living can only play Succeed; Death may play Succeed or Sabotage. The cards are shuffled and turned one by one: one Sabotage fails the mission.</li>
 <li><b>The night interlude.</b> Everyone records a secret Hunch about who is Death. After missions 2, 3 and 4 the Candle holder learns one player's side, and the Candle passes to that player. With Clues on, a true hint may arrive at dawn.</li>
 </ol>`,

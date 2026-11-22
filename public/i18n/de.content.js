@@ -386,10 +386,10 @@ export default {
 <li><b>Zeig nie deinen Bildschirm.</b> Dein Handy zeigt deine Rolle, deine Karten und deine Entscheidungen. Alles andere wird laut gesagt oder auf dem Fernseher gezeigt.</li>
 <li><b>Gemeinsame Szenen.</b> Große Momente (eine Enthüllung, eine Stimmauszählung, die Nacht) laufen auf allen Handys und dem Fernseher im selben Moment und gleich lang. Man kann sie nicht überspringen, und währenddessen läuft kein Timer.</li>
 <li><b>Eine Person wählen:</b> Tippe auf ihren Platz am Tischkreis. Ein wählbarer Platz pulsiert; deine Wahl wird pergamentfarben.</li>
-<li><b>Bestätigen:</b> Die meisten Entscheidungen sind ein Tippen und lassen sich bis zum Ende des Schritts ändern. Versiegelte Entscheidungen (eine Stimme, eine verdeckt gespielte Karte) sind ein <b>Halten</b>: Lass den Daumen liegen, bis sich das Siegel schließt.</li>
+<li><b>Bestätigen:</b> Eine private Entscheidung (eine Stimme, eine verdeckt gespielte Karte, eine Vorhersage) ist ein <b>Tippen</b> und lässt sich bis zum Ende des Schritts ändern. <b>Halten</b> gibt es nur für öffentliche Züge, die sich nicht zurücknehmen lassen, und der Knopf sagt es immer: Lass den Daumen drauf, bis die goldene Füllung voll ist.</li>
 <li><b>Die Kopfzeile</b> nennt den aktuellen Schritt des Spiels und seine Nummer (Nacht II, Mission 3, Runde 4…) mit der verbleibenden Zeit.</li>
 <li><b>Unter dem Tisch:</b> <em>Meine Karte</em> (deine Rolle, jederzeit), das Nachschlageblatt des Spiels, deine privaten <em>Notizen</em> und die <em>Geschichte</em>, wo das Spiel sie hat.</li>
-<li><b>Timer.</b> Läuft die Zeit ab, wird alles, was du nicht abgegeben hast, zu einem Passen oder einer Enthaltung. Der Gastgeber kann im Raummenü 30 Sekunden hinzufügen, weitergehen oder das Spiel beenden.</li>
+<li><b>Timer.</b> Läuft die Zeit ab, handelt das Spiel für alle, die noch nichts getan haben: meist ein Passen oder eine Enthaltung, aber manche Spiele wählen für dich (Särge etwa vergräbt einen zufälligen Sarg). Der Gastgeber kann im Raummenü 30 Sekunden hinzufügen, weitergehen oder das Spiel beenden.</li>
 <li><b>Hinweise</b> darauf, was andere gerade getan haben, erscheinen kurz in der Kopfzeile.</li>
 <li><b>Ehrenregeln.</b> Einige Regeln (Schweigen, stummgeschaltete Spieler) kann nur der Tisch selbst einhalten. Beim Fernspiel setzt der Chat sie durch.</li>
 </ul>`,
@@ -417,7 +417,7 @@ export default {
     missionsLoop: `<ol>
 <li><b>Die Missionskarte.</b> Jede Mission beginnt mit einer Karte. Die meisten sind regulär; ab und zu ändert eine das Team, die Abstimmung oder die Enthüllung dieser Mission.</li>
 <li><b>Der Vorschlag.</b> Der Missionsanführer (er hält die Laterne) tippt Spieler im Kreis an, um das Team zu füllen.</li>
-<li><b>Die Teamabstimmung.</b> Alle halten heimlich Zustimmen oder Ablehnen. Die Stimmen werden auf einmal aufgedeckt, mit Namen. Eine Mehrheit schickt das Team los; sonst geht die Laterne an den nächsten Spieler. Der fünfte Vorschlag einer Mission gilt unabhängig von der Abstimmung.</li>
+<li><b>Die Teamabstimmung.</b> Alle tippen heimlich Zustimmen oder Ablehnen. Die Stimmen werden auf einmal aufgedeckt, mit Namen. Eine Mehrheit schickt das Team los; sonst geht die Laterne an den nächsten Spieler. Der fünfte Vorschlag einer Mission gilt unabhängig von der Abstimmung.</li>
 <li><b>Die Mission.</b> Jedes Teammitglied spielt verdeckt eine Karte. Die Lebenden können nur Erfolg spielen; der Tod darf Erfolg oder Sabotage spielen. Die Karten werden gemischt und einzeln umgedreht: Eine Sabotage lässt die Mission scheitern.</li>
 <li><b>Das nächtliche Zwischenspiel.</b> Alle notieren einen geheimen Verdacht, wer der Tod ist. Nach den Missionen 2, 3 und 4 erfährt der Halter der Kerze die Seite eines Spielers, und die Kerze geht an diesen Spieler. Mit Hinweisen kann im Morgengrauen ein wahrer Hinweis kommen.</li>
 </ol>`,

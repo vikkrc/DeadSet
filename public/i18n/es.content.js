@@ -386,10 +386,10 @@ export default {
 <li><b>Nunca enseñes tu pantalla.</b> Tu móvil muestra tu rol, tus cartas y tus decisiones. Todo lo demás se dice en voz alta o se ve en la tele.</li>
 <li><b>Escenas compartidas.</b> Los grandes momentos (una revelación, un recuento, la noche) se ven en todos los móviles y en la tele a la vez, durante el mismo tiempo. No se pueden saltar, y mientras duran no corre ningún temporizador.</li>
 <li><b>Elegir a un jugador:</b> toca su asiento en el círculo de la mesa. Un asiento que puedes elegir palpita; tu elección se vuelve color pergamino.</li>
-<li><b>Confirmar:</b> casi todas las decisiones son un toque y se pueden cambiar hasta que acaba el paso. Las decisiones selladas (un voto, una carta jugada boca abajo) se hacen <b>manteniendo pulsado</b>: deja el pulgar hasta que el sello se cierre.</li>
+<li><b>Confirmar:</b> una decisión privada (un voto, una carta jugada boca abajo, una predicción) es un <b>toque</b> y se puede cambiar hasta que acaba el paso. <b>Mantener pulsado</b> es solo para jugadas públicas que no se pueden deshacer, y el botón siempre lo dice: deja el dedo hasta que se complete el relleno dorado.</li>
 <li><b>La cabecera</b> nombra el paso actual del juego y su número (Noche II, Misión 3, Ronda 4…), con el tiempo que queda.</li>
 <li><b>Bajo la mesa:</b> <em>Mi carta</em> (tu rol, en cualquier momento), la hoja de referencia del juego, tus <em>Notas</em> privadas y la <em>Historia</em>, si el juego las tiene.</li>
-<li><b>Temporizadores.</b> Cuando se acaba el tiempo, lo que no hayas enviado cuenta como pasar o abstenerse. El anfitrión puede añadir 30 segundos, avanzar o terminar la partida desde el menú de la sala.</li>
+<li><b>Temporizadores.</b> Cuando se acaba el tiempo, el juego actúa por quien no lo haya hecho: casi siempre pasar o abstenerse, pero algunos juegos eligen por ti (Ataúdes, por ejemplo, entierra un ataúd al azar). El anfitrión puede añadir 30 segundos, avanzar o terminar la partida desde el menú de la sala.</li>
 <li><b>Los avisos</b> sobre lo que acaban de hacer los demás aparecen un momento en la franja de la cabecera.</li>
 <li><b>Reglas de honor.</b> Algunas reglas (el silencio, los jugadores mudos) solo puede cumplirlas la propia mesa. A distancia, el chat las hace cumplir.</li>
 </ul>`,
@@ -417,7 +417,7 @@ export default {
     missionsLoop: `<ol>
 <li><b>La carta de misión.</b> Cada misión empieza con una carta. La mayoría son normales; de vez en cuando una cambia el equipo, la votación o la revelación de esa misión.</li>
 <li><b>La propuesta.</b> El Líder de la misión (que lleva el farol) toca jugadores en el círculo para formar el equipo.</li>
-<li><b>La votación del equipo.</b> Todos mantienen pulsado Aprobar o Rechazar en secreto. Los votos se destapan a la vez, con nombres. Una mayoría envía al equipo; si no, el farol pasa al siguiente jugador. La quinta propuesta de una misión sale adelante sea cual sea el voto.</li>
+<li><b>La votación del equipo.</b> Todos tocan Aprobar o Rechazar en secreto. Los votos se destapan a la vez, con nombres. Una mayoría envía al equipo; si no, el farol pasa al siguiente jugador. La quinta propuesta de una misión sale adelante sea cual sea el voto.</li>
 <li><b>La misión.</b> Cada miembro del equipo juega una carta boca abajo. Los Vivos solo pueden jugar Éxito; la Muerte puede jugar Éxito o Sabotaje. Las cartas se barajan y se destapan una a una: un Sabotaje hace fracasar la misión.</li>
 <li><b>El interludio nocturno.</b> Cada uno anota una Sospecha secreta sobre quién es la Muerte. Tras las misiones 2, 3 y 4, quien tiene la Vela descubre el bando de un jugador, y la Vela pasa a ese jugador. Con las Pistas, al amanecer puede llegar una pista verdadera.</li>
 </ol>`,
