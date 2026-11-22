@@ -27,6 +27,8 @@ const ROOM_TTL_MS = 12 * 60 * 60 * 1000;
 const SHOWCASE = new Set(['M_LOTTERY', 'M_RESULT', 'X_LOTTERY']);
 
 const sha = (s) => createHash('sha256').update(s).digest('hex');
+/** A response we may still write to (DS-035: never write after end). */
+const writable = (res) => !!res && !res.writableEnded && !res.destroyed && res.ended !== true;
 const newToken = () => randomBytes(32).toString('base64url');
 const newId = () => randomBytes(9).toString('base64url');
 
@@ -65,8 +67,26 @@ export class RoomManager {
     // Rotating a session revokes any previous device for that player.
     for (const [h, id] of room.sessions) if (id === pid) room.sessions.delete(h);
     room.sessions.set(sha(token), pid);
-    for (const c of room.clients) if (c.pid === pid) { c.res.write('event: revoked\ndata: {}\n\n'); c.res.end(); }
+    this.revokeClients(room, pid);
     return token;
+  }
+
+  /**
+   * DS-035: the one way a stream ends. The client leaves the room's set and loses its heartbeat before its
+   * response is ended, so a broadcast that follows can never write to it. Safe to call twice.
+   */
+  dropClient(room, client, last = '') {
+    if (client.gone) return;
+    client.gone = true;
+    room.clients.delete(client);
+    clearInterval(client.ping);
+    try { if (last && writable(client.res)) client.res.write(last); } catch { /* already closed */ }
+    try { if (writable(client.res)) client.res.end(); } catch { /* already closed */ }
+  }
+
+  revokeClients(room, pid, reason = null) {
+    const data = JSON.stringify(reason ? { reason } : {});
+    for (const c of [...room.clients]) if (c.pid === pid) this.dropClient(room, c, `event: revoked\ndata: ${data}\n\n`);
   }
 
   auth(room, token) {
@@ -103,7 +123,8 @@ export class RoomManager {
     const room = this.room(code);
     const key = String(recoveryCode || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
     const entry = room.recovery.get(key);
-    if (!entry || entry.expires < this.clock()) throw new GameError('That recovery code is not valid.', 'AUTH');
+    // DS-042: a code is only good for a seat that still exists.
+    if (!entry || entry.expires < this.clock() || !byId(room.match, entry.pid)) { if (entry) room.recovery.delete(key); throw new GameError('That recovery code is not valid.', 'AUTH'); }
     room.recovery.delete(key);
     const token = this.issueSession(room, entry.pid);
     pub(room.match, `${byId(room.match, entry.pid)?.name ?? 'A player'} reconnected on a new device.`, 'host');
@@ -191,7 +212,12 @@ export class RoomManager {
         if (payload.playerId === pid) throw new GameError('You cannot remove yourself.');
         removePlayer(m, payload.playerId);
         for (const [h, id] of room.sessions) if (id === payload.playerId) room.sessions.delete(h);
-        for (const c of room.clients) if (c.pid === payload.playerId) { c.res.write('event: revoked\ndata: {"reason":"kicked"}\n\n'); c.res.end(); }
+        // DS-042: the seat's recovery codes go with it.
+        for (const [k, e] of room.recovery) if (e.pid === payload.playerId) room.recovery.delete(k);
+        if (room.lastRecovery?.playerId === payload.playerId) room.lastRecovery = null;
+        room.transferVotes?.delete(payload.playerId);
+        if (room.endVotes) delete room.endVotes[payload.playerId];
+        this.revokeClients(room, payload.playerId, 'kicked');
         break;
       }
       case 'host.seat': moveSeat(m, payload.playerId, Number(payload.dir)); break;
@@ -292,17 +318,17 @@ export class RoomManager {
   attach(code, token, res, { board = false } = {}) {
     const room = this.room(code);
     const pid = board ? null : this.auth(room, token);
-    const client = { res, pid, board, last: '', key: board ? newToken() : null, audio: false };
+    const client = { res, pid, board, last: '', key: board ? newToken() : null, audio: false, gone: false, ping: null };
     room.clients.add(client);
+    res.on?.('error', () => this.dropClient(room, client)); // a broken socket never takes the process down
     if (board) res.write(`event: board\ndata: ${JSON.stringify({ key: client.key })}\n\n`);
     if (pid && pid === room.match.hostId) room.hostSeen = this.clock();
     this.syncPresence(room);
     this.send(room, client, true);
-    const ping = setInterval(() => res.write(': ping\n\n'), 25_000);
-    ping.unref?.();
+    client.ping = setInterval(() => { if (writable(res)) { try { res.write(': ping\n\n'); } catch { this.dropClient(room, client); } } else this.dropClient(room, client); }, 25_000);
+    client.ping.unref?.();
     res.on('close', () => {
-      clearInterval(ping);
-      room.clients.delete(client);
+      this.dropClient(room, client);
       if (pid && pid === room.match.hostId) room.hostSeen = this.clock();
       this.syncPresence(room);
       this.broadcast(room);
@@ -356,6 +382,7 @@ export class RoomManager {
   }
 
   send(room, client, force = false) {
+    if (client.gone || !writable(client.res)) return;
     const json = JSON.stringify(this.viewFor(room, client));
     const strip = json.replace(/"serverNow":\d+,/, '');
     if (!force && strip === client.last) return;
@@ -364,7 +391,7 @@ export class RoomManager {
   }
 
   broadcast(room) {
-    for (const c of room.clients) {
+    for (const c of [...room.clients]) {
       try { this.send(room, c); } catch { /* client gone */ }
     }
   }
