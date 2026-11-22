@@ -2855,6 +2855,7 @@ function eveningHtml(v, { host = false } = {}) {
   if (!e?.rows?.length) return '';
   return `<section class="evening" data-key="evening"><div class="rule">${t('Tonight\'s ledger')} · ${esc(tp('{n} game', '{n} games', e.games.length))}</div>
     <ol class="ev-rows">${e.rows.map((r, i) => `<li class="${r.id === v.me?.id ? 'me' : ''}"><span class="ev-n">${i + 1}</span><span class="ev-face">${r.avatar ? avatarSvg(r.avatar, 'tok-av') : esc(initials(r.name))}</span><b>${esc(r.name)}</b><small>${esc(th('{w}/{g} won', { w: r.wins, g: r.games }))}</small><em>${r.pts}</em></li>`).join('')}</ol>
+    <div class="share-row"><button class="btn btn-sm" data-act="shareEvening">${glyph('out')} ${t('Share the evening')}</button><button class="btn btn-sm btn-ghost" data-act="shareEvening" data-anon="1">${t('Share without names')}</button></div>
     ${host ? `<button class="btn btn-sm btn-ghost" data-act="eveningClear">${t('Clear the ledger')}</button>` : ''}</section>`;
 }
 
@@ -3286,6 +3287,26 @@ const ACT = {
   seatSheet(el) { S.ui.sheet = `seat:${el.dataset.id}`; render(); },
   sound() { sound.toggle(); render(); },
   copy(el) { navigator.clipboard?.writeText(el.dataset.text).then(() => toast(t('Invite link copied')), () => notify(el.dataset.text)); burstAt(el); },
+  async shareEvening(el) {
+    const v = V(); const e = v?.evening; if (!e?.rows?.length) return;
+    el.disabled = true;
+    try {
+      const first = e.rows[0];
+      const card = {
+        masthead: t('The Dead Set Gazette'), seatWord: t('Seat'), ptsWord: t('pts'),
+        dateLine: new Date().toLocaleDateString(getLang(), { day: 'numeric', month: 'long', year: 'numeric' }),
+        gamesLine: tp('{n} game', '{n} games', e.games.length),
+        title: t('{a} leads the evening', { a: first.name }),
+        standingsLabel: t('Tonight\'s ledger'), gamesLabel: t('The games'), moreLabel: t('+{n} more at the table'), earlierLabel: t('…and {n} earlier games'),
+        rows: e.rows.map((r) => ({ name: r.name, avatar: r.avatar, pts: r.pts, wins: r.wins, games: r.games })),
+        games: e.games.map((g) => ({ mode: modeTitle(g.mode), winners: g.winners ?? [] })),
+        url: location.host,
+      };
+      const how = await shareCard(card, { anon: !!el.dataset.anon, evening: true });
+      if (how === 'downloaded') notify(t('The front page is saved to your downloads.'));
+      if (how === 'failed') notify(t('The front page could not be drawn.'));
+    } finally { el.disabled = false; }
+  },
   async shareCard(el) {
     const v = V(); if (!v?.players?.length) return;
     el.disabled = true;

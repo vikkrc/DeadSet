@@ -206,9 +206,100 @@ export async function drawShareCard(card, { anon = false } = {}) {
   return new Promise((resolve) => c.toBlob(resolve, 'image/png'));
 }
 
+/**
+ * V2: the evening card. The ledger as one page: how many games, who won what, the standings with faces, and the
+ * evening's first place. Same paper, same 'without names' option as the game card.
+ * card = { masthead, dateLine, title, gamesLine, standingsLabel, gamesLabel, ptsWord, seatWord,
+ *          rows: [{ name, avatar, pts, wins, games }], games: [{ mode, winners: [names] }], url }
+ */
+export async function drawEveningCard(card, { anon = false } = {}) {
+  await document.fonts?.ready;
+  const seats = card.rows.map((r, i) => [r.name, `${card.seatWord} ${i + 1}`]);
+  const say = (x) => (anon ? anonymise(x, seats) : String(x ?? ''));
+  const paper = css('--vellum') || '#dccba4'; /* literal-ok */
+  const ink = css('--sepia') || '#1d1510'; /* literal-ok */
+  const ink2 = css('--sepia-2') || '#5a4632'; /* literal-ok */
+  const red = css('--rubric') || '#8e1b1f'; /* literal-ok */
+  const edge = css('--paper-edge') || '#77633f'; /* literal-ok */
+  const BLACK = "'Grenze Gotisch', 'UnifrakturCook', Georgia, serif";
+  const TEXT = "'EB Garamond', Georgia, serif";
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = paper; ctx.fillRect(0, 0, W, H);
+  const g = ctx.createRadialGradient(W / 2, H / 2, H * 0.2, W / 2, H / 2, H * 0.75);
+  g.addColorStop(0, 'rgba(0,0,0,0)'); /* literal-ok */
+  g.addColorStop(1, 'rgba(60,40,20,0.28)'); /* literal-ok */
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = edge; ctx.lineWidth = 3; ctx.strokeRect(28, 28, W - 56, H - 56);
+  ctx.lineWidth = 1; ctx.strokeRect(40, 40, W - 80, H - 80);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+  let y = 150;
+  ctx.fillStyle = ink;
+  fit(ctx, card.masthead, `400 {s}px ${BLACK}`, 108, W - 2 * M);
+  ctx.fillText(card.masthead, W / 2, y);
+  y += 36; rule(ctx, y, ink, true);
+  y += 44;
+  ctx.font = `600 26px ${TEXT}`; ctx.fillStyle = ink2;
+  ctx.textAlign = 'left'; ctx.fillText(card.dateLine.toUpperCase(), M, y);
+  ctx.textAlign = 'right'; ctx.fillText(card.gamesLine.toUpperCase(), W - M, y);
+  y += 22; rule(ctx, y, ink);
+  // The headline: the evening's first place.
+  ctx.textAlign = 'center';
+  const title = say(card.title);
+  const ts = fit(ctx, title, `400 {s}px ${BLACK}`, 96, W - 2 * M, 52);
+  ctx.fillStyle = ink; y += ts + 40; ctx.fillText(title, W / 2, y);
+  // The standings.
+  y += 78; ctx.font = `600 24px ${TEXT}`; ctx.fillStyle = red; ctx.fillText(card.standingsLabel.toUpperCase(), W / 2, y);
+  y += 20;
+  const rows = card.rows.slice(0, 10);
+  const rowH = rows.length > 7 ? 52 : 64;
+  const face = rowH - 14;
+  for (const [i, r] of rows.entries()) {
+    const top = y + i * rowH;
+    const x0 = M + 40;
+    ctx.fillStyle = i === 0 ? red : ink2; ctx.font = `400 34px ${BLACK}`; ctx.textAlign = 'right';
+    ctx.fillText(String(i + 1), x0, top + face * 0.72);
+    const fx = x0 + 20;
+    ctx.save(); ctx.beginPath(); ctx.arc(fx + face / 2, top + face / 2, face / 2, 0, Math.PI * 2); ctx.closePath();
+    ctx.fillStyle = css('--vellum-2') || '#c6b185'; /* literal-ok */
+    ctx.fill(); ctx.clip();
+    const img = !anon && r.avatar ? await svgImage(avatarSvg(r.avatar)) : null;
+    if (img) ctx.drawImage(img, fx, top, face, face);
+    else { ctx.fillStyle = ink; ctx.font = `400 ${Math.round(face * 0.45)}px ${BLACK}`; ctx.textAlign = 'center'; ctx.fillText(anon ? String(i + 1) : (r.name[0] || '?').toUpperCase(), fx + face / 2, top + face * 0.66); }
+    ctx.restore();
+    ctx.strokeStyle = i === 0 ? red : edge; ctx.lineWidth = i === 0 ? 3 : 2;
+    ctx.beginPath(); ctx.arc(fx + face / 2, top + face / 2, face / 2, 0, Math.PI * 2); ctx.stroke();
+    ctx.textAlign = 'left'; ctx.fillStyle = ink; ctx.font = `600 ${rowH > 60 ? 30 : 26}px ${TEXT}`;
+    ctx.fillText(anon ? seats[i][1] : r.name, fx + face + 18, top + face * 0.68);
+    ctx.textAlign = 'right'; ctx.font = `italic 400 24px ${TEXT}`; ctx.fillStyle = ink2;
+    ctx.fillText(`${r.wins}/${r.games}`, W - M - 140, top + face * 0.68);
+    ctx.font = `400 34px ${BLACK}`; ctx.fillStyle = ink;
+    ctx.fillText(`${r.pts} ${card.ptsWord}`, W - M - 10, top + face * 0.7);
+  }
+  y += rows.length * rowH + 10;
+  if (card.rows.length > rows.length) { ctx.textAlign = 'center'; ctx.font = `italic 400 22px ${TEXT}`; ctx.fillStyle = ink2; ctx.fillText(card.moreLabel.replace('{n}', card.rows.length - rows.length), W / 2, y + 8); y += 34; }
+  // The games, newest last.
+  if (y < H - 230 && card.games.length) {
+    rule(ctx, y, ink); y += 46;
+    ctx.textAlign = 'center'; ctx.font = `600 24px ${TEXT}`; ctx.fillStyle = red; ctx.fillText(card.gamesLabel.toUpperCase(), W / 2, y);
+    const room = Math.max(1, Math.floor((H - 160 - y) / 36));
+    if (card.games.length > room) { y += 36; ctx.font = `italic 400 22px ${TEXT}`; ctx.fillStyle = ink2; ctx.fillText(card.earlierLabel.replace('{n}', card.games.length - room + 1), W / 2, y); }
+    for (const gm of card.games.length > room ? card.games.slice(-(room - 1)) : card.games) {
+      y += 36; ctx.font = `italic 400 26px ${TEXT}`; ctx.fillStyle = ink2;
+      let line = say(`${gm.mode} — ${gm.winners.join(', ') || '—'}`);
+      while (ctx.measureText(line).width > W - 2 * M && line.length > 10) line = `${line.slice(0, -2)}…`;
+      ctx.fillText(line, W / 2, y);
+    }
+  }
+  rule(ctx, H - 120, ink, true);
+  ctx.textAlign = 'center'; ctx.fillStyle = ink2; ctx.font = `600 26px ${TEXT}`;
+  ctx.fillText(card.url, W / 2, H - 70);
+  return new Promise((resolve) => c.toBlob(resolve, 'image/png'));
+}
+
 /** Share the card as a file where the device can; otherwise download it. */
 export async function shareCard(card, opts = {}) {
-  const blob = await drawShareCard(card, opts);
+  const blob = await (opts.evening ? drawEveningCard(card, opts) : drawShareCard(card, opts));
   if (!blob) return 'failed';
   const file = new File([blob], `dead-set-${Date.now()}.png`, { type: 'image/png' });
   if (navigator.canShare?.({ files: [file] })) {
