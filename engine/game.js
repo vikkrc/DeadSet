@@ -165,6 +165,7 @@ export function startMatch(m, rng, now, { forceRoles = null, forceWord = null } 
   if (!forceRoles && report.notReady) throw new GameError('Everyone must tap Ready first.');
   const n = m.players.length;
   clearModes(m);
+  m.gameSeq = (m.gameSeq ?? 0) + 1; // DS-013, DS-014: each game gets its own number, so clients can scope to it
   if (PRESETS[m.settings.preset]?.missions) { m.C = null; m.K = null; m.N = null; m.S = null; startMissions(m, rng, now, { forceRoles }); return; }
   // DS-043: a moderator's hand-dealt Demon is the Demon.
   const manual = !forceRoles && m.moderated && Object.keys(m.manualRoles).length === n ? m.players.map((p) => m.manualRoles[p.id]) : null;
@@ -726,7 +727,7 @@ export function rematch(m, { ready = false } = {}) {
   // DS-036: the moderator is a separate, trusted identity. Handing the public host controls to a player must
   // never make that player the moderator at the next game.
   const moderatorId = m.moderatorId;
-  const tuning = { recTuned: m.recTuned, recN: m.recN };
+  const tuning = { recTuned: m.recTuned, recN: m.recN, gameSeq: m.gameSeq };
   const fresh = newMatch({ id: m.id, code: m.code, hostId: m.hostId, moderated: m.moderated });
   // DS-044: drop every field the last game added (Object.assign alone would leave them behind).
   for (const k of Object.keys(m)) if (!(k in fresh)) delete m[k];

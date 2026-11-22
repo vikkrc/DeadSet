@@ -83,7 +83,7 @@ export function publicView(m, now = Date.now()) {
   const revealDead = m.settings.revealOnDeath && !hasRule(m, 'HIDDEN_ROLES');
   const list = nominees(m);
   const v = {
-    code: m.code, phase: m.phase, phaseId: m.phaseId, version: m.stateVersion, rulesVersion: m.rulesVersion,
+    code: m.code, phase: m.phase, phaseId: m.phaseId, version: m.stateVersion, rulesVersion: m.rulesVersion, gameSeq: m.gameSeq ?? 0,
     dayNumber: m.dayNumber, nightNumber: m.nightNumber, deadline: m.deadline, serverNow: now,
     hostId: m.hostId, moderated: m.moderated,
     preset: m.config?.preset ?? m.settings.preset,

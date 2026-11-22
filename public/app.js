@@ -159,6 +159,16 @@ function heraldNext() {
   if (q.length) return heraldShow(q.shift());
   herald.cur = null; S.notes = []; render();
 }
+/** DS-014: unread notes are counted per game, with the same filter the badge shows. */
+const seenKey = (v) => `${v.code}:${v.gameSeq ?? 0}`;
+function noteCount(v) {
+  const u = MODES[v.mode]?.utility ?? {};
+  return (v.private || []).filter((e) => u.notes === '*' || e.kind === u.notes).length;
+}
+function clearHerald() {
+  clearTimeout(herald.timer);
+  herald.cur = null; herald.queue = []; S.notes = []; S.heraldLast = null; S.trayDot = false;
+}
 const toast = (text, kind = '') => notify(t(text), kind === 'err' ? 'err' : kind);
 
 // Language: the player's own choice, else the table's default, else the browser's.
@@ -292,6 +302,8 @@ function connect(board = false) {
     clockSkew = v.serverNow - Date.now();
     if (S.selPhase !== v.phaseId) { S.sel = {}; S.selPhase = v.phaseId; S.ui.tab = null; }
     const prev = S.view;
+    // DS-013: a new game, a return to the lobby or another room drops every notice from before.
+    if (prev && (prev.code !== v.code || prev.gameSeq !== v.gameSeq || (v.phase === 'LOBBY' && prev.phase !== 'LOBBY'))) clearHerald();
     detectMoments(v);
     if (board && prev && v.phase === 'LOBBY' && v.players.length > prev.players.length) pubSound('thud');
     S.view = v;
@@ -1668,8 +1680,8 @@ function tray(v) {
     ? `<button class="tray-slot ${cls}" data-act="sheet" data-id="${id}" data-key="ts-${id}">${icon}<span>${label}</span>${badge ? `<b class="tray-badge">${badge}</b>` : ''}</button>`
     : `<span class="tray-slot off" data-key="ts-off-${label}" aria-hidden="true">${icon}<span>${label}</span></span>`;
   const notesOn = !!u.notes && (!u.notesIf || u.notesIf.split('.').reduce((o, k) => o?.[k], v));
-  const notes = (v.private || []).filter((e) => u.notes === '*' || e.kind === u.notes).length;
-  const unread = Math.max(0, notes - (S.notesSeen?.[v.code] ?? 0));
+  const notes = noteCount(v);
+  const unread = Math.max(0, notes - (S.notesSeen?.[seenKey(v)] ?? 0));
   const board = u.board ? BOARD_SHEET[u.board] : null;
   const rules = u.rules && v.activeRules?.length;
   return `<nav class="tray" data-key="tray" aria-label="${esc(t('Your things'))}">
@@ -1860,7 +1872,7 @@ function sheet(v) {
 /** The Gazette is printed only where the game runs one: Classic and Missions, once the match is under way. */
 const usesGazette = (v) => ['classic', 'missions'].includes(v?.mode) && v?.phase !== 'LOBBY';
 /** G3: this phone's private notes on the table, per game. Never sent anywhere, never on the TV. */
-const notesKey = (v) => `deadset:notes:${v.code}:${v.evening?.games?.length ?? 0}`;
+const notesKey = (v) => `deadset:notes:${v.code}:${v.gameSeq ?? 0}`;
 function myNotes(v) {
   if (!v?.code) return {};
   const k = notesKey(v);
@@ -3272,7 +3284,7 @@ const ACT = {
   sheet(el) {
     const id = el.dataset.id; S.ui.sheet = id && S.ui.sheet !== id ? id : null;
     if (S.ui.sheet === 'role') S.trayDot = false;
-    if (S.ui.sheet === 'notes') { const v = V(); (S.notesSeen ??= {})[v.code] = (v.private || []).length; }
+    if (S.ui.sheet === 'notes') { const v = V(); (S.notesSeen ??= {})[seenKey(v)] = noteCount(v); }
     if (S.ui.sheet) uiSound('whoosh'); render();
   },
   cardInfo(el) { S.ui.cardInfo = { kind: el.dataset.kind, id: el.dataset.id }; S.ui.sheet = 'card'; uiSound('whoosh'); render(); },
