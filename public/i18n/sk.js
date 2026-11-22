@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tri misie zlyhali",
     "Use the Candle": "Použi Sviečku",
     "Game mode": "Herný režim",
+    "{done} of {total} in so far.": "Zatiaľ hotovo: {done} z {total}.",
     "Length, this setup": "Dĺžka, toto nastavenie",
     "A preview for the smallest table ({n}). ": "Náhľad pre najmenší stôl ({n}). ",
     "A rough guide to this setup, not a chance of winning. Problems with the setup come first.": "Hrubé vodidlo k tomuto nastaveniu, nie šanca na výhru. Problémy s nastavením majú prednosť.",

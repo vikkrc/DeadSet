@@ -1602,7 +1602,8 @@ function hostBox() {
     </div></details>`;
   if (v.phase === 'LOBBY') return `<div class="host-box" data-key="hostbox"><div class="rule">${t('Host')}</div><p class="small muted">${t('You see only what everyone sees.')}</p>${rec}</div>`;
   return `<div class="host-box" data-key="hostbox"><div class="rule">${t('Host controls')}</div>
-    ${h.advance ? holdBtn('advance', t(h.advance), 'btn-solid', { key: 'side-adv' }) : ''}
+    ${/* DS-021: the host's override is a quieter, labelled control; the player's own move stays the main button. */ ''}${h.advance ? holdBtn('advance', `${t('Host')} · ${t(h.advance)}`, 'btn-sm btn-wide host-adv', { key: 'side-adv' }) : ''}
+    ${h.advance && v.progress?.total ? `<p class="small muted">${esc(th('{done} of {total} in so far.', v.progress))}</p>` : ''}
     ${h.skipAll ? `<button class="btn btn-sm" data-act="advance" data-skip="1">${esc(t(h.skipAll))}</button>` : ''}
     <div class="row">${h.extend ? `<button class="btn btn-sm" data-act="extend">${t('+30 s')}</button>` : ''}
     ${h.end ? `<button class="btn btn-sm btn-ghost" data-act="end">${t('End match')}</button>` : ''}

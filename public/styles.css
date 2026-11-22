@@ -5687,3 +5687,5 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
 /* DS-027: the last result, kept in the lobby */
 .last-result { margin: 0 0 6px; }
 .last-awards { margin: 6px 0 0; padding-left: 18px; font-size: 14px; color: var(--bone-2); }
+/* DS-021: the host's override never outweighs your own move */
+.host-adv { border-color: var(--blood); }

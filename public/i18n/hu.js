@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "{done} of {total} in so far.": "Eddig {total} közül {done}.",
     "Length, this setup": "Hossz, ezzel a beállítással",
     "A preview for the smallest table ({n}). ": "Előnézet a legkisebb asztalra ({n}). ",
     "A rough guide to this setup, not a chance of winning. Problems with the setup come first.": "Durva iránymutatás ehhez a beállításhoz, nem nyerési esély. A beállítás hibái előbbre valók.",
