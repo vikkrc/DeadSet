@@ -316,6 +316,8 @@ function connect(board = false) {
     clockSkew = v.serverNow - Date.now();
     if (S.selPhase !== v.phaseId) { S.sel = {}; S.selPhase = v.phaseId; S.ui.tab = null; }
     const prev = S.view;
+    // DS-027: keep the last result (verdict and honours) so it can still be read back in the lobby.
+    if (v.phase === 'ENDED' && v.winner && v.winner !== 'ABORTED') { const vd = verdict(v); S.lastResult = { code: v.code, seq: v.gameSeq, mode: v.mode, kicker: vd.kicker, title: vd.title, reason: v.endReason, awards: v.awards ?? [] }; }
     // DS-013: a new game, a return to the lobby or another room drops every notice from before.
     if (prev && (prev.code !== v.code || prev.gameSeq !== v.gameSeq || (v.phase === 'LOBBY' && prev.phase !== 'LOBBY'))) clearHerald();
     detectMoments(v);
@@ -2119,6 +2121,15 @@ function recCard(v, isHost) {
     ${isHost ? `<div class="row">${r.tuned ? `<button class="btn btn-sm" data-act="recUse">${esc(th('Use the recommended setup for {n}', { n: r.n }))}</button>` : ''}<button class="btn btn-sm btn-ghost" data-act="ltab" data-id="rules">${t('Customise')}</button></div>` : ''}</section>`;
 }
 
+/** DS-027: the last game's verdict and honours stay readable in the lobby after the table returns, until dismissed. */
+function lastResultHtml(v) {
+  const r = S.lastResult;
+  if (!r || r.code !== v.code || r.seq !== v.gameSeq) return '';
+  return `<details class="more last-result" data-key="lastres"><summary>${glyph('scroll')} ${t('Last game')}: ${esc(r.title)}</summary>
+    <p class="small muted">${esc(modeTitle(r.mode))} · ${esc(r.kicker)}</p>${r.reason ? `<p>${tmh(r.reason)}</p>` : ''}
+    ${r.awards?.length ? `<ul class="last-awards">${r.awards.map((a) => `<li><b>${t(a.title)}</b> · ${tmh(a.line)}</li>`).join('')}</ul>` : ''}</details>`;
+}
+
 function lobbyMain(v, me) {
   const url = `${location.origin}/r/${v.code}`;
   const isHost = !!v.host;
@@ -2144,14 +2155,14 @@ function lobbyMain(v, me) {
     // U5: a guest sees one screen — the game, how it works, their own face, and Ready in the dock.
     return `${head(v)}${moderated}${seatedStrip(v)}${gameCard(v, false)}${recCard(v, false)}${portrait}
       <div class="lobby-steps guest" data-key="lsteps">${how}${lobbyDeck(v, false, v.mode === 'classic' || v.mode === 'missions' ? setupSummary(v) : '')}</div>
-      ${invite}${eveningHtml(v)}${problems}`;
+      ${lastResultHtml(v)}${invite}${eveningHtml(v)}${problems}`;
   }
   // U4: the host's lobby in three tabs — the table, the game, the rules.
   const tab = S.ui.ltab ?? 'table';
   const tabs = `<nav class="seg ltabs" role="tablist" data-key="ltabs">${[['table', t('Table')], ['game', t('Game')], ['rules', t('Rules')]].map(([k, l]) => `<button role="tab" data-act="ltab" data-id="${k}" aria-selected="${tab === k}" aria-pressed="${tab === k}">${l}</button>`).join('')}</nav>`;
   let body = '';
   if (tab === 'table') {
-    body = `${invite}${table}<p class="small muted center-text" data-key="seathint">${t('Tap a seat to move or remove a player.')}${v.mode === 'graverobbers' && (v.settings.g?.crews ?? 'seats') === 'seats' ? ` ${t('Moving a player across the table changes their crew.')}` : ''}</p>
+    body = `${lastResultHtml(v)}${invite}${table}<p class="small muted center-text" data-key="seathint">${t('Tap a seat to move or remove a player.')}${v.mode === 'graverobbers' && (v.settings.g?.crews ?? 'seats') === 'seats' ? ` ${t('Moving a player across the table changes their crew.')}` : ''}</p>
       ${portrait}${S.ui.botsPanel ? botsPanel(v) : ''}${eveningHtml(v, { host: true })}`;
   } else if (tab === 'game') {
     body = `${gameCard(v, true)}${recCard(v, true)}${v.mode === 'classic' ? balancePanel(v) : ''}<div class="lobby-steps" data-key="lsteps">${how}${lobbyDeck(v, true, v.mode === 'classic' || v.mode === 'missions' ? setupPresets(v) : '')}</div>`;
