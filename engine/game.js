@@ -45,8 +45,17 @@ export function newMatch({ id, code, hostId, moderated = false }) {
     scenario: null, activeRules: [], config: null,
     publicLog: [], privateLog: {}, chats: {},
     day: null, night: null, pendingStatuses: [], gamblerBets: [],
-    winner: null, endReason: null, manualRoles: {}, hostTransferVotes: [], M: null, X: null, C: null, K: null, N: null, S: null, G: null,
+    winner: null, endReason: null, manualRoles: {}, hostTransferVotes: [], ...emptyModes(),
   };
+}
+
+/** DS-044: every mode's state slot, empty. One list, so a new mode cannot be forgotten by a reset. */
+export const MODE_SLOTS = ['M', 'X', 'C', 'K', 'N', 'S', 'G', 'Q', 'O', 'W'];
+function emptyModes() { return Object.fromEntries(MODE_SLOTS.map((k) => [k, null])); }
+/** Clear every mode's state before any game starts, whatever ran in this match before. */
+function clearModes(m) {
+  for (const k of MODE_SLOTS) m[k] = null;
+  m.ghostHunches = [];
 }
 
 // ── Lobby ──────────────────────────────────────────────────────────────────
@@ -136,6 +145,7 @@ export function startMatch(m, rng, now, { forceRoles = null, forceWord = null } 
   if (!report.ok) throw new GameError(report.errors[0]);
   if (!forceRoles && report.notReady) throw new GameError('Everyone must tap Ready first.');
   const n = m.players.length;
+  clearModes(m);
   if (PRESETS[m.settings.preset]?.missions) { m.C = null; m.K = null; m.N = null; m.S = null; startMissions(m, rng, now, { forceRoles }); return; }
   if (PRESETS[m.settings.preset]?.exorcism) { m.C = null; m.K = null; m.N = null; m.S = null; startExorcism(m, rng, now, { forceRoles, forceWord }); return; }
   if (PRESETS[m.settings.preset]?.coffins) { m.K = null; m.N = null; m.S = null; startCoffins(m, rng, now, { forceRoles }); return; }
@@ -692,8 +702,15 @@ export function rematch(m, { ready = false } = {}) {
   const gScores = m.gScores;
   const gMatch = m.gMatch;
   const qKeep = { qScores: m.qScores, qMatch: m.qMatch, qLast: m.qLast, oScores: m.oScores, wScores: m.wScores, wSeen: m.wSeen };
+  // DS-036: the moderator is a separate, trusted identity. Handing the public host controls to a player must
+  // never make that player the moderator at the next game.
+  const moderatorId = m.moderatorId;
+  const tuning = { recTuned: m.recTuned, recN: m.recN };
   const fresh = newMatch({ id: m.id, code: m.code, hostId: m.hostId, moderated: m.moderated });
-  Object.assign(m, { ...fresh, settings: m.settings, stateVersion: m.stateVersion + 1, phaseSeq: m.phaseSeq + 1 });
+  // DS-044: drop every field the last game added (Object.assign alone would leave them behind).
+  for (const k of Object.keys(m)) if (!(k in fresh)) delete m[k];
+  Object.assign(m, { ...fresh, settings: m.settings, stateVersion: m.stateVersion + 1, phaseSeq: m.phaseSeq + 1, moderatorId });
+  for (const [k, x] of Object.entries(tuning)) if (x !== undefined) m[k] = x;
   m.phaseId = `LOBBY:${m.phaseSeq}`;
   if (scores) m.xScores = scores;
   if (cScores) m.cScores = cScores;
