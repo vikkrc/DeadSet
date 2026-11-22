@@ -5661,3 +5661,13 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
 }
 @media (min-width: 980px) { .stage-sub { display: none; } }
 .tb-menu.is-host { border: 1px solid var(--blood); border-radius: 50%; color: var(--blood-ink); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blood) 35%, transparent); }
+/* ST2 (DS-020): reserve the dock's real height (tray included) under the stage */
+.main { padding-bottom: calc(max(120px, var(--dock-h, 0px) + 24px) + var(--safe-b)); }
+@media (min-width: 980px) { .main { padding-bottom: max(130px, calc(var(--dock-h, 0px) + 24px)); } }
+.main.has-move { padding-bottom: calc(max(190px, var(--dock-h, 0px) + 24px) + var(--safe-b)); }
+/* ST2: on phones the Dream slip is one line (tap it for the full text), so it never hides behind the tray */
+@media (max-width: 979.98px) {
+  .ctx-slip { display: flex; align-items: baseline; gap: 8px; padding: 7px 12px; }
+  .ctx-slip small { display: none; }
+  .ctx-slip b::after { content: ' ›'; color: var(--blood); }
+}

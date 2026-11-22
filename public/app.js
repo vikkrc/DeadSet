@@ -918,6 +918,23 @@ function render() {
   gainPass(app);
   beadPass(app);
   heraldTurn(v);
+  syncDockHeight();
+}
+
+/** ST2 (DS-020): the stage ends above the fixed tray and dock, whatever their height, so nothing slides behind them. */
+let dockRO = null; let dockEl = null;
+const setDockHeight = () => document.documentElement.style.setProperty('--dock-h', `${dockEl?.isConnected ? Math.ceil(dockEl.getBoundingClientRect().height) : 0}px`);
+function syncDockHeight() {
+  const d = document.querySelector('.dock');
+  if (d !== dockEl) {
+    dockEl = d;
+    if (typeof ResizeObserver !== 'undefined') {
+      dockRO ||= new ResizeObserver(setDockHeight);
+      dockRO.disconnect();
+      if (d) dockRO.observe(d);
+    }
+  }
+  setDockHeight();
 }
 
 /**
