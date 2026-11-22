@@ -9,7 +9,7 @@ export const GUIDE_EN = {
   aboutH: 'What Dead Set is',
   about: `<p>Dead Set is a collection of social games (hidden roles, bluffing, word games, prediction) that share one table. Every game is played the same way: each player's <b>phone is a private screen</b> that shows only what that player may know, and the app is the narrator, so nobody has to sit out to run the game.</p>
 <ul>
-<li><b>No install.</b> It runs in the browser. Join with a six-letter code, a link or a QR code.</li>
+<li><b>No install.</b> It runs in the browser. Join with a six-character code, a link or a QR code.</li>
 <li><b>3 to 25 players</b>, depending on the game. Each game's chapter gives its table size and length.</li>
 <li><b>A TV is optional but best.</b> The TV board shows the table, the scenes, the scores and the music. It never shows a secret.</li>
 <li><b>Seven languages.</b> Everyone picks their own; word games use the table's language on every phone so the words match.</li>
@@ -17,7 +17,7 @@ export const GUIDE_EN = {
 </ul>`,
   tableH: 'Starting a table',
   table: `<ol>
-<li><b>Host a table.</b> The host taps <em>Host a table</em>, enters a name and gets a six-letter room code.</li>
+<li><b>Host a table.</b> The host taps <em>Host a table</em>, enters a name and gets a six-character room code.</li>
 <li><b>Invite.</b> Share the code, the link or the QR code. Everyone else taps <em>Join a table</em> (or opens the link), enters a name and picks a portrait.</li>
 <li><b>Put the TV on.</b> Tap <em>TV board</em> in the lobby, or open the room on the TV's own browser and choose <em>Open TV table</em>. Several screens can show the board at once.</li>
 <li><b>Seats.</b> Players sit round the table in the order they join. The host can tap a seat to move or remove a player.</li>

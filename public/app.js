@@ -948,6 +948,17 @@ function render() {
   heraldTurn(v);
   syncDockHeight();
   syncModal();
+  syncTitle();
+}
+
+/** DS-028: each page has its own title (a guide chapter, a room and its game, the TV board). */
+function syncTitle() {
+  const r = S.route ?? {};
+  const v = V();
+  const title = r.name === 'guide' ? `${r.chapter && MODES[r.chapter] ? modeTitle(r.chapter) : t('Rule book')} · Dead Set`
+    : (r.name === 'room' || r.name === 'board') && v ? `${modeTitle(v.mode)} · ${v.code} · Dead Set`
+      : 'Dead Set';
+  if (document.title !== title) document.title = title;
 }
 
 /**
