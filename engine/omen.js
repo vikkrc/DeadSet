@@ -37,7 +37,7 @@ export function applyOmenPatch(s, patch) {
 export function validateOmen(n) {
   const errors = [];
   if (n < O_MIN) errors.push(['At least {min} players are needed (currently {n}).', { min: O_MIN, n }]);
-  if (n > O_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'The Omen', n: O_MAX }]);
+  if (n > O_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'omen', n: O_MAX }]);
   return { ok: errors.length === 0, errors, warnings: [], publicDeck: { exact: {} }, suggestions: [] };
 }
 

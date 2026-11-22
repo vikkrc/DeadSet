@@ -50,7 +50,7 @@ export function applyMimicPatch(s, patch) {
 export function validateMimic(n) {
   const errors = [];
   if (n < Q_MIN) errors.push(['At least {min} players are needed (currently {n}).', { min: Q_MIN, n }]);
-  if (n > Q_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'Mimic', n: Q_MAX }]);
+  if (n > Q_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'mimic', n: Q_MAX }]);
   return { ok: errors.length === 0, errors, warnings: [], publicDeck: { exact: {} }, suggestions: [] };
 }
 

@@ -124,7 +124,7 @@ export function validateGrave(n, settings, players = []) {
   const errors = [];
   const warnings = [];
   if (n < G_MIN) errors.push(['At least {min} players are needed (currently {n}).', { min: G_MIN, n }]);
-  if (n > G_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'Graverobbers', n: G_MAX }]);
+  if (n > G_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'graverobbers', n: G_MAX }]);
   if (k.teams === 3 && n < 6 && n >= G_MIN) errors.push(['Three crews need at least {min} players (currently {n}).', { min: 6, n }]);
   if (k.crews === 'chosen' && players.length >= G_MIN) {
     const c = crewsFor(players, settings);

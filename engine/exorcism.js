@@ -70,7 +70,7 @@ export function validateExorcism(n, settings) {
   const errors = [];
   const warnings = [];
   if (n < X_MIN) errors.push(['At least {min} players are needed (currently {n}).', { min: X_MIN, n }]);
-  if (n > X_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'Exorcism', n: X_MAX }]);
+  if (n > X_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'exorcism', n: X_MAX }]);
   if (!x.categories.length) errors.push('Switch on at least one category.');
   if (x.demons === 2 && n < 7) errors.push('Two Demons need at least 7 players.');
   if (x.demons === 1 && n >= 10) warnings.push('At 10 or more players, two Demons keep the hunt tense.');

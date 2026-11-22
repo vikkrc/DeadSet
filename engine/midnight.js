@@ -90,7 +90,7 @@ export function validateMidnight(n, settings) {
   const errors = [];
   const warnings = [];
   if (n < N_MIN) errors.push(['At least {min} players are needed (currently {n}).', { min: N_MIN, n }]);
-  if (n > N_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'Midnight', n: N_MAX }]);
+  if (n > N_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'midnight', n: N_MAX }]);
   const deck = deckFor(Math.max(N_MIN, Math.min(N_MAX, n)), settings);
   if (k.deck === 'custom') {
     if (!deck.includes('DEATH')) errors.push('Death must be one of the cards.');

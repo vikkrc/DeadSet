@@ -101,7 +101,7 @@ export function validateCarnival(n, settings) {
   const errors = [];
   const warnings = [];
   if (n < K_MIN) errors.push(['At least {min} players are needed (currently {n}).', { min: K_MIN, n }]);
-  if (n > K_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'Carnival', n: K_MAX }]);
+  if (n > K_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'carnival', n: K_MAX }]);
   const need = Math.max(6, n);
   if (k.masks === 'custom') {
     if (!k.pool.includes('DEATH')) errors.push('Death must be one of the masks.');

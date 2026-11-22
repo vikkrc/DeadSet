@@ -74,7 +74,7 @@ export function validateSeance(n, settings, players = []) {
   const errors = [];
   const warnings = [];
   if (n < S_MIN) errors.push(['At least {min} players are needed (currently {n}).', { min: S_MIN, n }]);
-  if (n > S_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'Seance', n: S_MAX }]);
+  if (n > S_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'seance', n: S_MAX }]);
   if (k.ghost === 'host' && players.length && !players.some((p) => p.id === k.ghostId)) errors.push('Choose who plays the Ghost.');
   if (k.deceivers === 'two' && n < 9) warnings.push('Two Deceivers need nine players; this table gets one.');
   return { ok: errors.length === 0, errors, warnings, publicDeck: { exact: {} }, suggestions: [] };

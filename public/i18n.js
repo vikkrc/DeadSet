@@ -128,7 +128,8 @@ function val(k, v) {
   if (k.startsWith('names')) return list(v);
   if (k === 'who' || k === 'where' || k === 'why') return scen(k.toUpperCase(), v);
   if (k === 'product') return product(v);
-  if (k === 'preset') return presetF(String(v).toLowerCase().split(' ')[0], 'name');
+  // DS-011: engines send the preset's id; an old full English name is resolved whole, never by its first word.
+  if (k === 'preset') { const id = EN.presets?.[v] ? v : Object.keys(EN.presets ?? {}).find((x) => EN.presets[x].name === v); return id ? presetF(id, 'name').replace(/^Dead Set\s*:\s*/i, '') : String(v); }
   return String(v);
 }
 

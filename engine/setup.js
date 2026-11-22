@@ -322,8 +322,8 @@ export function validateSetup(n, settings, players = []) {
   const warnings = [];
   const preset = PRESETS[settings.preset];
   if (n < MIN_PLAYERS) errors.push(['At least {min} players are needed (currently {n}).', { min: MIN_PLAYERS, n }]);
-  if (n > preset.max) errors.push(['{preset} supports at most {n} players.', { preset: preset.name, n: preset.max }]);
-  if (n < preset.min) errors.push(['{preset} needs at least {n} players.', { preset: preset.name, n: preset.min }]);
+  if (n > preset.max) errors.push(['{preset} supports at most {n} players.', { preset: preset.id, n: preset.max }]);
+  if (n < preset.min) errors.push(['{preset} needs at least {n} players.', { preset: preset.id, n: preset.min }]);
   if (n > 13 && n <= ABS_MAX_PLAYERS) warnings.push('More than 13 players: balance is less tested. The suggested setups are a good start.');
 
   // Rules
@@ -496,7 +496,7 @@ function validateMissions(n, settings) {
   const errors = [];
   const warnings = [];
   if (n < MISSION_MIN) errors.push(['At least {min} players are needed (currently {n}).', { min: MISSION_MIN, n }]);
-  if (n > MISSION_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'Missions', n: MISSION_MAX }]);
+  if (n > MISSION_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'missions', n: MISSION_MAX }]);
   if (settings.scenario.mode === 'manual' && !(settings.scenario.who && settings.scenario.where && settings.scenario.why)) {
     errors.push('Fill in WHO, WHERE and WHY, or switch the scenario to random.');
   }

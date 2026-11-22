@@ -66,7 +66,7 @@ export function validateCoffins(n, settings) {
   const errors = [];
   const warnings = [];
   if (n < C_MIN) errors.push(['At least {min} players are needed (currently {n}).', { min: C_MIN, n }]);
-  if (n > C_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'Coffins', n: C_MAX }]);
+  if (n > C_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'coffins', n: C_MAX }]);
   if (c.toWin === 1 && n >= 7) warnings.push('One challenge to win is very quick at a big table.');
   return { ok: errors.length === 0, errors, warnings, publicDeck: null, suggestions: [] };
 }

@@ -41,7 +41,7 @@ export function applyMirrorPatch(s, patch) {
 export function validateMirror(n, settings) {
   const errors = [];
   if (n < W_MIN) errors.push(['At least {min} players are needed (currently {n}).', { min: W_MIN, n }]);
-  if (n > W_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'The Mirror', n: W_MAX }]);
+  if (n > W_MAX) errors.push(['{preset} supports at most {n} players.', { preset: 'mirror', n: W_MAX }]);
   if (poolOf(settings).length < W_ROUNDS) errors.push('Not enough dilemmas in the chosen packs.');
   return { ok: errors.length === 0, errors, warnings: [], publicDeck: { exact: {} }, suggestions: [] };
 }
