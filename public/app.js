@@ -2119,15 +2119,19 @@ function balancePanel(v) {
   const lean = now.pct - was.pct;
   const label = Math.abs(lean) < 4 ? '' : t(lean > 12 ? 'Death much stronger' : lean > 0 ? 'Death stronger' : lean < -12 ? 'The town much stronger' : 'The town stronger');
   return `<section class="balance" data-key="balance"><div class="bal-meter" aria-label="${esc(t('Balance'))}"><span class="bal-town">${t('Town')}</span><i class="bal-bar"><b class="bal-was" style="left:${was.pct}%"></b><b class="bal-now" style="left:${now.pct}%"></b></i><span class="bal-death">${t('Death')}</span></div>
-    <div class="bal-nums"><span><b>${esc(th('~{n} min', { n: now.mins }))}</b><small>${t('Length')}</small></span><span><b>${now.load} / 5</b><small>${t('To learn')}</small></span><span><b>${esc(th('{d} of {n}', { d: now.D, n: now.n }))}</b><small>${t('Death')}</small></span></div>
-    ${label ? `<p class="bal-effect">${esc(label)}</p>` : ''}</section>`;
+    <div class="bal-nums"><span><b>${esc(th('~{n} min', { n: now.mins }))}</b><small>${t('Length, this setup')}</small></span><span><b>${now.load} / 5</b><small>${t('To learn')}</small></span><span><b>${esc(th('{d} of {n}', { d: now.D, n: now.n }))}</b><small>${t('Death')}</small></span></div>
+    ${label ? `<p class="bal-effect">${esc(label)}</p>` : ''}
+    <p class="small muted bal-note">${v.players.length < (MODES.classic?.min ?? 5) ? th('A preview for the smallest table ({n}). ', { n: MODES.classic?.min ?? 5 }) : ''}${t('A rough guide to this setup, not a chance of winning. Problems with the setup come first.')}</p></section>`;
 }
 
 /** S2: the recommended setup for this game and table size, as a summary; the host can return to it after changes. */
 function recCard(v, isHost) {
   const r = v.rec;
   if (!r || !r.facts?.length) return '';
-  return `<section class="rec-card ${r.tuned ? 'tuned' : ''}" data-key="rec"><span class="kicker">${esc(r.tuned ? t('Changed by the host') : th('Recommended for {n}', { n: r.n }))}</span>
+  // DS-023: below the game's minimum the card is a preview for the smallest table, and says so.
+  const min = MODES[v.mode]?.min ?? 0;
+  const short = v.players.length < min;
+  return `<section class="rec-card ${r.tuned ? 'tuned' : ''}" data-key="rec"><span class="kicker">${esc(short ? tp('Setup preview: needs one more player', 'Setup preview: needs {n} more players', min - v.players.length) : r.tuned ? t('Changed by the host') : th('Recommended for {n}', { n: r.n }))}</span>${short ? `<p class="small muted">${esc(th('Shown for the smallest table, {n} players.', { n: min }))}</p>` : ''}
     <div class="rec-facts">${r.facts.map((f) => `<span class="rec-fact">${tmh(f)}</span>`).join('')}</div>
     ${isHost ? `<div class="row">${r.tuned ? `<button class="btn btn-sm" data-act="recUse">${esc(th('Use the recommended setup for {n}', { n: r.n }))}</button>` : ''}<button class="btn btn-sm btn-ghost" data-act="ltab" data-id="rules">${t('Customise')}</button></div>` : ''}</section>`;
 }
