@@ -1516,7 +1516,7 @@ function hostBox() {
     <div class="row">${h.extend ? `<button class="btn btn-sm" data-act="extend">${t('+30 s')}</button>` : ''}
     ${h.end ? `<button class="btn btn-sm btn-ghost" data-act="end">${t('End match')}</button>` : ''}
     ${h.rematch ? `<button class="btn btn-sm btn-solid" data-act="rematch">${t('New match, same table')}</button>` : ''}</div>
-    ${h.advance ? `<p class="small muted">${t('Hold to advance. Anything not submitted becomes a pass or abstention.')}</p>` : ''}
+    ${h.advance ? `<p class="small muted">${t('Hold to move on now. It does what running out of time would do.')} ${h.note ? t(h.note) : ''}</p>` : ''}
     ${h.redraw ? `<div class="x-redraw" data-key="xredraw">${holdBtn('xRedraw', t('Hold to draw another word'), 'btn-sm', { key: 'xredraw' })}<p class="small muted">${t('Too many people do not know this word? The round is dealt again with a new word and new roles. Nothing is scored.')}</p></div>` : ''}
     ${rec}
   </div>`;

@@ -155,9 +155,26 @@ export function publicView(m, now = Date.now()) {
   return v;
 }
 
+/**
+ * DS-004: what advancing (or the timer running out, which is the same handler) does to anyone who has not acted, in
+ * each phase where that is more than a pass. Public wording only: it never says which card a random choice took.
+ */
+const ADVANCE_NOTE = {
+  NIGHT_0_REVEAL: 'Day 1 begins for everyone, whether they have read their card or not.',
+  NIGHT_ACTIONS: 'Anyone who has not chosen does nothing tonight.',
+  DAY_VOTING: 'Anyone who has not voted abstains.',
+  C_BURY: 'Anyone still choosing buries a random coffin from their hand.',
+  C_TURN: 'The player on turn buries a random coffin from their hand; with none left, they challenge for one.',
+  C_BID: 'The player on turn passes.',
+  C_DIG: 'The digger opens the next coffin: their own first, then one picked at random.',
+  C_LOSE: 'The game picks which coffin is lost.',
+  K_TURN: 'The dancer on turn peeks at their own mask (in a forced first dance, they swap with someone at random).',
+  M_VOTE: 'Anyone who has not voted counts as Approve.',
+  M_MISSION: 'A team member who has not played a card plays Success.',
+};
 export function hostControls(m) {
   const c = { advance: null, extend: !!m.deadline, end: m.phase !== 'LOBBY' && m.phase !== 'ENDED', rematch: m.phase === 'ENDED' };
-  if (ADVANCE_LABEL[m.phase]) c.advance = ADVANCE_LABEL[m.phase];
+  if (ADVANCE_LABEL[m.phase]) { c.advance = ADVANCE_LABEL[m.phase]; c.note = ADVANCE_NOTE[m.phase] ?? null; }
   if (m.X && X_REDRAW_PHASES.includes(m.phase)) c.redraw = true;
   if (m.phase === 'DAY_DEFENSE') {
     const list = nominees(m);
