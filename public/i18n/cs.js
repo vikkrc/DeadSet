@@ -1536,7 +1536,7 @@ export default {
     "You have no vote today": "Dnes nehlasuješ",
     "Your vote is in": "Tvůj hlas je odevzdán",
     "You can change it until it locks": "Můžeš ho změnit, dokud se nezamkne",
-    "Vote for one accused, or abstain": "Hlasuj pro jednoho obviněného, nebo se zdrž",
+    "Vote for one accused, or abstain": "Hlasuj o obviněném, nebo se zdrž",
     "Secret until it locks": "Tajné, dokud se nezamkne",
     "Choose who you take with you": "Vyber, koho vezmeš s sebou",
     "Or go quietly": "Nebo odejdi tiše",

@@ -1525,7 +1525,7 @@ export default {
     "Watch in silence": "Mira en silencio",
     "The dead may not speak": "Los muertos no pueden hablar",
     "You have accused today": "Ya has acusado hoy",
-    "Talk, or tap a seat to accuse": "Habla, o toca un asiento para acusar",
+    "Talk, or tap a seat to accuse": "Habla, o toca un asiento y acusa",
     "One accusation each today": "Una acusación cada uno hoy",
     "Your turn to speak": "Te toca hablar",
     "Make your case to the table": "Defiéndete ante la mesa",
