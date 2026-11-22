@@ -22,6 +22,8 @@ import { redrawExorcism } from '../engine/exorcism.js';
 
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no 0/O/1/I
 const HOST_GRACE_MS = 60_000;
+/** DS-005: what still works while the table is paused. Nothing here can move the game on. */
+const PAUSE_OK = new Set(['host.pause', 'host.end', 'host.rename', 'host.kick', 'host.recovery', 'host.claim', 'chat.send', 'end.vote']);
 const ROOM_TTL_MS = 12 * 60 * 60 * 1000;
 // Phases that only exist to show a scene: they end shortly after it does.
 const SHOWCASE = new Set(['M_LOTTERY', 'M_RESULT', 'X_LOTTERY']);
@@ -138,15 +140,18 @@ export class RoomManager {
     const pid = this.auth(room, token);
     const m = room.match;
     room.touched = this.clock();
-    // Idempotency: one recorded command per key.
-    room.keys ||= new Map();
-    if (cmd.key) {
-      if (room.keys.has(cmd.key)) return { ok: true, duplicate: true };
-      room.keys.set(cmd.key, this.clock());
-      if (room.keys.size > 500) room.keys.delete(room.keys.keys().next().value);
-    }
     const type = String(cmd.type || '');
     const payload = cmd.payload && typeof cmd.payload === 'object' ? cmd.payload : {};
+    // DS-006, DS-039: idempotency. A key is recorded only once its command has succeeded, scoped to the actor,
+    // and kept across restarts; a failed request leaves no receipt, so its retry fails (or succeeds) honestly.
+    room.keys ||= new Map();
+    const receipt = cmd.key ? `${pid}:${String(cmd.key).slice(0, 80)}` : null;
+    if (receipt && room.keys.has(receipt)) {
+      if (room.keys.get(receipt).type !== type) throw new GameError('That request was already used for something else.', 'DUPLICATE');
+      return { ok: true, duplicate: true };
+    }
+    // DS-005: a paused table takes no moves. Only the host's housekeeping (and resuming) goes through.
+    if (room.paused && !PAUSE_OK.has(type)) throw new GameError('The table is paused.', 'PAUSED');
     if (!type.startsWith('host.') && !OPEN_DURING_SCENES(type) && this.holding(room)) throw new GameError('Wait for the scene to finish.', 'HOLD');
     if (type.startsWith('host.')) this.hostCommand(room, pid, type, payload, cmd.phaseId);
     else if (type === 'end.vote') {
@@ -154,6 +159,10 @@ export class RoomManager {
       if (!['again', 'another'].includes(payload.choice)) throw new GameError('Choose Again or Try another.');
       (room.endVotes ||= {})[pid] = payload.choice;
     } else playerCommand(m, pid, { type, payload, phaseId: cmd.phaseId }, this.rng, this.clock());
+    if (receipt) {
+      room.keys.set(receipt, { type, at: this.clock() });
+      while (room.keys.size > 500) room.keys.delete(room.keys.keys().next().value);
+    }
     this.changed(room);
     return { ok: true };
   }
@@ -178,7 +187,13 @@ export class RoomManager {
         break;
       }
       // S4: "Start anyway" seats everyone as ready (their phones get the role reveal like everyone else).
-      case 'host.start': if (payload.anyway) m.players.forEach((p) => { p.ready = true; }); startMatch(m, this.rng, now); break;
+      case 'host.start': {
+        // DS-045: Start anyway readies everyone only if the start then succeeds.
+        const was = m.players.map((p) => p.ready);
+        if (payload.anyway) m.players.forEach((p) => { p.ready = true; });
+        try { startMatch(m, this.rng, now); } catch (e) { m.players.forEach((p, i) => { p.ready = was[i]; }); throw e; }
+        break;
+      }
       case 'host.advance': hostAdvance(m, this.rng, now, { skipAll: !!payload.skipAll }); break;
       case 'host.extend': extendDeadline(m, Math.max(10, Math.min(300, Number(payload.seconds) || 30)), now); break;
       case 'host.end': abortMatch(m, now); break;
@@ -187,12 +202,14 @@ export class RoomManager {
       case 'host.pause': {
         if (room.paused) {
           if (room.paused.left != null) m.deadline = now + room.paused.left;
+          if (room.paused.hold != null) m.holdUntil = now + room.paused.hold; // a scene picks up where it stopped
           room.paused = null;
           pub(m, 'The table resumes.', 'host', { ev: 'resume' });
         } else {
           if (m.phase === 'LOBBY' || m.phase === 'ENDED') throw new GameError('There is nothing to pause.');
-          room.paused = { phaseId: m.phaseId, by: byId(m, pid)?.name ?? '', left: m.deadline ? Math.max(1000, m.deadline - now) : null };
+          room.paused = { phaseId: m.phaseId, by: byId(m, pid)?.name ?? '', left: m.deadline ? Math.max(1000, m.deadline - now) : null, hold: m.holdUntil > now ? m.holdUntil - now : null };
           m.deadline = null;
+          if (room.paused.hold != null) m.holdUntil = Number.MAX_SAFE_INTEGER; // scenes stop too
           pub(m, ['Paused by {a}.', { a: room.paused.by }], 'host', { ev: 'pause' });
         }
         break;
@@ -322,14 +339,25 @@ export class RoomManager {
     room.clients.add(client);
     res.on?.('error', () => this.dropClient(room, client)); // a broken socket never takes the process down
     if (board) res.write(`event: board\ndata: ${JSON.stringify({ key: client.key })}\n\n`);
-    if (pid && pid === room.match.hostId) room.hostSeen = this.clock();
+    if (pid && pid === room.match.hostId) {
+      room.hostSeen = this.clock();
+      // DS-041: the host is back, so any attempt to take over is void; DS-040: no takeover deadline either.
+      room.transferVotes.clear();
+      clearTimeout(room.hostTimer);
+    }
     this.syncPresence(room);
     this.send(room, client, true);
     client.ping = setInterval(() => { if (writable(res)) { try { res.write(': ping\n\n'); } catch { this.dropClient(room, client); } } else this.dropClient(room, client); }, 25_000);
     client.ping.unref?.();
     res.on('close', () => {
       this.dropClient(room, client);
-      if (pid && pid === room.match.hostId) room.hostSeen = this.clock();
+      if (pid && pid === room.match.hostId && !this.isConnected(room, pid)) {
+        room.hostSeen = this.clock();
+        // DS-040: when the grace runs out, tell everyone (an idle table would otherwise never learn it can rescue itself).
+        clearTimeout(room.hostTimer);
+        room.hostTimer = setTimeout(() => { if (this.rooms.get(room.code) === room) this.broadcast(room); }, HOST_GRACE_MS + 250);
+        room.hostTimer.unref?.();
+      }
       this.syncPresence(room);
       this.broadcast(room);
     });
@@ -476,7 +504,10 @@ export class RoomManager {
   changed(room) {
     this.syncRecommended(room);
     this.recordEvening(room);
-    if (room.paused && room.paused.phaseId !== room.match.phaseId) room.paused = null; // the host moved the table on
+    if (room.paused && room.paused.phaseId !== room.match.phaseId) { // the host ended the game while paused
+      room.paused = null;
+      if (room.match.holdUntil === Number.MAX_SAFE_INTEGER) room.match.holdUntil = 0;
+    }
     if (room.match.phase !== 'ENDED' && room.match.phase !== 'LOBBY') { room.endVotes = {}; room.awards = null; }
     this.stampScenes(room);
     this.syncPresence(room);
@@ -531,6 +562,9 @@ export class RoomManager {
     const data = [...this.rooms.values()].map((r) => ({
       code: r.code, match: r.match, sessions: [...r.sessions], recovery: [...r.recovery],
       touched: r.touched, moderatorName: r.moderatorName ?? null,
+      // DS-037, DS-038, DS-039: what a restart must not forget.
+      paused: r.paused ?? null, evening: r.evening ?? null, eveningFor: r.eveningFor ?? null, awards: r.awards ?? null,
+      endVotes: r.endVotes ?? null, keys: r.keys ? [...r.keys] : [],
     }));
     mkdirSync(dirname(this.dataFile), { recursive: true });
     const tmp = `${this.dataFile}.tmp`;
@@ -543,7 +577,8 @@ export class RoomManager {
     try {
       const data = JSON.parse(readFileSync(this.dataFile, 'utf8'));
       for (const r of data) {
-        const room = { code: r.code, match: r.match, sessions: new Map(r.sessions), recovery: new Map(r.recovery), clients: new Set(), timer: null, touched: r.touched, hostSeen: this.clock(), transferVotes: new Set(), moderatorName: r.moderatorName };
+        const room = { code: r.code, match: r.match, sessions: new Map(r.sessions), recovery: new Map(r.recovery), clients: new Set(), timer: null, touched: r.touched, hostSeen: this.clock(), transferVotes: new Set(), moderatorName: r.moderatorName,
+          paused: r.paused ?? null, evening: r.evening ?? undefined, eveningFor: r.eveningFor ?? undefined, awards: r.awards ?? null, endVotes: r.endVotes ?? undefined, keys: new Map(r.keys ?? []) };
         for (const p of room.match.players) p.connected = false;
         room.stampedTo = room.match.publicLog.length - 1;
         room.lastPhaseId = room.match.phaseId;

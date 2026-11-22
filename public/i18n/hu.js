@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "That request was already used for something else.": "Ezt a kérést már valami másra használták.",
+    "The table is paused.": "Az asztal szünetel.",
     "This seat was opened on another device.": "Ezt a helyet egy másik eszközön nyitották meg.",
     "No table has this code. Check the letters on the TV; if the table has closed, its candles are out.": "Egyik asztalnak sincs ilyen kódja. Nézd meg a betűket a tévén; ha az asztal bezárt, a gyertyái kialudtak.",
     "Enter another code": "Másik kód megadása",

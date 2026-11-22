@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Tři mise selhaly",
     "Use the Candle": "Použij Svíčku",
     "Game mode": "Herní režim",
+    "That request was already used for something else.": "Tento požadavek už byl použit pro něco jiného.",
+    "The table is paused.": "Stůl je pozastaven.",
     "This seat was opened on another device.": "Toto místo bylo otevřeno na jiném zařízení.",
     "No table has this code. Check the letters on the TV; if the table has closed, its candles are out.": "Žádný stůl nemá tento kód. Zkontroluj písmena na televizi; pokud se stůl zavřel, jeho svíčky dohořely.",
     "Enter another code": "Zadat jiný kód",

@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Drei Missionen gescheitert",
     "Use the Candle": "Benutze die Kerze",
     "Game mode": "Spielmodus",
+    "That request was already used for something else.": "Diese Anfrage wurde schon für etwas anderes verwendet.",
+    "The table is paused.": "Der Tisch ist angehalten.",
     "This seat was opened on another device.": "Dieser Platz wurde auf einem anderen Gerät geöffnet.",
     "No table has this code. Check the letters on the TV; if the table has closed, its candles are out.": "Kein Tisch hat diesen Code. Prüfe die Buchstaben auf dem Fernseher; ist der Tisch geschlossen, sind seine Kerzen aus.",
     "Enter another code": "Einen anderen Code eingeben",

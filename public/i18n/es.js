@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Tres misiones fracasaron",
     "Use the Candle": "Usa la Vela",
     "Game mode": "Modo de juego",
+    "That request was already used for something else.": "Esa solicitud ya se usó para otra cosa.",
+    "The table is paused.": "La mesa está en pausa.",
     "This seat was opened on another device.": "Este asiento se abrió en otro dispositivo.",
     "No table has this code. Check the letters on the TV; if the table has closed, its candles are out.": "Ninguna mesa tiene este código. Revisa las letras en la tele; si la mesa ha cerrado, sus velas se apagaron.",
     "Enter another code": "Escribir otro código",
