@@ -1482,16 +1482,27 @@ function roomScreen() {
   const top = `<header class="topbar" data-key="top">
       <span class="tb-emblem">${isNight(v.phase) ? glyph('moon') : glyph('sun')}</span>
       ${move.line ? `<div class="phase-mini with-move ${move.line.act ? 'act' : 'wait'}" role="status" aria-live="polite">
-        <span class="pm-kick">${v.paused ? `<span class="pm-paused">${esc(th('Paused by {a}', { a: v.paused.by }))}</span> · ` : ''}<b>${esc(pw.word)}${pw.num ? ` ${esc(pw.num)}` : ''}</b>${S.heraldLast && !herald.cur && Date.now() < S.heraldLast.until ? ` · <span class="herald-echo">${esc(S.heraldLast.text)}</span>` : stepOf(v) && stepOf(v) !== S.moveNow?.main ? ` · ${esc(stepOf(v))}` : ''}</span>
-        <span class="pm-move"><i class="move-dot" aria-hidden="true"></i><span>${move.line.main}</span></span>
-        ${move.line.act && move.line.sub ? `<small class="pm-sub">${move.line.sub}</small>` : ''}</div>
+        <span class="pm-kick">${v.paused ? `<span class="pm-paused">${esc(th('Paused by {a}', { a: v.paused.by }))}</span> · ` : ''}<b>${esc(pw.word)}${pw.num ? ` ${esc(pw.num)}` : ''}</b>${kickExtra(v, pw)}</span>
+        <span class="pm-move ${plainLen(move.line.main) > 30 ? 'long' : ''}"><i class="move-dot" aria-hidden="true"></i><span title="${esc(plainText(move.line.main))}">${move.line.main}</span></span></div>
       <span class="clock tb-clock" data-clock></span>` : `<div class="phase-mini"><strong class="${pw.night ? 'night' : ''}">${esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</strong>${S.heraldLast && !herald.cur && Date.now() < S.heraldLast.until ? `<span class="herald-echo">${esc(S.heraldLast.text)}</span>` : `<span>${esc(stepOf(v))}${v.phase === 'LOBBY' ? ` · ${t('{n} seated', { n: v.players.length })}` : !modeInfo(v.mode).aliveCount ? '' : ` · ${t('{n}/{total} alive', { n: aliveCount, total: v.players.length })}`}</span>`}</div>`}
-      ${v.host && inPlay(v) ? `<button class="host-pill" data-act="sheet" data-id="record" data-key="hostpill">${t('Host')}</button>` : ''}
-      <button class="btn btn-ghost icon-btn" data-act="sheet" data-id="record" aria-label="${esc(t('Open match record'))}">${glyph('menu')}</button>
+      <button class="btn btn-ghost icon-btn tb-menu ${v.host ? 'is-host' : ''}" data-act="sheet" data-id="record" aria-label="${esc(v.host ? t('Room menu (you are the host)') : t('Open match record'))}">${glyph('menu')}</button>
       ${fuse()}
     </header>`;
-  return `<div class="shell" data-key="shell">${side}<div class="col">${top}${move.strip}${toastsHtml('notes-slot')}<main class="main ${move.strip ? 'has-move' : ''}" id="main" data-key="main-${v.phase === 'LOBBY' ? 'lobby' : 'game'}">${coachCard(v)}${move.html}</main></div></div>${dock(v)}${sheet(v)}`;
+  return `<div class="shell" data-key="shell">${side}<div class="col">${top}${move.strip}${toastsHtml('notes-slot')}<main class="main ${move.strip ? 'has-move' : ''}" id="main" data-key="main-${v.phase === 'LOBBY' ? 'lobby' : 'game'}">${move.line?.sub ? `<p class="stage-sub mobile-only-block" data-key="stagesub">${move.line.sub}</p>` : ''}${coachCard(v)}${move.html}</main></div></div>${dock(v)}${sheet(v)}`;
 }
+
+/** TB1: what follows the phase in the kicker, said once: a recent notice's echo or the step, minus any repeat of the phase. */
+function kickExtra(v, pw) {
+  const echo = S.heraldLast && !herald.cur && Date.now() < S.heraldLast.until ? S.heraldLast.text : null;
+  let x = echo ?? stepOf(v);
+  if (!x || x === S.moveNow?.main) return '';
+  const head = [pw.word, pw.num].filter(Boolean).join(' ');
+  if (head && x.toLowerCase().startsWith(head.toLowerCase())) x = x.slice(head.length).replace(/^\s*[·:,-]\s*/, '');
+  if (!x) return '';
+  return ` · ${echo ? `<span class="herald-echo">${esc(x)}</span>` : esc(x)}`;
+}
+const plainText = (html) => String(html ?? '').replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+const plainLen = (html) => plainText(html).length;
 
 function hostBox() {
   const v = V();

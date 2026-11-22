@@ -176,6 +176,7 @@ export function hostControls(m) {
   const c = { advance: null, extend: !!m.deadline, end: m.phase !== 'LOBBY' && m.phase !== 'ENDED', rematch: m.phase === 'ENDED' };
   if (ADVANCE_LABEL[m.phase]) { c.advance = ADVANCE_LABEL[m.phase]; c.note = ADVANCE_NOTE[m.phase] ?? null; }
   if (m.X && X_REDRAW_PHASES.includes(m.phase)) c.redraw = true;
+  if (m.phase === 'DAY_DISCUSSION' && quietDay(m)) { c.advance = 'End the discussion'; c.note = 'There are no nominations today; the night follows.'; }
   if (m.phase === 'DAY_DEFENSE') {
     const list = nominees(m);
     if (m.day.defenseIndex >= list.length - 1) c.advance = 'Open the vote';
