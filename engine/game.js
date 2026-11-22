@@ -49,6 +49,9 @@ export function newMatch({ id, code, hostId, moderated = false }) {
   };
 }
 
+/** DS-043: the games where a trusted moderator may deal the cards by hand. The rest deal their own. */
+export const MANUAL_MODES = new Set(['classic', 'missions', 'exorcism']);
+
 /** DS-044: every mode's state slot, empty. One list, so a new mode cannot be forgotten by a reset. */
 export const MODE_SLOTS = ['M', 'X', 'C', 'K', 'N', 'S', 'G', 'Q', 'O', 'W'];
 function emptyModes() { return Object.fromEntries(MODE_SLOTS.map((k) => [k, null])); }
@@ -124,14 +127,19 @@ export function updateSettings(m, patch) {
 export function setupReport(m) {
   const report = validateSetup(m.players.length, m.settings, m.players);
   if (m.players.some((p) => !p.ready)) report.notReady = m.players.filter((p) => !p.ready).length;
-  if (m.moderated && Object.keys(m.manualRoles).length) {
+  if (m.moderated && Object.keys(m.manualRoles).length && !MANUAL_MODES.has(modeOf(m.settings.preset))) {
+    report.errors.push('This game deals its own cards: clear the manual assignment.');
+    report.ok = false;
+  } else if (m.moderated && Object.keys(m.manualRoles).length) {
     const roles = m.players.map((p) => m.manualRoles[p.id]).filter(Boolean);
+    const exorcism = modeOf(m.settings.preset) === 'exorcism';
     if (roles.length !== m.players.length) report.errors.push('Manual assignment: every player needs a role (or clear them all).');
     const missions = !!PRESETS[m.settings.preset]?.missions;
     if (roles.some((r) => !roleInMode(r, modeOf(m.settings.preset)))) report.errors.push(missions ? 'Manual assignment: use Missions roles only.' : 'Manual assignment: Missions roles cannot be used in this mode.');
     if (missions && roles.length === m.players.length && !(roles.includes('MEDIUM') && roles.includes('REAPER'))) report.errors.push('Manual assignment needs a Medium and a Reaper.');
     const d = roles.filter((r) => ROLES[r].alignment === 'DEATH').length;
-    if (roles.length === m.players.length && d < 1) report.errors.push('Manual assignment needs at least one Death.');
+    if (exorcism && roles.length === m.players.length && !roles.includes('X_DEMON')) report.errors.push('Manual assignment needs a Demon.');
+    else if (!exorcism && roles.length === m.players.length && d < 1) report.errors.push('Manual assignment needs at least one Death.');
     if (roles.length === m.players.length && d > roles.length - d) report.errors.push('Manual assignment gives Death a starting majority.');
     report.ok = report.errors.length === 0;
   }
@@ -147,7 +155,9 @@ export function startMatch(m, rng, now, { forceRoles = null, forceWord = null } 
   const n = m.players.length;
   clearModes(m);
   if (PRESETS[m.settings.preset]?.missions) { m.C = null; m.K = null; m.N = null; m.S = null; startMissions(m, rng, now, { forceRoles }); return; }
-  if (PRESETS[m.settings.preset]?.exorcism) { m.C = null; m.K = null; m.N = null; m.S = null; startExorcism(m, rng, now, { forceRoles, forceWord }); return; }
+  // DS-043: a moderator's hand-dealt Demon is the Demon.
+  const manual = !forceRoles && m.moderated && Object.keys(m.manualRoles).length === n ? m.players.map((p) => m.manualRoles[p.id]) : null;
+  if (PRESETS[m.settings.preset]?.exorcism) { m.C = null; m.K = null; m.N = null; m.S = null; startExorcism(m, rng, now, { forceRoles: forceRoles ?? manual, forceWord }); return; }
   if (PRESETS[m.settings.preset]?.coffins) { m.K = null; m.N = null; m.S = null; startCoffins(m, rng, now, { forceRoles }); return; }
   if (PRESETS[m.settings.preset]?.carnival) { m.N = null; m.S = null; startCarnival(m, rng, now); return; }
   if (PRESETS[m.settings.preset]?.midnight) { m.S = null; startMidnight(m, rng, now); return; }

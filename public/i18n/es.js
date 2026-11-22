@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Tres misiones fracasaron",
     "Use the Candle": "Usa la Vela",
     "Game mode": "Modo de juego",
+    "This game deals its own cards: clear the manual assignment.": "Este juego reparte sus propias cartas: borra la asignación manual.",
+    "Manual assignment needs a Demon.": "La asignación manual necesita un Demonio.",
     "That request was already used for something else.": "Esa solicitud ya se usó para otra cosa.",
     "The table is paused.": "La mesa está en pausa.",
     "This seat was opened on another device.": "Este asiento se abrió en otro dispositivo.",

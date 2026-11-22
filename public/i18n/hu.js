@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "This game deals its own cards: clear the manual assignment.": "Ez a játék maga osztja a lapokat: töröld a kézi kiosztást.",
+    "Manual assignment needs a Demon.": "A kézi kiosztáshoz kell egy Démon.",
     "That request was already used for something else.": "Ezt a kérést már valami másra használták.",
     "The table is paused.": "Az asztal szünetel.",
     "This seat was opened on another device.": "Ezt a helyet egy másik eszközön nyitották meg.",

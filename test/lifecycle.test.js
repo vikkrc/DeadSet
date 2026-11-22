@@ -46,3 +46,18 @@ test('DS-044: every ordered change of game leaves only the new game\'s state', (
   assert.deepEqual(bad, []);
   assert.equal(ran, MODE_IDS.length ** 2, 'every pair started');
 });
+
+test('DS-043: a hand-dealt Exorcism Demon is the Demon; games that deal their own cards refuse a manual deal', () => {
+  for (let seed = 1; seed <= 12; seed++) {
+    const m = table(5, { moderated: true });
+    updateSettings(m, { mode: 'exorcism' });
+    m.players.forEach((p, i) => { m.manualRoles[p.id] = i === 3 ? 'X_DEMON' : 'X_LIVING'; });
+    startMatch(m, seededRng(seed), 1000);
+    assert.equal(m.players[3].roleId, 'X_DEMON', `seed ${seed}`);
+    assert.equal(m.players.filter((p) => p.roleId === 'X_DEMON').length, 1);
+  }
+  const o = table(5, { moderated: true });
+  updateSettings(o, { mode: 'omen' });
+  o.manualRoles.p0 = 'X_LIVING';
+  assert.throws(() => startMatch(o, seededRng(1), 1000), /deals its own cards/);
+});

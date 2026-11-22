@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Tři mise selhaly",
     "Use the Candle": "Použij Svíčku",
     "Game mode": "Herní režim",
+    "This game deals its own cards: clear the manual assignment.": "Tato hra si karty rozdává sama: zruš ruční přidělení.",
+    "Manual assignment needs a Demon.": "Ruční přidělení potřebuje Démona.",
     "That request was already used for something else.": "Tento požadavek už byl použit pro něco jiného.",
     "The table is paused.": "Stůl je pozastaven.",
     "This seat was opened on another device.": "Toto místo bylo otevřeno na jiném zařízení.",

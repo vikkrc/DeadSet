@@ -5,7 +5,7 @@ import { mkdirSync, readFileSync, writeFileSync, renameSync, existsSync } from '
 import { dirname } from 'node:path';
 import {
   newMatch, addPlayer, removePlayer, moveSeat, updateSettings, startMatch, playerCommand,
-  hostAdvance, onDeadline, extendDeadline, abortMatch, rematch, normaliseName, GameError,
+  hostAdvance, onDeadline, extendDeadline, abortMatch, rematch, normaliseName, GameError, MANUAL_MODES,
 } from '../engine/game.js';
 import { playerView, publicView, moderatorView } from '../engine/views.js';
 import { mimicBoardHint } from '../engine/mimic.js';
@@ -258,6 +258,7 @@ export class RoomManager {
       }
       case 'host.assign': {
         if (!m.moderated || m.phase !== 'LOBBY') throw new GameError('Manual assignment is only for trusted moderators in the lobby.');
+        if (!payload.clear && !MANUAL_MODES.has(modeOf(m.settings.preset))) throw new GameError('This game deals its own cards: clear the manual assignment.');
         if (payload.clear) m.manualRoles = {};
         else if (byId(m, payload.playerId)) {
           if (payload.roleId && roleInMode(payload.roleId, modeOf(m.settings.preset))) m.manualRoles[payload.playerId] = payload.roleId;

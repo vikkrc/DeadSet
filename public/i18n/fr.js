@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Trois missions ont échoué",
     "Use the Candle": "Utilise la Bougie",
     "Game mode": "Mode de jeu",
+    "This game deals its own cards: clear the manual assignment.": "Ce jeu distribue ses propres cartes : efface l’attribution manuelle.",
+    "Manual assignment needs a Demon.": "L’attribution manuelle a besoin d’un Démon.",
     "That request was already used for something else.": "Cette requête a déjà servi à autre chose.",
     "The table is paused.": "La table est en pause.",
     "This seat was opened on another device.": "Cette place a été ouverte sur un autre appareil.",

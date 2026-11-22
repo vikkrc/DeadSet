@@ -1814,7 +1814,7 @@ function sheet(v) {
     body = `<p class="small muted">${t('Seat {n} of {total}. Seating matters for Fog of War and Sleepwalking.', { n: i + 1, total: v.players.length })}</p>
       <div class="row"><button class="btn btn-sm" data-act="seat" data-pid="${p.id}" data-dir="-1" ${i === 0 ? 'disabled' : ''}>${glyph('up')} ${t('Move earlier')}</button>
       <button class="btn btn-sm" data-act="seat" data-pid="${p.id}" data-dir="1" ${i === v.players.length - 1 ? 'disabled' : ''}>${glyph('down')} ${t('Move later')}</button></div>
-      ${me?.moderator ? `<label class="field"><span>${t('Assign role')}</span><select class="input" data-act-change="assign" data-pid="${p.id}"><option value="">${t('Random')}</option>${v.allRoles.map((r) => `<option value="${r.id}" ${v.manualRoles?.[p.id] === r.id ? 'selected' : ''}>${esc(roleF(r.id, 'name'))}</option>`).join('')}</select></label>` : ''}
+      ${me?.moderator && ['classic', 'missions', 'exorcism'].includes(v.mode) ? `<label class="field"><span>${t('Assign role')}</span><select class="input" data-act-change="assign" data-pid="${p.id}"><option value="">${t('Random')}</option>${v.allRoles.map((r) => `<option value="${r.id}" ${v.manualRoles?.[p.id] === r.id ? 'selected' : ''}>${esc(roleF(r.id, 'name'))}</option>`).join('')}</select></label>` : ''}
       ${p.id !== me?.id ? `<button class="btn btn-sm btn-ghost danger" data-act="kick" data-pid="${p.id}">${glyph('close')} ${t('Remove from table')}</button>` : ''}`;
   }
   return `<div class="sheet-scrim" data-act="sheet" data-key="scrim"></div>
