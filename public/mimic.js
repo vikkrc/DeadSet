@@ -105,7 +105,7 @@ export function mimicMain(v, me, h) {
   const a = v.action || {};
   const q = me?.q ?? {};
   const key = `${v.code}:${(Q.board ?? []).join('.')}`;
-  if (UI.ui.qkey !== key) { UI.ui.qkey = key; UI.ui.qstruck = []; UI.ui.qhide = false; UI.sel.qacc = null; UI.sel.qguess = null; UI.ui.qaccuse = false; }
+  if (UI.ui.qkey !== key) { UI.ui.qkey = key; UI.ui.qstruck = []; UI.ui.qhide = true; /* DS-010: your card starts covered, as in every other game */ UI.sel.qacc = null; UI.sel.qguess = null; UI.ui.qaccuse = false; }
   const struck = new Set(UI.ui.qstruck ?? []);
   const notes = `<p class="small muted center-text" data-key="qnotehint">${t('Tap a place to strike it out. Your notes are private.')}</p>`;
   let stage = '';

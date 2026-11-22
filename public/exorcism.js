@@ -201,13 +201,16 @@ export function myBall(v, { key = 'myball', open = true, big = false, small = fa
     sub = esc(t('The password'));
     extra = '<svg class="xb-runes" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="45"/><circle cx="50" cy="50" r="40"/></svg>';
   }
+  // DS-010: a closed ball holds no secret at all — not the password, not the Demon's whisper — so nothing can be read
+  // out of it by a screen reader, a text search or a flash while it renders. It is drawn again when opened.
+  if (!open) { word = ''; sub = ''; extra = ''; }
   const tag = act ? 'button' : 'div';
   return `<${tag} class="xball-btn" ${act ? `data-act="${act}"` : ''} data-key="${key}-btn" aria-label="${esc(t(open ? 'Hide the ball' : 'Look into the ball'))}">
   <div class="xball personal ${x.demon ? 'is-demon' : 'is-living'} ${big ? 'big' : ''} ${small ? 'small' : ''} ${open ? 'clear open' : 'closed'} ${cls}" data-key="${key}" style="--tint:${tint};--spin:${(1 / speed).toFixed(2)}">${orbit}
     <div class="xb-glow" aria-hidden="true"></div>
     <div class="xb-orb"><canvas class="xball-gl" data-key="${key}-gl" data-clear="${open ? 1 : 0}" data-tint="${tint}" data-speed="${speed}" aria-hidden="true"></canvas><div class="xb-css" aria-hidden="true"><i></i><i></i><i></i></div>
       ${extra}
-      <div class="xb-in"><span class="xb-k">${k}</span><b class="xb-word">${word}</b><span class="xb-sub">${sub}</span><span class="xb-tap">${esc(t('Tap to look inside'))}</span></div></div>
+      <div class="xb-in" ${open ? '' : 'aria-hidden="true"'}><span class="xb-k">${k}</span><b class="xb-word">${word}</b><span class="xb-sub">${sub}</span><span class="xb-tap">${esc(t('Tap to look inside'))}</span></div></div>
     <svg class="xb-letters" viewBox="0 0 100 100" aria-hidden="true"><defs><path id="${key}-lp" d="M50 50m-46.5 0a46.5 46.5 0 1 1 93 0a46.5 46.5 0 1 1-93 0"/></defs><circle class="xbl-dots" cx="50" cy="50" r="43"/><text><textPath href="#${key}-lp" textLength="288">VERBVM · VMBRA · SILENTIVM · NOMEN · SPIRITVS · </textPath></text></svg>
     <div class="xb-stand" aria-hidden="true">${standSvg(key)}</div>
   </div></${tag}>`;
@@ -316,10 +319,8 @@ export function exorcismMain(v, me, h) {
       // The one reveal: the ball clouds for a breath, then clears by itself.
       // Tapping it clouds it again (and back); the confirm fades in after a few seconds.
       const open = S.ui.xopen?.[v.phaseId];
-      if (open === undefined) {
-        (S.ui.xopen ||= {})[v.phaseId] = false;
-        setTimeout(() => { if (S.ui.xopen[v.phaseId] === false && !S.ui.xtouched?.[v.phaseId]) { S.ui.xopen[v.phaseId] = true; h.sound?.play('reveal'); h.render?.(); } }, 1500);
-      }
+      // DS-010: reveal first, by choice. The ball stays clouded until its owner taps it (it no longer clears itself).
+      if (open === undefined) (S.ui.xopen ||= {})[v.phaseId] = false;
       return `${head(v)}
         <p class="muted center-text x-hint" data-key="xrhint">${me.acknowledged ? waitText(v) : t('Shield your screen. Remember what you see.')}</p>
         ${myBall(v, { key: 'revealball', open: !!open, big: true, act: 'xFlip' })}
@@ -456,9 +457,8 @@ export function exorcismMomentHtml(m, h) {
   const v = V();
   switch (m.type) {
     case 'xball': {
-      const ball = onBoard() || !v?.me?.x
-        ? ballHtml({ key: `mball-${m.id}`, kicker: esc(t('The category')), title: esc(catName(m.category)), sub: esc(t('Phones: look only at your own screen.')), big: true })
-        : myBall(v, { key: `mball-${m.id}`, big: true });
+      // The opening scene shows every phone the same public ball (the category); each player reveals their own after.
+      const ball = ballHtml({ key: `mball-${m.id}`, kicker: esc(t('The category')), title: esc(catName(m.category)), sub: esc(t(onBoard() ? 'Phones: look only at your own screen.' : 'Your password waits in your own ball, next.')), big: true });
       return `<span class="kicker">${t('Dead Set: Exorcism')}</span><h1 class="m-title">${letters(t('The crystal ball'))}</h1>${ball}
         <p class="m-sub small">${t(onBoard() ? 'The Living see the password. The Demon sees only the category.' : 'Shield your screen. Remember what you see.')}</p>`;
     }

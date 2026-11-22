@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "Your password waits in your own ball, next.": "A jelszavad a saját gömbödben vár, mindjárt.",
     "{a} had Death in their sights by mission {n}.": "{a} már a(z) {n}. küldetésnél a Halált figyelte.",
     "Steady hand": "Biztos kéz",
     "{a} led a mission home.": "{a} sikerre vitt egy küldetést.",

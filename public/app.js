@@ -2495,15 +2495,15 @@ function roleCardHtml(role, { align = null, flipKey = 'role', flipped = null, mi
   }
   return `<div class="card-stage" data-key="stage-${flipKey}">
     <button class="flipcard ${isFlipped ? 'flipped' : ''}" data-act="flip" data-key="${flipKey}" data-tilt aria-label="${isFlipped ? esc(t('Your role: {x}', { x: roleF(role.id, 'name') })) : esc(t('Turn over your role card'))}">
-      <span class="face back tarot back"><span class="sig">DS</span><span class="hint kicker">${t('Tap to turn over')}</span></span>
-      <span class="face front tarot ${rubric}">
+      <span class="face back tarot back" ${isFlipped ? 'aria-hidden="true"' : ''}><span class="sig" aria-hidden="true">DS</span><span class="hint kicker">${t('Tap to turn over')}</span></span>
+      ${/* DS-010: a face-down card holds nothing; the face is drawn when it turns */ ''}<span class="face front tarot ${isFlipped ? rubric : ''}" ${isFlipped ? '' : 'aria-hidden="true"'}>${isFlipped ? `
         <span class="arc-num">${esc(roleNumber(role, t))}</span>
         ${cardArt(roleEmblemId(role))}
         <span class="nm">${esc(roleF(role.id, 'name'))}</span>
         ${roleF(role.id, 'alias') ? `<span class="arc-alias">${th('also called {x}', { x: roleF(role.id, 'alias') })}</span>` : ''}
         <span class="sum">${esc(roleF(role.id, 'summary'))}</span>
         <span class="arc-fac">${esc(ALIGN[a] ?? '')} · ${esc(roleF(role.id, 'when'))}</span>
-        <span class="shine" aria-hidden="true"></span>
+        <span class="shine" aria-hidden="true"></span>` : ''}
       </span>
     </button></div>`;
 }

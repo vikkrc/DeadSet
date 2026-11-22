@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tri misie zlyhali",
     "Use the Candle": "Použi Sviečku",
     "Game mode": "Herný režim",
+    "Your password waits in your own ball, next.": "Tvoje heslo čaká v tvojej vlastnej guli, hneď potom.",
     "{a} had Death in their sights by mission {n}.": "{a} mal(a) Smrť na muške už v misii {n}.",
     "Steady hand": "Pevná ruka",
     "{a} led a mission home.": "{a} doviedol(a) jednu misiu do cieľa.",

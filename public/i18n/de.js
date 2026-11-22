@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Drei Missionen gescheitert",
     "Use the Candle": "Benutze die Kerze",
     "Game mode": "Spielmodus",
+    "Your password waits in your own ball, next.": "Dein Passwort wartet gleich in deiner eigenen Kugel.",
     "{a} had Death in their sights by mission {n}.": "{a} hatte den Tod schon bei Mission {n} im Visier.",
     "Steady hand": "Ruhige Hand",
     "{a} led a mission home.": "{a} führte eine Mission heim.",
