@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tres misiones fracasaron",
     "Use the Candle": "Usa la Vela",
     "Game mode": "Modo de juego",
+    "Too many players at the table": "Demasiados jugadores en la mesa",
     "Hold to move on now. It does what running out of time would do.": "Mantén para avanzar ya. Pasa lo mismo que si se acabara el tiempo.",
     "Day 1 begins for everyone, whether they have read their card or not.": "El día 1 empieza para todos, hayan leído su carta o no.",
     "Anyone who has not chosen does nothing tonight.": "Quien no haya elegido no hace nada esta noche.",

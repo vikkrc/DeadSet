@@ -1799,10 +1799,13 @@ function sheet(v) {
       <span class="mr-txt"><b>${esc(modeTitle(id))}${v.mode === id ? ` <em class="tag solid">${t('Chosen')}</em>` : ''}</b><small>${esc(dim ? th(n < MODES[id].min ? 'Needs {n} or more players' : 'Up to {n} players', { n: n < MODES[id].min ? MODES[id].min : MODES[id].max }) : modePitch(id))}</small><i>${esc(modeMeta(id))}</i></span></button>`;
     const ids = MODE_IDS.filter(keep);
     const ok = ids.filter(fits);
-    const later = ids.filter((id) => !fits(id));
+    // DS-012: a table that is too small and one that is too big are different problems, with different groups.
+    const fewer = ids.filter((id) => !fits(id) && n < MODES[id].min);
+    const bigger = ids.filter((id) => !fits(id) && n > MODES[id].max);
     body = `<div class="mfilters" data-key="mfilters">${chips.map(([k, l]) => `<button class="mf ${F.has(k) ? 'on' : ''}" data-act="mFilter" data-id="${k}" aria-pressed="${F.has(k)}">${esc(l)}</button>`).join('')}</div>
       ${ok.length ? FAMILIES.map((f) => { const ids = ok.filter((id) => MODES[id].family === f.id); return ids.length ? `<div class="mfam" data-key="mfam-${f.id}"><div class="rule">${t(f.title)}</div><div class="mrows">${ids.map((id) => row(id, false)).join('')}</div></div>` : ''; }).join('') : `<p class="small muted center-text">${t('No game fits every filter.')}</p>`}
-      ${later.length ? `<div class="rule">${t('Needs more players')}</div><div class="mrows" data-key="mrows-later">${later.map((id) => row(id, true)).join('')}</div>` : ''}`;
+      ${fewer.length ? `<div class="rule">${t('Needs more players')}</div><div class="mrows" data-key="mrows-later">${fewer.map((id) => row(id, true)).join('')}</div>` : ''}
+      ${bigger.length ? `<div class="rule">${t('Too many players at the table')}</div><div class="mrows" data-key="mrows-big">${bigger.map((id) => row(id, true)).join('')}</div>` : ''}`;
   } else if (s === 'qr') {
     title = t('Scan to join');
     body = `<div class="qr-big">${qrSvg(`${location.origin}/r/${v.code}`)}</div><p class="code-tiles big">${codeTiles(v.code)}</p>`;

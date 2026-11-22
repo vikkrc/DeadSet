@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "Too many players at the table": "Túl sok játékos ül az asztalnál",
     "Hold to move on now. It does what running out of time would do.": "Tartsd lenyomva a továbblépéshez. Ugyanaz történik, mint amikor lejár az idő.",
     "Day 1 begins for everyone, whether they have read their card or not.": "Az 1. nap mindenkinek elkezdődik, akár elolvasta a lapját, akár nem.",
     "Anyone who has not chosen does nothing tonight.": "Aki nem választott, ma éjjel nem tesz semmit.",

@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tri misie zlyhali",
     "Use the Candle": "Použi Sviečku",
     "Game mode": "Herný režim",
+    "Too many players at the table": "Pri stole je príliš veľa hráčov",
     "Hold to move on now. It does what running out of time would do.": "Podrž a pokračuj hneď. Stane sa to isté, čo pri vypršaní času.",
     "Day 1 begins for everyone, whether they have read their card or not.": "Deň 1 začína pre všetkých, či si kartu prečítali, alebo nie.",
     "Anyone who has not chosen does nothing tonight.": "Kto nevybral, túto noc nič nerobí.",
