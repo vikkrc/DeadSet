@@ -170,6 +170,19 @@ function clearHerald() {
   clearTimeout(herald.timer);
   herald.cur = null; herald.queue = []; S.notes = []; S.heraldLast = null; S.trayDot = false;
 }
+/**
+ * DS-018: a form error sits under its own field (and is announced), the field is marked invalid and gets the focus;
+ * the notice still shows too. Typing in the field clears it.
+ */
+const ferr = (k) => (S.ui.ferr?.[k] ? `aria-invalid="true" aria-describedby="err-${k}"` : '');
+const ferrMsg = (k) => (S.ui.ferr?.[k] ? `<span class="field-err" id="err-${k}" role="alert">${esc(S.ui.ferr[k])}</span>` : '');
+function fieldError(k, text, translated = false) {
+  const msg = translated ? text : t(text);
+  (S.ui.ferr ||= {})[k] = msg;
+  notify(msg, 'err');
+  render();
+  document.querySelector(`[data-draft="${k}"]`)?.focus();
+}
 const toast = (text, kind = '') => notify(t(text), kind === 'err' ? 'err' : kind);
 
 // Language: the player's own choice, else the table's default, else the browser's.
@@ -1210,7 +1223,7 @@ function homeScreen() {
         <p class="h-tag">${t('{n} games of bluff and deduction. One phone each.', { n: HOME.modes })}</p>
         <div class="seg" role="tablist"><button role="tab" data-act="homeTab" data-id="host" aria-pressed="${tab === 'host'}">${t('Host a table')}</button><button role="tab" data-act="homeTab" data-id="join" aria-pressed="${tab === 'join'}">${t('Join a table')}</button></div>
         ${tab === 'host' ? `<div class="stack" data-key="h-host">
-          <label class="field"><span>${t('Your name')}</span><input class="input" maxlength="20" autocomplete="nickname" placeholder="${esc(t('e.g. Morgan'))}" data-draft="createName" value="${esc(d.createName ?? '')}"></label>
+          <label class="field"><span>${t('Your name')}</span><input class="input" maxlength="20" autocomplete="nickname" placeholder="${esc(t('e.g. Morgan'))}" data-draft="createName" ${ferr('createName')} value="${esc(d.createName ?? '')}">${ferrMsg('createName')}</label>
           ${S.ui.moderated ? '' : portraitRow(null)}
           <label class="check"><input type="checkbox" data-act="toggleModerated" ${S.ui.moderated ? 'checked' : ''}><span><b>${t('I\'ll moderate, not play')}</b><small>${t('Sees every secret, holds no seat. Everyone is told.')}</small></span></label>
           ${tutorialToggle()}
@@ -1261,7 +1274,7 @@ function joinScreen() {
   if (S.ui.recover) {
     body = `<span class="k">${th('Table {code} · recover your seat', { code: S.code })}</span><h2>${t('Back to <i>your chair.</i>')}</h2>
       <p>${t('Ask the host for a one-time recovery code. Your old device will be signed out.')}</p>
-      <label class="sign"><input data-draft="recCode" maxlength="8" autocomplete="off" placeholder="${esc(t('Recovery code'))}" value="${esc(d.recCode ?? '')}"><small>${t('Code')}</small></label>
+      <label class="sign"><input data-draft="recCode" ${ferr('recCode')} maxlength="8" autocomplete="off" placeholder="${esc(t('Recovery code'))}" value="${esc(d.recCode ?? '')}"><small>${t('Code')}</small>${ferrMsg('recCode')}</label>
       <button class="btn btn-blood btn-wide" data-act="recover">${t('Recover my seat')}</button>
       <button class="letter-link" data-act="toggleRecover">${t('Join as a new player instead')}</button>`;
   } else if (started) {
@@ -1272,7 +1285,7 @@ function joinScreen() {
     body = `<span class="k">${th('Table {code} · an invitation', { code: S.code })}</span>
       <h2>${th('<i>{a}</i> has saved you a seat.', { a: hostName })}</h2>
       <p>${t('You are invited to a table of strangers, with Death roaming amongst them in secret.')}</p>${meta}
-      <label class="sign"><input data-draft="joinName" maxlength="20" autocomplete="nickname" placeholder="${esc(t('Your name'))}" value="${esc(d.joinName ?? '')}"><small>${t('Sign your name')}</small></label>
+      <label class="sign"><input data-draft="joinName" ${ferr('joinName')} maxlength="20" autocomplete="nickname" placeholder="${esc(t('Your name'))}" value="${esc(d.joinName ?? '')}"><small>${t('Sign your name')}</small>${ferrMsg('joinName')}</label>
  <button class="letter-portrait" data-act="avatarSheet">${avatarSvg(myAvatar(), 'lp-av')}<span>${t('Your portrait')}</span></button>
       <label class="letter-check"><input type="checkbox" data-act="tutorialToggle" ${tipsOn() ? 'checked' : ''}><span>${t('First game? Show me tips as we play')}</span></label>
       <button class="btn btn-blood btn-wide" data-act="join" ${S.pending ? 'disabled' : ''}>${t('Take my seat')}</button>
@@ -3235,14 +3248,14 @@ const ACT = {
   pace: (el) => send('host.settings', { pace: el.dataset.id }),
   async create() {
     const name = (S.drafts.createName ?? '').trim();
-    if (!name) return toast('Enter your name first.', 'err');
+    if (!name) return fieldError('createName', 'Enter your name first.');
     S.pending = true; render();
     try {
       const r = await api('/api/rooms', { name, moderated: S.ui.moderated, lang: getLang(), avatar: S.ui.moderated ? null : myAvatar() });
       saveSession(r.code, r);
       sound.play('reveal');
       go(`/r/${r.code}`);
-    } catch (e) { toast(e.message, 'err'); } finally { S.pending = false; render(); }
+    } catch (e) { fieldError('recCode', e.message, true); } finally { S.pending = false; render(); }
   },
   // O: a practice table — Exorcism, five bots, first-game tips on. Bots are marked as bots on every screen.
   async practice() {
@@ -3268,7 +3281,7 @@ const ACT = {
   },
   async join() {
     const name = (S.drafts.joinName ?? '').trim();
-    if (!name) return toast('Enter your name first.', 'err');
+    if (!name) return fieldError('joinName', 'Enter your name first.');
     S.pending = true; render();
     try {
       const r = await api(`/api/rooms/${S.code}/join`, { name, avatar: myAvatar() });
@@ -3663,6 +3676,7 @@ const textTimers = {};
 document.addEventListener('input', (e) => {
   const el = e.target;
   if (el.dataset.draft) {
+    if (S.ui.ferr?.[el.dataset.draft]) { delete S.ui.ferr[el.dataset.draft]; render(); el.focus?.(); }
     let v = el.value;
     if (el.dataset.draft === 'joinCode') { v = v.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6); el.value = v; }
     S.drafts[el.dataset.draft] = v;
