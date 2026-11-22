@@ -1929,6 +1929,19 @@ function timelineHtml(v) {
     ${now ? `<ul class="tl-nowlist">${now}</ul>` : ''}</div>
     ${stand ? `<div class="stand" data-key="stand"><span class="kicker">${t('Where we stand')}</span><p>${esc(stand)}</p></div>` : ''}`;
 }
+/**
+ * DS-001: Classic's win line, from the rules actually in play (engine/victory.js): Death must strictly outnumber
+ * everyone else; the final-two table rule and the other hostile sides are named only when they are on. Never says
+ * how many Death are left.
+ */
+function classicWinLine(v) {
+  const tb = v.table ?? {};
+  const hostile = tb.cult || tb.ripper;
+  const parts = [t('Death wins once it outnumbers everyone else alive (equal numbers are not enough).')];
+  if (tb.finalTwoDeath) parts.push(t('Table rule: Death also wins if it is one of the final two.'));
+  parts.push(hostile ? t('The town wins when every hostile side is gone: Death, and the Cult or Ripper in play.') : t('The town wins when no Death is left alive.'));
+  return parts.join(' ');
+}
 /** G2: one or two sentences, from public state only, on what is at stake. */
 function whereWeStand(v) {
   if (!v || v.phase === 'LOBBY' || v.phase === 'ENDED') return '';
@@ -1943,7 +1956,7 @@ function whereWeStand(v) {
     const x = v.exorcism;
     return `${th('Round {r} of {n}.', { r: Math.max(1, x.round ?? 1), n: x.rounds ?? 1 })} ${tp('One Demon hides at the table.', '{n} Demons hide at the table.', x.demonCount ?? 1)}`;
   }
-  if (v.mode === 'classic') return `${living} ${t('Death wins once it matches the living; the town wins when Death is gone.')}${v.doomsday ? ` ${th('Doom after Day {n}', { n: roman(v.doomsday) })}.` : ''}`;
+  if (v.mode === 'classic') return `${living} ${classicWinLine(v)}${v.doomsday ? ` ${th('Doom after Day {n}', { n: roman(v.doomsday) })}.` : ''}`;
   return seated.some((p) => !p.alive) ? living : '';
 }
 
