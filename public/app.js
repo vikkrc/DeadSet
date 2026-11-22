@@ -931,6 +931,30 @@ function render() {
   beadPass(app);
   heraldTurn(v);
   syncDockHeight();
+  syncModal();
+}
+
+/**
+ * DS-008: one modal lifecycle for every sheet. On open, focus moves into the dialog (its first control) and the page
+ * behind goes inert; on close, focus returns to whatever opened it (or the menu button if that is gone).
+ */
+let modalOpen = null; let modalReturn = null;
+function syncModal() {
+  const box = document.querySelector('.sheet[role="dialog"]');
+  const key = box?.dataset.key ?? null;
+  document.querySelectorAll('#app > .shell, #app > main, #app > .dock').forEach((el) => { el.inert = !!box; });
+  if (key && key !== modalOpen) {
+    if (!modalOpen) modalReturn = document.activeElement instanceof HTMLElement && !box.contains(document.activeElement) ? document.activeElement : null;
+    modalOpen = key;
+    box.setAttribute('aria-modal', 'true');
+    const first = box.querySelector('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled])');
+    (first ?? box).focus?.({ preventScroll: true });
+  } else if (!key && modalOpen) {
+    modalOpen = null;
+    const back = modalReturn?.isConnected ? modalReturn : document.querySelector('.tb-menu, .side-menu');
+    modalReturn = null;
+    back?.focus?.({ preventScroll: true });
+  }
 }
 
 /** ST2 (DS-020): the stage ends above the fixed tray and dock, whatever their height, so nothing slides behind them. */
@@ -3610,6 +3634,19 @@ document.addEventListener('keydown', (e) => {
   const h = e.target.closest?.('[data-hold]');
   if (h && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); if (!h.disabled) ACT[h.dataset.hold]?.(h); return; }
   if (e.key === 'Escape' && S.ui.sheet) { S.ui.sheet = null; render(); return; }
+  // DS-008: Tab and Shift+Tab stay inside an open dialog.
+  if (e.key === 'Tab') {
+    const box = document.querySelector('.sheet[role="dialog"], .recap[role="dialog"]');
+    if (box) {
+      const f = [...box.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter((el) => el.offsetParent !== null);
+      if (f.length) {
+        const first = f[0]; const last = f.at(-1);
+        if (!box.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+        else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    }
+  }
   if (e.key === 'Escape' && S.moment) { nextMoment(); return; }
   if (e.key !== 'Enter' || !e.target.dataset?.draft) return;
   const k = e.target.dataset.draft;
