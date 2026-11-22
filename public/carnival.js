@@ -419,16 +419,23 @@ export function carnivalMomentHtml(m, h) {
 }
 
 // ── Lobby ──────────────────────────────────────────────────────────────────
-export function explainerHtml() {
+/** DS-002: with a table's view the steps describe its settings; without one (the rule book) they name the defaults. */
+export function explainerHtml(v = null) {
+  const k = v?.settings?.k ?? {};
+  const purse = k.target ?? 13;
+  const harvest = k.harvest ?? 6;
+  const win = !v ? th('Gather {n} Souls (8–20, set by the host), reap an optional Harvest with Death, or be the richest when someone is ruined.', { n: purse })
+    : harvest ? th('Gather {n} Souls, reap a Harvest of {h} with Death, or be the richest when someone is ruined.', { n: purse, h: harvest })
+      : th('Gather {n} Souls, or be the richest when someone is ruined.', { n: purse });
   const steps = [
     ['veiled', 'The unmasking', 'Everyone is dealt a mask: a role card. For a moment every mask is shown; then they turn face down.'],
     ['witch', 'Swap or pretend', 'Trade masks with someone, or only pretend to. Nobody, not even they, learns which.'],
     ['mentalist', 'Peek', 'Look at your own mask for a moment. Everyone sees that you looked.'],
     ['magistrate', 'Claim', 'Say which mask you wear and use its power. Anyone who thinks it is theirs may challenge: wrong guesses pay into the Offering.'],
-    ['death', 'Win', 'Gather 13 Souls, reap a Harvest of 6 with Death, or be the richest when someone is ruined.'],
+    ['death', 'Win', win],
   ];
   return `<section class="x-explain" data-key="kexplain"><div class="rule lstep">${t('How Carnival works')}</div>
-    <ol class="x-steps">${steps.map(([g, a, b], i) => `<li style="--i:${i}"><span class="xs-g">${glyph(g)}</span><span><b>${t(a)}</b><small>${t(b)}</small></span></li>`).join('')}</ol></section>`;
+    <ol class="x-steps">${steps.map(([g, a, b], i) => `<li style="--i:${i}"><span class="xs-g">${glyph(g)}</span><span><b>${t(a)}</b><small>${b === win ? b : t(b)}</small></span></li>`).join('')}</ol></section>`;
 }
 
 export function scoreboard(v) {
@@ -473,7 +480,7 @@ export function carnivalLobbyDeck(v, isHost, h) {
   const pool = new Set(k.pool ?? []);
   const need = Math.max(6, n);
   const harvests = [[0, t('Off')], ...[2, 4, 6, 8, 10, 12].map((x) => [x, String(x)])];
-  return `${explainerHtml()}
+  return `${explainerHtml(v)}
     <section class="lobby-deck" data-key="kdeck">
     <div class="rule lstep">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     ${n >= 4 ? `<p class="small muted" data-key="kcount">${n < 6 ? th(6 - n === 1 ? '{n} masks: one sits on an empty chair.' : '{n} masks: {c} sit on empty chairs.', { n: 6, c: 6 - n }) : th('{n} masks, one per guest.', { n })}</p>` : `<p class="small muted">${t('Seat 4 to 12 players.')}</p>`}

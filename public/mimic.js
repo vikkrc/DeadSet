@@ -293,12 +293,13 @@ export function mimicMomentHtml(m, h) {
 }
 
 // ── Lobby ──────────────────────────────────────────────────────────────────
-export function explainerHtml() {
+export function explainerHtml(v = null) {
+  const last = v ? v.settings?.q?.lastGuess !== false : null;
   const steps = [
     ['mimic', 'The cards', 'Everyone shares one place and holds a character there. One of you is the Mimic and sees only static.'],
     ['lantern', 'Questions', 'Whoever holds the lantern asks anyone a question aloud, then passes the lantern to them.'],
     ['dagger', 'Accuse', 'Once per game each. The clock stops; only a unanimous table convicts.'],
-    ['mentalist', 'The Mimic', 'Unmask at any moment and name the place. Caught? One last guess.'],
+    ['mentalist', 'The Mimic', last === false ? 'Unmask at any moment and name the place. Caught means caught: no last guess at this table.' : last === null ? 'Unmask at any moment and name the place. Caught? One last guess, if the host leaves it on.' : 'Unmask at any moment and name the place. Caught? One last guess.'],
   ];
   return `<section class="x-explain" data-key="qexplain"><div class="rule lstep">${t('How Mimic works')}</div>
     <ol class="x-steps">${steps.map(([g, a, b], i) => `<li style="--i:${i}"><span class="xs-g">${glyph(g)}</span><span><b>${t(a)}</b><small>${t(b)}</small></span></li>`).join('')}</ol></section>`;
@@ -321,7 +322,7 @@ export function mimicLobbyDeck(v, isHost, h) {
   const sw = (key, on) => `<input type="checkbox" class="switch" data-act-change="qSet" data-id="${key}" ${on ? 'checked' : ''}>`;
   const BOARDS = [[16, '16'], [12, '12'], [20, '20'], [30, t('All 30')]];
   const board = s.board ?? 16;
-  return `${explainerHtml()}
+  return `${explainerHtml(v)}
     <section class="lobby-deck" data-key="qdeck">
     <div class="rule lstep">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     <p class="small muted">${n >= 4 ? t('One Mimic; everyone else is Living.') : t('Seat 4 to 12 players.')}</p>

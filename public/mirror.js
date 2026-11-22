@@ -186,10 +186,13 @@ export function mirrorMomentHtml(m, h) {
 
 // ── Lobby ──────────────────────────────────────────────────────────────────
 /** How it works: the lobby's step 2 and the guide's chapter header. */
-export function explainerHtml() {
+export function explainerHtml(v = null) {
+  // DS-002: eight rounds cannot pair everyone with everyone above nine players; the targets rotate.
+  const n = v?.players?.length ?? 0;
+  const reads = n && n <= 9 ? t('Each round you face one player in the glass; over the game, everyone reads everyone.') : t('Each round you face one player in the glass; the targets rotate, so you read as many people as eight rounds allow.');
   return explainer(t('How The Mirror works'), [
     ['maskedvote', t('A dilemma'), t('Eight rounds, each a fictional dilemma with three answers. None of them is right.')],
-    ['medium', t('You read someone'), t('Each round you face one player in the glass; over the game, everyone reads everyone.')],
+    ['medium', t('You read someone'), reads],
     ['mentalist', t('Answer and predict'), t('Seal your own answer and your prediction of theirs. Talk first: tease, ask, mislead.')],
     ['crown', t('Read them right'), t('A right prediction scores 2; your own answer scores nothing. The best reader wins.')],
   ], glyph, 'wexplain');
@@ -203,7 +206,7 @@ export function mirrorLobbyDeck(v, isHost, h) {
   const packRow = packs.length > 1 ? settingRow(isHost, t('Dilemma packs'), t('Which packs the eight dilemmas are drawn from.'),
     `<span class="w-packs">${packs.map((p) => `<label class="check"><input type="checkbox" data-act-change="wSet" data-id="pack" value="${esc(p)}" ${(s.packs ?? ['core']).includes(p) ? 'checked' : ''}><span>${esc(p)} · ${size(p)}</span></label>`).join('')}</span>`,
     (s.packs ?? ['core']).join(', ')) : '';
-  return `${explainerHtml()}
+  return `${explainerHtml(v)}
     <section class="lobby-deck" data-key="wdeck">
     <div class="rule lstep">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     <p class="small muted">${n >= 4 ? th('{n} dilemmas in the bank; each game draws eight the table has not seen lately.', { n: DILEMMAS.length }) : t('Seat 4 to 12 players.')}</p>

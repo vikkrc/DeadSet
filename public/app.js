@@ -1243,7 +1243,7 @@ const HOW = { carnival: how_carnival, coffins: how_coffins, midnight: how_midnig
 /** The guide's cast for the games whose cast is the whole deck: every Carnival mask, every Midnight card. */
 const allOf = (powers) => ({ setup: { publicDeck: { exact: Object.fromEntries(Object.keys(powers).map((id) => [id, 1])) } } });
 const guideCast = (id) => (id === 'carnival' ? masksSheet(allOf(K_POWER)) : id === 'midnight' ? cardsSheet(allOf(NPOWER)) : '');
-const guideHow = (id) => (id === 'classic' || id === 'missions' ? howItWorks({ mode: id }) : HOW[id]?.() ?? '');
+const guideHow = (id, v = null) => (id === 'classic' || id === 'missions' ? howItWorks(v ?? { mode: id }) : HOW[id]?.(v) ?? '');
 // E3: the guide closes with the room menu's own control (an icon button), not a diamond button.
 const guideScreen = () => `<main class="main guide-main" data-key="guide"><div class="row between">${wordmark()}<div class="row">${langChip()}<button class="btn btn-ghost icon-btn" data-act="back" aria-label="${esc(t('Back'))}">${glyph('close')}</button></div></div>${renderGuide(S.content, { ...H, FAMILIES, MODES, howFor: guideHow, castFor: guideCast, chapter: S.route?.chapter ?? 'basics', cover })}</main>`;
 
@@ -3077,7 +3077,7 @@ function boardView() {
   // late or rejoining, the progress count at the right; news ribbons cross it in the middle (J6).
   const paused = v.paused ? `<div class="tv-paused" data-key="tvpaused"><span>${glyph('candle')}</span><b>${esc(th('Paused by {a}', { a: v.paused.by }))}</b></div>` : '';
   const caption = v.phase === 'LOBBY' ? '' : `<div class="tv-caption" data-key="tvcap"><span class="tc-join">${qrSvg(`${location.origin}/r/${v.code}`)}<span><small>${t('Join or rejoin')}</small><b>${esc(v.code)}</b></span></span><span class="tc-prog">${v.phase === 'ENDED' && v.endVotes?.total ? esc(th('Again? {n} of {m} say yes', { n: v.endVotes.again, m: v.endVotes.total })) : v.progress?.total ? esc(th('{done} of {total} done', v.progress)) : ''}</span></div>`;
-  const how = v.phase === 'LOBBY' ? guideHow(v.mode) : '';
+  const how = v.phase === 'LOBBY' ? guideHow(v.mode, v) : '';
   const steps = (how.match(/<li /g) || []).length || 1;
   return boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark, cover, how, howStep: (S.board.howStep ?? 0) % steps, avatar: (p) => (p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`) }) + caption + paused + hint;
 }

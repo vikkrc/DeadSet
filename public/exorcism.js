@@ -223,13 +223,15 @@ export function wordGrid(v, { act = '', selected = null, mark = null } = {}) {
 }
 
 // ── Lobby: explainer + setup ───────────────────────────────────────────────
-export function explainerHtml() {
+export function explainerHtml(v = null) {
+  const guess = v ? v.settings?.x?.guess !== false : null;
   const steps = [
     ['veiled', 'The crystal ball', 'Everyone sees the category. The Living also see the password. The Demon does not.'],
     ['coin', 'The lots', 'A lottery picks who speaks first. Then the turn goes around the table.'],
     ['whispers', 'One word each', 'Say one word linked to the password, then confirm on your phone. Prove you know it, without giving it away.'],
     ['magistrate', 'Name the Demon', 'Talk it over and vote. Miss, and the Demon wins.'],
-    ['death', 'One last guess', 'A caught Demon gets one guess at the password. Right, and the Demon still wins.'],
+    guess === false ? ['death', 'Caught is caught', 'This table plays without a last guess: name the Demon and the Living win.']
+      : ['death', guess === null ? 'One last guess (optional)' : 'One last guess', guess === null ? 'If the host leaves it on, a caught Demon gets one guess at the password. Right, and the Demon still wins.' : 'A caught Demon gets one guess at the password. Right, and the Demon still wins.'],
   ];
   return `<section class="x-explain" data-key="xexplain"><div class="rule lstep">${t('How Exorcism works')}</div>
     <ol class="x-steps">${steps.map(([g, a, b], i) => `<li style="--i:${i}"><span class="xs-g">${glyph(g)}</span><span><b>${t(a)}</b><small>${t(b)}</small></span></li>`).join('')}</ol></section>`;
@@ -249,7 +251,7 @@ export function exorcismLobbyDeck(v, isHost, h) {
   const on = new Set(x.categories ?? cats.map((c) => c.id));
   const tableLang = v.table?.lang ?? 'en';
   const scores = scoreboard(v);
-  return `${explainerHtml()}
+  return `${explainerHtml(v)}
     <section class="lobby-deck" data-key="xdeck">
     <div class="rule lstep">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     ${n >= 3 ? `<p class="small muted" data-key="xcount">${th(x.demons === 2 ? '{l} Living and two Demons.' : '{l} Living and one Demon.', { l: Math.max(0, n - (x.demons ?? 1)) })}</p>` : `<p class="small muted">${t('Seat 3 to 12 players.')}</p>`}

@@ -401,12 +401,16 @@ export function seanceMomentHtml(m, h) {
 }
 
 // ── Lobby ──────────────────────────────────────────────────────────────────
-export function explainerHtml() {
+/** The same count engine/seance.js deals: one Deceiver from five players, none at four (or as the host set it). */
+const deceiverCount = (n, k = 'auto') => (k === 'none' ? 0 : k === 'two' ? (n >= 9 ? 2 : n >= 5 ? 1 : 0) : k === 'one' ? 1 : n >= 5 ? 1 : 0);
+export function explainerHtml(v = null) {
+  // DS-002: a four-seat table (or one set to none) has no Deceiver; the steps say so.
+  const dec = v ? deceiverCount(v.players.length, v.settings?.s?.deceivers) : null;
   const steps = [
     ['shade', 'The Ghost', 'Someone was murdered. Their Ghost knows who, where and why, and cannot speak.'],
     ['p_cards', 'Visions', 'Each round the Ghost sends every reader a wordless vision for one row.'],
-    ['charlatan', 'The Deceiver', 'One reader is a second spirit. It knows the truth too, and swaps visions for lies.'],
-    ['p_candle', 'Candles', 'Argue, then light candles. Solve all three rows before the clock burns out, then name the Deceiver.'],
+    ...(dec === 0 ? [] : [['charlatan', dec === null ? 'The Deceiver (from five players)' : 'The Deceiver', 'One reader is a second spirit. It knows the truth too, and swaps visions for lies.']]),
+    ['p_candle', 'Candles', dec === 0 ? 'Argue, then light candles. Solve all three rows before the clock burns out.' : 'Argue, then light candles. Solve all three rows before the clock burns out, then name the Deceiver.'],
   ];
   return `<section class="x-explain" data-key="sexplain"><div class="rule lstep">${t('How the Séance works')}</div>
     <ol class="x-steps">${steps.map(([g, a, b], i) => `<li style="--i:${i}"><span class="xs-g">${glyph(g)}</span><span><b>${t(a)}</b><small>${t(b)}</small></span></li>`).join('')}</ol></section>`;
@@ -430,7 +434,7 @@ export function seanceLobbyDeck(v, isHost, h) {
   const DIFF_SUB = { gentle: 'Five cards a row, two visions each, eight candles.', standard: 'Six cards a row, one vision each, seven candles.', grim: 'Eight cards a row, one vision each, seven candles.' };
   const DEC = [['auto', t('One (none at four)')], ['none', t('None')], ['one', t('One')], ['two', t('Two (from nine)')]];
   const decN = s.deceivers === 'none' ? 0 : s.deceivers === 'two' ? (n >= 9 ? 2 : n >= 5 ? 1 : 0) : s.deceivers === 'one' ? 1 : n >= 5 ? 1 : 0;
-  return `${explainerHtml()}
+  return `${explainerHtml(v)}
     <section class="lobby-deck" data-key="sdeck">
     <div class="rule lstep">${t(n === 1 ? 'The deck · {n} player' : 'The deck · {n} players', { n })}</div>
     <p class="small muted">${n >= 4 ? th(decN === 1 ? 'One Ghost, {m} readers, {d} Deceiver among them.' : decN ? 'One Ghost, {m} readers, {d} Deceivers among them.' : 'One Ghost and {m} readers, all honest.', { m: Math.max(0, n - 1), d: decN }) : t('Seat 4 to 10 players.')}</p>
