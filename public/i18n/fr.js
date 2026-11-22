@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Trois missions ont échoué",
     "Use the Candle": "Utilise la Bougie",
     "Game mode": "Mode de jeu",
+    "+{n} more at the table": "+{n} autres à la table",
     "Your power": "Ton pouvoir",
     "End the discussion": "Clore la discussion",
     "There are no nominations today; the night follows.": "Pas de nominations aujourd’hui ; la nuit suit.",

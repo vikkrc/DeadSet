@@ -8,6 +8,21 @@ const W = 1080, H = 1350, M = 72;
 
 const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
+/**
+ * DS-015: the largest face size at which a group of n fits its budget of height on the 1080-wide card, or, past the
+ * smallest size, how many fit (the rest are named as '+N more'). Pure, so it can be tested without a canvas.
+ */
+export function fitFaces(n, budget, sizes = [128, 96, 72, 56, 44]) {
+  for (const size of sizes) {
+    const gap = size > 60 ? 24 : 14;
+    const per = Math.max(1, Math.floor((W - 2 * M + gap) / (size + gap)));
+    const rowH = size + (size > 100 ? 96 : size > 60 ? 70 : 34);
+    if (Math.ceil(n / per) * rowH <= budget) return { size, gap, per, rowH, fit: n };
+  }
+  const size = sizes.at(-1); const gap = 14; const per = Math.max(1, Math.floor((W - 2 * M + gap) / (size + gap))); const rowH = size + 34;
+  return { size, gap, per, rowH, fit: Math.max(0, Math.floor(budget / rowH) * per - 1) };
+}
+
 /** Replace every player name (longest first, so "Ann" never eats into "Anna") with its seat label. */
 export function anonymise(text, names) {
   let out = String(text ?? '');
@@ -105,16 +120,21 @@ export async function drawShareCard(card, { anon = false } = {}) {
   // The winners' faces, then the rest of the table.
   const winners = card.players.filter((p) => p.won);
   const others = card.players.filter((p) => !p.won);
-  const faces = async (list, size, top) => {
-    const per = Math.min(list.length, Math.floor((W - 2 * M) / (size + 24)));
-    const rows = [];
-    for (let i = 0; i < list.length; i += per) rows.push(list.slice(i, i + per));
+  // DS-015: every player is accounted for. Faces shrink until the whole group fits its share of the page; only past
+  // the smallest size do the rest become an explicit '+N more at the table' line, never a silent cut.
+  const drawn = new Set();
+  const faces = async (list, budget, top, sizes) => {
+    const L = fitFaces(list.length, budget, sizes);
+    const { size, gap, per, rowH } = L;
+    const shown = list.slice(0, L.fit);
     let yy = top;
-    for (const row of rows.slice(0, 2)) {
-      const total = row.length * size + (row.length - 1) * 24;
+    for (let i = 0; i < shown.length; i += per) {
+      const row = shown.slice(i, i + per);
+      const total = row.length * size + (row.length - 1) * gap;
       let x = (W - total) / 2;
       for (const p of row) {
         const idx = card.players.indexOf(p);
+        drawn.add(idx);
         ctx.save();
         ctx.beginPath(); ctx.arc(x + size / 2, yy + size / 2, size / 2, 0, Math.PI * 2); ctx.closePath();
         ctx.fillStyle = css('--vellum-2') || '#c6b185'; /* literal-ok */
@@ -127,13 +147,19 @@ export async function drawShareCard(card, { anon = false } = {}) {
         ctx.beginPath(); ctx.arc(x + size / 2, yy + size / 2, size / 2, 0, Math.PI * 2); ctx.stroke();
         if (!p.alive) { ctx.strokeStyle = ink2; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x + size * 0.2, yy + size * 0.8); ctx.lineTo(x + size * 0.8, yy + size * 0.2); ctx.stroke(); }
         ctx.fillStyle = ink; ctx.textAlign = 'center';
-        ctx.font = `600 ${size > 100 ? 26 : 20}px ${TEXT}`;
+        ctx.font = `600 ${size > 100 ? 26 : size > 60 ? 20 : 16}px ${TEXT}`;
         let label = anon ? seats[idx][1] : p.name;
-        while (ctx.measureText(label).width > size + 20 && label.length > 3) label = `${label.slice(0, -2)}…`;
-        ctx.fillText(label, x + size / 2, yy + size + (size > 100 ? 34 : 26));
-        x += size + 24;
+        while (ctx.measureText(label).width > size + gap - 4 && label.length > 3) label = `${label.slice(0, -2)}…`;
+        ctx.fillText(label, x + size / 2, yy + size + (size > 100 ? 34 : size > 60 ? 26 : 18));
+        x += size + gap;
       }
-      yy += size + (size > 100 ? 96 : 70);
+      yy += rowH;
+    }
+    const rest = list.length - shown.length;
+    if (rest > 0) {
+      ctx.font = `italic 400 22px ${TEXT}`; ctx.fillStyle = ink2; ctx.textAlign = 'center';
+      ctx.fillText(card.moreLabel.replace('{n}', rest), W / 2, yy + 6); yy += 40;
+      for (const p of list.slice(shown.length)) drawn.add(card.players.indexOf(p));
     }
     return yy;
   };
@@ -141,12 +167,13 @@ export async function drawShareCard(card, { anon = false } = {}) {
   if (winners.length) {
     ctx.font = `600 24px ${TEXT}`; ctx.fillStyle = red; ctx.textAlign = 'center';
     ctx.fillText(card.winnersLabel.toUpperCase(), W / 2, y); y += 22;
-    y = await faces(winners, winners.length > 6 ? 96 : 128, y);
+    y = await faces(winners, others.length ? 380 : 620, y, [128, 96, 72, 56, 44]);
   }
   if (others.length) {
     ctx.font = `600 22px ${TEXT}`; ctx.fillStyle = ink2; ctx.textAlign = 'center';
     ctx.fillText(card.othersLabel.toUpperCase(), W / 2, y); y += 18;
-    y = await faces(others, 72, y);
+    const honours = card.awards.length ? 60 + 44 * Math.min(3, card.awards.length) : 0;
+    y = await faces(others, Math.max(110, H - 140 - honours - y), y, [72, 56, 44, 40]);
   }
 
   // The evening's honours (F1).
@@ -156,7 +183,7 @@ export async function drawShareCard(card, { anon = false } = {}) {
     ctx.fillText(card.honoursLabel.toUpperCase(), W / 2, y);
     for (const a of card.awards.slice(0, 3)) {
       if (y > H - 170) break;
-      y += 48; ctx.textAlign = 'center';
+      y += 44; ctx.textAlign = 'center';
       ctx.font = `400 34px ${BLACK}`; ctx.fillStyle = ink;
       const head = `${a.title} — `;
       const body = say(a.line);

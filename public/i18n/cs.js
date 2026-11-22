@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tři mise selhaly",
     "Use the Candle": "Použij Svíčku",
     "Game mode": "Herní režim",
+    "+{n} more at the table": "+{n} dalších u stolu",
     "Your power": "Tvá schopnost",
     "End the discussion": "Ukončit diskusi",
     "There are no nominations today; the night follows.": "Dnes nejsou žádné nominace; následuje noc.",

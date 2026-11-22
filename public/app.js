@@ -2839,7 +2839,7 @@ function shareCardData(v) {
     dateLine: new Date().toLocaleDateString(getLang(), { day: 'numeric', month: 'long', year: 'numeric' }),
     modeLine: `${modeTitle(v.mode)} · ${tp('{n} player', '{n} players', seated.length)}`,
     kicker: plain(vd.kicker), title: plain(vd.title), reason: plain(tm(v.endReason)),
-    winnersLabel: t('The winners'), othersLabel: t('At the table'), honoursLabel: t('Honours'),
+    winnersLabel: t('The winners'), othersLabel: t('At the table'), honoursLabel: t('Honours'), moreLabel: t('+{n} more at the table'),
     players: seated.map((p) => ({ name: p.name, avatar: p.avatar, alive: p.alive !== false, won: didIWin({ ...v, me: p }, v.winner) === true })),
     awards: (v.awards ?? []).map((a) => ({ title: t(a.title), line: plain(tm(a.line)) })),
     url: location.host,

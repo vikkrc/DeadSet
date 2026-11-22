@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "+{n} more at the table": "+{n} további az asztalnál",
     "Your power": "A képességed",
     "End the discussion": "A vita lezárása",
     "There are no nominations today; the night follows.": "Ma nincsenek jelölések; jön az éjszaka.",
