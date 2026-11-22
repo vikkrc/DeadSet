@@ -489,9 +489,10 @@ export class RoomManager {
       else if (!won && p.alive && ['classic', 'midnight'].includes(mode)) pts = 1;
       if (mode === 'classic' && called.has(p.id)) pts += 1; // D1: a ghost who called it earns a point for the ledger
       const row = (ev.rows[p.id] ||= { name: p.name, pts: 0, games: 0, wins: 0 });
-      row.name = p.name; row.avatar = p.avatar ?? null; row.games++; row.pts += pts; if (won) { row.wins++; winners.push(p.name); }
+      row.name = p.name; row.avatar = p.avatar ?? null; row.games++; row.pts += pts; row.last = pts; if (won) { row.wins++; winners.push(p.name); }
     }
     room.awards = awardsFor(m, mode);
+    for (const r of Object.values(ev.rows)) if (!m.players.some((p) => ev.rows[p.id] === r)) r.last = null; // sat this one out
     ev.games.push({ mode, winner: m.winner, winners });
   }
 

@@ -2853,8 +2853,13 @@ function awardsHtml(v) {
 function eveningHtml(v, { host = false } = {}) {
   const e = v.evening;
   if (!e?.rows?.length) return '';
+  // DS-016: these are evening points, not the game's own score: the column says so, the rank is shared on a tie,
+  // what the last game added shows beside the total, and a short note gives the rule.
+  const rank = e.rows.map((r, i) => e.rows.findIndex((x) => x.pts === r.pts) + 1);
   return `<section class="evening" data-key="evening"><div class="rule">${t('Tonight\'s ledger')} · ${esc(tp('{n} game', '{n} games', e.games.length))}</div>
-    <ol class="ev-rows">${e.rows.map((r, i) => `<li class="${r.id === v.me?.id ? 'me' : ''}"><span class="ev-n">${i + 1}</span><span class="ev-face">${r.avatar ? avatarSvg(r.avatar, 'tok-av') : esc(initials(r.name))}</span><b>${esc(r.name)}</b><small>${esc(th('{w}/{g} won', { w: r.wins, g: r.games }))}</small><em>${r.pts}</em></li>`).join('')}</ol>
+    <div class="ev-head"><span></span><span></span><span>${t('Player')}</span><span>${t('Won')}</span><span>${t('Evening points')}</span></div>
+    <ol class="ev-rows">${e.rows.map((r, i) => `<li class="${r.id === v.me?.id ? 'me' : ''}"><span class="ev-n">${rank[i]}</span><span class="ev-face">${r.avatar ? avatarSvg(r.avatar, 'tok-av') : esc(initials(r.name))}</span><b>${esc(r.name)}</b><small>${esc(th('{w}/{g} won', { w: r.wins, g: r.games }))}</small><em>${r.pts}${r.last ? `<i class="ev-last">+${r.last}</i>` : ''}</em></li>`).join('')}</ol>
+    <details class="more ev-rule" data-key="evrule"><summary>${t('How evening points work')}</summary><p class="small muted">${t('Every finished game adds evening points, whatever its own scoring: 2 for a win; 1 for a place in the top half of a scored game, or for surviving a game of elimination; and in Classic, 1 for a ghost who called it. Abandoned games add nothing. Ties share a rank.')}</p></details>
     <div class="share-row"><button class="btn btn-sm" data-act="shareEvening">${glyph('out')} ${t('Share the evening')}</button><button class="btn btn-sm btn-ghost" data-act="shareEvening" data-anon="1">${t('Share without names')}</button></div>
     ${host ? `<button class="btn btn-sm btn-ghost" data-act="eveningClear">${t('Clear the ledger')}</button>` : ''}</section>`;
 }
