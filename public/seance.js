@@ -509,15 +509,20 @@ export function seanceBoard(v, h) {
       const vs = S.shown?.[id];
       return `<figure class="sbv ${S.frosted.includes(id) ? 'frost' : ''}" data-key="sbv-${id}">${vs ? vs.map((x) => vcard(x, { cls: 'thumb', frost: S.frosted.includes(id) })).join('') : vcard(null, { cls: 'thumb' })}<figcaption>${disc(v, id, 'xs')}${pname(v, id)}</figcaption></figure>`;
     }).join('');
-    return `<section class="sb-row ${S.solved[row] != null ? 'is-solved' : ''}" data-key="sbr-${row}"><header><span class="kicker">${esc(t(ROW_LABEL[row]))}</span><b>${esc(t(ROW_Q[row]))}</b></header>
+    return `<section class="sb-row ${S.solved[row] != null ? 'is-solved' : ''}" data-key="sbr-${row}" style="--n:${S.board[row].length}"><header><span class="kicker">${esc(t(ROW_LABEL[row]))}</span><b>${esc(t(ROW_Q[row]))}</b></header>
       ${rowCards(v, row, { truth: ended ? S.truth?.[row] : null, zoom: false })}<div class="sb-vis">${vis}</div></section>`;
   }).join('');
   const banner = `<div class="sb-banner" data-key="sbbanner">${at >= 0 ? `<ol class="sb-steps">${steps.map(([, l], i) => `<li class="${i === at ? 'on' : i < at ? 'done' : ''}"><i>${i + 1}</i>${esc(t(l))}</li>`).join('')}</ol>` : ''}<div><b>${esc(title)}</b><span>${esc(sub)}</span></div></div>`;
-  // The astrolabe table stays on the TV: the Ghost at its centre, the readers in their seats.
+  // Séance on the TV grid: the table (the Ghost at its centre), the séance clock and the cold spots on the left
+  // rail; the three story rows share the stage equally, cards sized to their row; the scores on the right rail.
   const table = h.ring ? `<div class="sb-table" data-key="sbtable">${h.ring(v, { center: `<span class="c-sub">${t('The Ghost')}</span><b class="c-name">${pname(v, S.ghost)}</b>` })}</div>` : '';
-  const side = `${table}<div class="sb-ghost fr" data-key="sbghost"><span class="kicker">${t('The Ghost')}</span>${disc(v, S.ghost, 'lg')}<b>${pname(v, S.ghost)}</b><small>${t('cannot speak')}</small>
-      <div class="sb-stats"><span>${glyph('v_snow')} ${th(S.cold === 1 ? '{n} cold spot' : '{n} cold spots', { n: S.cold })}</span>${S.round ? `<span>${th('Round {n}', { n: S.round })}</span>` : ''}</div></div>
+  const left = `${table}<div class="sb-ghostline" data-key="sbghostl"><small>${t('cannot speak')}</small><span>${glyph('v_snow')} ${th(S.cold === 1 ? '{n} cold spot' : '{n} cold spots', { n: S.cold })}</span>${S.round ? `<span>${th('Round {n}', { n: S.round })}</span>` : ''}</div>
     <div class="sb-clock" data-key="sbclock"><span class="kicker">${t('The séance clock')}</span>${candles(S)}<small>${th('{n} of {m} candles left', { n: S.candles - S.burnt, m: S.candles })}</small></div>`;
-  return `<main class="board2 sboard ${ended ? 'is-ended' : ''}" data-key="board-s">${header}
-    <div class="k-cols"><section class="k-main">${ended ? seanceEndHtml(v) : `${banner}<div class="sb-rows">${rows}</div>`}</section><aside class="k-side">${side}${scoreboard(v)}</aside></div></main>`;
+  const right = scoreboard(v) || `<section class="sb-readers"><span class="kicker">${t('At the table')}</span><ul>${v.players.filter((p) => p.id !== S.ghost).map((p) => `<li>${disc(v, p.id)}<b>${esc(p.name)}</b></li>`).join('')}</ul></section>`;
+  return `<main class="board2 sboard tv-grid ${ended ? 'is-ended' : ''}" data-key="board-s">${header}
+    <div class="tv-body">
+      <aside class="tv-rail tv-panel sb-left" data-key="sbleft" data-autoscroll>${left}</aside>
+      <section class="tv-stage sb-stage" data-key="sbstage">${ended ? `<div class="sb-end" data-autoscroll>${seanceEndHtml(v)}</div>` : `${banner}<div class="sb-rows">${rows}</div>`}</section>
+      <aside class="tv-rail tv-panel sb-right" data-key="sbright" data-autoscroll>${right}</aside>
+    </div></main>`;
 }

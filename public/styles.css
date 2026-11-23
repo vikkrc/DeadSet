@@ -6138,3 +6138,39 @@ body.is-board .tv-grid .b-stage:has(.b-mission) .ring { width: min(100%, calc(10
 .tv-deck .dcard { font-size: 8px; }
 .tv-deck .dcard b { font-size: 8.5px; letter-spacing: 0.04em; overflow-wrap: anywhere; text-align: center; }
 .tv-rules .plaque { box-sizing: border-box; max-width: none; justify-content: flex-start; }
+
+/* ── Séance on the TV grid ── */
+.sboard.tv-grid .sb-stage { grid-template-rows: auto minmax(0, 1fr); align-items: stretch; justify-items: stretch; gap: 14px; }
+.sboard.tv-grid .sb-banner { margin: 0; padding: 12px 18px; display: flex; align-items: center; gap: 24px; border: 1px solid var(--gilt-2); background: color-mix(in srgb, var(--ink-2) 85%, transparent); }
+.sboard.tv-grid .sb-rows { display: grid; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 10px; min-height: 0; }
+.sboard.tv-grid .sb-row { container-type: size; min-height: 0; display: grid; grid-template-columns: clamp(110px, 9vw, 150px) minmax(0, 1fr); grid-template-areas: 'head cards' 'head vis'; grid-template-rows: auto minmax(0, 1fr); align-items: start; gap: 6px 16px; padding: 8px 0; border-bottom: 1px solid var(--iron); }
+.sboard.tv-grid .sb-row:last-child { border-bottom: 0; }
+.sboard.tv-grid .sb-row header { align-self: center; }
+.sboard.tv-grid .sb-row header b { font-size: clamp(16px, 1.4vw, 24px); }
+.sboard.tv-grid .sb-row .srow-cards { display: flex; flex-wrap: nowrap; gap: 8px; }
+/* a card is 7.8em wide and about 11.4em tall: eight must fit across, and the card must leave room for the visions under it */
+.sboard.tv-grid .sb-row .srow-cards .scard { width: 7.8em; font-size: min(5.6cqh, calc((100cqw - clamp(110px, 9vw, 150px) - 80px) / 64)); }
+.sboard.tv-grid .sb-vis { gap: 10px; align-items: flex-start; flex-wrap: nowrap; overflow: hidden; }
+.sboard.tv-grid .sbv .vcard.tarot--thumb { font-size: clamp(5px, 2.2cqh, 9px); }
+.sboard.tv-grid .sbv figcaption { font-size: 10px; }
+.sb-left { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.sb-left > * + * { margin-top: 0; }
+.sboard.tv-grid .sb-table { width: 100%; }
+.sboard.tv-grid .sb-table .ring { width: min(100%, 38vh); --tok: clamp(30px, 4vh, 46px) !important; margin: 0 auto; }
+.sb-ghostline { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; font: 500 14px/1.2 var(--text); color: var(--bone-2); }
+.sb-ghostline small { font-style: italic; color: var(--ash); width: 100%; text-align: center; }
+.sb-ghostline svg { width: 16px; height: 16px; vertical-align: -3px; }
+.sboard.tv-grid .sb-clock { margin: 0; text-align: center; border-top: 1px solid var(--iron); padding-top: 12px; width: 100%; }
+.sb-readers ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.sb-readers li { display: flex; align-items: center; gap: 10px; }
+.sb-readers b { font: 500 18px/1.1 var(--text); color: var(--bone); }
+.sb-end { min-height: 0; overflow: hidden; width: 100%; }
+/* cards sized to the row's own count; the visions take the lower third */
+.sboard.tv-grid .sb-row .srow-cards .scard { font-size: min(4.9cqh, calc((100cqw - clamp(110px, 9vw, 150px) - 16px - (var(--n, 6) - 1) * 8px) / (var(--n, 6) * 7.8))); }
+.sboard.tv-grid .sbv .vcard.tarot--thumb { font-size: clamp(4px, 1.6cqh, 9px); }
+.sboard.tv-grid .sbv figcaption { font-size: clamp(8px, 2.6cqh, 11px); }
+.sboard.tv-grid .sb-banner .sb-steps { flex: none; }
+.sboard.tv-grid .sb-banner > div { min-width: 0; }
+.sboard.tv-grid .sb-banner b, .sboard.tv-grid .sb-banner h2 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 1500px) { .sboard.tv-grid .sb-banner small, .sboard.tv-grid .sb-banner p { display: none; } }
+@media (max-width: 1500px) { .sboard.tv-grid .sb-banner { flex-wrap: wrap; gap: 8px 24px; } .sboard.tv-grid .sb-banner > div { flex: 1 1 100%; } }
