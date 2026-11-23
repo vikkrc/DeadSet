@@ -1349,13 +1349,15 @@ function joinScreen() {
     <div class="letter">${body}</div>
   </main>`;
 }
-const loadingScreen = () => `<main class="main narrow" data-key="load">${wordmark()}<div class="loading"><span class="pulse-dot"></span> ${t('Finding your seat…')}</div></main>`;
+/** The astrolabe table, the game's icon, as a still picture: ticked rim, gilt ring, ray disc, whatever sits at its centre. */
+const astrolabe = (size, inner = '', cls = '') => `<div class="tseal astro ${cls}" style="--s:${size}px" aria-hidden="true"><div class="c">${inner}</div></div>`;
+const loadingScreen = () => `<main class="main narrow" data-key="load">${wordmark()}<div class="loading astro-loading">${astrolabe(132, '', 'turning')}<span>${t('Finding your seat…')}</span></div></main>`;
 // Z7, Z9: what happened, what happens next, one way forward. The code is shown in the TV's own tiles.
-const goneScreen = () => `<main class="main narrow edge" data-key="gone">${wordmark()}<header class="edge-head"><h1>${t('No such <i>table.</i>')}</h1>
+const goneScreen = () => `<main class="main narrow edge" data-key="gone">${wordmark()}${astrolabe(132, '', 'empty')}<header class="edge-head"><h1>${t('No such <i>table.</i>')}</h1>
     <p class="code-tiles">${codeTiles(S.code ?? '')}</p>
     <p class="muted">${t('No table has this code. Check the letters on the TV; if the table has closed, its candles are out.')}</p></header>
     <div class="stack"><button class="btn btn-solid" data-act="edgeHome" data-id="join">${t('Enter another code')}</button><button class="btn btn-ghost" data-act="edgeHome" data-id="host">${t('Start a new table')}</button></div></main>`;
-const kickedScreen = () => `<main class="main narrow edge" data-key="kicked">${wordmark()}<header class="edge-head"><h1>${t('You left the <i>table.</i>')}</h1>
+const kickedScreen = () => `<main class="main narrow edge" data-key="kicked">${wordmark()}${astrolabe(132, '', 'empty')}<header class="edge-head"><h1>${t('You left the <i>table.</i>')}</h1>
     <p class="muted">${t('The host removed you from this table.')}</p></header><a class="btn" href="/" data-link>${t('Back to start')}</a></main>`;
 /** A mode's "How it works" steps (the lobby's step 2), reused at the head of its guide chapter. */
 const HOW = { carnival: how_carnival, coffins: how_coffins, midnight: how_midnight, seance: how_seance, graverobbers: how_graverobbers, mimic: how_mimic, omen: how_omen, mirror: how_mirror, exorcism: how_exorcism };
@@ -2996,7 +2998,7 @@ function endMain(v, me) {
       <span class="seat">${p.role ? glyph(p.role.glyph) : ''}</span>
       <span class="who"><b>${esc(p.name)}</b><small>${p.role ? esc(roleF(p.role.id, 'name')) : '—'}${p.originalRole ? ` ${th('(was {role})', { role: p.originalRole.id })}` : ''} · ${p.alive ? t('alive') : `† ${esc(stamp(p.diedAt))}`}</small></span>
       <span class="tags">${p.lover ? `<span class="tag love" title="${esc(t('Lovers'))}">${glyph('heart')}</span>` : ''}<span class="tag ${p.alignment === 'DEATH' ? 'blood' : ''}">${esc(ALIGN[p.alignment] ?? '')}</span></span></li>`).join('')}</ul>` : `<p class="muted">${t('The host chose not to reveal roles.')}</p>`}</section>`;
-  return `<section class="verdict ${v.winner === 'DEATH' || v.winner === 'DEMON' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}${waxSeal('l', 'v-seal')}<span class="kicker">${esc(vd.kicker)}</span><h1>${letters(vd.title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
+  return `<section class="verdict ${v.winner === 'DEATH' || v.winner === 'DEMON' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}${astrolabe(196, waxSeal('l'), 'v-astro')}<span class="kicker">${esc(vd.kicker)}</span><h1>${letters(vd.title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
       ${stampHtml(vd.stamp)}</section>
     ${afterGame(v)}
     <div class="end-next" data-key="endnext">${v.host?.rematch ? `<button class="btn btn-solid btn-wide" data-act="rematch">${glyph('scroll')} ${t('Play again, same table')}</button>` : `<p class="small muted center-text">${t('Waiting for the host to start the next round.')}</p>`}</div>

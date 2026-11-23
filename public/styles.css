@@ -5894,3 +5894,14 @@ svg.o-needle { position: absolute; inset: 0; width: 100%; height: 100%; z-index:
 /* The game's family is on every cover again, the small ones included (home strip, picker, rejoin) */
 .tarot--cover.mini .cv-fam { display: block; font: 600 7px/1.15 var(--text); letter-spacing: 0.12em; text-align: center; max-width: 100%; overflow-wrap: anywhere; text-wrap: balance; }
 .rejoin .tarot--cover.mini .cv-fam { display: none; }
+
+/* ── The astrolabe table as the game's icon beyond play: loading, edge screens, under the seal at the end ── */
+.tseal.astro { cursor: default; margin: 0 auto; }
+.tseal.astro.turning::before { animation: spin 40s linear infinite; }
+.tseal.astro.turning .c { animation: breathe 2.6s ease-in-out infinite; }
+.tseal.astro.empty .c { border-style: dashed; opacity: 0.7; }
+.astro-loading { display: grid; justify-items: center; gap: 22px; margin-top: 12vh; }
+.edge > .tseal.astro { margin: 8px auto 4px; }
+.verdict .v-astro { margin: 6px auto 16px; }
+.verdict .v-astro .c { inset: 23%; background: radial-gradient(circle, var(--ink-3), var(--ink)); }
+.verdict .v-astro .wseal { animation-delay: 0.5s; }
