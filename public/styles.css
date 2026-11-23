@@ -5713,3 +5713,21 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
 .mr-card, .mr-fate, .mr-glass, .mr-chip, .mr-results li, .mf, .mrow, .rejoin, .g-pager a, .x-named li,
 .edict:not(.tarot), .rec-card, .rec-fact, .balance, .ba-list li, .tc-join svg, .ev-rows li, .awards li { border-radius: 0; }
 .btn.icon-btn { border-radius: 50%; }
+
+/* ── Coherence B: one spacing scale ──
+   Steps: 4 inside a line, 8 between lines in a box, 12 between controls,
+   18 between sections, 28 around a page title. Three boxes, three paddings:
+   the bar (one-line strips and list rows), the box (a few lines), the panel. */
+:root {
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 18px; --sp-5: 28px;
+  --pad-bar: 8px 12px; --pad-box: 12px 14px; --pad-panel: 18px; --edge: 16px;
+}
+.g-bar, .q-bar, .mr-glass, .gboard .g-sign, .g-sign, .s-mute, .sg-slot, .accused li, .awards li,
+.q-cast li, .k-ledger li, .w-reads li, .x-named li, .ev-rows li, .ba-list li, .mr-chip, .mr-results li { padding: var(--pad-bar); }
+.s-bar { padding: 8px 12px 4px; }
+.banner, .rec-card, .balance, .death-room, .coach, .mc-banner, .q-card, .rejoin, .open-ballots, .mrow,
+.g-pager a { padding: var(--pad-box); }
+.q-card.hidden { padding-bottom: 6px; }
+.panel { padding: var(--pad-panel); }
+.dock { padding-left: var(--edge); padding-right: var(--edge); }
+.tray { margin-left: calc(-1 * var(--edge)); margin-right: calc(-1 * var(--edge)); }
