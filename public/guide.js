@@ -417,7 +417,7 @@ export function renderGuide(c, { glyph, dreamGlyph, esc, t, roleF, dreamF, ruleF
   <section id="b-play"><h2>${G.playH}</h2>${G.play}</section>
   <section id="b-after"><h2>${G.afterH}</h2>${G.after}</section>
   ${cover ? `<section id="b-games"><h2>${t('The modes')}</h2><div class="g-covers">${order.slice(1).map((id) => `<a href="${href(id)}" data-link>${cover(id, { size: 'mini' })}<small>${esc(name(id))}</small></a>`).join('')}</div></section>` : ''}`;
-  const chapterBody = chapter === 'basics' ? basicsBody : `${cover ? `<div class="g-cover" data-key="gcover-${chapter}">${cover(chapter)}</div>` : ''}${chapter === 'classic' ? classic : game(chapter)}`;
+  const chapterBody = chapter === 'basics' ? basicsBody : `${cover ? `<div class="g-cover" data-key="gcover-${chapter}">${cover(chapter, { bare: true })}</div>` : ''}${chapter === 'classic' ? classic : game(chapter)}`;
   const sel = nav.replace(`value="${chapter === 'basics' ? 'b-about' : `m-${chapter}`}"`, `value="${chapter === 'basics' ? 'b-about' : `m-${chapter}`}" selected`);
   return `<div class="guide" data-key="guide-${chapter}">
   ${chapter === 'basics' ? `<header class="phase-head"><span class="kicker">${G.kicker}</span><h1>${G.title}</h1>

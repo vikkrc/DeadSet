@@ -1274,7 +1274,6 @@ function homeScreen() {
       </section>
       <section class="h-panel">
         ${rejoinCard()}
-        <p class="h-tag">${t('{n} games of bluff and deduction. One phone each.', { n: HOME.modes })}</p>
         <div class="seg" role="tablist"><button role="tab" data-act="homeTab" data-id="host" aria-pressed="${tab === 'host'}">${t('Host a table')}</button><button role="tab" data-act="homeTab" data-id="join" aria-pressed="${tab === 'join'}">${t('Join a table')}</button></div>
         ${tab === 'host' ? `<div class="stack" data-key="h-host">
           <label class="field"><span>${t('Your name')}</span><input class="input" maxlength="20" autocomplete="nickname" placeholder="${esc(t('e.g. Morgan'))}" data-draft="createName" ${ferr('createName')} value="${esc(d.createName ?? '')}">${ferrMsg('createName')}</label>
@@ -2139,8 +2138,8 @@ function gameCard(v, isHost) {
   // Other games' covers peek out behind the chosen one (a random few, kept while this game stays chosen), so it
   // reads as a deck to choose from. The host taps the card to change the game.
   if (S.ui.coverStack?.mode !== v.mode) S.ui.coverStack = { mode: v.mode, ids: MODE_IDS.filter((id) => id !== v.mode).sort(() => Math.random() - 0.5).slice(0, 2) };
-  const deck = `<div class="cover-deck ${isHost ? 'can' : ''}" data-key="coverdeck">${S.ui.coverStack.ids.map((id, i) => `<span class="cd-back b${i}" aria-hidden="true">${cover(id, { key: `cdb-${i}` })}</span>`).join('')}
-    ${/* DS-022: the cover is a picture of the game named beside it; one 'Change game' for the keyboard and readers. */ ''}${isHost ? `<button type="button" class="cd-top" data-act="sheet" data-id="modes" tabindex="-1" aria-hidden="true">${cover(v.mode)}</button>` : `<span class="cd-top" aria-hidden="true">${cover(v.mode)}</span>`}</div>`;
+  const deck = `<div class="cover-deck ${isHost ? 'can' : ''}" data-key="coverdeck">${S.ui.coverStack.ids.map((id, i) => `<span class="cd-back b${i}" aria-hidden="true">${cover(id, { key: `cdb-${i}`, bare: true })}</span>`).join('')}
+    ${/* DS-022: the cover is a picture of the game named beside it; one 'Change game' for the keyboard and readers. */ ''}${isHost ? `<button type="button" class="cd-top" data-act="sheet" data-id="modes" tabindex="-1" aria-hidden="true">${cover(v.mode, { bare: true })}</button>` : `<span class="cd-top" aria-hidden="true">${cover(v.mode, { bare: true })}</span>`}</div>`;
   return `<section class="game-card" data-key="gamecard">${deck}
     <div class="gc-side"><span class="kicker">${t(isHost ? 'Tonight\'s game' : 'The host chose this game')}</span><b>${esc(modeTitle(v.mode))}</b><small>${esc(modePitch(v.mode))}</small><i>${esc(modeMeta(v.mode))}</i>
     ${isHost ? `<button class="btn btn-sm" data-act="sheet" data-id="modes">${t('Change game')}</button>` : ''}<a class="btn btn-sm btn-ghost" href="/guide/${esc(v.mode)}" target="_blank" rel="noopener">${glyph('scroll')}<span>${t('Read the full chapter')}</span></a></div></section>`;
