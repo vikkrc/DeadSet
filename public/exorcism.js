@@ -179,7 +179,8 @@ const DEMON_TINT = '#c2344a';
 export function myBall(v, { key = 'myball', open = true, big = false, small = false, act = '', tint = LIVING_TINT, speed = 1, orbit = '', cls = '' } = {}) {
   const x = v.me?.x;
   if (!x || !v.exorcism) return '';
-  const k = `${esc(t('Category'))} · ${esc(catName(x.category))}`;
+  // The label is small and on its own line; the category itself reads large beneath it.
+  const k = `<small class="xb-kl">${esc(t('Category'))}</small><span class="xb-kv">${esc(catName(x.category))}</span>`;
   const letters = (str, demon) => {
     // Letters are animated one by one, grouped per word so lines only break between words.
     const n = [...str].length;
