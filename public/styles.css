@@ -6011,11 +6011,6 @@ svg.o-needle { position: absolute; inset: 0; width: 100%; height: 100%; z-index:
 .verdict.won .v-astro::before { animation: spin 30s linear infinite; }
 .verdict.lost { background: radial-gradient(90% 60% at 50% 20%, color-mix(in srgb, var(--blood) 18%, transparent), transparent 70%); }
 .verdict.lost .v-astro { filter: grayscale(0.4); }
-.wseal.cracked::after { content: ''; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(115deg, transparent 47%, var(--ink) 47.5%, var(--ink) 49%, transparent 49.5%), linear-gradient(35deg, transparent 54%, var(--ink) 54.5%, var(--ink) 55.6%, transparent 56%);
-  -webkit-mask: radial-gradient(circle, #000 60%, transparent 62%); mask: radial-gradient(circle, #000 60%, transparent 62%); /* literal-ok: mask */
-  animation: crackIn 0.4s 1.1s var(--ease) both; }
-@keyframes crackIn { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
 .verdict.lost .result-stamp { animation: stamp-in var(--t-stamp) var(--spring) 1.3s both, stampShake 0.4s 1.8s ease-in-out both; }
 @keyframes stampShake { 0%, 100% { translate: 0; } 25% { translate: -4px 0; } 75% { translate: 4px 0; } }
 .end-next { display: grid; gap: 10px; justify-items: center; margin: 4px 0 8px; }
@@ -6263,3 +6258,39 @@ html { background-color: var(--ink); overscroll-behavior-y: none; }
 .n-rolec b { font: 600 clamp(15px, 4.2vw, 19px)/1 var(--black); color: var(--bone); }
 .noact-line { margin: 4px 0 0; }
 .main:has(.card-stage) .card-stage { margin-top: 8px; }
+
+/* Dawn: the dead are struck through by the same hand as the table */
+.victims:not(.unmasked) .victim span::after {
+  left: -3%; right: -6%; top: 50%; height: 0.5em; transform: translateY(-48%); background: var(--blood-ink); animation: strikeDraw 0.5s calc(var(--d) + 0.35s) var(--ease) both;
+  -webkit-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><circle cx='4' cy='5' r='3.6' fill='%23000'/><circle cx='8.6' cy='7.4' r='1.2' fill='%23000'/></svg>") right center / 0.42em 0.42em no-repeat, var(--stroke) left center / calc(100% - 0.25em) 100% no-repeat; /* literal-ok: mask shapes only */
+  mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><circle cx='4' cy='5' r='3.6' fill='%23000'/><circle cx='8.6' cy='7.4' r='1.2' fill='%23000'/></svg>") right center / 0.42em 0.42em no-repeat, var(--stroke) left center / calc(100% - 0.25em) 100% no-repeat; /* literal-ok: mask shapes only */
+}
+/* the top-bar notice sits a little further right, clear of the emblem and balanced under the title */
+@media (max-width: 979.98px) { .notes-slot { left: 58px; right: 112px; } }
+
+/* The coin, engraved: warm gilt under a pencil-drawn rim, the name in blackletter at its heart */
+.coin-face { padding: 0; color: #4a3313; /* literal-ok: engraving ink on gilt */
+  background: radial-gradient(circle at 36% 30%, #f6e2a4, #d9b161 46%, #a77a2e 82%, #7a5620); /* literal-ok: struck gilt */
+  box-shadow: inset 0 0 0 2px #f5dc9a, inset 0 -6px 14px rgba(74, 51, 19, 0.45), 0 10px 24px -8px #000; } /* literal-ok: struck gilt */
+.coin-face .coin-art { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.1; --ink-filter: url(#ds-pencil); }
+.coin-face .coin-art circle[r='.9'], .coin-face .coin-art .cf-fill { fill: currentColor; stroke: none; }
+.coin-face span { position: relative; max-width: 54%; font: 600 clamp(17px, 5vw, 22px)/1 var(--black); color: #3a2710; text-shadow: 0 1px 0 rgba(255, 240, 200, 0.6); overflow-wrap: anywhere; } /* literal-ok: engraving */
+.coin-stage { height: 190px; }
+.m-outcome.solo { margin-top: 18px; }
+
+/* The broken seal (a loss): two pieces along a jagged break that come apart a beat after the press */
+.wseal.cracked .wh { position: absolute; inset: 0; display: block; }
+.wseal.cracked .wh svg { width: 100%; height: 100%; display: block; }
+.wseal.cracked .wh-a { clip-path: polygon(0 0, 58% 0, 50% 18%, 61% 33%, 47% 49%, 57% 64%, 44% 80%, 52% 100%, 0 100%); animation: breakA 0.6s 1.2s var(--ease) both; }
+.wseal.cracked .wh-b { clip-path: polygon(58% 0, 100% 0, 100% 100%, 52% 100%, 44% 80%, 57% 64%, 47% 49%, 61% 33%, 50% 18%); animation: breakB 0.6s 1.2s var(--ease) both; }
+@keyframes breakA { to { transform: translate(-6%, 3%) rotate(-9deg); } }
+@keyframes breakB { to { transform: translate(7%, 5%) rotate(11deg); } }
+
+/* The verdict: full width so its wash never shows an edge, the wash fading out before any side; tighter */
+.verdict { margin-left: calc(-1 * var(--edge, 16px)); margin-right: calc(-1 * var(--edge, 16px)); padding: 8px var(--edge, 16px) 4px; gap: 8px; }
+.verdict.lost { background: radial-gradient(60% 50% at 50% 42%, color-mix(in srgb, var(--blood) 20%, transparent), transparent 100%); }
+.verdict .sunburst { -webkit-mask: radial-gradient(closest-side, #000 20%, transparent 95%); mask: radial-gradient(closest-side, #000 20%, transparent 95%); } /* literal-ok: mask */
+.verdict .v-astro { --s: 124px !important; width: 124px; margin: 0 auto 4px; }
+.verdict .v-astro .wseal { --ws: 62px; }
+.verdict h1 { font-size: clamp(44px, 13vw, 84px); }
+.verdict .result-stamp { margin-top: 2px; }

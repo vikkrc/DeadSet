@@ -20,8 +20,9 @@ export function sceneMs(type, d = {}) {
     case 'dawn': return 6400 + 600 * (d.dead ?? 0);
     case 'revive': return 3000;
     case 'call': return 2600;
-    case 'tally': return 5200;
-    case 'coin': return 5200;
+    case 'tally': return 3000; // the ballots, counted
+    case 'verdict': return 3400; // then, on its own screen, who is sentenced (or spared)
+    case 'coin': return 4400;
     case 'death': return 3600;
     // Missions
     case 'mlottery': return 8600;
@@ -92,8 +93,8 @@ export function scenesFor(l, batch = [], ctx = {}) {
     case 'dawn': return [['dawn', { dead: (l.killed?.length ?? 0) + (l.expired?.length ?? 0) }]];
     case 'revive': return has('dawn') ? [] : [['revive']];
     case 'vote-open': case 'final-act': case 'm-stand': case 'm-haunt': return [['call']];
-    case 'tally': return [['tally']];
-    case 'coinflip': return [['coin']];
+    case 'tally': return has('coinflip') ? [['tally']] : [['tally'], ['verdict']];
+    case 'coinflip': return [['coin'], ['verdict']];
     case 'heartbreak': case 'shot': case 'exchange': return [['death']];
     case 'scapegoat': return has('tally') ? [] : [['death']];
     case 'm-lottery': case 'x-lottery': case 'c-lottery': case 'k-lottery': case 's-lottery': return [['mlottery']];

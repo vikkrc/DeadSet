@@ -109,9 +109,10 @@ test('P1/P3: banners hold no time; Brisk plays full scenes at 0.6', async () => 
   assert.equal(sceneSize('kswap'), 'banner');
   assert.equal(sceneSize('gdig', { kind: 'D' }), 'full');
   assert.equal(interludeMs({ ev: 'k-swap' }, []), 0);
+  // The ballots and the verdict are two scenes: the count, then who is sentenced.
   const full = interludeMs({ ev: 'tally' }, []);
-  assert.equal(full, 5200);
-  assert.equal(interludeMs({ ev: 'tally' }, [], { pace: 'brisk' }), Math.round(5200 * 0.6));
+  assert.equal(full, 6400);
+  assert.equal(interludeMs({ ev: 'tally' }, [], { pace: 'brisk' }), Math.round(6400 * 0.6));
   const m = newMatch({ mode: 'classic' });
   updateSettings(m, { pace: 'brisk' });
   assert.equal(m.settings.pace, 'brisk');

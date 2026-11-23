@@ -465,17 +465,21 @@ function detectMoments(v) {
       case 'revive': if (!fresh.some((x) => x.ev === 'dawn')) out.push({ type: 'revive', names: (l.ids ?? []).map(name) }); break;
       case 'vote-open': out.push({ type: 'call', kicker: ['Day {n}', { n: roman(v.dayNumber) }], title: 'The vote', sub: 'Cast your ballot in secret. You can change it until it locks.', sound: 'knock' }); break;
       case 'tally': {
+        // Two scenes: the count, then the verdict on its own screen (after a tie, the coin comes between).
+        const totals = Object.entries(l.totals || {}).map(([id, w]) => ({ name: name(id), w, id })).sort((a, b) => b.w - a.w);
         const coin = fresh.find((x) => x.i > l.i && x.ev === 'coinflip');
-        if (coin) { out.push({ type: 'tally', totals: Object.entries(l.totals || {}).map(([id, w]) => ({ name: name(id), w, id })).sort((a, b) => b.w - a.w), threshold: l.threshold, outcome: 'tie', reason: '', sentenced: null, goat: null }); break; }
         const outcomeEv = fresh.find((x) => x.i > l.i && ['sentence', 'nosentence', 'cancelled', 'scapegoat'].includes(x.ev));
         const goat = fresh.find((x) => x.i > l.i && x.ev === 'scapegoat');
         const sentence = fresh.find((x) => x.i > l.i && x.ev === 'sentence');
-        out.push({ type: 'tally', totals: Object.entries(l.totals || {}).map(([id, w]) => ({ name: name(id), w, id })).sort((a, b) => b.w - a.w),
-          threshold: l.threshold, outcome: outcomeEv?.ev ?? 'nosentence', reason: outcomeEv ? entryMsg(outcomeEv) : '', sentenced: sentence ? name(sentence.victims[0]) : null, sentencedId: sentence?.victims?.[0] ?? null,
+        out.push({ type: 'tally', totals, threshold: l.threshold, tie: !!coin, top: sentence?.victims?.[0] ?? null });
+        if (!coin) out.push({ type: 'verdict', outcome: outcomeEv?.ev ?? 'nosentence', reason: outcomeEv ? entryMsg(outcomeEv) : '', sentenced: sentence ? name(sentence.victims[0]) : null, sentencedId: sentence?.victims?.[0] ?? null,
           meSentenced: !!sentence?.victims?.includes(meId), goat: goat ? name(goat.victims[0]) : null });
         break;
       }
-      case 'coinflip': out.push({ type: 'coin', tied: (l.tied ?? []).map(name), winner: name(l.winner), meSentenced: l.winner === meId, sound: 'coin' }); break;
+      case 'coinflip':
+        out.push({ type: 'coin', tied: (l.tied ?? []).map(name), winner: name(l.winner), sound: 'coin' });
+        out.push({ type: 'verdict', outcome: 'sentence', reason: '', sentenced: name(l.winner), sentencedId: l.winner, meSentenced: l.winner === meId, goat: null, named: V()?.mode === 'missions' });
+        break;
       case 'heartbreak': out.push({ type: 'death', sound: 'death', art: 'heart', title: 'A broken heart', names: (l.victims ?? []).map(name), sub: 'Love would not let them stay.' }); break;
       case 'scapegoat':
         if (!fresh.some((x) => x.ev === 'tally')) out.push({ type: 'death', sound: 'scapegoat', title: 'The Scapegoat pays', names: (l.victims ?? []).map(name), sub: 'No one was sentenced.' });
@@ -509,7 +513,7 @@ const sceneData = (m) => ({ coin: m.coin ?? null, rules: m.rules?.length ?? 0, d
 
 const MOMENT_SOUND = { night0: 'night', day1: 'dawn', nightfall: 'night', dawn: 'dawn', tally: 'knock', death: 'death', revive: 'revive', bloodmoon: 'bloodmoon' };
 const END_THEME = { OMEN: 'winLiving', MIRROR: 'winLiving', MIMIC: 'winLiving', GRAVEROBBERS: 'winLiving', SEANCE: 'winLiving', MIDNIGHT: 'winLiving', CARNIVAL: 'winJester', COFFINS: 'winLiving', DEMON: 'winDeath', DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester', LOVERS: 'winLovers', CULT: 'winCult', RIPPER: 'winRipper' };
-const MOMENT_TIME = { end: 9000, private: 6000, gift: 5600, mside: 5200, coin: 5200, night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 5200, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
+const MOMENT_TIME = { end: 9000, private: 6000, gift: 5600, mside: 5200, coin: 4400, verdict: 3400, night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 3000, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
 const momentBase = (m) => (m.type === 'mreveal' ? revealTime(m) : O_MOMENT_TIME[m.type] ? O_MOMENT_TIME[m.type] : W_MOMENT_TIME[m.type] ? W_MOMENT_TIME[m.type] : Q_MOMENT_TIME[m.type] ? Q_MOMENT_TIME[m.type] : S_MOMENT_TIME[m.type] ? S_MOMENT_TIME[m.type] : G_MOMENT_TIME[m.type] ? G_MOMENT_TIME[m.type] : N_MOMENT_TIME[m.type] ? N_MOMENT_TIME[m.type] : K_MOMENT_TIME[m.type] ? K_MOMENT_TIME[m.type] : C_MOMENT_TIME[m.type] ? C_MOMENT_TIME[m.type] : X_MOMENT_TIME[m.type] ? X_MOMENT_TIME[m.type] : MISSION_MOMENT_TIME[m.type] ? MISSION_MOMENT_TIME[m.type] : !onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : (MOMENT_TIME[m.type] ?? 6000) + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
 
 // ── M3: Gain — things that count move ───────────────────────────────────
@@ -639,7 +643,7 @@ function nextMoment() {
     if (snd) pubSound(snd);
     if (m.type === 'dawn' && onBoard()) setTimeout(() => pubSound('page'), 300);
     if (m.type === 'dawn' && (m.killed.length || m.expired.length)) setTimeout(() => { pubSound('death'); cue('fall', { silent: true }); }, 900);
-    if (m.type === 'tally') setTimeout(() => { pubSound(m.sentenced || m.goat ? 'gavel' : 'tap'); if (m.sentenced) cue('stamp', { silent: true }); }, 1700);
+    if (m.type === 'verdict') setTimeout(() => { pubSound(m.sentenced || m.goat ? 'gavel' : 'tap'); if (m.sentenced) cue('stamp', { silent: true }); }, 700);
     if (m.type === 'death') cue('fall', { silent: true }); // the scene's own sound carries it; Fall has no buzz
     if (m.type === 'mreveal') {
       const n = m.cards ? m.cards.length : m.count;
@@ -689,6 +693,8 @@ function reportHtml(msg, lines) {
 // a vote total as lozenge beads (capped so a long row never wraps; the figure carries the exact count)
 const beads = (w) => `<span class="beads" aria-hidden="true">${'<i></i>'.repeat(Math.max(0, Math.min(12, Math.round(w))))}</span>`;
 // the sentenced player's medallion: their portrait if they have one, else the initial in blackletter
+/** The tie-break coin: an engraved gilt piece drawn in pencil (beaded rim, rays, four lozenges), the name at its heart. */
+const COIN_FACE = '<svg class="coin-art" viewBox="0 0 100 100" aria-hidden="true"><g class="emb-ink"><circle cx="50" cy="50" r="48.5"/><circle cx="50" cy="50" r="43" stroke-width=".6"/><circle cx="50" cy="50" r="39.5"/><circle cx="50" cy="50" r="29" stroke-width=".7"/><circle cx="95.5" cy="50.0" r=".9"/><circle cx="95.1" cy="55.9" r=".9"/><circle cx="93.9" cy="61.8" r=".9"/><circle cx="92.0" cy="67.4" r=".9"/><circle cx="89.4" cy="72.8" r=".9"/><circle cx="86.1" cy="77.7" r=".9"/><circle cx="82.2" cy="82.2" r=".9"/><circle cx="77.7" cy="86.1" r=".9"/><circle cx="72.8" cy="89.4" r=".9"/><circle cx="67.4" cy="92.0" r=".9"/><circle cx="61.8" cy="93.9" r=".9"/><circle cx="55.9" cy="95.1" r=".9"/><circle cx="50.0" cy="95.5" r=".9"/><circle cx="44.1" cy="95.1" r=".9"/><circle cx="38.2" cy="93.9" r=".9"/><circle cx="32.6" cy="92.0" r=".9"/><circle cx="27.3" cy="89.4" r=".9"/><circle cx="22.3" cy="86.1" r=".9"/><circle cx="17.8" cy="82.2" r=".9"/><circle cx="13.9" cy="77.7" r=".9"/><circle cx="10.6" cy="72.8" r=".9"/><circle cx="8.0" cy="67.4" r=".9"/><circle cx="6.1" cy="61.8" r=".9"/><circle cx="4.9" cy="55.9" r=".9"/><circle cx="4.5" cy="50.0" r=".9"/><circle cx="4.9" cy="44.1" r=".9"/><circle cx="6.1" cy="38.2" r=".9"/><circle cx="8.0" cy="32.6" r=".9"/><circle cx="10.6" cy="27.3" r=".9"/><circle cx="13.9" cy="22.3" r=".9"/><circle cx="17.8" cy="17.8" r=".9"/><circle cx="22.3" cy="13.9" r=".9"/><circle cx="27.2" cy="10.6" r=".9"/><circle cx="32.6" cy="8.0" r=".9"/><circle cx="38.2" cy="6.1" r=".9"/><circle cx="44.1" cy="4.9" r=".9"/><circle cx="50.0" cy="4.5" r=".9"/><circle cx="55.9" cy="4.9" r=".9"/><circle cx="61.8" cy="6.1" r=".9"/><circle cx="67.4" cy="8.0" r=".9"/><circle cx="72.8" cy="10.6" r=".9"/><circle cx="77.7" cy="13.9" r=".9"/><circle cx="82.2" cy="17.8" r=".9"/><circle cx="86.1" cy="22.3" r=".9"/><circle cx="89.4" cy="27.2" r=".9"/><circle cx="92.0" cy="32.6" r=".9"/><circle cx="93.9" cy="38.2" r=".9"/><circle cx="95.1" cy="44.1" r=".9"/><g stroke-width=".5" opacity=".7"><path d="M80.0 50.0L88.0 50.0"/><path d="M79.5 55.2L87.4 56.6"/><path d="M78.2 60.3L85.7 63.0"/><path d="M76.0 65.0L82.9 69.0"/><path d="M73.0 69.3L79.1 74.4"/><path d="M69.3 73.0L74.4 79.1"/><path d="M65.0 76.0L69.0 82.9"/><path d="M60.3 78.2L63.0 85.7"/><path d="M55.2 79.5L56.6 87.4"/><path d="M50.0 80.0L50.0 88.0"/><path d="M44.8 79.5L43.4 87.4"/><path d="M39.7 78.2L37.0 85.7"/><path d="M35.0 76.0L31.0 82.9"/><path d="M30.7 73.0L25.6 79.1"/><path d="M27.0 69.3L20.9 74.4"/><path d="M24.0 65.0L17.1 69.0"/><path d="M21.8 60.3L14.3 63.0"/><path d="M20.5 55.2L12.6 56.6"/><path d="M20.0 50.0L12.0 50.0"/><path d="M20.5 44.8L12.6 43.4"/><path d="M21.8 39.7L14.3 37.0"/><path d="M24.0 35.0L17.1 31.0"/><path d="M27.0 30.7L20.9 25.6"/><path d="M30.7 27.0L25.6 20.9"/><path d="M35.0 24.0L31.0 17.1"/><path d="M39.7 21.8L37.0 14.3"/><path d="M44.8 20.5L43.4 12.6"/><path d="M50.0 20.0L50.0 12.0"/><path d="M55.2 20.5L56.6 12.6"/><path d="M60.3 21.8L63.0 14.3"/><path d="M65.0 24.0L69.0 17.1"/><path d="M69.3 27.0L74.4 20.9"/><path d="M73.0 30.7L79.1 25.6"/><path d="M76.0 35.0L82.9 31.0"/><path d="M78.2 39.7L85.7 37.0"/><path d="M79.5 44.8L87.4 43.4"/></g><path transform="translate(50.0 8.5) rotate(0)" d="M0-2.4L1.3 0L0 2.4L-1.3 0Z" class="cf-fill"/><path transform="translate(91.5 50.0) rotate(90)" d="M0-2.4L1.3 0L0 2.4L-1.3 0Z" class="cf-fill"/><path transform="translate(50.0 91.5) rotate(180)" d="M0-2.4L1.3 0L0 2.4L-1.3 0Z" class="cf-fill"/><path transform="translate(8.5 50.0) rotate(270)" d="M0-2.4L1.3 0L0 2.4L-1.3 0Z" class="cf-fill"/><path d="M71 66a29 29 0 0 1-38 9" stroke-width="5" opacity=".18"/></g></svg>';
 function verdictMedal(id, nm) {
   const p = V()?.players?.find((x) => x.id === id);
   const inner = p?.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="vm-ini">${esc([...(nm ?? '?')][0] ?? '?')}</span>`;
@@ -763,7 +769,8 @@ function verdict(v, { winner = v?.winner, result = null, sides = null, whos = nu
 const stampHtml = (st) => (st ? `<div class="result-stamp ${st.cls}">${esc(st.text)}</div>` : '');
 
 function momentHtml(m) {
-  const names = (list, cls = '') => list.map((n, i) => `<li class="victim ${cls}" style="--d:${0.9 + i * 0.5}s"><span>${esc(n)}</span></li>`).join('');
+  // II · the same hand-drawn stroke as the table, one hand per name
+  const names = (list, cls = '') => list.map((n, i) => `<li class="victim ${cls} sv${[...String(n)].reduce((a, c) => a + c.charCodeAt(0), 0) % 4}" style="--d:${0.9 + i * 0.5}s"><span>${esc(n)}</span></li>`).join('');
   let body = '';
   switch (m.type) {
     case 'night0': {
@@ -813,24 +820,27 @@ function momentHtml(m) {
       break;
     case 'tally': {
       const max = Math.max(1, ...m.totals.map((x) => x.w));
+      body = `<span class="kicker">${t('The ballots')}</span><h1 class="m-title">${letters(t('The town decides'))}</h1>
+        ${m.totals.length ? `<div class="ballot"><ul class="bars">${m.totals.map((x, i) => `<li class="${m.top && x.id === m.top ? 'top' : ''}" style="--w:${(x.w / max) * 100}%;--d:${0.3 + i * 0.15}s"><span class="b-name">${esc(x.name)}</span>${beads(x.w)}<span class="b-n">${x.w}</span></li>`).join('')}</ul>
+        ${m.threshold != null ? `<p class="kicker t-foot">${t('Majority Rule: more than {n} needed.', { n: m.threshold })}</p>` : ''}</div>` : `<p class="m-sub">${t('No valid votes.')}</p>`}
+        ${m.tie ? `<p class="m-sub">${t('A tie')} · ${t('Coin toss')}</p>` : ''}`;
+      break;
+    }
+    case 'verdict': {
       const outcome = m.sentenced
-        ? `<div class="verdict-stamp ${m.meSentenced ? 'me' : ''}">${verdictMedal(m.sentencedId, m.sentenced)}<span class="v-name">${esc(m.meSentenced ? t('You') : m.sentenced)}</span><span class="stamp">${t('Sentenced')}</span></div>`
-        : m.outcome === 'tie' ? `<div class="verdict-stamp"><span class="v-name">${t('A tie')}</span><span class="stamp soft">${t('Coin toss')}</span></div>`
+        ? `<div class="verdict-stamp ${m.meSentenced ? 'me' : ''}">${verdictMedal(m.sentencedId, m.sentenced)}<span class="v-name">${esc(m.meSentenced ? t('You') : m.sentenced)}</span><span class="stamp">${t(m.named ? 'Named' : 'Sentenced')}</span></div>`
         : m.outcome === 'cancelled' ? `<div class="verdict-stamp"><span class="v-name">${t('Fate intervenes')}</span><span class="stamp soft">${t('Cancelled')}</span></div><p class="m-sub small">${t('A wager was won. Nobody hangs today.')}</p>`
           : `<div class="verdict-stamp"><span class="v-name">${t('No one')}</span><span class="stamp soft">${t('Spared')}</span></div><p class="m-sub small">${tmh(m.reason)}</p>`;
-      body = `<span class="kicker">${t('The ballots')}</span><h1 class="m-title">${letters(t('The town decides'))}</h1>
-        ${m.totals.length ? `<div class="ballot"><ul class="bars">${m.totals.map((x, i) => `<li class="${m.sentenced && x.name === m.sentenced ? 'top' : ''}" style="--w:${(x.w / max) * 100}%;--d:${0.3 + i * 0.15}s"><span class="b-name">${esc(x.name)}</span>${beads(x.w)}<span class="b-n">${x.w}</span></li>`).join('')}</ul>
-        ${m.threshold != null ? `<p class="kicker t-foot">${t('Majority Rule: more than {n} needed.', { n: m.threshold })}</p>` : ''}</div>` : `<p class="m-sub">${t('No valid votes.')}</p>`}
-        <div class="m-outcome">${outcome}${m.goat ? `<p class="m-sub blood">${th('The Scapegoat pays: {a} dies.', { a: m.goat })}</p>` : ''}</div>`;
+      body = `<span class="kicker">${t('The verdict')}</span><div class="m-outcome solo">${outcome}${m.goat ? `<p class="m-sub blood">${th('The Scapegoat pays: {a} dies.', { a: m.goat })}</p>` : ''}</div>`;
       break;
     }
     case 'coin': {
       const faces = m.tied.length === 2 ? m.tied : [m.winner, '?'];
       const lands = faces[0] === m.winner ? 0 : 1;
+      const face = (nm, cls) => `<div class="coin-face ${cls}">${COIN_FACE}<span>${esc(nm)}</span></div>`;
       body = `<span class="kicker">${t('The vote is tied')}</span><h1 class="m-title">${letters(t('A coin decides'))}</h1>
-        <div class="coin-stage"><div class="coin lands-${lands}"><div class="coin-face heads"><span>${esc(faces[0])}</span></div><div class="coin-face tails"><span>${esc(faces[1])}</span></div></div><div class="coin-shadow"></div></div>
-        ${m.tied.length > 2 ? `<p class="m-sub small">${th('Tied: {names}', { names: m.tied })}</p>` : ''}
-        <div class="verdict-stamp coin-verdict ${m.meSentenced ? 'me' : ''}"><span class="v-name">${esc(m.meSentenced ? t('You') : m.winner)}</span><span class="stamp">${t(V()?.mode === 'missions' ? 'Named' : 'Sentenced')}</span></div>`;
+        <div class="coin-stage"><div class="coin lands-${lands}">${face(faces[0], 'heads')}${face(faces[1], 'tails')}</div><div class="coin-shadow"></div></div>
+        ${m.tied.length > 2 ? `<p class="m-sub small">${th('Tied: {names}', { names: m.tied })}</p>` : ''}`;
       break;
     }
     case 'xball': case 'xvotes': case 'xguess': body = exorcismMomentHtml(m, { letters, onBoard, V }); break;
@@ -3052,7 +3062,7 @@ function endMain(v, me) {
   const mine = me && !me.moderator ? didIWin(v, v.winner) : null;
   const mood = mine === true ? 'won' : mine === false ? 'lost' : '';
   const motes = mood ? `<div class="v-motes" aria-hidden="true">${Array.from({ length: 16 }, (_, i) => `<i style="--x:${(i * 37) % 100}%;--d:${((i * 0.53) % 4).toFixed(2)}s;--s:${0.6 + ((i * 7) % 5) / 6}"></i>`).join('')}</div>` : '';
-  return `<section class="verdict ${mood} ${v.winner === 'DEATH' || v.winner === 'DEMON' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] || mood === 'won' ? '<div class="sunburst" aria-hidden="true"></div>' : ''}${motes}${astrolabe(150, waxSeal('l', mood === 'lost' ? 'cracked' : ''), 'v-astro')}<span class="kicker">${esc(vd.kicker)}</span><h1>${letters(vd.title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
+  return `<section class="verdict ${mood} ${v.winner === 'DEATH' || v.winner === 'DEMON' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] || mood === 'won' ? '<div class="sunburst" aria-hidden="true"></div>' : ''}${motes}${astrolabe(124, waxSeal('l', mood === 'lost' ? 'cracked' : ''), 'v-astro')}<span class="kicker">${esc(vd.kicker)}</span><h1>${letters(vd.title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
       ${stampHtml(vd.stamp)}</section>
     <div class="end-next" data-key="endnext">${ag.votes}${v.host?.rematch ? `<button class="btn btn-solid btn-wide" data-act="rematch">${glyph('scroll')} ${t('Play again, same table')}</button>` : `<p class="small muted center-text">${t('Waiting for the host to start the next round.')}</p>`}</div>
     ${revealed ? ring(v, { reveal: true, center: v.mode === 'exorcism' ? '' : centerFor(v), marks: v.mode === 'missions' ? missionMarks(v) : {}, extra: v.mode === 'missions' ? hunchArrowsSvg(v) : '', orb: v.mode === 'exorcism' ? endOrb(v) : '' }) : ''}
