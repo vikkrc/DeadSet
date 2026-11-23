@@ -1282,8 +1282,6 @@ function homeScreen() {
           <label class="check"><input type="checkbox" data-act="toggleModerated" ${S.ui.moderated ? 'checked' : ''}><span><b>${t('I\'ll moderate, not play')}</b><small>${t('Sees every secret, holds no seat. Everyone is told.')}</small></span></label>
           ${tutorialToggle()}
           <button class="btn btn-solid btn-wide btn-tall" data-act="create" ${S.pending ? 'disabled' : ''}>${t('Pull up a chair')}</button>
-          <button class="btn btn-ghost btn-wide practice-btn" data-act="practice" ${S.pending ? 'disabled' : ''}>${glyph('bot')} ${t('Try a practice round')}</button>
-          <p class="foot">${t('Exorcism with five practice bots and tips on. No one else needed.')}</p>
         </div>` : `<div class="stack" data-key="h-join">
           <label class="code-in" aria-label="${esc(t('Room code'))}">
             <input data-draft="joinCode" maxlength="6" autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text" value="${esc(code)}">
@@ -3351,21 +3349,6 @@ const ACT = {
       sound.play('reveal');
       go(`/r/${r.code}`);
     } catch (e) { fieldError('recCode', e.message, true); } finally { S.pending = false; render(); }
-  },
-  // O: a practice table — Exorcism, five bots, first-game tips on. Bots are marked as bots on every screen.
-  async practice() {
-    const name = (S.drafts.createName ?? '').trim() || t('You');
-    S.pending = true; render();
-    try {
-      const r = await api('/api/rooms', { name, lang: getLang(), avatar: myAvatar() });
-      saveSession(r.code, r);
-      const cmd = (type, payload) => api(`/api/rooms/${r.code}/cmd`, { t: r.token, type, payload, key: uid() });
-      await cmd('host.settings', { mode: 'exorcism' });
-      await cmd('host.bots', { count: 5 });
-      localStorage.setItem(TIPS_KEY, '1');
-      sound.play('reveal');
-      go(`/r/${r.code}`);
-    } catch (e) { toast(e.message, 'err'); } finally { S.pending = false; render(); }
   },
   edgeHome(el) { S.ui.homeTab = el.dataset.id; S.conn = null; go('/'); },
   toggleModerated() { S.ui.moderated = !S.ui.moderated; render(); },
