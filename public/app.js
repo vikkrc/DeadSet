@@ -11,7 +11,7 @@ import { didIWin } from './outcome.js';
 import { shareCard } from './share.js';
 import { sceneMs, scenesFor, sceneSize, paceScale } from './interludes.js';
 import { MODES, MODE_IDS, FAMILIES, COLLECTION, modeOfPhase, modeInfo } from './modes.js';
-import { explainer, waitText } from './kit.js';
+import { explainer, waitText, waxSeal } from './kit.js';
 import { cardArt, roleEmblemId, roleNumber } from './cards.js';
 import { emblem } from './emblems.js';
 import { isGravePhase, graveMain, graveDock, graveActs, graveMoment, graveMomentHtml, G_MOMENT_TIME, graveEndHtml, graveLobbyDeck, GRAVE_QUIET, graveTitle, graveKicker, lobbyCrews, graveLobbyCenter, explainerHtml as how_graverobbers } from './graverobbers.js';
@@ -1624,7 +1624,7 @@ function commitBtn(kind, act, label, { cls = '', dis = false, key = act, extra =
   return `<button class="btn btn-solid ${cls}" data-act="${act}" data-key="d-${key}" ${extra} ${dis ? 'disabled' : ''} ${S.pending ? 'data-pending' : ''}>${esc(label)}</button>`;
 }
 /** The stamped note after a secret choice is in. */
-const sealedNote = (text, key = 'sealed') => `<span class="dock-note stamped" data-key="${key}">${glyph('check')} ${esc(text)}</span>`;
+const sealedNote = (text, key = 'sealed') => `<span class="dock-note stamped" data-key="${key}">${waxSeal()} ${esc(text)}</span>`;
 
 function holdBtn(act, label, cls = '', { dis = false, key = act } = {}) {
   return `<button class="btn hold ${cls} ${S.ui.holding === key ? 'holding' : ''}" data-hold="${act}" data-key="hold-${key}" ${dis ? 'disabled' : ''} ${S.pending ? 'data-pending' : ''}><span class="hold-fill"></span><span class="hold-label">${esc(label)}</span></button>`;
@@ -1799,6 +1799,7 @@ function sheet(v) {
   const me = v?.me;
   let title = '';
   let kicker = '';
+  let headSeal = '';
   let body = '';
   if (s === 'record') {
     // H: one room menu in tabs — You (this phone), Table (the record, the evening, invite), Host, Help.
@@ -1874,6 +1875,7 @@ function sheet(v) {
     body = masksSheet(v);
   } else if (s === 'notes') {
     title = t('Only you were told');
+    headSeal = waxSeal('m');
     body = feed([...(v.private || [])].reverse(), 'feed-private');
   } else if (s === 'rules') {
     title = t('Rules in force');
@@ -1918,7 +1920,7 @@ function sheet(v) {
   return `<div class="sheet-scrim" data-act="sheet" data-key="scrim"></div>
     <div class="sheet" role="dialog" aria-label="${title.replace(/<[^>]*>/g, '')}" data-key="sheet-${s}">
       <div class="sheet-grip" aria-hidden="true"></div>
-      <div class="row between sheet-head"><div class="sh-t">${kicker ? `<span class="kicker">${kicker}</span>` : ''}<h2>${title}</h2></div><button class="btn btn-ghost icon-btn" data-act="sheet" aria-label="${esc(t('Close'))}">${glyph('close')}</button></div>
+      <div class="row between sheet-head">${headSeal}<div class="sh-t">${kicker ? `<span class="kicker">${kicker}</span>` : ''}<h2>${title}</h2></div><button class="btn btn-ghost icon-btn" data-act="sheet" aria-label="${esc(t('Close'))}">${glyph('close')}</button></div>
       <div class="sheet-body">${body}</div>
     </div>`;
 }
@@ -2945,7 +2947,7 @@ function endMain(v, me) {
       <span class="seat">${p.role ? glyph(p.role.glyph) : ''}</span>
       <span class="who"><b>${esc(p.name)}</b><small>${p.role ? esc(roleF(p.role.id, 'name')) : '—'}${p.originalRole ? ` ${th('(was {role})', { role: p.originalRole.id })}` : ''} · ${p.alive ? t('alive') : `† ${esc(stamp(p.diedAt))}`}</small></span>
       <span class="tags">${p.lover ? `<span class="tag love" title="${esc(t('Lovers'))}">${glyph('heart')}</span>` : ''}<span class="tag ${p.alignment === 'DEATH' ? 'blood' : ''}">${esc(ALIGN[p.alignment] ?? '')}</span></span></li>`).join('')}</ul>` : `<p class="muted">${t('The host chose not to reveal roles.')}</p>`}</section>`;
-  return `<section class="verdict ${v.winner === 'DEATH' || v.winner === 'DEMON' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<span class="kicker">${esc(vd.kicker)}</span><h1>${letters(vd.title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
+  return `<section class="verdict ${v.winner === 'DEATH' || v.winner === 'DEMON' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}${waxSeal('l', 'v-seal')}<span class="kicker">${esc(vd.kicker)}</span><h1>${letters(vd.title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
       ${stampHtml(vd.stamp)}</section>
     ${afterGame(v)}
     <div class="end-next" data-key="endnext">${v.host?.rematch ? `<button class="btn btn-solid btn-wide" data-act="rematch">${glyph('scroll')} ${t('Play again, same table')}</button>` : `<p class="small muted center-text">${t('Waiting for the host to start the next round.')}</p>`}</div>
@@ -3236,7 +3238,7 @@ function dock(v) {
         if (a.type === 'ballot') {
           const sel = S.sel.vote ?? a.choice;
           if (sel && sel !== a.choice) parts.push(btn(sel === 'ABSTAIN' ? t('Abstain') : th('Vote {name}', { name: rawName(sel) }), 'vote', 'btn-blood'));
-          else if (a.choice) parts.push(`<span class="dock-note stamped" data-key="rec-${a.choice}">${glyph('check')} ${a.choice === 'ABSTAIN' ? t('Abstained') : th('Voted {name}', { name: rawName(a.choice) })}</span>`);
+          else if (a.choice) parts.push(`<span class="dock-note stamped" data-key="rec-${a.choice}">${waxSeal()} ${a.choice === 'ABSTAIN' ? t('Abstained') : th('Voted {name}', { name: rawName(a.choice) })}</span>`);
         }
         break;
       case 'DAY_RESOLVING':

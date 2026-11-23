@@ -6,7 +6,7 @@
 // Privacy: during the night every phone shows the same step screen; only the
 // waking player's has controls. Nothing at night makes a sound or a buzz.
 import { glyph } from './icons.js';
-import { waitText } from './kit.js';
+import { waitText, waxSeal } from './kit.js';
 import { emblem } from './emblems.js';
 import { cardArt, roleNumber } from './cards.js';
 import { t, th, tmh, roleF } from './i18n.js';
@@ -164,7 +164,7 @@ export function midnightDock(v, h) {
     case 'nvote': {
       const pickd = sel[0];
       if (pickd && pickd !== a.choice) parts.push(commitBtn('secret', 'nVote', th('Point at {name}', { name: rawName(pickd) })));
-      else if (a.choice) parts.push(`<span class="dock-note stamped" data-key="nv-${a.choice}">${glyph('check')} ${th('You point at {name}', { name: rawName(a.choice) })}</span>`);
+      else if (a.choice) parts.push(`<span class="dock-note stamped" data-key="nv-${a.choice}">${waxSeal()} ${th('You point at {name}', { name: rawName(a.choice) })}</span>`);
       break;
     }
     default: break;

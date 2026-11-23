@@ -6,7 +6,7 @@
 // everyone else sees only stone until a grave is opened.
 
 import { glyph } from './icons.js';
-import { waitText } from './kit.js';
+import { waitText, waxSeal } from './kit.js';
 import { emblem } from './emblems.js';
 import { cardArt } from './cards.js';
 import { t, th, roleF } from './i18n.js';
@@ -182,7 +182,7 @@ export function graveDock(v, h) {
       break;
     }
     case 'gvote':
-      parts.push(a.choice === 'stop' ? `<span class="dock-note stamped" data-key="gstop">${glyph('check')} ${t('You vote to stop')}</span>` : commitBtn('secret', 'gStop', t('Vote to stop digging'), { cls: 'btn-ghost' }));
+      parts.push(a.choice === 'stop' ? `<span class="dock-note stamped" data-key="gstop">${waxSeal()} ${t('You vote to stop')}</span>` : commitBtn('secret', 'gStop', t('Vote to stop digging'), { cls: 'btn-ghost' }));
       break;
     default: break;
   }

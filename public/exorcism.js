@@ -2,7 +2,7 @@
 // Pure renderers over the filtered view; the shell (app.js) passes its helpers
 // in `h` and merges `exorcismActs` into its action table.
 import { glyph } from './icons.js';
-import { waitText } from './kit.js';
+import { waitText, waxSeal } from './kit.js';
 import { t, th, getLang, setNamer } from './i18n.js';
 import { avatarSvg } from './avatar.js';
 
@@ -391,7 +391,7 @@ export function exorcismDock(v, h) {
     case 'xvote': {
       const sel = S.sel.xvote ?? null;
       if (sel && sel !== a.choice) parts.push(btn(th('Name {name}', { name: rawName(sel) }), 'xVote', 'btn-blood'));
-      else if (a.choice) parts.push(`<span class="dock-note stamped" data-key="xv-${a.choice}">${glyph('check')} ${th('You named {name}', { name: rawName(a.choice) })}</span>`);
+      else if (a.choice) parts.push(`<span class="dock-note stamped" data-key="xv-${a.choice}">${waxSeal()} ${th('You named {name}', { name: rawName(a.choice) })}</span>`);
       break;
     }
     case 'xguess': {

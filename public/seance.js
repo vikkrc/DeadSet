@@ -7,7 +7,7 @@
 // Deceiver's false visions live in the same drawer every reader has.
 
 import { glyph } from './icons.js';
-import { waitText } from './kit.js';
+import { waitText, waxSeal } from './kit.js';
 import { emblem } from './emblems.js';
 import { cardArt } from './cards.js';
 import { t, th, tmh, roleF, scenAt, setNamer } from './i18n.js';
@@ -277,7 +277,7 @@ export function seanceDock(v, h) {
       const pick = UI.sel.scard;
       if (pick != null && pick !== s.lit) parts.push(commitBtn('secret', 'sLight', t('Light the candle')));
       else if (s.lit == null) { parts.push(note(t('Tap a card'))); parts.push(commitBtn('secret', 'sAbstain', t('Keep my candle dark'), { cls: 'btn-ghost' })); }
-      else parts.push(`<span class="dock-note stamped" data-key="slit">${glyph('check')} ${t('Your candle is lit')}</span>`);
+      else parts.push(`<span class="dock-note stamped" data-key="slit">${waxSeal()} ${t('Your candle is lit')}</span>`);
       break;
     }
     case 'sname': {

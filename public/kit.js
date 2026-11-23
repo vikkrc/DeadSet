@@ -63,6 +63,13 @@ export function explainer(title, steps, glyph, key) {
 }
 
 /** "Waiting for the others · 3/5", from the view's progress. */
+/**
+ * I · Sealed in wax: one seal means "this is final and it is yours". Three sizes only (s 30, m 44, l 92 px);
+ * pressed once when it first appears, then still. It never sits over words, and at night every role gets the
+ * same seal at the same moment, so it says nothing about what was chosen.
+ */
+export const waxSeal = (size = 's', cls = '') => `<span class="wseal ws-${size} ${cls}" aria-hidden="true"><b>DS</b></span>`;
+
 export const waiting = (v) => `<p class="small muted center-text" data-key="kwait">${waitText(v)}</p>`;
 /**
  * N3, DS-026: your choice is in; now name who the table waits for where the server says it is safe to, otherwise

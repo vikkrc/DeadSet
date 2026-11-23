@@ -2,6 +2,7 @@
 // Pure renderers over the filtered view; the shell (app.js) passes its helpers
 // in `h` and merges `missionActs` into its action table.
 import { glyph } from './icons.js';
+import { waxSeal } from './kit.js';
 import { t, th, tmh, roleF, mcardF, sideF, missionStoryLine, scen } from './i18n.js';
 import { backdropHtml } from './backdrops.js';
 import { seatLayout } from './layout.js';
@@ -305,7 +306,7 @@ export function missionDock(v, h) {
     case 'mstand': {
       const sel = S.sel.accuse ?? null;
       if (sel && sel !== a.choice) parts.push(btn(th('Name {name}', { name: rawName(sel) }), 'mAccuse', 'btn-blood'));
-      else if (a.choice) parts.push(`<span class="dock-note stamped" data-key="st-${a.choice}">${glyph('check')} ${th('You named {name}', { name: rawName(a.choice) })}</span>`);
+      else if (a.choice) parts.push(`<span class="dock-note stamped" data-key="st-${a.choice}">${waxSeal()} ${th('You named {name}', { name: rawName(a.choice) })}</span>`);
       break;
     }
     case 'mreckon': {
