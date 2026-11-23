@@ -6231,3 +6231,18 @@ body.is-board .kboard .k-side { display: flex; flex-direction: column; gap: 18px
 .k-tvref.ticker li .kcard, .k-tvref.ticker li .tarot { font-size: clamp(6px, 0.5vw, 9px); }
 .k-tvref.ticker li b { display: block; font: 600 clamp(18px, 1.35vw, 26px)/1.05 var(--black); color: var(--bone); padding-bottom: 4px; }
 @keyframes tkScroll { from { transform: translateY(0); } to { transform: translateY(calc(-50% - 6px)); } }
+
+/* Names on the table are written out: a name may run wider than its seat (it stays centred under the portrait);
+   only a genuinely long one is cut, at a little over twice the seat. Tracking is tighter so ordinary names fit. */
+.ring .tok-name { flex: none; width: max-content; max-width: calc(var(--tok) * 2.3); letter-spacing: 0.1em; text-indent: 0.1em; }
+.ring.dense .tok-name, .ring.small-tok .tok-name { max-width: calc(var(--tok) * 2.1); letter-spacing: 0.04em; text-indent: 0.04em; }
+.is-board .ring:not(.dense) .tok-name { max-width: calc(var(--tok) * 2.6); }
+/* the stroke is as long as the name, never the row */
+.ledger li.dead .who b, .dz-row.dead > b, .ring .tok.dead .tok-name { width: fit-content; max-width: 100%; }
+.ring .tok.dead .tok-name { max-width: calc(var(--tok) * 2.3); }
+
+/* iPhone overscroll and the status-bar strip: the bars extend past the screen edges in their own colour, so
+   scrolling or rubber-banding never shows the page behind them. */
+.topbar::before { content: ''; position: absolute; left: 0; right: 0; bottom: 100%; height: 100vh; background: var(--ink); pointer-events: none; }
+.dock::after { content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 100vh; background: var(--ink); pointer-events: none; }
+html { background-color: var(--ink); overscroll-behavior-y: none; }

@@ -991,6 +991,17 @@ function render() {
   syncModal();
   syncTitle();
   if (onBoard()) requestAnimationFrame(boardAutoScroll);
+  syncPageInk();
+}
+
+/** The page behind the bars (iPhone rubber-banding, the status-bar strip) takes the current mood's ink. */
+let pageInk = '';
+function syncPageInk() {
+  const ink = getComputedStyle(document.body).getPropertyValue('--ink').trim();
+  if (!ink || ink === pageInk) return;
+  pageInk = ink;
+  document.documentElement.style.backgroundColor = ink;
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', ink);
 }
 
 /**
