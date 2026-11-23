@@ -509,7 +509,7 @@ export function seanceBoard(v, h) {
       const vs = S.shown?.[id];
       return `<figure class="sbv ${S.frosted.includes(id) ? 'frost' : ''}" data-key="sbv-${id}">${vs ? vs.map((x) => vcard(x, { cls: 'thumb', frost: S.frosted.includes(id) })).join('') : vcard(null, { cls: 'thumb' })}<figcaption>${disc(v, id, 'xs')}${pname(v, id)}</figcaption></figure>`;
     }).join('');
-    return `<section class="sb-row ${S.solved[row] != null ? 'is-solved' : ''}" data-key="sbr-${row}" style="--n:${S.board[row].length}"><header><span class="kicker">${esc(t(ROW_LABEL[row]))}</span><b>${esc(t(ROW_Q[row]))}</b></header>
+    return `<section class="sb-row ${S.solved[row] != null ? 'is-solved' : ''}" data-key="sbr-${row}" style="--n:${S.board[row].length};--k:${Math.max(1, readersOf(S, row).reduce((a, id) => a + (S.shown?.[id]?.length || 1), 0))}"><header><span class="kicker">${esc(t(ROW_LABEL[row]))}</span><b>${esc(t(ROW_Q[row]))}</b></header>
       ${rowCards(v, row, { truth: ended ? S.truth?.[row] : null, zoom: false })}<div class="sb-vis">${vis}</div></section>`;
   }).join('');
   const banner = `<div class="sb-banner" data-key="sbbanner">${at >= 0 ? `<ol class="sb-steps">${steps.map(([, l], i) => `<li class="${i === at ? 'on' : i < at ? 'done' : ''}"><i>${i + 1}</i>${esc(t(l))}</li>`).join('')}</ol>` : ''}<div><b>${esc(title)}</b><span>${esc(sub)}</span></div></div>`;

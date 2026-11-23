@@ -6184,3 +6184,28 @@ body.is-board .tv-grid .b-stage:has(.b-mission) .ring { width: min(100%, calc(10
 .qr-frame .qr { color: var(--sepia); display: block; }
 .qr .qr-eye, .qr .qr-pupil { fill: var(--rubric); }
 .tc-join svg.qr, .tc-join svg { color: var(--sepia); background: var(--vellum); }
+
+/* Séance, refined: slimmer rails for this game, a one-line banner, and each row as one line of cards — the story
+   cards, a thin rule, then the readers' visions at the same size, every card as large as the row allows. */
+.sboard.tv-grid .tv-body { grid-template-columns: clamp(230px, 17vw, 340px) minmax(0, 1fr) clamp(190px, 13vw, 270px); }
+.sboard.tv-grid .sb-banner { padding: 8px 16px; gap: 20px; flex-wrap: nowrap; min-height: 0; }
+.sboard.tv-grid .sb-banner > div { flex: 1 1 auto; min-width: 0; display: flex; align-items: baseline; gap: 14px; }
+.sboard.tv-grid .sb-banner small, .sboard.tv-grid .sb-banner p { display: none; }
+.sboard.tv-grid .sb-banner b, .sboard.tv-grid .sb-banner h2 { font-size: clamp(18px, 1.4vw, 26px); margin: 0; }
+.sboard.tv-grid .sb-steps { margin: 0; flex: none; }
+.sboard.tv-grid .sb-steps li { font-size: clamp(10px, 0.75vw, 13px); }
+.sboard.tv-grid .sb-row { --head: clamp(100px, 8vw, 150px); --cw: min(calc((100cqh - 34px) * 0.66), calc((100cqw - var(--head) - 40px - (var(--n) + var(--k)) * 8px) / (var(--n) + var(--k))));
+  grid-template-columns: var(--head) auto auto; grid-template-areas: 'head cards vis'; grid-template-rows: minmax(0, 1fr); align-items: center; gap: 0 14px; }
+.sboard.tv-grid .sb-row .srow-cards .scard { width: var(--cw); font-size: calc(var(--cw) / 7.8); }
+.sboard.tv-grid .sb-vis { padding-left: 14px; border-left: 1px solid color-mix(in srgb, var(--gilt-2) 60%, transparent); gap: 8px; align-self: stretch; align-items: center; }
+.sboard.tv-grid .sbv { gap: 4px; }
+.sboard.tv-grid .sbv .vcard.tarot--thumb { width: var(--cw); height: auto; font-size: calc(var(--cw) / 6.5); }
+.sboard.tv-grid .sbv figcaption { font-size: clamp(9px, 0.7vw, 12px); }
+.sboard.tv-grid .sb-row header b { font-size: clamp(15px, 1.2vw, 22px); }
+.sboard.tv-grid .sb-banner > div > span { font: italic 400 clamp(13px, 0.95vw, 17px)/1.2 var(--text); color: var(--bone-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.sboard.tv-grid .sb-banner > div > b { flex: none; }
+@media (max-width: 1500px) {
+  .sboard.tv-grid .sb-banner > div > span { display: none; }
+  .sboard.tv-grid .sb-table .tok-name { display: none; }
+  .sboard.tv-grid .sb-table .ring { --tok: clamp(26px, 3.6vh, 40px) !important; }
+}
