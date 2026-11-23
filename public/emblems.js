@@ -140,7 +140,7 @@ export function emblem(id, { rays = false, cls = '' } = {}) {
   const inner = rays
     ? `<circle cx="50" cy="50" r="48" stroke-width="8" stroke-dasharray=".8 5.483" stroke-linecap="butt"/><g transform="translate(50 50) scale(.84) translate(-50 -50)">${art}</g>`
     : art;
-  return `<svg class="emblem ${cls}" viewBox="${rays ? '-4 -4 108 108' : '0 0 100 100'}" fill="none" stroke="currentColor" stroke-width="${rays ? 2.2 : 2.4}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${hatch}${inner}</svg>`;
+  return `<svg class="emblem ${cls}" viewBox="${rays ? '-4 -4 108 108' : '0 0 100 100'}" fill="none" stroke="currentColor" stroke-width="${rays ? 2.2 : 2.4}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${hatch}<g class="emb-ink">${inner}</g></svg>`;
 }
 
 // Traveling Agent parcels, in PRODUCTS order (engine/content.js).

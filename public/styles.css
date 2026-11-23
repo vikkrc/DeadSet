@@ -2284,7 +2284,7 @@ body.pressure .sky-orb.sun, body.pressure .sky-orb.moon { background: radial-gra
   content: ''; position: absolute; inset: 1.5px; clip-path: var(--arch);
   background: linear-gradient(var(--vellum) 30%, transparent 95%), radial-gradient(circle, rgba(29, 21, 16, 0.6) 0.9px, transparent 1.4px) 0 0 / 5px 5px, var(--vellum-2);
 }
-.arc-art .emblem { position: relative; width: 100%; height: auto; max-height: 100%; padding: 19% 4% 3%; color: var(--sepia); --paper: var(--vellum); filter: url(#ds-wobble); stroke-width: 2.2; }
+.arc-art .emblem { position: relative; width: 100%; height: auto; max-height: 100%; padding: 19% 4% 3%; color: var(--sepia); --paper: var(--vellum); --ink-filter: url(#ds-wobble); filter: none; stroke-width: 2.2; }
 .tarot .nm, .tarot .arc-ttl { font: 600 2em/0.98 var(--black); color: var(--sepia); padding-bottom: 0.08em; }
 .tarot .sum, .tarot .arc-sub { font: italic 400 0.86em/1.25 var(--text); color: var(--sepia-2); max-width: 22ch; }
 .arc-fac { font: 600 0.6em/1.2 var(--text); letter-spacing: 0.3em; text-indent: 0.3em; text-transform: uppercase; color: var(--sepia-2); }
@@ -2974,11 +2974,11 @@ body.is-board .lot-hand .glyph, body.is-board .lot-hand .emblem { top: calc(min(
 body.is-board .lot-seat small { font-size: 13px; max-width: 120px; }
 
 /* A winner's emblem (and every moment emblem) carries the card art's print wobble */
-.moment .m-art > .emblem { filter: url(#ds-wobble); stroke-width: 2.2; }
-.moment.living .m-art > .emblem { filter: url(#ds-wobble) drop-shadow(0 0 18px rgba(255, 211, 107, 0.75)); }
-.moment.lovers .m-art > .emblem { filter: url(#ds-wobble) drop-shadow(0 0 18px rgba(255, 107, 138, 0.8)); }
-.moment.cult .m-art > .emblem { filter: url(#ds-wobble) drop-shadow(0 0 20px rgba(181, 155, 224, 0.7)); }
-.moment.ripper .m-art > .emblem { filter: url(#ds-wobble) drop-shadow(0 0 16px rgba(226, 88, 94, 0.9)); }
+.moment .m-art > .emblem { --ink-filter: url(#ds-wobble); filter: none; stroke-width: 2.2; }
+.moment.living .m-art > .emblem { --ink-filter: url(#ds-wobble); filter: drop-shadow(0 0 18px rgba(255, 211, 107, 0.75)); }
+.moment.lovers .m-art > .emblem { --ink-filter: url(#ds-wobble); filter: drop-shadow(0 0 18px rgba(255, 107, 138, 0.8)); }
+.moment.cult .m-art > .emblem { --ink-filter: url(#ds-wobble); filter: drop-shadow(0 0 20px rgba(181, 155, 224, 0.7)); }
+.moment.ripper .m-art > .emblem { --ink-filter: url(#ds-wobble); filter: drop-shadow(0 0 16px rgba(226, 88, 94, 0.9)); }
 
 /* Cameos are always round */
 svg.avatar { border-radius: 50%; clip-path: circle(50% at 50% 50%); }
@@ -2992,11 +2992,11 @@ svg.avatar { border-radius: 50%; clip-path: circle(50% at 50% 50%); }
 .av-opt i { width: 100%; height: 100%; border-radius: 50%; }
 .av-opt.on { border-color: var(--gilt); box-shadow: 0 0 0 2px var(--ink), 0 0 0 3px var(--gilt), 0 0 14px color-mix(in srgb, var(--gilt) 45%, transparent); }
 /* moment emblems (the winner's above all) in the pencil line of the card art and backdrops */
-.moment .m-art > .emblem { filter: url(#ds-pencil); }
-.moment.living .m-art > .emblem { filter: url(#ds-pencil) drop-shadow(0 0 18px rgba(255, 211, 107, 0.75)); }
-.moment.lovers .m-art > .emblem { filter: url(#ds-pencil) drop-shadow(0 0 18px rgba(255, 107, 138, 0.8)); }
-.moment.cult .m-art > .emblem { filter: url(#ds-pencil) drop-shadow(0 0 20px rgba(181, 155, 224, 0.7)); }
-.moment.ripper .m-art > .emblem { filter: url(#ds-pencil) drop-shadow(0 0 16px rgba(226, 88, 94, 0.9)); }
+.moment .m-art > .emblem { --ink-filter: url(#ds-pencil); filter: none; }
+.moment.living .m-art > .emblem { --ink-filter: url(#ds-pencil); filter: drop-shadow(0 0 18px rgba(255, 211, 107, 0.75)); }
+.moment.lovers .m-art > .emblem { --ink-filter: url(#ds-pencil); filter: drop-shadow(0 0 18px rgba(255, 107, 138, 0.8)); }
+.moment.cult .m-art > .emblem { --ink-filter: url(#ds-pencil); filter: drop-shadow(0 0 20px rgba(181, 155, 224, 0.7)); }
+.moment.ripper .m-art > .emblem { --ink-filter: url(#ds-pencil); filter: drop-shadow(0 0 16px rgba(226, 88, 94, 0.9)); }
 .lot-wheel::before { inset: -11%; }
 
 /* ── The Empty Table (home): the game's astrolabe, role emblems taking the chairs ── */
@@ -3028,9 +3028,9 @@ svg.avatar { border-radius: 50%; clip-path: circle(50% at 50% 50%); }
 .chair.red::after { opacity: 1; }
 /* a role sits down, stays a moment, and fades */
 .ch-emb { display: grid; place-items: center; width: 78%; height: 78%; color: var(--bone-2); animation: chSit 6.4s var(--ease) both; }
-.ch-emb .emblem { width: 100%; height: 100%; --paper: var(--ink-2); filter: url(#ds-wobble) drop-shadow(0 0 8px color-mix(in srgb, var(--gilt) 30%, transparent)); }
+.ch-emb .emblem { width: 100%; height: 100%; --paper: var(--ink-2); --ink-filter: url(#ds-wobble); filter: drop-shadow(0 0 8px color-mix(in srgb, var(--gilt) 30%, transparent)); }
 .ch-emb.red { color: var(--blood-ink); }
-.ch-emb.red .emblem { filter: url(#ds-wobble) drop-shadow(0 0 10px rgba(228, 93, 80, 0.55)); }
+.ch-emb.red .emblem { --ink-filter: url(#ds-wobble); filter: drop-shadow(0 0 10px rgba(228, 93, 80, 0.55)); }
 @keyframes chSit { 0% { opacity: 0; transform: scale(0.6); } 14% { opacity: 1; transform: scale(1.04); } 22% { transform: none; } 58% { opacity: 1; } 100% { opacity: 0; transform: scale(0.94); } }
 /* the wordmark letters animate inside boxes wide enough for their swashes */
 .h-title h1 .l, .m-title .l { padding: 0 0.16em; margin: 0 -0.16em; }
@@ -3091,7 +3091,7 @@ body.has-moment { overflow: hidden; }
 @media (max-width: 979px) { .ph-step + .ph-x::before { content: none; } }
 
 /* Time of day in the pencil line of the cards */
-.glyph.tod, .c-moon, .m-art .moon { filter: url(#ds-pencil); }
+.glyph.tod, .c-moon, .m-art .moon { --ink-filter: url(#ds-pencil); filter: none; }
 .glyph.tod { --paper: var(--ink-2); }
 
 /* The portrait row: a small card in the ornate frame */
@@ -3410,7 +3410,7 @@ body.is-board .k-reveal .c-stamp { font-size: 22px; }
 /* masks shown at the table: a struck medallion in the mask's ink, the emblem in pencil outline */
 .k-face { background: radial-gradient(circle at 50% 38%, color-mix(in srgb, var(--suit, var(--iron)) 62%, var(--ink)), color-mix(in srgb, var(--suit, var(--iron)) 34%, var(--ink)) 72%); color: var(--bone); --paper: color-mix(in srgb, var(--suit, #3b3027) 50%, #0c0a09);
   box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--suit) 50%, var(--gilt-hi)), inset 0 0 14px rgba(0, 0, 0, 0.55); }
-.k-face svg { width: 74%; height: 74%; filter: url(#ds-pencil); stroke-width: 2.4; }
+.k-face svg { width: 74%; height: 74%; --ink-filter: url(#ds-pencil); filter: none; stroke-width: 2.4; }
 .k-face svg [fill="currentColor"] { fill: none; stroke: currentColor; stroke-width: 1.8; }
 .k-face.rubric { color: #f6d2c8; }
 .k-maskname { color: color-mix(in srgb, var(--suit, var(--gilt-hi)) 35%, var(--bone)); }
@@ -3465,7 +3465,7 @@ body.is-board .m-kintro .krunes .kr { height: 34px; } body.is-board .m-kintro .k
 /* Carnival coin: Death's skull for heads, the Dead Set monogram for tails */
 .k-coin { display: grid; place-items: center; }
 .k-coin .kc-skull { display: grid; place-items: center; width: 62%; height: 62%; color: var(--sepia); --paper: transparent; }
-.k-coin .kc-skull svg { width: 100%; height: 100%; filter: url(#ds-pencil); }
+.k-coin .kc-skull svg { width: 100%; height: 100%; --ink-filter: url(#ds-pencil); filter: none; }
 .k-coin .kc-ds { display: grid; place-items: center; width: 64%; aspect-ratio: 1; border-radius: 50%; border: 1.5px solid var(--sepia); box-shadow: 0 0 0 3px transparent, 0 0 0 4px var(--sepia-2); font: 700 34px/1 var(--mark); color: var(--rubric); letter-spacing: -0.02em; }
 
 /* ══ Coffins (Beta 3), in the Codex: a churchyard by moonlight ════════════
@@ -3511,7 +3511,7 @@ body.is-board .m-kintro .krunes .kr { height: 34px; } body.is-board .m-kintro .k
 /* The centre of the table */
 .c-centre { display: flex; flex-direction: column; align-items: center; gap: 1px; }
 .c-centre .cc-em { width: 32px; height: 32px; color: var(--gilt); --paper: var(--ink-2); }
-.c-centre .cc-em svg { width: 100%; height: 100%; filter: url(#ds-pencil); }
+.c-centre .cc-em svg { width: 100%; height: 100%; --ink-filter: url(#ds-pencil); filter: none; }
 .c-centre .cc-l { font: 600 9px/1.2 var(--text); letter-spacing: 0.24em; text-transform: uppercase; color: var(--ash); }
 .c-centre .cc-n { font: 500 34px/1.05 var(--bit); color: var(--bone); font-variant-numeric: tabular-nums lining-nums; animation: cPop 0.4s var(--ease) both; }
 .c-centre .cc-n small { font-size: 0.5em; color: var(--ash); }
@@ -3558,7 +3558,7 @@ body.is-board .m-kintro .krunes .kr { height: 34px; } body.is-board .m-kintro .k
 .crelic b { display: block; font: 600 20px/1.05 var(--black); padding-bottom: 0.1em; }
 .crelic small { font: italic 400 14px/1.3 var(--text); color: var(--bone-2); }
 .cr-art { width: 44px; height: 44px; color: var(--gilt); --paper: var(--ink); }
-.cr-art svg { width: 100%; height: 100%; filter: url(#ds-pencil); }
+.cr-art svg { width: 100%; height: 100%; --ink-filter: url(#ds-pencil); filter: none; }
 .c-lobbyhand { display: flex; justify-content: center; gap: 10px; margin: 10px 0 6px; }
 .c-lobbyhand .coff { font-size: 7px; }
 .c-lobbyhand .coff:nth-child(odd) { transform: rotate(-4deg); } .c-lobbyhand .coff:nth-child(even) { transform: rotate(3deg); }
@@ -3705,7 +3705,7 @@ body.is-board .c-stamp { font-size: 32px; }
 .nboard .nb-centre { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
 .nboard .nb-centre h2 { font: 600 52px/1.02 var(--black); margin: 0; padding-bottom: 0.1em; }
 .nb-moon { width: 90px; height: 90px; color: var(--gilt); --paper: var(--ink); }
-.nb-moon svg { width: 100%; height: 100%; filter: url(#ds-pencil); }
+.nb-moon svg { width: 100%; height: 100%; --ink-filter: url(#ds-pencil); filter: none; }
 .nb-card .ncard.tarot--hand { font-size: 20px; }
 .nb-backs { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; max-width: 900px; }
 .nb-backs .ncard { font-size: 9px; }
@@ -3782,7 +3782,7 @@ body.is-board .c-stamp { font-size: 32px; }
 .v-art { position: relative; width: 100%; flex: 1; min-height: 0; clip-path: var(--arch); background: var(--sepia); }
 .v-art::before { content: ''; position: absolute; inset: 1.5px; clip-path: var(--arch); background: radial-gradient(circle at 50% 40%, var(--vellum) 0 38%, transparent 80%), radial-gradient(circle, rgba(29, 21, 16, 0.55) 0.9px, transparent 1.4px) 0 0 / 5px 5px, var(--vellum-2); }
 .v-ring { position: absolute; left: 4%; right: 4%; top: 14%; width: 92%; color: var(--sepia-2); opacity: 0.55; }
-.vm { position: absolute; display: block; color: var(--sepia); --paper: var(--vellum); filter: url(#ds-wobble); }
+.vm { position: absolute; display: block; color: var(--sepia); --paper: var(--vellum); --ink-filter: url(#ds-wobble); filter: none; }
 .vm .emblem { width: 100%; height: 100%; display: block; stroke-width: 2.2; }
 /* 0: one motif inside the other · 1: a large motif, a small one across it · 2: a pair on the diagonal · 3: a small motif above a large one */
 .vl0 .vm1 { width: 44%; left: 28%; top: 38%; z-index: 2; }
@@ -4033,7 +4033,7 @@ body.is-board .c-stamp { font-size: 32px; }
 .scard { width: 7.8em; aspect-ratio: 11 / 15.5; padding: 0.95em 0.6em 0.75em; gap: 0.35em; }
 .scard .s-bd { clip-path: none; width: 100%; border: 1px solid var(--sepia-2); border-radius: 2px; background: rgba(255, 250, 235, 0.35); }
 .scard .s-ic { flex: 1; min-height: 0; width: 100%; display: grid; place-items: center; color: var(--sepia); }
-.scard .s-ic .emblem { width: 80%; height: auto; max-height: 100%; --paper: var(--vellum); filter: url(#ds-wobble); stroke-width: 2.3; }
+.scard .s-ic .emblem { width: 80%; height: auto; max-height: 100%; --paper: var(--vellum); --ink-filter: url(#ds-wobble); filter: none; stroke-width: 2.3; }
 .scard .nm { font-size: 1.28em; line-height: 1.02; min-height: 2.1em; }
 .scard.row-WHERE .nm { font-size: 1.18em; }
 .s-ok { position: absolute; top: -7px; right: -7px; z-index: 4; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--gilt-hi); color: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
@@ -5932,3 +5932,7 @@ svg.o-needle { position: absolute; inset: 0; width: 100%; height: 100%; z-index:
   box-shadow: 0 0 0 3px var(--ink), 0 0 0 5px var(--gilt-hi), 0 0 30px 4px color-mix(in srgb, var(--gilt-hi) 45%, transparent); animation: breathe 2.6s ease-in-out infinite; }
 .ring .tok.team .tok-name { color: var(--gilt-hi); }
 .ring .tok.team .tok-disc::before { content: ''; position: absolute; left: 50%; top: -14px; width: 9px; height: 9px; margin-left: -4.5px; transform: rotate(45deg); background: var(--gilt-hi); box-shadow: 0 0 8px var(--gilt-hi); z-index: 4; }
+
+/* The pencil and print wobble run inside the drawing, in vector space, so art stays sharp at any size and while a
+   card scales in (as a filter on the whole <svg> it was rasterised at layout size and upscaled: pixelated). */
+.emb-ink { filter: var(--ink-filter, none); }
