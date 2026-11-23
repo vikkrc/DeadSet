@@ -5993,3 +5993,31 @@ svg.o-needle { position: absolute; inset: 0; width: 100%; height: 100%; z-index:
 .lot-hub .lh-dot { fill: var(--gilt-hi); }
 .lot-seat.win .lot-disc { border-color: var(--lo); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--lo), 0 0 26px color-mix(in srgb, var(--lo) 60%, transparent); }
 .lot-seat.win small { color: var(--lo); }
+
+/* ── The results: your outcome first, with a mood of its own ──
+   Won: a slow gilt sunburst and embers rising. Lost: the seal is cracked and ash drifts down. What next sits
+   right under the verdict; the table as it really was, honours and the record follow. */
+.verdict { position: relative; overflow: hidden; padding-bottom: 6px; }
+.verdict .v-astro { margin: 0 auto 10px; }
+.v-motes { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.v-motes i { position: absolute; left: var(--x); width: calc(4px * var(--s)); height: calc(4px * var(--s)); border-radius: 50%; opacity: 0; }
+.verdict.won .v-motes i { bottom: -6px; background: var(--gilt-hi); box-shadow: 0 0 8px var(--gilt-hi); animation: moteUp 5s var(--d) ease-out infinite; }
+.verdict.lost .v-motes i { top: -6px; border-radius: 1px; background: var(--ash); animation: ashDown 6s var(--d) linear infinite; }
+@keyframes moteUp { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 0.9; } 100% { transform: translateY(-420px) translateX(12px); opacity: 0; } }
+@keyframes ashDown { 0% { transform: translateY(0) rotate(0); opacity: 0; } 15% { opacity: 0.55; } 100% { transform: translateY(460px) translateX(-18px) rotate(220deg); opacity: 0; } }
+.verdict > :not(.v-motes):not(.sunburst) { position: relative; z-index: 1; }
+.verdict.won .v-astro { filter: drop-shadow(0 0 26px color-mix(in srgb, var(--gilt-hi) 45%, transparent)); }
+.verdict.won .v-astro::before { animation: spin 30s linear infinite; }
+.verdict.lost { background: radial-gradient(90% 60% at 50% 20%, color-mix(in srgb, var(--blood) 18%, transparent), transparent 70%); }
+.verdict.lost .v-astro { filter: grayscale(0.4); }
+.wseal.cracked::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(115deg, transparent 47%, var(--ink) 47.5%, var(--ink) 49%, transparent 49.5%), linear-gradient(35deg, transparent 54%, var(--ink) 54.5%, var(--ink) 55.6%, transparent 56%);
+  -webkit-mask: radial-gradient(circle, #000 60%, transparent 62%); mask: radial-gradient(circle, #000 60%, transparent 62%); /* literal-ok: mask */
+  animation: crackIn 0.4s 1.1s var(--ease) both; }
+@keyframes crackIn { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
+.verdict.lost .result-stamp { animation: stamp-in var(--t-stamp) var(--spring) 1.3s both, stampShake 0.4s 1.8s ease-in-out both; }
+@keyframes stampShake { 0%, 100% { translate: 0; } 25% { translate: -4px 0; } 75% { translate: 4px 0; } }
+.end-next { display: grid; gap: 10px; justify-items: center; margin: 4px 0 8px; }
+.end-next .end-votes { width: 100%; display: grid; justify-items: center; gap: 8px; }
+.verdict .v-astro .wseal { --ws: 76px; }
+.verdict .sunburst { -webkit-mask: radial-gradient(closest-side, #000 35%, transparent 100%); mask: radial-gradient(closest-side, #000 35%, transparent 100%); } /* literal-ok: mask */

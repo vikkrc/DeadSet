@@ -2953,7 +2953,7 @@ function afterGame(v) {
   const votes = me && !me.moderator && ev ? `<section class="end-votes" data-key="endvotes"><span class="kicker">${t('What next?')}</span>
     <div class="seg"><button data-act="endVote" data-id="again" aria-pressed="${ev.mine === 'again'}">${t('Again')}${ev.again ? ` · ${ev.again}` : ''}</button><button data-act="endVote" data-id="another" aria-pressed="${ev.mine === 'another'}">${t('Try another')}${ev.another ? ` · ${ev.another}` : ''}</button></div></section>` : '';
   const share = v.players?.length ? `<section class="share-row" data-key="sharerow"><button class="btn btn-sm" data-act="shareCard">${glyph('out')} ${t('Share the story')}</button><button class="btn btn-sm btn-ghost" data-act="shareCard" data-anon="1">${t('Share without names')}</button></section>` : '';
-  return awardsHtml(v) + votes + share + eveningHtml(v);
+  return { awards: awardsHtml(v), votes, share, evening: eveningHtml(v) };
 }
 /** V1: the end of the game as a Gazette front page, for the share card. */
 function shareCardData(v) {
@@ -2997,10 +2997,14 @@ function endMain(v, me) {
       <span class="seat">${p.role ? glyph(p.role.glyph) : ''}</span>
       <span class="who"><b>${esc(p.name)}</b><small>${p.role ? esc(roleF(p.role.id, 'name')) : '—'}${p.originalRole ? ` ${th('(was {role})', { role: p.originalRole.id })}` : ''} · ${p.alive ? t('alive') : `† ${esc(stamp(p.diedAt))}`}</small></span>
       <span class="tags">${p.lover ? `<span class="tag love" title="${esc(t('Lovers'))}">${glyph('heart')}</span>` : ''}<span class="tag ${p.alignment === 'DEATH' ? 'blood' : ''}">${esc(ALIGN[p.alignment] ?? '')}</span></span></li>`).join('')}</ul>` : `<p class="muted">${t('The host chose not to reveal roles.')}</p>`}</section>`;
-  return `<section class="verdict ${v.winner === 'DEATH' || v.winner === 'DEMON' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}${astrolabe(196, waxSeal('l'), 'v-astro')}<span class="kicker">${esc(vd.kicker)}</span><h1>${letters(vd.title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
+  // The results, in the order they matter: your outcome, what next, the table as it really was, then the story.
+  const ag = afterGame(v);
+  const mine = me && !me.moderator ? didIWin(v, v.winner) : null;
+  const mood = mine === true ? 'won' : mine === false ? 'lost' : '';
+  const motes = mood ? `<div class="v-motes" aria-hidden="true">${Array.from({ length: 16 }, (_, i) => `<i style="--x:${(i * 37) % 100}%;--d:${((i * 0.53) % 4).toFixed(2)}s;--s:${0.6 + ((i * 7) % 5) / 6}"></i>`).join('')}</div>` : '';
+  return `<section class="verdict ${mood} ${v.winner === 'DEATH' || v.winner === 'DEMON' ? 'death' : WIN_CLASS[v.winner] ?? ''}" data-key="verdict">${WIN_CLASS[v.winner] || mood === 'won' ? '<div class="sunburst" aria-hidden="true"></div>' : ''}${motes}${astrolabe(150, waxSeal('l', mood === 'lost' ? 'cracked' : ''), 'v-astro')}<span class="kicker">${esc(vd.kicker)}</span><h1>${letters(vd.title)}</h1><p class="scenario">${tmh(v.endReason)}</p>
       ${stampHtml(vd.stamp)}</section>
-    ${afterGame(v)}
-    <div class="end-next" data-key="endnext">${v.host?.rematch ? `<button class="btn btn-solid btn-wide" data-act="rematch">${glyph('scroll')} ${t('Play again, same table')}</button>` : `<p class="small muted center-text">${t('Waiting for the host to start the next round.')}</p>`}</div>
+    <div class="end-next" data-key="endnext">${ag.votes}${v.host?.rematch ? `<button class="btn btn-solid btn-wide" data-act="rematch">${glyph('scroll')} ${t('Play again, same table')}</button>` : `<p class="small muted center-text">${t('Waiting for the host to start the next round.')}</p>`}</div>
     ${revealed ? ring(v, { reveal: true, center: v.mode === 'exorcism' ? '' : centerFor(v), marks: v.mode === 'missions' ? missionMarks(v) : {}, extra: v.mode === 'missions' ? hunchArrowsSvg(v) : '', orb: v.mode === 'exorcism' ? endOrb(v) : '' }) : ''}
     ${revealed && v.missions?.hunches?.length ? hunchLegend() : ''}
     ${v.mode === 'missions' ? missionEndHtml(v) : ''}
@@ -3013,7 +3017,9 @@ function endMain(v, me) {
     ${v.mode === 'mimic' ? mimicEndHtml(v) : ''}
     ${v.mode === 'omen' ? omenEndHtml(v) : ''}
     ${v.mode === 'mirror' ? mirrorEndHtml(v) : ''}
+    ${ag.awards}
     ${modeInfo(v.mode).rolesAtEnd ? everySecret() : ''}
+    ${ag.share}${ag.evening}
     ${me && !me.moderator ? `<details class="more" data-key="endnotes"><summary>${t('My notes')}</summary><div>${feed([...(v.private || [])].reverse(), 'feed-private')}</div></details>` : ''}
     <details class="more" data-key="endrec"><summary>${t('Public record')}</summary><div>${recordBlock(v)}</div></details>
     <div class="row center" data-key="endbtns">${v.recap ? `<button class="btn" data-act="recap">${glyph('scroll')} ${t('View recap')}</button>` : ''}</div>`;
