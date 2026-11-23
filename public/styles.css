@@ -6046,3 +6046,11 @@ body.is-board .sb-table .ring { width: min(100%, 34vh); margin: 0 auto 6px; --to
 body.is-board .sb-table .c-name { font: 600 clamp(16px, 2vh, 22px)/1 var(--black); color: var(--bone); }
 body.is-board .sb-table + .sb-ghost { display: none; }
 body.is-board .board2 .ring { width: min(100%, calc(100dvh - 250px), 760px); }
+
+/* Vertical rhythm, a notch tighter: less empty space between sections so less falls below the fold */
+.main { gap: 14px; padding-top: 10px; }
+.main.narrow { gap: 20px; }
+.lobby-steps { gap: 14px; }
+.x-steps p, .x-steps small, .x-explain p { line-height: 1.4; }
+.x-steps li { gap: 2px 12px; padding: 6px 0; }
+.game-card { margin-bottom: 4px; }
