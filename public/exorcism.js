@@ -332,9 +332,9 @@ export function exorcismMain(v, me, h) {
       break;
     case 'X_CLUES':
       if (a.type === 'xspeak') {
-        stage = `<div class="x-turn me rise-in" data-key="xturn-me"><span class="kicker">${t('Your turn')}</span><h2>${t('Say one word linked to the password')}</h2>
-          <p class="small muted">${t(me.x?.demon ? 'You do not know it. Listen, guess, blend in.' : 'Close enough to prove you know it. Not so close that the Demon learns it.')}</p>
-</div>`;
+        // Said once: the block lifts into the bar ("Your turn" · the instruction); the hint stays on the stage.
+        stage = `<div class="x-turn me rise-in" data-key="xturn-me"><span class="kicker">${t('Your turn')}</span><h2>${t('Say one word linked to the password')}</h2></div>
+          <p class="small muted center-text x-hint" data-key="xturn-hint">${t(me.x?.demon ? 'You do not know it. Listen, guess, blend in.' : 'Close enough to prove you know it. Not so close that the Demon learns it.')}</p>`;
       } else {
         stage = `<div class="x-turn" data-key="xturn"><span class="kicker">${t('Now speaking')}</span><h2>${esc(name(v, X.speaker))}</h2><p class="small muted">${t('Listen closely. Who knows the password, and who is only pretending?')}</p></div>`;
       }

@@ -1762,7 +1762,8 @@ function moveBand(v, html) {
       const act = m[1] === 'cturn' || m[1] === 'x-turn' ? /\bme\b/.test(m[2]) : m[1] === 'k-slip' ? /\bme\b/.test(m[2]) || canAct(v) : canAct(v);
       // Exorcism's slip carries its point in the kicker ("Now speaking"), so the strip keeps it: "Now speaking: Ash".
       const kick = m[1] === 'x-turn' ? (m[0].match(/<span class="kicker[^"]*">([^<]*)<\/span>/)?.[1] ?? '') : '';
-      line = { act, main: kick && !act ? `${kick}: ${m[3]}` : m[3], sub: m[4] ?? '', html: true };
+      // Your own Exorcism turn reads "Your turn" in the bar with the instruction beneath, so nothing long is cut off.
+      line = kick && act ? { act, main: kick, sub: m[3], html: true } : { act, main: kick && !act ? `${kick}: ${m[3]}` : m[3], sub: m[4] ?? '', html: true };
     }
   }
   if (!line) line = { act: canAct(v), main: esc(stepOf(v)), sub: '', html: true };
