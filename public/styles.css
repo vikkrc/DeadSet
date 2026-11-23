@@ -6174,3 +6174,13 @@ body.is-board .tv-grid .b-stage:has(.b-mission) .ring { width: min(100%, calc(10
 .sboard.tv-grid .sb-banner b, .sboard.tv-grid .sb-banner h2 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 @media (max-width: 1500px) { .sboard.tv-grid .sb-banner small, .sboard.tv-grid .sb-banner p { display: none; } }
 @media (max-width: 1500px) { .sboard.tv-grid .sb-banner { flex-wrap: wrap; gap: 8px 24px; } .sboard.tv-grid .sb-banner > div { flex: 1 1 100%; } }
+
+/* The QR as an engraving: sepia dots on vellum, rubric eyes, a double-ruled frame with lozenge corners */
+.qr-frame { position: relative; background: var(--vellum-stain), var(--vellum); background-size: 100% 100%, auto; padding: 14px; border-radius: 0;
+  box-shadow: 0 0 0 1px var(--paper-edge), inset 0 0 0 5px var(--vellum), inset 0 0 0 6px color-mix(in srgb, var(--sepia-2) 70%, transparent), 0 30px 60px -30px #000; }
+.qr-frame::before, .qr-frame::after { content: ''; position: absolute; width: 9px; height: 9px; background: var(--rubric); transform: rotate(45deg); }
+.qr-frame::before { left: -4.5px; top: calc(50% - 4.5px); }
+.qr-frame::after { right: -4.5px; top: calc(50% - 4.5px); }
+.qr-frame .qr { color: var(--sepia); display: block; }
+.qr .qr-eye, .qr .qr-pupil { fill: var(--rubric); }
+.tc-join svg.qr, .tc-join svg { color: var(--sepia); background: var(--vellum); }

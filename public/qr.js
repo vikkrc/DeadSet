@@ -164,9 +164,21 @@ function penalty(m) {
 }
 
 export function qrSvg(text, { dark = 'currentColor', quiet = 4 } = {}) {
+  // An engraved QR: round dots for the data and ornate rounded "eyes" for the three finder patterns. The light and
+  // dark structure a scanner reads is unchanged (no module is covered), only the shapes are softened.
   const m = qrMatrix(text);
-  const n = m.length + quiet * 2;
+  const size = m.length;
+  const n = size + quiet * 2;
+  const inEye = (x, y) => (x < 7 && y < 7) || (x >= size - 7 && y < 7) || (x < 7 && y >= size - 7);
   let d = '';
-  m.forEach((row, y) => row.forEach((on, x) => { if (on) d += `M${x + quiet} ${y + quiet}h1v1h-1z`; }));
-  return `<svg class="qr" viewBox="0 0 ${n} ${n}" shape-rendering="crispEdges" role="img" aria-label="QR code to join"><path fill="${dark}" d="${d}"/></svg>`;
+  m.forEach((row, y) => row.forEach((on, x) => {
+    if (on && !inEye(x, y)) d += `M${x + quiet + 0.5} ${y + quiet + 0.04}a.46 .46 0 1 1 0 .92a.46 .46 0 1 1 0-.92z`;
+  }));
+  const eye = (ex, ey) => {
+    const x = ex + quiet; const y = ey + quiet;
+    // Gently rounded (r .9 of a module): rounder eyes look softer but stricter scanners stop finding them.
+    return `<path class="qr-eye" d="M${x + 0.9} ${y}h5.2a.9 .9 0 0 1 .9 .9v5.2a.9 .9 0 0 1-.9 .9h-5.2a.9 .9 0 0 1-.9-.9v-5.2a.9 .9 0 0 1 .9-.9zM${x + 1.5} ${y + 1}a.5 .5 0 0 0-.5 .5v4a.5 .5 0 0 0 .5 .5h4a.5 .5 0 0 0 .5-.5v-4a.5 .5 0 0 0-.5-.5z" fill-rule="evenodd"/>`
+      + `<rect class="qr-pupil" x="${x + 2}" y="${y + 2}" width="3" height="3" rx=".45"/>`;
+  };
+  return `<svg class="qr" viewBox="0 0 ${n} ${n}" role="img" aria-label="QR code to join"><g fill="${dark}"><path d="${d}"/>${eye(0, 0)}${eye(size - 7, 0)}${eye(0, size - 7)}</g></svg>`;
 }
