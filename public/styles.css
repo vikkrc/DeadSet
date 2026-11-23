@@ -5911,3 +5911,16 @@ svg.o-needle { position: absolute; inset: 0; width: 100%; height: 100%; z-index:
   animation: fadeUp 0.5s var(--ease) both; animation-delay: calc(0.6s + var(--i) * 0.2s); }
 .w-tally b { font: 600 13px/1 var(--text); letter-spacing: 0.2em; color: var(--gilt); }
 .w-tally i { font: 600 34px/1 var(--black); font-style: normal; color: var(--bone); }
+
+/* ── The tray, compact: one line per slot (icon beside its name), 42 px, lozenges between slots ── */
+.tray { height: 42px; margin-bottom: 8px; border-bottom: 0; background: none;
+  border-image: linear-gradient(90deg, transparent, var(--gilt-2) 18%, var(--gilt-2) 82%, transparent) 1; border-top: 1px solid; }
+.tray-slot { grid-auto-flow: column; align-items: center; gap: 7px; min-height: 42px; border-left: 0; }
+.tray-slot + .tray-slot::before { content: ''; position: absolute; left: -3px; top: 50%; width: 5px; height: 5px; margin-top: -2.5px; transform: rotate(45deg); background: var(--gilt-2); }
+.tray-slot .glyph { font-size: 17px; }
+.tray-badge { position: static; min-width: 17px; height: 17px; font-size: 10px; line-height: 17px; border-radius: 0; margin-left: -1px; }
+.tray-slot.dot::after { top: 9px; left: auto; right: calc(50% - 4.5em); }
+.tray-slot { font: 500 15px/1 var(--text); letter-spacing: 0.01em; text-transform: none; }
+.tray-slot { font-size: 14px; gap: 6px; padding: 0 6px; }
+.tray-slot .glyph { font-size: 16px; }
+.tray-slot + .tray-slot::before { width: 4px; height: 4px; margin-top: -2px; left: -2px; opacity: 0.8; }
