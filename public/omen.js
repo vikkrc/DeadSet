@@ -18,21 +18,34 @@ const KEYS = ['LIFE', t('DEATH'), t('REBIRTH')];
 setNamer('face', (x) => { const i = KEYS.indexOf(String(x)); return i >= 0 ? faceName(i) : String(x); });
 
 /** The wheel: three faces; the needle points at `at` (or turns from `from` by `turn` steps when animating). */
-const P = (deg, r) => { const a = (deg * Math.PI) / 180; return `${(100 + r * Math.sin(a)).toFixed(1)} ${(100 - r * Math.cos(a)).toFixed(1)}`; };
-/** AT10: each face owns a sector of the dial, washed in its colour (Life gilt, Death oxblood, Rebirth blue-grey). */
-const sectors = () => [0, 1, 2].map((i) => `<path class="o-sec f-${i}" d="M100 100 L${P(i * 120 - 60, 90)} A90 90 0 0 1 ${P(i * 120 + 60, 90)} Z"/>`).join('');
 /** AT10: the seers ride the outer rim, one lozenge each; gilt once their omen is sealed. */
 const seerDots = (seers) => (seers ? Array.from({ length: seers.n }, (_, i) => `<i class="o-seer ${i < seers.done ? 'on' : ''}" style="--d:${((i + 0.5) * 360) / seers.n}deg"></i>`).join('') : '');
+/** AT10: the ornate needle — a tapered gilt blade with a lozenge tip, a crossguard, a crescent-ring counterweight and an eight-point rosette hub. */
+const NEEDLE = `<svg class="o-needle" viewBox="0 0 100 100" aria-hidden="true">
+  <defs><linearGradient id="o-nga" x1="0" x2="1"><stop offset="0" stop-color="#8a6d35"/><stop offset=".5" stop-color="#f4e2a8"/><stop offset="1" stop-color="#8a6d35"/></linearGradient></defs>
+  <g fill="url(#o-nga)" stroke="#4a3816" stroke-width=".25">
+    <path d="M50 9 L52.2 17.5 L51.1 17.5 L51.6 44 L50 47.5 L48.4 44 L48.9 17.5 L47.8 17.5Z"/><path d="M50 4.2 L52.6 9 L50 13.8 L47.4 9Z"/>
+    <path d="M45.2 25 Q50 21.5 54.8 25 Q50 23.6 45.2 25Z"/><path d="M50 52.5 L51.2 60 L50 61.5 L48.8 60Z"/>
+    <path d="M50 61 a5.6 5.6 0 1 0 0.01 0Z M50 63.2 a3.6 3.6 0 1 1 -0.01 0Z" fill-rule="evenodd"/>
+  </g>
+  <g transform="translate(50 50)"><circle r="7.2" fill="#1a130c" stroke="#c9a35a" stroke-width=".6"/>
+    <path d="M0-6 L1.3-1.3 L6 0 L1.3 1.3 L0 6 L-1.3 1.3 L-6 0 L-1.3-1.3Z" fill="url(#o-nga)"/>
+    <path d="M0-3.6 L.7-.7 L3.6 0 L.7 .7 L0 3.6 L-.7 .7 L-3.6 0 L-.7-.7Z" fill="#1a130c" transform="rotate(45)"/><circle r="1.3" fill="#f4e2a8"/></g>
+</svg>`;
+/** The engraving: a dotted outer ring, the inner ring, the three sector borders and a gilt lozenge where each meets the rim. */
+const ENGRAVING = (() => {
+  const pt = (deg, r) => { const a = (deg * Math.PI) / 180; return [(50 + r * Math.sin(a)).toFixed(1), (50 - r * Math.cos(a)).toFixed(1)]; };
+  const borders = [60, 180, 300].map((d) => { const [x1, y1] = pt(d, 8); const [x2, y2] = pt(d, 46); return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`; }).join('');
+  const loz = [60, 180, 300].map((d) => { const [x, y] = pt(d, 38); return `<path transform="translate(${x} ${y}) rotate(${d})" d="M0-2.2L1.2 0L0 2.2L-1.2 0Z"/>`; }).join('');
+  return `<svg class="o-rim" viewBox="0 0 100 100" aria-hidden="true"><g class="o-eng"><circle cx="50" cy="50" r="46.5" stroke-dasharray=".4 1.2"/><circle class="o-in" cx="50" cy="50" r="38"/>${borders}</g><g class="o-loz">${loz}</g></svg>`;
+})();
 export function wheel({ at = 0, from = null, turn = 0, size = '', mark = null, key = 'owheel', seers = null } = {}) {
   const spin = from != null;
   const a0 = (spin ? from : at) * 120;
   const a1 = a0 + turn * 120;
-  return `<div class="o-wheel ${size} ${spin ? 'spin' : ''}" data-key="${key}" style="--a0:${a0}deg;--a1:${a1}deg">
-    <svg class="o-rim" viewBox="0 0 200 200" aria-hidden="true">${sectors()}<circle cx="100" cy="100" r="96"/><circle cx="100" cy="100" r="99"/><circle cx="100" cy="100" r="78" stroke-dasharray="2 5"/>
-      ${[0, 120, 240].map((d) => `<path d="M100 100 L${(100 + 96 * Math.sin(((d + 60) * Math.PI) / 180)).toFixed(1)} ${(100 - 96 * Math.cos(((d + 60) * Math.PI) / 180)).toFixed(1)}"/>`).join('')}
-      ${Array.from({ length: 36 }, (_, i) => { const r = (i * 10 * Math.PI) / 180; return `<path d="M${(100 + 90 * Math.sin(r)).toFixed(1)} ${(100 - 90 * Math.cos(r)).toFixed(1)}L${(100 + 96 * Math.sin(r)).toFixed(1)} ${(100 - 96 * Math.cos(r)).toFixed(1)}"/>`; }).join('')}</svg>
+  return `<div class="o-wheel ${size} ${spin ? 'spin' : ''}" data-key="${key}" style="--a0:${a0}deg;--a1:${a1}deg">${ENGRAVING}
     ${[0, 1, 2].map((i) => `<span class="o-face f-${i} ${mark === i ? 'on' : ''}" style="--d:${i * 120}deg"><span class="o-fi">${emblem(FACE_EMB[i])}</span><b>${esc(faceName(i))}</b></span>`).join('')}
-    ${seerDots(seers)}<span class="o-needle"><i></i></span><span class="o-hub">${emblem('oracle')}</span></div>`;
+    ${seerDots(seers)}${NEEDLE}</div>`;
 }
 
 const pips = (n, total = 5) => `<span class="o-pips" aria-label="${esc(th('{n} Influence', { n }))}">${Array.from({ length: total }, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</span>`;
