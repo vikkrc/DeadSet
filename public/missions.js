@@ -590,7 +590,7 @@ export function missionEndHtml(v) {
 }
 
 // ── TV board ───────────────────────────────────────────────────────────────
-export function missionBoardStage(v, h) {
+export function missionBoardStage(v, h, part = '') {
   const M = v.missions;
   if (!M) return '';
   let now = '';
@@ -603,6 +603,8 @@ export function missionBoardStage(v, h) {
     case 'M_RECKONING': now = `<p class="b-now blood">${t('Death has unmasked and is hunting the Medium.')}</p>`; break;
     default: break;
   }
+  if (part === 'now') return now;
+  if (part === 'rail') return `<section class="b-mission" data-key="bmission">${trackHtml(v, { big: true })}${cardBanner(v)}</section>`;
   return `<section class="b-mission" data-key="bmission">${trackHtml(v, { big: true })}${cardBanner(v)}${now}</section>`;
 }
 

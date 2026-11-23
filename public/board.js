@@ -156,29 +156,33 @@ export function boardScreen(v, h) {
     const ruleCards = !classic ? '' : s.rules.mode === 'manual'
       ? (s.rules.selected.length ? s.rules.selected.map((id) => `<div class="tarot--small dcard rcard tarot edict" data-key="rc-${id}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><b>${esc(ruleF(id, 'name'))}</b></div>`).join('') : `<p class="small muted">${t('No rule cards.')}</p>`)
       : Array.from({ length: s.rules.count }, (_, i) => `<div class="tarot--small dcard rcard fd tarot back" data-key="rc-r${i}"><span class="sig">?</span><b>${t('Drawn at start')}</b></div>`).join('') || `<p class="small muted">${t('No rule cards.')}</p>`;
-    return `<main class="board2 lobby" data-key="board-lobby">${header}
-      <div class="b-lobby">
-        <section class="b-join">
+    // TV lobby on the shared grid: join on the left rail, the astrolabe table in the middle (a list from ten
+    // seats on, where names would crowd the rim), the game and its How it works on the right rail.
+    const ready = v.players.filter((p) => p.ready).length;
+    const big = v.players.length >= 10;
+    const seatsHtml = big
+      ? `<ol class="tv-seatlist" data-key="tvseats">${v.players.map((p, i) => `<li class="${p.ready ? 'ok' : ''}" data-key="tvs-${p.id}"><span class="n">${i + 1}</span><span class="ba-face">${h.avatar(p)}</span><b>${esc(p.name)}</b>${p.ready ? glyph('check') : ''}</li>`).join('')}</ol>`
+      : ring(v, { lobby: true, slots: Math.max(5, v.players.length), center: `<span class="c-big">${ready}<small>/${v.players.length}</small></span><span class="c-sub">${esc(t('ready'))}</span>` });
+    return `<main class="board2 lobby tv-grid" data-key="board-lobby">${header}
+      <div class="tv-body">
+        <aside class="tv-rail tv-panel tv-joinp" data-key="tvjoin" data-autoscroll>
           <span class="kicker">${t('Scan to take a seat')}</span>
           <div class="qr-frame">${qrSvg(url)}</div>
           <div class="code-tiles big">${codeTiles(v.code)}</div>
-          <span class="small muted">${esc(location.host)}</span>
-        </section>
-        <section class="b-attract" data-key="battract">${h.cover ? `<div class="ba-cover">${h.cover(v.mode)}</div>` : ''}${h.how ? `<div class="tv-how" data-step="${h.howStep ?? 0}" data-key="tvhow">${h.how}</div>` : ''}</section>
-        <section class="b-atable" data-key="batable"><span class="kicker">${t('At the table')}</span>
-          <ul class="ba-list">${v.players.map((p) => `<li class="${p.ready ? 'ok' : ''}" data-key="ba-${p.id}"><span class="ba-face">${h.avatar(p)}</span><b>${esc(p.name)}</b><small>${p.ready ? glyph('check') : esc(t(p.connected === false ? 'Away' : 'Getting ready'))}</small></li>`).join('')}</ul>
-          <p class="ba-count">${esc(th('Starting when everyone is ready · {n} of {m}', { n: v.players.filter((p) => p.ready).length, m: v.players.length }))}</p>
-          <div class="b-deck">
-          <span class="kicker">${t('Tonight\'s deck')} · ${esc(presetF(s.preset, 'name'))}</span>
-          <div class="deckrow">${deckHtml}</div>
-          ${deck?.extended ? `<p class="small muted">${th('Extended seats are drawn secretly from: {names}.', { names: deck.pool.map((id) => roleF(id, 'name')) })}</p>` : ''}
-          ${classic ? `<span class="kicker">${t('Rule cards')}</span>
-          <div class="deckrow">${ruleCards}</div>` : ''}
-          ${v.mode === 'coffins' ? `<div class="c-lobbyhand">${Array.from({ length: s.c?.coffins ?? 4 }, (_, i) => coffinCard(i === (s.c?.coffins ?? 4) - 1 ? 'C' : 'G')).join('')}</div><p class="small muted">${th('Each player: {g} Gold and one Curse.', { g: (s.c?.coffins ?? 4) - 1 })}</p>` : ''}
-          ${!modeInfo(v.mode).story ? '' : `<span class="kicker">${t('Story')}</span>`}
-          ${!modeInfo(v.mode).story ? '' : `<p class="scenario">${s.scenario.mode === 'manual' && s.scenario.who ? esc(`${scen('WHO', s.scenario.who)} · ${scen('WHERE', s.scenario.where)} · ${scen('WHY', s.scenario.why)}`) : t('Dealt when the match begins.')}</p>`}
+          <span class="tv-url">${esc(location.host)}</span>
+          <p class="tv-ready">${esc(th('Starting when everyone is ready · {n} of {m}', { n: ready, m: v.players.length }))}</p>
+        </aside>
+        <section class="tv-stage" data-key="tvstage">${seatsHtml}</section>
+        <aside class="tv-rail tv-panel tv-gamep" data-key="tvgame" data-autoscroll>
+          ${h.cover ? `<div class="tv-gcover">${h.cover(v.mode, { bare: true })}</div>` : ''}
+          ${h.how ? `<div class="tv-how" data-step="${h.howStep ?? 0}" data-key="tvhow">${h.how}</div>` : ''}
+          <div class="tv-deck">
+            <span class="kicker">${t('Tonight\'s deck')} · ${esc(presetF(s.preset, 'name'))}</span>
+            <div class="deckrow">${deckHtml}</div>
+            ${classic ? `<span class="kicker">${t('Rule cards')}</span><div class="deckrow">${ruleCards}</div>` : ''}
+            ${v.mode === 'coffins' ? `<div class="c-lobbyhand">${Array.from({ length: s.c?.coffins ?? 4 }, (_, i) => coffinCard(i === (s.c?.coffins ?? 4) - 1 ? 'C' : 'G')).join('')}</div>` : ''}
           </div>
-        </section>
+        </aside>
       </div></main>`;
   }
 
@@ -246,13 +250,18 @@ export function boardScreen(v, h) {
   const table = ring(v, { center: (mr ? '' : centerExtra) + centerFor(v), reveal: v.phase === 'ENDED', crack: true, extra, marks: mr?.marks ?? {}, pick: mr?.team.length ? { ids: [], selected: mr.team, act: '' } : null });
   const where = (h.content?.scenario?.WHERE ?? []).indexOf(v.scenario?.where);
   const backdrop = v.table?.backdrops !== false && where >= 0 ? backdropHtml(where, night) : '';
-  return `<main class="board2 ${night ? 'is-night' : 'is-day'} ${backdrop ? 'has-backdrop' : ''}" data-key="board-game">
+  // The shared TV grid: the game's own record on the left rail (Missions: the track and card; Classic: rules in
+  // force and the story), the astrolabe table centre stage with one caption under it, the Gazette on the right.
+  const story = v.scenario ? `<section class="tv-story"><span class="kicker">${t('The story')}</span>${[['WHO', t('Who')], ['WHERE', t('Where')], ['WHY', t('Why')]].map(([k, label]) => `<p><small>${esc(label)}</small>${esc(scen(k, v.scenario[k.toLowerCase()]))}</p>`).join('')}</section>` : '';
+  const left = mr ? missionBoardStage(v, h, 'rail') : `${plaques ? `<section class="tv-rules"><span class="kicker">${t('Rules in force')}</span><div class="plaques">${plaques}</div></section>` : ''}${story}`;
+  const caption = mr ? missionBoardStage(v, h, 'now') : '';
+  return `<main class="board2 tv-grid ${night ? 'is-night' : 'is-day'} ${backdrop ? 'has-backdrop' : ''}" data-key="board-game">
     ${backdrop}
     ${header}
-    <div class="b-cols">
-      <section class="b-stage">${mr ? missionBoardStage(v, h) : ''}${table}${mr && v.phase === 'ENDED' && v.missions?.hunches?.length ? hunchLegend() : ''}<div class="plaques">${plaques}</div>
-      </section>
-      <aside class="b-side" data-key="b-gz">${gazetteHtml(v, h, { tv: true, after: mr ? `<section class="b-grid"><span class="kicker">${t('The deduction')}</span>${gridHtml(v)}</section>` : '' })}</aside>
+    <div class="tv-body">
+      <aside class="tv-rail tv-panel tv-left" data-key="tvleft" data-autoscroll>${left}</aside>
+      <section class="tv-stage b-stage">${table}${mr && v.phase === 'ENDED' && v.missions?.hunches?.length ? hunchLegend() : ''}<div class="tv-cap">${caption}</div></section>
+      <aside class="tv-rail b-side" data-key="b-gz" data-autoscroll>${gazetteHtml(v, h, { tv: true, after: mr ? `<section class="b-grid"><span class="kicker">${t('The deduction')}</span>${gridHtml(v)}</section>` : '' })}</aside>
     </div>
     <div class="b-pressure" aria-hidden="true">${Array.from({ length: 22 }, (_, i) => `<i style="--i:${i}"></i>`).join('')}</div>
   </main>`;

@@ -6062,3 +6062,79 @@ body.is-board .board2 .ring { width: min(100%, calc(100dvh - 250px), 760px); }
 .tray-slot:not(.off):hover .glyph, .tray-slot:not(.off):focus-visible .glyph { color: var(--gilt-hi); }
 .tray-badge { position: absolute; top: 5px; left: calc(50% + 7px); margin: 0; }
 .tray-slot.dot::after { top: 6px; left: calc(50% + 9px); right: auto; }
+
+/* ══ The TV grid ══════════════════════════════════════════════════════════
+   One frame for every board: a 84 px header, the body, and the 72 px caption strip, all on the same outer
+   margin (--tv-m), so the left and right edges line up from the wordmark down to the join code. The body is
+   rail · stage · rail; rails share one panel, their tops and bottoms line up with the stage, and a rail that
+   holds more than fits scrolls itself. The astrolabe table is always centre stage. */
+body.is-board { --tv-m: clamp(20px, 2.6vw, 56px); --tv-g: clamp(16px, 2vw, 40px); --tv-rail: clamp(260px, 23vw, 440px); --tv-head: 84px; --tv-foot: 72px; }
+body.is-board .board2 { padding: 0 var(--tv-m) var(--tv-foot); grid-template-rows: var(--tv-head) minmax(0, 1fr); }
+body.is-board .b-head { height: var(--tv-head); }
+body.is-board .tv-caption { height: var(--tv-foot); padding: 0 var(--tv-m); }
+.tv-body { display: grid; grid-template-columns: var(--tv-rail) minmax(0, 1fr) var(--tv-rail); gap: var(--tv-g); min-height: 0; height: 100%; padding-bottom: 8px; }
+.tv-rail { min-height: 0; height: 100%; overflow: hidden; display: flex; flex-direction: column; gap: 18px; }
+.tv-panel { padding: 22px; border: 1px solid var(--gilt-2); background: linear-gradient(180deg, color-mix(in srgb, var(--ink-2) 88%, transparent), color-mix(in srgb, var(--ink) 92%, transparent));
+  box-shadow: inset 0 0 0 4px color-mix(in srgb, var(--ink) 70%, transparent), inset 0 0 0 5px color-mix(in srgb, var(--gilt-2) 35%, transparent); }
+.tv-panel > .kicker, .tv-panel section > .kicker { display: block; color: var(--gilt); margin-bottom: 10px; }
+.tv-stage { position: relative; min-height: 0; height: 100%; display: grid; grid-template-rows: minmax(0, 1fr) auto; justify-items: center; align-items: center; overflow: hidden; }
+body.is-board .tv-stage .ring { width: min(100%, calc(100dvh - var(--tv-head) - var(--tv-foot) - 90px), 860px); margin: 0 auto; }
+.tv-cap { min-height: 44px; display: grid; place-items: center; text-align: center; }
+.tv-cap .b-now { margin: 0; font-size: clamp(18px, 1.5vw, 26px); }
+body.is-board .tv-grid .b-side { max-height: none; height: 100%; align-self: stretch; padding: 26px 24px 18px; }
+body.is-board .tv-grid .b-stage:has(.b-mission) .ring { width: min(100%, calc(100dvh - var(--tv-head) - var(--tv-foot) - 90px), 860px); }
+
+/* Left rail contents */
+.tv-left .b-mission { display: grid; gap: 18px; justify-items: stretch; margin: 0; }
+.tv-left .b-mission .mc-banner, .tv-left .b-mission .card-banner { width: 100%; max-width: none; }
+.tv-rules .plaques { display: grid; gap: 10px; justify-items: stretch; }
+.tv-rules .plaque { width: 100%; }
+.tv-story p { margin: 0 0 10px; font: 400 clamp(16px, 1.3vw, 21px)/1.25 var(--serif); color: var(--bone); }
+.tv-story small { display: block; font: 600 11px/1.2 var(--text); letter-spacing: 0.2em; text-transform: uppercase; color: var(--ash); margin-bottom: 2px; }
+
+/* The lobby on the grid */
+.tv-joinp { align-items: center; justify-content: center; text-align: center; gap: 16px; }
+.tv-joinp .qr-frame { padding: 12px; }
+.tv-joinp .qr-frame svg { width: clamp(140px, 15vw, 260px); height: auto; display: block; }
+.tv-joinp .code-tiles.big .tile { width: clamp(30px, 2.8vw, 52px); height: clamp(38px, 3.5vw, 64px); font-size: clamp(18px, 1.7vw, 30px); }
+.tv-url { font: 500 14px/1 var(--text); color: var(--ash); }
+.tv-ready { margin: 0; font: 600 12px/1.4 var(--text); letter-spacing: 0.16em; text-transform: uppercase; color: var(--bone-2); max-width: 22ch; }
+.tv-gamep { gap: 14px; }
+.tv-gcover { display: grid; justify-items: center; }
+.tv-gcover .tarot--cover { font-size: clamp(9px, 0.75vw, 13px); width: 11em; }
+.tv-gamep .tv-how { min-height: 0; }
+.tv-gamep .tv-how .rule { justify-content: flex-start; font-size: 11px; }
+.tv-gamep .tv-how .x-steps li { grid-template-columns: auto 1fr; gap: 14px; }
+.tv-gamep .tv-how .x-steps b { font: 600 clamp(20px, 1.6vw, 28px)/1.05 var(--black); }
+.tv-gamep .tv-how .x-steps small, .tv-gamep .tv-how .x-steps p { font-size: clamp(14px, 1.05vw, 18px); line-height: 1.35; }
+.tv-deck { margin-top: auto; min-height: 0; overflow: hidden; border-top: 1px solid var(--iron); padding-top: 12px; }
+.tv-deck .deckrow { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.tv-deck .dcard { font-size: 6.5px; }
+.tv-seatlist { list-style: none; margin: 0; padding: 0; width: min(100%, 820px); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 18px; align-self: center; }
+.tv-seatlist li { display: grid; grid-template-columns: 28px 40px 1fr auto; align-items: center; gap: 12px; padding: 8px 12px; border: 1px solid var(--iron); background: var(--ink-2); }
+.tv-seatlist li.ok { border-color: var(--gilt-2); }
+.tv-seatlist .n { font: 600 14px/1 var(--bit); color: var(--ash); }
+.tv-seatlist b { font: 500 clamp(18px, 1.4vw, 24px)/1.1 var(--text); color: var(--bone); }
+.tv-seatlist .glyph { color: var(--gilt-hi); font-size: 20px; }
+.lobby.tv-grid .tv-stage { grid-template-rows: minmax(0, 1fr); }
+/* rails keep their contents at full size and scroll as a whole when they hold more */
+.tv-rail { display: block; }
+.tv-rail > * + * { margin-top: 18px; }
+.tv-gamep .tv-gcover .tarot--cover { font-size: clamp(8px, 0.62vw, 11px); }
+.tv-gamep .tv-how .x-steps .xs-g { width: 48px; height: 48px; }
+.tv-gamep .tv-how .xs-g .glyph { font-size: 26px; }
+.tv-deck { margin-top: 18px; }
+/* Missions' record in a rail: the track and the card at rail width */
+.tv-left .mtrack.big .md { width: clamp(34px, 2.6vw, 48px); height: clamp(34px, 2.6vw, 48px); font-size: clamp(14px, 1.1vw, 18px); }
+.tv-left .mtrack.big .discs .md + .md { margin-left: clamp(6px, 0.7vw, 14px); }
+.tv-left .mtrack.big .discs .md + .md::before { width: clamp(6px, 0.7vw, 14px); }
+.tv-left .mtrack.big .mscore > span { font-size: 26px; }
+.tv-left .mtrack, .tv-left .b-mission > * { max-width: 100%; }
+.tv-left .b-mission .mc-banner { width: 100%; box-sizing: border-box; }
+/* the Gazette in a rail: a masthead that fits */
+.tv-grid .b-side .gazette .mast h3 { font-size: clamp(24px, 2vw, 40px); }
+.tv-rail.tv-joinp { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.tv-rail.tv-joinp > * + * { margin-top: 0; }
+.tv-deck .dcard { font-size: 8px; }
+.tv-deck .dcard b { font-size: 8.5px; letter-spacing: 0.04em; overflow-wrap: anywhere; text-align: center; }
+.tv-rules .plaque { box-sizing: border-box; max-width: none; justify-content: flex-start; }
