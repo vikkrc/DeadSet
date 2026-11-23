@@ -5731,3 +5731,22 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
 .panel { padding: var(--pad-panel); }
 .dock { padding-left: var(--edge); padding-right: var(--edge); }
 .tray { margin-left: calc(-1 * var(--edge)); margin-right: calc(-1 * var(--edge)); }
+
+/* ── Coherence C: one dock ──
+   Your move first, solid; the host's command second: full width, outlined, one line, "Host" in red. */
+.dock { flex-wrap: wrap; }
+.dock > .host-slot { flex: 0 0 100%; display: flex; justify-content: center; }
+.host-slot .btn-host {
+  flex: 1; max-width: 420px; min-height: 40px; padding: 0 14px; background: transparent; box-shadow: none;
+  border: 1px solid var(--blood); outline: 0; color: var(--bone);
+  font: 600 11px/1 var(--text); letter-spacing: 0.16em; text-transform: uppercase;
+}
+.host-slot .btn-host::before, .host-slot .btn-host::after { display: none; }
+.host-slot .btn-host .hold-label { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.host-k { color: var(--blood-ink); font-weight: 600; margin-right: 0.6em; }
+.tray { grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); }
+/* One frame per rank: the double frame with lozenge tips is the primary's alone (solid, gold, wax and holds);
+   a secondary button is a single gilt line; ghost buttons stay text. */
+.btn:where(:not(.btn-solid, .btn-blood, .btn-gold, .hold, .btn-ghost, .icon-btn)) { outline: 0; }
+.btn:not(.btn-solid, .btn-blood, .btn-gold, .hold, .btn-ghost, .icon-btn)::before,
+.btn:not(.btn-solid, .btn-blood, .btn-gold, .hold, .btn-ghost, .icon-btn)::after { display: none; }

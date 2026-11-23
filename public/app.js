@@ -1715,9 +1715,9 @@ function classicMove(v) {
 const inPlay = (v) => !!v && v.phase !== 'LOBBY' && v.phase !== 'ENDED';
 
 /**
- * U2: the tray. Four fixed slots above the dock in every mode: My card · The board · Notes · Story. A slot the mode
- * does not have stays in place, dimmed and inert, so muscle memory carries across games. Notes counts unread notes.
- * Classic's active Rule cards live under The board.
+ * U2: the tray, above the dock in every mode, in one order: My card · The board · Notes · Story. Coherence C: a slot
+ * the game never has is left out; one that is only shut for now (Notes before the first note) stays, dimmed and
+ * inert. Notes counts unread notes. Classic's active Rule cards live under The board.
  */
 function tray(v) {
   const me = v.me;
@@ -1725,17 +1725,21 @@ function tray(v) {
   const u = MODES[v.mode]?.utility ?? {};
   const slot = (id, icon, label, on, badge = 0, cls = '') => on
     ? `<button class="tray-slot ${cls}" data-act="sheet" data-id="${id}" data-key="ts-${id}">${icon}<span>${label}</span>${badge ? `<b class="tray-badge">${badge}</b>` : ''}</button>`
-    : `<span class="tray-slot off" data-key="ts-off-${label}" aria-hidden="true">${icon}<span>${label}</span></span>`;
+    : `<span class="tray-slot off" data-key="ts-off-${id}" aria-hidden="true">${icon}<span>${label}</span></span>`;
   const notesOn = !!u.notes && (!u.notesIf || u.notesIf.split('.').reduce((o, k) => o?.[k], v));
   const notes = noteCount(v);
   const unread = Math.max(0, notes - (S.notesSeen?.[seenKey(v)] ?? 0));
   const board = u.board ? BOARD_SHEET[u.board] : null;
+  // Rule cards are dealt at the start and stay, so a game without them never has the slot.
   const rules = u.rules && v.activeRules?.length;
-  return `<nav class="tray" data-key="tray" aria-label="${esc(t('Your things'))}">
-    ${slot('role', glyph(me.role?.glyph ?? 'scroll'), t('My card'), !!(u.card && me.role), 0, S.trayDot ? 'dot' : '')}
-    ${board ? slot(u.board, glyph(board.glyph), t('The board'), true) : slot('rules', glyph('magistrate'), t('The board'), !!rules, 0, Object.keys(activeRuleNotes(v)).length ? 'live' : '')}
-    ${slot('notes', glyph('scroll'), t('Notes'), notesOn, unread)}
-    ${slot('story', glyph('whispers'), t('Story'), !!(u.story && v.scenario))}</nav>`;
+  const slots = [
+    u.card && slot('role', glyph(me.role?.glyph ?? 'scroll'), t('My card'), !!me.role, 0, S.trayDot ? 'dot' : ''),
+    board ? slot(u.board, glyph(board.glyph), t('The board'), true) : rules && slot('rules', glyph('magistrate'), t('The board'), true, 0, Object.keys(activeRuleNotes(v)).length ? 'live' : ''),
+    u.notes && slot('notes', glyph('scroll'), t('Notes'), notesOn, unread),
+    u.story && v.scenario && slot('story', glyph('whispers'), t('Story'), true),
+  ].filter(Boolean);
+  if (!slots.length) return '';
+  return `<nav class="tray" data-key="tray" style="--n:${slots.length}" aria-label="${esc(t('Your things'))}">${slots.join('')}</nav>`;
 }
 
 /**
@@ -3196,7 +3200,7 @@ function dock(v) {
   const me = v.me;
   const a = v.action;
   const parts = [];
-  const hostNext = v.host?.advance && v.phase !== 'LOBBY' ? holdBtn('advance', t(v.host.advance), 'btn-host', { key: 'dock-adv' }) : '';
+  const hostNext = !!v.host?.advance && v.phase !== 'LOBBY';
   const btn = (label, act, cls = 'btn-solid', dis = false, key = act, extra = '') => `<button class="btn ${cls}" data-act="${act}" data-key="d-${key}" ${extra} ${dis ? 'disabled' : ''} ${S.pending ? 'data-pending' : ''}>${label}</button>`;
   const startLabel = () => (v.setup.notReady ? th('Waiting for {n} to ready up', { n: v.setup.notReady }) : v.setup.ok ? t('Hold to start') : t('Fix setup first'));
   if (me?.moderator) {
@@ -3243,12 +3247,17 @@ function dock(v) {
         break;
     }
   }
-  // U3: in play the host's advance lives in the room menu (the Host pill), unless it is the only thing to do,
-  // then it sits in the dock, labelled as a host action.
-  if (hostNext && (!inPlay(v) || !parts.length)) parts.unshift(`<span class="mobile-only host-slot" data-key="hostslot">${inPlay(v) ? holdBtn('advance', th('Host · {x}', { x: t(v.host.advance) }), 'btn-host', { key: 'dock-adv' }) : hostNext}</span>`);
+  // Coherence C: your own move comes first and is the only solid button; the host's command is always second, full
+  // width, outlined, one line and labelled Host, so it never competes with a player's move.
+  if (hostNext) parts.push(`<span class="mobile-only host-slot" data-key="hostslot">${hostBtn(v.host.advance)}</span>`);
   const tr = tray(v);
   if (!parts.length && !tr) return '';
   return `<div class="dock ${tr ? 'has-tray' : ''}" data-key="dock">${tr}${parts.join('')}</div>`;
+}
+
+/** The host's hold control in the dock: one line, "Host" in red ahead of the command. */
+function hostBtn(cmd) {
+  return `<button class="btn hold btn-host ${S.ui.holding === 'dock-adv' ? 'holding' : ''}" data-hold="advance" data-key="hold-dock-adv" ${S.pending ? 'data-pending' : ''}><span class="hold-fill"></span><span class="hold-label"><b class="host-k">${esc(t('Host'))}</b> ${esc(t(cmd))}</span></button>`;
 }
 
 function commitReady(a) {
