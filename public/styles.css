@@ -5936,3 +5936,38 @@ svg.o-needle { position: absolute; inset: 0; width: 100%; height: 100%; z-index:
 /* The pencil and print wobble run inside the drawing, in vector space, so art stays sharp at any size and while a
    card scales in (as a filter on the whole <svg> it was rasterised at layout size and upscaled: pixelated). */
 .emb-ink { filter: var(--ink-filter, none); }
+
+/* ── The Omen in motion ──
+   Between phases the needle glides and the wheel eases to its new size. The reveal (31b): a wind-back, three
+   turns slowing to the stop while a light sweeps the rim and the faces veil; a held breath; then the face
+   lights, the rim flares and the name is stamped. */
+@property --sz { syntax: '<length>'; inherits: true; initial-value: 230px; }
+.o-wheel { transition: --sz var(--t-card) var(--ease); }
+.o-wheel:not(.spin) .o-needle { transition: transform var(--t-phase) var(--ease); }
+.o-wheel.spin .o-needle { animation: oSpin2 3.6s 0.3s var(--ease) both; }
+@keyframes oSpin2 {
+  0% { transform: rotate(var(--a0)); }
+  12% { transform: rotate(calc(var(--a0) - 24deg)); }
+  100% { transform: rotate(calc(var(--a1) + 1080deg)); }
+}
+.o-sweep { position: absolute; inset: 6%; z-index: 2; border-radius: 50%; pointer-events: none;
+  background: conic-gradient(from 0deg, transparent 0 72%, color-mix(in srgb, var(--gilt-hi) 30%, transparent) 94%, transparent 100%);
+  animation: oSweep 3.6s 0.3s var(--ease) both; }
+@keyframes oSweep { 0% { transform: rotate(0); opacity: 0; } 10% { opacity: 1; } 85% { opacity: 1; } 100% { transform: rotate(1080deg); opacity: 0; } }
+.o-wheel.spin .o-face { filter: none; animation: oVeil 4.7s both; }
+@keyframes oVeil { 0% { filter: none; } 10%, 88% { filter: blur(2px) brightness(0.5); } 100% { filter: none; } }
+/* nothing lit until the stop: the finish face starts like the others and lights after the held breath */
+.o-wheel.spin .o-face.on .o-fi { animation: oLightFi 0.9s 4.7s var(--spring) both; }
+.o-wheel.spin .o-face.on b { animation: oLightB 0.9s 4.7s var(--ease) both; }
+@keyframes oLightFi {
+  0% { transform: scale(1); border-color: var(--gilt-2); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 60%, transparent), 0 0 0 4px color-mix(in srgb, var(--gilt) 35%, transparent); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); border-color: var(--gilt-hi); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 60%, transparent), 0 0 0 5px var(--gilt-hi), 0 0 40px 8px color-mix(in srgb, var(--gilt-hi) 55%, transparent); }
+}
+@keyframes oLightB { 0% { color: var(--bone); border-color: color-mix(in srgb, var(--gilt) 40%, transparent); box-shadow: none; } 100% { color: var(--gilt-hi); border-color: var(--gilt-hi); box-shadow: 0 0 18px color-mix(in srgb, var(--gilt-hi) 50%, transparent); } }
+.o-wheel.spin { animation: oFlare 1.2s 4.7s var(--ease) both; }
+@keyframes oFlare { 0% { filter: none; } 30% { filter: brightness(1.35) drop-shadow(0 0 30px color-mix(in srgb, var(--gilt-hi) 70%, transparent)); } 100% { filter: none; } }
+.moment .o-late { opacity: 0; animation: oLate 0.5s 4.95s var(--ease) forwards; }
+@keyframes oLate { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.moment .o-stamp { opacity: 0; animation: oStamp 0.45s 4.75s var(--spring) forwards; }
+@keyframes oStamp { 0% { opacity: 0; transform: scale(1.6) rotate(-4deg); } 70% { opacity: 1; transform: scale(0.94) rotate(-2deg); } 100% { opacity: 1; transform: scale(1) rotate(-2deg); } }

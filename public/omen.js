@@ -45,7 +45,7 @@ export function wheel({ at = 0, from = null, turn = 0, size = '', mark = null, k
   const a1 = a0 + turn * 120;
   return `<div class="o-wheel ${size} ${spin ? 'spin' : ''}" data-key="${key}" style="--a0:${a0}deg;--a1:${a1}deg">${ENGRAVING}
     ${[0, 1, 2].map((i) => `<span class="o-face f-${i} ${mark === i ? 'on' : ''}" style="--d:${i * 120}deg"><span class="o-fi">${emblem(FACE_EMB[i])}</span><b>${esc(faceName(i))}</b></span>`).join('')}
-    ${seerDots(seers)}${NEEDLE}</div>`;
+    ${seerDots(seers)}${spin ? '<i class="o-sweep" aria-hidden="true"></i>' : ''}${NEEDLE}</div>`;
 }
 
 const pips = (n, total = 5) => `<span class="o-pips" aria-label="${esc(th('{n} Influence', { n }))}">${Array.from({ length: total }, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</span>`;
@@ -133,13 +133,15 @@ export function omenMoment(l) {
   if (l.ev === 'o-reveal') return { type: 'ospin', start: l.start, offset: l.offset, finish: l.finish, sound: 'coin' };
   return null;
 }
-export const O_MOMENT_TIME = { ospin: 4600 };
+export const O_MOMENT_TIME = { ospin: 6600 };
 
 export function omenMomentHtml(m, h) {
   const { letters } = h;
-  return `${wheel({ from: m.start, turn: m.offset, size: 'big', key: `ospin-${m.start}-${m.offset}` })}
-    <span class="kicker">${esc(m.offset ? th('The table turned it {n}', { n: m.offset > 0 ? `+${m.offset}` : String(m.offset) }) : t('The turns cancel out'))}</span>
-    <h1 class="m-title o-ft f-${m.finish}">${letters(faceName(m.finish))}</h1>`;
+  // 31b: nothing leaks early — the faces veil while it turns; only after the needle has stopped and a held breath
+  // does the finish face light and its name get stamped.
+  return `${wheel({ from: m.start, turn: m.offset, size: 'big', mark: m.finish, key: `ospin-${m.start}-${m.offset}` })}
+    <span class="kicker o-late">${esc(m.offset ? th('The table turned it {n}', { n: m.offset > 0 ? `+${m.offset}` : String(m.offset) }) : t('The turns cancel out'))}</span>
+    <h1 class="m-title o-ft o-stamp f-${m.finish}">${esc(faceName(m.finish))}</h1>`;
 }
 
 // ── Lobby ──────────────────────────────────────────────────────────────────

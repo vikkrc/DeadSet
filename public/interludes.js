@@ -42,7 +42,7 @@ export function sceneMs(type, d = {}) {
     case 'nfall': return 3200;
     case 'ndawn': return 3600;
     // Graverobbers
-    case 'ospin': return 4600;
+    case 'ospin': return 6600; // wind-back and spin 3.6 s, a held breath, then the face lights and the name is stamped
     case 'wprompt': return 4800;
     case 'wreveal': return 3200;
     case 'qstart': return 5200;
