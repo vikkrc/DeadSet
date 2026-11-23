@@ -990,6 +990,38 @@ function render() {
   syncDockHeight();
   syncModal();
   syncTitle();
+  if (onBoard()) requestAnimationFrame(boardAutoScroll);
+}
+
+/**
+ * The TV never needs a hand on it: any panel that holds more than fits (the Gazette, the seat list, a long deck)
+ * scrolls itself slowly, rests at each end, and comes back. Nothing on the board asks to be scrolled by a person.
+ */
+const autoScrolled = new Set();
+let autoScrollRaf = null;
+function boardAutoScroll() {
+  const board = document.querySelector('.board2');
+  if (!board) return;
+  board.querySelectorAll('.b-side, .b-atable, .b-attract, .b-join, .b-stage, [data-autoscroll], .b-cols > *, .b-lobby > *, .k-main, .k-side').forEach((el) => {
+    if (el.scrollHeight > el.clientHeight + 8) { el.classList.add('auto-scroll'); autoScrolled.add(el); }
+  });
+  for (const el of autoScrolled) if (!el.isConnected) autoScrolled.delete(el);
+  if (autoScrollRaf || !autoScrolled.size) return;
+  let last = performance.now();
+  const step = (now) => {
+    const dt = Math.min(100, now - last); last = now;
+    for (const el of autoScrolled) {
+      const max = el.scrollHeight - el.clientHeight;
+      if (max <= 2) { el.scrollTop = 0; continue; }
+      const st = (el._as ??= { dir: 1, rest: 3000, pos: el.scrollTop });
+      if (st.rest > 0) { st.rest -= dt; continue; }
+      st.pos = Math.max(0, Math.min(max, st.pos + st.dir * dt * 0.022)); // about 22 px a second
+      el.scrollTop = st.pos;
+      if (st.pos >= max || st.pos <= 0) { st.dir = -st.dir; st.rest = st.pos >= max ? 4000 : 6000; }
+    }
+    autoScrollRaf = autoScrolled.size ? requestAnimationFrame(step) : null;
+  };
+  autoScrollRaf = requestAnimationFrame(step);
 }
 
 /** DS-028: each page has its own title (a guide chapter, a room and its game, the TV board). */

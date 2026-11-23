@@ -186,7 +186,7 @@ export function boardScreen(v, h) {
   if (v.mode === 'coffins' && v.coffins) return coffinsBoard(v, { header });
   if (v.mode === 'carnival' && v.carnival) return carnivalBoard(v, { header });
   if (v.mode === 'midnight' && v.midnight) return midnightBoard(v, { header, ring });
-  if (v.mode === 'seance' && v.seance) return seanceBoard(v, { header });
+  if (v.mode === 'seance' && v.seance) return seanceBoard(v, { header, ring });
   if (v.mode === 'graverobbers' && v.graverobbers) return graveBoard(v, { header });
   if (v.mode === 'mimic' && v.mimic) return mimicBoard(v, { header, ring });
   if (v.mode === 'omen' && v.omen) return omenBoard(v, { header, ring });

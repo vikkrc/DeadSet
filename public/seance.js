@@ -513,7 +513,9 @@ export function seanceBoard(v, h) {
       ${rowCards(v, row, { truth: ended ? S.truth?.[row] : null, zoom: false })}<div class="sb-vis">${vis}</div></section>`;
   }).join('');
   const banner = `<div class="sb-banner" data-key="sbbanner">${at >= 0 ? `<ol class="sb-steps">${steps.map(([, l], i) => `<li class="${i === at ? 'on' : i < at ? 'done' : ''}"><i>${i + 1}</i>${esc(t(l))}</li>`).join('')}</ol>` : ''}<div><b>${esc(title)}</b><span>${esc(sub)}</span></div></div>`;
-  const side = `<div class="sb-ghost fr" data-key="sbghost"><span class="kicker">${t('The Ghost')}</span>${disc(v, S.ghost, 'lg')}<b>${pname(v, S.ghost)}</b><small>${t('cannot speak')}</small>
+  // The astrolabe table stays on the TV: the Ghost at its centre, the readers in their seats.
+  const table = h.ring ? `<div class="sb-table" data-key="sbtable">${h.ring(v, { center: `<span class="c-sub">${t('The Ghost')}</span><b class="c-name">${pname(v, S.ghost)}</b>` })}</div>` : '';
+  const side = `${table}<div class="sb-ghost fr" data-key="sbghost"><span class="kicker">${t('The Ghost')}</span>${disc(v, S.ghost, 'lg')}<b>${pname(v, S.ghost)}</b><small>${t('cannot speak')}</small>
       <div class="sb-stats"><span>${glyph('v_snow')} ${th(S.cold === 1 ? '{n} cold spot' : '{n} cold spots', { n: S.cold })}</span>${S.round ? `<span>${th('Round {n}', { n: S.round })}</span>` : ''}</div></div>
     <div class="sb-clock" data-key="sbclock"><span class="kicker">${t('The séance clock')}</span>${candles(S)}<small>${th('{n} of {m} candles left', { n: S.candles - S.burnt, m: S.candles })}</small></div>`;
   return `<main class="board2 sboard ${ended ? 'is-ended' : ''}" data-key="board-s">${header}

@@ -6021,3 +6021,28 @@ svg.o-needle { position: absolute; inset: 0; width: 100%; height: 100%; z-index:
 .end-next .end-votes { width: 100%; display: grid; justify-items: center; gap: 8px; }
 .verdict .v-astro .wseal { --ws: 76px; }
 .verdict .sunburst { -webkit-mask: radial-gradient(closest-side, #000 35%, transparent 100%); mask: radial-gradient(closest-side, #000 35%, transparent 100%); } /* literal-ok: mask */
+
+/* ── The TV fits its screen ──
+   The astrolabe table takes the larger column and as much height as the screen gives; every panel is bounded
+   by the screen, and one that still holds more scrolls itself (see boardAutoScroll). */
+body.is-board .board2 .auto-scroll { overflow: hidden !important; scrollbar-width: none; }
+body.is-board .board2 { height: 100dvh; }
+body.is-board .board2:not(.lobby) { padding-bottom: 72px; }
+body.is-board .b-cols { grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.85fr); gap: 2.4vw; min-height: 0; height: 100%; }
+body.is-board .b-stage { min-height: 0; height: 100%; overflow: hidden; }
+body.is-board .board2 .ring { width: min(100%, calc(100dvh - 210px), 780px); margin: 8px auto; }
+body.is-board .b-stage:has(.b-mission) .ring { width: min(100%, calc(100dvh - 330px), 680px); }
+body.is-board .b-side { max-height: 100%; overflow: hidden; align-self: stretch; }
+body.is-board .b-lobby { height: 100%; min-height: 0; align-items: stretch; grid-template-columns: minmax(240px, 0.75fr) minmax(0, 1.2fr) minmax(280px, 0.95fr); }
+body.is-board .b-lobby > section { min-height: 0; overflow: hidden; align-content: center; }
+body.is-board .b-atable { align-content: start; padding-top: 2vh; }
+body.is-board .b-join .code-tiles.big .tile { width: clamp(30px, 2.9vw, 52px); height: clamp(38px, 3.6vw, 64px); font-size: clamp(18px, 1.7vw, 30px); }
+body.is-board .b-join .qr-frame svg { width: clamp(150px, 18vh, 240px); height: auto; }
+/* Séance on the TV: visions under their row (not a column beside it), the table in the side panel */
+body.is-board .sb-row { grid-template-columns: 130px minmax(0, 1fr); grid-template-areas: 'head cards' 'head vis'; align-items: start; }
+body.is-board .sboard .k-cols { grid-template-columns: minmax(0, 1fr) minmax(300px, 26vw); height: 100%; min-height: 0; }
+body.is-board .sboard .k-main, body.is-board .sboard .k-side, body.is-board .kboard .k-main, body.is-board .kboard .k-side { min-height: 0; max-height: 100%; overflow: hidden; }
+body.is-board .sb-table .ring { width: min(100%, 34vh); margin: 0 auto 6px; --tok: clamp(32px, 4.4vh, 46px) !important; }
+body.is-board .sb-table .c-name { font: 600 clamp(16px, 2vh, 22px)/1 var(--black); color: var(--bone); }
+body.is-board .sb-table + .sb-ghost { display: none; }
+body.is-board .board2 .ring { width: min(100%, calc(100dvh - 250px), 760px); }
