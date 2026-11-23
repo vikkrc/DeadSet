@@ -363,6 +363,7 @@ function detectMoments(v) {
   if (S.seenLog === null) {
     // Fresh load: no replay, except a shared scene sequence still playing, which this screen joins mid-way.
     S.seenPriv = ptop;
+    S.inkPriv = ptop;
     const live = v.log.find((l) => l.mAt && l.mAt + l.mDur > v.serverNow);
     S.seenLog = live ? live.i - 1 : top;
     if (!live) return;
@@ -457,6 +458,7 @@ function detectMoments(v) {
             if (prod) out.push({ type: 'gift', product: prod, idx: productIndex(S.content?.products ?? [], prod), sound: null, tapOnly: true });
           }
           out.push({ type: 'private', reports: reports.map((x) => ({ msg: entryMsg(x), lines: x.lines, kind: x.kind })), tapOnly: true });
+          S.inkPriv = Math.max(S.inkPriv ?? -1, ...reports.map((x) => x.i)); // they ink in the moment, so Notes shows them dry
         }
         break;
       }
@@ -800,7 +802,7 @@ function momentHtml(m) {
     }
     case 'private':
       body = `<div class="m-art">${glyph('mentalist')}</div><span class="kicker">${t('Only you know')}</span><h1 class="m-title">${letters(t('Your night'))}</h1>
-        <ul class="m-reports">${m.reports.length ? m.reports.map((r, i) => `<li style="--d:${0.5 + i * 0.35}s">${reportHtml(r.msg, r.lines)}</li>`).join('') : `<li style="--d:.5s">${t('You slept. Nothing reached you.')}</li>`}</ul>
+        <ul class="m-reports">${/* VIII: every report inks in together, in the same time, whatever it says */ ''}${m.reports.length ? m.reports.map((r) => `<li class="ink-in" style="--d:.5s">${reportHtml(r.msg, r.lines)}</li>`).join('') : `<li class="ink-in" style="--d:.5s">${t('You slept. Nothing reached you.')}</li>`}</ul>
         <p class="m-sub small">${t('Keep this to yourself — or don\'t.')}</p>`;
       break;
     case 'revive':
@@ -1654,7 +1656,9 @@ function holdBtn(act, label, cls = '', { dis = false, key = act } = {}) {
 
 function feed(log, cls = '') {
   if (!log?.length) return `<p class="small muted">${t('Nothing yet.')}</p>`;
-  return `<ul class="feed ${cls}">${log.map((l) => `<li class="k-${esc(l.kind)}" data-key="f-${l.i}"><span class="at">${esc(stamp(l.at))}</span><span class="txt">${reportHtml(entryMsg(l), l.lines)}</span></li>`).join('')}</ul>`;
+  // VIII: in your Notes, what arrived since you last looked inks in; what you have seen is dry.
+  const ink = (l) => (cls === 'feed-private' && l.i > (S.inkPriv ?? Infinity) ? 'ink-in' : '');
+  return `<ul class="feed ${cls}">${log.map((l) => `<li class="k-${esc(l.kind)} ${ink(l)}" data-key="f-${l.i}"><span class="at">${esc(stamp(l.at))}</span><span class="txt">${reportHtml(entryMsg(l), l.lines)}</span></li>`).join('')}</ul>`;
 }
 
 function head(v, extra = '') {
@@ -2593,7 +2597,7 @@ function roleCardHtml(role, { align = null, flipKey = 'role', flipped = null, mi
   return `<div class="card-stage" data-key="stage-${flipKey}">
     <button class="flipcard ${isFlipped ? 'flipped' : ''}" data-act="flip" data-key="${flipKey}" data-tilt aria-label="${isFlipped ? esc(t('Your role: {x}', { x: roleF(role.id, 'name') })) : esc(t('Turn over your role card'))}">
       <span class="face back tarot back" ${isFlipped ? 'aria-hidden="true"' : ''}><span class="sig" aria-hidden="true">DS</span><span class="hint kicker">${t('Tap to turn over')}</span></span>
-      ${/* DS-010: a face-down card holds nothing; the face is drawn when it turns */ ''}<span class="face front tarot ${isFlipped ? rubric : ''}" ${isFlipped ? '' : 'aria-hidden="true"'}>${isFlipped ? `
+      ${/* DS-010: a face-down card holds nothing; the face is drawn when it turns */ ''}<span class="face front tarot ${isFlipped ? rubric : ''} ${isFlipped ? inkOnce(`card-${flipKey}`) : ''}" ${isFlipped ? '' : 'aria-hidden="true"'}>${isFlipped ? `
         <span class="arc-num">${esc(roleNumber(role, t))}</span>
         ${cardArt(roleEmblemId(role))}
         <span class="nm">${esc(roleF(role.id, 'name'))}</span>
@@ -2603,6 +2607,14 @@ function roleCardHtml(role, { align = null, flipKey = 'role', flipped = null, mi
         <span class="shine" aria-hidden="true"></span>` : ''}
       </span>
     </button></div>`;
+}
+
+/** VIII: words that are yours ink in the first time you see them, then stay dry. */
+function inkOnce(key) {
+  const k = `${V()?.gameSeq ?? 0}:${key}`;
+  if ((S.inked ??= new Set()).has(k)) return '';
+  setTimeout(() => S.inked.add(k), 1600);
+  return 'ink-face';
 }
 
 function roleNotes(me) {
@@ -3389,7 +3401,7 @@ const ACT = {
   sheet(el) {
     const id = el.dataset.id; S.ui.sheet = id && S.ui.sheet !== id ? id : null;
     if (S.ui.sheet === 'role') S.trayDot = false;
-    if (S.ui.sheet === 'notes') { const v = V(); (S.notesSeen ??= {})[seenKey(v)] = noteCount(v); }
+    if (S.ui.sheet === 'notes') { const v = V(); (S.notesSeen ??= {})[seenKey(v)] = noteCount(v); const top = maxI(v.private); setTimeout(() => { S.inkPriv = Math.max(S.inkPriv ?? -1, top); }, 1600); }
     if (S.ui.sheet) uiSound('whoosh'); render();
   },
   cardInfo(el) { S.ui.cardInfo = { kind: el.dataset.kind, id: el.dataset.id }; S.ui.sheet = 'card'; uiSound('whoosh'); render(); },
