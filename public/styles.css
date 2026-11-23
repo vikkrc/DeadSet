@@ -5763,3 +5763,11 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
 .mf.on, .mf[aria-pressed='true'] { background: var(--vellum); color: var(--sepia); border-color: var(--vellum-2); }
 .chip { min-height: 36px; border-color: var(--gilt-2); }
 .chip.on { background: var(--vellum); color: var(--sepia); border-color: var(--vellum-2); }
+
+/* ── Said once (E7): what you can tap is a button ──
+   Exorcism's word grid, Mimic's card and the Séance hand use the standard secondary button with an icon. */
+.btn.s-drawer-btn { width: 100%; min-height: 44px; padding: 0 16px; border: 1px solid var(--gilt-2); color: var(--bone); background: linear-gradient(var(--ink-3), var(--ink-2)); }
+.btn.btn-sm .glyph, .btn.btn-sm svg { width: 16px; height: 16px; font-size: 16px; flex: none; }
+.q-card header { gap: 8px; }
+.q-card header .kicker, .q-card header .btn { white-space: nowrap; }
+.q-card header .btn { min-height: 40px; padding: 0 10px; gap: 6px; letter-spacing: 0.12em; }

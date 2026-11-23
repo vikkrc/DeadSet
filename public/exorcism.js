@@ -307,7 +307,7 @@ export function exorcismMain(v, me, h) {
   const a = v.action || {};
   const { ctx, pick } = activePick(v);
   const peek = !!S.ui.xpeek?.[v.phaseId];
-  const gridBtn = X?.grid ? `<button class="chip" data-act="xGrid" data-key="xgridbtn">${glyph('menu')}<span>${t('Word grid')}</span></button>` : '';
+  const gridBtn = X?.grid ? `<button class="btn btn-sm x-gridbtn" data-act="xGrid" data-key="xgridbtn">${glyph('menu')}<span>${t('Word grid')}</span></button>` : '';
   const tools = gridBtn ? `<nav class="chips" data-key="xtools">${gridBtn}</nav>` : '';
   // A small ball, always in place: tap it to look again, tap again to cloud it.
   // During the turns the ball is the hero: what has been said floats on its edge.

@@ -144,7 +144,7 @@ function drawer(v, h) {
         : `<p class="small muted">${t('No swaps left.')}</p>`;
     } else body = `<p class="small muted">${t('You hold no visions. The Ghost will send you one.')}</p>`;
   }
-  return `<div class="s-drawer ${open ? 'open' : ''}" data-key="sdrawer"><button class="s-drawer-btn" data-act="sDrawer" aria-expanded="${open}">${glyph('p_cards')}<span>${t('Your hand')}</span>${glyph(open ? 'up' : 'down')}</button>${open ? `<div class="sd-body" data-key="sdbody">${body}</div>` : ''}</div>`;
+  return `<div class="s-drawer ${open ? 'open' : ''}" data-key="sdrawer"><button class="btn btn-sm s-drawer-btn" data-act="sDrawer" aria-expanded="${open}">${glyph('p_cards')}<span>${t('Your hand')}</span>${glyph(open ? 'up' : 'down')}</button>${open ? `<div class="sd-body" data-key="sdbody">${body}</div>` : ''}</div>`;
 }
 
 /** A card shown large over everything; tap anywhere to close. */

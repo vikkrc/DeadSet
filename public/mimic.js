@@ -49,7 +49,7 @@ function myCard(v, me, UI) {
     : q.loc != null ? th('You are {who}, at {where}.', { who: scenAt('WHO', q.who), where: place(q.loc) }) : '';
   const unmask = q.mimic && v.phase === 'Q_ASK' ? `<button class="btn hold btn-ghost btn-sm q-unmask ${UI.ui.holding === 'qUnmask' ? 'holding' : ''}" data-hold="qUnmask" data-key="hold-qUnmask"><span class="hold-fill"></span><span class="hold-label">${esc(t('Hold to unmask and name the place'))}</span></button>` : '';
   return `<section class="q-card ${hidden ? 'hidden' : ''}" data-key="qcard">
-    <header><span class="kicker">${t('Your card')}</span><button class="chip" data-act="qHide">${glyph(hidden ? 'mentalist' : 'close')}<span>${t(hidden ? 'Show my card' : 'Hide my card')}</span></button></header>
+    <header><span class="kicker">${t('Your card')}</span><button class="btn btn-sm" data-act="qHide">${glyph(hidden ? 'mentalist' : 'close')}<span>${t(hidden ? 'Show my card' : 'Hide my card')}</span></button></header>
     ${hidden ? '' : `<div class="q-pair">${pair}</div><p class="q-line">${esc(line)}</p>${unmask}`}</section>`;
 }
 
