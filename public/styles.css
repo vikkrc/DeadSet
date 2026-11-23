@@ -5800,3 +5800,21 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
 .dock-note.stamped .wseal { margin-left: -4px; }
 .sheet-head > .wseal { align-self: center; }
 .verdict .v-seal { display: grid; margin: 0 auto 10px; animation-delay: 0.5s; }
+
+/* ── II · Struck from the ledger ──
+   One rubric stroke through a dead player's name, drawn left to right in half a second with a blot where the pen
+   lifts; one of four hands per player. It replaces the plain line-through everywhere a name is listed. */
+.tok.dead .tok-name, .ledger li.dead .who b, .dz-row.dead > b { position: relative; text-decoration: none; }
+.tok.dead .tok-name::after, .ledger li.dead .who b::after, .dz-row.dead > b::after {
+  content: ''; position: absolute; left: -3%; right: -6%; top: 50%; height: 0.62em; transform: translateY(-48%); pointer-events: none;
+  background: var(--strike, var(--blood-ink));
+  -webkit-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><circle cx='4' cy='5' r='3.6' fill='%23000'/><circle cx='8.6' cy='7.4' r='1.2' fill='%23000'/></svg>") right center / 0.5em 0.5em no-repeat, var(--stroke) left center / calc(100% - 0.3em) 100% no-repeat; /* literal-ok: mask shapes only */
+  mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><circle cx='4' cy='5' r='3.6' fill='%23000'/><circle cx='8.6' cy='7.4' r='1.2' fill='%23000'/></svg>") right center / 0.5em 0.5em no-repeat, var(--stroke) left center / calc(100% - 0.3em) 100% no-repeat; /* literal-ok: mask shapes only */
+}
+.sv0 { --stroke: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'><path d='M1 6C22 4 48 7 70 5S92 4 97 5' stroke='%23000' stroke-width='2.4' fill='none' stroke-linecap='round' vector-effect='non-scaling-stroke'/></svg>"); } /* literal-ok: mask shape */
+.sv1 { --stroke: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'><path d='M1 5C18 7 40 3 62 6S88 5 97 4' stroke='%23000' stroke-width='2.4' fill='none' stroke-linecap='round' vector-effect='non-scaling-stroke'/></svg>"); } /* literal-ok: mask shape */
+.sv2 { --stroke: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'><path d='M1 7C30 5 52 4 74 6S90 6 97 5' stroke='%23000' stroke-width='2.4' fill='none' stroke-linecap='round' vector-effect='non-scaling-stroke'/></svg>"); } /* literal-ok: mask shape */
+.sv3 { --stroke: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'><path d='M1 4C26 6 46 6 66 4S88 6 97 6' stroke='%23000' stroke-width='2.4' fill='none' stroke-linecap='round' vector-effect='non-scaling-stroke'/></svg>"); } /* literal-ok: mask shape */
+.strike-new .tok-name::after, li.strike-new .who b::after, .dz-row.strike-new > b::after { animation: strikeDraw 0.5s var(--ease) 0.2s both; }
+@keyframes strikeDraw { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+.ledger li.dead .who b { --strike: var(--blood-ink); }

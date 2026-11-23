@@ -911,12 +911,34 @@ function morphChildren(a, b) {
   while (cur) { const nx = cur.nextSibling; a.removeChild(cur); cur = nx; }
 }
 
+/**
+ * II · Struck from the ledger: a death is struck through once, when it happens, for everyone at once. Deaths known
+ * when a phone (re)joins are already struck and do not animate; a new one waits until the shared scene is over.
+ */
+function trackStrikes(v) {
+  if (!v?.players) return;
+  const key = `${v.code}:${v.gameSeq ?? 0}`;
+  const dead = v.players.filter((p) => !p.alive).map((p) => p.id);
+  if (S.strikeKey !== key) { S.strikeKey = key; S.struck = new Set(dead); S.strikeFresh = new Set(); return; }
+  for (const id of S.struck) if (!dead.includes(id)) S.struck.delete(id); // brought back: a later death strikes again
+  if (S.moment) return;
+  for (const id of dead) {
+    if (S.struck.has(id)) continue;
+    S.struck.add(id); S.strikeFresh.add(id);
+    setTimeout(() => S.strikeFresh.delete(id), 2500);
+  }
+}
+/** The stroke's hand: one of four wobbles, always the same for the same player. */
+const strikeHand = (id) => `sv${[...String(id)].reduce((a, c) => a + c.charCodeAt(0), 0) % 4}`;
+const strikeCls = (p) => (p.alive ? '' : `${strikeHand(p.id)} ${S.strikeFresh?.has(p.id) ? 'strike-new' : ''}`);
+
 function render() {
   if (!S.route) return; // content can arrive before the first route is set
   syncLang();
   const bottoms = {};
   document.querySelectorAll('[data-scroll]').forEach((el) => { bottoms[el.dataset.scroll] = el.scrollHeight - el.scrollTop - el.clientHeight < 30; });
   const v = V();
+  trackStrikes(v);
   const night = !!v && isNight(v.phase) && ['room', 'board'].includes(S.route?.name);
   // Midnight's deal and night steps are eyes-shut steps too: they take the night palette (B1).
   const dark = night || (!!v && ['N_DEAL', 'N_NIGHT'].includes(v.phase) && ['room', 'board'].includes(S.route?.name));
@@ -1383,7 +1405,7 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     const isSel = sel.has(p.id);
     const ni = nomIdx(p.id);
     const cls = ['tok',
-      p.alive ? '' : 'dead', p.id === me?.id ? 'me' : '', p.connected ? '' : 'away',
+      p.alive ? '' : `dead ${strikeCls(p)}`, p.id === me?.id ? 'me' : '', p.connected ? '' : 'away',
       isSel ? 'sel' : '', selectable ? 'can' : pick ? 'mute' : '', pick?.tone === 'kill' ? 'kill' : '',
       ni >= 0 ? 'accused' : '', d?.speaking === p.id ? 'speaking' : '', p.immune ? 'immune' : '',
       lobby ? (p.ready ? 'ready' : 'unready') : '', reveal && p.alignment === 'DEATH' ? 'death' : '',
@@ -1956,7 +1978,7 @@ function dossierList(v) {
   if (!rows.length) return '';
   return `<section class="menu-sec" data-key="msec-dossiers"><div class="rule">${t('Dossiers')}</div><ul class="dossiers">${rows.map((p) => {
     const mk = MARKS.find(([k]) => k === notes[p.id]?.mark);
-    return `<li><button class="dz-row ${p.alive ? '' : 'dead'}" data-act="dossier" data-pid="${p.id}"><span class="dz-face">${p.avatar ? avatarSvg(p.avatar, 'tok-av') : esc(initials(p.name))}</span><b>${esc(p.name)}</b>${mk ? `<span class="dz-mark mk-${mk[0]}">${markGlyph(mk[2])} ${t(mk[1])}</span>` : ''}${notes[p.id]?.text ? `<span class="dz-note" aria-label="${esc(t('Has a note'))}">${glyph('scroll')}</span>` : ''}</button></li>`;
+    return `<li><button class="dz-row ${p.alive ? '' : `dead ${strikeCls(p)}`}" data-act="dossier" data-pid="${p.id}"><span class="dz-face">${p.avatar ? avatarSvg(p.avatar, 'tok-av') : esc(initials(p.name))}</span><b>${esc(p.name)}</b>${mk ? `<span class="dz-mark mk-${mk[0]}">${markGlyph(mk[2])} ${t(mk[1])}</span>` : ''}${notes[p.id]?.text ? `<span class="dz-note" aria-label="${esc(t('Has a note'))}">${glyph('scroll')}</span>` : ''}</button></li>`;
   }).join('')}</ul><p class="small muted">${t('Marks and notes stay on this phone.')}</p></section>`;
 }
 function dossierHtml(v, p) {
@@ -2943,7 +2965,7 @@ function eveningHtml(v, { host = false } = {}) {
 function endMain(v, me) {
   const vd = verdict(v);
   const revealed = !!modeInfo(v.mode).rolesAtEnd && v.players.some((p) => p.role);
-  const everySecret = () => `<section data-key="reveal"><div class="rule">${t('Every secret')}</div>${revealed ? `<ul class="ledger">${v.players.map((p, i) => `<li class="${p.alive ? '' : 'dead'} ${p.id === me?.id ? 'me' : ''}" style="--i:${i}" data-key="rv-${p.id}">
+  const everySecret = () => `<section data-key="reveal"><div class="rule">${t('Every secret')}</div>${revealed ? `<ul class="ledger">${v.players.map((p, i) => `<li class="${p.alive ? '' : `dead ${strikeCls(p)}`} ${p.id === me?.id ? 'me' : ''}" style="--i:${i}" data-key="rv-${p.id}">
       <span class="seat">${p.role ? glyph(p.role.glyph) : ''}</span>
       <span class="who"><b>${esc(p.name)}</b><small>${p.role ? esc(roleF(p.role.id, 'name')) : '—'}${p.originalRole ? ` ${th('(was {role})', { role: p.originalRole.id })}` : ''} · ${p.alive ? t('alive') : `† ${esc(stamp(p.diedAt))}`}</small></span>
       <span class="tags">${p.lover ? `<span class="tag love" title="${esc(t('Lovers'))}">${glyph('heart')}</span>` : ''}<span class="tag ${p.alignment === 'DEATH' ? 'blood' : ''}">${esc(ALIGN[p.alignment] ?? '')}</span></span></li>`).join('')}</ul>` : `<p class="muted">${t('The host chose not to reveal roles.')}</p>`}</section>`;
@@ -2990,7 +3012,7 @@ function moderatorMain(v) {
     ${ring(v, { center: centerFor(v) })}
     ${v.deathTeam ? `<div class="panel seal tight" data-key="moddt"><span class="kicker blood">${th('Death room · capacity {n}', { n: v.deathTeam.capacity })}</span>${v.deathTeam.members.map((id) => `<p>${pname(id)}: ${(v.deathTeam.proposals[id] || []).map(pname).join(' + ') || '—'} ${v.deathTeam.confirmed[id] ? `(${t('confirmed')})` : ''}</p>`).join('')}</div>` : ''}
     ${v.day ? nominationList(v) : ''}
-    <section data-key="modall"><div class="rule">${t('Everyone')}</div><ul class="ledger">${v.players.map((p) => { const s = sec[p.id] || {}; return `<li class="${p.alive ? '' : 'dead'}" data-key="mod-${p.id}"><span class="seat">${String(p.seat + 1).padStart(2, '0')}</span><span class="who"><b>${esc(p.name)}</b><small>${s.roleId ? esc(roleF(s.roleId, 'name')) : ''} · ${esc(ALIGN[s.alignment] ?? '')}${s.dreamId ? ` · ${th('dreams {dream}', { dream: s.dreamId })}` : ''}${s.statuses?.length ? ` · ${s.statuses.map(optLabel).join(', ')}` : ''}${s.action ? ` · ${s.action.map((u) => [u.target ? pname(u.target) : '', u.option ? esc(optLabel(u.option)) : ''].filter(Boolean).join(' ')).join('; ')}` : ''}${s.ballot ? ` · ${s.ballot === 'ABSTAIN' ? t('abstains') : th('votes {name}', { name: rawName(s.ballot) })}` : ''}</small></span><span class="tags">${s.done ? `<span class="tag solid">${t('Done')}</span>` : ''}</span></li>`; }).join('')}</ul></section>`;
+    <section data-key="modall"><div class="rule">${t('Everyone')}</div><ul class="ledger">${v.players.map((p) => { const s = sec[p.id] || {}; return `<li class="${p.alive ? '' : `dead ${strikeCls(p)}`}" data-key="mod-${p.id}"><span class="seat">${String(p.seat + 1).padStart(2, '0')}</span><span class="who"><b>${esc(p.name)}</b><small>${s.roleId ? esc(roleF(s.roleId, 'name')) : ''} · ${esc(ALIGN[s.alignment] ?? '')}${s.dreamId ? ` · ${th('dreams {dream}', { dream: s.dreamId })}` : ''}${s.statuses?.length ? ` · ${s.statuses.map(optLabel).join(', ')}` : ''}${s.action ? ` · ${s.action.map((u) => [u.target ? pname(u.target) : '', u.option ? esc(optLabel(u.option)) : ''].filter(Boolean).join(' ')).join('; ')}` : ''}${s.ballot ? ` · ${s.ballot === 'ABSTAIN' ? t('abstains') : th('votes {name}', { name: rawName(s.ballot) })}` : ''}</small></span><span class="tags">${s.done ? `<span class="tag solid">${t('Done')}</span>` : ''}</span></li>`; }).join('')}</ul></section>`;
 }
 
 /** Translation and markup helpers shared with the board, Gazette and guide. */
