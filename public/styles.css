@@ -5689,3 +5689,27 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
 .last-awards { margin: 6px 0 0; padding-left: 18px; font-size: 14px; color: var(--bone-2); }
 /* DS-021: the host's override never outweighs your own move */
 .host-adv { border-color: var(--blood); }
+
+/* ── Coherence A: three corner shapes ──
+   Chrome (buttons, panels, bars, rows, chips, badges, slips) is square.
+   Cards keep one corner, a share of the card itself, so the back and the
+   face of a card are the same shape whatever their type size, and a card
+   no longer changes its corners as it turns. Circles stay circles. */
+:root { --r-card: 3.5% / 2.15%; }
+.tarot, .face, .shine, .dr-face, .cer-face, .cer-face.tarot, .mc-back, .mc-front,
+.mplay-card, .mrc-back, .mrc-front, .mrc-front.tarot, .swap-card, .swap-card.tarot,
+.q-dc, .sg-empty, .smv-none { border-radius: var(--r-card); }
+.btn, .seg, .panel, .banner, .accused li, .tile, .qr, .qr-frame, .deck-card, .preset, .option,
+.death-room, .toast, .b-bar, .b-bar i, .rr, .cer-rule, .pool-grid > *, .plaque, .coach, .sg, .sg-role,
+.rc-sum, .rc, .av-opt, .portrait-row, .letter-portrait, .recap-lines li, .open-ballots, .b-sound, .ghost-tag,
+.verdict.living, .verdict.lovers, .verdict.cult, .verdict.ripper, .mc-banner, .b-grid,
+.kr, .kme-btn, .kld-c > b, .cp-more, .cp-n, .bdg.k-soul, .bdg.c-hand,
+.ring .tok .b-nom, .ring.dense .tok .b-nom, .board2 .ring .tok .b-nom,
+.k-slip.me, .cturn.me, .nreport, .sd-body, .ctx-slip, .scard .s-bd,
+.s-mute, .sg-slot, .s-bar, .sg-chip, .s-tabs, .s-nm, .s-drawer-btn, .sd-t, .sb-banner,
+.g-bar, .g-sign, .g-crews section, .g-crewedit section, .ge-digs i, .ge-digs em, .gt-banner, .gt-crew,
+.q-bar, .q-card, .q-static .q-noise, .q-cast li, .qt-banner, .k-ledger li, .o-pred, .o-hist li, .ot-banner,
+.w-reads li, .w-grid li, .guide .x-explain, .lens b, .cfan .cf-o,
+.mr-card, .mr-fate, .mr-glass, .mr-chip, .mr-results li, .mf, .mrow, .rejoin, .g-pager a, .x-named li,
+.edict:not(.tarot), .rec-card, .rec-fact, .balance, .ba-list li, .tc-join svg, .ev-rows li, .awards li { border-radius: 0; }
+.btn.icon-btn { border-radius: 50%; }
