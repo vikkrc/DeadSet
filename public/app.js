@@ -2876,7 +2876,9 @@ function nightMain(v, me) {
         <span class="small muted">${progressLine(v.progress)}</span>
       </section>${chips(v)}`;
   }
-  return `${head(v, `<button class="btn btn-sm btn-ghost cover" data-act="veil" data-key="cover">${glyph('veil')} ${t('Cover')}</button>`)}${ruleRibbon(v, me)}<div class="night-body" data-key="nightbody">${actionsStage(v, me, v.action)}</div>${chips(v)}`;
+  const stage = actionsStage(v, me, v.action);
+  // Without a table on screen (a choice of options), Cover sits at the right of the body's first line instead.
+  return `${head(v)}${ruleRibbon(v, me)}<div class="night-body" data-key="nightbody">${stage.includes('n-cover') ? '' : `<div class="n-coverrow">${coverBtn()}</div>`}${stage}</div>${chips(v)}`;
 }
 
 function nightfallStage(v, me, a) {
@@ -2946,7 +2948,7 @@ function actionsStage(v, me, a) {
         for (const x of a.death.proposals[m.id] ?? []) marks[x] = (marks[x] ?? '') + initials(m.name);
       }
     }
-    parts.push(ring(v, { pick, center: centerFor(v, pick), marks }));
+    parts.push(`<div class="n-table" data-key="ntable">${coverBtn()}${ring(v, { pick, center: centerFor(v, pick), marks })}</div>`);
     if (pick.key === 'role' && s?.options && (S.sel.uses ?? []).length) {
       parts.push(`<div class="stack" data-key="useopts">${(S.sel.uses ?? []).map((u, i) => `<div class="optrow" data-key="uo-${u.target}"><span>${pname(u.target)}</span><div class="seg">${s.options.map((o) => `<button data-act="pickUseOption" data-i="${i}" data-id="${o.id}" aria-pressed="${u.option === o.id}">${esc(optLabel(o.id))}</button>`).join('')}</div></div>`).join('')}</div>`);
     }
@@ -2968,7 +2970,7 @@ function actionsStage(v, me, a) {
   if (!a.death && !ctx.length && me.role) {
     const rubric = me.alignment === 'DEATH' ? 'rubric' : '';
     const centre = `<button type="button" class="n-rolec" data-act="sheet" data-id="role" aria-label="${esc(t('Your role: {x}', { x: roleF(me.role.id, 'name') }))}"><span class="tarot tarot--thumb ${rubric}">${cardArt(roleEmblemId(me.role))}</span><b>${esc(roleF(me.role.id, 'name'))}</b></button>`;
-    parts.unshift(`<div class="n-quiet" data-key="nquiet">${ring(v, { center: centre })}</div>`);
+    parts.unshift(`<div class="n-table n-quiet" data-key="nquiet">${coverBtn()}${ring(v, { center: centre })}</div>`);
   }
   parts.push(dreamSlip(me.dream));
   parts.push(chatBlock(v));
@@ -2983,6 +2985,9 @@ function submittedSummary(a) {
   if (a.submitted?.length) return `<p class="small muted center-text" data-key="sub">${th('Submitted: {what}.', { what: a.submitted.map((u) => [u.target ? rawName(u.target) : '', u.option ? optLabel(u.option) : ''].filter(Boolean).join(' · ')).join('; ') })}</p>`;
   return '';
 }
+
+/** Night: the Cover control sits in the table's empty top-right corner, beside the thing it hides. */
+const coverBtn = () => `<button class="n-cover" data-act="veil" data-key="cover" aria-label="${esc(t('Cover'))}" title="${esc(t('Cover'))}">${glyph('veil')}</button>`;
 
 function noActionReason(me, v) {
   if (me.mimicPowerless) return t('Your copy failed. No action — waiting for dawn.');

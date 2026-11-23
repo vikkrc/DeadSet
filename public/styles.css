@@ -6294,3 +6294,15 @@ html { background-color: var(--ink); overscroll-behavior-y: none; }
 .verdict .v-astro .wseal { --ws: 62px; }
 .verdict h1 { font-size: clamp(44px, 13vw, 84px); }
 .verdict .result-stamp { margin-top: 2px; }
+
+/* Night: no empty band at the top — the rule (if any) right under the bar, then the table; Cover is a round
+   control in the table's top-right corner. */
+.n-table { position: relative; }
+.n-cover { position: absolute; top: 2px; right: 0; z-index: 5; width: 40px; height: 40px; display: grid; place-items: center; padding: 0;
+  border: 1px solid var(--iron); border-radius: 50%; background: color-mix(in srgb, var(--ink) 80%, transparent); color: var(--bone-2); cursor: pointer; }
+.n-cover .glyph { width: 20px; height: 20px; font-size: 20px; }
+.n-cover:active { background: var(--ink-2); }
+.night-body > .small.muted:first-child { margin: 0 0 4px; }
+/* the role card on Night 0 keeps the screen's own top margin under the bar */
+.main:has(.card-stage) .card-stage { margin-top: 14px; }
+.n-coverrow { position: relative; height: 0; } .n-coverrow .n-cover { top: -2px; }
