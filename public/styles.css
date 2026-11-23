@@ -6055,3 +6055,10 @@ body.is-board .board2 .ring { width: min(100%, calc(100dvh - 250px), 760px); }
 .x-steps p, .x-steps small, .x-explain p { line-height: 1.4; }
 .x-steps li { gap: 2px 12px; padding: 6px 0; }
 .game-card { margin-bottom: 4px; }
+
+/* The tray as pictograms: one larger icon per slot, the count riding its corner */
+.tray-slot { gap: 0; }
+.tray-slot .glyph { font-size: 24px; width: 24px; height: 24px; }
+.tray-slot:not(.off):hover .glyph, .tray-slot:not(.off):focus-visible .glyph { color: var(--gilt-hi); }
+.tray-badge { position: absolute; top: 5px; left: calc(50% + 7px); margin: 0; }
+.tray-slot.dot::after { top: 6px; left: calc(50% + 9px); right: auto; }

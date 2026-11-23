@@ -1789,7 +1789,9 @@ function classicMove(v) {
 const inPlay = (v) => !!v && v.phase !== 'LOBBY' && v.phase !== 'ENDED';
 
 /**
- * U2: the tray, above the dock in every mode, in one order: My card · The board · Notes · Story. Coherence C: a slot
+ * U2: the tray, above the dock in every mode, in one order: My card · The board · Notes · Story. Pictograms only:
+ * the sheet each one opens says its name, and no language's long word can crowd the row (the name stays for
+ * screen readers and as a hover title). Coherence C: a slot
  * the game never has is left out; one that is only shut for now (Notes before the first note) stays, dimmed and
  * inert. Notes counts unread notes. Classic's active Rule cards live under The board.
  */
@@ -1798,8 +1800,8 @@ function tray(v) {
   if (!me || me.moderator || !inPlay(v) || !V().me) return '';
   const u = MODES[v.mode]?.utility ?? {};
   const slot = (id, icon, label, on, badge = 0, cls = '') => on
-    ? `<button class="tray-slot ${cls}" data-act="sheet" data-id="${id}" data-key="ts-${id}">${icon}<span>${label}</span>${badge ? `<b class="tray-badge">${badge}</b>` : ''}</button>`
-    : `<span class="tray-slot off" data-key="ts-off-${id}" aria-hidden="true">${icon}<span>${label}</span></span>`;
+    ? `<button class="tray-slot ${cls}" data-act="sheet" data-id="${id}" data-key="ts-${id}" title="${esc(label)}">${icon}<span class="sr-only">${label}</span>${badge ? `<b class="tray-badge">${badge}</b>` : ''}</button>`
+    : `<span class="tray-slot off" data-key="ts-off-${id}" aria-hidden="true">${icon}</span>`;
   const notesOn = !!u.notes && (!u.notesIf || u.notesIf.split('.').reduce((o, k) => o?.[k], v));
   const notes = noteCount(v);
   const unread = Math.max(0, notes - (S.notesSeen?.[seenKey(v)] ?? 0));
