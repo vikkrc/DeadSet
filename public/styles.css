@@ -6209,3 +6209,25 @@ body.is-board .tv-grid .b-stage:has(.b-mission) .ring { width: min(100%, calc(10
   .sboard.tv-grid .sb-table .tok-name { display: none; }
   .sboard.tv-grid .sb-table .ring { --tok: clamp(26px, 3.6vh, 40px) !important; }
 }
+
+/* ── Every board on the same edges: content runs from the wordmark's left edge to the score button's right edge ── */
+body.is-board .x-cols, body.is-board .k-cols, body.is-board .c-cols, body.is-board .gt-cols, body.is-board .qt-cols, body.is-board .ot-cols, body.is-board .wt-cols {
+  padding-left: 0; padding-right: 0; gap: var(--tv-g); }
+body.is-board .kboard .k-cols, body.is-board .cboard .c-cols, body.is-board .nboard .k-cols { grid-template-columns: minmax(0, 1fr) var(--tv-rail); height: 100%; min-height: 0; }
+
+/* ── Ornate panels: every TV panel wears the codex frame (corner flourishes, double rule) ── */
+.tv-panel { border: 1px solid var(--gilt-2); border-image: var(--frame) 32 / 24px stretch; padding: 28px 26px; box-shadow: none; }
+
+/* ── The Mirror on TV: the dilemma reads at a calmer size ── */
+body.is-board .mr-card.tv { --q: clamp(22px, 1.7vw, 32px); --ti: clamp(24px, 1.9vw, 36px); padding: 20px 26px 22px; }
+
+/* ── Carnival: the masks at the ball as a slow ticker under the players ── */
+body.is-board .kboard .k-side { display: flex; flex-direction: column; gap: 18px; height: 100%; min-height: 0; overflow: hidden; }
+.k-tvref.ticker { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 10px; padding: 18px 20px 6px; border: 1px solid var(--gilt-2); border-image: var(--frame) 32 / 22px stretch; }
+.k-tvref.ticker .tk-win { flex: 1; min-height: 0; overflow: hidden;
+  -webkit-mask: linear-gradient(transparent, #000 12%, #000 88%, transparent); mask: linear-gradient(transparent, #000 12%, #000 88%, transparent); } /* literal-ok: mask */
+.k-tvref.ticker .tk-track { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; animation: tkScroll calc(var(--n, 8) * 4.5s) linear infinite; }
+.k-tvref.ticker li { display: grid; grid-template-columns: clamp(54px, 4.2vw, 78px) 1fr; gap: 14px; align-items: center; }
+.k-tvref.ticker li .kcard, .k-tvref.ticker li .tarot { font-size: clamp(6px, 0.5vw, 9px); }
+.k-tvref.ticker li b { display: block; font: 600 clamp(18px, 1.35vw, 26px)/1.05 var(--black); color: var(--bone); padding-bottom: 4px; }
+@keyframes tkScroll { from { transform: translateY(0); } to { transform: translateY(calc(-50% - 6px)); } }

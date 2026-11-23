@@ -556,7 +556,9 @@ export function carnivalBoard(v, h) {
       <section class="k-main">${ballroom(v, { open: ended || v.phase === 'K_UNMASK', marks, big: true })}<p class="b-now" data-key="know">${now}</p></section>
       <aside class="k-side">
         <div class="k-ledger fr"><span class="kicker">${th('Souls · {n} to win', { n: K.target })}</span><ul>${purses}</ul></div>
-        <div class="k-tvref ${K.deck.length > 7 ? 'two' : ''}"><span class="kicker">${t('Masks at the ball')}</span><ul>${K.deck.map(({ id, n }) => `<li>${maskCard(id, { cls: 'thumb' })}<b>${esc(roleName(id))}${n > 1 ? ` ×${n}` : ''}</b>${runes(id, 'sm')}</li>`).join('')}</ul></div>
+        ${(() => { const items = (hidden) => K.deck.map(({ id, n }) => `<li ${hidden ? 'aria-hidden="true"' : ''}>${maskCard(id, { cls: 'thumb' })}<span><b>${esc(roleName(id))}${n > 1 ? ` ×${n}` : ''}</b>${runes(id, 'sm')}</span></li>`).join('');
+          // The masks at the ball as a slow ticker under the players: the list twice, sliding up in a loop.
+          return `<div class="k-tvref ticker" style="--n:${K.deck.length}"><span class="kicker">${t('Masks at the ball')}</span><div class="tk-win"><ul class="tk-track">${items(false)}${items(true)}</ul></div></div>`; })()}
         ${ended ? scoreboard(v) : ''}
       </aside>
     </div></main>`;
