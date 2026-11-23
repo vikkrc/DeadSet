@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Drei Missionen gescheitert",
     "Use the Candle": "Benutze die Kerze",
     "Game mode": "Spielmodus",
+    "Share the code, the link or the QR. The recommended setup suits a first game.": "Teile den Code, den Link oder den QR-Code. Die empfohlene Einstellung passt für ein erstes Spiel.",
     "The room": "Der Raum",
     "{done} of {total} in so far.": "Bisher {done} von {total}.",
     "Length, this setup": "Dauer, diese Einstellung",

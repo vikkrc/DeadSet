@@ -3038,7 +3038,8 @@ function tutorialToggle() {
   return `<label class="toggle-row" data-key="tut"><span><b>${t('First-game tips')}</b><small>${t('Short hints walk you through each step of your first game.')}</small></span><input type="checkbox" class="switch" data-act="tutorialToggle" ${tipsOn() ? 'checked' : ''}></label>`;
 }
 const TUTORIAL = {
-  lobbyHost: ['You are the host', 'Share the code, the link or the QR. The recommended setup suits a first game. When everyone is ready, hold Start.'],
+  // Said once: the Start button already says when it can be held and why not yet.
+  lobbyHost: ['You are the host', 'Share the code, the link or the QR. The recommended setup suits a first game.'],
   lobby: ['Welcome to the table', 'Wait for everyone to arrive and read the deck below. Then tap Ready; the host starts the game.'],
   night0: ['Your secret role', 'Shield your screen and tap the card to turn it over. Read what your role does, then tap Understood. Nobody acts tonight.'],
   night0Death: ['You are Death', 'You and your teammates know each other. Each night you agree on one victim. By day, blend in and steer suspicion away.'],

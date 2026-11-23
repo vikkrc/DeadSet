@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tři mise selhaly",
     "Use the Candle": "Použij Svíčku",
     "Game mode": "Herní režim",
+    "Share the code, the link or the QR. The recommended setup suits a first game.": "Sdílej kód, odkaz nebo QR. Doporučené nastavení se hodí na první hru.",
     "The room": "Místnost",
     "{done} of {total} in so far.": "Zatím hotovo: {done} z {total}.",
     "Length, this setup": "Délka, toto nastavení",
