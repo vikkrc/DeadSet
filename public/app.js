@@ -1767,7 +1767,7 @@ function classicMove(v) {
   const dead = me && !me.alive;
   const L = (act, main, sub = '') => ({ act, main, sub });
   switch (v.phase) {
-    case 'NIGHT_0_REVEAL': return me.acknowledged ? L(false, waitingFor(v), '') : L(true, t('Turn your card and read it'), t('Then tap Understood'));
+    case 'NIGHT_0_REVEAL': return me.acknowledged ? L(false, waitingFor(v), '') : L(true, t('Turn your card and read it'), '');
     case 'DAY_PREP': {
       const ab = (a.abilities ?? []).filter((x) => !x.used);
       return ab.length ? L(true, t('Use your power, or wait'), t('The dawn news is read aloud')) : L(false, t('The dawn news is read'), t('The host opens the discussion'));
@@ -1791,7 +1791,7 @@ function classicMove(v) {
     case 'NIGHT_DREAM_SWAP': return L(false, t('Night falls: turn your Dream'), t('Dream Snatchers may swap now'));
     case 'NIGHT_ACTIONS':
       if (a.type !== 'night') return L(false, t('The town sleeps'), t('Watch in silence'));
-      return a.done ? L(false, t('You are asleep'), '') : L(false, t('Your night: choose, then sleep'), t('Pass if you have nothing to do'));
+      return a.done ? L(false, t('You are asleep'), '') : L(false, t('Your night: choose, then sleep'), '');
     default: return null;
   }
 }
@@ -2704,7 +2704,7 @@ function deathTeam(me) {
 function revealMain(v, me) {
   const key = `n0-${v.phaseId}`;
   return `${head(v)}
-    <p class="muted center-text" data-key="n0hint">${me.acknowledged ? waitText(v) : t('Shield your screen, then tap the card.')}</p>
+    ${me.acknowledged ? `<p class="muted center-text" data-key="n0hint">${waitText(v)}</p>` : ''}
     ${roleCardHtml(me.role, { align: me.alignment, flipKey: key })}
     ${S.ui.flipped[key] ? `<div data-key="n0notes" class="rise-in">${roleNotes(me)}</div>` : ''}
     ${chips(v)}`;
@@ -2943,7 +2943,7 @@ function actionsStage(v, me, a) {
     if (pick.key === 'role' && s?.kind === 'chat') parts.push(`<div class="row center" data-key="conspbtn"><button class="btn" data-act="conspire" ${S.sel.conspire ? '' : 'disabled'}>${t('Open whisper')}</button></div>`);
   }
   if (a.death) parts.push(deathRoom(v, me, a.death));
-  else if (!s) parts.push(`<p class="muted center-text" data-key="noact">${esc(noActionReason(me, v))}</p>`);
+  else if (!s) parts.push(`<p class="muted center-text noact-line" data-key="noact">${esc(noActionReason(me, v))}</p>`);
   else if (s.blocked === 'paralysis') parts.push(`<div class="banner blood" data-key="para">${dreamGlyph('SLEEP_PARALYSIS')}<div><b>${esc(dreamF('SLEEP_PARALYSIS', 'name'))}</b><p>${t('You cannot use your role tonight.')}</p></div></div>`);
   else if (s.kind === 'choice') {
     const sel = S.sel.uses ?? [];
@@ -2954,7 +2954,12 @@ function actionsStage(v, me, a) {
   } else {
     parts.push(`<p class="small muted center-text role-hint" data-key="rolehint"><span class="kicker">${t('Your power')}</span> ${rname}${s.charges === 1 ? ` · ${t('once per game')}` : ''}${s.uses > 1 ? ` · ${t('twice tonight')}` : ''}${s.role.id === 'MIMIC' ? ` · ${t('mandatory, or you stay powerless')}` : ''}${s.kind === 'dead' ? ` · ${t('you must survive the night')}` : ''}</p>`);
   }
-  if (!a.death && !ctx.length && me.role) parts.push(roleCardHtml(me.role, { align: me.alignment, mini: true }));
+  // A quiet night still sits at the table: your card at its centre (tap it to read), the reason beneath.
+  if (!a.death && !ctx.length && me.role) {
+    const rubric = me.alignment === 'DEATH' ? 'rubric' : '';
+    const centre = `<button type="button" class="n-rolec" data-act="sheet" data-id="role" aria-label="${esc(t('Your role: {x}', { x: roleF(me.role.id, 'name') }))}"><span class="tarot tarot--thumb ${rubric}">${cardArt(roleEmblemId(me.role))}</span><b>${esc(roleF(me.role.id, 'name'))}</b></button>`;
+    parts.unshift(`<div class="n-quiet" data-key="nquiet">${ring(v, { center: centre })}</div>`);
+  }
   parts.push(dreamSlip(me.dream));
   parts.push(chatBlock(v));
   return parts.join('');

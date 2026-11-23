@@ -6246,3 +6246,20 @@ body.is-board .kboard .k-side { display: flex; flex-direction: column; gap: 18px
 .topbar::before { content: ''; position: absolute; left: 0; right: 0; bottom: 100%; height: 100vh; background: var(--ink); pointer-events: none; }
 .dock::after { content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 100vh; background: var(--ink); pointer-events: none; }
 html { background-color: var(--ink); overscroll-behavior-y: none; }
+
+/* Night 0 and nightfall: the card sits near the top and is sized to the screen left between the bar and the dock,
+   so the count and the dock never cover it. */
+.nightfall { padding-top: 4px; gap: 10px; }
+.dream-reveal { width: min(60vw, 240px, calc((100dvh - 330px) * 0.611)); margin-top: 0; }
+.nightfall-count { grid-auto-flow: column; align-items: baseline; gap: 10px; }
+.nightfall-count b { font-size: 34px; min-height: 0; }
+.nightfall-count span { text-align: left; }
+.main:has(> .card-stage), .main:has([data-key^="stage-n0"]) { padding-top: 4px; }
+.card-stage { margin-top: 0; }
+/* the quiet night: the table with your card at its centre */
+.n-quiet { margin-top: -4px; }
+.n-rolec { display: grid; justify-items: center; gap: 6px; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+.n-rolec .tarot--thumb { font-size: clamp(6px, 1.9vw, 8.5px); width: 8.4em; aspect-ratio: 11 / 18; animation: float 6s ease-in-out infinite; }
+.n-rolec b { font: 600 clamp(15px, 4.2vw, 19px)/1 var(--black); color: var(--bone); }
+.noact-line { margin: 4px 0 0; }
+.main:has(.card-stage) .card-stage { margin-top: 8px; }
