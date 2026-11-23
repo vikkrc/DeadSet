@@ -2945,7 +2945,7 @@ body.is-dead { --ash: #8a919c; } /* labels keep 4.5:1 under the cold fade */
 .vf-face.front .glyph, .vf-face.front .emblem { width: 100%; height: 100%; overflow: visible; }
 
 /* Missions lottery: the same astrolabe as the table, a gilt needle carrying the lantern */
-.lot-wheel { width: min(330px, 84vw); }
+.lot-wheel { width: var(--lw); }
 .lot-wheel::before {
   content: ''; position: absolute; inset: -2%; border-radius: 50%; pointer-events: none;
   background: repeating-conic-gradient(var(--gilt-2) 0 0.7deg, transparent 0.7deg 6deg);
@@ -2964,8 +2964,8 @@ body.is-dead { --ash: #8a919c; } /* labels keep 4.5:1 under the cold fade */
 .lot-seat.win small { color: var(--gilt); }
 .lot-hand { z-index: 3; }
 .lot-hand::before { content: ''; position: absolute; left: -6px; top: -6px; width: 12px; height: 12px; border-radius: 50%; background: var(--gilt); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--gilt-2); }
-.lot-hand i { left: -1px; width: 2px; height: calc(min(330px, 84vw) * 0.22); background: linear-gradient(to top, var(--gilt-2), var(--gilt)); }
-.lot-hand .glyph, .lot-hand .emblem { left: -17px; top: calc(min(330px, 84vw) * -0.22 - 34px); width: 34px; height: 34px; font-size: 34px; color: var(--gilt); --paper: var(--ink); filter: drop-shadow(0 0 10px color-mix(in srgb, var(--gilt) 70%, transparent)); }
+.lot-hand i { left: -1px; width: 2px; height: calc(var(--lw) * 0.22); background: linear-gradient(to top, var(--gilt-2), var(--gilt)); }
+.lot-hand .glyph, .lot-hand .emblem { left: -17px; top: calc(var(--lw) * -0.22 - 34px); width: 34px; height: 34px; font-size: 34px; color: var(--gilt); --paper: var(--ink); filter: drop-shadow(0 0 10px color-mix(in srgb, var(--gilt) 70%, transparent)); }
 .lot-result b { font: 600 clamp(36px, 9vw, 56px)/1 var(--black); color: var(--gilt); padding-bottom: 0.08em; }
 body.is-board .lot-wheel { width: min(460px, 54vh); }
 body.is-board .lot-disc { width: 64px; height: 64px; }
@@ -4697,7 +4697,7 @@ button.g-stone:active { transform: scale(0.96); }
 /* the Coffins lottery: the hand of the wheel is a pencil shovel, grip on the hub, blade on the seat */
 .lot-hand.shovel .lot-shovel { position: absolute; left: calc(var(--sh-h) * -0.1); bottom: calc(var(--sh-h) * -0.03); width: calc(var(--sh-h) * 0.2); height: var(--sh-h); color: var(--gilt);
   filter: drop-shadow(0 0 8px color-mix(in srgb, var(--gilt-hi) 55%, transparent)); overflow: visible; }
-.lot-hand.shovel { --sh-h: calc(min(330px, 84vw) * 0.36); }
+.lot-hand.shovel { --sh-h: calc(var(--lw) * 0.36); }
 body.is-board .lot-hand.shovel { --sh-h: calc(min(460px, 54vh) * 0.34); }
 .lot-shovel g { --paper: var(--ink-2); }
 /* scene titles: a long word scales down to the screen's width; lines stay centred */
@@ -5771,3 +5771,8 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
 .q-card header { gap: 8px; }
 .q-card header .kicker, .q-card header .btn { white-space: nowrap; }
 .q-card header .btn { min-height: 40px; padding: 0 10px; gap: 6px; letter-spacing: 0.12em; }
+
+/* ── Said once (E8): the shared draw wheel fills a tall phone ──
+   Capped by the height left for the title and the caption, so it never pushes them off. */
+:root { --lw: min(330px, 84vw); }
+@media (max-width: 600px) and (min-height: 760px) { :root { --lw: min(88vw, 420px, calc(100dvh - 470px)); } }
