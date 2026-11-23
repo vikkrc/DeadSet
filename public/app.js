@@ -930,6 +930,22 @@ function trackStrikes(v) {
     setTimeout(() => S.strikeFresh.delete(id), 2500);
   }
 }
+/**
+ * VII · Each game's fleuron is the emblem it already owns. In play it ends the section rules of that game's screens
+ * and sheets, and turns slowly in the top bar while you wait. Covers, the picker and the lobby keep the large emblem.
+ */
+function syncFleuron(v) {
+  const id = v && ['room', 'board'].includes(S.route?.name) && v.phase !== 'LOBBY' ? MODES[v.mode]?.emblem ?? null : null;
+  if (S.fleuron === id && (!id || document.body.dataset.fleuron === id)) return;
+  S.fleuron = id;
+  const root = document.documentElement;
+  if (!id) { delete document.body.dataset.fleuron; root.style.removeProperty('--fleuron'); return; }
+  // A mask only reads shape: knock-out fills go clear, every line is ink.
+  const svg = emblem(id).replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ').replace(/var\(--paper[^)]*\)/g, 'none');
+  root.style.setProperty('--fleuron', `url("data:image/svg+xml,${encodeURIComponent(svg)}")`);
+  document.body.dataset.fleuron = id;
+}
+
 /** The stroke's hand: one of four wobbles, always the same for the same player. */
 const strikeHand = (id) => `sv${[...String(id)].reduce((a, c) => a + c.charCodeAt(0), 0) % 4}`;
 const strikeCls = (p) => (p.alive ? '' : `${strikeHand(p.id)} ${S.strikeFresh?.has(p.id) ? 'strike-new' : ''}`);
@@ -941,6 +957,7 @@ function render() {
   document.querySelectorAll('[data-scroll]').forEach((el) => { bottoms[el.dataset.scroll] = el.scrollHeight - el.scrollTop - el.clientHeight < 30; });
   const v = V();
   trackStrikes(v);
+  syncFleuron(v);
   const night = !!v && isNight(v.phase) && ['room', 'board'].includes(S.route?.name);
   // Midnight's deal and night steps are eyes-shut steps too: they take the night palette (B1).
   const dark = night || (!!v && ['N_DEAL', 'N_NIGHT'].includes(v.phase) && ['room', 'board'].includes(S.route?.name));

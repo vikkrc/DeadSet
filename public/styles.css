@@ -5833,3 +5833,17 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
   70% { filter: blur(0.4px); opacity: 1; }
   100% { -webkit-mask-position: 0 0; mask-position: 0 0; filter: none; opacity: 1; }
 }
+
+/* ── VII · The game's fleuron: the emblem it already owns ──
+   Two slots only, in play: the end of each section rule, and the waiting mark in the top bar (turning slowly).
+   Drawn in gilt at 16–18 px; the covers, picker and lobby keep the emblem at full size. */
+body[data-fleuron] .main .rule::after, body[data-fleuron] .sheet .rule::after { order: 2; }
+body[data-fleuron] .main .rule::before, body[data-fleuron] .sheet .rule::before {
+  content: ''; order: 3; flex: none; width: 20px; height: 20px; background: var(--gilt);
+  -webkit-mask: var(--fleuron) center / contain no-repeat; mask: var(--fleuron) center / contain no-repeat;
+}
+body[data-fleuron] .with-move.wait .move-dot, body[data-fleuron] .move.wait .move-dot {
+  width: 16px; height: 16px; border-radius: 0; box-shadow: none; background: var(--bone-2);
+  -webkit-mask: var(--fleuron) center / contain no-repeat; mask: var(--fleuron) center / contain no-repeat;
+  animation: spin 14s linear infinite;
+}
