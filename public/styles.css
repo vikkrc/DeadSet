@@ -5890,3 +5890,7 @@ svg.o-needle { position: absolute; inset: 0; width: 100%; height: 100%; z-index:
 .o-wheel .o-seer { z-index: 2; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--ink-3); border-color: var(--gilt-2); box-shadow: 0 0 0 2px var(--ink);
   transform: rotate(var(--d)) translateY(calc(var(--sz) * -0.5 - 4px)); }
 .o-wheel .o-seer.on { background: var(--gilt); border-color: var(--gilt); }
+
+/* The game's family is on every cover again, the small ones included (home strip, picker, rejoin) */
+.tarot--cover.mini .cv-fam { display: block; font: 600 7px/1.15 var(--text); letter-spacing: 0.12em; text-align: center; max-width: 100%; overflow-wrap: anywhere; text-wrap: balance; }
+.rejoin .tarot--cover.mini .cv-fam { display: none; }
