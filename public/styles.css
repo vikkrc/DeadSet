@@ -5784,13 +5784,9 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
 /* ── I · Sealed in wax: one seal, three sizes, pressed once ── */
 .wseal {
   --ws: 30px; flex: none; position: relative; display: inline-grid; place-items: center; width: var(--ws); height: var(--ws);
-  border-radius: 46% 54% 50% 50% / 52% 48% 52% 48%;
-  background: radial-gradient(circle at 38% 34%, #d0444c, var(--rubric) 60%, var(--wax)); /* literal-ok: wax highlight */
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5), inset 0 -2px 5px rgba(0, 0, 0, 0.35);
-  animation: wsPress 0.36s var(--spring) both;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.5)); animation: wsPress 0.36s var(--spring) both;
 }
-.wseal::before { content: ''; position: absolute; inset: 12%; border-radius: 50%; border: 1px solid rgba(255, 220, 210, 0.25); }
-.wseal b { font: 600 calc(var(--ws) * 0.36)/1 var(--black); color: #f3c9bf; letter-spacing: 0.02em; } /* literal-ok: pressed wax */
+.wseal svg { width: 100%; height: 100%; display: block; }
 .ws-s { --ws: 30px; }
 .ws-m { --ws: 44px; }
 .ws-l { --ws: 92px; }
