@@ -180,8 +180,8 @@ export function mirrorMomentHtml(m, h) {
   if (m.type === 'wprompt') return `<div class="m-art w-mart">${emblem('s_self')}</div><span class="kicker">${esc(th('Dilemma {n} of {m}', { n: m.round, m: V()?.mirror?.rounds ?? 8 }))}</span>
     ${dilemmaCard(m.dilemma, { size: 'scene', round: m.round })}`;
   const c = counts(m.answers);
-  return `<div class="m-art w-mart crack">${emblem('s_self')}</div><span class="kicker">${esc(t('The mirror shows'))}</span><h1 class="m-title">${letters(t('Every answer'))}</h1>
-    <p class="m-sub">${LETTERS.map((x) => `${numOf(x)} · ${c[x]}`).join('   ')}</p>`;
+  return `<div class="m-art w-mart w-lit">${emblem('s_self')}</div><span class="kicker">${esc(t('The mirror shows'))}</span><h1 class="m-title">${letters(t('Every answer'))}</h1>
+    <p class="w-tally">${LETTERS.map((x, i) => `<span style="--i:${i}"><b>${numOf(x)}</b><i>${c[x]}</i></span>`).join('')}</p>`;
 }
 
 // ── Lobby ──────────────────────────────────────────────────────────────────
