@@ -2188,7 +2188,7 @@ function lobbyMain(v, me) {
     body = `${lastResultHtml(v)}${invite}${table}<p class="small muted center-text" data-key="seathint">${t('Tap a seat to move or remove a player.')}${v.mode === 'graverobbers' && (v.settings.g?.crews ?? 'seats') === 'seats' ? ` ${t('Moving a player across the table changes their crew.')}` : ''}</p>
       ${portrait}${S.ui.botsPanel ? botsPanel(v) : ''}${eveningHtml(v, { host: true })}`;
   } else if (tab === 'game') {
-    body = `${gameCard(v, true)}${recCard(v, true)}${v.mode === 'classic' ? balancePanel(v) : ''}<div class="lobby-steps" data-key="lsteps">${how}${lobbyDeck(v, true, v.mode === 'classic' || v.mode === 'missions' ? setupPresets(v) : '')}</div>`;
+    body = `${gameCard(v, true)}${recCard(v, true)}<div class="lobby-steps" data-key="lsteps">${how}${lobbyDeck(v, true, v.mode === 'classic' || v.mode === 'missions' ? setupPresets(v) : '')}</div>`;
   } else {
     body = `${v.mode === 'classic' ? balancePanel(v) : ''}<div class="lobby-steps" data-key="lsteps">${setupForm(v) ? `<section data-key="setup">${setupForm(v)}</section>` : ''}${tableSection(v, true)}${timersForm(v)}</div>`;
   }
