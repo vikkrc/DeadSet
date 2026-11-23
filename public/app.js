@@ -2685,7 +2685,8 @@ function morningStage(v) {
 
 function nominationList(v) {
   const d = v.day;
-  if (!d?.nominations.length) return `<p class="muted small center-text" data-key="nonom">${t('No one is accused yet.')}</p>`;
+  // Said once: the centre of the table already counts the accused; the line goes until someone is.
+  if (!d?.nominations.length) return '';
   const by = {};
   for (const n of d.nominations) (by[n.target] ||= []).push(n.by);
   return `<ol class="accused" data-key="accused">${d.nominees.map((id, i) => `<li data-key="acc-${id}" class="${d.speaking === id ? 'speaking' : ''}"><span class="num">${roman(i + 1)}</span><b>${pname(id)}</b><small>${th('by {names}', { names: by[id].map(rawName) })}</small></li>`).join('')}</ol>`;
