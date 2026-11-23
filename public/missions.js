@@ -8,6 +8,7 @@ import { backdropHtml } from './backdrops.js';
 import { seatLayout } from './layout.js';
 import { cardArt, missionEmblemId } from './cards.js';
 import { emblem } from './emblems.js';
+import { MODES } from './modes.js';
 
 export const isMissionPhase = (ph) => typeof ph === 'string' && ph.startsWith('M_');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -440,6 +441,23 @@ const SHOVEL = `<svg class="lot-shovel" viewBox="0 0 40 200" fill="none" stroke=
     <circle cx="20" cy="194" r="3.2" fill="currentColor" stroke="none"/>
   </g></svg>`;
 
+/**
+ * The draw wheels' engraving, in each game's colour and emblem: a dotted double rim with a lozenge between
+ * every two seats, a slowly turning band of the game's emblem drawn in pencil, a constellation in the disc
+ * and an eight-point rosette on the hub. The pointer carries the game's emblem (Coffins keeps its shovel).
+ */
+function lotOrnament(n, emb) {
+  const pt = (deg, r) => { const a = ((deg - 90) * Math.PI) / 180; return [(50 + r * Math.cos(a)).toFixed(2), (50 + r * Math.sin(a)).toFixed(2)]; };
+  const loz = Array.from({ length: n }, (_, i) => { const d = ((i + 0.5) / n) * 360; const [x, y] = pt(d, 48.4); return `<path transform="translate(${x} ${y}) rotate(${d})" d="M0-1.6L.9 0L0 1.6L-.9 0Z"/>`; }).join('');
+  const band = Array.from({ length: 8 }, (_, i) => { const d = (i / 8) * 360 + 22.5; const [x, y] = pt(d, 29.3); return `<svg x="${(x - 2.3).toFixed(2)}" y="${(y - 2.3).toFixed(2)}" width="4.6" height="4.6" viewBox="0 0 100 100" overflow="visible" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">${emblem(emb).replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '')}</svg>`; }).join('');
+  const stars = [[42, 38], [47, 33], [55, 36], [60, 42], [57, 58], [45, 61], [39, 54]];
+  const constel = `<path class="lo-con" d="M${stars.map(([x, y]) => `${x} ${y}`).join(' L')}"/>${stars.map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="${i % 3 ? 0.45 : 0.75}"/>`).join('')}`;
+  return `<svg class="lot-orn" viewBox="0 0 100 100" aria-hidden="true">
+    <g class="lo-rim"><circle cx="50" cy="50" r="49.4"/><circle cx="50" cy="50" r="47.4" stroke-dasharray=".3 1.1"/><circle cx="50" cy="50" r="31.6"/><circle cx="50" cy="50" r="27"/></g>
+    <g class="lo-loz">${loz}</g><g class="lo-band">${band}</g><g class="lo-sky">${constel}</g></svg>`;
+}
+const LOT_HUB = '<svg class="lot-hub" viewBox="-10 -10 20 20" aria-hidden="true"><circle r="7.2" class="lh-disc"/><path class="lh-star" d="M0-6 L1.3-1.3 L6 0 L1.3 1.3 L0 6 L-1.3 1.3 L-6 0 L-1.3-1.3Z"/><path class="lh-in" d="M0-3.6 L.7-.7 L3.6 0 L.7 .7 L0 3.6 L-.7 .7 L-3.6 0 L-.7-.7Z" transform="rotate(45)"/><circle r="1.2" class="lh-dot"/></svg>';
+
 export const MISSION_MOMENT_TIME = { mside: 5200, mlottery: 8600, mlantern: 3600, mintro: 9000, mcandle: 5200, mcard: 4200, mvotes: 5400, mnamed: 5200, munmask: 5200, mreckon: 6200 };
 export const revealTime = (m) => 2600 + (m.cards ? m.cards.length : m.count) * 1150 + 2600;
 
@@ -455,7 +473,7 @@ export function missionMomentHtml(m, h) {
       }).join('');
       const turn = m.spins * 360 + (m.idx / n) * 360;
       return `<span class="kicker">${esc(m.kickerText ?? t('Before the first mission'))}</span><h1 class="m-title">${letters(m.titleText ?? t('Who leads first?'))}</h1>
-        <div class="lot-wheel" style="--turn:${turn}deg"><ul>${seats}</ul>${m.pointer === 'shovel' ? `<div class="lot-hand shovel" aria-hidden="true">${SHOVEL}</div>` : `<div class="lot-hand" aria-hidden="true"><i></i>${glyph('lantern')}</div>`}</div>
+        <div class="lot-wheel" style="--turn:${turn}deg;--cv:${MODES[h.mode]?.accent ?? 'var(--gilt)'}">${lotOrnament(n, MODES[h.mode]?.emblem ?? 'lantern')}<ul>${seats}</ul>${m.pointer === 'shovel' ? `<div class="lot-hand shovel" aria-hidden="true">${SHOVEL}</div>` : `<div class="lot-hand" aria-hidden="true"><i></i>${emblem(MODES[h.mode]?.emblem ?? 'lantern', { cls: 'lot-ptr' })}</div>`}${LOT_HUB}</div>
         <div class="lot-result"><b>${esc(t(m.resultText ?? '{name} leads first', { name: m.leaderName }))}</b></div>`;
     }
     case 'mlantern':

@@ -5971,3 +5971,25 @@ svg.o-needle { position: absolute; inset: 0; width: 100%; height: 100%; z-index:
 @keyframes oLate { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .moment .o-stamp { opacity: 0; animation: oStamp 0.45s 4.75s var(--spring) forwards; }
 @keyframes oStamp { 0% { opacity: 0; transform: scale(1.6) rotate(-4deg); } 70% { opacity: 1; transform: scale(0.94) rotate(-2deg); } 100% { opacity: 1; transform: scale(1) rotate(-2deg); } }
+
+/* ── The draw wheels, engraved: each game's colour and emblem, pencil-drawn ── */
+.lot-wheel { --lo: color-mix(in srgb, var(--cv, var(--gilt)) 55%, var(--gilt)); }
+.lot-orn { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; overflow: visible; pointer-events: none; }
+.lo-rim { fill: none; stroke: var(--lo); stroke-width: 0.3; }
+.lo-loz { fill: var(--lo); }
+.lo-band { color: var(--lo); --paper: var(--ink); opacity: 0.85; transform-origin: 50% 50%; transform-box: view-box; animation: spin 80s linear infinite; --ink-filter: url(#ds-pencil); }
+.lo-sky { fill: color-mix(in srgb, var(--lo) 80%, var(--bone)); }
+.lo-sky .lo-con { fill: none; stroke: color-mix(in srgb, var(--lo) 45%, transparent); stroke-width: 0.25; stroke-dasharray: 0.6 0.8; }
+.lot-wheel ul::before { background: repeating-conic-gradient(color-mix(in srgb, var(--lo) 14%, transparent) 0 1.5deg, transparent 1.5deg 9deg), radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--cv, var(--gilt)) 12%, var(--ink-3)), var(--ink) 72%); }
+.lot-wheel::before { background: repeating-conic-gradient(var(--lo) 0 0.7deg, transparent 0.7deg 6deg); }
+.lot-hand::before { display: none; }
+.lot-hand i { background: linear-gradient(to top, color-mix(in srgb, var(--lo) 60%, var(--ink)), var(--lo)); width: 3px; left: -1.5px; }
+.lot-hand .lot-ptr { position: absolute; left: -19px; top: calc(var(--lw) * -0.22 - 38px); width: 38px; height: 38px; color: var(--lo); --paper: var(--ink); --ink-filter: url(#ds-pencil);
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--lo) 70%, transparent)); }
+.lot-hub { position: absolute; left: 50%; top: 50%; z-index: 4; width: 34px; height: 34px; margin: -17px; overflow: visible; filter: drop-shadow(0 2px 4px #000); }
+.lot-hub .lh-disc { fill: var(--ink); stroke: var(--lo); stroke-width: 0.6; }
+.lot-hub .lh-star { fill: var(--lo); }
+.lot-hub .lh-in { fill: var(--ink); }
+.lot-hub .lh-dot { fill: var(--gilt-hi); }
+.lot-seat.win .lot-disc { border-color: var(--lo); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--lo), 0 0 26px color-mix(in srgb, var(--lo) 60%, transparent); }
+.lot-seat.win small { color: var(--lo); }

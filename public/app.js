@@ -843,7 +843,7 @@ function momentHtml(m) {
     case 'svisions': case 'scold': case 'sverdict': case 'slast': case 'sname': case 'snamed': body = seanceMomentHtml(m, { letters, onBoard, V }); break;
     case 'kintro': case 'kswap': case 'kclaim': case 'kreveal': case 'kpower': case 'klook': body = carnivalMomentHtml(m, { letters, onBoard, V }); break;
     case 'gift': body = giftHtml(m.idx, { t, th, esc, product: m.product }); break;
-    case 'mside': case 'mlottery': case 'mlantern': case 'mintro': case 'mcandle': case 'mcard': case 'mvotes': case 'mreveal': case 'mnamed': case 'munmask': case 'mreckon': body = missionMomentHtml(m, { letters, avatarSvg, onBoard }); break;
+    case 'mside': case 'mlottery': case 'mlantern': case 'mintro': case 'mcandle': case 'mcard': case 'mvotes': case 'mreveal': case 'mnamed': case 'munmask': case 'mreckon': body = missionMomentHtml(m, { letters, avatarSvg, onBoard, mode: V()?.mode }); break;
     case 'death':
       body = `<div class="m-art">${glyph(m.art || 'dagger')}</div><h1 class="m-title">${letters(t(m.title))}</h1>${m.names.length ? `<ul class="victims">${names(m.names)}</ul>` : ''}<p class="m-sub">${tmh(m.sub)}</p>`;
       break;
