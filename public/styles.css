@@ -5924,3 +5924,11 @@ svg.o-needle { position: absolute; inset: 0; width: 100%; height: 100%; z-index:
 .tray-slot { font-size: 14px; gap: 6px; padding: 0 6px; }
 .tray-slot .glyph { font-size: 16px; }
 .tray-slot + .tray-slot::before { width: 4px; height: 4px; margin-top: -2px; left: -2px; opacity: 0.8; }
+
+/* A chosen group shown, not picked (Missions' proposed team, a crew): full colour, a gilt halo and a lantern mark;
+   everyone else steps back. */
+.ring .tok.team { z-index: 3; opacity: 1; filter: none; }
+.ring .tok.team .tok-disc { transform: scale(1.12); border-color: var(--gilt-hi);
+  box-shadow: 0 0 0 3px var(--ink), 0 0 0 5px var(--gilt-hi), 0 0 30px 4px color-mix(in srgb, var(--gilt-hi) 45%, transparent); animation: breathe 2.6s ease-in-out infinite; }
+.ring .tok.team .tok-name { color: var(--gilt-hi); }
+.ring .tok.team .tok-disc::before { content: ''; position: absolute; left: 50%; top: -14px; width: 9px; height: 9px; margin-left: -4.5px; transform: rotate(45deg); background: var(--gilt-hi); box-shadow: 0 0 8px var(--gilt-hi); z-index: 4; }

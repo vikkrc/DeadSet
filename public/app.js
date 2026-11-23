@@ -1424,7 +1424,7 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     const ni = nomIdx(p.id);
     const cls = ['tok',
       p.alive ? '' : `dead ${strikeCls(p)}`, p.id === me?.id ? 'me' : '', p.connected ? '' : 'away',
-      isSel ? 'sel' : '', selectable ? 'can' : pick ? 'mute' : '', pick?.tone === 'kill' ? 'kill' : '',
+      isSel ? 'sel' : '', selectable ? 'can' : pick && !(isSel && !pick.act) ? 'mute' : '', isSel && pick && !pick.act ? 'team' : '', pick?.tone === 'kill' ? 'kill' : '',
       ni >= 0 ? 'accused' : '', d?.speaking === p.id ? 'speaking' : '', p.immune ? 'immune' : '',
       lobby ? (p.ready ? 'ready' : 'unready') : '', reveal && p.alignment === 'DEATH' ? 'death' : '',
       me?.teammates?.some((t) => t.id === p.id) ? 'mate' : '', pos[i].inner ? 'inner' : dense && pos[i].y < 50 ? 'up' : '',
