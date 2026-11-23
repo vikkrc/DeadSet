@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tři mise selhaly",
     "Use the Candle": "Použij Svíčku",
     "Game mode": "Herní režim",
+    "The room": "Místnost",
     "{done} of {total} in so far.": "Zatím hotovo: {done} z {total}.",
     "Length, this setup": "Délka, toto nastavení",
     "A preview for the smallest table ({n}). ": "Náhled pro nejmenší stůl ({n}). ",

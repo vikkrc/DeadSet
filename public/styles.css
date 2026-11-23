@@ -5750,3 +5750,16 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
 .btn:where(:not(.btn-solid, .btn-blood, .btn-gold, .hold, .btn-ghost, .icon-btn)) { outline: 0; }
 .btn:not(.btn-solid, .btn-blood, .btn-gold, .hold, .btn-ghost, .icon-btn)::before,
 .btn:not(.btn-solid, .btn-blood, .btn-gold, .hold, .btn-ghost, .icon-btn)::after { display: none; }
+
+/* ── Coherence D: sheets close in one place; one segmented control; one chip ── */
+.sheet > .sheet-head { flex-wrap: nowrap; align-items: flex-start; gap: 12px; }
+.sheet-head .sh-t { flex: 1; min-width: 0; display: grid; gap: 4px; }
+.sheet-head .sh-t h2 { margin: 0; overflow-wrap: anywhere; }
+.sheet-head .icon-btn { flex: none; width: 44px; height: 44px; }
+.seg.s-tabs { border-color: var(--gilt-2); overflow: visible; margin: 0 0 10px; }
+.seg.s-tabs button { padding: 0 6px; background: transparent; box-shadow: none; color: var(--bone-2); }
+.seg.s-tabs button[aria-pressed='true'] { background: var(--vellum); color: var(--sepia); }
+.mf { display: inline-flex; align-items: center; min-height: 36px; padding: 0 12px; border: 1px solid var(--gilt-2); background: transparent; color: var(--bone-2); font: italic 400 15px/1.1 var(--text); }
+.mf.on, .mf[aria-pressed='true'] { background: var(--vellum); color: var(--sepia); border-color: var(--vellum-2); }
+.chip { min-height: 36px; border-color: var(--gilt-2); }
+.chip.on { background: var(--vellum); color: var(--sepia); border-color: var(--vellum-2); }

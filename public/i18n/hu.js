@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "The room": "A szoba",
     "{done} of {total} in so far.": "Eddig {total} közül {done}.",
     "Length, this setup": "Hossz, ezzel a beállítással",
     "A preview for the smallest table ({n}). ": "Előnézet a legkisebb asztalra ({n}). ",

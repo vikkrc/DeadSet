@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Drei Missionen gescheitert",
     "Use the Candle": "Benutze die Kerze",
     "Game mode": "Spielmodus",
+    "The room": "Der Raum",
     "{done} of {total} in so far.": "Bisher {done} von {total}.",
     "Length, this setup": "Dauer, diese Einstellung",
     "A preview for the smallest table ({n}). ": "Eine Vorschau für den kleinsten Tisch ({n}). ",

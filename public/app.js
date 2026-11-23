@@ -1797,10 +1797,13 @@ function sheet(v) {
   if (!s) return '';
   const me = v?.me;
   let title = '';
+  let kicker = '';
   let body = '';
   if (s === 'record') {
     // H: one room menu in tabs — You (this phone), Table (the record, the evening, invite), Host, Help.
-    title = `${esc(modeName(v))} · ${th('Room {code}', { code: '%CODE%' }).replace('%CODE%', `<span class="code-txt">${esc(v.code)}</span>`)}`;
+    // Coherence D: a kicker says what and where; the title stays short so the close button never moves.
+    kicker = `${esc(modeName(v))} · ${th('Room {code}', { code: '%CODE%' }).replace('%CODE%', `<span class="code-txt">${esc(v.code)}</span>`)}`;
+    title = t('The room');
     const tabs = [['you', t('You')], ['table', t('Table')], ...(v.host ? [['host', t('Host')]] : []), ['help', t('Help')]];
     const tab = tabs.some(([k]) => k === S.ui.mtab) ? S.ui.mtab : v.host && inPlay(v) ? 'host' : 'you';
     const nav = `<nav class="seg mtabs" role="tablist" data-key="mtabs">${tabs.map(([k, l]) => `<button role="tab" data-act="mtab" data-id="${k}" aria-selected="${tab === k}" aria-pressed="${tab === k}">${l}</button>`).join('')}</nav>`;
@@ -1914,7 +1917,7 @@ function sheet(v) {
   return `<div class="sheet-scrim" data-act="sheet" data-key="scrim"></div>
     <div class="sheet" role="dialog" aria-label="${title.replace(/<[^>]*>/g, '')}" data-key="sheet-${s}">
       <div class="sheet-grip" aria-hidden="true"></div>
-      <div class="row between"><h2>${title}</h2><button class="btn btn-ghost icon-btn" data-act="sheet" aria-label="${esc(t('Close'))}">${glyph('close')}</button></div>
+      <div class="row between sheet-head"><div class="sh-t">${kicker ? `<span class="kicker">${kicker}</span>` : ''}<h2>${title}</h2></div><button class="btn btn-ghost icon-btn" data-act="sheet" aria-label="${esc(t('Close'))}">${glyph('close')}</button></div>
       <div class="sheet-body">${body}</div>
     </div>`;
 }
