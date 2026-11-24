@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tres misiones fracasaron",
     "Use the Candle": "Usa la Vela",
     "Game mode": "Modo de juego",
+    "Night actions open soon.": "Las acciones nocturnas empiezan pronto.",
     "Share the code, the link or the QR. The recommended setup suits a first game.": "Comparte el código, el enlace o el QR. La configuración recomendada sirve para una primera partida.",
     "The room": "La sala",
     "{done} of {total} in so far.": "Van {done} de {total}.",

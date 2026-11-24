@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "Night actions open soon.": "Hamarosan kezdődnek az éjszakai lépések.",
     "Share the code, the link or the QR. The recommended setup suits a first game.": "Oszd meg a kódot, a linket vagy a QR-t. Az ajánlott beállítás jó első játéknak.",
     "The room": "A szoba",
     "{done} of {total} in so far.": "Eddig {total} közül {done}.",

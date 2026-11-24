@@ -6306,3 +6306,25 @@ html { background-color: var(--ink); overscroll-behavior-y: none; }
 /* the role card on Night 0 keeps the screen's own top margin under the bar */
 .main:has(.card-stage) .card-stage { margin-top: 14px; }
 .n-coverrow { position: relative; height: 0; } .n-coverrow .n-cover { top: -2px; }
+
+/* The QR sheet: everything sized to the sheet's own width, so the six code tiles always fit */
+.sheet .qr-big { container-type: inline-size; width: 100%; }
+.sheet .qr-big .qr { width: min(100%, 260px); }
+.sheet .qr-big + .code-tiles.big { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; width: 100%; max-width: 330px; margin: 10px auto 0; }
+.sheet .qr-big + .code-tiles.big .tile { width: auto; height: auto; aspect-ratio: 4 / 5; font-size: clamp(20px, 6.5vw, 30px); }
+.nf-hint { margin: 2px 0 0; max-width: 30ch; font: italic 400 15px/1.35 var(--text); color: var(--bone-2); text-align: center; }
+.dream-reveal { width: min(64vw, 250px, calc((100dvh - 290px) * 0.611)); }
+.main { padding-top: 14px; }
+/* the night table's card turns face down on a tap, and back */
+.n-rolec .nr-in { position: relative; display: block; width: calc(clamp(6px, 1.9vw, 8.5px) * 8.4); aspect-ratio: 11 / 18; perspective: 600px; animation: float 6s ease-in-out infinite; }
+.n-rolec .nr-face, .n-rolec .nr-back { position: absolute; inset: 0; width: 100%; font-size: clamp(6px, 1.9vw, 8.5px); backface-visibility: hidden; -webkit-backface-visibility: hidden; transition: transform var(--t-card) var(--ease); animation: none; }
+.n-rolec .nr-back { transform: rotateY(180deg); display: grid; place-items: center; }
+.n-rolec .nr-back .sig { font-size: 2.2em; }
+.n-rolec.down .nr-face { transform: rotateY(-180deg); }
+.n-rolec.down .nr-back { transform: rotateY(0); }
+
+/* My card, in its sheet: it turns over as the sheet opens, then sways gently in 3D */
+.sheet .card-stage { perspective: 900px; animation: cardSway 7s ease-in-out 0.9s infinite; transform-style: preserve-3d; }
+.sheet .flipcard { animation: sheetTurn 0.85s var(--ease) both; transform-style: preserve-3d; }
+@keyframes sheetTurn { from { transform: rotateY(-180deg) scale(0.92); } 60% { transform: rotateY(12deg) scale(1.02); } to { transform: rotateY(0) scale(1); } }
+@keyframes cardSway { 0%, 100% { transform: rotateY(-7deg) rotateX(3deg); } 50% { transform: rotateY(7deg) rotateX(-2deg); } }

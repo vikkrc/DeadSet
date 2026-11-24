@@ -1661,7 +1661,7 @@ function roomScreen() {
       <button class="btn btn-ghost icon-btn tb-menu ${v.host ? 'is-host' : ''}" data-act="sheet" data-id="record" aria-label="${esc(v.host ? t('Room menu (you are the host)') : t('Open match record'))}">${glyph('menu')}</button>
       ${fuse()}
     </header>`;
-  return `<div class="shell" data-key="shell">${side}<div class="col">${top}${move.strip}${toastsHtml('notes-slot')}<main class="main ${move.strip ? 'has-move' : ''}" id="main" data-key="main-${v.phase === 'LOBBY' ? 'lobby' : 'game'}">${move.line?.sub ? `<p class="stage-sub mobile-only-block" data-key="stagesub">${move.line.sub}</p>` : ''}${coachCard(v)}${move.html}</main></div></div>${dock(v)}${sheet(v)}`;
+  return `<div class="shell" data-key="shell">${side}<div class="col">${top}${move.strip}${toastsHtml('notes-slot')}<main class="main ${move.strip ? 'has-move' : ''}" id="main" data-key="main-${v.phase === 'LOBBY' ? 'lobby' : 'game'}">${coachCard(v)}${move.html}</main></div></div>${dock(v)}${sheet(v)}`;
 }
 
 /** TB1: what follows the phase in the kicker, said once: a recent notice's echo or the step, minus any repeat of the phase. */
@@ -2902,7 +2902,7 @@ function nightfallStage(v, me, a) {
       ${count('Night actions open when the count ends.')}
     </section>`;
   }
-  return `<section class="nightfall" data-key="nightfall">${blood}${reveal}${count('Shield your screen. Night actions open when the count ends.')}</section>`;
+  return `<section class="nightfall" data-key="nightfall">${blood}${reveal}<p class="nf-hint" data-key="nfhint">${t('Dream Snatchers may swap now')}. ${t('Night actions open soon.')}</p></section>`;
 }
 
 function sleepingHtml(v, line) {
@@ -2969,7 +2969,9 @@ function actionsStage(v, me, a) {
   // A quiet night still sits at the table: your card at its centre (tap it to read), the reason beneath.
   if (!a.death && !ctx.length && me.role) {
     const rubric = me.alignment === 'DEATH' ? 'rubric' : '';
-    const centre = `<button type="button" class="n-rolec" data-act="sheet" data-id="role" aria-label="${esc(t('Your role: {x}', { x: roleF(me.role.id, 'name') }))}"><span class="tarot tarot--thumb ${rubric}">${cardArt(roleEmblemId(me.role))}</span><b>${esc(roleF(me.role.id, 'name'))}</b></button>`;
+    // Tap the card to turn it face down (and back): a quick way to hide your role from a glance across the table.
+    const hidden = !!S.ui.flipped[`nrole-${v.phaseId}`];
+    const centre = `<button type="button" class="n-rolec ${hidden ? 'down' : ''}" data-act="flip" data-key="nrole-${v.phaseId}" aria-pressed="${hidden}" aria-label="${esc(hidden ? t('Turn over your role card') : t('Your role: {x}', { x: roleF(me.role.id, 'name') }))}"><span class="nr-in"><span class="tarot tarot--thumb nr-face ${rubric}">${cardArt(roleEmblemId(me.role))}</span><span class="tarot tarot--thumb back nr-back" aria-hidden="true"><span class="sig">DS</span></span></span><b>${hidden ? '&nbsp;' : esc(roleF(me.role.id, 'name'))}</b></button>`;
     parts.unshift(`<div class="n-table n-quiet" data-key="nquiet">${coverBtn()}${ring(v, { center: centre })}</div>`);
   }
   parts.push(dreamSlip(me.dream));
