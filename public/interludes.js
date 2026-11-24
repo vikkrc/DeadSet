@@ -15,6 +15,7 @@ export function sceneMs(type, d = {}) {
   switch (type) {
     case 'night0': return 7600 + (d.rules ?? 0) * 700;
     case 'day1': return 3200;
+    case 'doom': return 4800; // the Doomsday Clock: how many days remain, at the first morning and every dawn
     case 'nightfall': return 3000;
     case 'bloodmoon': return 4600;
     case 'dawn': return 6400 + 600 * (d.dead ?? 0);
@@ -87,10 +88,10 @@ export function scenesFor(l, batch = [], ctx = {}) {
   switch (l.ev) {
     case 'night0': return [['night0', { rules: ctx.rules ?? 0 }]];
     case 'm-start': return [['night0', { rules: 0 }]];
-    case 'day1': return [['day1']];
+    case 'day1': return ctx.doomsday ? [['day1'], ['doom']] : [['day1']];
     case 'nightfall': case 'm-night': return [['nightfall']];
     case 'bloodmoon': return [['bloodmoon']];
-    case 'dawn': return [['dawn', { dead: (l.killed?.length ?? 0) + (l.expired?.length ?? 0) }]];
+    case 'dawn': return [['dawn', { dead: (l.killed?.length ?? 0) + (l.expired?.length ?? 0) }], ...(ctx.doomsday && !has('end') && l.day <= ctx.doomsday ? [['doom']] : [])];
     case 'revive': return has('dawn') ? [] : [['revive']];
     case 'vote-open': case 'final-act': case 'm-stand': case 'm-haunt': return [['call']];
     case 'tally': return has('coinflip') ? [['tally']] : [['tally'], ['verdict']];

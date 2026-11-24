@@ -376,7 +376,7 @@ function detectMoments(v) {
   const sharedFrom = (l, start) => {
     // Moments this entry produced that the server runs as shared scenes get its window; the rest stay personal.
     if (!l.mAt) return;
-    const types = scenesFor(l, fresh).filter(([type, d]) => sceneSize(type, d) === 'full').map(([type]) => type);
+    const types = scenesFor(l, fresh, { doomsday: v.doomsday }).filter(([type, d]) => sceneSize(type, d) === 'full').map(([type]) => type);
     let at = l.mAt;
     const end = l.mAt + l.mDur;
     for (const m of out.slice(start)) {
@@ -400,7 +400,7 @@ function detectMoments(v) {
     const start = out.length;
     entryMoments(l);
     // P1: a banner-sized scene becomes a public herald slip with the entry's own line; the table stays in play.
-    const banners = scenesFor(l, fresh).filter(([type, d]) => sceneSize(type, d) === 'banner').map(([type]) => type);
+    const banners = scenesFor(l, fresh, { doomsday: v.doomsday }).filter(([type, d]) => sceneSize(type, d) === 'banner').map(([type]) => type);
     if (banners.length) {
       for (let k = out.length - 1; k >= start; k--) {
         const m = out[k];
@@ -445,12 +445,13 @@ function detectMoments(v) {
         out.push({ type: 'night0', scenario: sc ? entryMsg(sc) : '', sc: v.scenario, rules: v.activeRules.map((r) => ({ id: r.id })), tapOnly: false });
         break;
       }
-      case 'day1': out.push({ type: 'day1' }); break;
+      case 'day1': out.push({ type: 'day1' }); if (v.doomsday) out.push({ type: 'doom', day: 1, of: v.doomsday }); break;
       case 'nightfall': out.push({ type: 'nightfall', n: l.n }); break;
       case 'bloodmoon': out.push({ type: 'bloodmoon', n: l.n }); break;
       case 'dawn': {
         const rev = fresh.find((x) => x.ev === 'revive' && x.i > l.i);
         out.push({ type: 'dawn', day: l.day, killed: (l.killed ?? []).map(name), expired: (l.expired ?? []).map(name), revived: (rev?.ids ?? []).map(name), meDied: (l.victims ?? []).includes(meId) });
+        if (v.doomsday && l.day <= v.doomsday && !fresh.some((x) => x.ev === 'end')) out.push({ type: 'doom', day: l.day, of: v.doomsday });
         if (v.me && !v.me.moderator && v.me.alive) {
           const reports = freshPriv.filter((x) => (x.at === `Night ${l.day - 1}` || x.at === `Day ${l.day}`) && !['dreamdraw', 'surge', 'chat', 'role'].includes(x.kind));
           for (const g of reports.filter((x) => x.kind === 'gift')) {
@@ -513,7 +514,7 @@ const sceneData = (m) => ({ coin: m.coin ?? null, rules: m.rules?.length ?? 0, d
 
 const MOMENT_SOUND = { night0: 'night', day1: 'dawn', nightfall: 'night', dawn: 'dawn', tally: 'knock', death: 'death', revive: 'revive', bloodmoon: 'bloodmoon' };
 const END_THEME = { OMEN: 'winLiving', MIRROR: 'winLiving', MIMIC: 'winLiving', GRAVEROBBERS: 'winLiving', SEANCE: 'winLiving', MIDNIGHT: 'winLiving', CARNIVAL: 'winJester', COFFINS: 'winLiving', DEMON: 'winDeath', DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester', LOVERS: 'winLovers', CULT: 'winCult', RIPPER: 'winRipper' };
-const MOMENT_TIME = { end: 9000, private: 6000, gift: 5600, mside: 5200, coin: 4400, verdict: 3400, night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 3000, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
+const MOMENT_TIME = { doom: 4800, end: 9000, private: 6000, gift: 5600, mside: 5200, coin: 4400, verdict: 3400, night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 3000, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
 const momentBase = (m) => (m.type === 'mreveal' ? revealTime(m) : O_MOMENT_TIME[m.type] ? O_MOMENT_TIME[m.type] : W_MOMENT_TIME[m.type] ? W_MOMENT_TIME[m.type] : Q_MOMENT_TIME[m.type] ? Q_MOMENT_TIME[m.type] : S_MOMENT_TIME[m.type] ? S_MOMENT_TIME[m.type] : G_MOMENT_TIME[m.type] ? G_MOMENT_TIME[m.type] : N_MOMENT_TIME[m.type] ? N_MOMENT_TIME[m.type] : K_MOMENT_TIME[m.type] ? K_MOMENT_TIME[m.type] : C_MOMENT_TIME[m.type] ? C_MOMENT_TIME[m.type] : X_MOMENT_TIME[m.type] ? X_MOMENT_TIME[m.type] : MISSION_MOMENT_TIME[m.type] ? MISSION_MOMENT_TIME[m.type] : !onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : (MOMENT_TIME[m.type] ?? 6000) + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
 
 // ── M3: Gain — things that count move ───────────────────────────────────
@@ -787,6 +788,22 @@ function momentHtml(m) {
     case 'day1':
       body = `<div class="m-art sunrise">${glyph('sun')}</div><span class="kicker">${t('Day {n}', { n: 'I' })}</span><h1 class="m-title">${letters(t('Morning'))}</h1><p class="m-sub">${t('Nobody has died — yet.')}</p>`;
       break;
+    case 'doom': {
+      // The Doomsday Clock: an engraved dial of the days, its hand moving to today; the days left are counted out.
+      const left = m.of - m.day + 1;
+      const ticks = Array.from({ length: m.of }, (_, i) => {
+        const a = ((i + 0.5) / m.of) * 2 * Math.PI - Math.PI / 2;
+        return `<span class="dc-day ${i + 1 < m.day ? 'gone' : i + 1 === m.day ? 'now' : ''}" style="left:${(50 + 39 * Math.cos(a)).toFixed(2)}%;top:${(50 + 39 * Math.sin(a)).toFixed(2)}%">${roman(i + 1)}</span>`;
+      }).join('');
+      const from = ((m.day - 1.5) / m.of) * 360;
+      const to = ((m.day - 0.5) / m.of) * 360;
+      const final = left === 1;
+      body = `<div class="doom-clock ${final ? 'final' : ''}" style="--from:${from}deg;--to:${to}deg">${astrolabe(0, '', 'dc-face')}${ticks}<i class="dc-hand" aria-hidden="true"></i><i class="dc-hub" aria-hidden="true"></i></div>
+        <span class="kicker">${esc(final ? t('Dawn of the final day') : th('Dawn of Day {n}', { n: roman(m.day) }))}</span>
+        <h1 class="m-title ${final ? 'blood' : ''}">${letters(final ? t('Until dusk') : th('{n} days remain', { n: left }))}</h1>
+        <p class="m-sub">${esc(final ? t('When this day closes, Death wins.') : th('If no one has won when Day {n} closes, Death wins.', { n: roman(m.of) }))}</p>`;
+      break;
+    }
     case 'nightfall':
       body = `<div class="m-art">${moon(0.35, 'rise')}<span class="stars"><i></i><i></i><i></i><i></i><i></i></span></div><span class="kicker">${t('Night {n}', { n: roman(m.n) })}</span><h1 class="m-title">${letters(t('Night falls'))}</h1><p class="m-sub">${t('Close your eyes. Keep your screen to yourself.')}</p>`;
       break;
@@ -1212,7 +1229,7 @@ function phaseWord(v) {
     return { word: t(info.unit), num: info.roman ? roman(n) : String(n), night: dark };
   }
   if (dark || v.phase === 'NIGHT_RESOLVING') return { word: t('Night'), num: roman(v.nightNumber), night: true };
-  return { word: t('Day'), num: roman(v.dayNumber), night: false };
+  return { word: t('Day'), num: v.doomsday ? `${roman(v.dayNumber)}/${roman(v.doomsday)}` : roman(v.dayNumber), night: false };
 }
 /** The mode's own name, for the room menu and the TV wordmark line (C4). */
 const modeName = (v) => (MODES[v?.mode]?.name ? t(MODES[v.mode].name) : presetF(v?.mode, 'name'));
@@ -1734,7 +1751,7 @@ function head(v, extra = '') {
   const pw = phaseWord(v);
   return `<header class="phase-head" data-key="head-${v.phase}">
     <div class="ph-row"><h1>${pw.night ? `<i>${esc(pw.word)}</i>` : esc(pw.word)}${pw.num ? `<span class="num">${esc(pw.num)}</span>` : ''}</h1>
-    <span class="kicker"><span class="ph-step">${esc(stepOf(v))}</span>${v.doomsday && v.phase !== 'LOBBY' ? `<span class="ph-x">${t('Doom after Day {n}', { n: roman(v.doomsday) })}</span>` : ''}${v.bloodMoon && isNight(v.phase) ? `<span class="ph-x blood">${t('Blood Moon')}</span>` : ''}</span>${v.me && v.me.alive === false && !v.me.moderator && v.phase !== 'ENDED' ? `<span class="ghost-tag" data-key="ghosttag">${t(isGhostTable(v) ? 'Ghost' : 'Dead')}</span>` : ''}${extra}</div>
+    <span class="kicker"><span class="ph-step">${esc(stepOf(v))}</span>${v.bloodMoon && isNight(v.phase) ? `<span class="ph-x blood">${t('Blood Moon')}</span>` : ''}</span>${v.me && v.me.alive === false && !v.me.moderator && v.phase !== 'ENDED' ? `<span class="ghost-tag" data-key="ghosttag">${t(isGhostTable(v) ? 'Ghost' : 'Dead')}</span>` : ''}${extra}</div>
   </header>`;
 }
 

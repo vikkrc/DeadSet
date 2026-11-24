@@ -6328,3 +6328,21 @@ html { background-color: var(--ink); overscroll-behavior-y: none; }
 .sheet .flipcard { animation: sheetTurn 0.85s var(--ease) both; transform-style: preserve-3d; }
 @keyframes sheetTurn { from { transform: rotateY(-180deg) scale(0.92); } 60% { transform: rotateY(12deg) scale(1.02); } to { transform: rotateY(0) scale(1); } }
 @keyframes cardSway { 0%, 100% { transform: rotateY(-7deg) rotateX(3deg); } 50% { transform: rotateY(7deg) rotateX(-2deg); } }
+
+/* ── The Doomsday Clock: an engraved dial of the days; the hand moves on to today; the final day burns red ── */
+.doom-clock { --dc: min(70vw, 280px, 36vh); position: relative; width: var(--dc); height: var(--dc); margin: 0 auto 8px; }
+.doom-clock .dc-face { --s: var(--dc) !important; position: absolute; inset: 0; width: 100%; }
+.doom-clock .dc-face .c { inset: 30%; }
+.doom-clock .dc-day { position: absolute; transform: translate(-50%, -50%); z-index: 2; font: 600 calc(var(--dc) * 0.07)/1 var(--black); color: var(--bone-2); text-shadow: 0 1px 0 #000; transition: color var(--t-ui); }
+.doom-clock .dc-day.gone { color: var(--ash-2); text-decoration: line-through; text-decoration-color: var(--blood-ink); }
+.doom-clock .dc-day.now { color: var(--gilt-hi); font-size: calc(var(--dc) * 0.1); text-shadow: 0 0 14px color-mix(in srgb, var(--gilt-hi) 70%, transparent); animation: pop 0.6s 2.2s var(--spring) both; }
+.doom-clock .dc-hand { position: absolute; left: 50%; top: 50%; z-index: 3; width: 3px; height: calc(var(--dc) * 0.3); margin-left: -1.5px; transform-origin: 50% 100%; translate: 0 -100%;
+  background: linear-gradient(var(--gilt-hi), var(--gilt-2)); clip-path: polygon(50% 0, 100% 12%, 70% 100%, 30% 100%, 0 12%); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--gilt-hi) 60%, transparent));
+  rotate: var(--to); animation: dcHand 1.6s 0.7s var(--spring) both; }
+@keyframes dcHand { from { rotate: var(--from); } to { rotate: var(--to); } }
+.doom-clock .dc-hub { position: absolute; left: 50%; top: 50%; z-index: 4; width: 14px; height: 14px; margin: -7px; border-radius: 50%; background: var(--gilt); box-shadow: 0 0 0 3px var(--ink), 0 0 0 4px var(--gilt-2); }
+.doom-clock.final .dc-hand { background: linear-gradient(var(--blood-ink), var(--wax)); filter: drop-shadow(0 0 10px var(--blood-ink)); }
+.doom-clock.final .dc-day.now { color: var(--blood-ink); text-shadow: 0 0 16px var(--blood-ink); }
+.doom-clock.final { animation: dcToll 1.2s 2.3s ease-out both; }
+@keyframes dcToll { 0% { transform: scale(1); } 15% { transform: scale(1.04); } 30% { transform: scale(0.99); } 100% { transform: scale(1); } }
+.moment.m-doom { background: radial-gradient(120% 80% at 50% 30%, color-mix(in srgb, var(--blood) 14%, var(--ink-3)), var(--ink) 68%); }
