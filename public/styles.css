@@ -6346,3 +6346,6 @@ html { background-color: var(--ink); overscroll-behavior-y: none; }
 .doom-clock.final { animation: dcToll 1.2s 2.3s ease-out both; }
 @keyframes dcToll { 0% { transform: scale(1); } 15% { transform: scale(1.04); } 30% { transform: scale(0.99); } 100% { transform: scale(1); } }
 .moment.m-doom { background: radial-gradient(120% 80% at 50% 30%, color-mix(in srgb, var(--blood) 14%, var(--ink-3)), var(--ink) 68%); }
+/* controls placed at the table's centre (the night card) take taps above the disc */
+.ring-center .n-rolec, .ring-center button, .ring-center a { pointer-events: auto; position: relative; z-index: 3; }
+.ring-center:has(.n-rolec) { z-index: 3; }
