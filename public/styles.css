@@ -5740,7 +5740,8 @@ body.is-board .b-side { align-self: start; height: auto; max-height: calc(100vh 
   border: 1px solid var(--blood); outline: 0; color: var(--bone);
   font: 600 11px/1 var(--text); letter-spacing: 0.16em; text-transform: uppercase;
 }
-.host-slot .btn-host::before, .host-slot .btn-host::after { display: none; }
+/* the host's command is a hold too, so it keeps the lozenge tips (in red), which close in while held */
+.host-slot .btn-host::before, .host-slot .btn-host::after { display: block; border-color: var(--blood-ink) !important; }
 .host-slot .btn-host .hold-label { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .host-k { color: var(--blood-ink); font-weight: 600; margin-right: 0.6em; }
 .tray { grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); }
@@ -6349,3 +6350,4 @@ html { background-color: var(--ink); overscroll-behavior-y: none; }
 /* controls placed at the table's centre (the night card) take taps above the disc */
 .ring-center .n-rolec, .ring-center button, .ring-center a { pointer-events: auto; position: relative; z-index: 3; }
 .ring-center:has(.n-rolec) { z-index: 3; }
+.host-slot .btn-host { padding: 0 34px; }
