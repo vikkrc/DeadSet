@@ -1,0 +1,4 @@
+[{"name":"seance","settings":[{"mode":"seance"}],"bots":5,"maxMs":220000,"audit":true},
+{"name":"graverobbers","settings":[{"mode":"graverobbers"}],"bots":7,"maxMs":220000,"audit":true},
+{"name":"mimic","settings":[{"mode":"mimic"}],"bots":5,"maxMs":200000,"audit":true},
+{"name":"classic15","settings":[{"preset":"standard"}],"bots":14,"maxMs":160000,"audit":true}]

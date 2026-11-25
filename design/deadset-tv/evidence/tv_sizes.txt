@@ -1,0 +1,14 @@
+carnival      frames= 28 glyph-runs=  8532 <16px=   6% <20px=  58% <24px=  89%
+classic       frames= 30 glyph-runs= 13403 <16px=   8% <20px=  63% <24px=  72%
+classic12     frames= 25 glyph-runs= 12879 <16px=   9% <20px=  68% <24px=  76%
+coffins       frames= 49 glyph-runs= 11849 <16px=  14% <20px=  73% <24px=  86%
+custom20      frames= 17 glyph-runs= 10383 <16px=   9% <20px=  75% <24px=  83%
+doomsday      frames= 21 glyph-runs=  7270 <16px=   9% <20px=  60% <24px=  69%
+exorcism      frames= 12 glyph-runs=  2444 <16px=  12% <20px=  50% <24px=  79%
+graverobbers  frames= 33 glyph-runs= 11502 <16px=   6% <20px=  79% <24px=  82%
+midnight      frames= 13 glyph-runs=  2941 <16px=  15% <20px=  79% <24px=  83%
+mimic         frames=  5 glyph-runs=  1526 <16px=   9% <20px=  79% <24px=  80%
+mirror        frames= 24 glyph-runs=  6006 <16px=  13% <20px=  53% <24px=  55%
+missions      frames= 21 glyph-runs=  5473 <16px=   7% <20px=  68% <24px=  69%
+omen          frames= 24 glyph-runs=  3514 <16px=  18% <20px=  69% <24px=  71%
+seance        frames= 23 glyph-runs=  8052 <16px=  31% <20px=  89% <24px=  93%

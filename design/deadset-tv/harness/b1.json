@@ -1,0 +1,4 @@
+[{"name":"classic","settings":[{"preset":"standard"}],"bots":7,"maxMs":220000,"audit":true},
+{"name":"missions","settings":[{"mode":"missions"}],"bots":6,"maxMs":220000,"audit":true},
+{"name":"exorcism","settings":[{"mode":"exorcism"}],"bots":5,"maxMs":200000,"audit":true},
+{"name":"coffins","settings":[{"mode":"coffins"}],"bots":4,"maxMs":200000,"audit":true}]

@@ -1,0 +1,3 @@
+[{"name":"classic12","settings":[{"preset":"full"}],"bots":11,"maxMs":180000,"audit":true},
+{"name":"doomsday","settings":[{"preset":"doomsday"}],"bots":6,"maxMs":180000,"audit":true},
+{"name":"custom20","settings":[{"preset":"custom"}],"bots":19,"maxMs":120000,"audit":true}]
