@@ -7,6 +7,7 @@
 // Privacy: Swap and Pretend are the same wax button with a different word;
 // every phone answers every challenge; what a look shows is only ever on the
 // looker's own phone.
+import { tvFrame, nowCard, panel } from './tvframe.js';
 import { glyph } from './icons.js';
 import { emblem } from './emblems.js';
 import { cardArt, roleNumber } from './cards.js';
@@ -532,34 +533,28 @@ export function carnivalEndHtml(v) {
 
 // ── TV board ───────────────────────────────────────────────────────────────
 export function carnivalBoard(v, h) {
-  const { header } = h;
   const K = v.carnival;
   if (!K) return '';
   const turn = pname(v, K.turn);
+  const nowEnded = tph('{names} wins.', '{names} win.', (K.winners ?? []).length, { names: (K.winners ?? []).map((id) => pname(v, id)) });
   const now = {
-    K_UNMASK: t('Remember every mask.'),
-    K_LOTTERY: t('The masks turn face down…'),
-    K_TURN: th('{a}: swap or pretend, peek, or claim?', { a: turn }),
-    K_CHALLENGE: K.claim ? `${th('{a} claims the {role}.', { a: pname(v, K.claim.by), role: roleName(K.claim.mask) })} <b>${th('{done}/{total} have answered', v.progress ?? { done: 0, total: 0 })}</b>` : '',
-    K_POWER: K.power ? th('{a} uses the {role}…', { a: pname(v, K.power.user), role: roleName(K.power.mask) }) : '',
-    K_LOOK: K.look ? (K.look.kind === 'peek' ? th('{a} lifts their mask…', { a: pname(v, K.look.pid) }) : th('{a} reads the masks…', { a: pname(v, K.look.pid) })) : '',
-    ENDED: tph('{names} wins.', '{names} win.', (K.winners ?? []).length, { names: (K.winners ?? []).map((id) => pname(v, id)) }),
-  }[v.phase] ?? '';
+    K_UNMASK: { kicker: t('The unmasking'), title: t('Remember every mask'), line: t('Then they turn face down for the night.'), herald: t('Watch the table: every mask, once.') },
+    K_LOTTERY: { kicker: t('The first dancer'), title: t('The masks turn face down…'), line: '', herald: '' },
+    K_TURN: { kicker: th('Turn {n}', { n: K.turnNo }), title: th('{a}: swap or pretend, peek, or claim?', { a: turn }), line: th('{n} Souls win the night.', { n: K.target }), herald: th('{a} chooses on their phone.', { a: turn }) },
+    K_CHALLENGE: K.claim ? { kicker: t('A claim'), title: th('{a} claims the {role}', { a: pname(v, K.claim.by), role: roleName(K.claim.mask) }), line: t('Challenge it, or let it stand.'), herald: t('Answer on your phone: challenge, or let it stand.'), tone: 'red' } : null,
+    K_POWER: K.power ? { kicker: t('A power'), title: th('{a} uses the {role}…', { a: pname(v, K.power.user), role: roleName(K.power.mask) }), line: '', herald: '' } : null,
+    K_LOOK: K.look ? { kicker: t('A look'), title: K.look.kind === 'peek' ? th('{a} lifts their mask…', { a: pname(v, K.look.pid) }) : th('{a} reads the masks…', { a: pname(v, K.look.pid) }), line: '', herald: '' } : null,
+    ENDED: { kicker: t('The end'), title: nowEnded, line: '', herald: t('The host chooses: again, or another game.') },
+  }[v.phase] ?? { title: '', line: '', herald: '' };
   const ended = v.phase === 'ENDED';
   const marks = v.phase === 'K_CHALLENGE' && K.claim ? Object.fromEntries(K.claim.answered.map((id) => [id, glyph('check')])) : {};
   const backdrop = v.table?.backdrops !== false && K.where >= 0 ? backdropHtml(K.where, true) : '';
   const purses = [...K.seats].filter((s) => !s.chair).map((s) => `<li data-key="kpl-${s.id}" class="${s.id === K.turn ? 'now' : ''}"><b>${esc(pname(v, s.id))}</b>
     <span class="k-pips" aria-label="${esc(th('{n} Souls', { n: s.souls }))}">${Array.from({ length: Math.min(s.souls, 20) }, () => '<i></i>').join('')}<em data-gain="ks-${s.id}" data-n="${s.souls}">${s.souls}</em></span>
     ${K.harvestTarget ? `<span class="k-harv">${Array.from({ length: K.harvestTarget / 2 }, (_, i) => `<i class="${i < s.harvest / 2 ? 'on' : ''}">${ico('harvest')}</i>`).join('')}</span>` : ''}</li>`).join('');
-  return `<main class="board2 kboard ${ended ? 'is-ended' : ''} ${backdrop ? 'has-backdrop' : ''}" data-key="board-k">${backdrop}${header}
-    <div class="k-cols">
-      <section class="k-main">${ballroom(v, { open: ended || v.phase === 'K_UNMASK', marks, big: true })}<p class="b-now" data-key="know">${now}</p></section>
-      <aside class="k-side">
-        <div class="k-ledger fr"><span class="kicker">${th('Souls · {n} to win', { n: K.target })}</span><ul>${purses}</ul></div>
-        ${(() => { const items = (hidden) => K.deck.map(({ id, n }) => `<li ${hidden ? 'aria-hidden="true"' : ''}>${maskCard(id, { cls: 'thumb' })}<span><b>${esc(roleName(id))}${n > 1 ? ` ×${n}` : ''}</b>${runes(id, 'sm')}</span></li>`).join('');
-          // The masks at the ball as a slow ticker under the players: the list twice, sliding up in a loop.
-          return `<div class="k-tvref ticker" style="--n:${K.deck.length}"><span class="kicker">${t('Masks at the ball')}</span><div class="tk-win"><ul class="tk-track">${items(false)}${items(true)}</ul></div></div>`; })()}
-        ${ended ? scoreboard(v) : ''}
-      </aside>
-    </div></main>`;
+  const items = (hidden) => K.deck.map(({ id, n }) => `<li ${hidden ? 'aria-hidden="true"' : ''}>${maskCard(id, { cls: 'thumb' })}<span><b>${esc(roleName(id))}${n > 1 ? ` ×${n}` : ''}</b>${runes(id, 'sm')}</span></li>`).join('');
+  // The masks at the ball as a slow ticker: the list twice, sliding up in a loop.
+  const ticker = `<div class="k-tvref ticker" style="--n:${K.deck.length}"><span class="kicker">${t('Masks at the ball')}</span><div class="tk-win"><ul class="tk-track">${items(false)}${items(true)}</ul></div></div>`;
+  const ledger = `${nowCard(now)}${panel(th('Souls · {n} to win', { n: K.target }), `<ul class="k-purses">${purses}</ul>`, 'kledger')}${ended ? scoreboard(v) : ticker}`;
+  return tvFrame(v, h, { stage: ballroom(v, { open: ended || v.phase === 'K_UNMASK', marks, big: true }), ledger, herald: now.herald, backdrop, key: 'board-k', cls: `kboard ${ended ? 'is-ended' : ''} ${backdrop ? 'has-backdrop' : ''}` });
 }

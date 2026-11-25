@@ -4,6 +4,7 @@
 // and a character there (a WHO card); the Mimic holds static. A lantern passes round the table with
 // each question; the board of possible places sits under everything, with private strike-outs.
 
+import { tvFrame, nowCard, panel } from './tvframe.js';
 import { glyph } from './icons.js';
 import { waitText } from './kit.js';
 import { emblem } from './emblems.js';
@@ -385,12 +386,22 @@ export function mimicBoard(v, h) {
   const votes = v.phase === 'Q_VOTE' && A ? `<div class="q-tvvotes">${v.players.filter((p) => p.id !== A.target).map((p) => { const x = Q.votes?.[p.id]; return `<span class="q-v ${x === true ? 'yes' : x === false ? 'no' : ''}">${disc(v, p.id, 'sm')}<i>${x === true ? glyph('check') : x === false ? glyph('close') : '…'}</i></span>`; }).join('')}</div>` : '';
   const center = ended ? '' : `<span class="q-tvclock">${clock}</span>`;
   const shape = { 12: [4, 3], 16: [4, 4], 20: [5, 4], 30: [6, 5] }[Q.board.length] ?? [4, 4];
-  // The end on the TV: the reveal, who was who, and the board, side by side and sized to the screen.
-  if (ended) return `<main class="board2 qboard is-ended" data-key="board-q">${header}<div class="qt-end">${mimicEndHtml(v)}</div></main>`;
-  return `<main class="board2 qboard" data-key="board-q">${header}
-    <div class="qt-cols">
-      <section class="qt-table">${ring(v, { center, orb: hint, turn: v.phase === 'Q_ASK' ? Q.asker ?? null : null, extra: ended ? '' : askArrows(v, 5), marks: A && v.phase === 'Q_VOTE' ? { [A.target]: '?' } : {} })}
-        ${ended ? '' : `<div class="qt-banner ${['Q_VOTE', 'Q_GUESS', 'Q_FINAL'].includes(v.phase) ? 'blood' : ''}" data-key="qtban"><b>${esc(title)}</b><span>${esc(sub)}</span>${votes}</div>`}</section>
-      <section class="qt-places" style="--cols:${shape[0]};--rows:${shape[1]}">${ended ? mimicEndHtml(v) : `<div class="rule">${t('The possible places')}</div>${placesBoard(v, { size: 'tv' })}`}</section>
-    </div></main>`;
+  const now = {
+    Q_INTRO: { kicker: t('Your card'), title, line: t('One of you is the Mimic, and does not know the place.'), herald: t('Look at your card on your phone.') },
+    Q_ASK: { kicker: t('Questions'), title, line: sub, herald: t('Ask anyone a question about the place. Answer without giving it away.') },
+    Q_VOTE: { kicker: t('An accusation'), title, line: t('Everyone else agrees or disagrees. It takes everyone.'), herald: t('Agree or disagree on your phone.'), tone: 'red' },
+    Q_GUESS: { kicker: t('The Mimic names the place'), title, line: sub, herald: '', tone: 'red' },
+    Q_FINAL: { kicker: t('The final vote'), title, line: t('Everyone points at once.'), herald: t('Point at the Mimic on your phone.'), tone: 'red' },
+    ENDED: { kicker: t('The end'), title: '', line: '', herald: t('The host chooses: again, or another game.') },
+  }[v.phase] ?? { title: '', line: '', herald: '' };
+  // TV-G7, object + companion table: the table in a fixed left column with one caption line, the places centred
+  // in the rest of the stage. The ledger keeps who still holds their one accusation (TV-A10).
+  if (ended) return tvFrame(v, h, { stage: `<div class="qt-end">${mimicEndHtml(v)}</div>`, ledger: `${nowCard(now)}${scoreboard(v)}`, herald: now.herald, key: 'board-q', cls: 'qboard is-ended' });
+  const caption = v.phase === 'Q_ASK' && Q.asked?.length ? `${rawName(v, Q.asked.at(-1).by)} → ${rawName(v, Q.asked.at(-1).to)}` : v.phase === 'Q_ASK' ? th('{a} holds the lantern', { a: rawName(v, Q.asker) }) : '';
+  const table = ring(v, { center, orb: hint, turn: v.phase === 'Q_ASK' ? Q.asker ?? null : null, extra: askArrows(v, 5), marks: A && v.phase === 'Q_VOTE' ? { [A.target]: '?' } : {} });
+  const stage = `<div class="duo"><div class="duo-t">${table}${caption ? `<p class="duo-cap">${esc(caption)}</p>` : ''}${votes}</div>
+    <div class="duo-h qt-places" style="--cols:${shape[0]};--rows:${shape[1]}">${placesBoard(v, { size: 'tv' })}</div></div>`;
+  const holds = `<ul class="tvx-ros q-holds">${v.players.map((p) => `<li class="tvx-rr ${Q.accusedBy?.includes(p.id) ? 'spent' : ''}"><i class="rr-face">${disc(v, p.id, 'sm')}</i><b>${esc(p.name)}</b><span class="${Q.accusedBy?.includes(p.id) ? '' : 'ok'}">${esc(Q.accusedBy?.includes(p.id) ? t('accused') : t('holds one'))}</span></li>`).join('')}</ul>`;
+  const ledger = `${nowCard(now)}${panel(t('One accusation each'), holds, 'qholds')}${scoreboard(v)}`;
+  return tvFrame(v, h, { stage, ledger, herald: now.herald, key: 'board-q', cls: 'qboard' });
 }

@@ -5,6 +5,7 @@
 //
 // Privacy: during the night every phone shows the same step screen; only the
 // waking player's has controls. Nothing at night makes a sound or a buzz.
+import { tvFrame, nowCard, panel } from './tvframe.js';
 import { glyph } from './icons.js';
 import { waitText, waxSeal } from './kit.js';
 import { emblem } from './emblems.js';
@@ -344,24 +345,27 @@ export function midnightEndHtml(v) {
 
 // ── TV ─────────────────────────────────────────────────────────────────────
 export function midnightBoard(v, h) {
-  const { header, ring } = h;
+  const { ring } = h;
   const N = v.midnight;
   if (!N) return '';
   const ended = v.phase === 'ENDED';
-  let main = '';
-  if (v.phase === 'N_DEAL') {
-    main = `<div class="nb-centre"><span class="kicker">${t('Midnight')}</span><h2>${t('Everyone looks at their card, once.')}</h2><div class="nb-backs">${v.players.map(() => ncard(null)).join('')}</div>
-      <p class="b-now">${th('{done}/{total} have looked', v.progress ?? { done: 0, total: 0 })}</p></div>`;
-  } else if (v.phase === 'N_NIGHT') {
-    main = `<div class="nb-centre night"><div class="nb-moon">${emblem('moon')}</div><span class="kicker">${th('Night · {i} of {n}', { i: N.step + 1, n: N.steps.length })}</span>
-      <div class="nb-card">${ncard(N.stepRole, { cls: 'big' })}</div><h2>${wakes(N.stepRole)}</h2>
-      <ol class="nb-steps">${N.steps.map((r, i) => `<li class="${i < N.step ? 'past' : i === N.step ? 'now' : ''}">${emblem(embOf(r))}</li>`).join('')}</ol></div>`;
-  } else {
-    const marks = v.phase === 'N_VOTE' ? Object.fromEntries((N.voted ?? []).map((id) => [id, glyph('check')])) : {};
-    const now = v.phase === 'N_DAY' ? t('Dawn. Who are you now? Talk it over.') : v.phase === 'N_VOTE' ? th('Point at one player · {done}/{total}', v.progress ?? { done: 0, total: 0 }) : '';
-    main = `${ring ? ring(v, { center: '', marks }) : ''}<p class="b-now">${now}</p>`;
-  }
-  const deck = `<div class="n-tvref fr"><span class="kicker">${t('Cards in play')}</span><ul>${N.deck.map(({ id, n }) => `<li>${nicon(id)}<b>${esc(rname(id))}${n > 1 ? ` <small>×${n}</small>` : ''}</b></li>`).join('')}</ul></div>`;
-  return `<main class="board2 nboard ${['N_DEAL', 'N_NIGHT'].includes(v.phase) ? 'is-night' : ''} ${ended ? 'is-ended' : ''}" data-key="board-n">${header}
-    <div class="k-cols"><section class="k-main">${ended ? midnightEndHtml(v) : main}</section><aside class="k-side">${deck}${scoreboard(v)}</aside></div></main>`;
+  const night = ['N_DEAL', 'N_NIGHT'].includes(v.phase);
+  // TV-A4: the table of cards. The three table cards lie face down in the disc; at night the moon rises over them.
+  const tableCards = `<div class="nb-tablecards">${[0, 1, 2].map(() => ncard(null)).join('')}</div>`;
+  const center = v.phase === 'N_NIGHT'
+    ? `<div class="nb-moon">${emblem('moon')}</div>${tableCards}<span class="c-sub">${esc(th('Night · {i} of {n}', { i: N.step + 1, n: N.steps.length }))}</span>`
+    : `${tableCards}${v.phase === 'N_DEAL' ? `<span class="c-sub">${esc(t('Everyone looks at their card, once.'))}</span>` : ''}`;
+  const stage = ended ? `<div class="nb-end" data-autoscroll>${midnightEndHtml(v)}</div>` : ring ? ring(v, { center }) : '';
+  const now = {
+    N_DEAL: { kicker: t('Midnight'), title: t('Everyone looks at their card, once'), line: t('Then the night begins: every role wakes in turn.'), herald: t('Look at your card on your phone. Once.') },
+    N_NIGHT: { kicker: th('Night · {i} of {n}', { i: N.step + 1, n: N.steps.length }), title: wakes(N.stepRole), line: t('Every step lasts the same, even when its card lies on the table.'), herald: t('Keep your eyes shut unless your phone wakes you.') },
+    N_DAY: { kicker: t('Dawn'), title: t('Who are you now?'), line: t('Cards may have moved in the night. Talk it over.'), herald: t('Talk it over. The vote comes next.') },
+    N_VOTE: { kicker: t('The vote'), title: t('Point at one player'), line: t('The most votes dies, if that is at least two; a tie kills every tied player.'), herald: t('Vote on your phone.'), tone: 'red' },
+    ENDED: { kicker: t('The end'), title: '', line: '', herald: t('The host chooses: again, or another game.') },
+  }[v.phase] ?? { title: '', line: '', herald: '' };
+  // The wake order: every role in play, the one awake now lit, the done ones dimmed (TV-A4).
+  const order = night ? panel(t('The wake order'), `<ol class="nb-order">${N.steps.map((r, i) => `<li class="${v.phase === 'N_NIGHT' && i < N.step ? 'past' : v.phase === 'N_NIGHT' && i === N.step ? 'now' : ''}">${nicon(r)}<b>${esc(rname(r))}</b></li>`).join('')}</ol>`, 'nborder') : '';
+  const deck = panel(t('Cards in play'), `<ul class="nb-deck">${N.deck.map(({ id, n }) => `<li>${nicon(id)}<b>${esc(rname(id))}${n > 1 ? ` <small>×${n}</small>` : ''}</b></li>`).join('')}</ul>`, 'nbdeck');
+  const ledger = `${nowCard(now)}${order || deck}${scoreboard(v)}`;
+  return tvFrame(v, h, { stage, ledger, herald: now.herald, night, key: 'board-n', cls: `nboard ${night ? 'is-night' : ''} ${ended ? 'is-ended' : ''}` });
 }

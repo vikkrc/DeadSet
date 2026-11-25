@@ -6608,3 +6608,41 @@ body.is-board .board2.tvx { padding: 0; grid-template-rows: calc(var(--tvu) * 88
 .tvx .s2-table .s-disc { width: calc(var(--tvu) * 34); height: calc(var(--tvu) * 34); }
 .tvx .s2-table b { font-size: calc(var(--tvu) * 23); }
 .tvx .s2-table li.ghost small { font-size: calc(var(--tvu) * 14); letter-spacing: 0.14em; }
+
+/* TV-G7: object + companion table. The table in a fixed 420 column, vertically centred, one caption line under it;
+   the hero centred in the rest. */
+.tvx .duo { display: grid; grid-template-columns: calc(var(--tvu) * 420) minmax(0, 1fr); gap: calc(var(--tvu) * 30); align-items: center; width: 100%; height: 100%; }
+.tvx .duo-t { display: grid; justify-items: center; gap: calc(var(--tvu) * 18); min-width: 0; }
+.tvx .duo-t > .ring-wrap { width: calc(var(--tvu) * 400); height: calc(var(--tvu) * 400); display: grid; place-items: center; }
+.tvx .duo-t > .ring-wrap > .ring { width: calc(var(--tvu) * 400); }
+.tvx .duo-cap { margin: 0; font: 400 calc(var(--tvu) * 26)/1.2 var(--text); color: var(--bone-2); text-align: center; }
+.tvx .duo-h { display: grid; place-items: center; min-width: 0; min-height: 0; height: 100%; }
+/* the ledger's extra lists */
+.tvx .tvx-note { margin: calc(var(--tvu) * 8) 0 0; font: italic 400 calc(var(--tvu) * 20)/1.25 var(--text); color: var(--bone-2); }
+.tvx .tvx-rule { margin: calc(var(--tvu) * 8) 0 0; display: flex; gap: calc(var(--tvu) * 10); align-items: flex-start; font: 400 calc(var(--tvu) * 20)/1.3 var(--text); color: var(--bone-2); }
+.tvx .tvx-rule svg { flex: none; width: calc(var(--tvu) * 24); height: calc(var(--tvu) * 24); color: var(--blood-ink); margin-top: 2px; }
+.tvx .tvx-rule b { color: var(--bone); font-weight: 600; }
+.tvx .nb-order, .tvx .nb-deck, .tvx .c-rec, .tvx .k-purses { list-style: none; margin: 0; padding: 0; display: grid; gap: calc(var(--tvu) * 4); }
+.tvx .nb-order li, .tvx .nb-deck li { display: grid; grid-template-columns: calc(var(--tvu) * 40) minmax(0, 1fr); gap: calc(var(--tvu) * 12); align-items: center; min-height: calc(var(--tvu) * 44); border-bottom: 1px solid color-mix(in srgb, var(--iron) 80%, transparent); }
+.tvx .nb-order li svg, .tvx .nb-deck li svg, .tvx .nb-order li .emblem, .tvx .nb-deck li .emblem { width: calc(var(--tvu) * 40); height: calc(var(--tvu) * 40); color: var(--silver, var(--bone-2)); }
+.tvx .nb-order b, .tvx .nb-deck b { font: 500 calc(var(--tvu) * 24)/1.1 var(--text); color: var(--bone); }
+.tvx .nb-order li.past { opacity: 0.45; }
+.tvx .nb-order li.now { background: linear-gradient(90deg, color-mix(in srgb, var(--gilt) 18%, transparent), transparent); }
+.tvx .nb-order li.now b { color: var(--gilt-hi); }
+.tvx .nb-tablecards { display: flex; gap: calc(var(--tvu) * 10); justify-content: center; }
+.tvx .nb-tablecards > * { width: calc(var(--tvu) * 44); }
+.tvx .c-rec li, .tvx .k-purses li { display: flex; align-items: center; gap: calc(var(--tvu) * 12); min-height: calc(var(--tvu) * 44); border-bottom: 1px solid color-mix(in srgb, var(--iron) 80%, transparent); }
+.tvx .c-rec li b, .tvx .k-purses li b { font: 500 calc(var(--tvu) * 24)/1.1 var(--text); color: var(--bone); min-width: 0; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tvx .c-rec li.now, .tvx .k-purses li.now { background: linear-gradient(90deg, color-mix(in srgb, var(--gilt) 18%, transparent), transparent); }
+.tvx .c-rec li.out b { color: var(--ash); text-decoration: line-through; }
+.tvx .q-holds .tvx-rr.spent b { color: var(--ash); }
+.tvx .gt-crew { display: grid; gap: calc(var(--tvu) * 8); }
+.tvx .gt-crew.turn { border-color: var(--gilt); }
+.tvx .gt-crew .gt-name { font: 600 calc(var(--tvu) * 30)/1 var(--black); color: var(--bone); }
+.tvx .gt-crew ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: calc(var(--tvu) * 6) calc(var(--tvu) * 14); }
+.tvx .gt-crew li { display: flex; align-items: center; gap: calc(var(--tvu) * 8); font: 500 calc(var(--tvu) * 22)/1.1 var(--text); color: var(--bone); }
+.tvx .gt-crew li em { font: 600 calc(var(--tvu) * 13)/1 var(--text); letter-spacing: 0.14em; text-transform: uppercase; color: var(--gilt); font-style: normal; }
+/* stage objects keep inside the stage */
+.tvx .tvx-stage > * { max-width: 100%; max-height: 100%; }
+.tvx .x-stage, .tvx .ot-wheel, .tvx .gt-main { display: grid; place-items: center; gap: calc(var(--tvu) * 14); width: 100%; height: 100%; min-height: 0; }
+.tvx .sb-end, .tvx .nb-end, .tvx .ot-end, .tvx .wt-end, .tvx .gt-end, .tvx .qt-end { width: 100%; height: 100%; overflow: hidden; }

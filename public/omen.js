@@ -4,6 +4,7 @@
 // it starts; every seer secretly predicts the finish and may turn it one step (one Influence). The
 // reveal turns the needle once, by the net total, and the ledger shows who pushed which way.
 
+import { tvFrame, nowCard, panel } from './tvframe.js';
 import { glyph } from './icons.js';
 import { emblem } from './emblems.js';
 import { cardArt } from './cards.js';
@@ -196,10 +197,11 @@ export function omenBoard(v, h) {
     if (showing) { const b = L.ballots[id] ?? {}; const d = L.deltas[id] ?? 0; return `${faceChip(b.pred)}<span class="o-rot r${b.rot ?? 0}">${rotGlyph(b.rot ?? 0)}</span>${d ? `<em class="o-plus">+${d}</em>` : ''}${pips(O.influence[id])}`; }
     return `${v.phase === 'O_SECRET' && O.locked.includes(id) ? `<span class="o-lock">${glyph('check')}</span>` : ''}${pips(O.influence[id])}`;
   };
-  return `<main class="board2 oboard ${ended ? 'is-ended' : ''}" data-key="board-o">${header}
-    <div class="ot-cols">
-      <section class="ot-wheel">${ended ? '' : `<span class="kicker">${th('Round {n} of {m}', { n: O.round, m: O.rounds })}</span>`}${wheel({ at, mark: showing || v.phase === 'O_SHOW' ? at : null, size: 'tv' })}
-        <div class="ot-banner"><b>${esc(title)}</b>${sub ? `<span>${esc(sub)}</span>` : ''}</div></section>
-      <section class="ot-side">${ended ? omenEndHtml(v) : scoreLedger(v, O.scores, { title: t('The seers'), key: 'otled', extra })}</section>
-    </div></main>`;
+  const now = { kicker: ended ? t('The end') : th('Round {n} of {m}', { n: O.round, m: O.rounds }), title: esc(title),
+    line: v.phase === 'O_SHOW' ? t('Predict where it stops, and turn it if you like.') : v.phase === 'O_SECRET' ? t('Each seer seals a prediction and, perhaps, a turn.') : showing ? esc(sub) : '',
+    herald: v.phase === 'O_SECRET' ? t('Seal your omen on your phone.') : ended ? t('The host chooses: again, or another game.') : '' };
+  // TV-A5: the ornate wheel is the hero; the seers, with Influence and points, in the ledger.
+  const stage = ended ? `<div class="ot-end" data-autoscroll>${omenEndHtml(v)}</div>` : `<div class="ot-wheel">${wheel({ at, mark: showing || v.phase === 'O_SHOW' ? at : null, size: 'tv' })}</div>`;
+  const ledger = `${nowCard(now)}${ended ? '' : scoreLedger(v, O.scores, { title: t('The seers'), key: 'otled', extra })}`;
+  return tvFrame(v, h, { stage, ledger, herald: now.herald, key: 'board-o', cls: `oboard ${ended ? 'is-ended' : ''}` });
 }

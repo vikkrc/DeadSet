@@ -3,6 +3,7 @@
 // A haunted mirror: each round a dilemma with three answers; you answer for yourself and predict the
 // player you face in the glass. The reveal draws every reading as an arrow, right or wrong.
 
+import { tvFrame, nowCard, panel } from './tvframe.js';
 import { glyph } from './icons.js';
 import { emblem } from './emblems.js';
 import { t, th, tp, dilemmaText } from './i18n.js';
@@ -245,10 +246,14 @@ export function mirrorBoard(v, h) {
   const marks = L ? Object.fromEntries(Object.entries(L.answers).map(([id, x]) => [id, numOf(x)])) : v.phase === 'W_CHOOSE' ? Object.fromEntries(W.locked.map((id) => [id, '✓'])) : {};
   const title = v.phase === 'W_PROMPT' ? t('Talk it over') : v.phase === 'W_CHOOSE' ? t('Seal your ballots') : L ? t('The mirror shows every answer') : '';
   const sub = v.phase === 'W_CHOOSE' ? th('Ballots sealed · {done}/{total}', v.progress ?? { done: 0, total: 0 }) : v.phase === 'W_PROMPT' ? t('Each arrow: who reads whom this round.') : '';
-  return `<main class="board2 wboard ${ended ? 'is-ended' : ''}" data-key="board-w">${header}
-    <div class="wt-cols">
-      <section class="wt-table">${ended ? '' : ring(v, { center: `<span class="c-sub">${esc(th('Dilemma {n} of {m}', { n: W.round, m: W.rounds }))}</span>`, extra: seatArrows(v, pairs, `warr-${W.round}-${v.phase}`), marks })}
-        ${ended ? '' : `<div class="ot-banner"><b>${esc(title)}</b>${sub ? `<span>${esc(sub)}</span>` : ''}</div>`}</section>
-      <section class="wt-side">${ended ? mirrorEndHtml(v) : `${dilemmaCard(W.dilemma, L ? { size: 'tv', round: W.round, who: chosenBy(v, L.answers), v, auto: L.auto } : { size: 'tv', round: W.round })}${scoreLedger(v, W.scores, { title: t('The readers'), key: 'wtled' })}`}</section>
-    </div></main>`;
+  const now = { kicker: ended ? t('The end') : th('Dilemma {n} of {m}', { n: W.round, m: W.rounds }), title: esc(title),
+    line: v.phase === 'W_PROMPT' ? t('Each arrow: who reads whom this round.') : v.phase === 'W_CHOOSE' ? t('Your own answer, and your guess at the one you read.') : '',
+    herald: v.phase === 'W_PROMPT' ? t('Talk it over. Ballots open next.') : v.phase === 'W_CHOOSE' ? t('Seal your ballot on your phone.') : ended ? t('The host chooses: again, or another game.') : '' };
+  if (ended) return tvFrame(v, h, { stage: `<div class="wt-end" data-autoscroll>${mirrorEndHtml(v)}</div>`, ledger: nowCard({ ...now, title: '' }), herald: now.herald, key: 'board-w', cls: 'wboard is-ended' });
+  // TV-G7 / TV-A6: the companion table (who reads whom) in the left column, the dilemma card the hero.
+  const table = ring(v, { center: `<span class="c-sub">${esc(th('Dilemma {n} of {m}', { n: W.round, m: W.rounds }))}</span>`, extra: seatArrows(v, pairs, `warr-${W.round}-${v.phase}`), marks });
+  const stage = `<div class="duo"><div class="duo-t">${table}<p class="duo-cap">${esc(t('Who reads whom'))}</p></div>
+    <div class="duo-h">${dilemmaCard(W.dilemma, L ? { size: 'tv', round: W.round, who: chosenBy(v, L.answers), v, auto: L.auto } : { size: 'tv', round: W.round })}</div></div>`;
+  const ledger = `${nowCard(now)}${scoreLedger(v, W.scores, { title: t('The readers'), key: 'wtled' })}`;
+  return tvFrame(v, h, { stage, ledger, herald: now.herald, key: 'board-w', cls: 'wboard' });
 }

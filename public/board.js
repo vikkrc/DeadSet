@@ -187,15 +187,15 @@ export function boardScreen(v, h) {
       </div></main>`;
   }
 
-  if (v.mode === 'exorcism' && v.exorcism) return exorcismBoard(v, { header, ring });
-  if (v.mode === 'coffins' && v.coffins) return coffinsBoard(v, { header });
-  if (v.mode === 'carnival' && v.carnival) return carnivalBoard(v, { header });
-  if (v.mode === 'midnight' && v.midnight) return midnightBoard(v, { header, ring });
+  if (v.mode === 'exorcism' && v.exorcism) return exorcismBoard(v, { ...h, header, ring });
+  if (v.mode === 'coffins' && v.coffins) return coffinsBoard(v, { ...h, header });
+  if (v.mode === 'carnival' && v.carnival) return carnivalBoard(v, { ...h, header });
+  if (v.mode === 'midnight' && v.midnight) return midnightBoard(v, { ...h, header, ring });
   if (v.mode === 'seance' && v.seance) return seanceBoard(v, { ...h, header, ring });
-  if (v.mode === 'graverobbers' && v.graverobbers) return graveBoard(v, { header });
-  if (v.mode === 'mimic' && v.mimic) return mimicBoard(v, { header, ring });
-  if (v.mode === 'omen' && v.omen) return omenBoard(v, { header, ring });
-  if (v.mode === 'mirror' && v.mirror) return mirrorBoard(v, { header, ring });
+  if (v.mode === 'graverobbers' && v.graverobbers) return graveBoard(v, { ...h, header });
+  if (v.mode === 'mimic' && v.mimic) return mimicBoard(v, { ...h, header, ring });
+  if (v.mode === 'omen' && v.omen) return omenBoard(v, { ...h, header, ring });
+  if (v.mode === 'mirror' && v.mirror) return mirrorBoard(v, { ...h, header, ring });
 
   // ── 1 · Living table + 2 · sky + 6 · threads + 17 · plaques ────────────
   const players = [...v.players].sort((a, b) => a.seat - b.seat);

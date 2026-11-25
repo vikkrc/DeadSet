@@ -1,6 +1,7 @@
 // Dead Set: Exorcism — phone screens, moments, the crystal ball and the TV board.
 // Pure renderers over the filtered view; the shell (app.js) passes its helpers
 // in `h` and merges `exorcismActs` into its action table.
+import { tvFrame, nowCard, panel } from './tvframe.js';
 import { glyph } from './icons.js';
 import { waitText, waxSeal } from './kit.js';
 import { t, th, getLang, setNamer } from './i18n.js';
@@ -506,47 +507,34 @@ export function exorcismEndHtml(v) {
 /** The lobby (phone and TV): the ball takes the middle of the table. */
 export const lobbyOrb = () => ballHtml({ key: 'lobbyball', cls: 'in-ring', clear: false });
 
+/** What the room needs to know now (TV-G2), and the herald line for the band. */
+function exorcismNow(v) {
+  const X = v.exorcism;
+  switch (v.phase) {
+    case 'X_REVEAL': return { kicker: t('The crystal ball'), title: t('Look into your crystal ball'), line: t('The Living see the password. The Demon sees only the category, and bluffs.'), herald: t('Look at your phone. Keep it to yourself.') };
+    case 'X_LOTTERY': return { kicker: t('The lots'), title: t('Who speaks first?'), line: t('Then the turn goes round the table in seat order.'), herald: '' };
+    case 'X_CLUES': return { kicker: t('One word each'), title: th('{a} speaks now', { a: name(v, X.speaker) }), line: t('One word linked to the password. Prove you know it without handing it to the Demon.'), herald: th('{a}: say your word, then hold the button on your phone.', { a: name(v, X.speaker) }) };
+    case 'X_DISCUSS': return { kicker: t('Talk it over'), title: t('Who does not know the password?'), line: t('Then everyone names one player.'), herald: t('Talk it over. The vote opens next.') };
+    case 'X_VOTE': return { kicker: t('The vote'), title: t('Name the Demon'), line: t('Name the Demon and the Living win, unless it guesses the password.'), herald: t('Vote on your phone.'), tone: 'red' };
+    case 'X_GUESS': return { kicker: t('One last guess'), title: th('{a} is caught', { a: name(v, X.named) }), line: t('If it names the password, the Demon steals the win.'), herald: t('The Demon guesses on its phone.'), tone: 'red' };
+    case 'ENDED': return { kicker: t('The end'), title: t(v.winner === 'DEMON' ? 'The Demon wins.' : 'The Living win.'), line: '', herald: t('The host chooses: again, or another game.') };
+    default: return { title: '', line: '', herald: '' };
+  }
+}
+
 export function exorcismBoard(v, h) {
-  const { header, ring } = h;
+  const { ring } = h;
   const X = v.exorcism;
   if (!X) return '';
-  let now = '';
-  switch (v.phase) {
-    case 'X_REVEAL': now = `<p class="b-now">${t('Look into your crystal ball.')} <b>${th('{done}/{total} ready', { done: v.progress?.done ?? 0, total: v.progress?.total ?? 0 })}</b></p>`; break;
-    case 'X_LOTTERY': now = `<p class="b-now">${t('The lots are drawn…')}</p>`; break;
-    case 'X_CLUES': now = `<p class="b-now">${th('Now speaking: {a}', { a: name(v, X.speaker) })}</p>`; break;
-    case 'X_DISCUSS': now = `<p class="b-now">${t('Talk it over: who does not know the password?')} <b>${th('{done}/{total} ready to vote', { done: v.progress?.done ?? 0, total: v.progress?.total ?? 0 })}</b></p>`; break;
-    case 'X_VOTE': now = `<p class="b-now blood">${t('Name the Demon.')} <b>${th('{done}/{total} votes in', { done: v.progress?.done ?? 0, total: v.progress?.total ?? 0 })}</b></p>`; break;
-    case 'X_GUESS': now = `<p class="b-now blood">${th('{a} is caught and gets one guess…', { a: name(v, X.named) })}</p>`; break;
-    case 'ENDED': now = `<p class="b-now">${t(v.winner === 'DEMON' ? 'The Demon wins.' : 'The Living win.')}</p>`; break;
-    default: break;
-  }
+  const now = exorcismNow(v);
   const ended = v.phase === 'ENDED';
-  const ball = ended
-    ? ballHtml({ key: 'tvball', kicker: `${esc(t('The password'))} · ${esc(catName(X.category))}`, title: esc(wordAt(X.category, X.word)), sub: X.demons?.length ? th(X.demons.length > 1 ? 'The Demons: {names}' : 'The Demon: {names}', { names: X.demons.map((id) => name(v, id)) }) : '', tint: v.winner === 'DEMON' ? DEMON_TINT : LIVING_TINT, big: true })
-    : v.phase === 'X_DISCUSS'
-      ? ballHtml({ key: 'tvball', kicker: esc(t('The category')), title: esc(catName(X.category)), big: true, tint: TALK_TINT, orbit: orbitHtml(v), cls: 'talk' })
-      : ballHtml({ key: 'tvball', kicker: esc(t('The category')), title: esc(catName(X.category)), sub: X.hint !== 'none' ? esc(t('The Demon hears a whisper.')) : '', big: true, orbit: v.phase === 'X_CLUES' ? orbitHtml(v) : '' });
-  // The vote on the TV: everyone around a red, restless ball; a tick for each vote in.
-  if (ended && ring) {
-    return `<main class="board2 xboard is-ended" data-key="board-x">${header}
-    <div class="x-cols">
-      <section class="x-left">${ring(v, { center: '', reveal: true, orb: endOrb(v) })}${now}</section>
-      <aside class="x-right">${X.grid ? `<div class="b-grid"><span class="kicker">${t('The grid')}</span>${wordGrid(v, { mark: X.word, selected: X.guess?.index ?? null })}</div>` : ''}${scoreboard(v)}</aside>
-    </div></main>`;
-  }
-  if (v.phase === 'X_VOTE' && ring) {
-    const marks = Object.fromEntries((X.voted ?? []).map((id) => [id, glyph('check')]));
-    const orb = ballHtml({ key: 'tvball', kicker: esc(t('The category')), title: esc(catName(X.category)), tint: VOTE_TINT, speed: 2.4, cls: 'in-ring vote' });
-    return `<main class="board2 xboard" data-key="board-x">${header}
-    <div class="x-cols">
-      <section class="x-left">${ring(v, { center: '', orb, marks, turn: v.phase === 'X_CLUES' ? X.speaker : null })}${now}</section>
-      <aside class="x-right">${X.grid ? `<div class="b-grid"><span class="kicker">${t('The grid')}</span>${wordGrid(v)}</div>` : ''}${scoreboard(v)}</aside>
-    </div></main>`;
-  }
-  return `<main class="board2 xboard ${ended ? 'is-ended' : ''}" data-key="board-x">${header}
-    <div class="x-cols">
-      <section class="x-left">${ball}${now}${orderStrip(v)}</section>
-      <aside class="x-right">${X.grid ? `<div class="b-grid"><span class="kicker">${t('The grid')}</span>${wordGrid(v, { mark: ended ? X.word : null, selected: X.guess?.index ?? null })}</div>` : ''}${scoreboard(v)}</aside>
-    </div></main>`;
+  // TV-A7: the ball on its pedestal is the hero; spoken words orbit it. The grid and the scores live in the ledger.
+  let stage;
+  if (ended) stage = ring(v, { center: '', reveal: true, orb: endOrb(v) });
+  else if (v.phase === 'X_VOTE') stage = ring(v, { center: '', orb: ballHtml({ key: 'tvball', kicker: esc(t('The category')), title: esc(catName(X.category)), tint: VOTE_TINT, speed: 2.4, cls: 'in-ring vote' }) });
+  else if (v.phase === 'X_DISCUSS') stage = ballHtml({ key: 'tvball', kicker: esc(t('The category')), title: esc(catName(X.category)), big: true, tint: TALK_TINT, orbit: orbitHtml(v), cls: 'talk' });
+  else stage = ballHtml({ key: 'tvball', kicker: esc(t('The category')), title: esc(catName(X.category)), sub: X.hint !== 'none' ? esc(t('The Demon hears a whisper.')) : '', big: true, orbit: v.phase === 'X_CLUES' ? orbitHtml(v) : '' });
+  const grid = X.grid ? panel(t('The grid'), wordGrid(v, ended ? { mark: X.word, selected: X.guess?.index ?? null } : {}), 'xgrid') : '';
+  const ledger = `${nowCard(now)}${grid}${scoreboard(v)}`;
+  return tvFrame(v, h, { stage: `<div class="x-stage">${stage}</div>`, ledger, herald: now.herald, key: 'board-x', cls: `xboard ${ended ? 'is-ended' : ''}` });
 }

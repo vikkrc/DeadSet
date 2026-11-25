@@ -4,6 +4,7 @@
 //
 // Privacy: every coffin face is drawn on the same dark wood at the same
 // brightness, and nothing private ever plays a sound or a buzz.
+import { tvFrame, nowCard, panel } from './tvframe.js';
 import { glyph } from './icons.js';
 import { emblem } from './emblems.js';
 import { t, th } from './i18n.js';
@@ -469,34 +470,32 @@ export function coffinsEndHtml(v) {
 }
 
 // ── TV board ───────────────────────────────────────────────────────────────
+/** What the room needs to know now (TV-G2), and the herald for the band. */
+function coffinsNow(v) {
+  const C = v.coffins;
+  switch (v.phase) {
+    case 'C_LOTTERY': return { kicker: t('The lots'), title: t('Who plays first?'), line: '', herald: '' };
+    case 'C_BURY': return { kicker: th('Round {n}', { n: C.round }), title: t('Everyone buries a coffin'), line: t('Gold or cursed, face down on your grave.'), herald: t('Bury a coffin on your phone.') };
+    case 'C_TURN': return { kicker: th('Round {n}', { n: C.round }), title: th('{a}: bury another, or challenge?', { a: name(v, C.turn) }), line: t('A challenge names how many coffins you will open.'), herald: th('{a} decides on their phone.', { a: name(v, C.turn) }) };
+    case 'C_BID': return { kicker: t('The bidding'), title: th('{a}: raise above {n}, or pass?', { a: name(v, C.turn), n: C.bid.n }), line: t('The highest bid digs.'), herald: th('{a} bids on their phone.', { a: name(v, C.turn) }) };
+    case 'C_WAGER': return { kicker: t('Ghost wagers'), title: th('The ghosts wager on {a}\'s dig', { a: name(v, C.digger) }), line: t('Clean dig, or a curse?'), herald: t('Ghosts: wager on your phone.') };
+    case 'C_DIG': return { kicker: t('The dig'), title: th('{a} digs', { a: name(v, C.digger) }), line: th('{k} of {n} opened. A curse stops the dig.', { k: C.opened.length, n: C.target }), herald: th('{a} opens coffins on their phone.', { a: name(v, C.digger) }), tone: 'red' };
+    case 'C_LOSE': return { kicker: t('A coffin is lost'), title: th('{a} chooses a coffin to lose', { a: name(v, C.digger) }), line: '', herald: '', tone: 'red' };
+    case 'ENDED': return { kicker: t('The end'), title: th('{a} wins.', { a: name(v, C.winner) }), line: '', herald: t('The host chooses: again, or another game.') };
+    default: return { title: '', line: '', herald: '' };
+  }
+}
+
 export function coffinsBoard(v, h) {
-  const { header } = h;
   const C = v.coffins;
   if (!C) return '';
-  let now = '';
-  switch (v.phase) {
-    case 'C_LOTTERY': now = t('The lots are drawn…'); break;
-    case 'C_BURY': now = `${th('Round {n}: everyone buries a coffin.', { n: C.round })} <b>${th('{done}/{total} buried', { done: v.progress?.done ?? 0, total: v.progress?.total ?? 0 })}</b>`; break;
-    case 'C_TURN': now = th('{a}: bury another, or challenge?', { a: name(v, C.turn) }); break;
-    case 'C_BID': now = `${th('{a}: raise above {n}, or pass?', { a: name(v, C.turn), n: C.bid.n })}`; break;
-    case 'C_WAGER': now = `${th('The ghosts wager on {a}\'s dig.', { a: name(v, C.digger) })} <b>${th('{done}/{total} wagers in', { done: v.progress?.done ?? 0, total: v.progress?.total ?? 0 })}</b>`; break;
-    case 'C_DIG': now = th('{a} digs: {k} of {n} opened.', { a: name(v, C.digger), k: C.opened.length, n: C.target }); break;
-    case 'C_LOSE': now = th('{a} chooses a coffin to lose.', { a: name(v, C.digger) }); break;
-    case 'ENDED': now = th('{a} wins.', { a: name(v, C.winner) }); break;
-    default: break;
-  }
+  const now = coffinsNow(v);
   const ended = v.phase === 'ENDED';
   const backdrop = v.table?.backdrops !== false && C.where >= 0 ? backdropHtml(C.where, true) : '';
   const legend = `<div class="c-legend" data-key="clegend"><span>${coffinCard('G')}<small>${t('Gold')}</small></span><span>${coffinCard('C')}<small>${t('Cursed')}</small></span>${C.deathOn ? `<span>${coffinCard('D')}<small>${t('Death')}</small></span>` : ''}</div>`;
-  return `<main class="board2 cboard ${ended ? 'is-ended' : ''} ${backdrop ? 'has-backdrop' : ''}" data-key="board-c">${backdrop}${header}
-    <div class="c-cols">
-      <section class="c-main">${graveyard(v, { big: true, reveal: ended })}<p class="b-now ${['C_DIG', 'C_LOSE'].includes(v.phase) ? 'blood' : ''}" data-key="cnow">${now}</p></section>
-      <aside class="c-side">
-        <div class="c-ledger fr" data-key="cledger"><span class="kicker">${th(C.toWin === 1 ? 'One clean dig wins.' : '{n} clean digs win.', { n: C.toWin })}</span>
-          <ul>${C.plots.map((pl) => `<li class="${pl.out ? 'out' : ''} ${C.turn === pl.id && ['C_TURN', 'C_BID'].includes(v.phase) ? 'now' : ''}" data-key="cl-${pl.id}"><b>${esc(name(v, pl.id))}</b>
-            ${pl.out ? (C.wagersOn ? candles(pl.candles, C.rise) : `<small>${t('Out')}</small>`) : `<span class="cl-coffins" aria-label="${esc(th('{n} in hand', { n: pl.held }))}">${Array.from({ length: pl.held }, () => `<i>${emblem('undertaker')}</i>`).join('')}</span>`}
-            ${winMarks(pl.wins, C.toWin, pl.id)}</li>`).join('')}</ul>
-          <p class="small muted">${t('Or be the last one with coffins.')}</p></div>
-        ${legend}${scoreboard(v)}</aside>
-    </div></main>`;
+  const record = `<ul class="c-rec">${C.plots.map((pl) => `<li class="${pl.out ? 'out' : ''} ${C.turn === pl.id && ['C_TURN', 'C_BID'].includes(v.phase) ? 'now' : ''} ${C.digger === pl.id && ['C_DIG', 'C_LOSE', 'C_WAGER'].includes(v.phase) ? 'now' : ''}" data-key="cl-${pl.id}"><b>${esc(name(v, pl.id))}</b>
+      ${pl.out ? (C.wagersOn ? candles(pl.candles, C.rise) : `<small>${t('Out')}</small>`) : `<span class="cl-coffins" aria-label="${esc(th('{n} in hand', { n: pl.held }))}">${Array.from({ length: pl.held }, () => `<i>${emblem('undertaker')}</i>`).join('')}</span>`}
+      ${winMarks(pl.wins, C.toWin, pl.id)}</li>`).join('')}</ul><p class="tvx-note">${t('Or be the last one with coffins.')}</p>`;
+  const ledger = `${nowCard(now)}${panel(th(C.toWin === 1 ? 'One clean dig wins.' : '{n} clean digs win.', { n: C.toWin }), record, 'cledger')}${legend}${scoreboard(v)}`;
+  return tvFrame(v, h, { stage: graveyard(v, { big: true, reveal: ended }), ledger, herald: now.herald, backdrop, key: 'board-c', cls: `cboard ${ended ? 'is-ended' : ''} ${backdrop ? 'has-backdrop' : ''}` });
 }

@@ -5,6 +5,7 @@
 // Undertakers' phones show the burial register as bands on the stones;
 // everyone else sees only stone until a grave is opened.
 
+import { tvFrame, nowCard, panel } from './tvframe.js';
 import { glyph } from './icons.js';
 import { waitText, waxSeal } from './kit.js';
 import { emblem } from './emblems.js';
@@ -388,20 +389,23 @@ export function graveEndHtml(v) {
 
 // ── TV ─────────────────────────────────────────────────────────────────────
 export function graveBoard(v, h) {
-  const { header } = h;
   const R = v.graverobbers;
   if (!R) return '';
   const ended = v.phase === 'ENDED';
-  const prog = v.progress ?? { done: 0, total: 0 };
   const turn = t(CREW_NAME[R.turn]);
-  const [title, sub] = {
-    G_INTRO: [t('The cemetery at midnight'), th('Everyone looks at their crew · {done}/{total}', prog)],
-    G_SIGN: [th('{name} is choosing a sign', { name: rawName(v, R.caps[R.turn]) }), (R.turn === 'V' ? t('The Stars are up. Undertakers: not a word, not a look.') : th('{crew} is up. Undertakers: not a word, not a look.', { crew: turn }))],
-    G_DIG: [(R.turn === 'V' ? t('The Stars are digging') : th('{crew} is digging', { crew: turn })), th('Votes in · {done}/{total}', prog)],
-  }[v.phase] ?? ['', ''];
-  const crewCol = (c) => `<aside class="gt-crew c-${c} ${R.turn === c && !ended ? 'turn' : ''}" data-key="gtc-${c}">${altar(R, c)}<b class="gt-name">${t(CREW_NAME[c])}</b>
-    <ul>${R.crews[c].map((id) => `<li>${disc(v, id, 'sm')}<span>${pname(v, id)}</span>${R.caps[c] === id ? `<em>${esc(roleF('G_UNDERTAKER', 'name'))}</em>` : ''}</li>`).join('')}</ul></aside>`;
+  const cap = rawName(v, R.caps[R.turn]);
+  const now = {
+    G_INTRO: { kicker: t('The crews'), title: t('The cemetery at midnight'), line: t('Everyone looks at their crew. Only the Undertakers know what lies under every stone.'), herald: t('Look at your crew on your phone.') },
+    G_SIGN: { kicker: t('The sign'), title: th('{name} is choosing a sign', { name: cap }), line: R.turn === 'V' ? t('The Stars are up. Undertakers: not a word, not a look.') : th('{crew} is up. Undertakers: not a word, not a look.', { crew: turn }), herald: t('Not a word, not a look, while the sign is chosen.') },
+    G_DIG: { kicker: t('The dig'), title: R.turn === 'V' ? t('The Stars are digging') : th('{crew} is digging', { crew: turn }), line: t('Vote for a stone on your phone. The majority digs.'), herald: t('Diggers: vote for a stone on your phone.') },
+    ENDED: { kicker: t('The end'), title: '', line: '', herald: t('The host chooses: again, or another game.') },
+  }[v.phase] ?? { title: '', line: '', herald: '' };
+  // TV-A9: the cemetery is the hero, the sign on a plaque above it; the crews (relic tracks and members) in the ledger,
+  // the digging crew's panel lit.
+  const crewCol = (c) => `<section class="gt-crew tvx-pnl c-${c} ${R.turn === c && !ended ? 'turn' : ''}" data-key="gtc-${c}">${altar(R, c)}<b class="gt-name">${t(CREW_NAME[c])}</b>
+    <ul>${R.crews[c].map((id) => `<li>${disc(v, id, 'sm')}<span>${pname(v, id)}</span>${R.caps[c] === id ? `<em>${esc(roleF('G_UNDERTAKER', 'name'))}</em>` : ''}</li>`).join('')}</ul></section>`;
   const backdrop = v.table?.backdrops !== false ? backdropHtml(17, true) : '';
-  return `<main class="board2 gboard has-backdrop ${ended ? 'is-ended' : ''} turn-${R.turn}" data-key="board-g">${backdrop}${header}
-    <div class="gt-cols ${crewsIn(R).length === 3 ? 'three' : ''}">${crewCol('B')}<section class="gt-main">${ended ? graveEndHtml(v) : `<div class="gt-banner c-${R.turn}" data-key="gtban"><div><b>${esc(title)}</b><span>${esc(sub)}</span></div></div>${signBanner(v)}${cemetery(v, { size: 'tv' })}`}</section>${R.crews.V ? `<div class="gt-side">${crewCol('G')}${crewCol('V')}</div>` : crewCol('G')}</div></main>`;
+  const stage = ended ? `<div class="gt-end" data-autoscroll>${graveEndHtml(v)}</div>` : `<div class="gt-main">${signBanner(v)}${cemetery(v, { size: 'tv' })}</div>`;
+  const ledger = `${nowCard(now)}${crewCol('B')}${crewCol('G')}${R.crews.V ? crewCol('V') : ''}`;
+  return tvFrame(v, h, { stage, ledger, herald: now.herald, backdrop, key: 'board-g', cls: `gboard has-backdrop ${ended ? 'is-ended' : ''} turn-${R.turn} ${R.crews.V ? 'three' : ''}` });
 }
