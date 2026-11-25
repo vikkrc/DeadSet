@@ -248,7 +248,7 @@ export function boardScreen(v, h) {
   const plaques = (v.activeRules || []).map((r) => `<span class="plaque ${live[r.id] ? 'on' : ''}" data-key="pl-${r.id}">${glyph(ruleGlyph(r.id))}<span>${esc(ruleF(r.id, 'name'))}${live[r.id] ? `<em>${tmh(live[r.id])}</em>` : ''}</span></span>`).join('');
   const mr = v.mode === 'missions' ? missionBoardRing(v) : null;
   if (mr && v.phase === 'ENDED') extra += hunchArrowsSvg(v);
-  const table = ring(v, { center: (mr ? '' : centerExtra) + centerFor(v), reveal: v.phase === 'ENDED', crack: true, extra, marks: mr?.marks ?? {}, pick: mr?.team.length ? { ids: [], selected: mr.team, act: '' } : null });
+  const table = ring(v, { center: (mr ? '' : centerExtra) + centerFor(v), reveal: v.phase === 'ENDED', crack: true, extra, marks: mr?.marks ?? {}, pick: mr?.team.length ? { ids: [], selected: mr.team, act: '', keep: true } : null });
   const where = (h.content?.scenario?.WHERE ?? []).indexOf(v.scenario?.where);
   const backdrop = v.table?.backdrops !== false && where >= 0 ? backdropHtml(where, night) : '';
   // TV-G1 / TV-A1: no left rail. The ledger holds the Now card (rules only when one applies), the town or the

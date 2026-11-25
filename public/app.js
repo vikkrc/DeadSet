@@ -1498,7 +1498,7 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     const ni = nomIdx(p.id);
     const cls = ['tok',
       p.alive ? '' : `dead ${strikeCls(p)}`, p.id === me?.id ? 'me' : '', p.connected ? '' : 'away',
-      isSel ? 'sel' : '', selectable ? 'can' : pick && !(isSel && !pick.act) ? 'mute' : '', isSel && pick && !pick.act ? 'team' : '', pick?.tone === 'kill' ? 'kill' : '',
+      isSel ? 'sel' : '', selectable ? 'can' : pick && !pick.keep && !(isSel && !pick.act) ? 'mute' : '', isSel && pick && !pick.act ? 'team' : '', pick?.tone === 'kill' ? 'kill' : '',
       ni >= 0 ? 'accused' : '', d?.speaking === p.id ? 'speaking' : '', p.immune ? 'immune' : '',
       lobby ? (p.ready ? 'ready' : 'unready') : '', reveal && p.alignment === 'DEATH' ? 'death' : '',
       me?.teammates?.some((t) => t.id === p.id) ? 'mate' : '', pos[i].inner ? 'inner' : dense && pos[i].y < 50 ? 'up' : '',
@@ -1582,6 +1582,8 @@ function centerFor(v, pick) {
     case 'DAY_RESOLVING': return `<span class="c-emblem">${glyph('dagger')}</span><span class="c-sub">${t('A final act')}</span>${hint}${clock}`;
     case 'NIGHT_DREAM_SWAP': return `${moon(0.08, 'c-moon')}<span class="c-sub">${t('Nightfall')}</span>${hint}${clock}`;
     case 'NIGHT_ACTIONS': if (pick?.key === 'role' && V()?.me?.role?.glyph) return `<span class="c-emblem">${glyph(V().me.role.glyph)}</span>${hint}${clock}`;
+      // TV-R10: the TV never counts who is asleep (it hints at how many are acting): the moon alone, and the night's steps in the ledger.
+      if (onBoard()) return `${moon(0.5, 'c-moon')}<span class="c-sub">${t('The town sleeps')}</span>${clock}`;
       return `${moon(prog ? prog.done / Math.max(1, prog.total) : 0, 'c-moon')}<span class="c-sub">${prog ? t('{n}/{total} asleep', { n: prog.done, total: prog.total }) : ''}</span>${hint}${clock}`;
     case 'ENDED': return `<span class="c-emblem">${glyph(WIN_GLYPH[v.winner] ?? 'scroll')}</span><span class="c-sub">${t({ DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'Jester wins', DRAW: 'Draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[v.winner] ?? '')}</span>`;
     default: return '';
@@ -3341,7 +3343,9 @@ function boardView() {
   if (S.conn === 'gone') return goneScreen();
   if (!v) return loadingScreen();
   tvChrome();
-  const hint = !document.fullscreenElement && !S.board.fsAsked && localStorage.getItem(FS_KEY) !== 'off' ? `<div class="tv-fs-hint" data-key="tvfs">${t('Press F or tap for full screen')}</div>` : '';
+  // TV-R8: the full-screen hint shows once, for the first few seconds the board is open, then never again.
+  S.board.fsHintAt ??= Date.now();
+  const hint = !document.fullscreenElement && !S.board.fsAsked && localStorage.getItem(FS_KEY) !== 'off' && Date.now() - S.board.fsHintAt < 6000 ? `<div class="tv-fs-hint" data-key="tvfs">${t('Press F or tap for full screen')}</div>` : '';
   // T3: the lobby teaches while people join — the game's cover, and its How it works turning a step every 8 s.
   if (v.phase === 'LOBBY' && !S.board.howTimer) S.board.howTimer = setInterval(() => { if (onBoard() && V()?.phase === 'LOBBY') { S.board.howStep = (S.board.howStep ?? 0) + 1; render(); } }, 8000);
   // T1: the caption strip along the bottom of every TV board in play: a small join QR and the code for anyone
