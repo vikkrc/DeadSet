@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Dead Set TV — 24 · Today — lobby, interludes, endings</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Grenze+Gotisch:wght@400;600;800&family=UnifrakturCook:wght@700&display=swap">
+<link rel="stylesheet" href="./ds.css"><link rel="stylesheet" href="./workshop.css"><link rel="stylesheet" href="./tvkit.css">
+
+
+<style>
+body{margin:0}
+
+.mfs{display:grid;gap:30px 32px;padding:0 44px}
+.mf{margin:0;display:grid;gap:12px;align-content:start}
+.mfv{position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(201,163,90,.35),0 20px 40px -20px #000}
+.mfv>.tvx{transform-origin:0 0;position:absolute;left:0;top:0}
+.mf figcaption{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:baseline}
+.mf figcaption .t{font:600 13px/1.2 'EB Garamond',serif;letter-spacing:.2em;text-transform:uppercase;color:#c9a35a}
+.mf figcaption .ms{font:600 13px/1 'EB Garamond',serif;letter-spacing:.12em;color:#e45d50}
+.mf figcaption p{grid-column:1/-1;margin:0;font:400 17px/1.38 'EB Garamond',serif;color:#c2b496}
+.mf figcaption p b{color:#e8dcc0;font-weight:500}
+.sec{font:600 14px/1 'EB Garamond',serif;letter-spacing:.28em;text-transform:uppercase;color:#c9a35a;padding:6px 44px 14px;display:flex;align-items:center;gap:16px}
+.sec::after{content:'';flex:1;height:1px;background:rgba(201,163,90,.3)}
+/* scene composition (TV-S1) */
+.sk{display:grid;justify-items:center;text-align:center;width:1200px}
+.sk .kk{font:600 22px/1 var(--text);letter-spacing:.3em;text-transform:uppercase;color:var(--gilt)}
+.sk h2{font:600 92px/1 var(--black);color:var(--bone);margin:14px 0 30px;position:relative;z-index:2}
+.sk h2.sm{font-size:76px}
+.sk .ln{font:italic 400 32px/1.3 var(--text);color:var(--bone-2);margin:22px 0 0;max-width:44ch}
+.sk .row{display:flex;align-items:center;justify-content:center;gap:40px}
+/* big medallion with portrait */
+.med{position:relative;display:grid;justify-items:center;gap:12px}
+.med i{display:block;border-radius:50%;overflow:hidden;box-shadow:0 0 0 4px var(--ink),0 0 0 5px var(--gilt),0 0 0 14px rgba(201,163,90,.12),0 0 40px rgba(201,163,90,.35)}
+.med i img{width:100%;height:100%;display:block}
+.med b{font:600 24px/1 var(--text);letter-spacing:.2em;text-indent:.2em;text-transform:uppercase;color:var(--bone);background:var(--ink);padding:5px 9px 4px}
+.med.red i{box-shadow:0 0 0 4px var(--ink),0 0 0 5px var(--blood-ink),0 0 0 14px rgba(228,93,80,.14),0 0 46px rgba(228,93,80,.5)}
+.med.red b{color:var(--blood-ink)}
+.med.dim{opacity:.5;filter:grayscale(.7)}
+.med .rl{font:italic 400 24px/1 var(--text);color:var(--bone-2);margin-top:-4px}
+/* rays and dust for celebrations */
+.rays{position:absolute;left:50%;top:-40%;width:1800px;height:1800px;transform:translateX(-50%);background:repeating-conic-gradient(from -90deg at 50% 50%,rgba(236,210,143,.10) 0 3deg,transparent 3deg 12deg);-webkit-mask:radial-gradient(closest-side,#000,transparent);mask:radial-gradient(closest-side,#000 20%,transparent);pointer-events:none;z-index:0}
+.dust{position:absolute;inset:0;pointer-events:none;z-index:0}
+.dust i{position:absolute;width:9px;height:9px;transform:rotate(45deg);background:var(--gilt);box-shadow:0 0 8px rgba(236,210,143,.7)}
+.dust i.s{width:5px;height:5px;opacity:.7}
+.mist{position:absolute;inset:0;pointer-events:none;background:radial-gradient(60% 50% at 50% 60%,rgba(120,16,20,.45),transparent 70%),radial-gradient(90% 40% at 50% 100%,rgba(60,6,10,.8),transparent 70%)}
+.banner{position:relative;padding:14px 70px 16px;background:linear-gradient(#8e6a2a,#c9a35a 40%,#8e6a2a);color:#1d1510;font:600 30px/1 var(--black);clip-path:polygon(0 0,100% 0,96% 50%,100% 100%,0 100%,4% 50%)}
+.banner.red{background:linear-gradient(#5a1014,#9c1c22 45%,#5a1014);color:#f6d3c8}
+.tag2{font:600 15px/1 var(--text);letter-spacing:.2em;text-transform:uppercase;color:var(--gilt)}
+.cov{--acc:#8e1b1f}
+.qrbig{width:250px;height:250px;padding:16px;background:var(--vellum);box-shadow:0 0 0 1px var(--gilt-2),0 0 0 8px var(--ink),0 0 0 9px var(--gilt-2)}
+.qrbig span{display:block;width:100%;height:100%;background:url(./art/qr.svg) center/100% no-repeat}
+.tiles{display:flex;gap:8px}
+.tiles b{width:50px;height:60px;display:grid;place-items:center;border:1px solid var(--gilt-2);background:var(--ink-2);font:500 38px/1 var(--text);color:var(--bone)}
+.chair i{background:transparent!important;border:2px dashed rgba(201,163,90,.35)!important;box-shadow:none!important;color:rgba(201,163,90,.5)!important;font:300 34px/1 var(--text)!important}
+.chair i::before{display:none}
+.chair b{opacity:.0}
+.edge{position:absolute;z-index:3;transform:translate(-50%,-50%)}
+
+.etch{position:relative;border-radius:50%;background:radial-gradient(circle at 50% 42%,#f3ead6,var(--vellum) 62%,#cdbb92);box-shadow:0 0 0 3px var(--ink),0 0 0 4px var(--gilt),0 0 0 12px rgba(201,163,90,.12),0 0 60px rgba(201,163,90,.35);display:grid;place-items:center}
+.etch img{width:86%;height:86%;mix-blend-mode:multiply}
+.etch.night{background:radial-gradient(circle at 50% 42%,#eef0f2,#d7dce4 62%,#aeb6c4);box-shadow:0 0 0 3px var(--ink),0 0 0 4px #9fb0cc,0 0 0 12px rgba(160,180,215,.14),0 0 90px rgba(190,205,235,.35)}
+.etch.blood{background:radial-gradient(circle at 50% 42%,#f2d2c6,#dfa494 62%,#b4604e);box-shadow:0 0 0 3px var(--ink),0 0 0 4px var(--blood-ink),0 0 0 12px rgba(228,93,80,.14),0 0 100px rgba(210,40,30,.45)}
+.etch.gold{background:radial-gradient(circle at 50% 42%,#fbefc8,#e3c27a 62%,#a88140);box-shadow:0 0 0 3px var(--ink),0 0 0 5px #6b4f1c,0 0 0 12px rgba(236,210,143,.18),0 0 70px rgba(236,210,143,.5)}
+.eicon{filter:invert(1) sepia(.7) saturate(1.5) brightness(1.05)}
+.eicon.lit{filter:invert(1) sepia(.7) saturate(1.6) brightness(1.05) drop-shadow(0 0 7px rgba(255,190,90,.75))}
+.eicon.out{filter:invert(1) sepia(.2) brightness(.55);opacity:.45}
+
+.aud{display:grid;grid-template-columns:1000px 1fr;gap:36px;padding:0 44px}
+.shot{position:relative;width:1000px;height:563px;box-shadow:0 0 0 1px rgba(201,163,90,.35)}
+.shot img{width:100%;height:100%;display:block}
+.shot .ann{position:absolute;transform:translate(-50%,-50%)}
+.fl{display:grid;gap:12px;align-content:start}
+.fi{display:grid;grid-template-columns:34px 1fr;gap:12px;font:400 17px/1.36 'EB Garamond',serif;color:#c2b496}
+.fi b{color:#e8dcc0;font-weight:500}
+.fi .ann{position:static}
+.keep{margin-top:6px;border-top:1px solid rgba(201,163,90,.3);padding-top:12px;font:400 17px/1.4 'EB Garamond',serif;color:#c2b496}
+.keep b{display:block;font:600 13px/1.3 'EB Garamond',serif;letter-spacing:.2em;text-transform:uppercase;color:#8fae7a;margin-bottom:4px}
+.evs{display:grid;grid-template-columns:repeat(4,1fr);gap:22px 28px;padding:0 44px}
+.ev{display:grid;gap:8px}
+.ev .im{position:relative;aspect-ratio:16/9;overflow:hidden;box-shadow:0 0 0 1px rgba(201,163,90,.3)}
+.ev img{width:100%;height:100%;display:block;object-fit:cover}
+.ev b{font:600 13px/1.2 'EB Garamond',serif;letter-spacing:.2em;text-transform:uppercase;color:#c9a35a}
+.ev p{margin:0;font:400 16px/1.36 'EB Garamond',serif;color:#c2b496}
+.need{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:0 44px}
+.nd{border:1px solid rgba(201,163,90,.35);padding:16px 18px;background:rgba(34,27,21,.6)}
+.nd b{display:block;font:600 24px/1.05 'Grenze Gotisch',serif;color:#e8dcc0;margin-bottom:8px}
+.nd ul{margin:0;padding-left:18px;font:400 16px/1.4 'EB Garamond',serif;color:#c2b496}
+.nd li{margin:3px 0}
+.nd .go{display:block;margin-top:10px;font:600 12px/1.3 'EB Garamond',serif;letter-spacing:.2em;text-transform:uppercase;color:#e45d50}
+
+</style>
+
+<style>body{margin:0;background:#0b0908}</style></head><body>
+
+<div class="ds" style="width:1600px;height:1860px;background:#0b0908">
+<div class="bt"><h1>Lobby, interludes, endings: today</h1><p>Captured from the latest branch. What works, what breaks, and what each of the four needs to do.</p><span class="tag">Audit</span></div><div class="sec">The TV lobby today · classic, 8 players</div>
+<div class="aud"><div class="shot"><img src="./evidence/e11.jpg" alt=""><span class="ann" style="left:400px;top:21px">1</span><span class="ann" style="left:834px;top:26px">2</span><span class="ann" style="left:47px;top:375px">3</span><span class="ann" style="left:369px;top:144px">4</span><span class="ann" style="left:441px;top:281px">5</span><span class="ann" style="left:806px;top:125px">6</span><span class="ann" style="left:806px;top:247px">7</span><span class="ann" style="left:806px;top:400px">8</span><span class="ann" style="left:975px;top:508px">9</span></div><div class="fl"><div class="fi"><span class="ann">1</span><span><b>TV chrome.</b> “Press F or tap for full screen” and a large “Start the score” button sit in the header all lobby long. The TV is never operated (TV-P4).</span></div><div class="fi"><span class="ann">2</span><span><b>The score prompt</b> is the loudest thing on screen, louder than the game’s name.</span></div><div class="fi"><span class="ann">3</span><span><b>The join panel is good, but quiet.</b> The QR on vellum works; the code tiles are 30 px, the address is 14 px (and reads <i>localhost</i>), and “Starting when everyone is ready · 8 of 8” is 13 px caps.</span></div><div class="fi"><span class="ann">4</span><span><b>Ready is a 14 px lock badge.</b> The seats carry tiny padlock chips; the room cannot see who is ready or who is still choosing a face.</span></div><div class="fi"><span class="ann">5</span><span><b>Nothing happens at 8/8.</b> The disc counts, but a full, ready table looks exactly like a waiting one. No countdown, no ceremony into Night 0.</span></div><div class="fi"><span class="ann">6</span><span><b>What are we playing?</b> The game is a 110 px cover in a corner; the header says “Lobby · Gathering”. No title, no pitch, no player range or length.</span></div><div class="fi"><span class="ann">7</span><span><b>One teach step, static,</b> in 15 px (“Hidden roles…”). The four steps never cycle; nobody learns the game while waiting.</span></div><div class="fi"><span class="ann">8</span><span><b>Deck labels break mid-word</b> (INNOCEN T, GUARDIA N, EXTENDE D) and the deck overflows its panel; the bottom row is cut off.</span></div><div class="fi"><span class="ann">9</span><span><b>Settings are invisible.</b> Rules in force, pace and the story setting are only on the host’s phone; the last game’s result (DS-027) never reaches the TV.</span></div><div class="keep"><b>Keep</b>The QR on vellum and the code tiles · the portraits seated at the ring · the disc count · the cover as the game’s face · the deck shown as real cards.</div></div></div>
+<div class="sec" style="margin-top:34px">Interludes, endings and results today</div><div class="evs"><div class="ev"><div class="im"><img src="./evidence/e12.jpg" alt=""></div><b>Night 0 · the deal</b><p>Three story cards in a column and a rule card: good bones, but small (story cards 150 px) and nothing is dealt to the seats.</p></div><div class="ev"><div class="im"><img src="./evidence/e13.jpg" alt=""></div><b>Nightfall</b><p>Elegant and calm, but the same emblem + title + line as every interlude; no table, no faces, header and band gone.</p></div><div class="ev"><div class="im"><img src="./evidence/e17.jpg" alt=""></div><b>The call (“The vote”)</b><p>A title in a void for 2.6 s. The room already knows; this could be the arch passing over the table instead.</p></div><div class="ev"><div class="im"><img src="./evidence/e18.jpg" alt=""></div><b>Death unmasks</b><p>The name is 22 px, red-on-red and blurred mid-animation; the moment the room has waited for is the smallest thing on screen.</p></div><div class="ev"><div class="im"><img src="./evidence/e14.jpg" alt=""></div><b>The end · the Omen</b><p>“Dorian wins” and one line. No podium, no scores, no table truth; it stays like this until the host moves on.</p></div><div class="ev"><div class="im"><img src="./evidence/e16.jpg" alt=""></div><b>The end · Mimic</b><p>The verdict line is clipped (“A livin…”) and runs off the frame while the convicted medallion floats alone.</p></div><div class="ev"><div class="im"><img src="./evidence/e15.jpg" alt=""></div><b>Results · Missions</b><p>The game board returns with a “The End” header: 13 px Gazette, the rail and the ring unchanged. No honours on the TV.</p></div><div class="ev"><div class="im"><img src="./evidence/e8.jpg" alt=""></div><b>The end · Exorcism</b><p>A blank red frame for ~3 s between the vote and the verdict (TV-R3).</p></div></div>
+<div class="sec" style="margin-top:34px">What each needs to do</div><div class="need"><div class="nd"><b>The lobby</b><ul><li>Get every phone in fast (QR hero, big code)</li><li>Say what we’re playing and teach it while we wait</li><li>Show who is in, who is ready, who is missing</li><li>Show the deal and the rules</li><li>Start with a ceremony, not a cut</li></ul><span class="go">Boards 25–28</span></div><div class="nd"><b>Interludes</b><ul><li>One scene kit with the table, faces and objects</li><li>Header and band stay; a progress line</li><li>A ceremony per game, built from shared parts</li><li>Banners for turn-level news</li><li>No voids, no blank frames</li></ul><span class="go">Boards 29–31</span></div><div class="nd"><b>Celebrations</b><ul><li>A peak moment: who won, in faces</li><li>Light for the town, dark for Death</li><li>Each game’s own flourish (wheel, ball, crews…)</li><li>Solo winners get their own beat</li><li>Sound and motion that build, then settle</li></ul><span class="go">Boards 32–34</span></div><div class="nd"><b>Results</b><ul><li>The table tells the truth: every card turns</li><li>Honours with emblems, readable at 3 m</li><li>Scores, podium and the race for points games</li><li>The evening across games, and the share card</li><li>A clear next step: again, another, or goodnight</li></ul><span class="go">Boards 35–37</span></div></div><div class="notes"></div>
+</div>
+</body></html>

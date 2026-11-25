@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Dead Set TV — 37 · Results — the evening</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Grenze+Gotisch:wght@400;600;800&family=UnifrakturCook:wght@700&display=swap">
+<link rel="stylesheet" href="./ds.css"><link rel="stylesheet" href="./workshop.css"><link rel="stylesheet" href="./tvkit.css">
+
+
+<style>
+body{margin:0}
+
+.mfs{display:grid;gap:30px 32px;padding:0 44px}
+.mf{margin:0;display:grid;gap:12px;align-content:start}
+.mfv{position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(201,163,90,.35),0 20px 40px -20px #000}
+.mfv>.tvx{transform-origin:0 0;position:absolute;left:0;top:0}
+.mf figcaption{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:baseline}
+.mf figcaption .t{font:600 13px/1.2 'EB Garamond',serif;letter-spacing:.2em;text-transform:uppercase;color:#c9a35a}
+.mf figcaption .ms{font:600 13px/1 'EB Garamond',serif;letter-spacing:.12em;color:#e45d50}
+.mf figcaption p{grid-column:1/-1;margin:0;font:400 17px/1.38 'EB Garamond',serif;color:#c2b496}
+.mf figcaption p b{color:#e8dcc0;font-weight:500}
+.sec{font:600 14px/1 'EB Garamond',serif;letter-spacing:.28em;text-transform:uppercase;color:#c9a35a;padding:6px 44px 14px;display:flex;align-items:center;gap:16px}
+.sec::after{content:'';flex:1;height:1px;background:rgba(201,163,90,.3)}
+/* scene composition (TV-S1) */
+.sk{display:grid;justify-items:center;text-align:center;width:1200px}
+.sk .kk{font:600 22px/1 var(--text);letter-spacing:.3em;text-transform:uppercase;color:var(--gilt)}
+.sk h2{font:600 92px/1 var(--black);color:var(--bone);margin:14px 0 30px;position:relative;z-index:2}
+.sk h2.sm{font-size:76px}
+.sk .ln{font:italic 400 32px/1.3 var(--text);color:var(--bone-2);margin:22px 0 0;max-width:44ch}
+.sk .row{display:flex;align-items:center;justify-content:center;gap:40px}
+/* big medallion with portrait */
+.med{position:relative;display:grid;justify-items:center;gap:12px}
+.med i{display:block;border-radius:50%;overflow:hidden;box-shadow:0 0 0 4px var(--ink),0 0 0 5px var(--gilt),0 0 0 14px rgba(201,163,90,.12),0 0 40px rgba(201,163,90,.35)}
+.med i img{width:100%;height:100%;display:block}
+.med b{font:600 24px/1 var(--text);letter-spacing:.2em;text-indent:.2em;text-transform:uppercase;color:var(--bone);background:var(--ink);padding:5px 9px 4px}
+.med.red i{box-shadow:0 0 0 4px var(--ink),0 0 0 5px var(--blood-ink),0 0 0 14px rgba(228,93,80,.14),0 0 46px rgba(228,93,80,.5)}
+.med.red b{color:var(--blood-ink)}
+.med.dim{opacity:.5;filter:grayscale(.7)}
+.med .rl{font:italic 400 24px/1 var(--text);color:var(--bone-2);margin-top:-4px}
+/* rays and dust for celebrations */
+.rays{position:absolute;left:50%;top:-40%;width:1800px;height:1800px;transform:translateX(-50%);background:repeating-conic-gradient(from -90deg at 50% 50%,rgba(236,210,143,.10) 0 3deg,transparent 3deg 12deg);-webkit-mask:radial-gradient(closest-side,#000,transparent);mask:radial-gradient(closest-side,#000 20%,transparent);pointer-events:none;z-index:0}
+.dust{position:absolute;inset:0;pointer-events:none;z-index:0}
+.dust i{position:absolute;width:9px;height:9px;transform:rotate(45deg);background:var(--gilt);box-shadow:0 0 8px rgba(236,210,143,.7)}
+.dust i.s{width:5px;height:5px;opacity:.7}
+.mist{position:absolute;inset:0;pointer-events:none;background:radial-gradient(60% 50% at 50% 60%,rgba(120,16,20,.45),transparent 70%),radial-gradient(90% 40% at 50% 100%,rgba(60,6,10,.8),transparent 70%)}
+.banner{position:relative;padding:14px 70px 16px;background:linear-gradient(#8e6a2a,#c9a35a 40%,#8e6a2a);color:#1d1510;font:600 30px/1 var(--black);clip-path:polygon(0 0,100% 0,96% 50%,100% 100%,0 100%,4% 50%)}
+.banner.red{background:linear-gradient(#5a1014,#9c1c22 45%,#5a1014);color:#f6d3c8}
+.tag2{font:600 15px/1 var(--text);letter-spacing:.2em;text-transform:uppercase;color:var(--gilt)}
+.cov{--acc:#8e1b1f}
+.qrbig{width:250px;height:250px;padding:16px;background:var(--vellum);box-shadow:0 0 0 1px var(--gilt-2),0 0 0 8px var(--ink),0 0 0 9px var(--gilt-2)}
+.qrbig span{display:block;width:100%;height:100%;background:url(./art/qr.svg) center/100% no-repeat}
+.tiles{display:flex;gap:8px}
+.tiles b{width:50px;height:60px;display:grid;place-items:center;border:1px solid var(--gilt-2);background:var(--ink-2);font:500 38px/1 var(--text);color:var(--bone)}
+.chair i{background:transparent!important;border:2px dashed rgba(201,163,90,.35)!important;box-shadow:none!important;color:rgba(201,163,90,.5)!important;font:300 34px/1 var(--text)!important}
+.chair i::before{display:none}
+.chair b{opacity:.0}
+.edge{position:absolute;z-index:3;transform:translate(-50%,-50%)}
+
+.etch{position:relative;border-radius:50%;background:radial-gradient(circle at 50% 42%,#f3ead6,var(--vellum) 62%,#cdbb92);box-shadow:0 0 0 3px var(--ink),0 0 0 4px var(--gilt),0 0 0 12px rgba(201,163,90,.12),0 0 60px rgba(201,163,90,.35);display:grid;place-items:center}
+.etch img{width:86%;height:86%;mix-blend-mode:multiply}
+.etch.night{background:radial-gradient(circle at 50% 42%,#eef0f2,#d7dce4 62%,#aeb6c4);box-shadow:0 0 0 3px var(--ink),0 0 0 4px #9fb0cc,0 0 0 12px rgba(160,180,215,.14),0 0 90px rgba(190,205,235,.35)}
+.etch.blood{background:radial-gradient(circle at 50% 42%,#f2d2c6,#dfa494 62%,#b4604e);box-shadow:0 0 0 3px var(--ink),0 0 0 4px var(--blood-ink),0 0 0 12px rgba(228,93,80,.14),0 0 100px rgba(210,40,30,.45)}
+.etch.gold{background:radial-gradient(circle at 50% 42%,#fbefc8,#e3c27a 62%,#a88140);box-shadow:0 0 0 3px var(--ink),0 0 0 5px #6b4f1c,0 0 0 12px rgba(236,210,143,.18),0 0 70px rgba(236,210,143,.5)}
+.eicon{filter:invert(1) sepia(.7) saturate(1.5) brightness(1.05)}
+.eicon.lit{filter:invert(1) sepia(.7) saturate(1.6) brightness(1.05) drop-shadow(0 0 7px rgba(255,190,90,.75))}
+.eicon.out{filter:invert(1) sepia(.2) brightness(.55);opacity:.45}
+
+.gm{display:flex;gap:18px;justify-content:center}
+.gm .g{display:grid;justify-items:center;gap:10px;width:170px}
+.gm .g .w{display:flex;gap:4px}
+.gm .g .w i{width:38px;height:38px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 2px var(--ink),0 0 0 3px var(--gilt)}
+.gm .g .w i img{width:100%;height:100%}
+.gm .g>span{font:500 20px/1.15 var(--text);color:var(--bone-2);text-align:center}
+.fp{width:300px;padding:16px 18px;background:var(--vellum);box-shadow:0 0 0 1px #77633f,0 24px 40px -20px #000;transform:rotate(-1.5deg);display:grid;gap:8px;color:var(--sepia)}
+.fp .m{font:600 26px/1 var(--black);text-align:center;border-bottom:2px solid var(--sepia);padding-bottom:6px}
+.fp h4{margin:0;font:600 30px/1 var(--black);text-align:center}
+.fp p{margin:0;font:400 16px/1.3 var(--text);color:var(--sepia-2);text-align:center}
+.qr2{width:96px;height:96px;background:url(./art/qr.svg) center/100% no-repeat,var(--vellum);box-shadow:0 0 0 8px var(--vellum),0 0 0 9px var(--gilt-2)}
+
+</style>
+
+<style>body{margin:0;background:#0b0908}</style></head><body>
+
+<div class="ds" style="width:1600px;height:1320px;background:#0b0908">
+<div class="bt"><h1>Results · the evening</h1><p>After several games: the champion, every game and its winners, and tonight’s front page.</p><span class="tag">Proposal</span></div><div class="tvwrap" style="margin-left:0"><div class="tvx  " style="--acc:#8e1b1f;--accg:rgba(142,27,31,.20)"><div class="bgx" style="background-image:url(./bg/05-ink.svg)"></div><i class="cn tl"></i><i class="cn tr"></i><i class="cn bl"></i><i class="cn br"></i><header class="th"><span><span class="wm">Dead <em>Set</em></span></span><span class="ph">The evening</span><span class="st">Five games · 9 players</span><span class="grow"></span><span class="snd" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M9 22V14a7 7 0 0 1 14 0v8l2 3H7z"/></svg></span></header><div class="tb "><div class="stg"><div style="display:grid;justify-items:center;gap:26px"><span class="tag2" style="font-size:22px;letter-spacing:.3em">Tonight at the table · 2 h 10 min</span><div style="display:flex;align-items:center;gap:30px"><div class="med "><i style="width:170px;height:170px"><img src="./av/a0.svg" alt=""></i><b>Viktor</b></div><div style="display:grid;gap:8px;width:300px"><span class="tag2" style="font-size:20px">Champion of the evening</span><span style="font:600 60px/1 var(--black);color:var(--gilt-hi)">Viktor</span><span style="font:italic 400 24px/1.3 var(--text);color:var(--bone-2)">19 points over five games: two wins, never hanged.</span></div><div style="display:flex;align-items:center;gap:22px"><div class="fp" style="width:250px"><span class="m">The Dead Set Gazette</span><h4>Viktor Rules the Night</h4><p>Five games, one table, two Deaths nobody saw coming.</p></div><div style="display:grid;justify-items:center;gap:12px"><div class="qr2"></div><span class="tag2" style="font-size:13px;text-align:center;max-width:130px;line-height:1.4">Scan for tonight’s front page</span></div></div></div><div class="gm"><div class="g"><div class="cover " style="--acc:#8e1b1f;width:120px;font-size:9.38px"><span class="fam">Dead Set</span><div class="win"><img src="./art/death.svg" alt=""></div><h3>Classic</h3><span class="meta"><span>5–25</span><span>~45 min</span></span></div><div class="w"><i><img src=./av/a4.svg alt=></i><i><img src=./av/a8.svg alt=></i></div><span>Death wins</span></div><div class="g"><div class="cover " style="--acc:#9a7b2f;width:120px;font-size:9.38px"><span class="fam">Dead Set</span><div class="win"><img src="./art/p_compass.svg" alt=""></div><h3>The Omen</h3><span class="meta"><span>4–12</span><span>~20 min</span></span></div><div class="w"><i><img src=./av/a17.svg alt=></i></div><span>Dorian</span></div><div class="g"><div class="cover " style="--acc:#6b55a8;width:120px;font-size:9.38px"><span class="fam">Dead Set</span><div class="win"><img src="./art/demon.svg" alt=""></div><h3>Exorcism</h3><span class="meta"><span>3–12</span><span>~10 min</span></span></div><div class="w"><i><img src=./av/a0.svg alt=></i><i><img src=./av/a1.svg alt=></i><i><img src=./av/a2.svg alt=></i><i><img src=./av/a5.svg alt=></i></div><span>The Living</span></div><div class="g"><div class="cover " style="--acc:#4a4f58;width:120px;font-size:9.38px"><span class="fam">Dead Set</span><div class="win"><img src="./art/undertaker.svg" alt=""></div><h3>Coffins</h3><span class="meta"><span>3–10</span><span>~15 min</span></span></div><div class="w"><i><img src=./av/a0.svg alt=></i></div><span>Viktor</span></div><div class="g"><div class="cover " style="--acc:#6f7d74;width:120px;font-size:9.38px"><span class="fam">Dead Set</span><div class="win"><img src="./art/mimic.svg" alt=""></div><h3>Mimic</h3><span class="meta"><span>4–12</span><span>~10 min</span></span></div><div class="w"><i><img src=./av/a0.svg alt=></i><i><img src=./av/a1.svg alt=></i><i><img src=./av/a4.svg alt=></i><i><img src=./av/a5.svg alt=></i></div><span>The table</span></div></div></div></div><aside class=ldg><section class="pnl" style=""><span class="k">The evening · top six of 9</span><div class="ros "><div class="rr hi"><i>V</i><b>Viktor</b><span class="pts">19</span></div><div class="rr "><i>I</i><b>Ilka</b><span class="pts">15</span></div><div class="rr "><i>D</i><b>Dorian</b><span class="pts">14</span></div><div class="rr "><i>B</i><b>Bram</b><span class="pts">12</span></div><div class="rr "><i>M</i><b>Mara</b><span class="pts">10</span></div><div class="rr "><i>Z</i><b>Zsófi</b><span class="pts">9</span></div></div></section><section class="pnl orn" style="display:block;flex:1;min-height:0"><span class="k">Honours of the evening · 2 of 3</span><div class="hon"><div class="hon-top"><div class="etch " style="width:72px;height:72px"><img src="./art/scapegoat.svg" alt=""></div><div><span class="hg">Classic · game 1</span><b>Red herring</b><span class="hw"><i><img src="./av/a3.svg" alt=""></i>Tomi</span></div></div><p>Drew 7 votes and was never Death.</p><div class="hdots"><i class=""></i><i class="on"></i><i class=""></i></div><span class="hnext">Next: Hand on the wheel · The Omen · game 2</span></div></section></aside></div><footer class="tc "><span class="hd"><span class="loz"></span>Again, another game, or goodnight? <em>Ilka decides.</em></span><span class="join"><span class="q"></span><span>Join or rejoin<b>A3RCBG</b></span></span></footer></div><span class="ann" style="left:514px;top:119px">1</span><span class="ann" style="left:295px;top:564px">2</span><span class="ann" style="left:223px;top:161px">3</span><span class="ann" style="left:532px;top:734px">4</span><span class="ann" style="left:1500px;top:640px">5</span><span class="ann" style="left:48px;top:799px">6</span></div><div class="notes"><div class="nt"><span class="ann">1</span><span><b>The evening, not just the game</b>After the third game (or when the host taps “How are we doing?”), the TV shows the whole evening: the champion, every game with its winners, and the running ledger. The data is “Tonight so far” from the lobby (board 28).</span></div><div class="nt"><span class="ann">2</span><span><b>Every game, in order</b>Each game played as its cover with the winners’ faces under it, in the order played. A rematch shows as one cover with a ×2.</span></div><div class="nt"><span class="ann">3</span><span><b>The champion</b>The evening’s top scorer at 200 px with one line that earned it. Ties share the title.</span></div><div class="nt"><span class="ann">4</span><span><b>The share card</b>Tonight’s front page as a vellum card (share.js drawEveningCard), with a QR so anyone can save it. Names can be anonymised from the host’s phone.</span></div><div class="nt"><span class="ann">5</span><span><b>Honours, one at a time</b>Every honour earned tonight (from each game’s awards: Red herring, Hand on the wheel, Called it…) takes the panel in turn, 5 s each: its etching, title, holder with portrait, the game it came from and the line that earned it; a dot track and the next one waiting underneath.</span></div><div class="nt"><span class="ann">6</span><span><b>Goodnight</b>“Goodnight” fades the table out with the candles, leaving the front page on screen for a minute before the idle loop.</span></div></div>
+</div>
+</body></html>

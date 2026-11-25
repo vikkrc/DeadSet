@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Dead Set TV — 25 · Lobby I — arrival</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Grenze+Gotisch:wght@400;600;800&family=UnifrakturCook:wght@700&display=swap">
+<link rel="stylesheet" href="./ds.css"><link rel="stylesheet" href="./workshop.css"><link rel="stylesheet" href="./tvkit.css">
+
+
+<style>
+body{margin:0}
+
+.mfs{display:grid;gap:30px 32px;padding:0 44px}
+.mf{margin:0;display:grid;gap:12px;align-content:start}
+.mfv{position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(201,163,90,.35),0 20px 40px -20px #000}
+.mfv>.tvx{transform-origin:0 0;position:absolute;left:0;top:0}
+.mf figcaption{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:baseline}
+.mf figcaption .t{font:600 13px/1.2 'EB Garamond',serif;letter-spacing:.2em;text-transform:uppercase;color:#c9a35a}
+.mf figcaption .ms{font:600 13px/1 'EB Garamond',serif;letter-spacing:.12em;color:#e45d50}
+.mf figcaption p{grid-column:1/-1;margin:0;font:400 17px/1.38 'EB Garamond',serif;color:#c2b496}
+.mf figcaption p b{color:#e8dcc0;font-weight:500}
+.sec{font:600 14px/1 'EB Garamond',serif;letter-spacing:.28em;text-transform:uppercase;color:#c9a35a;padding:6px 44px 14px;display:flex;align-items:center;gap:16px}
+.sec::after{content:'';flex:1;height:1px;background:rgba(201,163,90,.3)}
+/* scene composition (TV-S1) */
+.sk{display:grid;justify-items:center;text-align:center;width:1200px}
+.sk .kk{font:600 22px/1 var(--text);letter-spacing:.3em;text-transform:uppercase;color:var(--gilt)}
+.sk h2{font:600 92px/1 var(--black);color:var(--bone);margin:14px 0 30px;position:relative;z-index:2}
+.sk h2.sm{font-size:76px}
+.sk .ln{font:italic 400 32px/1.3 var(--text);color:var(--bone-2);margin:22px 0 0;max-width:44ch}
+.sk .row{display:flex;align-items:center;justify-content:center;gap:40px}
+/* big medallion with portrait */
+.med{position:relative;display:grid;justify-items:center;gap:12px}
+.med i{display:block;border-radius:50%;overflow:hidden;box-shadow:0 0 0 4px var(--ink),0 0 0 5px var(--gilt),0 0 0 14px rgba(201,163,90,.12),0 0 40px rgba(201,163,90,.35)}
+.med i img{width:100%;height:100%;display:block}
+.med b{font:600 24px/1 var(--text);letter-spacing:.2em;text-indent:.2em;text-transform:uppercase;color:var(--bone);background:var(--ink);padding:5px 9px 4px}
+.med.red i{box-shadow:0 0 0 4px var(--ink),0 0 0 5px var(--blood-ink),0 0 0 14px rgba(228,93,80,.14),0 0 46px rgba(228,93,80,.5)}
+.med.red b{color:var(--blood-ink)}
+.med.dim{opacity:.5;filter:grayscale(.7)}
+.med .rl{font:italic 400 24px/1 var(--text);color:var(--bone-2);margin-top:-4px}
+/* rays and dust for celebrations */
+.rays{position:absolute;left:50%;top:-40%;width:1800px;height:1800px;transform:translateX(-50%);background:repeating-conic-gradient(from -90deg at 50% 50%,rgba(236,210,143,.10) 0 3deg,transparent 3deg 12deg);-webkit-mask:radial-gradient(closest-side,#000,transparent);mask:radial-gradient(closest-side,#000 20%,transparent);pointer-events:none;z-index:0}
+.dust{position:absolute;inset:0;pointer-events:none;z-index:0}
+.dust i{position:absolute;width:9px;height:9px;transform:rotate(45deg);background:var(--gilt);box-shadow:0 0 8px rgba(236,210,143,.7)}
+.dust i.s{width:5px;height:5px;opacity:.7}
+.mist{position:absolute;inset:0;pointer-events:none;background:radial-gradient(60% 50% at 50% 60%,rgba(120,16,20,.45),transparent 70%),radial-gradient(90% 40% at 50% 100%,rgba(60,6,10,.8),transparent 70%)}
+.banner{position:relative;padding:14px 70px 16px;background:linear-gradient(#8e6a2a,#c9a35a 40%,#8e6a2a);color:#1d1510;font:600 30px/1 var(--black);clip-path:polygon(0 0,100% 0,96% 50%,100% 100%,0 100%,4% 50%)}
+.banner.red{background:linear-gradient(#5a1014,#9c1c22 45%,#5a1014);color:#f6d3c8}
+.tag2{font:600 15px/1 var(--text);letter-spacing:.2em;text-transform:uppercase;color:var(--gilt)}
+.cov{--acc:#8e1b1f}
+.qrbig{width:250px;height:250px;padding:16px;background:var(--vellum);box-shadow:0 0 0 1px var(--gilt-2),0 0 0 8px var(--ink),0 0 0 9px var(--gilt-2)}
+.qrbig span{display:block;width:100%;height:100%;background:url(./art/qr.svg) center/100% no-repeat}
+.tiles{display:flex;gap:8px}
+.tiles b{width:50px;height:60px;display:grid;place-items:center;border:1px solid var(--gilt-2);background:var(--ink-2);font:500 38px/1 var(--text);color:var(--bone)}
+.chair i{background:transparent!important;border:2px dashed rgba(201,163,90,.35)!important;box-shadow:none!important;color:rgba(201,163,90,.5)!important;font:300 34px/1 var(--text)!important}
+.chair i::before{display:none}
+.chair b{opacity:.0}
+.edge{position:absolute;z-index:3;transform:translate(-50%,-50%)}
+
+.etch{position:relative;border-radius:50%;background:radial-gradient(circle at 50% 42%,#f3ead6,var(--vellum) 62%,#cdbb92);box-shadow:0 0 0 3px var(--ink),0 0 0 4px var(--gilt),0 0 0 12px rgba(201,163,90,.12),0 0 60px rgba(201,163,90,.35);display:grid;place-items:center}
+.etch img{width:86%;height:86%;mix-blend-mode:multiply}
+.etch.night{background:radial-gradient(circle at 50% 42%,#eef0f2,#d7dce4 62%,#aeb6c4);box-shadow:0 0 0 3px var(--ink),0 0 0 4px #9fb0cc,0 0 0 12px rgba(160,180,215,.14),0 0 90px rgba(190,205,235,.35)}
+.etch.blood{background:radial-gradient(circle at 50% 42%,#f2d2c6,#dfa494 62%,#b4604e);box-shadow:0 0 0 3px var(--ink),0 0 0 4px var(--blood-ink),0 0 0 12px rgba(228,93,80,.14),0 0 100px rgba(210,40,30,.45)}
+.etch.gold{background:radial-gradient(circle at 50% 42%,#fbefc8,#e3c27a 62%,#a88140);box-shadow:0 0 0 3px var(--ink),0 0 0 5px #6b4f1c,0 0 0 12px rgba(236,210,143,.18),0 0 70px rgba(236,210,143,.5)}
+.eicon{filter:invert(1) sepia(.7) saturate(1.5) brightness(1.05)}
+.eicon.lit{filter:invert(1) sepia(.7) saturate(1.6) brightness(1.05) drop-shadow(0 0 7px rgba(255,190,90,.75))}
+.eicon.out{filter:invert(1) sepia(.2) brightness(.55);opacity:.45}
+
+.jn{display:grid;justify-items:center;gap:18px;padding:26px 26px 24px;border:1px solid rgba(201,163,90,.4);background:linear-gradient(rgba(34,27,21,.9),rgba(21,17,14,.9));position:relative}
+.jn::before{content:'';position:absolute;inset:5px;border:1px solid rgba(201,163,90,.14);pointer-events:none}
+.jn .tag2{font-size:17px;letter-spacing:.26em}
+.jn .url{font:500 22px/1 var(--text);color:var(--bone-2)} .jn .url b{color:var(--bone);font-weight:500}
+.cv{display:grid;grid-template-columns:130px 1fr;gap:18px;align-items:center}
+.cv h3{font:600 34px/1 var(--black);white-space:nowrap;color:var(--bone);margin:0 0 8px}
+.cv p{margin:0;font:italic 400 22px/1.3 var(--text);color:var(--bone-2)}
+.cv .mt{display:flex;flex-wrap:wrap;gap:6px 14px;white-space:nowrap;margin-top:10px;font:600 15px/1 var(--text);letter-spacing:.2em;text-transform:uppercase;color:var(--gilt)}
+.tch{display:grid;gap:10px}
+.tch .st{display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:start}
+.tch .st i{width:44px;height:44px;border-radius:50%;border:1px solid var(--gilt-2);display:grid;place-items:center;font:600 20px/1 var(--black);font-style:normal;color:var(--gilt)}
+.tch .st b{display:block;font:600 26px/1.05 var(--black);color:var(--bone)}
+.tch .st span{font:400 22px/1.28 var(--text);color:var(--bone-2)}
+.dots{display:flex;gap:8px;margin-top:4px}.dots i{width:12px;height:12px;transform:rotate(45deg);border:1px solid var(--gilt-2)}.dots i.on{background:var(--gilt)}
+.tch .st.nx{opacity:.5;align-items:center}.tch .st.nx b{font-size:22px}
+.tch .st.nx i{width:36px;height:36px;font-size:16px;margin-left:4px}
+.tkr .tkw{flex:1;min-height:0;overflow:hidden;-webkit-mask:linear-gradient(transparent,#000 14%,#000 80%,transparent);mask:linear-gradient(transparent,#000 14%,#000 80%,transparent)}
+.tkr .tkt{display:grid;gap:12px;padding-top:6px}
+.tkr .tkc{display:grid;grid-template-columns:52px 1fr;gap:14px;align-items:center}
+.tkr .tkc b{display:block;font:600 24px/1.05 var(--black);color:var(--bone)}
+.tkr .tkc span{font:italic 400 19px/1.2 var(--text);color:var(--bone-2)}
+.tkr .tkc.rule b{color:#f0b9ad}
+.land{position:absolute;z-index:5;left:50%;top:10%;transform:translate(-50%,-50%)}
+
+</style>
+
+<style>body{margin:0;background:#0b0908}</style></head><body>
+
+<div class="ds" style="width:1600px;height:1320px;background:#0b0908">
+<div class="bt"><h1>Lobby I · Arrival</h1><p>The first minute: get every phone in, and tell the room what it is about to play.</p><span class="tag">Proposal</span></div><div class="tvwrap" style="margin-left:0"><div class="tvx  " style="--acc:#8e1b1f;--accg:rgba(142,27,31,.20)"><div class="bgx" style="background-image:url(./bg/05-ink.svg)"></div><i class="cn tl"></i><i class="cn tr"></i><i class="cn bl"></i><i class="cn br"></i><header class="th"><span><span class="wm">Dead <em>Set</em></span><span class="md">Classic</span></span><span class="ph">The gathering</span><span class="st">2 seated · the host is choosing the deck</span><span class="grow"></span><span class="snd" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M9 22V14a7 7 0 0 1 14 0v8l2 3H7z"/></svg></span></header><div class="tb "><div class="stg"><div style="display:grid;grid-template-columns:380px 600px;gap:44px;align-items:center"><div class="jn"><span class="tag2">Scan to take a seat</span><div class="qrbig"><span></span></div>
+<div class="tiles"><b>A</b><b>3</b><b>R</b><b>C</b><b>B</b><b>G</b></div><span class="url">deadset.onrender.com/<b>A3RCBG</b></span></div><div class="table " style="width:600px;--t:0.25"><div class="orbit"></div><div class="disc"><span class="bit gilt" style="font-size:80px;font-family:var(--black)">2</span><span class="lab" style="font-size:16px">seated · 5 to 25</span></div><div class="seat lg " style="left:50.0%;top:10.0%"><span class="mk ok">✓</span><i class="av"><img src="./av/a0.svg" alt=""></i><b>Viktor</b></div><div class="seat lg pick" style="left:78.3%;top:21.7%"><i class="av"><img src="./av/a1.svg" alt=""></i><b>Ilka</b></div><div class="seat lg chair" style="left:90.0%;top:50.0%"><i>+</i><b>·</b></div><div class="seat lg chair" style="left:78.3%;top:78.3%"><i>+</i><b>·</b></div><div class="seat lg chair" style="left:50.0%;top:90.0%"><i>+</i><b>·</b></div><div class="seat lg chair" style="left:21.7%;top:78.3%"><i>+</i><b>·</b></div><div class="seat lg chair" style="left:10.0%;top:50.0%"><i>+</i><b>·</b></div><div class="seat lg chair" style="left:21.7%;top:21.7%"><i>+</i><b>·</b></div></div></div></div><aside class=ldg><section class="pnl now"><span class="k">Tonight we play</span><div class="cv"><div class="cover " style="--acc:#8e1b1f;width:130px;font-size:10.16px"><span class="fam">Dead Set</span><div class="win"><img src="./art/death.svg" alt=""></div></div><div><h3>Classic Dead Set</h3><p>Hidden roles, night kills, Dreams and Rule cards.</p><div class="mt"><span>5–25 players</span><span>~45 min</span></div></div></div></section>
+<section class="pnl"><span class="k">How it works · 1 of 4</span><div class="tch"><div class="st"><i>I</i><div><b>Hidden roles</b><span>Everyone gets a secret role. Death’s team knows each other; the town does not.</span></div></div></div><div class="dots" style="margin-top:12px"><i class="on"></i><i></i><i></i><i></i></div></section><section class="pnl tkr" style="flex:1;min-height:0;display:flex;flex-direction:column"><span class="k">Tonight’s cards · 8 roles · 1 rule</span><div class="tkw"><div class="tkt"><div class="tkc rule"><div class="card noir rubric" style="width:46px;font-size:2.97px;transform:rotate(0deg)"><span class="num"></span><div class="art"><img src="./art/s_lone.svg" alt=""></div></div><div><b>Equal Exchange</b><span>A sentenced Death may take one down with them.</span></div></div><div class="tkc "><div class="card noir " style="width:46px;font-size:2.97px;transform:rotate(0deg)"><span class="num"></span><div class="art"><img src="./art/death.svg" alt=""></div></div><div><b>Death ×2</b><span>Agrees one shared kill each night.</span></div></div><div class="tkc "><div class="card  " style="width:46px;font-size:2.97px;transform:rotate(0deg)"><span class="num"></span><div class="art"><img src="./art/innocent.svg" alt=""></div></div><div><b>Innocent ×3</b><span>No power. Your voice and your vote.</span></div></div><div class="tkc "><div class="card  " style="width:46px;font-size:2.97px;transform:rotate(0deg)"><span class="num"></span><div class="art"><img src="./art/guardian.svg" alt=""></div></div><div><b>Guardian</b><span>Shields one player from Death.</span></div></div><div class="tkc "><div class="card  " style="width:46px;font-size:2.97px;transform:rotate(0deg)"><span class="num"></span><div class="art"><img src="./art/mentalist.svg" alt=""></div></div><div><b>Mentalist</b><span>Reads one player: Death or not.</span></div></div><div class="tkc "><div class="card  " style="width:46px;font-size:2.97px;transform:rotate(0deg)"><span class="num"></span><div class="art"><img src="./art/oracle.svg" alt=""></div></div><div><b>Oracle</b><span>Once: guess who Death will strike tonight.</span></div></div></div></div></section></aside></div><footer class="tc "><span class="hd"><span class="loz"></span>Scan the code with your phone to take a seat. <em>No app, no account.</em></span><span></span></footer></div><span class="ann" style="left:230px;top:120px">1</span><span class="ann" style="left:1000px;top:650px">2</span><span class="ann" style="left:828px;top:173px">3</span><span class="ann" style="left:1500px;top:150px">4</span><span class="ann" style="left:1512px;top:494px">5</span><span class="ann" style="left:48px;top:799px">6</span></div><div class="notes"><div class="nt"><span class="ann">1</span><span><b>Join is the hero</b>Until the table fills, the QR (250 px on vellum) and the code (38 px tiles) are the biggest things on screen, with the real address. The band repeats the one instruction in 30 px. The TV hides its own join chip in the band while this panel is up.</span></div><div class="nt"><span class="ann">2</span><span><b>Empty chairs</b>The table shows seats for the players expected (the preset’s count, or 6 by default) as dashed chairs, so the room sees the shape of the game before anyone sits. A chair fills the moment a phone joins.</span></div><div class="nt"><span class="ann">3</span><span><b>Arrival</b>Each new player’s portrait drops onto the next chair (Deal, 450 ms) with a soft chime; their name types in. Choosing a face shows a gilt halo on the seat (here: Ilka); ready shows the tick.</span></div><div class="nt"><span class="ann">4</span><span><b>What we play, large</b>The cover at 130 px (art only; the name is beside it) with the title (34 px), pitch, player range and length: the room knows what it signed up for. It changes live as the host browses games on their phone.</span></div><div class="nt"><span class="ann">5</span><span><b>Teach, then tonight’s cards</b>The teach step cycles every 8 s (UX Part II, B1). Under it, a slow upward ticker of every card and rule in play: card, name, one line of what it does; rules first, in rubric. It re-deals when the host changes the deck.</span></div><div class="nt"><span class="ann">6</span><span><b>No buttons</b>No “Start the score”, no “Press F”. The score starts with the host’s first tap; the full-screen hint shows once, for 5 s, in the band.</span></div></div>
+</div>
+</body></html>
