@@ -15,7 +15,8 @@ import { mirrorBoard } from './mirror.js';
 import { cardArt, roleEmblemId } from './cards.js';
 import { missionBoardStage, missionBoardRing, gridHtml, hunchArrowsSvg, hunchLegend } from './missions.js';
 import { modeInfo } from './modes.js';
-import { tvFrame, nowCard, panel, latestHeadlines } from './tvframe.js';
+import { tvFrame, tvHeader, nowCard, panel, latestHeadlines } from './tvframe.js';
+import { modeTitle, modePitch, modeMeta } from './covers.js';
 import { editions } from './gazette.js';
 
 /** Which Rule cards shape the current phase, with a one-line note. */
@@ -157,34 +158,7 @@ export function boardScreen(v, h) {
     const ruleCards = !classic ? '' : s.rules.mode === 'manual'
       ? (s.rules.selected.length ? s.rules.selected.map((id) => `<div class="tarot--small dcard rcard tarot edict" data-key="rc-${id}"><i class="ed-ini" aria-hidden="true">${esc([...ruleF(id, 'name')][0] ?? '')}</i><b>${esc(ruleF(id, 'name'))}</b></div>`).join('') : `<p class="small muted">${t('No rule cards.')}</p>`)
       : Array.from({ length: s.rules.count }, (_, i) => `<div class="tarot--small dcard rcard fd tarot back" data-key="rc-r${i}"><span class="sig">?</span><b>${t('Drawn at start')}</b></div>`).join('') || `<p class="small muted">${t('No rule cards.')}</p>`;
-    // TV lobby on the shared grid: join on the left rail, the astrolabe table in the middle (a list from ten
-    // seats on, where names would crowd the rim), the game and its How it works on the right rail.
-    const ready = v.players.filter((p) => p.ready).length;
-    const big = v.players.length >= 10;
-    const seatsHtml = big
-      ? `<ol class="tv-seatlist" data-key="tvseats">${v.players.map((p, i) => `<li class="${p.ready ? 'ok' : ''}" data-key="tvs-${p.id}"><span class="n">${i + 1}</span><span class="ba-face">${h.avatar(p)}</span><b>${esc(p.name)}</b>${p.ready ? glyph('check') : ''}</li>`).join('')}</ol>`
-      : ring(v, { lobby: true, slots: Math.max(5, v.players.length), center: `<span class="c-big">${ready}<small>/${v.players.length}</small></span><span class="c-sub">${esc(t('ready'))}</span>` });
-    return `<main class="board2 lobby tv-grid" data-key="board-lobby">${header}
-      <div class="tv-body">
-        <aside class="tv-rail tv-panel tv-joinp" data-key="tvjoin" data-autoscroll>
-          <span class="kicker">${t('Scan to take a seat')}</span>
-          <div class="qr-frame">${qrSvg(url)}</div>
-          <div class="code-tiles big">${codeTiles(v.code)}</div>
-          <span class="tv-url">${esc(location.host)}</span>
-          <p class="tv-ready">${esc(th('Starting when everyone is ready · {n} of {m}', { n: ready, m: v.players.length }))}</p>
-        </aside>
-        <section class="tv-stage" data-key="tvstage">${seatsHtml}</section>
-        <aside class="tv-rail tv-panel tv-gamep" data-key="tvgame" data-autoscroll>
-          ${h.cover ? `<div class="tv-gcover">${h.cover(v.mode, { bare: true })}</div>` : ''}
-          ${h.how ? `<div class="tv-how" data-step="${h.howStep ?? 0}" data-key="tvhow">${h.how}</div>` : ''}
-          <div class="tv-deck">
-            <span class="kicker">${t('Tonight\'s deck')} · ${esc(presetF(s.preset, 'name'))}</span>
-            <div class="deckrow">${deckHtml}</div>
-            ${classic ? `<span class="kicker">${t('Rule cards')}</span><div class="deckrow">${ruleCards}</div>` : ''}
-            ${v.mode === 'coffins' ? `<div class="c-lobbyhand">${Array.from({ length: s.c?.coffins ?? 4 }, (_, i) => coffinCard(i === (s.c?.coffins ?? 4) - 1 ? 'C' : 'G')).join('')}</div>` : ''}
-          </div>
-        </aside>
-      </div></main>`;
+    return lobbyTv(v, h, { deckHtml, ruleCards, roles });
   }
 
   if (v.mode === 'exorcism' && v.exorcism) return exorcismBoard(v, { ...h, header, ring });
@@ -262,6 +236,51 @@ export function boardScreen(v, h) {
   const stage = `${table}${mr && v.phase === 'ENDED' && v.missions?.hunches?.length ? hunchLegend() : ''}`;
   return tvFrame(v, h, { stage, ledger, herald: now.herald ?? '', night, backdrop, key: 'board-game', cls: `${night ? 'is-night' : 'is-day'} ${backdrop ? 'has-backdrop' : ''}` })
     + `<div class="b-pressure" aria-hidden="true">${Array.from({ length: 22 }, (_, i) => `<i style="--i:${i}"></i>`).join('')}</div>`;
+}
+
+/**
+ * TV-L7 / TV-L8: the lobby on the frame. Until the expected players are seated (the preset's minimum, or six),
+ * the join panel is the hero beside a table of empty chairs; then the table takes the stage with its ready ticks.
+ * The ledger tells the room what it is about to play and teaches it, a step at a time.
+ */
+function lobbyTv(v, h, { deckHtml, ruleCards, roles }) {
+  const { t, th, glyph, ring, codeTiles, qrSvg, presetF, ruleF, roleF, avatar } = h;
+  const s = v.settings;
+  const info = modeInfo(v.mode);
+  const preset = v.presets?.find((p) => p.id === s.preset);
+  const expected = Math.max(v.players.length, preset?.min ?? info.min ?? 6, 4);
+  const n = v.players.length;
+  const ready = v.players.filter((p) => p.ready).length;
+  const arrival = n < expected;
+  const url = `${location.origin}/r/${v.code}`;
+  // Teach: the game's own steps, one at a time (every 8 s), with a dot track.
+  const steps = [...(h.how ?? '').matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)].map((m) => m[1]);
+  const k = steps.length ? (h.howStep ?? 0) % steps.length : 0;
+  const teach = steps.length ? `<div class="lb-teach" data-key="lbteach-${k}">${steps[k]}</div><span class="lb-dots" aria-hidden="true">${steps.map((_, i) => `<i class="${i === k ? 'on' : ''}"></i>`).join('')}</span>` : '';
+  const title = modeTitle(v.mode);
+  const tonight = `<section class="tv-now lb-tonight" data-key="lbtonight"><span class="kicker">${t('Tonight we play')}</span>
+    <div class="lb-game">${h.cover ? `<span class="lb-cover">${h.cover(v.mode, { bare: true })}</span>` : ''}<span><b>${esc(title)}</b><em>${esc(modePitch(v.mode))}</em><small>${esc(modeMeta(v.mode))}</small></span></div></section>`;
+  const how = teach ? panel(th('How it works · {n} of {m}', { n: k + 1, m: steps.length }), teach, 'lbhow') : '';
+  const deck = deckHtml ? panel(th('Tonight\'s deck · {name}', { name: presetF(s.preset, 'name') }), `<div class="lb-deck">${deckHtml}</div>${v.mode === 'classic' ? `<span class="kicker lb-rk">${t('Rule cards')}</span><div class="lb-deck">${ruleCards}</div>` : ''}`, 'lbdeck') : '';
+  const header = tvHeader(v, h, { word: t('The gathering'), step: esc(arrival ? th('{n} seated · {m} expected', { n, m: expected }) : th('{n} seated · {r} ready', { n, r: ready })) });
+  const notReady = v.players.filter((p) => !p.ready);
+  const herald = arrival ? `${t('Scan the code with your phone to take a seat.')} <em>${t('No app, no account.')}</em>`
+    : !notReady.length ? th('All {n} are ready. The host starts when the room is settled.', { n })
+      : notReady.length <= 3 ? th('Waiting for {names}', { names: notReady.map((p) => p.name) }) : t('Ready up on your phone.');
+  const table = ring(v, { lobby: true, slots: arrival ? expected : n, center: arrival
+    ? `<span class="c-big">${n}</span><span class="c-sub">${esc(th('seated · {a} to {b}', { a: info.min ?? preset?.min ?? 4, b: info.max ?? preset?.max ?? 12 }))}</span>`
+    : `<span class="c-big">${ready}<small>/${n}</small></span><span class="c-sub">${esc(t(ready === n ? 'all ready' : 'ready'))}</span>` });
+  const join = `<section class="tv-now lb-join" data-key="lbjoin"><span class="kicker">${t('Scan to take a seat')}</span><div class="qr-frame">${qrSvg(url)}</div>
+    <div class="code-tiles big">${codeTiles(v.code)}</div><span class="tv-url">${esc(`${location.host}/r/${v.code}`)}</span>
+    ${v.table?.score !== false && !h.audio ? `<p class="lb-sound">${glyph('bell')} ${t('Sound plays from this screen: tap it once to turn it on.')}</p>` : ''}</section>`;
+  const stage = arrival ? `<div class="duo lb-arrival">${join}<div class="duo-h">${table}</div></div>` : table;
+  // Gathering: the Now card is the teach step; the game and tonight's deck below it.
+  const teachNow = teach ? `<section class="tv-now lb-now" data-key="lbnow"><span class="kicker">${th('How it works · {n} of {m}', { n: k + 1, m: steps.length })}</span>${teach}</section>` : '';
+  // Every step at a glance, the one being taught lit (where there is no deck to show, this fills the record).
+  const titles = steps.map((x) => (x.match(/<b>([\s\S]*?)<\/b>/)?.[1] ?? '').replace(/<[^>]+>/g, ''));
+  const outline = !deck && titles.length ? panel(t('The game in steps'), `<ol class="lb-outline">${titles.map((x, i) => `<li class="${i === k ? 'on' : ''}"><i>${i + 1}</i>${esc(x)}</li>`).join('')}</ol>`, 'lboutline') : '';
+  const ledger = arrival ? `${tonight}${how}${deck}` : `${teachNow}${tonight.replace('tv-now lb-tonight', 'tvx-pnl lb-tonight')}${deck || outline}`;
+  return tvFrame(v, h, { stage, ledger, herald, header, key: 'board-lobby', cls: `lobby ${arrival ? 'is-arrival' : 'is-gathering'}` });
 }
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

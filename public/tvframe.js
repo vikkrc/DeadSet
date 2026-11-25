@@ -8,12 +8,12 @@ import { t, th } from './i18n.js';
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /** The header: wordmark (and the mode under it), the phase word with its numeral, one step line, the clock dial, the bell. */
-export function tvHeader(v, h, { step = null } = {}) {
+export function tvHeader(v, h, { step = null, word = null } = {}) {
   const { phaseWord, modeName, wordmark, stepOf, scen } = h;
-  const pw = phaseWord(v);
+  const pw = word ? { word, num: '', night: false } : phaseWord(v);
   const place = v.scenario && v.mode === 'classic' ? scen('WHERE', v.scenario.where) : '';
   const line = step ?? `${esc(stepOf(v))}${place ? ` · <b>${esc(place)}</b>` : ''}`;
-  const mode = v.phase === 'LOBBY' || v.mode === 'classic' ? '' : esc(modeName(v).replace(/^Dead Set\s*[:·–-]\s*/i, ''));
+  const mode = v.mode === 'classic' && v.phase !== 'LOBBY' ? '' : esc(modeName(v).replace(/^Dead Set\s*[:·–-]\s*/i, ''));
   // TV-R7: after the lobby the score is a 40-unit bell, never a button with words. Any key or tap on the TV starts it.
   const on = !!h.audio && v.table?.score !== false;
   const bell = v.table?.score === false ? '' : `<span class="tvx-bell ${on ? 'on' : 'off'}" data-key="tvbell" role="img" aria-label="${esc(on ? t('The score is playing') : t('Sound is off'))}">${glyph('bell')}${on ? '' : '<i class="tvx-bell-x"></i>'}</span>`;

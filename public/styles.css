@@ -6673,3 +6673,59 @@ body.is-board .moment .paper { width: min(100%, calc(var(--tvu) * 1260)); max-he
 body.is-board.has-moment #app > main.board2.tvx { visibility: visible; }
 body.is-board.has-moment #app > main.board2.tvx .tvx-body { visibility: hidden; }
 .tvx .tv-now .tvx-rule b { font: 600 calc(var(--tvu) * 20)/1.3 var(--text); color: var(--bone); padding: 0; }
+
+/* TV-L7: arrival. The join panel (ornate: it asks something of the room) beside the table of empty chairs */
+.tvx .lb-arrival { grid-template-columns: calc(var(--tvu) * 380) minmax(0, 1fr); }
+.tvx .lb-join { align-items: center; text-align: center; gap: calc(var(--tvu) * 14); padding: calc(var(--tvu) * 24) calc(var(--tvu) * 26) calc(var(--tvu) * 22); }
+.tvx .lb-join .qr-frame { width: calc(var(--tvu) * 250); height: calc(var(--tvu) * 250); padding: calc(var(--tvu) * 12); background: var(--vellum); }
+.tvx .lb-join .qr-frame svg { width: 100%; height: 100%; display: block; }
+.tvx .lb-join .code-tiles.big .tile { width: calc(var(--tvu) * 46); height: calc(var(--tvu) * 56); font-size: calc(var(--tvu) * 38); }
+.tvx .lb-join .tv-url { font: 400 calc(var(--tvu) * 22)/1.2 var(--text); color: var(--bone); }
+.tvx .lb-join .lb-sound { margin: calc(var(--tvu) * 4) 0 0; font: italic 400 calc(var(--tvu) * 18)/1.3 var(--text); color: var(--bone-2); display: flex; gap: calc(var(--tvu) * 8); align-items: center; justify-content: center; }
+.tvx .lb-join .lb-sound svg { width: calc(var(--tvu) * 20); height: calc(var(--tvu) * 20); color: var(--gilt); flex: none; }
+.tvx .lb-arrival .duo-h > .ring-wrap { width: min(100%, calc(var(--tvu) * 600)); }
+.tvx .lb-arrival .duo-h > .ring-wrap > .ring { width: min(calc(var(--tvu) * 600), 100cqh); }
+.tvx .tok.empty .tok-name { font-size: calc(var(--tvu) * 16); }
+/* the game the room is about to play */
+.tvx .lb-game { display: grid; grid-template-columns: calc(var(--tvu) * 112) minmax(0, 1fr); gap: calc(var(--tvu) * 18); align-items: center; }
+.tvx .lb-cover { display: block; width: calc(var(--tvu) * 112); }
+.tvx .lb-cover > * { width: 100%; }
+.tvx .lb-game b { display: block; font: 600 calc(var(--tvu) * 34)/1.02 var(--black); color: var(--bone); padding-bottom: 0.06em; }
+.tvx .lb-game em { display: block; margin-top: calc(var(--tvu) * 6); font: italic 400 calc(var(--tvu) * 21)/1.25 var(--text); color: var(--bone-2); }
+.tvx .lb-game small { display: block; margin-top: calc(var(--tvu) * 8); font: 600 calc(var(--tvu) * 15)/1 var(--text); letter-spacing: 0.2em; text-transform: uppercase; color: var(--gilt); }
+.tvx .tvx-pnl.lb-tonight .lb-cover { width: calc(var(--tvu) * 84); } .tvx .tvx-pnl.lb-tonight .lb-game { grid-template-columns: calc(var(--tvu) * 84) minmax(0, 1fr); }
+.tvx .tvx-pnl.lb-tonight .lb-game b { font-size: calc(var(--tvu) * 28); }
+/* teach: one step at a time, with a dot track */
+.tvx .lb-teach { display: flex; gap: calc(var(--tvu) * 14); align-items: flex-start; animation: fadeIn var(--t-slow) var(--ease) both; }
+.tvx .lb-teach .xs-g { width: calc(var(--tvu) * 44); height: calc(var(--tvu) * 44); flex: none; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--gilt-2); color: var(--gilt); }
+.tvx .lb-teach .xs-g svg { width: calc(var(--tvu) * 26); height: calc(var(--tvu) * 26); }
+.tvx .lb-teach b { display: block; font: 600 calc(var(--tvu) * 26)/1.05 var(--black); color: var(--bone); padding-bottom: 0.06em; }
+.tvx .lb-teach small { display: block; margin-top: calc(var(--tvu) * 4); font: 400 calc(var(--tvu) * 22)/1.3 var(--text); color: var(--bone-2); }
+.tvx .lb-now .lb-teach b { font-size: calc(var(--tvu) * 34); }
+.tvx .lb-now .lb-teach small { font-size: calc(var(--tvu) * 24); }
+.tvx .lb-dots { display: flex; gap: calc(var(--tvu) * 8); margin-top: calc(var(--tvu) * 12); }
+.tvx .lb-dots i { width: calc(var(--tvu) * 10); height: calc(var(--tvu) * 10); transform: rotate(45deg); border: 1px solid var(--gilt-2); }
+.tvx .lb-dots i.on { background: var(--gilt); border-color: var(--gilt); }
+/* tonight's deck: 66 cards in a five-column grid, names under in mixed case, never broken */
+.tvx .lb-deck { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: calc(var(--tvu) * 12) calc(var(--tvu) * 10); }
+.tvx .lb-deck .dcard { width: calc(var(--tvu) * 66); justify-self: center; font-size: calc(var(--tvu) * 6); position: relative; }
+.tvx .lb-deck .dcard b { position: absolute; top: 100%; left: 50%; translate: -50% 0; margin-top: calc(var(--tvu) * 4); width: calc(var(--tvu) * 84); text-align: center; font: 500 calc(var(--tvu) * 15)/1.05 var(--text); letter-spacing: 0; text-transform: none; color: var(--bone-2); }
+.tvx .lb-deck .dcard i { position: absolute; top: -6px; right: -8px; font: 600 calc(var(--tvu) * 15)/1 var(--text); font-style: normal; padding: calc(var(--tvu) * 3) calc(var(--tvu) * 5); background: var(--gilt); color: var(--ink); border-radius: calc(var(--tvu) * 8); }
+.tvx .lb-deck { padding-bottom: calc(var(--tvu) * 32); row-gap: calc(var(--tvu) * 44); }
+.tvx .lb-rk { margin-top: calc(var(--tvu) * 6); }
+/* the gathering: the disc's count in 80 units */
+.tvx.is-gathering .ring-center .c-big, .tvx.is-arrival .ring-center .c-big { font-size: calc(var(--tvu) * 80); }
+
+/* empty chairs on the TV: a dashed ring with a +, no label */
+.tvx .tok.empty .tok-name { visibility: hidden; }
+.tvx .tok.empty .tok-disc { border: 1.5px dashed var(--gilt-2); display: grid; place-items: center; animation: none; }
+.tvx .tok.empty .tok-disc::after { content: '+'; font: 300 calc(var(--tvu) * 30)/1 var(--text); color: var(--gilt-2); }
+/* the full-screen hint sits above the band, never over the header */
+body.is-board .tv-fs-hint { top: auto; bottom: calc(var(--tvu) * 96); }
+
+.tvx .lb-outline { list-style: none; margin: 0; padding: 0; display: grid; gap: calc(var(--tvu) * 4); }
+.tvx .lb-outline li { display: flex; align-items: center; gap: calc(var(--tvu) * 12); min-height: calc(var(--tvu) * 40); font: 500 calc(var(--tvu) * 22)/1.15 var(--text); color: var(--bone-2); border-bottom: 1px solid color-mix(in srgb, var(--iron) 70%, transparent); }
+.tvx .lb-outline li:last-child { border: 0; }
+.tvx .lb-outline li i { width: calc(var(--tvu) * 28); height: calc(var(--tvu) * 28); flex: none; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--gilt-2); font: 600 calc(var(--tvu) * 15)/1 var(--text); font-style: normal; color: var(--gilt); }
+.tvx .lb-outline li.on { color: var(--bone); }
+.tvx .lb-outline li.on i { background: var(--gilt); color: var(--ink); }
