@@ -4,7 +4,7 @@ import { createHash, randomBytes, randomInt } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync, renameSync, existsSync } from 'node:fs';
 import { dirname } from 'node:path';
 import {
-  newMatch, addPlayer, removePlayer, moveSeat, updateSettings, startMatch, playerCommand,
+  newMatch, addPlayer, removePlayer, moveSeat, updateSettings, startMatch, playerCommand, setupReport,
   hostAdvance, onDeadline, extendDeadline, abortMatch, rematch, normaliseName, GameError, MANUAL_MODES, renamePlayer,
 } from '../engine/game.js';
 import { playerView, publicView, moderatorView } from '../engine/views.js';
@@ -14,6 +14,9 @@ import { ROLES, PRESETS, LANGS, modeOf, roleInMode } from '../engine/content.js'
 import { byId, pub } from '../engine/state.js';
 import { botDecide, botAvatar, BOT_NAMES } from './bots.js';
 import { interludeMs, OPEN_DURING_SCENES } from '../public/interludes.js';
+
+/** TV-L9: the start ceremony on the TV: 3, 2, 1, then the deal. */
+export const COUNTDOWN_MS = 3600;
 import { recommend } from '../engine/recommend.js';
 import { didIWin } from '../public/outcome.js';
 import { awardsFor, calledIt } from '../engine/awards.js';
@@ -153,6 +156,9 @@ export class RoomManager {
     // DS-005: a paused table takes no moves. Only the host's housekeeping (and resuming) goes through.
     if (room.paused && !PAUSE_OK.has(type)) throw new GameError('The table is paused.', 'PAUSED');
     if (!type.startsWith('host.') && !OPEN_DURING_SCENES(type) && this.holding(room)) throw new GameError('Wait for the scene to finish.', 'HOLD');
+    if (room.countdown && (['host.settings', 'host.kick', 'host.bots', 'host.seat'].includes(type) || (type === 'lobby.ready' && payload.ready === false))) {
+      this.cancelCountdown(room, type === 'host.settings' ? 'setup' : 'table');
+    }
     if (type.startsWith('host.')) this.hostCommand(room, pid, type, payload, cmd.phaseId);
     else if (type === 'end.vote') {
       // F3: after a game every player can say what they want next; the host still decides.
@@ -188,12 +194,25 @@ export class RoomManager {
       }
       // S4: "Start anyway" seats everyone as ready (their phones get the role reveal like everyone else).
       case 'host.start': {
-        // DS-045: Start anyway readies everyone only if the start then succeeds.
-        const was = m.players.map((p) => p.ready);
-        if (payload.anyway) m.players.forEach((p) => { p.ready = true; });
-        try { startMatch(m, this.rng, now); } catch (e) { m.players.forEach((p, i) => { p.ready = was[i]; }); throw e; }
+        // TV-L9: with a TV at the table, the start is a ceremony: 3, 2, 1 on the TV (phones say "Look at the TV"),
+        // then the deal. The host can cancel until zero (TV-L14). Without a TV the game starts at once.
+        if (m.phase !== 'LOBBY') throw new GameError('The match has already started.');
+        const report = setupReport(m);
+        if (!report.ok) throw new GameError(report.errors[0]);
+        if (report.notReady && !payload.anyway) throw new GameError('Everyone must tap Ready first.');
+        if (this.interludes && [...room.clients].some((c) => c.board) && !room.countdown) {
+          room.countdown = { at: now + COUNTDOWN_MS, anyway: !!payload.anyway, by: byId(m, pid)?.name ?? '' };
+          room.countdownOff = null;
+          clearTimeout(room.cdTimer);
+          room.cdTimer = setTimeout(() => this.finishCountdown(room), COUNTDOWN_MS);
+          room.cdTimer.unref?.();
+          break;
+        }
+        if (room.countdown) break; // already counting down
+        this.startNow(room, !!payload.anyway);
         break;
       }
+      case 'host.cancelStart': this.cancelCountdown(room, 'host'); break;
       case 'host.advance': hostAdvance(m, this.rng, now, { skipAll: !!payload.skipAll }); break;
       case 'host.extend': extendDeadline(m, Math.max(10, Math.min(300, Number(payload.seconds) || 30)), now); break;
       case 'host.end': abortMatch(m, now); break;
@@ -365,7 +384,7 @@ export class RoomManager {
   viewFor(room, client) {
     const m = room.match;
     const now = this.clock();
-    if (client.board) { const hint = mimicBoardHint(m); return { ...publicView(m, now), boardAudio: this.boardAudio(room), paused: room.paused ? { by: room.paused.by } : null, evening: this.eveningView(room), endVotes: this.endVotesView(room), awards: m.phase === 'ENDED' ? room.awards ?? null : null, ...(hint ? { mimicHint: hint } : {}) }; }
+    if (client.board) { const hint = mimicBoardHint(m); return { ...publicView(m, now), boardAudio: this.boardAudio(room), paused: room.paused ? { by: room.paused.by } : null, ...this.countdownView(room), evening: this.eveningView(room), endVotes: this.endVotesView(room), awards: m.phase === 'ENDED' ? room.awards ?? null : null, ...(hint ? { mimicHint: hint } : {}) }; }
     if (m.moderated && client.pid === m.moderatorId) {
       const v = moderatorView(m, now);
       v.moderatorName = room.moderatorName;
@@ -385,6 +404,12 @@ export class RoomManager {
     return { again: votes.filter((x) => x === 'again').length, another: votes.filter((x) => x === 'another').length, total: room.match.players.filter((p) => !p.bot).length, mine: pid ? room.endVotes?.[pid] ?? null : null };
   }
 
+  countdownView(room) {
+    if (room.match.phase !== 'LOBBY') return {};
+    const off = room.countdownOff && this.clock() - room.countdownOff.at < 6000 ? { reason: room.countdownOff.reason } : null;
+    return { countdown: room.countdown ? { at: room.countdown.at, by: room.countdown.by } : null, countdownOff: off };
+  }
+
   decorate(room, client, v) {
     const m = room.match;
     v.boardAudio = this.boardAudio(room);
@@ -392,6 +417,7 @@ export class RoomManager {
     v.endVotes = this.endVotesView(room, client.pid);
     v.awards = room.match.phase === 'ENDED' ? room.awards ?? null : null;
     v.paused = room.paused ? { by: room.paused.by } : null;
+    Object.assign(v, this.countdownView(room));
     v.moderatorName = m.moderated ? room.moderatorName : null;
     if (v.host && room.lastRecovery?.forHost === client.pid && room.lastRecovery.expires > this.clock()) {
       v.host.recovery = { playerId: room.lastRecovery.playerId, code: room.lastRecovery.code };
@@ -530,6 +556,32 @@ export class RoomManager {
         } catch { /* the window moved on; try again next change */ }
       }, Math.max(0, (m.holdUntil ?? 0) - this.clock()) + this.botDelay[0] + this.rng.int(this.botDelay[1])).unref?.() ?? null);
     }
+  }
+
+  /** Start the game now (DS-045: Start anyway readies everyone only if the start then succeeds). */
+  startNow(room, anyway) {
+    const m = room.match;
+    const was = m.players.map((p) => p.ready);
+    if (anyway) m.players.forEach((p) => { p.ready = true; });
+    try { startMatch(m, this.rng, this.clock()); } catch (e) { m.players.forEach((p, i) => { p.ready = was[i]; }); throw e; }
+  }
+
+  /** The countdown reached zero: start, unless the table changed under it (then it says why). */
+  finishCountdown(room) {
+    if (this.rooms.get(room.code) !== room || !room.countdown) return;
+    const { anyway } = room.countdown;
+    room.countdown = null;
+    try { this.startNow(room, anyway); } catch { room.countdownOff = { reason: 'setup', at: this.clock() }; }
+    this.changed(room);
+  }
+
+  /** TV-L14: until zero, a host tap or a change at the table (someone leaves, unreadies, or the setup changes) cancels. */
+  cancelCountdown(room, reason) {
+    if (!room.countdown) return false;
+    clearTimeout(room.cdTimer);
+    room.countdown = null;
+    room.countdownOff = { reason, at: this.clock() };
+    return true;
   }
 
   arm(room) {

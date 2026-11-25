@@ -6729,3 +6729,20 @@ body.is-board .tv-fs-hint { top: auto; bottom: calc(var(--tvu) * 96); }
 .tvx .lb-outline li i { width: calc(var(--tvu) * 28); height: calc(var(--tvu) * 28); flex: none; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--gilt-2); font: 600 calc(var(--tvu) * 15)/1 var(--text); font-style: normal; color: var(--gilt); }
 .tvx .lb-outline li.on { color: var(--bone); }
 .tvx .lb-outline li.on i { background: var(--gilt); color: var(--ink); }
+
+/* TV-L9: the countdown in the disc, a beat per second; the table glows and the seats lean in */
+.tvx .lb-count { font: 600 calc(var(--tvu) * 210)/0.9 var(--black); color: var(--gilt-hi); text-shadow: 0 0 calc(var(--tvu) * 40) color-mix(in srgb, var(--gilt-hi) 45%, transparent); }
+.tvx .lb-count.beat { animation: cdBeat var(--t-slow) var(--spring) both; }
+.tvx.is-counting .ring .tok { scale: 0.94; transition: scale var(--t-slow) var(--ease); }
+.tvx.is-counting .ring-table { box-shadow: 0 0 calc(var(--tvu) * 80) color-mix(in srgb, var(--gilt-hi) 30%, transparent); }
+@keyframes cdBeat { from { opacity: 0; transform: scale(1.5); } to { opacity: 1; transform: none; } }
+/* TV-L9 on the phone: everyone looks up at the TV while it counts down */
+.countdown-veil { position: fixed; inset: 0; z-index: var(--z-moment); display: grid; place-content: center; justify-items: center; gap: 10px; text-align: center; background: color-mix(in srgb, var(--ink) 92%, transparent); }
+.countdown-veil b { font: 600 140px/1 var(--black); color: var(--gilt-hi); }
+.countdown-veil b.beat { animation: cdBeat var(--t-slow) var(--spring) both; }
+.countdown-veil p { margin: 0; font: italic 400 22px/1.3 var(--text); color: var(--bone-2); }
+body:has(.countdown-veil) .dock { z-index: calc(var(--z-moment) + 1); }
+
+.tvx .lb-deck { row-gap: calc(var(--tvu) * 36); padding-bottom: calc(var(--tvu) * 26); }
+.tvx .lb-deck .dcard { width: calc(var(--tvu) * 58); }
+.tvx.is-gathering .tvx-pnl.lb-tonight em { font-size: calc(var(--tvu) * 19); }

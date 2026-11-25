@@ -1204,6 +1204,11 @@ function tickClock() {
     el.classList.toggle('low', secs != null && secs <= 10);
   });
   document.querySelectorAll('[data-secs]').forEach((el) => { el.textContent = secs == null ? '' : String(secs); });
+  // TV-L9: the start countdown, 3-2-1, on the TV and on every phone.
+  document.querySelectorAll('[data-countdown]').forEach((el) => {
+    const left = Math.max(1, Math.ceil((Number(el.dataset.countdown) - now) / 1000));
+    if (el.textContent !== String(left)) { el.textContent = String(left); el.classList.remove('beat'); void el.offsetWidth; el.classList.add('beat'); if (onBoard()) pubSound('bell'); }
+  });
   if (secs != null && secs <= 5 && secs > 0 && secs !== lastTick && S.route?.name === 'room' && !S.moment && v.phase !== 'NIGHT_DREAM_SWAP') pubSound('tick');
   // L5: ten seconds left — one buzz on each phone, once per phase, never on a secret screen.
   if (secs === 10 && lastTick !== 10 && S.route?.name === 'room' && !S.moment && !SECRET(v) && S.buzz10 !== v.phaseId) { S.buzz10 = v.phaseId; haptic(25); }
@@ -1685,7 +1690,9 @@ function roomScreen() {
       <button class="btn btn-ghost icon-btn tb-menu ${v.host ? 'is-host' : ''}" data-act="sheet" data-id="record" aria-label="${esc(v.host ? t('Room menu (you are the host)') : t('Open match record'))}">${glyph('menu')}</button>
       ${fuse()}
     </header>`;
-  return `<div class="shell" data-key="shell">${side}<div class="col">${top}${move.strip}${toastsHtml('notes-slot')}<main class="main ${move.strip ? 'has-move' : ''}" id="main" data-key="main-${v.phase === 'LOBBY' ? 'lobby' : 'game'}">${coachCard(v)}${move.html}</main></div></div>${dock(v)}${sheet(v)}`;
+  // TV-L9: while the TV counts down, every phone looks up.
+  const countdown = v.phase === 'LOBBY' && v.countdown ? `<div class="countdown-veil" data-key="cdveil" role="status"><span class="kicker">${t('The game begins')}</span><b data-countdown="${v.countdown.at}">3</b><p>${t('Look at the TV')}</p></div>` : '';
+  return `<div class="shell" data-key="shell">${side}<div class="col">${top}${move.strip}${toastsHtml('notes-slot')}<main class="main ${move.strip ? 'has-move' : ''}" id="main" data-key="main-${v.phase === 'LOBBY' ? 'lobby' : 'game'}">${coachCard(v)}${move.html}</main></div></div>${countdown}${dock(v)}${sheet(v)}`;
 }
 
 /** TB1: what follows the phase in the kicker, said once: a recent notice's echo or the step, minus any repeat of the phase. */
@@ -3372,6 +3379,7 @@ function dock(v) {
   } else if (me) {
     switch (v.phase) {
       case 'LOBBY': {
+        if (v.countdown) { if (v.host) parts.push(btn(t('Cancel the start'), 'cancelStart', 'btn-blood')); break; }
         const need = (v.presets.find((p) => p.id === v.settings.preset)?.min ?? 5) - v.players.length;
         // S4: never a dead button — it names what is missing; with players not ready, a long press starts anyway.
         if (v.host && need <= 0 && v.setup.ok && v.setup.notReady) parts.push(holdBtn('startAnyway', th('Hold to start anyway · {n} not ready', { n: v.setup.notReady }), 'btn-solid'));
@@ -3725,6 +3733,7 @@ const ACT = {
     S.ui.sheet = null;
     loadLang(wantedLang()).then(render);
   },
+  async cancelStart() { await send('host.cancelStart', {}); },
   boardScore() { sound.unlock(); if (!sound.on) sound.toggle(); S.board.audio = true; reportBoardAudio(true); render(); },
   boardMute() { S.board.audio = false; score.stop(); reportBoardAudio(false); render(); },
 };

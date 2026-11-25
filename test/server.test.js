@@ -128,3 +128,43 @@ test('a connected, unmuted TV board silences public sounds on phones', () => {
   assert.equal(phone.last().boardAudio, false, 'board left');
   assert.equal(phone.last().table.threads, false, 'threads default off');
 });
+
+test('TV-L9 / TV-L14: with a TV attached the start counts down on the TV and can be cancelled; without one it starts at once', async () => {
+  // No TV: the start is immediate, as before.
+  {
+    const rm = new RoomManager({ rng: seededRng(3), interludes: true });
+    const host = rm.createRoom({ name: 'Ada' });
+    const seats = [host];
+    for (let i = 1; i < 5; i++) seats.push(rm.joinRoom(host.code, { name: `P${i}` }));
+    for (const s of seats.slice(1)) rm.command(host.code, s.token, { type: 'lobby.ready', payload: { ready: true } });
+    rm.command(host.code, host.token, { type: 'host.start', payload: {} });
+    assert.notEqual(rm.rooms.get(host.code).match.phase, 'LOBBY');
+  }
+  let now = 1_000_000;
+  const rm = new RoomManager({ rng: seededRng(4), interludes: true, clock: () => now });
+  const host = rm.createRoom({ name: 'Ada' });
+  const seats = [host];
+  for (let i = 1; i < 5; i++) seats.push(rm.joinRoom(host.code, { name: `P${i}` }));
+  for (const s of seats.slice(1)) rm.command(host.code, s.token, { type: 'lobby.ready', payload: { ready: true } });
+  const tv = fakeRes();
+  rm.attach(host.code, null, tv, { board: true });
+  const room = rm.rooms.get(host.code);
+  rm.command(host.code, host.token, { type: 'host.start', payload: {} });
+  assert.equal(room.match.phase, 'LOBBY', 'counting down');
+  assert.ok(tv.last().countdown?.at > now, 'the TV sees the countdown');
+  // A player unreadies: the countdown stops and says why.
+  rm.command(host.code, seats[2].token, { type: 'lobby.ready', payload: { ready: false } });
+  assert.equal(room.countdown, null);
+  assert.equal(tv.last().countdownOff?.reason, 'table');
+  rm.command(host.code, seats[2].token, { type: 'lobby.ready', payload: { ready: true } });
+  rm.command(host.code, host.token, { type: 'host.start', payload: {} });
+  rm.command(host.code, host.token, { type: 'host.cancelStart', payload: {} });
+  assert.equal(room.countdown, null);
+  assert.equal(tv.last().countdownOff?.reason, 'host');
+  // Let it run out: the game starts.
+  rm.command(host.code, host.token, { type: 'host.start', payload: {} });
+  now += 4000;
+  rm.finishCountdown(room);
+  assert.notEqual(room.match.phase, 'LOBBY');
+  clearTimeout(room.cdTimer);
+});

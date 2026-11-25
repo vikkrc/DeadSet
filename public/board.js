@@ -263,24 +263,27 @@ function lobbyTv(v, h, { deckHtml, ruleCards, roles }) {
   const how = teach ? panel(th('How it works · {n} of {m}', { n: k + 1, m: steps.length }), teach, 'lbhow') : '';
   const deck = deckHtml ? panel(th('Tonight\'s deck · {name}', { name: presetF(s.preset, 'name') }), `<div class="lb-deck">${deckHtml}</div>${v.mode === 'classic' ? `<span class="kicker lb-rk">${t('Rule cards')}</span><div class="lb-deck">${ruleCards}</div>` : ''}`, 'lbdeck') : '';
   const header = tvHeader(v, h, { word: t('The gathering'), step: esc(arrival ? th('{n} seated · {m} expected', { n, m: expected }) : th('{n} seated · {r} ready', { n, r: ready })) });
+  // TV-L9 / TV-L14: the start ceremony. The disc counts 3, 2, 1 in 210-unit blackletter; a cancel says why in the band.
+  const counting = !!v.countdown;
+  const offWhy = v.countdownOff ? { host: t('The host called the start off.'), table: t('The start was called off: the table changed.'), setup: t('The start was called off: the setup changed.') }[v.countdownOff.reason] : '';
   const notReady = v.players.filter((p) => !p.ready);
-  const herald = arrival ? `${t('Scan the code with your phone to take a seat.')} <em>${t('No app, no account.')}</em>`
+  const herald = counting ? esc(th('{a} starts the game. Look up.', { a: v.countdown.by })) : offWhy ? esc(offWhy) : arrival ? `${t('Scan the code with your phone to take a seat.')} <em>${t('No app, no account.')}</em>`
     : !notReady.length ? th('All {n} are ready. The host starts when the room is settled.', { n })
       : notReady.length <= 3 ? th('Waiting for {names}', { names: notReady.map((p) => p.name) }) : t('Ready up on your phone.');
-  const table = ring(v, { lobby: true, slots: arrival ? expected : n, center: arrival
+  const table = ring(v, { lobby: true, slots: arrival ? expected : n, center: counting ? `<b class="lb-count" data-countdown="${v.countdown.at}">3</b><span class="c-sub">${esc(t('The game begins'))}</span>` : arrival
     ? `<span class="c-big">${n}</span><span class="c-sub">${esc(th('seated · {a} to {b}', { a: info.min ?? preset?.min ?? 4, b: info.max ?? preset?.max ?? 12 }))}</span>`
     : `<span class="c-big">${ready}<small>/${n}</small></span><span class="c-sub">${esc(t(ready === n ? 'all ready' : 'ready'))}</span>` });
   const join = `<section class="tv-now lb-join" data-key="lbjoin"><span class="kicker">${t('Scan to take a seat')}</span><div class="qr-frame">${qrSvg(url)}</div>
     <div class="code-tiles big">${codeTiles(v.code)}</div><span class="tv-url">${esc(`${location.host}/r/${v.code}`)}</span>
     ${v.table?.score !== false && !h.audio ? `<p class="lb-sound">${glyph('bell')} ${t('Sound plays from this screen: tap it once to turn it on.')}</p>` : ''}</section>`;
-  const stage = arrival ? `<div class="duo lb-arrival">${join}<div class="duo-h">${table}</div></div>` : table;
+  const stage = arrival && !counting ? `<div class="duo lb-arrival">${join}<div class="duo-h">${table}</div></div>` : table;
   // Gathering: the Now card is the teach step; the game and tonight's deck below it.
   const teachNow = teach ? `<section class="tv-now lb-now" data-key="lbnow"><span class="kicker">${th('How it works · {n} of {m}', { n: k + 1, m: steps.length })}</span>${teach}</section>` : '';
   // Every step at a glance, the one being taught lit (where there is no deck to show, this fills the record).
   const titles = steps.map((x) => (x.match(/<b>([\s\S]*?)<\/b>/)?.[1] ?? '').replace(/<[^>]+>/g, ''));
   const outline = !deck && titles.length ? panel(t('The game in steps'), `<ol class="lb-outline">${titles.map((x, i) => `<li class="${i === k ? 'on' : ''}"><i>${i + 1}</i>${esc(x)}</li>`).join('')}</ol>`, 'lboutline') : '';
   const ledger = arrival ? `${tonight}${how}${deck}` : `${teachNow}${tonight.replace('tv-now lb-tonight', 'tvx-pnl lb-tonight')}${deck || outline}`;
-  return tvFrame(v, h, { stage, ledger, herald, header, key: 'board-lobby', cls: `lobby ${arrival ? 'is-arrival' : 'is-gathering'}` });
+  return tvFrame(v, h, { stage, ledger, herald, header, key: 'board-lobby', cls: `lobby ${arrival && !counting ? 'is-arrival' : 'is-gathering'} ${counting ? 'is-counting' : ''}` });
 }
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
