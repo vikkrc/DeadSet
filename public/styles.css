@@ -6746,3 +6746,22 @@ body:has(.countdown-veil) .dock { z-index: calc(var(--z-moment) + 1); }
 .tvx .lb-deck { row-gap: calc(var(--tvu) * 36); padding-bottom: calc(var(--tvu) * 26); }
 .tvx .lb-deck .dcard { width: calc(var(--tvu) * 58); }
 .tvx.is-gathering .tvx-pnl.lb-tonight em { font-size: calc(var(--tvu) * 19); }
+
+/* TV-A5: the ornate wheel at 600 */
+.tvx .o-wheel.tv { --sz: min(calc(var(--tvu) * 600), 96cqh); }
+.tvx .ot-wheel { container-type: size; }
+/* TV-A7: the crystal ball at 440 on its pedestal */
+.tvx .x-stage { container-type: size; }
+.tvx .xball.big { --size: min(calc(var(--tvu) * 440), 62cqh); }
+.tvx .xball.big .xb-word { font-size: calc(var(--tvu) * 64); }
+/* TV-A6: the dilemma card at 560 with the question in 40 upright Garamond; the fates as text-only cards in 26 */
+.tvx .duo-h { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: calc(var(--tvu) * 18); }
+.tvx .duo-h .mr-card.tv { width: calc(var(--tvu) * 560); max-width: 100%; padding: calc(var(--tvu) * 30) calc(var(--tvu) * 40); }
+.tvx .duo-h .mr-card.tv .mr-title { font-size: calc(var(--tvu) * 34); }
+.tvx .duo-h .mr-card.tv .mr-q { font: 400 calc(var(--tvu) * 40)/1.2 var(--text); font-style: normal; }
+.tvx .duo-h .fates.tv { width: calc(var(--tvu) * 560); max-width: 100%; display: grid; gap: calc(var(--tvu) * 10); }
+.tvx .duo-h .fates.tv .mr-fate { font-size: calc(var(--tvu) * 26); padding: calc(var(--tvu) * 12) calc(var(--tvu) * 18); }
+/* TV-A10: Mimic's places, 136 × 128 with 19 names, centred as the hero */
+.tvx .duo-h.qt-places .q-places { gap: calc(var(--tvu) * 12); }
+.tvx .duo-h.qt-places .scard { width: calc(var(--tvu) * 136); font-size: calc(var(--tvu) * 11); }
+.tvx .duo-h.qt-places .scard .nm { font-size: calc(var(--tvu) * 19); }
