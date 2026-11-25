@@ -517,25 +517,25 @@ export default {
 <li><b>Dĺžka diskusie, hier v zápase.</b></li>
 </ul>`,
     seanceSetup: `<p>4–10 hráčov, asi 30 minút. Kooperatívna vražedná záhada so zradcom. Jeden hráč je Duch: vie, kto ho zabil, kde a prečo, a nemôže hovoriť. Všetci ostatní sú Médiá, ktoré čítajú jeho vízie. Od piatich hráčov sa medzi Médiami môže skrývať Klamár: druhý duch, ktorý pozná pravdu a pracuje proti stolu.</p>
-<p><b>Tabuľa:</b> tri rady kariet príbehu, KTO, KDE a PREČO. V každom rade je jedna karta pravda.</p>`,
+<p><b>Tabuľa:</b> tri rady kariet príbehu, KTO, KDE a PREČO. V každom rade je jedna karta pravda. Seansa sa pýta postupne: najprv kto, potom kde, nakoniec prečo.</p>`,
     seanceLoop: `<ol>
-<li><b>Vízie.</b> V každom kole dostane každé Médium jeden rad. Duch mu zo svojej ruky vyberie víziu: kartu s dvoma alebo tromi rytými motívmi, ktorá má ukázať na pravdu v tom rade.</li>
-<li><b>Odhalenie.</b> Vízie sa otočia pre všetkých. Opíšte ich, hádajte sa, presviedčajte. Duch mlčí, ale môže víziu zamraziť studeným miestom: <em>táto nie je moja</em>.</li>
-<li><b>Klamárova výmena.</b> Niekoľkokrát za hru Klamár tajne vymení víziu iného Média za jednu zo svojich lží.</li>
-<li><b>Sviečky.</b> Každé Médium zapáli sviečku na karte vo svojom rade, alebo ju podrží. Karta s najviac sviečkami ide pred ducha. Správne: rad je vyriešený. Nesprávne: karta sa preškrtne.</li>
-<li><b>Hodiny.</b> Každé kolo zhorí jedna sviečka hodín seansy (sedem pri štandardnej obtiažnosti).</li>
+<li><b>Vízie.</b> Duch pošle každému Médiu jednu víziu k otázke: kartu s dvoma alebo tromi rytými motívmi. V ruke má vždy niekoľko, ktoré sedia na odpoveď; zvyšok je šťastie balíčka. Medzitým si každé Médium tajne označí <b>podozrenie</b>: koho podozrieva.</li>
+<li><b>Klamárova výmena.</b> Niekoľkokrát za hru Klamár tajne vymení víziu iného Média za jednu svoju, ktorá ukazuje na nesprávnu kartu.</li>
+<li><b>Ruky.</b> Vízie sa otočia a zostanú na stole, kým otázka nemá odpoveď. Prediskutujte to. Duch mlčí, ale môže víziu zamraziť studeným miestom: <em>táto nie je moja</em>. Potom každé Médium položí ruku na jednu kartu.</li>
+<li><b>Duch odpovedá.</b> Karta pod najviac rukami ide pred ducha; pri remíze, alebo keď nikto ruku nepoložil, vyberie ukazovateľ náhodne. Áno: ide sa na ďalšiu otázku. Nie: karta sa preškrtne.</li>
+<li><b>Hodiny.</b> Každé kolo zhorí jedna zo siedmich sviečok, nech je odpoveď akákoľvek.</li>
 </ol>`,
     seanceWin: `<ul>
-<li>Vyriešte všetky tri rady, kým sviečky nedohoria, a potom označte Klamára. Správne: <b>úplné víťazstvo</b>. Nesprávne: <b>prázdne víťazstvo</b>, o ktoré sa delí aj Klamár.</li>
-<li>Ak hodiny dohoria, vyhráva Klamár (bez Klamára stôl prehráva). Ak zostal jeden rad, najprv na ňom každý zapáli sviečku posledného výdychu.</li>
-<li>V zápase: úplné víťazstvo +2 pre Ducha a každé Médium; prázdne +1 pre každého a +1 pre Klamára; výhra Klamára +3.</li>
-<li>Záverečná obrazovka prehrá každé kolo: pravé vízie, výmeny a sviečky.</li>
+<li>Odpovedzte na všetky tri otázky skôr, než sviečky dohoria, a potom pomenujte Klamára (vaše posledné podozrenie je označené). Správne: <b>úplné víťazstvo</b>. Nesprávne: <b>prázdne víťazstvo</b>, spoločné s Klamárom.</li>
+<li>Ak hodiny dohoria, vyhrá Klamár (bez Klamára stôl prehrá). Hádať naslepo nestačí: sedem sviečok na tri odpovede, po šesť kariet v rade.</li>
+<li>V zápase: úplné víťazstvo +2 pre Ducha a každé Médium; prázdne +1 pre každého a +1 pre Klamára; víťazstvo Klamára +3.</li>
+<li>Záverečná obrazovka prehrá každé kolo: skutočné vízie, výmeny, ruky a podozrenia.</li>
 </ul>`,
     seanceOpts: `<ul>
-<li><b>Obtiažnosť:</b> koľko kariet v rade, vízií na Médium a sviečok na hodinách.</li>
-<li><b>Klamári:</b> žiadny, jeden alebo dvaja, a či sa dvaja poznajú; koľko výmen majú.</li>
-<li><b>Studené miesta Ducha:</b> koľko vízií smie zamraziť.</li>
-<li><b>Posledný výdych:</b> zapnutý alebo vypnutý. <b>Duch:</b> žrebom, alebo ho vyberie hostiteľ. <b>Hier v zápase.</b></li>
+<li><b>Obtiažnosť:</b> koľko kariet je v rade, koľko Duchových vízií sedí na odpoveď a koľko sviečok horí na hodinách.</li>
+<li><b>Klamári:</b> žiadny, jeden alebo dvaja, a či sa dvaja poznajú; koľko výmen dostanú.</li>
+<li><b>Duchove studené miesta:</b> koľko vízií smie zamraziť.</li>
+<li><b>Duch:</b> losom, alebo ho vyberie hostiteľ. <b>Hier v zápase.</b></li>
 </ul>`,
     graveSetup: `<p>4–12 hráčov, asi 15 minút. Dve partie vykrádačov hrobov, Mesiac a Slnko, kopú na cintoríne s 25 náhrobkami relikvie, ktoré privolajú ich božstvo. Minca určí partiu, ktorá kope prvá: tá má v zemi 9 relikvií, druhá 8. Sedem hrobov je prázdnych a jeden patrí Smrti.</p>
 <p>Každá partia má <b>Hrobára</b>, jediného hráča, ktorý vidí pohrebný register: čo leží pod každým kameňom. Všetci ostatní kopú. Náhrobky ukazujú slová v jazyku stola alebo ceruzkové ikony.</p>`,

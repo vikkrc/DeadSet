@@ -79,8 +79,7 @@ export function moodFor(v) {
     case 'G_DIG': return 'gDig';
     case 'S_INTRO': return 'sGather';
     case 'S_VISION': return 'sReach';
-    case 'S_DISCUSS': return 'sTalk';
-    case 'S_CANDLE': case 'S_LAST': return 'sCandle';
+    case 'S_HANDS': return v.seance && v.seance.candles - v.seance.burnt <= 2 ? 'sCandle' : 'sTalk';
     case 'S_NAMING': return 'sName';
     case 'N_DEAL': return 'nDeal';
     case 'N_NIGHT': return 'nNight';
@@ -111,9 +110,9 @@ export function moodFor(v) {
 }
 
 /** Séance: the last two candles. */
-const isSeanceLate = (v) => !!v.seance && ['S_CANDLE', 'S_DISCUSS', 'S_VISION'].includes(v.phase) && v.seance.candles - v.seance.burnt <= 2;
+const isSeanceLate = (v) => !!v.seance && ['S_HANDS', 'S_VISION'].includes(v.phase) && v.seance.candles - v.seance.burnt <= 2;
 /** The last few alive: the score adds a tension layer. */
-export const tenseFor = (v) => v.mode === 'seance' ? v.phase === 'S_LAST' || (isSeanceLate(v)) : v.mode === 'carnival' ? v.phase === 'K_CHALLENGE' : v.mode === 'coffins' ? v.phase === 'C_DIG' : !['LOBBY', 'ENDED'].includes(v.phase) && v.players.filter((p) => p.alive).length <= Math.max(3, Math.ceil(v.players.length * 0.3));
+export const tenseFor = (v) => v.mode === 'seance' ? isSeanceLate(v) : v.mode === 'carnival' ? v.phase === 'K_CHALLENGE' : v.mode === 'coffins' ? v.phase === 'C_DIG' : !['LOBBY', 'ENDED'].includes(v.phase) && v.players.filter((p) => p.alive).length <= Math.max(3, Math.ceil(v.players.length * 0.3));
 
 const RULE_GLYPH = {
   FOG_OF_WAR: 'veil', CURSED_SILENCE: 'psycho', MAJORITY_RULE: 'magistrate', PARANOIA: 'mentalist', VENGEFUL_GHOSTS: 'death',

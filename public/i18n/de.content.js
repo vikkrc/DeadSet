@@ -517,25 +517,25 @@ export default {
 <li><b>Länge der Diskussion, Spiele pro Partie.</b></li>
 </ul>`,
     seanceSetup: `<p>4–10 Spieler, etwa 30 Minuten. Ein kooperativer Mordfall mit einem Verräter. Ein Spieler ist der Geist: Er weiß, wer ihn getötet hat, wo und warum, und er kann nicht sprechen. Alle anderen sind Medien und lesen seine Visionen. Ab fünf Spielern kann sich ein Täuscher unter den Medien verstecken: ein zweiter Geist, der die Wahrheit kennt und gegen den Tisch arbeitet.</p>
-<p><b>Das Brett:</b> drei Reihen Story-Karten, WER, WO und WARUM. In jeder Reihe ist eine Karte die Wahrheit.</p>`,
+<p><b>Das Brett:</b> drei Reihen Story-Karten, WER, WO und WARUM. In jeder Reihe ist eine Karte die Wahrheit. Die Séance fragt nacheinander: erst wer, dann wo, dann warum.</p>`,
     seanceLoop: `<ol>
-<li><b>Visionen.</b> In jeder Runde bekommt jedes Medium eine Reihe. Der Geist wählt für jedes Medium eine Vision aus seiner Hand: eine Karte mit zwei oder drei radierten Motiven, die auf die Wahrheit in dieser Reihe deuten soll.</li>
-<li><b>Die Enthüllung.</b> Die Visionen werden für alle aufgedeckt. Beschreibt sie, streitet, überzeugt. Der Geist schweigt, kann aber eine Vision mit einem kalten Fleck vereisen: <em>Die ist nicht von mir.</em></li>
-<li><b>Der Tausch des Täuschers.</b> Ein paar Mal pro Spiel tauscht der Täuscher heimlich die Vision eines anderen Mediums gegen eine seiner Lügen.</li>
-<li><b>Kerzen.</b> Jedes Medium zündet eine Kerze auf einer Karte seiner Reihe an oder hält sie zurück. Die Karte mit den meisten Kerzen wird dem Geist vorgelegt. Richtig: Die Reihe ist gelöst. Falsch: Die Karte wird gestrichen.</li>
-<li><b>Die Uhr.</b> Jede Runde brennt eine Kerze der Séance-Uhr ab (sieben bei Standard).</li>
+<li><b>Visionen.</b> Der Geist schickt jedem Medium eine Vision zur Frage: eine Karte mit zwei oder drei radierten Motiven. Seine Hand hält immer ein paar, die zur Antwort passen; der Rest ist das Glück des Stapels. Währenddessen markiert jedes Medium heimlich seinen <b>Verdacht</b>: wen es verdächtigt.</li>
+<li><b>Der Tausch des Täuschers.</b> Ein paar Mal pro Spiel tauscht der Täuscher heimlich die Vision eines anderen Mediums gegen eine eigene, die auf eine falsche Karte deutet.</li>
+<li><b>Hände.</b> Die Visionen werden aufgedeckt und bleiben liegen, bis die Frage beantwortet ist. Beratet euch. Der Geist schweigt, kann aber eine Vision mit einem kalten Fleck vereisen: <em>Die ist nicht von mir.</em> Dann legt jedes Medium seine Hand auf eine Karte.</li>
+<li><b>Der Geist antwortet.</b> Die Karte unter den meisten Händen wird dem Geist vorgelegt; bei Gleichstand, oder ohne Hände, wählt die Planchette zufällig. Ja: weiter zur nächsten Frage. Nein: Die Karte wird gestrichen.</li>
+<li><b>Die Uhr.</b> Jede Runde brennt eine von sieben Kerzen ab, egal wie die Antwort lautet.</li>
 </ol>`,
     seanceWin: `<ul>
-<li>Löst alle drei Reihen, bevor die Kerzen herunterbrennen, und nennt dann den Täuscher. Richtig: ein <b>voller Sieg</b>. Falsch: ein <b>hohler Sieg</b>, den der Täuscher teilt.</li>
-<li>Brennt die Uhr aus, gewinnt der Täuscher (ohne Täuscher verliert der Tisch). Ist nur noch eine Reihe offen, zünden vorher alle eine Kerze des letzten Atemzugs darauf an.</li>
-<li>Über eine Partie: ein voller Sieg +2 für den Geist und jedes Medium; ein hohler +1 für jeden und +1 für den Täuscher; ein Sieg des Täuschers +3.</li>
-<li>Der Endbildschirm spielt jede Runde nach: die wahren Visionen, die Täusche und die Kerzen.</li>
+<li>Beantwortet alle drei Fragen, bevor die Kerzen abbrennen, und benennt dann den Täuscher (euer letzter Verdacht ist markiert). Richtig: ein <b>voller Sieg</b>. Falsch: ein <b>hohler Sieg</b>, geteilt mit dem Täuscher.</li>
+<li>Brennt die Uhr ab, gewinnt der Täuscher (ohne Täuscher verliert der Tisch). Blind raten reicht nicht: sieben Kerzen für drei Antworten unter je sechs Karten.</li>
+<li>Über ein Match: voller Sieg +2 für den Geist und jedes Medium; hohler Sieg +1 für alle und +1 für den Täuscher; Sieg des Täuschers +3.</li>
+<li>Der Endbildschirm spielt jede Runde nach: die wahren Visionen, die Täusche, die Hände und die Verdachte.</li>
 </ul>`,
     seanceOpts: `<ul>
-<li><b>Schwierigkeit:</b> wie viele Karten pro Reihe, Visionen pro Medium und Kerzen auf der Uhr.</li>
+<li><b>Schwierigkeit:</b> wie viele Karten in einer Reihe liegen, wie viele Visionen des Geistes zur Antwort passen und wie viele Kerzen die Uhr hat.</li>
 <li><b>Täuscher:</b> keiner, einer oder zwei, und ob zwei einander kennen; wie viele Täusche sie haben.</li>
 <li><b>Die kalten Flecken des Geistes:</b> wie viele Visionen er vereisen darf.</li>
-<li><b>Letzter Atemzug:</b> an oder aus. <b>Der Geist:</b> ausgelost oder vom Gastgeber gewählt. <b>Spiele pro Partie.</b></li>
+<li><b>Der Geist:</b> ausgelost oder vom Gastgeber gewählt. <b>Spiele pro Match.</b></li>
 </ul>`,
     graveSetup: `<p>4–12 Spieler, etwa 15 Minuten. Zwei Grabräuberbanden, der Mond und die Sonne, graben auf einem Friedhof mit 25 Grabsteinen nach den Reliquien, die ihre Gottheit rufen. Eine Münze bestimmt die Bande, die zuerst gräbt: Sie hat 9 Reliquien in der Erde, die andere 8. Sieben Gräber sind leer, und eines ist das Grab des Todes.</p>
 <p>Jede Bande hat einen <b>Totengräber</b>, den einzigen Spieler, der das Grabregister sieht: was unter jedem Stein liegt. Alle anderen graben. Die Grabsteine zeigen Wörter in der Tischsprache oder Bleistiftsymbole.</p>`,

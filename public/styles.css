@@ -6351,3 +6351,129 @@ html { background-color: var(--ink); overscroll-behavior-y: none; }
 .ring-center .n-rolec, .ring-center button, .ring-center a { pointer-events: auto; position: relative; z-index: 3; }
 .ring-center:has(.n-rolec) { z-index: 3; }
 .host-slot .btn-host { padding: 0 34px; }
+
+/* ── Séance redesign: one question at a time, visions so far, hunches, hands ── */
+.sb-mid { display: flex; align-items: flex-end; gap: 10px; }
+.sb-mid .sb-steps { flex: 1; }
+.s-qs { list-style: none; display: flex; gap: 4px; margin: 8px 0 0; padding: 0; }
+.s-qs li { display: flex; flex-direction: column; gap: 2px; padding: 6px 8px 4px; border-top: 2px solid var(--iron); font: 600 10px/1 var(--text); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ash); }
+.s-qs li small { font: italic 400 11px/1.1 var(--text); letter-spacing: 0; text-transform: none; color: var(--bone-2); max-width: 9em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.s-qs li.on { color: var(--gilt-hi); border-top-color: var(--gilt-hi); }
+.s-qs li.done { color: var(--bone-2); border-top-color: var(--gilt-2); }
+.s-seen { margin: 10px 0 4px; display: flex; flex-direction: column; gap: 6px; }
+.sv-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+.sv { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.sv .vcard.tarot--thumb { width: 66px; font-size: 7px; }
+.sv figcaption { display: flex; flex-direction: column; align-items: center; gap: 2px; font: 600 10px/1 var(--text); letter-spacing: 0.12em; text-transform: uppercase; color: var(--bone-2); }
+.sv figcaption small { font: italic 400 10px/1 var(--text); letter-spacing: 0; text-transform: none; color: var(--ash); }
+.sv.old { opacity: 0.62; }
+.sv.sel .vcard { outline: 2px solid var(--blood-ink); outline-offset: 2px; }
+.s-hunch { margin: 12px 0 6px; display: flex; flex-direction: column; gap: 6px; }
+.s-picks { display: flex; flex-wrap: wrap; gap: 6px; }
+.s-picks .sd-t { border-color: var(--iron); color: var(--bone-2); padding: 6px 11px 6px 6px; border-radius: 18px; }
+.s-picks .sd-t.sel { border-color: var(--gilt-hi); color: var(--bone); box-shadow: 0 0 0 2px color-mix(in srgb, var(--gilt-hi) 15%, transparent); }
+.sg-chip .vcard.chip { width: 22px; font-size: 3px; }
+.sm-answer { position: relative; display: grid; place-items: center; margin: 14px auto 8px; }
+.sm-answer .scard.tarot--hand, .sm-answer .scard.big { font-size: 15px; }
+.sm-stamp { position: absolute; bottom: -6%; right: -14%; padding: 0.12em 0.5em 0.2em; border: 3px double currentColor; border-radius: 4px; font: 600 40px/1 var(--black); transform: rotate(-9deg); background: color-mix(in srgb, var(--ink) 70%, transparent); animation: oStamp var(--t-slow) 1.2s var(--spring) both; }
+.sm-answer.right .sm-stamp { color: var(--gilt-hi); }
+.sm-answer.wrong .sm-stamp { color: var(--blood-ink); }
+.s-sheet section.is-now .kicker { color: var(--gilt-hi); }
+.s-sheet .sv-row { margin-top: 6px; }
+.st-cards .scard.is-now { outline: 2px solid var(--gilt-hi); outline-offset: 2px; }
+/* TV: the current question bright, the next ones waiting, the answered ones in gilt */
+.sboard .sb-row { grid-template-columns: 130px minmax(0, 1fr); grid-template-areas: 'head cards'; }
+.sboard .sb-row header small { font: italic 400 15px/1.2 var(--text); color: var(--ash); }
+.sboard .sb-row.is-later { opacity: 0.5; }
+.sboard .sb-row.is-now header b { color: var(--gilt-hi); }
+.sboard .sb-vis { display: flex; flex-direction: column; gap: 8px; padding: 6px 0 10px; border-bottom: 1px solid var(--iron); }
+.sboard .sb-vis .sv .vcard.tarot--thumb { width: 78px; font-size: 8px; }
+.sboard .sb-vis .sv figcaption { font-size: 13px; }
+.sboard .sv.wait .vcard { opacity: 0.35; }
+.sb-now { display: flex; flex-direction: column; gap: 6px; padding-bottom: 12px; border-bottom: 1px solid var(--iron); }
+.sb-now b { font: 600 26px/1.1 var(--black); color: var(--bone); }
+.sb-now span:last-child { font: 400 17px/1.3 var(--text); color: var(--bone-2); }
+.sb-readers li.ghost b { color: var(--blood-ink); }
+.sb-readers li small svg { width: 18px; height: 18px; color: var(--gilt-hi); }
+.sboard.no-right .tv-body { grid-template-columns: var(--tv-rail) minmax(0, 1fr); }
+/* story-card names never collapse to nothing beside a tall etching */
+.scard .nm { flex: none; }
+/* Hands: your vision, the table seal and the others' visions on one line, the row below */
+.s-mine { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 0 0 8px; }
+.s-mine > .seal-row { margin: 0; gap: 18px; }
+.s-mine > .seal-row > .seal-obj { flex: none; }
+.s-mine .sm-yours .vcard { width: min(28vw, 112px); }
+.s-mine > .sv-row { width: 100%; gap: 6px 5px; justify-content: center; }
+.s-mine .sv .vcard.tarot--thumb { width: 46px; font-size: 5px; }
+.s-mine .sv figcaption { font-size: 9px; letter-spacing: 0.06em; }
+
+/* ── TV units and the ledgered body (TV-PASS §3): stage + a 440-unit ledger on the right ── */
+body.is-board { --tvu: calc(100vw / 1600); }
+@media (min-aspect-ratio: 16/9) { body.is-board { --tvu: calc(100vh / 900); } }
+.tv-body.tv-ledgered { grid-template-columns: minmax(0, 1fr) calc(var(--tvu) * 440); gap: calc(var(--tvu) * 28); }
+.tv-ledger { min-height: 0; height: 100%; overflow: hidden; display: flex; flex-direction: column; gap: calc(var(--tvu) * 18); }
+.tv-ledger .kicker { font-size: calc(var(--tvu) * 16); letter-spacing: 0.2em; }
+.tv-now { padding: calc(var(--tvu) * 24) calc(var(--tvu) * 26); border: 1px solid var(--gilt-2); border-image: var(--frame) 32 / 24px stretch; display: flex; flex-direction: column; gap: calc(var(--tvu) * 8); }
+.tv-now b { font: 600 calc(var(--tvu) * 38)/1.08 var(--black); color: var(--bone); padding-bottom: 0.06em; }
+.tv-now > span:last-child { font: 400 calc(var(--tvu) * 24)/1.3 var(--text); color: var(--bone-2); }
+/* Séance on the TV (TV-A8) */
+.sboard2 .s2-stage { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: calc(var(--tvu) * 12); }
+.s2-vis { display: flex; flex-direction: column; gap: calc(var(--tvu) * 8); min-height: calc(var(--tvu) * 160); padding-left: calc(var(--tvu) * 174); }
+.s2-vis .kicker { font-size: calc(var(--tvu) * 16); }
+.s2-vis .sv-row { flex-wrap: nowrap; gap: calc(var(--tvu) * 12); overflow: hidden; }
+.s2-vis .sv .vcard.tarot--thumb { width: calc(var(--tvu) * 84); font-size: calc(var(--tvu) * 9); }
+.s2-vis .sv figcaption { font-size: calc(var(--tvu) * 16); letter-spacing: 0.14em; }
+.s2-vis .sv figcaption small { font-size: calc(var(--tvu) * 14); }
+.s2-vis .sv.wait .vcard { opacity: 0.4; }
+.s2-rows { display: flex; flex-direction: column; gap: calc(var(--tvu) * 10); }
+.s2-row { display: grid; grid-template-columns: calc(var(--tvu) * 162) minmax(0, 1fr); gap: calc(var(--tvu) * 12); align-items: center; }
+.s2-row header { display: flex; flex-direction: column; gap: calc(var(--tvu) * 4); }
+.s2-row header b { font: 600 calc(var(--tvu) * 30)/1 var(--black); color: var(--bone); padding-bottom: 0.08em; }
+.s2-row header small { font: italic 400 calc(var(--tvu) * 18)/1.15 var(--text); color: var(--ash); }
+.s2-row .srow-cards { display: flex; gap: calc(var(--tvu) * 12); margin: 0; }
+.s2-row .srow-cards .scard { width: calc(var(--tvu) * 118); font-size: calc(var(--tvu) * 12.5); max-width: none; }
+.s2-row.is-now header b { color: var(--gilt-hi); }
+.s2-row.is-solved header b { color: var(--gilt); }
+.s2-row.is-later { opacity: 0.55; }
+.s2-row.is-solved .scard.is-dim { opacity: 0.35; }
+.s2-clock { display: flex; flex-direction: column; align-items: center; gap: calc(var(--tvu) * 10); padding: calc(var(--tvu) * 16) 0; border-top: 1px solid var(--iron); border-bottom: 1px solid var(--iron); }
+.s2-clock .scandles { gap: calc(var(--tvu) * 10); }
+.s2-clock .scdl { width: calc(var(--tvu) * 44); height: calc(var(--tvu) * 44); }
+.s2-clock small { font: italic 400 calc(var(--tvu) * 22)/1 var(--text); color: var(--bone-2); }
+.s2-clock small svg { width: 1em; height: 1em; vertical-align: -0.1em; }
+.s2-table ul { list-style: none; margin: calc(var(--tvu) * 8) 0 0; padding: 0; display: flex; flex-direction: column; gap: calc(var(--tvu) * 6); }
+.s2-table li { display: flex; align-items: center; gap: calc(var(--tvu) * 12); padding: calc(var(--tvu) * 4) 0; border-bottom: 1px solid color-mix(in srgb, var(--iron) 60%, transparent); }
+.s2-table .s-disc { width: calc(var(--tvu) * 40); height: calc(var(--tvu) * 40); flex: none; }
+.s2-table b { font: 500 calc(var(--tvu) * 24)/1.1 var(--text); color: var(--bone); flex: 1; }
+.s2-table li.ghost b { color: var(--blood-ink); flex: none; }
+.s2-table li.ghost small { margin-left: auto; font: 600 calc(var(--tvu) * 15)/1 var(--text); letter-spacing: 0.18em; text-transform: uppercase; color: var(--blood-ink); }
+.s2-table .mk { width: calc(var(--tvu) * 24); height: calc(var(--tvu) * 24); border-radius: 50%; display: grid; place-items: center; flex: none; }
+.s2-table .mk.ok { background: var(--gilt-hi); color: var(--ink); }
+.s2-table .mk.ok svg { width: 70%; height: 70%; }
+.s2-table .mk.wait { border: 1.5px dashed var(--gilt-2); }
+.s2-row .scard .nm { font-size: calc(var(--tvu) * 18); line-height: 1.04; max-height: 3.2em; -webkit-line-clamp: 3; }
+.s2-row .scard.row-WHERE .nm { font-size: calc(var(--tvu) * 17); }
+.s2-vis .sv-row { flex-wrap: wrap; max-height: calc(var(--tvu) * 172); align-content: flex-start; }
+.s2-vis .sv.old .vcard.tarot--thumb { width: calc(var(--tvu) * 58); font-size: calc(var(--tvu) * 6.2); }
+.s2-vis .sv.old figcaption { font-size: calc(var(--tvu) * 13); }
+.sboard2 .s2-stage { align-items: center; justify-content: center; }
+.s2-board { width: max-content; max-width: 100%; display: flex; flex-direction: column; gap: calc(var(--tvu) * 12); }
+.s2-board .s2-vis { max-width: calc(var(--tvu) * 900); }
+/* Long story-card names wrap onto a third line rather than shrinking out of sight (the legibility floor hides text under 11 px). */
+.scard .nm { font-size: calc(1.28em * max(0.8, min(1, 17 / var(--nl, 10)))); max-height: 3.3em; }
+.scard.row-WHERE .nm { font-size: calc(1.18em * max(0.82, min(1, 17 / var(--nl, 10)))); }
+/* Séance status bar: the questions and the clock on one line */
+.s-bar .sb-top { align-items: flex-end; }
+.s-bar .s-qs { margin: 0; flex: 1; min-width: 0; }
+.s-bar .s-qs li { flex: 1; min-width: 0; }
+.s-bar .scandles.sm { flex: none; margin: 0 0 4px; }
+.s-bar .sb-special { margin: 0; flex: 1; }
+.s-bar .sb-you { margin: 6px 0 2px; font: italic 400 14px/1 var(--text); color: var(--blood-ink); }
+/* Story-card names on phones: never under the legibility floor; they wrap instead */
+.scard .nm { font-size: max(11.5px, calc(1.28em * max(0.8, min(1, 17 / var(--nl, 10))))); }
+.scard.row-WHERE .nm { font-size: max(11px, calc(1.18em * max(0.82, min(1, 17 / var(--nl, 10))))); }
+.srow-cards.xs .scard .nm { display: none; }
+/* The spirit answers: the card large, the stamp beneath it, never over its name */
+.sm-answer { display: flex; flex-direction: column; align-items: center; gap: 0; }
+.sm-answer .scard { width: min(52vw, 200px); font-size: min(3.4vw, 14px); }
+.sm-answer .sm-stamp { position: relative; inset: auto; margin-top: -0.45em; z-index: 2; font-size: 44px; }

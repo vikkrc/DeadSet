@@ -155,9 +155,10 @@ function graveMove(m, v, rng) {
   }
 }
 
-// Séance: the Ghost sends the vision that fits the truth best and the rest of the row least,
-// and frosts a vision it did not send; Mediums light the card their row's visions fit best;
-// the Deceiver swaps in a vision that fits a near miss, and lights plausibly wrong.
+// Séance: the Ghost sends each Medium the vision in its hand that fits the answer best and the rest of
+// the row least, and frosts a vision it did not send; Mediums lay their hand on the card the row's visions
+// fit best (with a reader's noise); the Deceiver swaps in a vision that fits its decoy and leans on it.
+const S_NOISE = 1.2;
 function seanceMove(m, v, rng) {
   const a = v.action || {};
   const me = v.me.id;
@@ -165,52 +166,77 @@ function seanceMove(m, v, rng) {
   const s = v.me.s ?? {};
   const open = (row) => S.board[row].filter((c) => !S.struck[row].includes(c));
   const best = (scores) => { const top = Math.max(...Object.values(scores)); const ids = Object.keys(scores).filter((k) => scores[k] === top); return Number(pick(rng, ids)); };
+  // Who laid hands on cards the spirit later denied, or on a wrong card of a solved question.
+  const suspicion = (ids) => {
+    const sus = Object.fromEntries(ids.map((id) => [id, rng.int(100) / 1000]));
+    for (const r of S.past ?? []) {
+      const answer = S.solved[r.row];
+      for (const [id, c] of Object.entries(r.hands ?? {})) if (id in sus && ((answer != null && c !== answer) || (!r.verdict.right && c === r.verdict.pick))) sus[id] += 1;
+      for (const id of r.frosted ?? []) if (id in sus) sus[id] -= 2; // a swapped vision's reader is not the Deceiver
+    }
+    return Object.keys(sus).sort((x, y) => sus[y] - sus[x]);
+  };
+  const read = (row) => {
+    const vis = (S.seen?.[row] ?? []).filter((x) => !x.frost).map((x) => x.v);
+    return Object.fromEntries(open(row).map((c) => [c, vis.reduce((n, vid) => n + fit(vid, row, c), 0) + (rng.int(1000) / 1000) * S_NOISE]));
+  };
+  // The Deceiver's decoy: the wrong card its false hand fits best.
+  const decoy = (row) => {
+    const rest = open(row).filter((c) => c !== s.truth[row]);
+    const sc = Object.fromEntries(rest.map((c) => [c, (s.dhand ?? []).reduce((n, vid) => n + fit(vid, row, c), 0) + (S.seen?.[row] ?? []).reduce((n, x) => n + fit(x.v, row, c), 0) / 2]));
+    return rest.length ? best(sc) : null;
+  };
   switch (a.type) {
     case 'sintro': return a.done ? null : { cmd: { type: 's.ack', payload: {} } };
     case 'ssend': {
-      const to = Object.keys(S.assign).find((id) => (s.sent?.[id]?.length ?? 0) < S.perMedium);
-      if (!to || !s.hand?.length || !chance(rng, 0.5)) return null;
-      const row = S.assign[to];
+      const to = S.readers.find((id) => s.sent?.[id] == null);
+      if (!to || !s.cards?.length || !chance(rng, 0.5)) return null;
+      const row = a.row;
       const others = open(row).filter((c) => c !== s.truth[row]);
-      const score = (vid) => fit(vid, row, s.truth[row]) * 2 - Math.max(0, ...others.map((c) => fit(vid, row, c)));
-      const vision = [...s.hand].sort((x, y) => score(y) - score(x))[0];
+      const score = (vid) => fit(vid, row, s.truth[row]) * 2 - Math.max(0, ...others.map((c) => fit(vid, row, c))) * 1.5;
+      const vision = [...s.cards].sort((x, y) => score(y) - score(x))[0];
       return { cmd: { type: 's.send', payload: { target: to, vision } } };
     }
-    case 'simpress': {
-      if (s.impression != null || !chance(rng, 0.4)) return null;
-      if (s.role === 'DECEIVER' && !s.swap && s.swapsLeft > 0 && chance(rng, 0.7)) {
-        const targets = Object.keys(S.assign).filter((id) => id !== me);
-        const t = pick(rng, targets);
-        const row = S.assign[t];
-        const near = open(row).filter((c) => c !== s.truth[row]);
-        const score = (vid) => Math.max(0, ...near.map((c) => fit(vid, row, c))) * 2 - fit(vid, row, s.truth[row]);
-        const vision = [...s.dhand].sort((x, y) => score(y) - score(x))[0];
+    case 'shunch': {
+      if (s.role === 'DECEIVER' && !s.swap && s.swapsLeft > 0 && chance(rng, 0.5)) {
+        const t = pick(rng, a.targets);
+        const d = decoy(a.row);
+        const score = (vid) => (d == null ? 0 : fit(vid, a.row, d)) * 2 - fit(vid, a.row, s.truth[a.row]);
+        const vision = [...(s.dhand ?? [])].sort((x, y) => score(y) - score(x))[0];
         if (vision != null) return { cmd: { type: 's.swap', payload: { target: t, vision } } };
       }
-      return { cmd: { type: 's.impress', payload: { card: pick(rng, open(a.row)) } } };
+      if (s.hunch != null || !chance(rng, 0.4)) return null;
+      let order = suspicion(a.targets);
+      if (s.role === 'DECEIVER') order = order.filter((x) => !(s.fellows ?? []).includes(x));
+      return { cmd: { type: 's.hunch', payload: { target: order[0] ?? pick(rng, a.targets) } } };
     }
-    case 'scold': {
-      if (!S.cold || !chance(rng, 0.3)) return null;
-      const t = Object.keys(S.shown ?? {}).find((id) => !S.frosted.includes(id) && S.shown[id].some((x) => !(s.sent?.[id] ?? []).includes(x)));
-      return t ? { cmd: { type: 's.cold', payload: { target: t } } } : null;
+    case 'sghost': {
+      if (a.done || !chance(rng, 0.4)) return null;
+      if (S.cold > 0) {
+        const lie = S.readers.find((id) => !S.frosted.includes(id) && s.sent?.[id] != null && (S.seen?.[a.row] ?? []).some((x) => x.round === S.round && x.to === id && x.v !== s.sent[id]));
+        if (lie) return { cmd: { type: 's.cold', payload: { target: lie } } };
+      }
+      return { cmd: { type: 's.done', payload: {} } };
     }
-    case 'slight': {
-      if (s.lit != null || !chance(rng, 0.4)) return null;
+    case 'shand': {
+      if (s.hand != null || !chance(rng, 0.4)) return null;
       const row = a.row;
-      const cands = open(row);
-      const visions = Object.entries(S.shown ?? {}).filter(([id]) => S.assign[id] === row && !S.frosted.includes(id)).flatMap(([, vs]) => vs);
-      const scores = Object.fromEntries(cands.map((c) => [c, visions.reduce((n, vid) => n + fit(vid, row, c), 0) + rng.int(100) / 1000]));
-      if (s.role === 'DECEIVER' && chance(rng, 0.6)) { delete scores[s.truth[row]]; if (!Object.keys(scores).length) return { cmd: { type: 's.light', payload: { card: 'abstain' } } }; }
-      return { cmd: { type: 's.light', payload: { card: best(scores) } } };
+      const scores = read(row);
+      if (s.role === 'DECEIVER') {
+        const d = decoy(row);
+        const top = Math.max(...Object.values(scores));
+        // Lean on the decoy while it is plausible; otherwise blend in with the table.
+        if (d != null && scores[d] >= top * 0.6 && chance(rng, 0.75)) return { cmd: { type: 's.hand', payload: { card: d } } };
+        delete scores[s.truth[row]];
+        if (!Object.keys(scores).length || chance(rng, 0.4)) return { cmd: { type: 's.hand', payload: { card: s.truth[row] } } };
+      }
+      return { cmd: { type: 's.hand', payload: { card: best(scores) } } };
     }
     case 'sname': {
       if (s.named || !chance(rng, 0.5)) return null;
-      // Suspicion: candles lit on cards that turned out wrong.
-      const sus = Object.fromEntries(a.targets.map((id) => [id, rng.int(100) / 1000]));
-      for (const r of S.past ?? []) for (const [id, c] of Object.entries(r.lit ?? {})) if (id in sus && c !== 'abstain' && S.solved[r.assign[id]] != null && Number(c) !== S.solved[r.assign[id]]) sus[id] += 1;
-      if (s.role === 'DECEIVER') for (const f of [me, ...(s.fellows ?? [])]) delete sus[f];
-      const ranked = Object.keys(sus).sort((x, y) => sus[y] - sus[x]);
-      return { cmd: { type: 's.name', payload: { targets: ranked.slice(0, a.count) } } };
+      let order = suspicion(a.targets);
+      if (s.role === 'DECEIVER') order = order.filter((x) => !(s.fellows ?? []).includes(x));
+      return { cmd: { type: 's.name', payload: { targets: order.slice(0, a.count) } } };
     }
     default: return null;
   }

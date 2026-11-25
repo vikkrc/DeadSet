@@ -517,25 +517,25 @@ export default {
 <li><b>Duración de la discusión, partidas por encuentro.</b></li>
 </ul>`,
     seanceSetup: `<p>De 4 a 10 jugadores, unos 30 minutos. Un misterio de asesinato cooperativo con un traidor. Un jugador es el Fantasma: sabe quién lo mató, dónde y por qué, y no puede hablar. Todos los demás son Médiums que leen sus visiones. Desde cinco jugadores, un Impostor puede esconderse entre los Médiums: un segundo espíritu que conoce la verdad y juega contra la mesa.</p>
-<p><b>El tablero:</b> tres filas de cartas de historia, QUIÉN, DÓNDE y POR QUÉ. En cada fila, una carta es la verdad.</p>`,
+<p><b>El tablero:</b> tres filas de cartas de historia, QUIÉN, DÓNDE y POR QUÉ. En cada fila, una carta es la verdad. La sesión las pregunta una a una: quién, luego dónde, luego por qué.</p>`,
     seanceLoop: `<ol>
-<li><b>Visiones.</b> En cada ronda, cada Médium recibe una fila. El Fantasma elige de su mano una visión para cada uno: una carta con dos o tres motivos grabados que debe apuntar a la verdad de esa fila.</li>
-<li><b>La revelación.</b> Las visiones se destapan para todos. Describidlas, discutid, convenced. El Fantasma calla, pero puede helar una visión con una mancha fría: <em>esta no es mía</em>.</li>
-<li><b>El cambio del Impostor.</b> Unas cuantas veces por partida, el Impostor cambia en secreto la visión de otro Médium por una de sus mentiras.</li>
-<li><b>Velas.</b> Cada Médium enciende una vela sobre una carta de su fila, o se la guarda. La carta con más velas se presenta al espíritu. Si acierta, la fila queda resuelta. Si no, la carta se tacha.</li>
-<li><b>El reloj.</b> Cada ronda consume una vela del reloj de la sesión (siete en dificultad Estándar).</li>
+<li><b>Visiones.</b> El Fantasma envía a cada Médium una visión para la pregunta: una carta con dos o tres motivos grabados. Su mano siempre tiene algunas que encajan con la respuesta; el resto es la suerte del mazo. Mientras, cada Médium marca en secreto su <b>sospecha</b>: de quién sospecha.</li>
+<li><b>El cambio del Impostor.</b> Unas cuantas veces por partida, el Impostor cambia en secreto la visión de otro Médium por una suya, que apunta a una carta equivocada.</li>
+<li><b>Manos.</b> Las visiones se destapan y se quedan en la mesa hasta que la pregunta tiene respuesta. Habladlo. El Fantasma calla, pero puede helar una visión con una mancha fría: <em>esta no es mía</em>. Luego cada Médium pone la mano sobre una carta.</li>
+<li><b>El espíritu responde.</b> La carta bajo más manos se presenta al espíritu; en caso de empate, o sin ninguna mano, la planchette elige al azar. Sí: a la siguiente pregunta. No: la carta se tacha.</li>
+<li><b>El reloj.</b> Cada ronda consume una de las siete velas, sea cual sea la respuesta.</li>
 </ol>`,
     seanceWin: `<ul>
-<li>Resolved las tres filas antes de que se consuman las velas y luego señalad al Impostor. Si acertáis: una <b>victoria plena</b>. Si no: una <b>victoria hueca</b>, compartida con el Impostor.</li>
-<li>Si el reloj se consume, gana el Impostor (sin Impostor, la mesa pierde). Si solo queda una fila, antes todos encienden en ella una vela del último aliento.</li>
-<li>En un encuentro: una victoria plena +2 para el Fantasma y cada Médium; una hueca +1 para cada uno y +1 para el Impostor; una victoria del Impostor +3.</li>
-<li>La pantalla final repite cada ronda: las visiones verdaderas, los cambios y las velas.</li>
+<li>Responded las tres preguntas antes de que se apaguen las velas y luego nombrad al Impostor (vuestra última sospecha está marcada). Si acertáis: <b>victoria total</b>. Si no: <b>victoria hueca</b>, compartida con el Impostor.</li>
+<li>Si el reloj se apaga, gana el Impostor (sin Impostor, la mesa pierde). Adivinar a ciegas no basta: siete velas para tres respuestas entre seis cartas cada una.</li>
+<li>En una partida larga: victoria total +2 para el Fantasma y cada Médium; victoria hueca +1 para cada uno y +1 para el Impostor; victoria del Impostor +3.</li>
+<li>La pantalla final repasa cada ronda: las visiones verdaderas, los cambios, las manos y las sospechas.</li>
 </ul>`,
     seanceOpts: `<ul>
-<li><b>Dificultad:</b> cuántas cartas por fila, visiones por Médium y velas en el reloj.</li>
-<li><b>Impostores:</b> ninguno, uno o dos, y si dos se conocen; cuántos cambios tienen.</li>
+<li><b>Dificultad:</b> cuántas cartas hay por fila, cuántas visiones del Fantasma encajan con la respuesta y cuántas velas tiene el reloj.</li>
+<li><b>Impostores:</b> ninguno, uno o dos, y si los dos se conocen; cuántos cambios tienen.</li>
 <li><b>Las manchas frías del Fantasma:</b> cuántas visiones puede helar.</li>
-<li><b>Último aliento:</b> activado o no. <b>El Fantasma:</b> por sorteo, o lo elige el anfitrión. <b>Partidas por encuentro.</b></li>
+<li><b>El Fantasma:</b> por sorteo, o elegido por el anfitrión. <b>Partidas por encuentro.</b></li>
 </ul>`,
     graveSetup: `<p>De 4 a 12 jugadores, unos 15 minutos. Dos cuadrillas de saqueadores de tumbas, la Luna y el Sol, excavan un cementerio de 25 lápidas en busca de las reliquias que invocarán a su deidad. Una moneda decide la cuadrilla que excava primero: tiene 9 reliquias bajo tierra, la otra 8. Siete tumbas están vacías y una es la de la Muerte.</p>
 <p>Cada cuadrilla tiene un <b>Enterrador</b>, el único jugador que ve el registro de sepulturas: qué hay bajo cada lápida. Todos los demás excavan. Las lápidas muestran palabras en el idioma de la mesa, o iconos a lápiz.</p>`,

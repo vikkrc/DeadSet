@@ -517,25 +517,25 @@ export default {
 <li><b>Délka diskuse, her v zápase.</b></li>
 </ul>`,
     seanceSetup: `<p>4–10 hráčů, asi 30 minut. Kooperativní vražedná záhada se zrádcem. Jeden hráč je Duch: ví, kdo ho zabil, kde a proč, a nemůže mluvit. Všichni ostatní jsou Média, která čtou jeho vize. Od pěti hráčů se mezi Médii může skrývat Lhář: druhý duch, který zná pravdu a pracuje proti stolu.</p>
-<p><b>Tabule:</b> tři řady karet příběhu, KDO, KDE a PROČ. V každé řadě je jedna karta pravda.</p>`,
+<p><b>Tabule:</b> tři řady karet příběhu, KDO, KDE a PROČ. V každé řadě je jedna karta pravda. Seance se ptá postupně: nejdřív kdo, pak kde, nakonec proč.</p>`,
     seanceLoop: `<ol>
-<li><b>Vize.</b> V každém kole dostane každé Médium jednu řadu. Duch mu ze své ruky vybere vizi: kartu se dvěma nebo třemi rytými motivy, která má ukázat na pravdu v té řadě.</li>
-<li><b>Odhalení.</b> Vize se otočí pro všechny. Popište je, hádejte se, přesvědčujte. Duch mlčí, ale může vizi zamrazit studeným místem: <em>tahle není moje</em>.</li>
-<li><b>Lhářova výměna.</b> Několikrát za hru Lhář tajně vymění vizi jiného Média za jednu ze svých lží.</li>
-<li><b>Svíčky.</b> Každé Médium zapálí svíčku na kartě ve své řadě, nebo ji podrží. Karta s nejvíce svíčkami jde před ducha. Správně: řada je vyřešená. Špatně: karta se škrtne.</li>
-<li><b>Hodiny.</b> Každé kolo shoří jedna svíčka hodin seance (sedm při standardní obtížnosti).</li>
+<li><b>Vize.</b> Duch pošle každému Médiu jednu vizi k otázce: kartu se dvěma nebo třemi rytými motivy. V ruce má vždy několik, které sedí na odpověď; zbytek je štěstí balíčku. Mezitím si každé Médium tajně označí <b>podezření</b>: koho podezírá.</li>
+<li><b>Lhářova výměna.</b> Několikrát za hru Lhář tajně vymění vizi jiného Média za jednu svou, která ukazuje na špatnou kartu.</li>
+<li><b>Ruce.</b> Vize se otočí a zůstanou na stole, dokud otázka nemá odpověď. Proberte to. Duch mlčí, ale může vizi zamrazit studeným místem: <em>tahle není moje</em>. Pak každé Médium položí ruku na jednu kartu.</li>
+<li><b>Duch odpovídá.</b> Karta pod nejvíce rukama jde před ducha; při remíze, nebo když nikdo ruku nepoložil, vybere ukazatel náhodně. Ano: jde se na další otázku. Ne: karta se škrtne.</li>
+<li><b>Hodiny.</b> Každé kolo shoří jedna ze sedmi svíček, ať je odpověď jakákoli.</li>
 </ol>`,
     seanceWin: `<ul>
-<li>Vyřešte všechny tři řady, než svíčky dohoří, a pak označte Lháře. Správně: <b>úplné vítězství</b>. Špatně: <b>prázdné vítězství</b>, o které se dělí i Lhář.</li>
-<li>Pokud hodiny dohoří, vyhrává Lhář (bez Lháře stůl prohrává). Pokud zbývá jedna řada, nejdřív na ní každý zapálí svíčku posledního výdechu.</li>
-<li>V zápase: úplné vítězství +2 pro Ducha a každé Médium; prázdné +1 pro každého a +1 pro Lháře; výhra Lháře +3.</li>
-<li>Závěrečná obrazovka přehraje každé kolo: pravé vize, výměny a svíčky.</li>
+<li>Odpovězte na všechny tři otázky dřív, než svíčky dohoří, a pak pojmenujte Lháře (vaše poslední podezření je označené). Správně: <b>úplné vítězství</b>. Špatně: <b>prázdné vítězství</b>, společné se Lhářem.</li>
+<li>Když hodiny dohoří, vyhraje Lhář (bez Lháře stůl prohraje). Hádat naslepo nestačí: sedm svíček na tři odpovědi, po šesti kartách v řadě.</li>
+<li>V zápase: úplné vítězství +2 pro Ducha a každé Médium; prázdné +1 pro každého a +1 pro Lháře; vítězství Lháře +3.</li>
+<li>Závěrečná obrazovka přehraje každé kolo: skutečné vize, výměny, ruce a podezření.</li>
 </ul>`,
     seanceOpts: `<ul>
-<li><b>Obtížnost:</b> kolik karet v řadě, vizí na Médium a svíček na hodinách.</li>
-<li><b>Lháři:</b> žádný, jeden, nebo dva, a zda se dva znají; kolik výměn mají.</li>
-<li><b>Studená místa Ducha:</b> kolik vizí smí zamrazit.</li>
-<li><b>Poslední výdech:</b> zapnutý, nebo vypnutý. <b>Duch:</b> losem, nebo ho vybere hostitel. <b>Her v zápase.</b></li>
+<li><b>Obtížnost:</b> kolik karet je v řadě, kolik Duchových vizí sedí na odpověď a kolik svíček hoří na hodinách.</li>
+<li><b>Lháři:</b> žádný, jeden nebo dva, a zda se dva znají; kolik výměn dostanou.</li>
+<li><b>Duchova studená místa:</b> kolik vizí smí zamrazit.</li>
+<li><b>Duch:</b> losem, nebo ho vybere hostitel. <b>Her v zápase.</b></li>
 </ul>`,
     graveSetup: `<p>4–12 hráčů, asi 15 minut. Dvě party vykradačů hrobů, Měsíc a Slunce, kopou na hřbitově s 25 náhrobky relikvie, které přivolají jejich božstvo. Mince určí partu, která kope první: ta má v zemi 9 relikvií, druhá 8. Sedm hrobů je prázdných a jeden patří Smrti.</p>
 <p>Každá parta má <b>Hrobníka</b>, jediného hráče, který vidí pohřební rejstřík: co leží pod každým kamenem. Všichni ostatní kopou. Náhrobky ukazují slova v jazyce stolu nebo tužkové ikony.</p>`,

@@ -119,7 +119,7 @@ function letters(text) {
  * least 1.2 s; three or more waiting collapse to one line pointing at the Gazette, which keeps everything anyway.
  * During discussion (quiet hours) only bad news drops a slip. The latest line stays in the header for 10 s.
  */
-const TALK = new Set(['DAY_DISCUSSION', 'N_DAY', 'X_DISCUSS', 'W_PROMPT', 'Q_ASK', 'S_DISCUSS']);
+const TALK = new Set(['DAY_DISCUSSION', 'N_DAY', 'X_DISCUSS', 'W_PROMPT', 'Q_ASK', 'S_HANDS']);
 const herald = { cur: null, shownAt: 0, queue: [], timer: null };
 function notify(text, kind = '') {
   kind = kind === 'err' ? 'bad' : kind === 'accuse' ? 'public accuse' : kind || 'public';
@@ -867,7 +867,7 @@ function momentHtml(m) {
     case 'ospin': body = omenMomentHtml(m, { letters, onBoard, V }); break;
     case 'wprompt': case 'wreveal': body = mirrorMomentHtml(m, { letters, onBoard, V }); break;
     case 'qstart': case 'qaccuse': case 'qverdict': case 'qunmask': case 'qguess': case 'qtime': body = mimicMomentHtml(m, { letters, onBoard, V }); break;
-    case 'svisions': case 'scold': case 'sverdict': case 'slast': case 'sname': case 'snamed': body = seanceMomentHtml(m, { letters, onBoard, V }); break;
+    case 'svisions': case 'scold': case 'sverdict': case 'sname': case 'snamed': body = seanceMomentHtml(m, { letters, onBoard, V }); break;
     case 'kintro': case 'kswap': case 'kclaim': case 'kreveal': case 'kpower': case 'klook': body = carnivalMomentHtml(m, { letters, onBoard, V }); break;
     case 'gift': body = giftHtml(m.idx, { t, th, esc, product: m.product }); break;
     case 'mside': case 'mlottery': case 'mlantern': case 'mintro': case 'mcandle': case 'mcard': case 'mvotes': case 'mreveal': case 'mnamed': case 'munmask': case 'mreckon': body = missionMomentHtml(m, { letters, avatarSvg, onBoard, mode: V()?.mode }); break;
@@ -1121,7 +1121,8 @@ let legibilityRaf = 0;
 function legibility() {
   cancelAnimationFrame(legibilityRaf);
   legibilityRaf = requestAnimationFrame(() => {
-    const floor = onBoard() ? 16 : 11;
+    // On the TV the floor scales with the board (TV units: 1600 × 900), as every other TV size does.
+    const floor = onBoard() ? 16 * Math.min(1, innerWidth / 1600, innerHeight / 900) : 11;
     for (const el of app.querySelectorAll(TINY_TEXT)) {
       const h = el.offsetHeight;
       const scale = h ? el.getBoundingClientRect().height / h : 1;
@@ -1243,7 +1244,7 @@ const STEP_EN = {
   O_SHOW: 'The wheel', O_SECRET: 'Predict and turn', O_REVEAL: 'The wheel turns',
   W_PROMPT: 'Talk it over', W_CHOOSE: 'Seal your ballot', W_REVEAL: 'The reveal',
   Q_INTRO: 'Your card', Q_ASK: 'Questions', Q_VOTE: 'An accusation', Q_GUESS: 'The Mimic names the place', Q_FINAL: 'The final vote',
-  S_INTRO: 'The Ghost', S_VISION: 'Visions', S_DISCUSS: 'Discussion', S_CANDLE: 'Candles', S_LAST: 'The last breath', S_NAMING: 'The naming',
+  S_INTRO: 'The Ghost', S_VISION: 'Visions', S_HANDS: 'Hands', S_NAMING: 'The naming',
   K_UNMASK: 'The unmasking', K_LOTTERY: 'The first dancer', K_TURN: 'Swap, peek or claim', K_CHALLENGE: 'Challenges', K_POWER: 'A power', K_LOOK: 'A look',
   C_LOTTERY: 'The first player', C_BURY: 'The burial', C_TURN: 'Bury or challenge', C_BID: 'The bidding', C_WAGER: 'Ghost wagers', C_DIG: 'The dig', C_LOSE: 'A coffin is lost',
   X_REVEAL: 'The crystal ball', X_LOTTERY: 'The first speaker', X_CLUES: 'One word each', X_DISCUSS: 'Talk it over', X_VOTE: 'Name the Demon', X_GUESS: 'The last guess',
@@ -1862,7 +1863,7 @@ function tray(v) {
  * `move(v)` -> { act, main, sub }; until it does, the mode's own "do now" block is lifted out of its screen into
  * the strip, so no screen says it twice. On secret steps every role sees the same line.
  */
-const IDLE = new Set(['none', 'wait', 'spectate', 'defense', 'morning', 'moderator', 'ready', 'ack', 'talk']);
+const IDLE = new Set(['none', 'wait', 'swait', 'swatch', 'spectate', 'defense', 'morning', 'moderator', 'ready', 'ack', 'talk']);
 const canAct = (v) => { const a = v.action; return !!a && !IDLE.has(a.type) && !a.done && !a.played && !a.ghost; };
 function moveBand(v, html) {
   if (!inPlay(v) || !v.me || v.me.moderator) return { strip: '', html };
@@ -2564,7 +2565,7 @@ function timersForm(v) {
     mirror: () => `${timer('wTalk', 'Talking it over')}${timer('wChoose', 'Sealing the ballots')}${timer('wReveal', 'The reveal')}`,
     mimic: () => `${timer('qIntro', 'Looking at your card')}${timer('qRound', 'The questions')}${timer('qVote', 'Each accusation vote')}${timer('qGuess', 'The Mimic\'s guess')}${timer('qFinal', 'The final vote')}`,
     graverobbers: () => `${timer('gIntro', 'Meeting your crew')}${timer('gSign', 'The sign')}${timer('gVote', 'Each vote')}`,
-    seance: () => `${timer('sIntro', 'Looking at your role')}${timer('sVision', 'Visions')}${timer('sDiscuss', 'Discussion')}${timer('sCandle', 'Candles')}${timer('sName', 'The naming')}`,
+    seance: () => `${timer('sIntro', 'Looking at your role')}${timer('sVision', 'Visions')}${timer('sHands', 'Hands')}${timer('sName', 'The naming')}`,
     midnight: () => `${timer('nDeal', 'Looking at your card')}${timer('nStep', 'Each night step')}${timer('nDay', 'Discussion')}${timer('nVote', 'The vote')}`,
     carnival: () => `${timer('kTurn', 'Each turn')}${timer('kChallenge', 'Challenges')}${timer('kPower', 'Power picks')}${timer('kLook', 'Looking at a mask')}`,
     coffins: () => `${timer('cBury', 'Burial')}${timer('cTurn', 'Each turn')}${timer('cBid', 'Each bid')}${timer('cDig', 'Each dig pick')}${timer('cWager', 'Ghost wagers')}`,

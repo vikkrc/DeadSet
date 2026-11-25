@@ -5,7 +5,7 @@ import { newMatch, addPlayer, startMatch, playerCommand, hostAdvance, updateSett
 import { playerView, publicView } from '../engine/views.js';
 import { seededRng } from '../engine/rng.js';
 import { botDecide } from '../server/bots.js';
-import { ROWS, DIFFICULTY, deceiverCount } from '../engine/seance.js';
+import { ROWS, DIFFICULTY, deceiverCount, fitsAnswer, fitsDecoy, fitCount } from '../engine/seance.js';
 import { VISIONS, MOTIF_TAGS, STORY_TAGS, TAGS } from '../engine/seancecontent.js';
 import { SCENARIO } from '../engine/content.js';
 import { EMBLEMS } from '../public/emblems.js';
@@ -30,14 +30,20 @@ function setup({ n = 6, dec = ['p5'], settings = {}, ack = true } = {}) {
   const readers = () => m.players.map((p) => p.id).filter((id) => id !== 'p0');
   const t = { m, rng, cmd, advance, readers, S: () => m.S };
   if (ack) for (const p of m.players) cmd(p.id, 's.ack');
-  /** Send every reader a vision and mark every impression: the visions go public. */
+  /** The Ghost sends every reader a vision and every reader marks a hunch: the visions go public. */
   t.visions = () => {
-    for (const id of readers()) for (let k = 0; k < DIFFICULTY[m.config.difficulty].visions; k++) if (m.phase === 'S_VISION') cmd('p0', 's.send', { target: id, vision: m.S.hand[0] });
-    for (const id of readers()) if (m.phase === 'S_VISION') cmd(id, 's.impress', { card: m.S.board[m.S.assign[id]].find((c) => !m.S.struck[m.S.assign[id]].includes(c)) });
+    for (const id of readers()) if (m.phase === 'S_VISION') cmd('p0', 's.send', { target: id, vision: m.S.hand[0] });
+    for (const id of readers()) if (m.phase === 'S_VISION' && m.S.deceivers.length) cmd(id, 's.hunch', { target: readers().find((x) => x !== id) });
   };
-  /** Light candles: `pick(row)` → the card each reader lights. */
-  t.light = (pick) => { if (m.phase === 'S_DISCUSS') advance(); for (const id of readers()) if (['S_CANDLE', 'S_LAST'].includes(m.phase)) cmd(id, 's.light', { card: pick(m.S.assign[id], id) }); };
-  t.round = (pick) => { t.visions(); t.light(pick); };
+  /** Lay hands: `pick(id)` → the card each reader's hand rests on; the Ghost is done. */
+  t.hands = (pick) => {
+    if (m.phase !== 'S_HANDS') return;
+    cmd('p0', 's.done');
+    for (const id of readers()) if (m.phase === 'S_HANDS') cmd(id, 's.hand', { card: pick(id) });
+  };
+  t.round = (pick) => { t.visions(); t.hands(pick); };
+  /** A wrong card still in the current row. */
+  t.wrong = () => m.S.board[m.S.at].find((c) => c !== m.S.truth[m.S.at] && !m.S.struck[m.S.at].includes(c));
   return t;
 }
 
@@ -77,19 +83,40 @@ test('the start: a public, silent Ghost; the truth only for the Ghost and the De
   }
   for (const p of m.players) t.cmd(p.id, 's.ack');
   assert.equal(m.phase, 'S_VISION');
-  assert.ok(m.S.hand.length >= 7);
+  assert.equal(m.S.hand.length, 8);
 });
 
-test('assignments spread the readers over the open rows and rotate', () => {
+test('one question at a time: who, then where, then why; the visions for it stay on the table', () => {
   const t = setup();
   const { m } = t;
-  const first = { ...m.S.assign };
-  const counts = ROWS.map((r) => Object.values(first).filter((x) => x === r).length);
-  assert.ok(Math.max(...counts) - Math.min(...counts) <= 1);
-  // Nobody solves anything: everyone lights a wrong card in round one.
-  t.round((row) => m.S.board[row][1]);
-  assert.equal(m.S.round, 2);
-  for (const id of t.readers()) assert.notEqual(m.S.assign[id], first[id], 'rotated');
+  assert.equal(m.S.at, 'WHO');
+  t.round(() => t.wrong());
+  assert.equal(m.S.at, 'WHO', 'a wrong answer keeps the question open');
+  assert.equal(m.S.seen.WHO.length, 5, 'five readers, five visions');
+  t.round(() => m.S.truth.WHO);
+  assert.equal(m.S.at, 'WHERE');
+  assert.equal(publicView(m).seance.seen.WHO.length, 10, 'both rounds of WHO visions stay public');
+  assert.equal(m.S.seen.WHERE.length, 0);
+  assert.equal(m.S.round, 3);
+});
+
+test('fair dealing: the Ghost\'s hand always holds visions that fit the answer; the Deceiver\'s fit a wrong card', () => {
+  for (let seed = 1; seed < 30; seed++) {
+    const rng = seededRng(seed);
+    const m = newMatch({ id: 's', code: 'S', hostId: 'p0' });
+    for (let i = 0; i < 6; i++) addPlayer(m, { id: `p${i}`, name: NAMES[i] });
+    updateSettings(m, { mode: 'seance' });
+    m.players.forEach((p) => { p.ready = true; });
+    startMatch(m, rng, 1e6);
+    hostAdvance(m, rng, 1e6 + 10);
+    const row = m.S.at;
+    const truth = m.S.truth[row];
+    const rest = m.S.board[row].filter((c) => c !== truth);
+    assert.equal(m.S.hand.length, 8, 'five readers + 3');
+    assert.ok(m.S.hand.filter((x) => fitsAnswer(x, row, truth, rest)).length >= fitCount('standard', 5), `seed ${seed}`);
+    const [d] = m.S.deceivers;
+    assert.ok(m.S.dhand[d].some((x) => fitsDecoy(x, row, truth, rest)), `decoys, seed ${seed}`);
+  }
 });
 
 test('visions: the Ghost sends (and can change) one per reader; they go public only at the reveal', () => {
@@ -98,17 +125,35 @@ test('visions: the Ghost sends (and can change) one per reader; they go public o
   const [v1, v2] = m.S.hand;
   cmd('p0', 's.send', { target: 'p1', vision: v1 });
   cmd('p0', 's.send', { target: 'p1', vision: v2 });
-  assert.deepEqual(m.S.sent.p1, [v2]);
+  assert.equal(m.S.sent.p1, v2);
   assert.ok(m.S.hand.includes(v1), 'the replaced vision returns to the hand');
-  assert.equal(publicView(m).seance.shown, undefined);
-  assert.equal(playerView(m, 'p1').me.s.visions, undefined, 'the reader sees it at the reveal');
+  assert.equal(publicView(m).seance.seen.WHO.length, 0);
+  assert.equal(playerView(m, 'p1').me.s.vision, undefined, 'the reader sees it at the reveal');
   assert.throws(() => cmd('p1', 's.send', { target: 'p2', vision: m.S.hand[0] }), /Ghost/);
-  // The deadline: unsent visions go out at random.
+  // The deadline: unsent visions go out from the hand.
   t.advance();
-  assert.equal(m.phase, 'S_DISCUSS');
-  for (const id of t.readers()) assert.equal(m.S.shown[id].length, 1);
-  assert.ok(publicView(m).seance.shown);
-  assert.deepEqual(playerView(m, 'p1').me.s.visions, [v2]);
+  assert.equal(m.phase, 'S_HANDS');
+  for (const id of t.readers()) assert.ok(m.S.shown[id] != null);
+  assert.equal(playerView(m, 'p1').me.s.vision, v2);
+});
+
+test('hunches: every reader marks one while the Ghost chooses (the Deceiver\'s cover); the window waits for them', () => {
+  const t = setup();
+  const { m, cmd } = t;
+  for (const id of t.readers()) cmd('p0', 's.send', { target: id, vision: m.S.hand[0] });
+  assert.equal(m.phase, 'S_VISION', 'still waiting for the hunches');
+  assert.equal(playerView(m, 'p5').action.type, playerView(m, 'p2').action.type, 'the same screen for the Deceiver');
+  assert.throws(() => cmd('p1', 's.hunch', { target: 'p1' }), /another/);
+  assert.throws(() => cmd('p1', 's.hunch', { target: 'p0' }), /another/);
+  for (const id of t.readers()) cmd(id, 's.hunch', { target: id === 'p1' ? 'p2' : 'p1' });
+  assert.equal(m.phase, 'S_HANDS');
+  assert.equal(playerView(m, 'p3').me.s.lastHunch, 'p1', 'kept for the next round and the Naming');
+  assert.equal(JSON.stringify(publicView(m)).includes('"hunch'), false, 'hunches stay private until the end');
+  // No Deceiver: nobody hunches.
+  const q = setup({ n: 4, dec: [] });
+  assert.equal(playerView(q.m, 'p1').action.type, 'swait');
+  for (const id of q.readers()) q.cmd('p0', 's.send', { target: id, vision: q.m.S.hand[0] });
+  assert.equal(q.m.phase, 'S_HANDS');
 });
 
 test('the Deceiver swaps another reader\'s vision for one of its own; nobody can tell', () => {
@@ -118,55 +163,73 @@ test('the Deceiver swaps another reader\'s vision for one of its own; nobody can
   assert.throws(() => cmd('p5', 's.swap', { target: 'p5', vision: fake }), /another/);
   assert.throws(() => cmd('p2', 's.swap', { target: 'p1', vision: fake }));
   cmd('p5', 's.swap', { target: 'p1', vision: fake });
-  // Same screen as a Medium's.
-  assert.equal(playerView(m, 'p5').action.type, playerView(m, 'p2').action.type);
   t.visions();
-  assert.equal(m.phase, 'S_DISCUSS');
-  assert.deepEqual(m.S.shown.p1, [fake]);
-  assert.notDeepEqual(m.S.sent.p1, [fake]);
+  assert.equal(m.phase, 'S_HANDS');
+  assert.equal(m.S.shown.p1, fake);
+  assert.notEqual(m.S.sent.p1, fake);
   assert.equal(m.S.swapsLeft.p5, m.config.swaps - 1);
+  assert.equal(playerView(m, 'p1').me.s.vision, fake);
   assert.equal(JSON.stringify(publicView(m)).includes('"swap'), false, 'no swap in public');
 });
 
-test('cold spots: only the Ghost, a limited number, frost on every screen', () => {
-  const t = setup({ settings: { colds: 2 } });
+test('cold spots: only the Ghost, a limited number; the round waits for the Ghost', () => {
+  const t = setup();
   const { m, cmd } = t;
   t.visions();
+  assert.equal(m.S.cold, 2, 'two by default');
   assert.throws(() => cmd('p1', 's.cold', { target: 'p2' }), /Ghost/);
   cmd('p0', 's.cold', { target: 'p1' });
   cmd('p0', 's.cold', { target: 'p2' });
   assert.throws(() => cmd('p0', 's.cold', { target: 'p3' }), /No cold/);
   assert.deepEqual(publicView(m).seance.frosted, ['p1', 'p2']);
-});
-
-test('verdicts: the plurality is put to the spirit; right solves, wrong strikes; ties give nothing; a candle per round', () => {
-  const t = setup({ n: 7, dec: [] });
-  const { m } = t;
-  // Two readers per row: on WHO both light the truth, on WHERE both a wrong card, on WHY they split.
-  const split = {};
-  t.round((row, id) => {
-    if (row === 'WHO') return m.S.truth.WHO;
-    if (row === 'WHERE') return m.S.board.WHERE[1];
-    split[row] = (split[row] ?? 0) + 1;
-    return m.S.board.WHY[split[row]];
-  });
-  const h = m.S.history[0];
-  assert.equal(h.verdicts.WHO.right, true);
+  assert.ok(m.S.seen.WHO.find((x) => x.to === 'p1').frost);
+  for (const id of t.readers()) cmd(id, 's.hand', { card: m.S.truth.WHO });
+  assert.equal(m.phase, 'S_HANDS', 'every hand is down, but the Ghost is still looking');
+  cmd('p0', 's.done');
   assert.equal(m.S.solved.WHO, m.S.truth.WHO);
-  assert.equal(h.verdicts.WHERE.right, false);
-  assert.ok(m.S.struck.WHERE.includes(m.S.board.WHERE[1]));
-  assert.equal(h.verdicts.WHY.pick, null, 'a tie');
-  assert.equal(m.S.burnt, 1, 'one candle for the round; a wrong verdict burns nothing extra');
-  assert.ok(publicView(m).seance.past[0].lit, 'candles are public after the verdict');
-  // Solved rows take no readers.
-  assert.ok(!Object.values(m.S.assign).includes('WHO'));
 });
 
-test('the end: solve all three, then name the Deceiver: full or hollow victory; scores', () => {
+test('hands: the card under the most is asked; a tie is settled at random, never skipped; a candle per round', () => {
+  const t = setup({ n: 6, dec: [] });
+  const { m, cmd } = t;
+  t.visions();
+  assert.throws(() => cmd('p0', 's.hand', { card: m.S.truth.WHO }), /Ghost/);
+  assert.throws(() => cmd('p1', 's.hand', { card: m.S.board.WHERE[0] }), /row/);
+  cmd('p1', 's.hand', { card: m.S.board.WHO[1] });
+  cmd('p1', 's.hand', { card: null });
+  assert.equal(m.S.hands.p1, undefined, 'a hand can be lifted');
+  assert.deepEqual(publicView(m).seance.handsIn, []);
+  // Two on one wrong card, two on another, one on the truth: a tie between the two wrong cards.
+  const [w1, w2] = m.S.board.WHO.filter((c) => c !== m.S.truth.WHO);
+  t.hands((id) => ({ p1: w1, p2: w1, p3: w2, p4: w2, p5: m.S.truth.WHO })[id]);
+  const h = m.S.history[0];
+  assert.equal(h.verdict.tie, true);
+  assert.ok([w1, w2].includes(h.verdict.pick));
+  assert.equal(h.verdict.right, false);
+  assert.ok(m.S.struck.WHO.includes(h.verdict.pick));
+  assert.equal(m.S.burnt, 1);
+  assert.deepEqual(publicView(m).seance.past[0].hands.p5, m.S.truth.WHO, 'hands are public after the answer');
+  // Nobody lays a hand: the planchette drifts to a card anyway.
+  t.visions();
+  t.advance();
+  assert.equal(m.S.history[1].verdict.drift, true);
+  assert.equal(m.S.burnt, 2);
+});
+
+test('brute force fails: three questions, seven candles, six cards each', () => {
+  // Asking every card in turn needs up to 15 rounds; the clock has 7.
+  const t = setup({ n: 4, dec: [] });
+  while (t.m.phase !== 'ENDED') t.round(() => t.wrong() ?? t.m.S.truth[t.m.S.at]);
+  assert.equal(t.m.S.result, 'lost');
+  assert.equal(t.m.S.burnt, 7);
+});
+
+test('the end: answer all three, then name the Deceiver: full or hollow victory; scores', () => {
   for (const [named, result] of [['p5', 'full'], ['p1', 'hollow']]) {
     const t = setup();
     const { m, cmd } = t;
-    while (m.phase !== 'S_NAMING') t.round((row) => m.S.truth[row]);
+    while (m.phase !== 'S_NAMING') t.round(() => m.S.truth[m.S.at]);
+    assert.equal(m.S.burnt, 3);
     assert.throws(() => cmd('p0', 's.name', { target: 'p5' }), /Ghost/);
     for (const id of t.readers()) cmd(id, 's.name', { target: id === named ? 'p2' : named });
     assert.equal(m.phase, 'ENDED');
@@ -178,25 +241,16 @@ test('the end: solve all three, then name the Deceiver: full or hollow victory; 
   }
 });
 
-test('the clock burns out: the Deceiver wins; with one row open, the last breath', () => {
-  // No last breath: the Deceiver wins.
-  let t = setup({ settings: { lastBreath: false } });
-  while (t.m.phase !== 'ENDED') t.round((row) => t.m.S.board[row].find((c) => c !== t.m.S.truth[row] && !t.m.S.struck[row].includes(c)) ?? 'abstain');
+test('the clock burns out: the Deceiver wins', () => {
+  const t = setup();
+  while (t.m.phase !== 'ENDED') t.round(() => t.wrong() ?? t.m.S.truth[t.m.S.at]);
   assert.equal(t.m.S.result, 'deceiver');
   assert.equal(t.m.sScores.p5, 3);
-  // Last breath: WHO and WHERE solved, WHY open when the candles run out.
-  t = setup();
-  const { m } = t;
-  while (m.phase !== 'S_LAST' && m.phase !== 'ENDED') t.round((row) => (row === 'WHY' ? 'abstain' : m.S.truth[row]));
-  assert.equal(m.phase, 'S_LAST');
-  assert.ok(Object.values(m.S.assign).every((r) => r === 'WHY'), 'everyone reads the last row');
-  t.light(() => m.S.truth.WHY);
-  assert.equal(m.phase, 'S_NAMING');
 });
 
 test('no Deceiver at four: solving the murder is a full victory at once', () => {
   const t = setup({ n: 4, dec: [] });
-  while (t.m.phase !== 'ENDED') t.round((row) => t.m.S.truth[row]);
+  while (t.m.phase !== 'ENDED') t.round(() => t.m.S.truth[t.m.S.at]);
   assert.equal(t.m.S.result, 'full');
 });
 
@@ -204,7 +258,7 @@ test('two Deceivers: the table names two', () => {
   const t = setup({ n: 9, dec: ['p7', 'p8'], settings: { deceivers: 'two' } });
   const { m, cmd } = t;
   assert.deepEqual(playerView(m, 'p7').me.s.fellows, ['p8']);
-  while (m.phase !== 'S_NAMING') t.round((row) => m.S.truth[row]);
+  while (m.phase !== 'S_NAMING') t.round(() => m.S.truth[m.S.at]);
   assert.throws(() => cmd('p1', 's.name', { targets: ['p7'] }), /two/);
   for (const id of t.readers()) cmd(id, 's.name', { targets: id === 'p7' || id === 'p8' ? ['p1', 'p2'] : ['p7', 'p8'] });
   assert.equal(m.S.result, 'full');
@@ -216,6 +270,7 @@ test('privacy: a Medium never sees the truth, the Deceivers or another reader\'s
   const v = JSON.stringify(playerView(m, 'p1'));
   assert.ok(!v.includes('"truth"'));
   assert.ok(!v.includes('"dhand"'));
+  assert.ok(!v.includes('"cards"'), 'not the Ghost\'s hand');
   assert.equal(playerView(m, 'p1').me.s.role, 'MEDIUM');
   assert.equal(playerView(m, 'p5').me.s.role, 'DECEIVER');
 });

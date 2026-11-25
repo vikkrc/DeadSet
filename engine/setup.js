@@ -53,7 +53,7 @@ export function defaultSettings() {
       cBury: 20, cTurn: 30, cBid: 20, cDig: 15, cWager: 10,
       kTurn: 45, kChallenge: 12, kPower: 20, kLook: 12,
       nDeal: 15, nStep: 10, nDay: 300, nVote: 30,
-      sIntro: 20, sVision: 90, sDiscuss: 180, sCandle: 45, sName: 60,
+      sIntro: 20, sVision: 90, sHands: 180, sName: 60,
       gIntro: 20, gSign: 90, gVote: 45,
       qIntro: 20, qRound: 480, qVote: 30, qGuess: 30, qFinal: 45,
       oShow: 8, oSecret: 40, oReveal: 12,

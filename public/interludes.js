@@ -60,8 +60,7 @@ export function sceneMs(type, d = {}) {
     // Séance
     case 'svisions': return 3600 + Math.min(d.n ?? 0, 10) * 450;
     case 'scold': return 2600;
-    case 'sverdict': return 2200 + (d.n ?? 0) * 2400;
-    case 'slast': return 3200;
+    case 'sverdict': return 5200;
     case 'sname': return 3000;
     case 'snamed': return 5600;
     // Carnival
@@ -113,8 +112,7 @@ export function scenesFor(l, batch = [], ctx = {}) {
     case 'g-dig': return l.coin ? [['gcoin'], ['gdig', { kind: l.kind }]] : [['gdig', { kind: l.kind }]];
     case 's-visions': return [['svisions', { n: l.count ?? 0 }]];
     case 's-cold': return [['scold']];
-    case 's-verdict': return [['sverdict', { n: l.rows?.length ?? 0 }]];
-    case 's-last': return [['slast']];
+    case 's-verdict': return [['sverdict']];
     case 's-naming': return [['sname']];
     case 's-named': return [['snamed']];
     case 'n-night': return [['nfall']];

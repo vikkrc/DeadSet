@@ -245,25 +245,25 @@ export const GUIDE_EN = {
 </ul>`,
   // ── Séance ──
   seanceSetup: `<p>4–10 players, about 30 minutes. A co-operative murder mystery with a traitor. One player is the Ghost: it knows who killed it, where and why, and it cannot speak. Everyone else is a Medium, reading its visions. From five players a Deceiver may hide among the Mediums: a second spirit that knows the truth and works against the table.</p>
-<p><b>The board:</b> three rows of story cards, WHO, WHERE and WHY. One card in each row is the truth.</p>`,
+<p><b>The board:</b> three rows of story cards, WHO, WHERE and WHY. One card in each row is the truth. The séance asks them one at a time: who, then where, then why.</p>`,
   seanceLoop: `<ol>
-<li><b>Visions.</b> Each round every Medium is given one row. The Ghost picks a vision for each Medium from its hand: a card of two or three etched motifs that should point to the truth in that row.</li>
-<li><b>The reveal.</b> The visions turn face up for everyone. Describe them, argue, persuade. The Ghost stays silent, but may frost a vision with a cold spot: <em>this one is not mine</em>.</li>
-<li><b>The Deceiver's swap.</b> A few times a game, the Deceiver secretly swaps another Medium's vision for one of its own lies.</li>
-<li><b>Candles.</b> Each Medium lights a candle on a card in their row, or holds it. The card with the most candles is put to the spirit. Right: the row is solved. Wrong: the card is struck.</li>
-<li><b>The clock.</b> Every round burns a candle of the séance clock (seven at Standard).</li>
+<li><b>Visions.</b> The Ghost sends every Medium one vision for the question: a card of two or three etched motifs. Its hand always holds a few that fit the answer; the rest are the luck of the deck. Meanwhile each Medium marks a private <b>hunch</b>: who they suspect.</li>
+<li><b>The Deceiver's swap.</b> A few times a game, the Deceiver secretly swaps another Medium's vision for one of its own, dealt to point at a wrong card.</li>
+<li><b>Hands.</b> The visions turn face up and stay on the table until the question is answered. Talk it over. The Ghost stays silent, but may frost a vision with a cold spot: <em>this one is not mine</em>. Then every Medium lays a hand on a card.</li>
+<li><b>The spirit answers.</b> The card under the most hands is put to the spirit; on a tie, or with no hands, the planchette chooses at random. Yes: on to the next question. No: the card is struck.</li>
+<li><b>The clock.</b> Every round burns one of seven candles, whatever the answer.</li>
 </ol>`,
   seanceWin: `<ul>
-<li>Solve all three rows before the candles burn out, then name the Deceiver. Right: a <b>full victory</b>. Wrong: a <b>hollow victory</b>, shared with the Deceiver.</li>
-<li>If the clock burns out, the Deceiver wins (with no Deceiver, the table loses). With one row left, everyone first lights a last-breath candle on it.</li>
+<li>Answer all three questions before the candles burn out, then name the Deceiver (your last hunch is marked). Right: a <b>full victory</b>. Wrong: a <b>hollow victory</b>, shared with the Deceiver.</li>
+<li>If the clock burns out, the Deceiver wins (with no Deceiver, the table loses). Guessing blind is not enough: seven candles for three answers among six cards each.</li>
 <li>Across a match: a full victory +2 for the Ghost and each Medium; a hollow one +1 each and +1 for the Deceiver; a Deceiver's win +3.</li>
-<li>The end screen replays every round: the true visions, the swaps and the candles.</li>
+<li>The end screen replays every round: the true visions, the swaps, the hands and the hunches.</li>
 </ul>`,
   seanceOpts: `<ul>
-<li><b>Difficulty:</b> how many cards in a row, visions per Medium and candles on the clock.</li>
+<li><b>Difficulty:</b> how many cards in a row, how many of the Ghost's visions fit the answer, and the candles on the clock.</li>
 <li><b>Deceivers:</b> none, one or two, and whether two know each other; how many swaps they get.</li>
 <li><b>The Ghost's cold spots:</b> how many visions it may frost.</li>
-<li><b>Last breath:</b> on or off. <b>The Ghost:</b> drawn by lot, or chosen by the host. <b>Games per match.</b></li>
+<li><b>The Ghost:</b> drawn by lot, or chosen by the host. <b>Games per match.</b></li>
 </ul>`,
   // ── Graverobbers ──
   graveSetup: `<p>4–12 players, about 15 minutes. Two crews of grave robbers, the Moon and the Sun, dig a cemetery of 25 headstones for the relics that will summon their deity. A coin picks the crew that digs first: it has 9 relics in the ground, the other crew 8. Seven graves are empty, and one is Death's.</p>

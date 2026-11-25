@@ -517,25 +517,25 @@ export default {
 <li><b>Durée de la discussion, parties par match.</b></li>
 </ul>`,
     seanceSetup: `<p>De 4 à 10 joueurs, environ 30 minutes. Une enquête criminelle coopérative avec un traître. Un joueur est le Fantôme : il sait qui l’a tué, où et pourquoi, et il ne peut pas parler. Tous les autres sont des Médiums qui lisent ses visions. À partir de cinq joueurs, un Imposteur peut se cacher parmi les Médiums : un second esprit qui connaît la vérité et travaille contre la table.</p>
-<p><b>Le plateau :</b> trois rangées de cartes histoire, QUI, OÙ et POURQUOI. Dans chaque rangée, une carte est la vérité.</p>`,
+<p><b>Le plateau :</b> trois rangées de cartes histoire, QUI, OÙ et POURQUOI. Dans chaque rangée, une carte est la vérité. La séance les pose une à une : qui, puis où, puis pourquoi.</p>`,
     seanceLoop: `<ol>
-<li><b>Les visions.</b> À chaque manche, chaque Médium reçoit une rangée. Le Fantôme choisit dans sa main une vision pour chacun : une carte de deux ou trois motifs gravés, qui doit désigner la vérité de cette rangée.</li>
-<li><b>La révélation.</b> Les visions se retournent pour tous. Décrivez-les, débattez, convainquez. Le Fantôme se tait, mais peut givrer une vision d’une tache froide : <em>celle-ci n’est pas de moi</em>.</li>
-<li><b>L’échange de l’Imposteur.</b> Quelques fois par partie, l’Imposteur échange en secret la vision d’un autre Médium contre l’un de ses mensonges.</li>
-<li><b>Les bougies.</b> Chaque Médium allume une bougie sur une carte de sa rangée, ou la garde. La carte qui a le plus de bougies est soumise à l’esprit. Juste : la rangée est résolue. Faux : la carte est barrée.</li>
-<li><b>L’horloge.</b> Chaque manche consume une bougie de l’horloge de la séance (sept en difficulté Standard).</li>
+<li><b>Les visions.</b> Le Fantôme envoie à chaque Médium une vision pour la question : une carte de deux ou trois motifs gravés. Sa main en contient toujours quelques-unes qui correspondent à la réponse ; le reste est la chance du paquet. Pendant ce temps, chaque Médium note en secret son <b>soupçon</b> : qui il soupçonne.</li>
+<li><b>L’échange de l’Imposteur.</b> Quelques fois par partie, l’Imposteur échange en secret la vision d’un autre Médium contre l’une des siennes, qui désigne une mauvaise carte.</li>
+<li><b>Les mains.</b> Les visions se retournent et restent sur la table jusqu’à ce que la question ait sa réponse. Discutez-en. Le Fantôme se tait, mais peut givrer une vision d’une tache froide : <em>celle-ci n’est pas de moi</em>. Puis chaque Médium pose la main sur une carte.</li>
+<li><b>L’esprit répond.</b> La carte sous le plus de mains est soumise à l’esprit ; en cas d’égalité, ou sans aucune main, la planchette choisit au hasard. Oui : on passe à la question suivante. Non : la carte est barrée.</li>
+<li><b>L’horloge.</b> Chaque manche consume l’une des sept bougies, quelle que soit la réponse.</li>
 </ol>`,
     seanceWin: `<ul>
-<li>Résolvez les trois rangées avant que les bougies ne s’éteignent, puis désignez l’Imposteur. Juste : une <b>victoire totale</b>. Faux : une <b>victoire creuse</b>, partagée avec l’Imposteur.</li>
-<li>Si l’horloge s’éteint, l’Imposteur gagne (sans Imposteur, la table perd). S’il ne reste qu’une rangée, chacun y allume d’abord une bougie du dernier souffle.</li>
-<li>Sur un match : une victoire totale +2 pour le Fantôme et chaque Médium ; une victoire creuse +1 chacun et +1 pour l’Imposteur ; une victoire de l’Imposteur +3.</li>
-<li>L’écran de fin rejoue chaque manche : les vraies visions, les échanges et les bougies.</li>
+<li>Répondez aux trois questions avant que les bougies ne s’éteignent, puis nommez l’Imposteur (votre dernier soupçon est marqué). Juste : une <b>victoire totale</b>. Faux : une <b>victoire creuse</b>, partagée avec l’Imposteur.</li>
+<li>Si l’horloge s’éteint, l’Imposteur gagne (sans Imposteur, la table perd). Deviner à l’aveugle ne suffit pas : sept bougies pour trois réponses parmi six cartes chacune.</li>
+<li>Sur un match : victoire totale +2 pour le Fantôme et chaque Médium ; victoire creuse +1 pour chacun et +1 pour l’Imposteur ; victoire de l’Imposteur +3.</li>
+<li>L’écran de fin rejoue chaque manche : les vraies visions, les échanges, les mains et les soupçons.</li>
 </ul>`,
     seanceOpts: `<ul>
-<li><b>Difficulté :</b> combien de cartes par rangée, de visions par Médium et de bougies sur l’horloge.</li>
-<li><b>Imposteurs :</b> aucun, un ou deux, et si deux se connaissent ; combien d’échanges ils ont.</li>
+<li><b>Difficulté :</b> combien de cartes par rangée, combien de visions du Fantôme correspondent à la réponse, et combien de bougies sur l’horloge.</li>
+<li><b>Imposteurs :</b> aucun, un ou deux, et si les deux se connaissent ; combien d’échanges ils ont.</li>
 <li><b>Les taches froides du Fantôme :</b> combien de visions il peut givrer.</li>
-<li><b>Dernier souffle :</b> activé ou non. <b>Le Fantôme :</b> tiré au sort, ou choisi par l’hôte. <b>Parties par match.</b></li>
+<li><b>Le Fantôme :</b> tiré au sort, ou choisi par l’hôte. <b>Parties par match.</b></li>
 </ul>`,
     graveSetup: `<p>De 4 à 12 joueurs, environ 15 minutes. Deux bandes de pilleurs de tombes, la Lune et le Soleil, fouillent un cimetière de 25 stèles à la recherche des reliques qui invoqueront leur divinité. Une pièce désigne la bande qui creuse en premier : elle a 9 reliques sous terre, l’autre 8. Sept tombes sont vides, et une est celle de la Mort.</p>
 <p>Chaque bande a un <b>Croque-mort</b>, le seul joueur qui voit le registre des sépultures : ce qui repose sous chaque pierre. Tous les autres creusent. Les stèles affichent des mots dans la langue de la table, ou des icônes au crayon.</p>`,

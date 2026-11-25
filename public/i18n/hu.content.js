@@ -517,25 +517,25 @@ export default {
 <li><b>A vita hossza, játék meccsenként.</b></li>
 </ul>`,
     seanceSetup: `<p>4–10 játékos, kb. 30 perc. Kooperatív gyilkossági rejtély egy árulóval. Az egyik játékos a Szellem: tudja, ki ölte meg, hol és miért, de nem tud beszélni. Mindenki más Médium, aki a látomásait olvassa. Öt játékostól egy Csaló is rejtőzhet a Médiumok között: egy második szellem, amely ismeri az igazságot, és az asztal ellen dolgozik.</p>
-<p><b>A tábla:</b> három sor történetkártya, KI, HOL és MIÉRT. Minden sorban egy kártya az igazság.</p>`,
+<p><b>A tábla:</b> három sor történetkártya, KI, HOL és MIÉRT. Minden sorban egy kártya az igazság. A szeánsz egyenként kérdez: előbb ki, aztán hol, végül miért.</p>`,
     seanceLoop: `<ol>
-<li><b>Látomások.</b> Minden körben minden Médium kap egy sort. A Szellem a kezéből választ mindegyiküknek egy látomást: egy kártyát két-három rajzolt motívummal, amely arra a sorra az igazság felé mutat.</li>
-<li><b>A felfedés.</b> A látomások mindenki számára felfordulnak. Írjátok le őket, vitatkozzatok, győzködjetek. A Szellem hallgat, de egy hideg folttal bejegelhet egy látomást: <em>ez nem az enyém</em>.</li>
-<li><b>A Csaló cseréje.</b> Játékonként néhányszor a Csaló titokban kicseréli egy másik Médium látomását egy saját hazugságára.</li>
-<li><b>Gyertyák.</b> Minden Médium gyertyát gyújt egy kártyán a sorában, vagy visszatartja. A legtöbb gyertyát kapott kártya a szellem elé kerül. Ha igaz, a sor megoldva; ha nem, a kártyát kihúzzák.</li>
-<li><b>Az óra.</b> Minden kör leéget egy gyertyát a szeánsz órájáról (alap nehézségen hetet).</li>
+<li><b>Látomások.</b> A Szellem minden Médiumnak küld egy látomást a kérdéshez: egy kártyát két-három rajzolt motívummal. A kezében mindig van néhány, ami illik a válaszhoz; a többi a pakli szerencséje. Közben minden Médium titokban megjelöli a <b>gyanúját</b>: kit gyanúsít.</li>
+<li><b>A Csaló cseréje.</b> Játékonként néhányszor a Csaló titokban kicseréli egy másik Médium látomását egy sajátjára, amely egy rossz kártya felé mutat.</li>
+<li><b>Kezek.</b> A látomások felfordulnak, és az asztalon maradnak, amíg a kérdésre nincs válasz. Beszéljétek meg. A Szellem hallgat, de egy hideg folttal bejegelhet egy látomást: <em>ez nem az enyém</em>. Aztán minden Médium egy kártyára teszi a kezét.</li>
+<li><b>A szellem válaszol.</b> A legtöbb kéz alatti kártya kerül a szellem elé; döntetlennél, vagy ha senki nem tette le a kezét, a mutató véletlenszerűen választ. Igen: jön a következő kérdés. Nem: a kártya kihúzva.</li>
+<li><b>Az óra.</b> Minden kör elégeti a hét gyertya egyikét, bármi a válasz.</li>
 </ol>`,
     seanceWin: `<ul>
-<li>Oldjátok meg mindhárom sort, mielőtt leégnek a gyertyák, aztán nevezzétek meg a Csalót. Ha eltaláljátok: <b>teljes győzelem</b>. Ha nem: <b>üres győzelem</b>, amelyen a Csaló is osztozik.</li>
-<li>Ha leég az óra, a Csaló nyer (Csaló nélkül az asztal veszít). Ha csak egy sor maradt, előtte mindenki gyújt rá egy utolsó lehelet gyertyát.</li>
+<li>Válaszoljatok mindhárom kérdésre, mielőtt a gyertyák leégnek, aztán nevezzétek meg a Csalót (az utolsó gyanúd meg van jelölve). Jó: <b>teljes győzelem</b>. Rossz: <b>üres győzelem</b>, a Csalóval közösen.</li>
+<li>Ha az óra leég, a Csaló nyer (Csaló nélkül az asztal veszít). A vaktában tippelés nem elég: hét gyertya három válaszra, soronként hat kártyából.</li>
 <li>Egy meccsen: teljes győzelem +2 a Szellemnek és minden Médiumnak; üres győzelem +1 mindenkinek és +1 a Csalónak; a Csaló győzelme +3.</li>
-<li>A záróképernyő minden kört visszajátszik: a valódi látomásokat, a cseréket és a gyertyákat.</li>
+<li>A záróképernyő minden kört visszajátszik: az igazi látomásokat, a cseréket, a kezeket és a gyanúkat.</li>
 </ul>`,
     seanceOpts: `<ul>
-<li><b>Nehézség:</b> hány kártya egy sorban, hány látomás jut egy Médiumra, és hány gyertya az órán.</li>
-<li><b>Csalók:</b> egy sem, egy vagy kettő, és hogy kettő ismeri-e egymást; hány cserét kapnak.</li>
+<li><b>Nehézség:</b> hány kártya van egy sorban, a Szellem látomásai közül hány illik a válaszhoz, és hány gyertya ég az órán.</li>
+<li><b>Csalók:</b> nincs, egy vagy kettő, és hogy a kettő ismeri-e egymást; hány cserét kapnak.</li>
 <li><b>A Szellem hideg foltjai:</b> hány látomást jegelhet be.</li>
-<li><b>Utolsó lehelet:</b> be vagy ki. <b>A Szellem:</b> sorsolással, vagy a házigazda választja. <b>Játék meccsenként.</b></li>
+<li><b>A Szellem:</b> sorsolással, vagy a házigazda választja. <b>Játék meccsenként.</b></li>
 </ul>`,
     graveSetup: `<p>4–12 játékos, kb. 15 perc. Két sírrabló csapat, a Hold és a Nap, egy 25 sírkőből álló temetőben ássa ki az ereklyéket, amelyek megidézik istenségüket. Érme dönti el, melyik csapat ás először: annak 9 ereklyéje van a földben, a másiknak 8. Hét sír üres, egy pedig a Halálé.</p>
 <p>Minden csapatnak van egy <b>Sírásója</b>, az egyetlen játékos, aki látja a temetési jegyzéket: mi fekszik minden kő alatt. Mindenki más ásó. A sírköveken az asztal nyelvén szavak vagy ceruzarajzos ikonok vannak.</p>`,
