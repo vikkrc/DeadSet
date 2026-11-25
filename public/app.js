@@ -5,6 +5,7 @@ import { qrSvg } from './qr.js';
 import { renderGuide } from './guide.js';
 import { sound, score, haptic, burstAt, celebrate, ambient, cue, setCueRoute } from './fx.js';
 import { boardScreen, activeRuleNotes, moodFor, tenseFor, ruleGlyph } from './board.js';
+import { seatMarks } from './tvframe.js';
 import { seatLayout, turnBead } from './layout.js';
 import { cover, modeTitle, modePitch, modeMeta } from './covers.js';
 import { didIWin } from './outcome.js';
@@ -1474,8 +1475,10 @@ function seal(v, { turn = null, sealed = [], center = '', marks = {}, size = 104
   return `<button type="button" class="tseal ${n >= 13 ? 'many' : ''} ${turn && turn === mine ? 'mine' : ''}" style="--s:${size}px" data-act="sheet" data-id="table" data-form="seal" data-key="${key}" aria-label="${esc(t('The table'))}">${mid}${dots}</button>`;
 }
 
-function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = {}, lobby = false, crack = false, extra = '', orb = '', crews = null, turn = undefined } = {}) {
+function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = {}, lobby = false, crack = false, extra = '', orb = '', crews = null, turn = undefined, acted = undefined } = {}) {
   const players = [...v.players].sort((a, b) => a.seat - b.seat);
+  // TV-G4: on the TV, a gilt tick on every seat that has acted in this step, a dashed ring on the rest.
+  const actedMarks = acted ?? (onBoard() && !lobby ? seatMarks(v) : {});
   const n = Math.max(players.length, slots);
   const { pos, tok, dense, step } = seatLayout(n);
   const crowded = step === 'crowded';
@@ -1515,6 +1518,7 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     if (crews?.[p.id]) badges.push(`<b class="bdg b-crew" data-key="crew-${crews[p.id]}">${glyph(crews[p.id] === 'B' ? 'moon' : 'sun')}</b>`);
     if (marks[p.id]) badges.push(`<b class="bdg b-mark" data-key="mark">${marks[p.id]}</b>`);
     if (pick?.stamp === p.id) badges.push(`<b class="bdg b-stamp" data-key="stamp-${p.id}">${glyph('check')}</b>`);
+    if (actedMarks[p.id]) badges.push(`<i class="tv-mk ${actedMarks[p.id]}" data-key="tvmk">${actedMarks[p.id] === 'tv-ok' ? glyph('check') : ''}</i>`);
     // Y-scale: from 19 seats the medallions carry letters; the lens shows the portrait and name.
     const inner = reveal && p.role ? glyph(p.role.glyph) : p.avatar && !(crowded && !onBoard()) ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${initials(p.name)}</span>`;
     if (p.bot && (lobby || v.phase === 'LOBBY')) badges.push(`<b class="bdg b-bot" data-key="bot">${glyph('bot')}</b>`);
@@ -3321,6 +3325,11 @@ function tvChrome() {
   const full = () => { if (!document.fullscreenElement && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().then(() => localStorage.setItem(FS_KEY, 'on')).catch(() => {}); };
   document.addEventListener('keydown', (e) => { if (onBoard() && (e.key === 'f' || e.key === 'F') && !e.target.closest?.('input,textarea')) { if (document.fullscreenElement) { document.exitFullscreen?.(); localStorage.setItem(FS_KEY, 'off'); } else full(); } });
   document.addEventListener('pointerdown', () => { if (onBoard() && want() && !document.fullscreenElement && !S.board.fsAsked) { S.board.fsAsked = true; full(); } }, { capture: true });
+  // TV-R7 / TV-L5: the TV has no score button after the lobby. Browsers only play sound after a gesture on the TV
+  // itself, so the first tap or key anywhere on it starts the score (the host's phone cannot do it for the TV).
+  const wake = () => { if (onBoard() && !S.board.audio && V()?.table?.score !== false) ACT.boardScore(); };
+  document.addEventListener('pointerdown', wake, { capture: true });
+  document.addEventListener('keydown', wake, { capture: true });
   document.addEventListener('fullscreenchange', () => { if (onBoard()) render(); });
   let idle = null;
   document.addEventListener('mousemove', () => { if (!onBoard()) return; document.body.classList.remove('tv-idle'); clearTimeout(idle); idle = setTimeout(() => document.body.classList.add('tv-idle'), 3000); });
@@ -3341,7 +3350,9 @@ function boardView() {
   const caption = v.phase === 'LOBBY' ? '' : `<div class="tv-caption" data-key="tvcap"><span class="tc-join">${qrSvg(`${location.origin}/r/${v.code}`)}<span><small>${t('Join or rejoin')}</small><b>${esc(v.code)}</b></span></span><span class="tc-prog">${v.phase === 'ENDED' && v.endVotes?.total ? esc(th('Again? {n} of {m} say yes', { n: v.endVotes.again, m: v.endVotes.total })) : v.progress?.total ? esc(th('{done} of {total} done', v.progress)) : ''}</span></div>`;
   const how = v.phase === 'LOBBY' ? guideHow(v.mode, v) : '';
   const steps = (how.match(/<li /g) || []).length || 1;
-  return boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark, cover, how, howStep: (S.board.howStep ?? 0) % steps, avatar: (p) => (p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`) }) + caption + paused + hint;
+  const screen = boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark, cover, how, howStep: (S.board.howStep ?? 0) % steps, avatar: (p) => (p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`) });
+  // Boards on the TV frame carry their own band (tvframe.js); the others keep the old caption strip.
+  return screen + (screen.includes('board2 tvx') ? '' : caption) + paused + hint;
 }
 
 // ── Dock (primary action) ──────────────────────────────────────────────────

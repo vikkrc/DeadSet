@@ -6477,3 +6477,134 @@ body.is-board { --tvu: calc(100vw / 1600); }
 .sm-answer { display: flex; flex-direction: column; align-items: center; gap: 0; }
 .sm-answer .scard { width: min(52vw, 200px); font-size: min(3.4vw, 14px); }
 .sm-answer .sm-stamp { position: relative; inset: auto; margin-top: -0.45em; z-index: 2; font-size: 44px; }
+
+/* ══ TV-PASS: the TV frame (tvframe.js). Authored at 1600 × 900; every size is in TV units. ══ */
+body.is-board .tvx { --acc: var(--blood); --accg: color-mix(in srgb, var(--acc) 22%, transparent); height: 100dvh; padding: 0; display: grid; grid-template-rows: calc(var(--tvu) * 88) minmax(0, 1fr) calc(var(--tvu) * 84); gap: 0;
+  background: radial-gradient(70% 55% at 38% 52%, var(--accg), transparent 70%), radial-gradient(120% 90% at 50% 50%, transparent 55%, color-mix(in srgb, black 70%, transparent)), var(--ink); }
+.tvx.mode-classic { --acc: #8e1b1f; } /* literal-ok: the cover's accent (TV-I2) */
+.tvx.mode-missions { --acc: #a7742a; } /* literal-ok */
+.tvx.mode-carnival { --acc: #7a1f3d; } /* literal-ok */
+.tvx.mode-midnight { --acc: #2c4a7a; } /* literal-ok */
+.tvx.mode-omen { --acc: #9a7b2f; } /* literal-ok */
+.tvx.mode-mirror { --acc: #6f8aa8; } /* literal-ok */
+.tvx.mode-exorcism { --acc: #6b55a8; } /* literal-ok */
+.tvx.mode-seance { --acc: #b88a3a; } /* literal-ok */
+.tvx.mode-graverobbers { --acc: #4f6b3a; } /* literal-ok */
+.tvx.mode-mimic { --acc: #6f7d74; } /* literal-ok */
+.tvx.mode-coffins { --acc: #4a4f58; } /* literal-ok */
+/* the proscenium: a fine gilt frame that closes at the top of the band; four lozenge corners in the accent */
+.tvx::before { content: ''; position: absolute; inset: calc(var(--tvu) * 14) calc(var(--tvu) * 14) calc(var(--tvu) * 84) calc(var(--tvu) * 14); pointer-events: none; z-index: var(--z-dock); border: 1px solid color-mix(in srgb, var(--gilt) 32%, transparent);
+  box-shadow: inset 0 0 0 calc(var(--tvu) * 5) color-mix(in srgb, var(--gilt) 12%, transparent); }
+.tvx .cn { position: absolute; z-index: calc(var(--z-dock) + 1); width: calc(var(--tvu) * 30); height: calc(var(--tvu) * 30); pointer-events: none; }
+.tvx .cn::before { content: ''; position: absolute; inset: calc(var(--tvu) * 9); transform: rotate(45deg); border: 1px solid var(--gilt); background: var(--ink); }
+.tvx .cn::after { content: ''; position: absolute; inset: calc(var(--tvu) * 13); transform: rotate(45deg); background: var(--acc); }
+.tvx .cn.tl { left: 0; top: 0; } .tvx .cn.tr { right: 0; top: 0; } .tvx .cn.bl { left: 0; bottom: calc(var(--tvu) * 69); } .tvx .cn.br { right: 0; bottom: calc(var(--tvu) * 69); }
+.tvx > .backdrop, .tvx > .b-backdrop { opacity: 0.08; mix-blend-mode: normal; }
+.tvx > * { position: relative; z-index: 1; }
+/* header: inside the frame */
+.tvx-head { display: flex; align-items: center; gap: calc(var(--tvu) * 22); padding: calc(var(--tvu) * 14) calc(var(--tvu) * 52) 0; min-width: 0; }
+.tvx-brand { display: grid; justify-items: start; gap: calc(var(--tvu) * 5); flex: none; }
+.tvx-brand .wordmark { font-size: calc(var(--tvu) * 27); }
+.tvx-mode { font: 600 calc(var(--tvu) * 13)/1 var(--text); letter-spacing: 0.24em; text-transform: uppercase; color: var(--gilt); }
+.tvx-phase { display: flex; align-items: flex-start; gap: calc(var(--tvu) * 4); font: 600 calc(var(--tvu) * 56)/1 var(--black); color: var(--bone); flex: none; padding-bottom: 0.06em; }
+.tvx-phase i { font-style: normal; color: var(--silver, var(--bone)); }
+.tvx-phase sup { font: 600 calc(var(--tvu) * 22)/1 var(--text); color: var(--gilt); margin-top: calc(var(--tvu) * 4); }
+.tvx-step { font: 500 calc(var(--tvu) * 24)/1.1 var(--text); color: var(--bone-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.tvx-step b { color: var(--bone); font-weight: 500; }
+.tvx-head .grow { flex: 1; }
+.tvx-clock { display: flex; align-items: center; gap: calc(var(--tvu) * 12); flex: none; }
+.tvx-dial { width: calc(var(--tvu) * 50); height: calc(var(--tvu) * 50); display: block; }
+.tvx-dial svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.tvx-dial circle { fill: none; stroke-width: 3.2; }
+.tvx-dial .trk { stroke: var(--iron); }
+.tvx-dial .burn { stroke: var(--gilt); stroke-dasharray: 100; stroke-linecap: round; transition: stroke-dashoffset var(--t-slow) linear; }
+.tvx-dial.off { visibility: hidden; }
+.tvx-dial.low .burn { stroke: var(--blood-ink); }
+.tvx-clock .clock { font: 500 calc(var(--tvu) * 40)/1 var(--text); font-variant-numeric: tabular-nums; color: var(--gilt-hi); min-width: 2.4em; }
+.tvx-clock .clock:empty { min-width: 0; }
+.tvx-bell { width: calc(var(--tvu) * 38); height: calc(var(--tvu) * 38); border-radius: 50%; border: 1px solid var(--iron); display: grid; place-items: center; color: var(--ash); position: relative; flex: none; }
+.tvx-bell svg { width: calc(var(--tvu) * 20); height: calc(var(--tvu) * 20); }
+.tvx-bell.on { color: var(--gilt-hi); border-color: var(--gilt-2); }
+.tvx-bell-x { position: absolute; left: calc(var(--tvu) * 7); right: calc(var(--tvu) * 7); top: 50%; height: 1.5px; background: var(--ash); transform: rotate(-45deg); }
+/* body: stage + a 440 ledger, clear of the frame (10 under the header, 24 above the band) */
+.tvx-body { display: grid; grid-template-columns: minmax(0, 1fr) calc(var(--tvu) * 440); gap: calc(var(--tvu) * 28); padding: calc(var(--tvu) * 10) calc(var(--tvu) * 44) calc(var(--tvu) * 24); min-height: 0; }
+.tvx-body.full { grid-template-columns: minmax(0, 1fr); }
+.tvx-stage { position: relative; min-height: 0; min-width: 0; display: grid; place-items: center; }
+.tvx-ledger { display: flex; flex-direction: column; gap: calc(var(--tvu) * 14); min-height: 0; overflow: hidden; }
+.tvx-ledger .kicker { display: block; font: 600 calc(var(--tvu) * 15)/1 var(--text); letter-spacing: 0.24em; text-transform: uppercase; color: var(--gilt); margin-bottom: calc(var(--tvu) * 10); }
+.tvx-pnl { position: relative; border: 1px solid color-mix(in srgb, var(--gilt) 35%, transparent); background: linear-gradient(color-mix(in srgb, var(--ink-2) 85%, transparent), color-mix(in srgb, var(--ink) 85%, transparent)); padding: calc(var(--tvu) * 16) calc(var(--tvu) * 20); }
+.tvx-pnl::before { content: ''; position: absolute; inset: calc(var(--tvu) * 4); border: 1px solid color-mix(in srgb, var(--gilt) 12%, transparent); pointer-events: none; }
+/* the Now card: ornate frame, the fill inside the curls */
+.tvx .tv-now { position: relative; isolation: isolate; border: 1px solid var(--gilt-2); border-image: var(--frame) 32 / calc(var(--tvu) * 26) stretch; padding: calc(var(--tvu) * 20) calc(var(--tvu) * 26); display: flex; flex-direction: column; gap: calc(var(--tvu) * 6); background: transparent; box-shadow: none; }
+.tvx .tv-now::before { content: ''; position: absolute; inset: calc(var(--tvu) * 7); z-index: -1; pointer-events: none; background: linear-gradient(var(--ink-2), var(--ink));
+  clip-path: polygon(calc(var(--tvu) * 16) 0, calc(100% - calc(var(--tvu) * 16)) 0, 100% calc(var(--tvu) * 16), 100% calc(100% - calc(var(--tvu) * 16)), calc(100% - calc(var(--tvu) * 16)) 100%, calc(var(--tvu) * 16) 100%, 0 calc(100% - calc(var(--tvu) * 16)), 0 calc(var(--tvu) * 16)); }
+.tvx .tv-now.red::before { background: linear-gradient(color-mix(in srgb, var(--blood) 30%, var(--ink)), var(--ink)); }
+.tvx .tv-now .kicker { margin-bottom: calc(var(--tvu) * 4); }
+.tvx .tv-now b { font: 600 calc(var(--tvu) * 38)/1.04 var(--black); color: var(--bone); padding-bottom: 0.06em; }
+.tvx .tv-now.red b { color: var(--blood-hi, var(--bone)); }
+.tvx .tv-now > span:last-child { font: 400 calc(var(--tvu) * 24)/1.25 var(--text); color: var(--bone-2); }
+/* roster rows */
+.tvx-ros { display: grid; gap: 2px; }
+.tvx-rr { display: grid; grid-template-columns: calc(var(--tvu) * 40) minmax(0, 1fr) auto; gap: calc(var(--tvu) * 12); align-items: center; min-height: calc(var(--tvu) * 44); padding: 0 calc(var(--tvu) * 4); border-bottom: 1px solid color-mix(in srgb, var(--iron) 80%, transparent); }
+.tvx-rr .rr-face { width: calc(var(--tvu) * 36); height: calc(var(--tvu) * 36); border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: var(--ink-3); border: 1px solid var(--gilt-2); color: var(--bone); font: 600 calc(var(--tvu) * 18)/1 var(--black); }
+.tvx-rr .rr-face svg { width: 100%; height: 100%; }
+.tvx-rr b { font: 500 calc(var(--tvu) * 24)/1 var(--text); color: var(--bone); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tvx-rr span { font: 600 calc(var(--tvu) * 15)/1 var(--text); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ash); white-space: nowrap; }
+.tvx-rr .ok { color: var(--gilt); } .tvx-rr .rd { color: var(--blood-ink); }
+.tvx-rr.dead b { text-decoration: line-through; text-decoration-color: var(--blood-ink); color: var(--ash); } .tvx-rr.dead .rr-face { opacity: 0.5; }
+.tvx-rr.hi { background: linear-gradient(90deg, color-mix(in srgb, var(--gilt) 16%, transparent), transparent); } .tvx-rr.hi .rr-face { border-color: var(--gilt-hi); }
+.tvx-rr .pts { font: 600 calc(var(--tvu) * 28)/1 var(--black); letter-spacing: 0; color: var(--gilt-hi); text-transform: none; }
+.tvx-ros.two { grid-template-columns: 1fr 1fr; column-gap: calc(var(--tvu) * 16); }
+/* the Gazette, latest: three headlines */
+.tvx-lat p { margin: 0; padding: calc(var(--tvu) * 8) 0; border-bottom: 1px solid color-mix(in srgb, var(--iron) 80%, transparent); display: grid; grid-template-columns: calc(var(--tvu) * 84) minmax(0, 1fr); gap: calc(var(--tvu) * 10); align-items: baseline; }
+.tvx-lat p:last-child { border: 0; }
+.tvx-lat small { font: 600 calc(var(--tvu) * 14)/1.4 var(--text); letter-spacing: 0.14em; text-transform: uppercase; color: var(--gilt); }
+.tvx-lat b { font: 500 calc(var(--tvu) * 22)/1.25 var(--text); color: var(--bone); }
+.tvx-lat p.dead b { color: var(--blood-ink); }
+/* the band: the herald, beads, the join code; sits below the frame */
+.tvx-band { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: calc(var(--tvu) * 28); padding: 0 calc(var(--tvu) * 44); background: linear-gradient(color-mix(in srgb, var(--ink) 20%, transparent), color-mix(in srgb, var(--ink) 85%, transparent)); }
+.tvx-herald { margin: 0; display: flex; align-items: center; gap: calc(var(--tvu) * 14); font: 500 calc(var(--tvu) * 30)/1.1 var(--text); color: var(--bone); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.tvx-herald em { font-style: italic; color: var(--bone-2); }
+.tvx-herald .loz { flex: none; width: calc(var(--tvu) * 10); height: calc(var(--tvu) * 10); transform: rotate(45deg); background: var(--gilt); }
+.tvx-prog { display: flex; align-items: center; gap: calc(var(--tvu) * 10); font: 600 calc(var(--tvu) * 16)/1 var(--text); letter-spacing: 0.18em; text-transform: uppercase; color: var(--gilt); white-space: nowrap; }
+.tvx-beads { display: flex; gap: calc(var(--tvu) * 6); }
+.tvx-beads i { width: calc(var(--tvu) * 14); height: calc(var(--tvu) * 14); transform: rotate(45deg); border: 1px solid var(--gilt-2); }
+.tvx-beads i.on { background: var(--gilt); border-color: var(--gilt); }
+.tvx-join { display: flex; align-items: center; gap: calc(var(--tvu) * 12); }
+.tvx-join svg, .tvx-join .qr { width: calc(var(--tvu) * 52); height: calc(var(--tvu) * 52); background: var(--vellum); box-shadow: 0 0 0 calc(var(--tvu) * 4) var(--vellum); display: block; }
+.tvx-join small { display: block; font: 600 calc(var(--tvu) * 14)/1.2 var(--text); letter-spacing: 0.18em; text-transform: uppercase; color: var(--ash); }
+.tvx-join b { display: block; font: 600 calc(var(--tvu) * 24)/1 var(--text); letter-spacing: 0.14em; color: var(--bone); }
+/* seat marks (TV-G4) */
+.tvx .tok .tv-mk { position: absolute; z-index: 4; top: -4px; right: 2px; width: calc(var(--tvu) * 22); height: calc(var(--tvu) * 22); border-radius: 50%; display: grid; place-items: center; box-shadow: 0 0 0 2px var(--ink); font-style: normal; }
+.tvx .tok .tv-mk.tv-ok { background: var(--gilt); color: var(--ink); }
+.tvx .tok .tv-mk.tv-ok svg { width: calc(var(--tvu) * 14); height: calc(var(--tvu) * 14); }
+.tvx .tok .tv-mk.tv-wait { background: var(--ink-3); border: 1px dashed var(--gilt-2); }
+.tvx .tok-name { font-size: calc(var(--tvu) * 17); letter-spacing: 0.16em; }
+/* the hero table: 680 units, centred */
+.tvx .tvx-stage > .ring-wrap { width: min(100%, calc(var(--tvu) * 680)); height: min(100%, calc(var(--tvu) * 680)); display: grid; place-items: center; }
+.tvx .tvx-stage > .ring-wrap .ring { width: min(100%, calc(var(--tvu) * 680)); }
+.tvx .s2-clock { border: 0; padding: 4px 0 0; }
+body.is-board .board2.tvx > .cn { position: absolute; }
+body.is-board .board2.tvx > .backdrop { position: absolute; inset: 0; z-index: 0; }
+body.is-board .board2.tvx { padding: 0; grid-template-rows: calc(var(--tvu) * 88) minmax(0, 1fr) calc(var(--tvu) * 84); }
+
+.tvx-rr .rr-face .tok-av, .tvx-rr .rr-face .tok-ini { position: static; inset: auto; width: 100%; height: 100%; transform: none; }
+.tvx-rr .rr-face .tok-ini { display: grid; place-items: center; font: 600 calc(var(--tvu) * 18)/1 var(--black); }
+/* the ledger never scrolls: lists keep their size, the Gazette's latest is what gives way */
+.tvx-ledger > * { flex: none; }
+.tvx-ledger > [data-key="tvlat"] { flex: 0 1 auto; min-height: 0; overflow: hidden; }
+.tvx-ledger > [data-key="tvtown"] { flex: 0 1 auto; min-height: 0; overflow: hidden; }
+.tvx-ros:not(.two) .tvx-rr { min-height: calc(var(--tvu) * 40); }
+/* the hero table: as large as the stage allows, centred */
+.tvx .tvx-stage { justify-items: center; align-items: center; }
+.tvx .tvx-stage > .ring-wrap { width: auto; height: auto; margin: 0; }
+.tvx .tvx-stage > .ring-wrap > .ring { width: min(calc(var(--tvu) * 680), 100cqh); height: auto; aspect-ratio: 1; }
+.tvx .tvx-stage { container-type: size; }
+
+.tvx-ros:not(.two) .tvx-rr { min-height: calc(var(--tvu) * 38); }
+.tvx-rr .rr-face { width: calc(var(--tvu) * 32); height: calc(var(--tvu) * 32); }
+.tvx-rr b { font-size: calc(var(--tvu) * 23); }
+.tvx .s2-table li { padding: calc(var(--tvu) * 3) 0; }
+.tvx .s2-table .s-disc { width: calc(var(--tvu) * 34); height: calc(var(--tvu) * 34); }
+.tvx .s2-table b { font-size: calc(var(--tvu) * 23); }
+.tvx .s2-table li.ghost small { font-size: calc(var(--tvu) * 14); letter-spacing: 0.14em; }

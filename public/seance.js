@@ -14,6 +14,7 @@ import { t, th, tmh, roleF, scenAt, setNamer } from './i18n.js';
 import { avatarSvg } from './avatar.js';
 import { backdropSvg } from './backdrops.js';
 import { VISIONS, STORY_ICONS } from './visions.js';
+import { tvFrame, nowCard, panel } from './tvframe.js';
 
 export const isSeancePhase = (ph) => typeof ph === 'string' && ph.startsWith('S_');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -497,18 +498,17 @@ export function seanceEndHtml(v) {
 /** The TV's line for each step: a title and what the table is doing. */
 function tvNow(v) {
   const S = v.seance;
-  const prog = v.progress ?? { done: 0, total: 0 };
   const q = S.at ? t(ROW_Q[S.at]) : '';
   return {
-    S_INTRO: [th('{a} is the Ghost', { a: rawName(v, S.ghost) }), th('Everyone looks at their role · {done}/{total}', prog)],
-    S_VISION: [q, S.deceivers ? th('The Ghost sends every reader a vision; readers mark a hunch · {done}/{total} sent', prog) : th('The Ghost sends every reader a vision · {done}/{total}', prog)],
-    S_HANDS: [q, th('Talk it over, then lay your hands. The most hands are put to the spirit · {done}/{total}', prog)],
-    S_NAMING: [t(S.deceivers > 1 ? 'Name the two Deceivers' : 'Name the Deceiver'), th('Votes in · {done}/{total}', prog)],
+    S_INTRO: [th('{a} is the Ghost', { a: rawName(v, S.ghost) }), t('Everyone looks at their role.')],
+    S_VISION: [q, S.deceivers ? t('The Ghost sends every reader a vision. Readers mark a hunch while they wait.') : t('The Ghost sends every reader a vision.')],
+    S_HANDS: [q, t('Talk it over, then lay your hands. The card under the most hands is put to the spirit.')],
+    S_NAMING: [t(S.deceivers > 1 ? 'Name the two Deceivers' : 'Name the Deceiver'), t('The murder is solved. Who came through with the Ghost?')],
   }[v.phase] ?? ['', ''];
 }
 
 export function seanceBoard(v, h) {
-  const { header } = h;
+
   const S = v.seance;
   if (!S) return '';
   const ended = v.phase === 'ENDED';
@@ -525,15 +525,13 @@ export function seanceBoard(v, h) {
   // TV-G4: a tick for every reader who has acted in this step, a dashed ring for the rest.
   const acting = { S_INTRO: S.acked, S_HANDS: S.handsIn, S_NAMING: S.named }[v.phase] ?? null;
   const mark = (id) => (acting ? `<i class="mk ${acting.includes(id) ? 'ok' : 'wait'}">${acting.includes(id) ? glyph('check') : ''}</i>` : '');
-  const table = `<section class="s2-table" data-key="s2table"><span class="kicker">${t('At the table')}</span><ul>
+  const table = `<div class="s2-table"><ul>
     <li class="ghost">${disc(v, S.ghost)}<b>${pname(v, S.ghost)}</b><small>${t('The Ghost · cannot speak')}</small></li>
-    ${(S.readers ?? []).map((id) => `<li>${disc(v, id)}<b>${pname(v, id)}</b>${mark(id)}</li>`).join('')}</ul></section>`;
-  const ledger = `<div class="tv-now" data-key="s2now"><span class="kicker">${S.round ? th('Round {n}', { n: S.round }) : t('The séance')}</span><b>${esc(title)}</b><span>${esc(sub)}</span></div>
-    <section class="s2-clock" data-key="s2clock"><span class="kicker">${th('The séance clock · {n} of {m} left', { n: S.candles - S.burnt, m: S.candles })}</span>${candles(S)}<small>${glyph('v_snow')} ${th(S.cold === 1 ? '{n} cold spot' : '{n} cold spots', { n: S.cold })}</small></section>
-    ${table}${scoreboard(v)}`;
-  return `<main class="board2 sboard2 tv-grid ${ended ? 'is-ended' : ''}" data-key="board-s">${header}
-    <div class="tv-body tv-ledgered">
-      <section class="tv-stage s2-stage" data-key="s2stage">${ended ? `<div class="sb-end" data-autoscroll>${seanceEndHtml(v)}</div>` : `<div class="s2-board">${strip}<div class="s2-rows">${rows}</div></div>`}</section>
-      <aside class="tv-ledger" data-key="s2ledger" data-autoscroll>${ledger}</aside>
-    </div></main>`;
+    ${(S.readers ?? []).map((id) => `<li>${disc(v, id)}<b>${pname(v, id)}</b>${mark(id)}</li>`).join('')}</ul></div>`;
+  const ledger = `${nowCard({ kicker: S.at ? th('Question {n} of 3', { n: ROWS.indexOf(S.at) + 1 }) : t('The séance'), title: esc(title), line: esc(sub) }, 's2now')}
+    ${panel(th('The séance clock · {n} of {m} left', { n: S.candles - S.burnt, m: S.candles }), `<div class="s2-clock">${candles(S)}<small>${glyph('v_snow')} ${th(S.cold === 1 ? '{n} cold spot' : '{n} cold spots', { n: S.cold })}</small></div>`, 's2clock')}
+    ${panel(t('At the table'), table, 's2table')}${scoreboard(v)}`;
+  const herald = { S_INTRO: t('Look at your role on your phone. Keep it secret.'), S_VISION: t('The Ghost chooses. Readers: mark your hunch on your phone.'), S_HANDS: t('Talk it over, then lay your hand on your phone.'), S_NAMING: t('Name the Deceiver on your phone.') }[v.phase] ?? '';
+  const stage = ended ? `<div class="sb-end" data-autoscroll>${seanceEndHtml(v)}</div>` : `<div class="s2-board">${strip}<div class="s2-rows">${rows}</div></div>`;
+  return tvFrame(v, h, { stage, ledger, herald, key: 'board-s', cls: `sboard2 ${ended ? 'is-ended' : ''}` });
 }

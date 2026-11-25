@@ -15,6 +15,8 @@ import { mirrorBoard } from './mirror.js';
 import { cardArt, roleEmblemId } from './cards.js';
 import { missionBoardStage, missionBoardRing, gridHtml, hunchArrowsSvg, hunchLegend } from './missions.js';
 import { modeInfo } from './modes.js';
+import { tvFrame, nowCard, panel, latestHeadlines } from './tvframe.js';
+import { editions } from './gazette.js';
 
 /** Which Rule cards shape the current phase, with a one-line note. */
 export function activeRuleNotes(v) {
@@ -189,7 +191,7 @@ export function boardScreen(v, h) {
   if (v.mode === 'coffins' && v.coffins) return coffinsBoard(v, { header });
   if (v.mode === 'carnival' && v.carnival) return carnivalBoard(v, { header });
   if (v.mode === 'midnight' && v.midnight) return midnightBoard(v, { header, ring });
-  if (v.mode === 'seance' && v.seance) return seanceBoard(v, { header, ring });
+  if (v.mode === 'seance' && v.seance) return seanceBoard(v, { ...h, header, ring });
   if (v.mode === 'graverobbers' && v.graverobbers) return graveBoard(v, { header });
   if (v.mode === 'mimic' && v.mimic) return mimicBoard(v, { header, ring });
   if (v.mode === 'omen' && v.omen) return omenBoard(v, { header, ring });
@@ -249,19 +251,78 @@ export function boardScreen(v, h) {
   const table = ring(v, { center: (mr ? '' : centerExtra) + centerFor(v), reveal: v.phase === 'ENDED', crack: true, extra, marks: mr?.marks ?? {}, pick: mr?.team.length ? { ids: [], selected: mr.team, act: '' } : null });
   const where = (h.content?.scenario?.WHERE ?? []).indexOf(v.scenario?.where);
   const backdrop = v.table?.backdrops !== false && where >= 0 ? backdropHtml(where, night) : '';
-  // The shared TV grid: the game's own record on the left rail (Missions: the track and card; Classic: rules in
-  // force and the story), the astrolabe table centre stage with one caption under it, the Gazette on the right.
-  const story = v.scenario ? `<section class="tv-story"><span class="kicker">${t('The story')}</span>${[['WHO', t('Who')], ['WHERE', t('Where')], ['WHY', t('Why')]].map(([k, label]) => `<p><small>${esc(label)}</small>${esc(scen(k, v.scenario[k.toLowerCase()]))}</p>`).join('')}</section>` : '';
-  const left = mr ? missionBoardStage(v, h, 'rail') : `${plaques ? `<section class="tv-rules"><span class="kicker">${t('Rules in force')}</span><div class="plaques">${plaques}</div></section>` : ''}${story}`;
-  const caption = mr ? missionBoardStage(v, h, 'now') : '';
-  return `<main class="board2 tv-grid ${night ? 'is-night' : 'is-day'} ${backdrop ? 'has-backdrop' : ''}" data-key="board-game">
-    ${backdrop}
-    ${header}
-    <div class="tv-body">
-      <aside class="tv-rail tv-panel tv-left" data-key="tvleft" data-autoscroll>${left}</aside>
-      <section class="tv-stage b-stage">${table}${mr && v.phase === 'ENDED' && v.missions?.hunches?.length ? hunchLegend() : ''}<div class="tv-cap">${caption}</div></section>
-      <aside class="tv-rail b-side" data-key="b-gz" data-autoscroll>${gazetteHtml(v, h, { tv: true, after: mr ? `<section class="b-grid"><span class="kicker">${t('The deduction')}</span>${gridHtml(v)}</section>` : '' })}</aside>
-    </div>
-    <div class="b-pressure" aria-hidden="true">${Array.from({ length: 22 }, (_, i) => `<i style="--i:${i}"></i>`).join('')}</div>
-  </main>`;
+  // TV-G1 / TV-A1: no left rail. The ledger holds the Now card (rules only when one applies), the town or the
+  // expedition, and the Gazette's latest three headlines; the table is the hero, centred.
+  const now = classicNow(v, h, live);
+  const rulesNow = Object.entries(live).map(([id, note]) => `<p class="tvx-rule">${glyph(ruleGlyph(id))}<span><b>${esc(ruleF(id, 'name'))}</b> ${tmh(note)}</span></p>`).join('');
+  const town = rosterHtml(v, h);
+  const ledger = mr
+    ? `${nowCard(now)}${missionBoardStage(v, h, 'rail')}${panel(t('The deduction'), gridHtml(v), 'tvgrid')}`
+    : `${nowCard({ ...now, line: `${now.line ?? ''}${rulesNow}` })}${panel(v.phase === 'ENDED' ? t('The town') : t('The town'), town, 'tvtown')}${latestHeadlines(editions(v, h), h)}`;
+  const stage = `${table}${mr && v.phase === 'ENDED' && v.missions?.hunches?.length ? hunchLegend() : ''}`;
+  return tvFrame(v, h, { stage, ledger, herald: now.herald ?? '', night, backdrop, key: 'board-game', cls: `${night ? 'is-night' : 'is-day'} ${backdrop ? 'has-backdrop' : ''}` })
+    + `<div class="b-pressure" aria-hidden="true">${Array.from({ length: 22 }, (_, i) => `<i style="--i:${i}"></i>`).join('')}</div>`;
 }
+
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+/** The town in seat order: who stands accused (and by whom), the dead struck through with when they fell. */
+function rosterHtml(v, h) {
+  const { t, th, roman: rn } = h;
+  const players = [...v.players].sort((a, b) => a.seat - b.seat);
+  const noms = v.day?.nominations ?? [];
+  const order = v.day?.nominees ?? [];
+  const when = (at) => { const [k, n] = String(at ?? '').split(' '); return k === 'Day' ? th('fell Day {n}', { n: rn(Number(n)) }) : k === 'Night' ? th('fell Night {n}', { n: rn(Number(n)) }) : t('fell'); };
+  const rows = players.map((p) => {
+    const i = order.indexOf(p.id);
+    const by = noms.filter((x) => x.target === p.id).map((x) => v.players.find((q) => q.id === x.by)?.name ?? '?');
+    const right = !p.alive ? `<span>${esc(when(p.diedAt))}</span>` : i >= 0 ? `<span class="rd">${esc(`${rn(i + 1)} · ${th('by {names}', { names: by })}`)}</span>` : v.day?.speaking === p.id ? `<span class="ok">${esc(t('speaks'))}</span>` : '<span></span>';
+    return `<div class="tvx-rr ${p.alive ? '' : 'dead'} ${v.day?.speaking === p.id ? 'hi' : ''}" data-key="rr-${p.id}"><i class="rr-face">${h.avatar(p)}</i><b>${esc(p.name)}</b>${right}</div>`;
+  }).join('');
+  return `<div class="tvx-ros ${players.length >= 16 ? 'two' : ''}">${rows}</div>`;
+}
+
+/** What the room needs to know now, in the TV's words (TV-G2), and the herald line for the band. */
+function classicNow(v, h, live) {
+  const { t, th, roman: rn } = h;
+  const name = (id) => v.players.find((p) => p.id === id)?.name ?? '?'; // raw: th() escapes what it fills in
+  const names = (ids) => ids.map(name);
+  const day = v.dayNumber ?? 0;
+  const noms = v.day?.nominees ?? [];
+  const M = v.missions;
+  if (M) {
+    const team = (M.proposal?.team ?? []).map(name);
+    switch (v.phase) {
+      case 'M_REVEAL': return { kicker: t('The expedition'), title: t('Look at your role'), line: t('Every phone shows a card. Keep it to yourself.'), herald: t('Look at your role on your phone. Keep it secret.') };
+      case 'M_PROPOSE': return { kicker: th('Mission {n}', { n: rn(M.mission + 1) }), title: th('{a} chooses a team', { a: name(M.leader) }), line: th('A team of {n} sets out.', { n: M.sizes[M.mission].size }), herald: th('{a} picks the team on their phone. Argue for your place.', { a: name(M.leader) }) };
+      case 'M_VOTE': return { kicker: th('Mission {n} · the vote', { n: rn(M.mission + 1) }), title: th('{a} proposes {names}', { a: name(M.proposal.leader), names: team }), line: t('Approve or reject. A majority sends them.'), herald: t('Vote on your phone: approve or reject the team.') };
+      case 'M_MISSION': return { kicker: th('Mission {n}', { n: rn(M.mission + 1) }), title: th('On the mission: {names}', { names: team }), line: t('Each of them plays a card in secret.'), herald: t('The team plays their cards. Everyone else waits.') };
+      case 'M_NIGHT': return { kicker: t('Night'), title: t('Night falls on the expedition'), line: t('Night powers wake on the phones.'), herald: t('Eyes on your own phone.'), tone: '' };
+      case 'M_LAST_STAND': return { kicker: t('The Last Stand'), title: t('Name one player you believe is Death'), line: t('Three missions succeeded. One last chance for Death to hide.'), herald: t('Vote on your phone.'), tone: 'red' };
+      case 'M_RECKONING': return { kicker: t('The Reckoning'), title: t('Death hunts the Medium'), line: t('Death has unmasked. If it finds the Medium, it wins.'), herald: t('Death chooses on its phone.'), tone: 'red' };
+      case 'ENDED': return { kicker: t('The end'), title: t('The expedition is over'), line: '', herald: t('The host chooses: again, or another game.') };
+      default: return { kicker: '', title: h.stepOf(v), line: '', herald: '' };
+    }
+  }
+  switch (v.phase) {
+    case 'NIGHT_0_REVEAL': return { kicker: t('Night 0'), title: t('The story is dealt'), line: t('Everyone looks at their role.'), herald: t('Look at your role on your phone. Keep it secret.') };
+    case 'NIGHT_DREAM_SWAP': case 'NIGHT_ACTIONS': return { kicker: th('Night {n}', { n: rn(v.nightNumber ?? day) }), title: t('The town sleeps'), line: t('Every phone looks the same at night. Nothing here gives anyone away.'), herald: t('Eyes on your own phone. The night is quiet.') };
+    case 'DAY_PREP': return { kicker: th('Day {n} · morning', { n: rn(day) }), title: t('The town wakes'), line: t('Read the Gazette, then the floor opens.'), herald: t('Morning. The floor opens soon.') };
+    case 'DAY_DISCUSSION': return { kicker: th('Day {n} · discussion', { n: rn(day) }), title: noms.length ? (noms.length > 1 ? th('{names} stand accused', { names: names(noms) }) : th('{names} stands accused', { names: names(noms) })) : t('The floor is open'),
+      line: t('Accuse someone from your phone; a second voice puts them on trial.'), herald: t('Talk it over. Accuse and second from your phone.') };
+    case 'DAY_DEFENSE': {
+      const sp = v.day?.speaking;
+      const by = (v.day?.nominations ?? []).filter((x) => x.target === sp).map((x) => name(x.by));
+      const next = noms[noms.indexOf(sp) + 1];
+      return { kicker: th('Day {n} · the defence', { n: rn(day) }), title: th('{a} speaks', { a: name(sp) }), line: by.length ? th('Accused by {names}.', { names: by }) : '',
+        herald: next ? th('Next: {a}, then the ballot.', { a: name(next) }) : t('Next: the ballot.') };
+    }
+    case 'DAY_VOTING': return { kicker: th('Day {n} · {step}', { n: rn(day), step: h.stepOf(v) }), title: t('Hang one, or spare them all'),
+      line: noms.length === 1 ? t('One stands accused. Ballots lock when the clock runs out.') : th('{n} stand accused. Ballots lock when the clock runs out.', { n: noms.length }),
+      herald: v.day?.openBallots ? t('Vote on your phone. Every vote shows on the table.') : t('Cast your ballot on your phone. You can change it until it locks.') };
+    case 'DAY_RESOLVING': return { kicker: th('Day {n} · the final act', { n: rn(day) }), title: t('The sentence'), line: '', herald: t('The sentence is carried out.'), tone: 'red' };
+    case 'ENDED': return { kicker: t('The end'), title: h.tmh ? h.tmh(v.endReason) : '', line: '', herald: t('The host chooses: again, or another game.') };
+    default: return { kicker: '', title: esc(h.stepOf(v)), line: '', herald: '' };
+  }
+}
+

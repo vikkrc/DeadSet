@@ -44,7 +44,7 @@ function strings(src) {
 }
 
 // Client: every string literal inside a t( / th( / tm( / tmh( call (balanced parens).
-for (const f of ['public/app.js', 'public/board.js', 'public/gazette.js', 'public/guide.js', 'public/gifts.js', 'public/missions.js', 'public/exorcism.js', 'public/coffins.js', 'public/carnival.js', 'public/midnight.js', 'public/seance.js', 'public/graverobbers.js', 'public/mimic.js', 'public/omen.js', 'public/mirror.js', 'public/kit.js']) {
+for (const f of ['public/app.js', 'public/board.js', 'public/gazette.js', 'public/guide.js', 'public/gifts.js', 'public/missions.js', 'public/exorcism.js', 'public/coffins.js', 'public/carnival.js', 'public/midnight.js', 'public/seance.js', 'public/graverobbers.js', 'public/mimic.js', 'public/omen.js', 'public/mirror.js', 'public/kit.js', 'public/tvframe.js']) {
   const src = read(f);
   const re = /\b(?:t|th)\(/g;
   let m;
