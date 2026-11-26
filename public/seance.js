@@ -397,8 +397,10 @@ export function seanceMomentHtml(m, h) {
   switch (m.type) {
     case 'svisions': {
       if (!onBoard() && m.mine != null) return `<span class="kicker">${esc(t('Your vision'))}</span><h1 class="m-title">${letters(t(ROW_Q[m.row] ?? 'Your vision'))}</h1><div class="sm-vis">${vcard(m.mine, { cls: 'big rise-in' })}</div>`;
-      const all = Object.values(m.shown ?? {});
-      return `<span class="kicker">${esc(t(ROW_Q[m.row] ?? 'The séance'))}</span><h1 class="m-title">${letters(t('The visions arrive'))}</h1><div class="sm-all">${all.map((x, i) => `<span style="--i:${i}">${vcard(x, { cls: 'thumb' })}</span>`).join('')}</div>`;
+      // TV-N3: on the TV each vision sits over the name of the medium who received it.
+      const all = Object.entries(m.shown ?? {});
+      const who = (id) => h.V?.()?.players?.find((p) => p.id === id)?.name ?? '';
+      return `<span class="kicker">${esc(t(ROW_Q[m.row] ?? 'The séance'))}</span><h1 class="m-title">${letters(t('The visions arrive'))}</h1><div class="sm-all">${all.map(([id, x], i) => `<figure style="--i:${i}">${vcard(x, { cls: 'thumb' })}${h.onBoard?.() ? `<figcaption>${esc(who(id))}</figcaption>` : ''}</figure>`).join('')}</div>`;
     }
     case 'scold': return `<div class="m-art sm-cold">${emblem('v_snow')}</div><span class="kicker">${esc(t('A cold spot'))}</span><h1 class="m-title">${letters(t('This one is not mine'))}</h1><p class="m-sub">${esc(th('{name}\'s vision is frosted.', { name: m.name }))}</p>`;
     case 'sverdict': {

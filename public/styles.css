@@ -6982,3 +6982,8 @@ body.is-board:has(.tvx) .moment .paper .photo .portrait .gz-x { width: calc(var(
 @keyframes tvf-grey2 { to { filter: grayscale(1) brightness(0.7); } }
 .tvf.struck .tvf-disc::after { content: ''; position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 0 0 var(--blood); animation: tvf-rim var(--t-slow) var(--ease) calc(1.5s + var(--i) * 0.2s) forwards; }
 @keyframes tvf-rim { to { box-shadow: inset 0 0 0 calc(var(--tvu) * 5) var(--blood); } }
+
+.sm-all > figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: calc(var(--tvu) * 6); animation: fadeUp var(--t-gain) calc(var(--i) * 0.35s + 0.6s) var(--ease) both; }
+body.is-board:has(.tvx) .sm-all { max-width: calc(var(--tvu) * 1300); gap: calc(var(--tvu) * 28); margin-top: calc(var(--tvu) * 24); }
+body.is-board:has(.tvx) .sm-all .vcard.tarot--thumb { width: calc(var(--tvu) * 132); font-size: calc(var(--tvu) * 14); }
+.sm-all figcaption { font: 500 calc(var(--tvu) * 24)/1.1 var(--black); color: var(--bone); max-width: calc(var(--tvu) * 150); text-align: center; overflow-wrap: anywhere; }
