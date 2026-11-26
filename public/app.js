@@ -1681,7 +1681,7 @@ function centerFor(v, pick) {
     case 'NIGHT_DREAM_SWAP': return `${moon(0.08, 'c-moon')}<span class="c-sub">${t('Nightfall')}</span>${hint}${clock}`;
     case 'NIGHT_ACTIONS': if (pick?.key === 'role' && V()?.me?.role?.glyph) return `<span class="c-emblem">${glyph(V().me.role.glyph)}</span>${hint}${clock}`;
       // TV-R10: the TV never counts who is asleep (it hints at how many are acting): the moon alone, and the night's steps in the ledger.
-      if (onBoard()) return `${moon(0.5, 'c-moon')}<span class="c-sub">${t('The town sleeps')}</span>${clock}`;
+      if (onBoard()) return moon(0.5, 'c-moon'); // the Now card says it, the header keeps the time
       return `${moon(prog ? prog.done / Math.max(1, prog.total) : 0, 'c-moon')}<span class="c-sub">${prog ? t('{n}/{total} asleep', { n: prog.done, total: prog.total }) : ''}</span>${hint}${clock}`;
     case 'ENDED': return `<span class="c-emblem">${glyph(WIN_GLYPH[v.winner] ?? 'scroll')}</span><span class="c-sub">${t({ DEATH: 'Death wins', NON_DEATH: 'The living win', JESTER: 'Jester wins', DRAW: 'Draw', ABORTED: 'Abandoned', LOVERS: 'The Lovers win', CULT: 'The Cult wins', RIPPER: 'The Ripper wins' }[v.winner] ?? '')}</span>`;
     default: return '';

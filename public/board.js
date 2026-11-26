@@ -232,11 +232,15 @@ export function boardScreen(v, h) {
   const now = classicNow(v, h, live);
   const rulesNow = Object.entries(live).map(([id, note]) => `<p class="tvx-rule">${glyph(ruleGlyph(id))}<span><b>${esc(ruleF(id, 'name'))}</b> ${tmh(note)}</span></p>`).join('');
   const town = rosterHtml(v, h);
+  const steps = !mr && NIGHT_PHASES.includes(v.phase) ? nightSteps(v, h) : null;
   const ledger = mr
     ? `${nowCard(now)}${cardBanner(v) ? panel('', cardBanner(v), 'tvmcard') : ''}${panel(t('The deduction'), gridHtml(v), 'tvgrid')}`
-    : `${nowCard({ ...now, line: `${now.line ?? ''}${rulesNow}` })}${panel(v.phase === 'ENDED' ? t('The town') : t('The town'), town, 'tvtown')}${latestHeadlines(editions(v, h), h)}`;
+    : steps
+      // TV-A1b: at night the ledger holds the night's public steps (the current one lit) and the story, not the town.
+      ? `${nowCard({ ...now, line: rulesNow })}${panel(t('Tonight'), steps.html, 'tvsteps')}${storyPanel(v, h)}`
+      : `${nowCard({ ...now, line: `${now.line ?? ''}${rulesNow}` })}${panel(t('The town'), town, 'tvtown')}${latestHeadlines(editions(v, h), h)}`;
   const stage = `${table}${mr && v.phase === 'ENDED' && v.missions?.hunches?.length ? hunchLegend() : ''}`;
-  return tvFrame(v, h, { stage, ledger, herald: now.herald ?? '', night, backdrop, key: 'board-game', cls: `${night ? 'is-night' : 'is-day'} ${backdrop ? 'has-backdrop' : ''}` })
+  return tvFrame(v, h, { stage, ledger, herald: now.herald ?? '', night, backdrop, key: 'board-game', progress: steps?.progress, cls: `${night ? 'is-night' : 'is-day'} ${backdrop ? 'has-backdrop' : ''}` })
     + `<div class="b-pressure" aria-hidden="true">${Array.from({ length: 22 }, (_, i) => `<i style="--i:${i}"></i>`).join('')}</div>`;
 }
 
@@ -342,6 +346,31 @@ function rosterHtml(v, h) {
 }
 
 /** What the room needs to know now, in the TV's words (TV-G2), and the herald line for the band. */
+const NIGHT_PHASES = ['NIGHT_DREAM_SWAP', 'NIGHT_ACTIONS', 'NIGHT_RESOLVING'];
+/**
+ * TV-A1b: the night's public steps. Every phone acts at once, so the steps light by phase, never by who has acted:
+ * the dreams are dealt (or night falls), the night's roles wake and Death chooses together, then dawn.
+ */
+function nightSteps(v, h) {
+  const { t, glyph } = h;
+  const rows = [
+    { id: 'NIGHT_DREAM_SWAP', g: 'moon', label: v.table?.dreams ? t('The dreams are dealt') : t('Night falls') },
+    { id: 'NIGHT_ACTIONS', g: 'mentalist', label: t('The night\'s roles wake') },
+    { id: 'NIGHT_ACTIONS', g: 'death', label: t('Death chooses') },
+    { id: 'NIGHT_RESOLVING', g: 'sun', label: t('Dawn') },
+  ];
+  const order = ['NIGHT_DREAM_SWAP', 'NIGHT_ACTIONS', 'NIGHT_RESOLVING'];
+  const at = order.indexOf(v.phase);
+  const html = `<ol class="tv-steps">${rows.map((r) => { const k = order.indexOf(r.id); return `<li class="${k < at ? 'past' : k === at ? 'now' : ''}">${glyph(r.g)}<span>${esc(r.label)}</span></li>`; }).join('')}</ol>`;
+  return { html, progress: { done: at, total: order.length, label: h.th('Step {n} of {m}', { n: at + 1, m: order.length }) } };
+}
+/** The story in 24 units: the sentence the Gazette uses. */
+function storyPanel(v, h) {
+  const sc = v.scenario;
+  if (!sc) return '';
+  return panel(h.t('The story'), `<p class="tv-story">${h.th('We are {who}, in {where}, trying to {why}.', { who: h.scen('WHO', sc.who), where: h.scen('WHERE', sc.where), why: h.scen('WHY', sc.why) })}</p>`, 'tvstory');
+}
+
 function classicNow(v, h, live) {
   const { t, th, roman: rn } = h;
   const name = (id) => v.players.find((p) => p.id === id)?.name ?? '?'; // raw: th() escapes what it fills in

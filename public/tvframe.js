@@ -37,15 +37,16 @@ export function nowCard({ kicker = '', title = '', line = '', tone = '' } = {}, 
 export const panel = (title, body, key, cls = '') => (body ? `<section class="tvx-pnl ${cls}" data-key="${key}">${title ? `<span class="kicker">${title}</span>` : ''}${body}</section>` : '');
 
 /** The band (TV-I1): the herald in 30 units, progress beads with their label, the join code and a small QR. */
-export function tvBand(v, h, herald = '') {
+export function tvBand(v, h, herald = '', progress = undefined) {
   const { qrSvg } = h;
-  const p = v.progress;
+  // A board may count something else than players (TV-A1b: the night counts its steps, never who has acted).
+  const p = progress === undefined ? v.progress : progress;
   const beads = p?.total && p.total <= 24 ? `<span class="tvx-beads" aria-hidden="true">${Array.from({ length: p.total }, (_, i) => `<i class="${i < p.done ? 'on' : ''}"></i>`).join('')}</span>` : '';
   // TV-Y3: with three or fewer left to act, the band names them (only where the server says who, never a secret).
-  const names = p?.waiting?.length && p.waiting.length <= 3 && p.total > p.waiting.length
+  const names = progress === undefined && p?.waiting?.length && p.waiting.length <= 3 && p.total > p.waiting.length
     ? th('Waiting for {names}', { names: p.waiting.map((id) => v.players.find((x) => x.id === id)?.name ?? '?') }) : '';
   const label = v.phase === 'ENDED' && v.endVotes?.total ? th('Again? {n} of {m} say yes', { n: v.endVotes.again, m: v.endVotes.total })
-    : names || (p?.total ? th('{done} of {total} done', p) : '');
+    : p?.label ? p.label : names || (p?.total ? th('{done} of {total} done', p) : '');
   const join = v.phase === 'LOBBY' ? '' : `<span class="tvx-join">${qrSvg(`${location.origin}/r/${v.code}`)}<span><small>${t('Join or rejoin')}</small><b>${esc(v.code)}</b></span></span>`;
   return `<footer class="tvx-band" data-key="tvband"><p class="tvx-herald">${herald ? `<i class="loz" aria-hidden="true"></i>${herald}` : ''}</p>
     ${label ? `<span class="tvx-prog">${beads}<span>${esc(label)}</span></span>` : ''}${join}</footer>`;
@@ -70,14 +71,14 @@ export function honoursPanel(v, h) {
     ${list.length > 1 ? `<span class="lb-dots" aria-hidden="true">${list.map((_, i) => `<i class="${i === k ? 'on' : ''}"></i>`).join('')}</span><small class="hon-next">${esc(th('Next: {title}', { title: t(next.title) }))}</small>` : ''}</section>`;
 }
 
-export function tvFrame(v, h, { stage = '', ledger = '', herald = '', cls = '', key = 'board', night = false, backdrop = '', full = false, header = null, step = null } = {}) {
+export function tvFrame(v, h, { stage = '', ledger = '', herald = '', cls = '', key = 'board', night = false, backdrop = '', full = false, header = null, step = null, progress = undefined } = {}) {
   // TV-O1: at the end every game's ledger opens with its honours.
   if (v.phase === 'ENDED') ledger = `${honoursPanel(v, h)}${ledger}`;
   return `<main class="board2 tvx mode-${esc(v.mode)} ${night ? 'night is-night' : ''} ${cls}" data-key="${key}">
     ${backdrop}<i class="cn tl" aria-hidden="true"></i><i class="cn tr" aria-hidden="true"></i><i class="cn bl" aria-hidden="true"></i><i class="cn br" aria-hidden="true"></i>
     ${header ?? tvHeader(v, h, { step })}
     <div class="tvx-body ${full ? 'full' : ''}"><section class="tvx-stage" data-key="tvstage">${stage}</section>${full ? '' : `<aside class="tvx-ledger" data-key="tvledger">${ledger}</aside>`}</div>
-    ${tvBand(v, h, herald)}
+    ${tvBand(v, h, herald, progress)}
   </main>`;
 }
 
