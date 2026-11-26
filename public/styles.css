@@ -6822,3 +6822,26 @@ body.is-board .tv-arch i { position: absolute; left: 4%; right: 4%; top: 0; heig
 /* TV-Z1: paused, the stage dims to half and every loop stops */
 body.is-board:has(.tv-paused) .tvx-body { opacity: 0.5; }
 body.is-board:has(.tv-paused) .tvx-body * { animation-play-state: paused !important; }
+
+/* TV-S2: the tally as columns */
+.tally-cols { position: relative; width: min(100%, calc(var(--tvu) * 1100)); height: calc(var(--tvu) * 440); margin-top: calc(var(--tvu) * 12); }
+.tally-cols ol { list-style: none; margin: 0; padding: 0; height: 100%; display: flex; justify-content: center; align-items: flex-end; gap: calc(var(--tvu) * 44); }
+.tally-cols .tc-col { display: flex; flex-direction: column; align-items: center; gap: calc(var(--tvu) * 8); height: 100%; justify-content: flex-end; }
+.tally-cols .tc-n { font: 600 calc(var(--tvu) * 56)/1 var(--black); color: var(--bone); }
+.tally-cols .tc-stack { display: flex; flex-direction: column-reverse; align-items: center; gap: calc(var(--tvu) * 4); min-height: 0; }
+.tally-cols .tc-stack i { width: calc(var(--tvu) * 26); height: calc(var(--tvu) * 26); transform: rotate(45deg); background: var(--gilt); box-shadow: inset 0 0 0 calc(var(--tvu) * 3) color-mix(in srgb, black 25%, transparent); animation: tcDrop var(--t-stamp) var(--d) var(--spring) both; }
+.tally-cols .tc-face { width: calc(var(--tvu) * 84); height: calc(var(--tvu) * 84); border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: var(--ink-3); box-shadow: 0 0 0 2px var(--gilt-2); }
+.tally-cols .tc-face .tok-av, .tally-cols .tc-face .tok-ini { position: static; width: 100%; height: 100%; display: grid; place-items: center; }
+.tally-cols .tc-name { font: 600 calc(var(--tvu) * 17)/1 var(--text); letter-spacing: 0.16em; text-transform: uppercase; color: var(--bone-2); }
+.tally-cols .tc-col.lead .tc-stack i { background: var(--blood-ink); }
+.tally-cols .tc-col.lead .tc-face { box-shadow: 0 0 0 calc(var(--tvu) * 3) var(--blood-ink), 0 0 calc(var(--tvu) * 30) color-mix(in srgb, var(--blood-ink) 50%, transparent); }
+.tally-cols .tc-col.lead .tc-n { color: var(--blood-ink); }
+.tally-cols .tc-col.tied .tc-face { animation: tcTie var(--t-phase) ease-in-out infinite alternate; }
+.tally-cols .tc-line { position: absolute; left: 0; right: 0; bottom: calc(calc(var(--tvu) * 150) + (100% - calc(var(--tvu) * 230)) * var(--y) / 100); border-top: 2px dashed var(--gilt); }
+.tally-cols .tc-line em { position: absolute; right: 0; top: -30px; font: italic 400 calc(var(--tvu) * 20)/1 var(--text); color: var(--gilt); }
+@keyframes tcDrop { from { opacity: 0; transform: translateY(-40px) rotate(45deg); } to { opacity: 1; transform: rotate(45deg); } }
+@keyframes tcTie { from { box-shadow: 0 0 0 2px var(--gilt-2); } to { box-shadow: 0 0 0 calc(var(--tvu) * 4) var(--gilt-hi), 0 0 calc(var(--tvu) * 30) color-mix(in srgb, var(--gilt-hi) 50%, transparent); } }
+
+/* each ballot is one 30-unit lozenge on a 34-unit pitch; the majority line sits that many ballots above the faces */
+.tally-cols .tc-stack i { width: calc(var(--tvu) * 30); height: calc(var(--tvu) * 30); }
+.tally-cols .tc-line { bottom: calc(calc(var(--tvu) * 128) + var(--th, 0) * calc(var(--tvu) * 34)); }

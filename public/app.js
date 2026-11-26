@@ -838,6 +838,7 @@ function momentHtml(m) {
       break;
     case 'tally': {
       const max = Math.max(1, ...m.totals.map((x) => x.w));
+      if (onBoard() && m.totals.length) { body = `<span class="kicker">${t('The ballots')}</span><h1 class="m-title">${letters(t('The town decides'))}</h1>${tallyColumns(m)}`; break; }
       body = `<span class="kicker">${t('The ballots')}</span><h1 class="m-title">${letters(t('The town decides'))}</h1>
         ${m.totals.length ? `<div class="ballot"><ul class="bars">${m.totals.map((x, i) => `<li class="${m.top && x.id === m.top ? 'top' : ''}" style="--w:${(x.w / max) * 100}%;--d:${0.3 + i * 0.15}s"><span class="b-name">${esc(x.name)}</span>${beads(x.w)}<span class="b-n">${x.w}</span></li>`).join('')}</ul>
         ${m.threshold != null ? `<p class="kicker t-foot">${t('Majority Rule: more than {n} needed.', { n: m.threshold })}</p>` : ''}</div>` : `<p class="m-sub">${t('No valid votes.')}</p>`}
@@ -891,6 +892,33 @@ function momentHtml(m) {
     ${m.type === 'end' && WIN_CLASS[m.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<div class="m-body">${body}</div>
     <div class="m-foot">${auto ? `<span class="m-timer" style="--t:${left}ms"><i></i></span>` : ''}${onBoard() ? '' : `<span class="kicker">${t(m.at ? 'Everyone sees this together' : auto ? 'Tap to skip' : 'Tap to continue')}${S.moments.length ? ` · ${t('{n} more', { n: S.moments.length })}` : ''}</span>`}</div>
   </div>`;
+}
+
+/**
+ * TV-S2: the ballot as columns. Each candidate: the medallion, a stack of wax lozenges dropping one every 350 ms,
+ * and the count in blackletter; a dashed gilt majority line where a rule sets one; the leader in oxblood, tied
+ * leaders pulsing gilt. Secret ballots show no voters.
+ */
+function tallyColumns(m) {
+  const vp = V()?.players ?? [];
+  const max = Math.max(1, ...m.totals.map((x) => x.w), m.threshold ?? 0);
+  const top = Math.max(...m.totals.map((x) => x.w));
+  const tied = m.totals.filter((x) => x.w === top).length > 1;
+  // Ballots drop in a random order across the columns (so the lead changes while the room watches), all within the scene.
+  const counts = m.totals.map((x) => Math.min(Math.round(x.w), 14));
+  const total = counts.reduce((a, b) => a + b, 0);
+  const order = Array.from({ length: total }, (_, i) => i).sort(() => Math.random() - 0.5);
+  const step = Math.min(0.35, 2.1 / Math.max(1, total));
+  let k = 0;
+  const cols = m.totals.map((x, ci) => {
+    const p = vp.find((q) => q.id === x.id);
+    const lozenges = Array.from({ length: counts[ci] }, () => `<i style="--d:${(0.5 + step * order[k++]).toFixed(2)}s"></i>`).join('');
+    const cls = x.w === top ? (tied ? 'tied' : 'lead') : '';
+    return `<li class="tc-col ${cls}" style="--h:${(x.w / max) * 100}%"><b class="tc-n">${x.w}</b><span class="tc-stack">${lozenges}</span>
+      <span class="tc-face">${p?.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(x.name))}</span>`}</span><span class="tc-name">${esc(x.name)}</span></li>`;
+  }).join('');
+  const line = m.threshold != null ? `<span class="tc-line" style="--th:${m.threshold}"><em>${esc(t('Majority Rule: more than {n} needed.', { n: m.threshold }))}</em></span>` : '';
+  return `<div class="tally-cols"><ol>${cols}</ol>${line}</div>${tied ? `<p class="m-sub">${t('A tie')} · ${t('Coin toss')}</p>` : ''}`;
 }
 
 /** TV-C1: the peak shows faces, not only a title: the winners as portraits with names, everyone else smaller beneath. */
