@@ -138,8 +138,10 @@ export function ballroom(v, { pick = null, open = false, center = '', marks = {}
     if (marks[s.id]) badges.push(`<b class="bdg b-mark" data-key="mark">${marks[s.id]}</b>`);
     const mask = face ? `<span class="k-maskname" style="${ink(s.mask)}" data-key="kmn-${s.mask}">${esc(roleName(s.mask))}</span>` : `<span class="kmask" data-key="km-x">${maskCard(null)}</span>`;
     const label = `${pname(v, s.id)}${sel.has(s.id) ? `, ${t('selected')}` : ''}`;
-    return `<button type="button" class="${cls}" data-key="tok-${s.id}" style="left:${x}%;top:${y}%" ${selectable ? `data-act="${pick.act}" data-id="${s.id}"` : 'tabindex="-1"'} aria-pressed="${sel.has(s.id)}" aria-label="${esc(label)}">
-      <span class="tok-disc">${inner}${badges.join('')}</span>${face ? '' : mask}<span class="tok-name">${esc(s.chair ? t('Empty chair') : p?.name ?? '?')}</span>${face ? mask : ''}</button>`;
+    // TV-P: a seat is only a button where it can be chosen (never on the TV).
+    const tag = selectable ? 'button' : 'div';
+    return `<${tag} ${selectable ? 'type="button"' : 'role="img"'} class="${cls}" data-key="tok-${s.id}" style="left:${x}%;top:${y}%" ${selectable ? `data-act="${pick.act}" data-id="${s.id}" aria-pressed="${sel.has(s.id)}"` : ''} aria-label="${esc(label)}">
+      <span class="tok-disc">${inner}${badges.join('')}</span>${face ? '' : mask}<span class="tok-name">${esc(s.chair ? t('Empty chair') : p?.name ?? '?')}</span>${face ? mask : ''}</${tag}>`;
   }).join('');
   const orbit = dense ? 0 : (50 - Math.hypot(pos[0].x - 50, pos[0].y - 50)).toFixed(2);
   return `<div class="ring-wrap kball ${big ? 'big' : ''} ${open ? 'open' : ''}" data-key="ring-wrap"><div class="ring ${dense ? 'dense' : ''} ${tok < 44 ? 'small-tok' : ''} ${pick ? 'picking' : ''}" style="--tok:${tok}px;--orbit:${orbit}%" data-key="ring">

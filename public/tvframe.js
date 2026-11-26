@@ -23,6 +23,7 @@ export function tvHeader(v, h, { step = null, word = null } = {}) {
     ${pw.word ? `<span class="tvx-phase">${pw.night ? `<i>${esc(pw.word)}</i>` : esc(pw.word)}${pw.num ? `<sup>${esc(pw.num)}</sup>` : ''}</span>` : ''}
     <span class="tvx-step">${line}</span>
     <span class="grow"></span>
+    ${v.hostOut ? `<span class="tvx-watch host-out" data-key="tvhostout">${esc(v.hostOut.free ? th('{name} is away. Anyone can take the host controls on their phone.', { name: v.hostOut.name }) : th('{name} stepped out. The game goes on.', { name: v.hostOut.name }))}</span>` : ''}
     ${v.watching ? `<span class="tvx-watch" data-key="tvwatch">${glyph('mentalist')}${esc(th('Watching: {n}', { n: v.watching }))}</span>` : ''}
     <span class="tvx-clock" data-key="tvclock"><span class="tvx-dial" data-ringfuse><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="trk" cx="18" cy="18" r="15.9"/><circle class="burn" cx="18" cy="18" r="15.9" pathLength="100"/></svg></span><b class="clock" data-clock></b></span>
     ${bell}
@@ -50,10 +51,7 @@ export function tvBand(v, h, herald = '', progress = undefined) {
   const label = v.phase === 'ENDED' && v.endVotes?.total ? th('Again? {n} of {m} say yes', { n: v.endVotes.again, m: v.endVotes.total })
     : p?.label ? p.label : names || (p?.total ? th('{done} of {total} done', p) : '');
   const join = v.phase === 'LOBBY' ? '' : `<span class="tvx-join">${qrSvg(`${location.origin}/r/${v.code}`)}<span><small>${t('Join or rejoin')}</small><b>${esc(v.code)}</b></span></span>`;
-  // TV-Z3: a host who stepped out takes the herald; the game goes on.
-  const ho = v.hostOut;
-  if (ho) herald = esc(ho.free ? th('{name} is away. Anyone can take the host controls on their phone.', { name: ho.name }) : th('{name} stepped out. The game goes on.', { name: ho.name }));
-  return `<footer class="tvx-band ${ho ? 'host-out' : ''}" data-key="tvband"><p class="tvx-herald">${herald ? `<i class="loz" aria-hidden="true"></i>${herald}` : ''}</p>
+  return `<footer class="tvx-band" data-key="tvband"><p class="tvx-herald">${herald ? `<i class="loz" aria-hidden="true"></i>${herald}` : ''}</p>
     ${label ? `<span class="tvx-prog">${beads}<span>${esc(label)}</span></span>` : ''}${join}</footer>`;
 }
 

@@ -6506,7 +6506,7 @@ body.is-board .tvx { --acc: var(--blood); --accg: color-mix(in srgb, var(--acc) 
 .tvx-head { display: flex; align-items: center; gap: calc(var(--tvu) * 22); padding: calc(var(--tvu) * 14) calc(var(--tvu) * 52) 0; min-width: 0; }
 .tvx-brand { display: grid; justify-items: start; gap: calc(var(--tvu) * 5); flex: none; }
 .tvx-brand .wordmark { font-size: calc(var(--tvu) * 27); }
-.tvx-mode { font: 600 calc(var(--tvu) * 13)/1 var(--text); letter-spacing: 0.24em; text-transform: uppercase; color: var(--gilt); }
+.tvx-mode { font: 600 calc(var(--tvu) * 15)/1 var(--text); letter-spacing: 0.24em; text-transform: uppercase; color: var(--gilt); }
 .tvx-phase { display: flex; align-items: flex-start; gap: calc(var(--tvu) * 4); font: 600 calc(var(--tvu) * 56)/1 var(--black); color: var(--bone); flex: none; padding-bottom: 0.06em; }
 .tvx-phase i { font-style: normal; color: var(--silver, var(--bone)); }
 .tvx-phase sup { font: 600 calc(var(--tvu) * 22)/1 var(--text); color: var(--gilt); margin-top: calc(var(--tvu) * 4); }
@@ -7118,5 +7118,6 @@ body.is-board:has(.tvx) .moment.m-end .m-sub { margin-bottom: 0; }
 @keyframes tv-orbit { to { transform: rotate(360deg); } }
 .tvx-watch { display: inline-flex; align-items: center; gap: calc(var(--tvu) * 8); margin-right: calc(var(--tvu) * 18); padding: calc(var(--tvu) * 5) calc(var(--tvu) * 14); border: 1px solid var(--iron); border-radius: calc(var(--tvu) * 999); font: 600 calc(var(--tvu) * 15)/1 var(--text); letter-spacing: 0.18em; text-transform: uppercase; color: var(--bone-2); }
 .tvx-watch svg { width: calc(var(--tvu) * 20); height: calc(var(--tvu) * 20); }
-.tvx-band.host-out .tvx-herald { color: var(--bone); }
-.tvx-band.host-out .tvx-herald .loz { background: var(--bone-2); }
+body.is-board .tv-fs-hint { font-size: calc(var(--tvu) * 18); padding: calc(var(--tvu) * 10) calc(var(--tvu) * 20); }
+/* TV-Z3: the host stepped out: a chip in the header, so the band keeps the game's instruction. */
+.tvx-watch.host-out { letter-spacing: 0.04em; text-transform: none; font: italic 400 calc(var(--tvu) * 18)/1.1 var(--text); color: var(--bone); max-width: calc(var(--tvu) * 560); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

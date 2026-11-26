@@ -1653,8 +1653,10 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     const inner = reveal && p.role ? glyph(p.role.glyph) : p.avatar && !(crowded && !onBoard()) ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${initials(p.name)}</span>`;
     if (p.bot && (lobby || v.phase === 'LOBBY')) badges.push(`<b class="bdg b-bot" data-key="bot">${glyph('bot')}</b>`);
     const label = `${esc(p.name)}${p.alive ? '' : `, ${t('dead')}`}${isSel ? `, ${t('selected')}` : ''}`;
-    seats.push(`<button type="button" class="${cls}" data-key="tok-${p.id}" style="left:${x}%;top:${y}%" ${selectable ? `data-act="${pick.act}" data-id="${p.id}"` : 'tabindex="-1"'} aria-pressed="${isSel}" aria-label="${label}">
-      <span class="tok-disc">${sigil(p.id)}${crack && !p.alive ? CRACK : ''}${inner}${badges.join('')}</span><span class="tok-name">${esc(p.name)}</span></button>`);
+    // TV-P: the TV has no buttons; a seat there is a figure, not a control.
+    const stag = onBoard() && !selectable ? 'div' : 'button';
+    seats.push(`<${stag} ${stag === 'button' ? 'type="button"' : 'role="img"'} class="${cls}" data-key="tok-${p.id}" style="left:${x}%;top:${y}%" ${selectable ? `data-act="${pick.act}" data-id="${p.id}"` : stag === 'button' ? 'tabindex="-1"' : ''} ${stag === 'button' ? `aria-pressed="${isSel}"` : ''} aria-label="${label}">
+      <span class="tok-disc">${sigil(p.id)}${crack && !p.alive ? CRACK : ''}${inner}${badges.join('')}</span><span class="tok-name">${esc(p.name)}</span></${stag}>`);
   }
   // Crews around the table (Graverobbers lobby): the starburst takes each seat's crew colour in its sector.
   const crewRays = crews ? crewSectors(pos, n, players, crews) : '';
