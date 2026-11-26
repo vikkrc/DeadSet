@@ -321,6 +321,8 @@ function connect(board = false) {
     if (v.phase === 'ENDED' && v.winner && v.winner !== 'ABORTED') { const vd = verdict(v); S.lastResult = { code: v.code, seq: v.gameSeq, mode: v.mode, kicker: vd.kicker, title: vd.title, reason: v.endReason, awards: v.awards ?? [] }; }
     // DS-013: a new game, a return to the lobby or another room drops every notice from before.
     if (prev && (prev.code !== v.code || prev.gameSeq !== v.gameSeq || (v.phase === 'LOBBY' && prev.phase !== 'LOBBY'))) clearHerald();
+    // TV-L10: back in the lobby, the TV drops a lingering end scene so the room sees the table and the last result.
+    if (onBoard() && v.phase === 'LOBBY' && prev && prev.phase !== 'LOBBY' && S.moment?.type === 'end') { S.moments = []; nextMoment(); }
     detectMoments(v);
     if (board && prev && v.phase === 'LOBBY' && v.players.length > prev.players.length) pubSound('thud');
     S.view = v;
@@ -1023,6 +1025,9 @@ function render() {
   const bottoms = {};
   document.querySelectorAll('[data-scroll]').forEach((el) => { bottoms[el.dataset.scroll] = el.scrollHeight - el.scrollTop - el.clientHeight < 30; });
   const v = V();
+  // TV-L11: the host's game picker is mirrored on the TV while it is open.
+  const browsing = !!(v?.host && v.phase === 'LOBBY' && S.ui.sheet === 'modes');
+  if (S.route?.name === 'room' && browsing !== !!S.browseSent) { S.browseSent = browsing; send('host.browse', { open: browsing }, { quiet: true }); }
   trackStrikes(v);
   syncFleuron(v);
   const night = !!v && isNight(v.phase) && ['room', 'board'].includes(S.route?.name);
@@ -3187,7 +3192,7 @@ function moderatorMain(v) {
 }
 
 /** Translation and markup helpers shared with the board, Gazette and guide. */
-const H = { esc, glyph, dreamGlyph, t, th, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, scen, tlist, tx, getLang, mcardF };
+const H = { esc, glyph, dreamGlyph, t, th, tp, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, scen, tlist, tx, getLang, mcardF };
 /** Helpers for the Missions screens (public/missions.js). */
 /** AT-common: the mode's object with the seal at its top right. */
 const sealRow = (obj, sealHtml) => `<div class="seal-row" data-key="seal-row"><div class="seal-obj">${obj}</div>${sealHtml}</div>`;
@@ -3384,6 +3389,13 @@ function tvChrome() {
   setInterval(() => { if (!onBoard()) return; const r = () => Math.round((Math.random() - 0.5) * 8); document.body.style.setProperty('--drift', `${r()}px ${r()}px`); }, 180000);
 }
 
+/** TV-L13: how long the lobby has gone without anyone joining (the host alone at the table). */
+function idleFor(v) {
+  if (v.phase !== 'LOBBY') { S.board.joinAt = null; return 0; }
+  if (S.board.seen !== v.players.length || S.board.joinAt == null) { S.board.seen = v.players.length; S.board.joinAt = Date.now(); }
+  return v.players.length <= 1 ? Date.now() - S.board.joinAt : 0;
+}
+
 function boardView() {
   const v = V();
   if (S.conn === 'gone') return goneScreen();
@@ -3402,7 +3414,7 @@ function boardView() {
   const caption = v.phase === 'LOBBY' ? '' : `<div class="tv-caption" data-key="tvcap"><span class="tc-join">${qrSvg(`${location.origin}/r/${v.code}`)}<span><small>${t('Join or rejoin')}</small><b>${esc(v.code)}</b></span></span><span class="tc-prog">${v.phase === 'ENDED' && v.endVotes?.total ? esc(th('Again? {n} of {m} say yes', { n: v.endVotes.again, m: v.endVotes.total })) : v.progress?.total ? esc(th('{done} of {total} done', v.progress)) : ''}</span></div>`;
   const how = v.phase === 'LOBBY' ? guideHow(v.mode, v) : '';
   const steps = (how.match(/<li /g) || []).length || 1;
-  const screen = boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark, cover, how, howStep: (S.board.howStep ?? 0) % steps, honStep: S.board.honStep ?? 0, emblem, avatar: (p) => (p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`) });
+  const screen = boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark, cover, how, howStep: (S.board.howStep ?? 0) % steps, honStep: S.board.honStep ?? 0, emblem, lastResult: S.lastResult && S.lastResult.code === v.code ? S.lastResult : null, idleFor: idleFor(v), cycle: S.board.howStep ?? 0, avatar: (p) => (p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`) });
   // TV-I3: every phase change opens through the Codex arch (600 ms): a gilt-rimmed pointed arch rises from the band
   // and passes beyond the frame. Never during a timer under ten seconds.
   const nowMs = Date.now();

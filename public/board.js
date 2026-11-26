@@ -14,7 +14,7 @@ import { omenBoard } from './omen.js';
 import { mirrorBoard } from './mirror.js';
 import { cardArt, roleEmblemId } from './cards.js';
 import { missionBoardStage, missionBoardRing, gridHtml, hunchArrowsSvg, hunchLegend, trackHtml, cardBanner } from './missions.js';
-import { modeInfo } from './modes.js';
+import { modeInfo, MODE_IDS } from './modes.js';
 import { tvFrame, tvHeader, nowCard, panel, latestHeadlines } from './tvframe.js';
 import { modeTitle, modePitch, modeMeta } from './covers.js';
 import { editions } from './gazette.js';
@@ -247,6 +247,7 @@ export function boardScreen(v, h) {
  */
 function lobbyTv(v, h, { deckHtml, ruleCards, roles }) {
   const { t, th, glyph, ring, codeTiles, qrSvg, presetF, ruleF, roleF, avatar } = h;
+  const rn = h.roman ?? String;
   const s = v.settings;
   const info = modeInfo(v.mode);
   const preset = v.presets?.find((p) => p.id === s.preset);
@@ -264,28 +265,62 @@ function lobbyTv(v, h, { deckHtml, ruleCards, roles }) {
     <div class="lb-game">${h.cover ? `<span class="lb-cover">${h.cover(v.mode, { bare: true })}</span>` : ''}<span><b>${esc(title)}</b><em>${esc(modePitch(v.mode))}</em><small>${esc(modeMeta(v.mode))}</small></span></div></section>`;
   const how = teach ? panel(th('How it works · {n} of {m}', { n: k + 1, m: steps.length }), teach, 'lbhow') : '';
   const deck = deckHtml ? panel(th('Tonight\'s deck · {name}', { name: presetF(s.preset, 'name') }), `<div class="lb-deck">${deckHtml}</div>${v.mode === 'classic' ? `<span class="kicker lb-rk">${t('Rule cards')}</span><div class="lb-deck">${ruleCards}</div>` : ''}`, 'lbdeck') : '';
-  const header = tvHeader(v, h, { word: t('The gathering'), step: esc(arrival ? th('{n} seated · {m} expected', { n, m: expected }) : th('{n} seated · {r} ready', { n, r: ready })) });
+  const join = (cls = '') => `<section class="tv-now lb-join ${cls}" data-key="lbjoin"><span class="kicker">${t('Scan to take a seat')}</span><div class="qr-frame">${qrSvg(url)}</div>
+    <div class="code-tiles big">${codeTiles(v.code)}</div><span class="tv-url">${esc(`${location.host}/r/${v.code}`)}</span>
+    ${v.table?.score !== false && !h.audio ? `<p class="lb-sound">${glyph('bell')} ${t('Sound plays from this screen: tap it once to turn it on.')}</p>` : ''}</section>`;
+  const ids = MODE_IDS;
+  // TV-L11: the TV follows the host's picker: the chosen cover large, its neighbours dimmed, the title, pitch and the
+  // game's teach steps as chips. The room can argue about it before anyone taps.
+  if (v.browsing && !v.countdown) {
+    const i = Math.max(0, ids.indexOf(v.mode));
+    const near = [-2, -1, 0, 1, 2].map((d) => ids[(i + d + ids.length) % ids.length]);
+    const titles = steps.map((x) => (x.match(/<b>([\s\S]*?)<\/b>/)?.[1] ?? '').replace(/<[^>]+>/g, '')).filter(Boolean).slice(0, 4);
+    const stage = `<div class="lb-choose"><div class="lb-carousel">${near.map((id, j) => `<span class="lb-c ${j === 2 ? 'on' : 'off'}" data-key="lbc-${id}">${h.cover(id, { bare: true })}</span>`).join('')}</div>
+      <h2 class="lb-ctitle">${esc(title)}</h2><p class="lb-cpitch">${esc(modePitch(v.mode))}</p><small class="lb-cmeta">${esc(modeMeta(v.mode))}</small>
+      ${titles.length ? `<ol class="lb-chips">${titles.map((x, j) => `<li><i>${rn(j + 1)}</i>${esc(x)}</li>`).join('')}</ol>` : ''}</div>`;
+    return tvFrame(v, h, { stage, full: true, key: 'board-lobby', cls: 'lobby is-choosing',
+      header: tvHeader(v, h, { word: t('Choose a game'), step: esc(th('{n} at the table · {a} is browsing', { n, a: v.browsing.by })) }),
+      herald: `${esc(th('{a} is choosing tonight\'s game.', { a: v.browsing.by }))} <em>${esc(t('Suggest one out loud.'))}</em>` });
+  }
+  // TV-L13: nobody joins for three minutes: the join panel is the hero and the covers cycle beside it.
+  if ((h.idleFor ?? 0) > 180_000) {
+    const k2 = (h.cycle ?? 0) % ids.length;
+    const near = [-1, 0, 1].map((d) => ids[(k2 + d + ids.length) % ids.length]);
+    const stage = `<div class="lb-idle">${join('big')}<div class="lb-idlecovers"><div class="lb-carousel">${near.map((id, j) => `<span class="lb-c ${j === 1 ? 'on' : 'off'}" data-key="lbi-${id}">${h.cover(id, { bare: j !== 1 })}</span>`).join('')}</div>
+      <p class="lb-cpitch">${esc(th('{n} games. The host picks one once you are seated.', { n: ids.length }))}</p></div></div>`;
+    return tvFrame(v, h, { stage, full: true, key: 'board-lobby', cls: 'lobby is-idle', header: tvHeader(v, h, { word: t('Waiting for players'), step: '' }),
+      herald: `${t('Scan the code with your phone to take a seat.')} <em>${t('No app, no account.')}</em>` });
+  }
+  // TV-L10: between games: the last result beside the table; the ledger asks Again, or another game, and keeps the evening.
+  const ev = v.evening;
+  const last = h.lastResult;
+  const between = !!(ev?.games?.length && last);
+  const header = between ? tvHeader(v, h, { word: t('Again?'), step: esc(th('Game {n} of the evening', { n: ev.games.length + 1 })) }) : tvHeader(v, h, { word: t('The gathering'), step: esc(arrival ? th('{n} seated · {m} expected', { n, m: expected }) : th('{n} seated · {r} ready', { n, r: ready })) });
   // TV-L9 / TV-L14: the start ceremony. The disc counts 3, 2, 1 in 210-unit blackletter; a cancel says why in the band.
   const counting = !!v.countdown;
   const offWhy = v.countdownOff ? { host: t('The host called the start off.'), table: t('The start was called off: the table changed.'), setup: t('The start was called off: the setup changed.') }[v.countdownOff.reason] : '';
   const notReady = v.players.filter((p) => !p.ready);
-  const herald = counting ? esc(th('{a} starts the game. Look up.', { a: v.countdown.by })) : offWhy ? esc(offWhy) : arrival ? `${t('Scan the code with your phone to take a seat.')} <em>${t('No app, no account.')}</em>`
+  // TV-L12: a change the host makes arrives as a ribbon in the band; everyone re-readies.
+  const ln = v.lobbyNote;
+  const noteText = ln ? (ln.kind === 'mode' ? th('{a} chose {game} · everyone re-readies', { a: ln.by, game: modeTitle(ln.mode) }) : ln.kind === 'rule+' ? th('{a} added the rule {rule} · everyone re-readies', { a: ln.by, rule: ruleF(ln.rule, 'name') }) : ln.kind === 'rule-' ? th('{a} removed the rule {rule} · everyone re-readies', { a: ln.by, rule: ruleF(ln.rule, 'name') }) : th('{a} changed the setup · everyone re-readies', { a: ln.by })) : '';
+  const herald = counting ? esc(th('{a} starts the game. Look up.', { a: v.countdown.by })) : offWhy ? esc(offWhy) : noteText ? `<span class="lb-ribbon">${esc(noteText)}</span>` : between ? (notReady.length && notReady.length <= 3 ? `${esc(t('Ready up for another round.'))} <em>${esc(th('Waiting for {names}', { names: notReady.map((p) => p.name) }))}</em>` : esc(t('Ready up for another round.'))) : arrival ? `${t('Scan the code with your phone to take a seat.')} <em>${t('No app, no account.')}</em>`
     : !notReady.length ? th('All {n} are ready. The host starts when the room is settled.', { n })
       : notReady.length <= 3 ? th('Waiting for {names}', { names: notReady.map((p) => p.name) }) : t('Ready up on your phone.');
   const table = ring(v, { lobby: true, slots: arrival ? expected : n, center: counting ? `<b class="lb-count" data-countdown="${v.countdown.at}">3</b><span class="c-sub">${esc(t('The game begins'))}</span>` : arrival
     ? `<span class="c-big">${n}</span><span class="c-sub">${esc(th('seated · {a} to {b}', { a: info.min ?? preset?.min ?? 4, b: info.max ?? preset?.max ?? 12 }))}</span>`
     : `<span class="c-big">${ready}<small>/${n}</small></span><span class="c-sub">${esc(t(ready === n ? 'all ready' : 'ready'))}</span>` });
-  const join = `<section class="tv-now lb-join" data-key="lbjoin"><span class="kicker">${t('Scan to take a seat')}</span><div class="qr-frame">${qrSvg(url)}</div>
-    <div class="code-tiles big">${codeTiles(v.code)}</div><span class="tv-url">${esc(`${location.host}/r/${v.code}`)}</span>
-    ${v.table?.score !== false && !h.audio ? `<p class="lb-sound">${glyph('bell')} ${t('Sound plays from this screen: tap it once to turn it on.')}</p>` : ''}</section>`;
-  const stage = arrival && !counting ? `<div class="duo lb-arrival">${join}<div class="duo-h">${table}</div></div>` : table;
+  const lastCard = between ? `<section class="tv-now red lb-last" data-key="lblast"><span class="kicker">${esc(th('Last game · {game}', { game: modeTitle(last.mode) }))}</span><b>${esc(last.title)}</b>${last.reason ? `<span>${h.tmh(last.reason)}</span>` : ''}
+      ${last.awards?.[0] ? `<p class="lb-lasthon">${h.emblem ? `<i>${h.emblem(last.awards[0].emblem)}</i>` : ''}<span><b>${esc(t(last.awards[0].title))}</b><small>${h.tmh(last.awards[0].line)}</small></span></p>` : ''}</section>` : '';
+  const stage = arrival && !counting && !between ? `<div class="duo lb-arrival">${join()}<div class="duo-h">${table}</div></div>` : between && !counting ? `<div class="duo lb-between">${lastCard}<div class="duo-h">${table}</div></div>` : table;
   // Gathering: the Now card is the teach step; the game and tonight's deck below it.
   const teachNow = teach ? `<section class="tv-now lb-now" data-key="lbnow"><span class="kicker">${th('How it works · {n} of {m}', { n: k + 1, m: steps.length })}</span>${teach}</section>` : '';
   // Every step at a glance, the one being taught lit (where there is no deck to show, this fills the record).
   const titles = steps.map((x) => (x.match(/<b>([\s\S]*?)<\/b>/)?.[1] ?? '').replace(/<[^>]+>/g, ''));
   const outline = !deck && titles.length ? panel(t('The game in steps'), `<ol class="lb-outline">${titles.map((x, i) => `<li class="${i === k ? 'on' : ''}"><i>${i + 1}</i>${esc(x)}</li>`).join('')}</ol>`, 'lboutline') : '';
-  const ledger = arrival ? `${tonight}${how}${deck}` : `${teachNow}${tonight.replace('tv-now lb-tonight', 'tvx-pnl lb-tonight')}${deck || outline}`;
-  return tvFrame(v, h, { stage, ledger, herald, header, key: 'board-lobby', cls: `lobby ${arrival && !counting ? 'is-arrival' : 'is-gathering'} ${counting ? 'is-counting' : ''}` });
+  const sofar = ev?.games?.length ? panel(h.tp ? h.tp('Tonight so far · {n} game', 'Tonight so far · {n} games', ev.games.length) : th('Tonight so far · {n} games', { n: ev.games.length }), `<ol class="lb-sofar">${ev.games.map((g) => `<li><span class="lb-sc">${h.emblem ? h.emblem(modeInfo(g.mode).emblem) : ''}</span><span><b>${esc(modeTitle(g.mode))}</b><small>${esc(g.winners?.length ? th('Won: {names}', { names: g.winners }) : t('Nobody won'))}</small></span></li>`).join('')}</ol>`, 'lbsofar') : '';
+  const againNow = `<section class="tv-now lb-now" data-key="lbagain"><span class="kicker">${t('Again, or another game?')}</span><b>${esc(t('Same table, new roles'))}</b><span>${esc(t('Ready up on your phone; the host can also pick another game.'))}</span></section>`;
+  const ledger = between ? `${againNow}${sofar}` : arrival ? `${tonight}${how}${deck}` : `${teachNow}${tonight.replace('tv-now lb-tonight', 'tvx-pnl lb-tonight')}${deck || outline}`;
+  return tvFrame(v, h, { stage, ledger, herald, header, key: 'board-lobby', cls: `lobby ${arrival && !counting && !between ? 'is-arrival' : 'is-gathering'} ${counting ? 'is-counting' : ''} ${between ? 'is-between' : ''} ${noteText ? 'has-ribbon' : ''}` });
 }
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

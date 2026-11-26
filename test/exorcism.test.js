@@ -177,8 +177,9 @@ test('the host can draw another word before the vote: a fresh deal, nothing scor
   const rm = new RoomManager({ botDelay: [10_000_000, 1] });
   const host = rm.createRoom({ name: 'Ada' });
   const m = rm.rooms.get(host.code).match;
-  for (let i = 1; i < 5; i++) { const s = rm.joinRoom(host.code, { name: NAMES[i] }); rm.command(host.code, s.token, { type: 'lobby.ready', payload: { ready: true } }); }
+  // The game is chosen first: a change of game asks everyone to ready up again (TV-L12).
   rm.command(host.code, host.token, { type: 'host.settings', payload: { preset: 'exorcism' } });
+  for (let i = 1; i < 5; i++) { const s = rm.joinRoom(host.code, { name: NAMES[i] }); rm.command(host.code, s.token, { type: 'lobby.ready', payload: { ready: true } }); }
   rm.command(host.code, host.token, { type: 'lobby.ready', payload: { ready: true } });
   rm.command(host.code, host.token, { type: 'host.start' });
   const before = `${m.X.category}:${m.X.word}`;

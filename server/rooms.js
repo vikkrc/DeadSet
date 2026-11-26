@@ -188,8 +188,25 @@ export class RoomManager {
         // settings (language, music, pace, backdrops) do not count; choosing a game starts from its recommendation.
         const COSMETIC = ['lang', 'score', 'scoreTheme', 'backdrops', 'threads', 'pace', 'transport'];
         if (payload.recommended) { m.recTuned = false; m.recN = null; break; }
+        const before = JSON.stringify(m.settings);
+        const rulesBefore = [...(m.settings.rules?.selected ?? [])];
         updateSettings(m, payload);
         if (payload.mode) { m.recTuned = false; m.recN = null; } else if (Object.keys(payload).some((k) => !COSMETIC.includes(k))) m.recTuned = true;
+        // TV-L12: a change to the game, the deck or the rules lands as a ribbon on the TV, and everyone re-readies,
+        // so nobody starts on rules they did not see. Table settings (music, pace, language…) change nothing.
+        if (m.phase === 'LOBBY' && JSON.stringify(m.settings) !== before && Object.keys(payload).some((k) => !COSMETIC.includes(k) && k !== 'timers')) {
+          for (const p of m.players) if (!p.bot && p.id !== m.hostId) p.ready = false;
+          const rulesNow = m.settings.rules?.selected ?? [];
+          const added = rulesNow.find((r) => !rulesBefore.includes(r));
+          const removed = rulesBefore.find((r) => !rulesNow.includes(r));
+          const by = byId(m, pid)?.name ?? '';
+          room.lobbyNote = payload.mode ? { kind: 'mode', by, mode: payload.mode, at: now } : added ? { kind: 'rule+', by, rule: added, at: now } : removed ? { kind: 'rule-', by, rule: removed, at: now } : { kind: 'setup', by, at: now };
+        }
+        break;
+      }
+      // TV-L11: while the host has the game picker open, the TV follows it.
+      case 'host.browse': {
+        room.browsing = payload.open && m.phase === 'LOBBY' ? { by: byId(m, pid)?.name ?? '', at: now } : null;
         break;
       }
       // S4: "Start anyway" seats everyone as ready (their phones get the role reveal like everyone else).
@@ -210,6 +227,7 @@ export class RoomManager {
         }
         if (room.countdown) break; // already counting down
         this.startNow(room, !!payload.anyway);
+        room.browsing = null;
         break;
       }
       case 'host.cancelStart': this.cancelCountdown(room, 'host'); break;
@@ -407,7 +425,9 @@ export class RoomManager {
   countdownView(room) {
     if (room.match.phase !== 'LOBBY') return {};
     const off = room.countdownOff && this.clock() - room.countdownOff.at < 6000 ? { reason: room.countdownOff.reason } : null;
-    return { countdown: room.countdown ? { at: room.countdown.at, by: room.countdown.by } : null, countdownOff: off };
+    const note = room.lobbyNote && this.clock() - room.lobbyNote.at < 6000 ? { ...room.lobbyNote } : null;
+    const browsing = room.browsing && this.clock() - room.browsing.at < 180_000 ? { by: room.browsing.by } : null;
+    return { countdown: room.countdown ? { at: room.countdown.at, by: room.countdown.by } : null, countdownOff: off, lobbyNote: note, browsing };
   }
 
   decorate(room, client, v) {
@@ -571,6 +591,7 @@ export class RoomManager {
     if (this.rooms.get(room.code) !== room || !room.countdown) return;
     const { anyway } = room.countdown;
     room.countdown = null;
+    room.browsing = null;
     try { this.startNow(room, anyway); } catch { room.countdownOff = { reason: 'setup', at: this.clock() }; }
     this.changed(room);
   }

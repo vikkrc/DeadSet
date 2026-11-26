@@ -168,3 +168,20 @@ test('TV-L9 / TV-L14: with a TV attached the start counts down on the TV and can
   assert.notEqual(room.match.phase, 'LOBBY');
   clearTimeout(room.cdTimer);
 });
+
+test('TV-L12: a change to the game, deck or rules asks everyone to ready again and shows on the TV; timers do not', () => {
+  const { rm, code, seats } = table(5);
+  const room = rm.rooms.get(code);
+  const tv = fakeRes();
+  rm.attach(code, null, tv, { board: true });
+  rm.command(code, seats[0].token, { type: 'host.settings', payload: { timers: { night: 40 } } });
+  assert.ok(room.match.players.filter((p) => p.id !== room.match.hostId).every((p) => p.ready), 'timers keep everyone ready');
+  rm.command(code, seats[0].token, { type: 'host.settings', payload: { rules: { mode: 'manual', selected: ['OPEN_BALLOT'] } } });
+  assert.ok(room.match.players.filter((p) => p.id !== room.match.hostId).every((p) => !p.ready), 'a rule change re-readies');
+  assert.equal(tv.last().lobbyNote?.kind, 'rule+');
+  assert.equal(tv.last().lobbyNote?.rule, 'OPEN_BALLOT');
+  rm.command(code, seats[0].token, { type: 'host.browse', payload: { open: true } });
+  assert.ok(tv.last().browsing, 'the TV follows the picker');
+  rm.command(code, seats[0].token, { type: 'host.browse', payload: { open: false } });
+  assert.equal(tv.last().browsing, null);
+});
