@@ -6888,3 +6888,44 @@ body.is-board .tvx.has-ribbon > .tvx-band { background: linear-gradient(90deg, v
 .tvx .lb-sc svg { width: calc(var(--tvu) * 34); height: calc(var(--tvu) * 34); }
 .tvx .lb-between .duo-h > .ring-wrap > .ring { width: min(calc(var(--tvu) * 600), 100cqh); }
 .tvx .lb-between .duo-h { container-type: size; }
+
+/* TV-N1: Night 0 in beats on the TV. A, the story; B, tonight's rules. Both share one cell; A leaves as B arrives. */
+body.is-board .m-night0 .m-body:has(.n0) { width: 100%; max-width: none; }
+.n0 { display: grid; width: 100%; justify-items: center; }
+.n0 > .n0-beat { grid-area: 1 / 1; display: flex; flex-direction: column; align-items: center; gap: calc(var(--tvu) * 18); width: 100%; }
+.n0-a.leaves { animation: n0-leave var(--t-slow) var(--ease-in) 4.2s forwards; }
+.n0-b { opacity: 0; animation: n0-come var(--t-slow) var(--ease) 4.4s forwards; }
+@keyframes n0-leave { to { opacity: 0; transform: translateY(-12px); visibility: hidden; } }
+@keyframes n0-come { from { opacity: 0; transform: translateY(calc(var(--tvu) * 12)); } to { opacity: 1; transform: none; } }
+body.is-board .m-night0 .n0 .m-title { font-size: calc(var(--tvu) * 64); }
+body.is-board .m-night0 .n0-cards { display: flex; gap: calc(var(--tvu) * 36); grid-template-columns: none; }
+body.is-board .m-night0 .n0-card { width: calc(var(--tvu) * 230); height: auto; aspect-ratio: 11 / 18; }
+.n0-card .cer-face.front { padding: 0; background: none; border: 0; box-shadow: none; display: block; }
+.n0-card .cer-face.front .scard { width: 100%; height: 100%; font-size: calc(var(--tvu) * 13); }
+.n0-card .scard .nm { font-size: calc(var(--tvu) * 24); line-height: 1.05; }
+.n0-card .scard .arc-num { font-size: calc(var(--tvu) * 13); }
+body.is-board .m-night0 .n0 .cer-line { font-size: calc(var(--tvu) * 30); max-width: calc(var(--tvu) * 1100); text-align: center; }
+.n0-rules { list-style: none; margin: calc(var(--tvu) * 8) 0 0; padding: 0; width: calc(var(--tvu) * 1040); display: flex; flex-direction: column; gap: calc(var(--tvu) * 14); }
+.n0-rules li { display: grid; grid-template-columns: calc(var(--tvu) * 76) 1fr; gap: calc(var(--tvu) * 24); align-items: center; padding: calc(var(--tvu) * 16) calc(var(--tvu) * 24); border: 1px solid var(--iron); background: color-mix(in srgb, var(--ink) 70%, transparent); opacity: 0.38; animation: n0-lit var(--t-slow) var(--ease) var(--d) forwards; }
+@keyframes n0-lit { to { opacity: 1; border-color: var(--gilt-2); } }
+.n0-rc { width: calc(var(--tvu) * 76); height: calc(var(--tvu) * 112); display: grid; grid-template-rows: auto 1fr; justify-items: center; align-items: center; padding: calc(var(--tvu) * 8) 0 calc(var(--tvu) * 4); border: 1px solid var(--gilt-2); outline: 1px solid color-mix(in srgb, var(--gilt-2) 40%, transparent); outline-offset: -5px; background: var(--vellum); color: var(--blood); }
+.n0-rc small { font: 600 calc(var(--tvu) * 10)/1 var(--text); letter-spacing: 0.2em; text-transform: uppercase; color: var(--sepia); }
+.n0-rc i { font: 400 calc(var(--tvu) * 64)/1 var(--black); font-style: normal; color: var(--blood); }
+.n0-rules b { display: block; font: 500 calc(var(--tvu) * 40)/1.05 var(--black); color: var(--bone); }
+.n0-rules li small { display: block; margin-top: calc(var(--tvu) * 6); font: 400 calc(var(--tvu) * 26)/1.25 var(--text); color: var(--bone-2); }
+
+body.is-board .m-night0 .n0-cards { justify-content: center; }
+.n0-rules li { text-align: left; }
+.n0-rc { grid-template-rows: 1fr; padding: 0; }
+.n0-card .scard.n0-sc:not(:has(.s-ic, .s-bd)) .nm { flex: 1; font-size: calc(var(--tvu) * 28); }
+
+.n0-card .scard.row-WHERE .s-bd { margin-top: calc(var(--tvu) * 8); }
+
+/* TV-N1 beat 3: a card face down at every seat's medallion edge; it tips away once the phone has looked. */
+.tvx .tok .tv-rc { position: absolute; z-index: 3; left: -14px; bottom: -6px; width: calc(var(--tvu) * 30); height: calc(var(--tvu) * 46); display: grid; place-items: center; border-radius: calc(var(--tvu) * 3); transform: rotate(-14deg); transform-origin: 50% 90%;
+  background: repeating-linear-gradient(45deg, transparent 0 calc(var(--tvu) * 5), color-mix(in srgb, var(--gilt) 34%, transparent) calc(var(--tvu) * 5) calc(var(--tvu) * 6)), repeating-linear-gradient(-45deg, transparent 0 calc(var(--tvu) * 5), color-mix(in srgb, var(--gilt) 34%, transparent) calc(var(--tvu) * 5) calc(var(--tvu) * 6)), var(--wax);
+  box-shadow: 0 0 0 1px var(--gilt-2), 0 0 0 calc(var(--tvu) * 3) var(--ink), 0 calc(var(--tvu) * 6) calc(var(--tvu) * 12) -4px var(--ink);
+  animation: tvrc-deal var(--t-card) var(--ease) both; transition: transform var(--t-card) var(--ease), opacity var(--t-card) var(--ease); }
+.tvx .tok .tv-rc .sig { width: calc(var(--tvu) * 16); height: calc(var(--tvu) * 16); border-radius: 50%; display: grid; place-items: center; font: 700 calc(var(--tvu) * 8)/1 var(--mark); color: var(--gilt); background: var(--ink); box-shadow: 0 0 0 1px var(--gilt-2); }
+.tvx .tok .tv-rc.seen { transform: rotate(-38deg) translate(-6px, calc(var(--tvu) * 4)); opacity: 0.4; }
+@keyframes tvrc-deal { from { opacity: 0; transform: translate(calc(var(--tvu) * 40), -40px) rotate(30deg); } }

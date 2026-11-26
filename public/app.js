@@ -19,7 +19,7 @@ import { isGravePhase, graveMain, graveDock, graveActs, graveMoment, graveMoment
 import { isOmenPhase, omenMain, omenDock, omenActs, omenMoment, omenMomentHtml, O_MOMENT_TIME, omenEndHtml, omenLobbyDeck, OMEN_QUIET, omenTitle, explainerHtml as how_omen } from './omen.js';
 import { isMirrorPhase, mirrorMain, mirrorDock, mirrorActs, mirrorMoment, mirrorMomentHtml, W_MOMENT_TIME, mirrorEndHtml, mirrorLobbyDeck, MIRROR_QUIET, mirrorTitle, explainerHtml as how_mirror } from './mirror.js';
 import { isMimicPhase, mimicMain, mimicDock, mimicActs, mimicMoment, mimicMomentHtml, Q_MOMENT_TIME, mimicEndHtml, mimicLobbyDeck, MIMIC_QUIET, mimicTitle, explainerHtml as how_mimic } from './mimic.js';
-import { isSeancePhase, seanceMain, seanceDock, seanceActs, seanceMoment, seanceMomentHtml, S_MOMENT_TIME, seanceEndHtml, seanceLobbyDeck, boardSheet as seanceSheet, SEANCE_QUIET, seanceTitle, explainerHtml as how_seance } from './seance.js';
+import { isSeancePhase, seanceMain, seanceDock, seanceActs, seanceMoment, seanceMomentHtml, S_MOMENT_TIME, seanceEndHtml, seanceLobbyDeck, boardSheet as seanceSheet, SEANCE_QUIET, seanceTitle, explainerHtml as how_seance, scard as seanceCard } from './seance.js';
 import { isMidnightPhase, midnightMain, midnightDock, midnightActs, midnightMoment, midnightMomentHtml, N_MOMENT_TIME, midnightEndHtml, midnightLobbyDeck, cardsSheet, MIDNIGHT_QUIET, explainerHtml as how_midnight, NPOWER } from './midnight.js';
 import { isCarnivalPhase, carnivalMain, carnivalDock, carnivalActs, carnivalMoment, carnivalMomentHtml, lookMoments, K_MOMENT_TIME, carnivalEndHtml, carnivalLobbyDeck, masksSheet, CARNIVAL_QUIET, explainerHtml as how_carnival, POWER as K_POWER } from './carnival.js';
 import { isCoffinsPhase, coffinsMain, coffinsDock, coffinsActs, coffinsMoment, coffinsMomentHtml, lanternMoments, C_MOMENT_TIME, coffinsEndHtml, coffinsLobbyDeck, COFFINS_QUIET, explainerHtml as how_coffins } from './coffins.js';
@@ -28,7 +28,7 @@ import { avatarSvg, randomAvatar, PARTS, COLORS } from './avatar.js';
 import { giftHtml, productIndex } from './gifts.js';
 import { gazetteHtml, frontPageHtml } from './gazette.js';
 import { isMissionPhase, missionMain, missionPicks, missionCenter, missionDock, missionActs, missionMoment, missionMomentHtml, MISSION_MOMENT_TIME, revealTime, missionEndHtml, knowledgeHtml, trackHtml, gridHtml, missionMarks, hunchArrowsSvg, hunchLegend } from './missions.js';
-import { LANGS, t, th, tp, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, mcardF, scen, optLabel, list as tlist, loadLang, setContent, browserLang, isLang, getLang, extra as tx } from './i18n.js';
+import { LANGS, t, th, tp, tm, tmh, entryMsg, stamp, roleF, dreamF, ruleF, presetF, mcardF, scen, scenIdx, optLabel, list as tlist, loadLang, setContent, browserLang, isLang, getLang, extra as tx } from './i18n.js';
 
 /** Each mode's client hooks, keyed by the registry's mode id (B7). Phases find their mode by prefix. */
 const CLIENT = {
@@ -780,6 +780,7 @@ function momentHtml(m) {
     case 'night0': {
       // 19 · The opening ceremony: the story cards are dealt and turned, then the rules.
       const sc = m.sc ?? { who: '?', where: '?', why: '?' };
+      if (onBoard() && m.sc) { body = night0Tv(m); break; }
       const cards = [['Who', 'mentalist', scen('WHO', sc.who)], ['Where', 'necro', scen('WHERE', sc.where)], ['Why', 'scroll', scen('WHY', sc.why)]];
       body = `<span class="kicker">${t('Night 0 · the story is dealt')}</span><h1 class="m-title">${letters(t('The game begins'))}</h1>
         <div class="cer-cards">${cards.map(([k, g, txt], i) => `<div class="cer-card" style="--d:${0.9 + i * 0.85}s"><div class="cer-in"><div class="cer-face back tarot back" aria-hidden="true"><span class="sig">DS</span></div><div class="cer-face front tarot"><span class="arc-num">${['I', 'II', 'III'][i]}</span><span class="k">${t(k)}</span><b>${esc(txt)}</b></div></div></div>`).join('')}</div>
@@ -894,6 +895,24 @@ function momentHtml(m) {
     ${m.type === 'end' && WIN_CLASS[m.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<div class="m-body">${body}</div>
     <div class="m-foot">${auto ? `<span class="m-timer" style="--t:${left}ms"><i></i></span>` : ''}${onBoard() ? '' : `<span class="kicker">${t(m.at ? 'Everyone sees this together' : auto ? 'Tap to skip' : 'Tap to continue')}${S.moments.length ? ` · ${t('{n} more', { n: S.moments.length })}` : ''}</span>`}</div>
   </div>`;
+}
+
+/**
+ * TV-N1: Night 0 on the TV in beats. A, the story: Who, Where and Why deal in and turn one by one at 230 units with
+ * their etchings, and the sentence the Gazette will use. B, tonight's rules: one row per rule (its card with the
+ * rule's initial in rubric, the name in 40, the effect in 26), lit one at a time. Then the table returns (beat C,
+ * the role reveal on the board) and the nightfall scene carries Night I (beat D).
+ */
+function night0Tv(m) {
+  const sc = m.sc;
+  // A host-written card has no etching: it turns up as plain vellum with its words.
+  const face = (row, txt) => { const i = scenIdx(row, txt); return i >= 0 ? seanceCard(row, i, { cls: 'n0-sc' }) : `<span class="tarot scard n0-sc row-${row}"><span class="arc-num">${esc({ WHO: t('Who'), WHERE: t('Where'), WHY: t('Why') }[row])}</span><span class="nm">${esc(txt)}</span></span>`; };
+  const story = [['WHO', sc.who], ['WHERE', sc.where], ['WHY', sc.why]].map(([row, txt], i) => `<div class="cer-card n0-card" style="--d:${0.6 + i * 0.6}s"><div class="cer-in"><div class="cer-face back tarot back" aria-hidden="true"><span class="sig">DS</span></div><div class="cer-face front">${face(row, txt)}</div></div></div>`).join('');
+  const a = `<div class="n0-beat n0-a ${m.rules.length ? 'leaves' : ''}"><span class="kicker">${t('Night 0 · the story')}</span><h1 class="m-title">${letters(t('Who, where and why'))}</h1>
+    <div class="cer-cards n0-cards">${story}</div><p class="m-sub cer-line" style="--d:2.6s">${tmh(m.scenario)}</p></div>`;
+  const b = m.rules.length ? `<div class="n0-beat n0-b"><span class="kicker">${t('Night 0 · tonight\'s rules')}</span><h1 class="m-title">${esc(tp('One rule card', '{n} rule cards', m.rules.length))}</h1>
+    <ol class="n0-rules">${m.rules.map((r, i) => `<li style="--d:${4.8 + i * 0.7}s"><span class="n0-rc" aria-hidden="true"><i>${esc([...ruleF(r.id, 'name')][0] ?? '')}</i></span><span><b>${esc(ruleF(r.id, 'name'))}</b><small>${esc(ruleF(r.id, 'text'))}</small></span></li>`).join('')}</ol></div>` : '';
+  return `<div class="n0">${a}${b}</div>`;
 }
 
 /**
@@ -1567,6 +1586,8 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     if (crews?.[p.id]) badges.push(`<b class="bdg b-crew" data-key="crew-${crews[p.id]}">${glyph(crews[p.id] === 'B' ? 'moon' : 'sun')}</b>`);
     if (marks[p.id]) badges.push(`<b class="bdg b-mark" data-key="mark">${marks[p.id]}</b>`);
     if (pick?.stamp === p.id) badges.push(`<b class="bdg b-stamp" data-key="stamp-${p.id}">${glyph('check')}</b>`);
+    // TV-N1 beat 3: at a role reveal each seat holds a card face down at its medallion's edge; it tips away once looked at.
+    if (onBoard() && /REVEAL$/.test(v.phase) && actedMarks[p.id]) badges.push(`<i class="tv-rc ${actedMarks[p.id] === 'tv-ok' ? 'seen' : ''}" data-key="tvrc" aria-hidden="true"><span class="sig">DS</span></i>`);
     if (actedMarks[p.id]) badges.push(`<i class="tv-mk ${actedMarks[p.id]}" data-key="tvmk">${actedMarks[p.id] === 'tv-ok' ? glyph('check') : ''}</i>`);
     // Y-scale: from 19 seats the medallions carry letters; the lens shows the portrait and name.
     const inner = reveal && p.role ? glyph(p.role.glyph) : p.avatar && !(crowded && !onBoard()) ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${initials(p.name)}</span>`;
@@ -1623,7 +1644,9 @@ function centerFor(v, pick) {
       const need = Math.max(0, 5 - v.players.length);
       return `<span class="c-big">${v.players.length}</span><span class="c-sub">${need ? t('{n} more needed', { n: need }) : t('{n}/{total} ready', { n: prog.done, total: prog.total })}</span>`;
     }
-    case 'NIGHT_0_REVEAL': return `${moon(prog.done / Math.max(1, prog.total), 'c-moon')}<span class="c-sub">${t('{n}/{total} have seen their role', { n: prog.done, total: prog.total })}</span>`;
+    // TV-N1 beat 3: on the TV the moon waxes as phones look; the count is the band's beads, not words in the disc.
+    case 'NIGHT_0_REVEAL': if (onBoard()) return moon(prog.done / Math.max(1, prog.total), 'c-moon');
+      return `${moon(prog.done / Math.max(1, prog.total), 'c-moon')}<span class="c-sub">${t('{n}/{total} have seen their role', { n: prog.done, total: prog.total })}</span>`;
     case 'DAY_PREP': return `<span class="c-emblem sun">${glyph('sun')}</span>${onBoard() ? `<span class="c-sub">${t('Morning')}</span>` : ''}${hint}${clock}`;
     case 'DAY_DISCUSSION': return `<span class="c-big">${v.day.nominees.length}</span><span class="c-sub">${t('accused')}</span>${hint}${clock}`;
     case 'DAY_DEFENSE': return `<span class="c-sub">${t('Speaking')}</span><span class="c-name">${v.day.speaking ? pname(v.day.speaking) : '—'}</span>${clock}`;
