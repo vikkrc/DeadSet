@@ -6816,9 +6816,12 @@ body.is-board .tvx > .tvx-band { background: var(--ink); z-index: 2; }
 
 /* TV-I3: the arch. The old phase dims to ink under a gilt-rimmed pointed arch that rises from the band and passes
    beyond the frame's top. */
-body.is-board .tv-arch { position: fixed; left: calc(var(--tvu) * 14); right: calc(var(--tvu) * 14); top: 0; bottom: calc(var(--tvu) * 84); z-index: calc(var(--z-moment) - 1); pointer-events: none; overflow: hidden; }
-body.is-board .tv-arch i { position: absolute; left: 4%; right: 4%; top: 0; height: 160%; clip-path: var(--arch); background: linear-gradient(var(--ink), var(--ink-2)); filter: drop-shadow(0 0 0 var(--gilt)); box-shadow: inset 0 0 0 calc(var(--tvu) * 3) var(--gilt-2); animation: archRise var(--t-slow) var(--ease-in) both; }
-@keyframes archRise { from { transform: translateY(62%); } 40% { transform: translateY(0); } to { transform: translateY(-105%); } }
+body.is-board .tv-arch { position: fixed; inset: 0 0 calc(var(--tvu) * 84); z-index: calc(var(--z-moment) - 1); pointer-events: none; overflow: hidden; }
+body.is-board .tv-arch svg { position: absolute; left: -2%; width: 104%; top: 0; height: 300%; animation: archPass var(--t-scene) var(--ease-in) both; will-change: transform; }
+.tv-arch .ta-fill { fill: var(--ink); }
+.tv-arch .ta-rim, .tv-arch .ta-rim2 { fill: none; stroke: var(--gilt); vector-effect: non-scaling-stroke; }
+.tv-arch .ta-rim { stroke-width: 3px; } .tv-arch .ta-rim2 { stroke-width: 1px; stroke: var(--gilt-2); }
+@keyframes archPass { from { transform: translateY(-34%); } to { transform: translateY(-100%); } }
 /* TV-Z1: paused, the stage dims to half and every loop stops */
 body.is-board:has(.tv-paused) .tvx-body { opacity: 0.5; }
 body.is-board:has(.tv-paused) .tvx-body * { animation-play-state: paused !important; }
@@ -7140,3 +7143,26 @@ body.is-board .tv-fs-hint { font-size: calc(var(--tvu) * 18); padding: calc(var(
 .ev-wins { display: flex; align-items: center; }
 .ev-wins i { font: 600 calc(var(--tvu) * 16)/1 var(--text); font-style: normal; color: var(--bone-2); margin-left: calc(var(--tvu) * 6); }
 .ev-game figcaption { font: 500 calc(var(--tvu) * 18)/1.2 var(--text); color: var(--bone-2); text-align: center; }
+
+/* The frame's corner lozenges sit above the band on every board (the backdrop rule had pushed them under it). */
+body.is-board .board2.tvx > .cn { z-index: calc(var(--z-dock) + 1); }
+/* The bell is the TV's one control. */
+button.tvx-bell { padding: 0; background: none; font: inherit; cursor: pointer; transition: color var(--t-ui) var(--ease), border-color var(--t-ui) var(--ease), background var(--t-ui) var(--ease); }
+button.tvx-bell:hover, button.tvx-bell:focus-visible { border-color: var(--gilt-hi); color: var(--gilt-hi); outline: none; }
+/* Gathering: the join panel stays beside the table, a little smaller once the table has filled. */
+.tvx .lb-join.small { gap: calc(var(--tvu) * 10); padding: calc(var(--tvu) * 18) calc(var(--tvu) * 20); }
+.tvx .lb-join.small .qr-frame { width: calc(var(--tvu) * 200); height: calc(var(--tvu) * 200); padding: calc(var(--tvu) * 10); }
+.tvx .lb-join.small .code-tiles.big .tile { width: calc(var(--tvu) * 38); height: calc(var(--tvu) * 46); font-size: calc(var(--tvu) * 30); }
+.tvx .lb-join.small .tv-url { font-size: calc(var(--tvu) * 18); }
+/* The ledger fits: panels that would run under the band give way (fitLedger). */
+.tvx-ledger > .fit-out { display: none; }
+/* The evening: the game's name beside (under) its cover. */
+.ev-title { font: 500 calc(var(--tvu) * 22)/1.1 var(--black); color: var(--bone); text-align: center; }
+/* The idle lobby: every cover on a slow ring that turns without end; the front cover large and lit, the sides
+   receding into the dark. */
+.tvx .lb-idlecovers { min-width: 0; }
+.lb-flow { position: relative; width: 100%; height: calc(var(--tvu) * 560); perspective: calc(var(--tvu) * 2200); perspective-origin: 50% 40%; -webkit-mask-image: linear-gradient(90deg, transparent, var(--ink) 22% 78%, transparent); mask-image: linear-gradient(90deg, transparent, var(--ink) 22% 78%, transparent); }
+.lb-flow-ring { position: absolute; left: 50%; top: calc(var(--tvu) * 90); width: calc(var(--tvu) * 200); height: calc(var(--tvu) * 340); margin-left: calc(var(--tvu) * -100); transform-style: preserve-3d; animation: lb-turn 72s linear infinite; }
+.lb-fc { position: absolute; inset: 0; transform: rotateY(calc(var(--i) * 360deg / var(--n))) translateZ(calc(var(--tvu) * 440)); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.lb-fc > .tarot { width: 100%; height: auto; box-shadow: 0 calc(var(--tvu) * 30) calc(var(--tvu) * 50) -20px var(--ink); }
+@keyframes lb-turn { from { transform: rotateY(0); } to { transform: rotateY(-360deg); } }

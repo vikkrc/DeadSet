@@ -617,6 +617,21 @@ function fitMoment() {
 }
 /** P3: the table's pace as a scale on scene time (1 cinematic, 0.6 brisk). */
 const pace = () => paceScale(V()?.table?.pace);
+/**
+ * The TV's ledger never runs under the band. When it is too long, panels give way: first those marked data-fit
+ * (repeats of what the screen already says), then from the bottom up; the Now card always stays.
+ */
+function fitLedger() {
+  const L = document.querySelector('.tvx-ledger');
+  if (!L) return;
+  const kids = [...L.children];
+  for (const k of kids) k.classList.remove('fit-out');
+  const over = () => L.scrollHeight > L.clientHeight + 1;
+  if (!over()) return;
+  const order = [...kids.filter((k) => k.dataset.fit), ...kids.filter((k) => !k.dataset.fit).reverse()].filter((k) => k !== kids[0]);
+  for (const k of order) { if (!over()) break; k.classList.add('fit-out'); }
+}
+
 /** P3: play the open scene's animations at the table's pace (its timer bar already runs on the scaled window). */
 function paceMoment() {
   const k = pace();
@@ -1132,6 +1147,7 @@ function render() {
   tickClock();
   syncWake();
   paceMoment();
+  if (onBoard()) fitLedger();
   fitMoment();
   gainPass(app);
   beadPass(app);
@@ -3465,7 +3481,9 @@ function tvChrome() {
   document.addEventListener('pointerdown', () => { if (onBoard() && want() && !document.fullscreenElement && !S.board.fsAsked) { S.board.fsAsked = true; full(); } }, { capture: true });
   // TV-R7 / TV-L5: the TV has no score button after the lobby. Browsers only play sound after a gesture on the TV
   // itself, so the first tap or key anywhere on it starts the score (the host's phone cannot do it for the TV).
-  const wake = () => { if (onBoard() && !S.board.audio && V()?.table?.score !== false) ACT.boardScore(); };
+  // A tap on the bell itself is the bell's own business (it turns the score on or off), and once someone has turned
+  // the score off on the TV, other taps leave it off.
+  const wake = (e) => { if (onBoard() && !S.board.audio && !S.board.muted && !e?.target?.closest?.('.tvx-bell') && V()?.table?.score !== false) ACT.boardScore(); };
   document.addEventListener('pointerdown', wake, { capture: true });
   document.addEventListener('keydown', wake, { capture: true });
   document.addEventListener('fullscreenchange', () => { if (onBoard()) render(); });
@@ -3504,9 +3522,14 @@ function boardView() {
   // TV-I3: every phase change opens through the Codex arch (600 ms): a gilt-rimmed pointed arch rises from the band
   // and passes beyond the frame. Never during a timer under ten seconds.
   const nowMs = Date.now();
-  if (S.board.archPhase && S.board.archPhase !== v.phaseId && !S.moment) { S.board.archUntil = nowMs + 700; setTimeout(() => render(), 750); }
+  if (S.board.archPhase && S.board.archPhase !== v.phaseId && !S.moment) { S.board.archUntil = nowMs + 1000; S.board.archKey = `${v.phaseId}-${nowMs}`; setTimeout(() => render(), 1050); }
   S.board.archPhase = v.phaseId;
-  const arch = nowMs < (S.board.archUntil ?? 0) ? `<div class="tv-arch" data-verb data-key="arch-${esc(v.phaseId)}" aria-hidden="true"><i></i></div>` : '';
+  // An ink arch with a double gilt rim: its pointed head rises from the band and covers the old phase, then the new
+  // phase opens through the pointed arch cut into its trailing edge as it leaves through the top (one SVG).
+  const arch = nowMs < (S.board.archUntil ?? 0) ? `<div class="tv-arch" data-key="arch-${esc(S.board.archKey)}" aria-hidden="true"><svg viewBox="0 0 100 300" preserveAspectRatio="none">
+    <path class="ta-fill" d="M0 300V95C0 50 28 18 50 0C72 18 100 50 100 95V300C100 255 72 218 50 200C28 218 0 255 0 300Z"/>
+    <path class="ta-rim" d="M0 300V95C0 50 28 18 50 0C72 18 100 50 100 95V300"/><path class="ta-rim" d="M0 300C0 255 28 218 50 200C72 218 100 255 100 300"/>
+    <path class="ta-rim2" d="M3 300V97C3 54 30 24 50 7C70 24 97 54 97 97V300"/><path class="ta-rim2" d="M3 300C3 259 30 225 50 208C70 225 97 259 97 300"/></svg></div>` : '';
   // Boards on the TV frame carry their own band (tvframe.js); the others keep the old caption strip.
   return screen + (screen.includes('board2 tvx') ? '' : caption) + arch + paused + hint;
 }
@@ -3879,8 +3902,8 @@ const ACT = {
     loadLang(wantedLang()).then(render);
   },
   async cancelStart() { await send('host.cancelStart', {}); },
-  boardScore() { sound.unlock(); if (!sound.on) sound.toggle(); S.board.audio = true; reportBoardAudio(true); render(); },
-  boardMute() { S.board.audio = false; score.stop(); reportBoardAudio(false); render(); },
+  boardScore() { sound.unlock(); if (!sound.on) sound.toggle(); S.board.audio = true; S.board.muted = false; reportBoardAudio(true); render(); },
+  boardMute() { S.board.audio = false; S.board.muted = true; score.stop(); reportBoardAudio(false); render(); },
 };
 
 Object.assign(ACT, exorcismActs({ S, V, send: (...a) => send(...a), render: () => render(), picked, burstAt, sound, haptic }), {

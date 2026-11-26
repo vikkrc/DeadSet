@@ -15,11 +15,11 @@ export const modePitch = (id) => t(MODES[id]?.blurb ?? '').replace(/\s*\d+\s*[�
 export const modeMeta = (id) => { const m = MODES[id]; return m ? `${m.min}–${m.max} · ${th('~{n} min', { n: m.minutes ?? 20 })}` : ''; };
 
 /** The cover. size: '' (lobby), 'mini' (picker rows, home strip). */
-export function cover(id, { size = '', act = '', key = '', bare = false } = {}) {
+export function cover(id, { size = '', act = '', key = '', bare = false, notitle = false } = {}) {
   const m = MODES[id];
   if (!m) return '';
   const tag = act ? 'button' : 'div';
   return `<${tag} class="tarot tarot--cover ${size}" style="--cv:${m.accent ?? 'var(--gilt)'}" ${act ? `type="button" data-act="${act}" data-id="${id}"` : ''} data-key="${key || `cover-${id}-${size}`}">
-    ${cardArt(m.emblem, { rays: false })}<b class="cv-title">${esc(modeTitle(id))}</b>
+    ${cardArt(m.emblem, { rays: false })}${notitle ? '' : `<b class="cv-title">${esc(modeTitle(id))}</b>`}
     ${size === 'mini' || bare ? '' : `<small class="cv-pitch">${esc(modePitch(id))}</small><span class="cv-meta">${esc(modeMeta(id))}</span>`}</${tag}>`;
 }

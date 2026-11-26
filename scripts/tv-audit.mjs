@@ -2,7 +2,7 @@
 // Needs a running server. Usage: PORT=3123 node scripts/tv-audit.mjs [mode …]   (default: every game)
 // Env: SAMPLES (default 14), EVERY (ms between samples, default 2500), BOTS (default 6), OUT (folder for captures).
 //
-// Hard checks (exit 1): blank frames, buttons on the TV outside the lobby (the score bell is a span), text clipped
+// Hard checks (exit 1): blank frames, buttons on the TV outside the lobby (except the score bell), text clipped
 // past the viewport or running under the band, anything covering a seat's name.
 // Soft report: the share of visible text under 20 px, and every text under 16 px (the TV floor).
 import fs from 'node:fs';
@@ -32,7 +32,7 @@ function inspect() {
   const stage = frame?.querySelector('.tvx-stage');
   if (!frame || (!moment && !(stage && vis(stage) && (stage.textContent.trim() || stage.querySelector('svg, .tok, img'))))) out.blank = true;
   const lobby = !!document.querySelector('.tvx.lb, .tvx[data-key^="board-lobby"], .tvx .lb-count') || /LOBBY/.test(document.body.dataset.phase ?? '');
-  if (!lobby) for (const b of document.querySelectorAll('main.tvx button')) if (vis(b) && !b.closest('.moment')) out.buttons.push(label(b));
+  if (!lobby) for (const b of document.querySelectorAll('main.tvx button:not(.tvx-bell)')) if (vis(b) && !b.closest('.moment')) out.buttons.push(label(b));
   const band = frame?.querySelector('.tvx-band')?.getBoundingClientRect();
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   let n;
