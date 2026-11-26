@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tres misiones fracasaron",
     "Use the Candle": "Usa la Vela",
     "Game mode": "Modo de juego",
+    "Until the next dawn.": "Hasta el próximo amanecer.",
     "One rule card": "Una carta de regla",
     "Night 0 · the story": "Noche 0 · la historia",
     "Night 0 · tonight's rules": "Noche 0 · las reglas de esta noche",

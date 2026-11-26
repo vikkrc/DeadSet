@@ -453,7 +453,7 @@ function detectMoments(v) {
       case 'bloodmoon': out.push({ type: 'bloodmoon', n: l.n }); break;
       case 'dawn': {
         const rev = fresh.find((x) => x.ev === 'revive' && x.i > l.i);
-        out.push({ type: 'dawn', day: l.day, killed: (l.killed ?? []).map(name), expired: (l.expired ?? []).map(name), revived: (rev?.ids ?? []).map(name), meDied: (l.victims ?? []).includes(meId) });
+        out.push({ type: 'dawn', day: l.day, ids: [...(l.killed ?? []), ...(l.expired ?? [])], killed: (l.killed ?? []).map(name), expired: (l.expired ?? []).map(name), revived: (rev?.ids ?? []).map(name), meDied: (l.victims ?? []).includes(meId) });
         if (v.doomsday && l.day <= v.doomsday && !fresh.some((x) => x.ev === 'end')) out.push({ type: 'doom', day: l.day, of: v.doomsday });
         if (v.me && !v.me.moderator && v.me.alive) {
           const reports = freshPriv.filter((x) => (x.at === `Night ${l.day - 1}` || x.at === `Day ${l.day}`) && !['dreamdraw', 'surge', 'chat', 'role'].includes(x.kind));
@@ -466,7 +466,7 @@ function detectMoments(v) {
         }
         break;
       }
-      case 'revive': if (!fresh.some((x) => x.ev === 'dawn')) out.push({ type: 'revive', names: (l.ids ?? []).map(name) }); break;
+      case 'revive': if (!fresh.some((x) => x.ev === 'dawn')) out.push({ type: 'revive', ids: l.ids ?? [], names: (l.ids ?? []).map(name) }); break;
       case 'vote-open': out.push({ type: 'call', kicker: ['Day {n}', { n: roman(v.dayNumber) }], title: 'The vote', sub: 'Cast your ballot in secret. You can change it until it locks.', sound: 'knock' }); break;
       case 'tally': {
         // Two scenes: the count, then the verdict on its own screen (after a tie, the coin comes between).
@@ -484,13 +484,13 @@ function detectMoments(v) {
         out.push({ type: 'coin', tied: (l.tied ?? []).map(name), winner: name(l.winner), sound: 'coin' });
         out.push({ type: 'verdict', outcome: 'sentence', reason: '', sentenced: name(l.winner), sentencedId: l.winner, meSentenced: l.winner === meId, goat: null, named: V()?.mode === 'missions' });
         break;
-      case 'heartbreak': out.push({ type: 'death', sound: 'death', art: 'heart', title: 'A broken heart', names: (l.victims ?? []).map(name), sub: 'Love would not let them stay.' }); break;
+      case 'heartbreak': out.push({ type: 'death', sound: 'death', art: 'heart', title: 'A broken heart', ids: l.victims ?? [], names: (l.victims ?? []).map(name), sub: 'Love would not let them stay.' }); break;
       case 'scapegoat':
-        if (!fresh.some((x) => x.ev === 'tally')) out.push({ type: 'death', sound: 'scapegoat', title: 'The Scapegoat pays', names: (l.victims ?? []).map(name), sub: 'No one was sentenced.' });
+        if (!fresh.some((x) => x.ev === 'tally')) out.push({ type: 'death', sound: 'scapegoat', title: 'The Scapegoat pays', ids: l.victims ?? [], names: (l.victims ?? []).map(name), sub: 'No one was sentenced.' });
         break;
-      case 'shot': out.push({ type: 'death', sound: 'shot', title: 'A shot rings out', names: (l.victims ?? []).map(name), sub: l.victims?.length ? 'Nobody saw who pulled the trigger.' : 'The bullet found no one.' }); break;
+      case 'shot': out.push({ type: 'death', sound: 'shot', title: 'A shot rings out', ids: l.victims ?? [], names: (l.victims ?? []).map(name), sub: l.victims?.length ? 'Nobody saw who pulled the trigger.' : 'The bullet found no one.' }); break;
       case 'final-act': out.push({ type: 'call', kicker: ruleF('EQUAL_EXCHANGE', 'name'), title: 'A final act', sub: 'The condemned may take one more with them.', sound: 'knock' }); break;
-      case 'exchange': out.push({ type: 'death', title: 'An equal exchange', names: (l.victims ?? []).map(name), sub: 'The condemned did not go alone.' }); break;
+      case 'exchange': out.push({ type: 'death', title: 'An equal exchange', ids: l.victims ?? [], names: (l.victims ?? []).map(name), sub: 'The condemned did not go alone.' }); break;
       case 'end': out.push({ type: 'end', winner: l.winner, reason: l.reason, who: l.pid ? name(l.pid) : '', whos: (l.pids ?? []).map(name), pids: l.pids ?? null, sides: l.sides, result: l.result, tapOnly: true }); break;
       case 'discussion': notify(t('Day {n} · the floor is open', { n: roman(v.dayNumber) })); break;
       case 'defense': notify(t('Defence: each nominee speaks in turn')); pubSound('spot'); break;
@@ -518,7 +518,7 @@ const sceneData = (m) => ({ coin: m.coin ?? null, rules: m.rules?.length ?? 0, d
 const MOMENT_SOUND = { night0: 'night', day1: 'dawn', nightfall: 'night', dawn: 'dawn', tally: 'knock', death: 'death', revive: 'revive', bloodmoon: 'bloodmoon' };
 const END_THEME = { OMEN: 'winLiving', MIRROR: 'winLiving', MIMIC: 'winLiving', GRAVEROBBERS: 'winLiving', SEANCE: 'winLiving', MIDNIGHT: 'winLiving', CARNIVAL: 'winJester', COFFINS: 'winLiving', DEMON: 'winDeath', DEATH: 'winDeath', NON_DEATH: 'winLiving', JESTER: 'winJester', LOVERS: 'winLovers', CULT: 'winCult', RIPPER: 'winRipper' };
 const MOMENT_TIME = { doom: 4800, end: 9000, private: 6000, gift: 5600, mside: 5200, coin: 4400, verdict: 3400, night0: 7600, day1: 3200, nightfall: 3000, dawn: 4200, tally: 3000, death: 3600, revive: 3000, call: 2200, bloodmoon: 4600, dreamswap: 3800 };
-const momentBase = (m) => (m.type === 'mreveal' ? revealTime(m) : O_MOMENT_TIME[m.type] ? O_MOMENT_TIME[m.type] : W_MOMENT_TIME[m.type] ? W_MOMENT_TIME[m.type] : Q_MOMENT_TIME[m.type] ? Q_MOMENT_TIME[m.type] : S_MOMENT_TIME[m.type] ? S_MOMENT_TIME[m.type] : G_MOMENT_TIME[m.type] ? G_MOMENT_TIME[m.type] : N_MOMENT_TIME[m.type] ? N_MOMENT_TIME[m.type] : K_MOMENT_TIME[m.type] ? K_MOMENT_TIME[m.type] : C_MOMENT_TIME[m.type] ? C_MOMENT_TIME[m.type] : X_MOMENT_TIME[m.type] ? X_MOMENT_TIME[m.type] : MISSION_MOMENT_TIME[m.type] ? MISSION_MOMENT_TIME[m.type] : !onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? 9000 : (MOMENT_TIME[m.type] ?? 6000) + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
+const momentBase = (m) => (m.type === 'mreveal' ? revealTime(m) : O_MOMENT_TIME[m.type] ? O_MOMENT_TIME[m.type] : W_MOMENT_TIME[m.type] ? W_MOMENT_TIME[m.type] : Q_MOMENT_TIME[m.type] ? Q_MOMENT_TIME[m.type] : S_MOMENT_TIME[m.type] ? S_MOMENT_TIME[m.type] : G_MOMENT_TIME[m.type] ? G_MOMENT_TIME[m.type] : N_MOMENT_TIME[m.type] ? N_MOMENT_TIME[m.type] : K_MOMENT_TIME[m.type] ? K_MOMENT_TIME[m.type] : C_MOMENT_TIME[m.type] ? C_MOMENT_TIME[m.type] : X_MOMENT_TIME[m.type] ? X_MOMENT_TIME[m.type] : MISSION_MOMENT_TIME[m.type] ? MISSION_MOMENT_TIME[m.type] : !onBoard() && m.type === 'nightfall' ? 1800 : onBoard() && m.type === 'dawn' ? (m.ids?.length ? 12000 : 8000) : (MOMENT_TIME[m.type] ?? 6000) + (m.type === 'dawn' ? 600 * (m.killed.length + m.expired.length) : 0)) + (m.type === 'night0' ? m.rules.length * 700 : 0);
 
 // ── M3: Gain — things that count move ───────────────────────────────────
 // A number marked data-gain="<key>" data-n="<value>" that rises between renders ticks up, its row glows, and a
@@ -809,9 +809,11 @@ function momentHtml(m) {
       break;
     }
     case 'nightfall':
+      if (onBoard()) { body = `${tvMedal('moon', 'silver')}<span class="kicker">${t('Night {n}', { n: roman(m.n) })}</span><h1 class="m-title">${letters(t('Night falls'))}</h1><p class="m-sub">${t('Close your eyes. Keep your screen to yourself.')}</p>`; break; }
       body = `<div class="m-art">${moon(0.35, 'rise')}<span class="stars"><i></i><i></i><i></i><i></i><i></i></span></div><span class="kicker">${t('Night {n}', { n: roman(m.n) })}</span><h1 class="m-title">${letters(t('Night falls'))}</h1><p class="m-sub">${t('Close your eyes. Keep your screen to yourself.')}</p>`;
       break;
     case 'bloodmoon':
+      if (onBoard()) { body = `${tvMedal('moon', 'oxblood')}<span class="kicker blood">${t('Night {n}', { n: roman(m.n) })}</span><h1 class="m-title blood">${letters(t('Blood Moon'))}</h1><p class="m-sub">${t('No protection holds tonight.')}</p>`; break; }
       body = `<div class="m-art blood-moon-art">${moon(1, 'rise blood')}<span class="stars"><i></i><i></i><i></i></span></div><span class="kicker blood">${t('Night {n}', { n: roman(m.n) })}</span><h1 class="m-title blood">${letters(t('Blood Moon'))}</h1><p class="m-sub">${t('Two nights passed without a death. Tonight no protection holds, and nothing can stay Death\'s hand.')}</p>`;
       break;
     case 'dreamswap':
@@ -820,7 +822,12 @@ function momentHtml(m) {
         <p class="m-sub small">${t('Tonight you dream this instead. Keep it to yourself.')}</p>`;
       break;
     case 'dawn': {
-      if (onBoard()) { body = frontPageHtml(V(), m, H); break; }
+      if (onBoard()) {
+        // TV-N2: with deaths, the dead come first as portraits with their roles, struck as the stamp lands; then the front page.
+        const fp = frontPageHtml(V(), m, H);
+        body = m.ids?.length ? `<div class="dw"><div class="dw-a"><span class="kicker">${t('Dawn · Day {n}', { n: roman(m.day) })}</span><h1 class="m-title">${letters(t('Found dead'))}</h1><div class="tvf-row">${m.ids.map((id, i) => tvFace(id, { cls: 'struck', role: true, i })).join('')}</div></div><div class="dw-b">${fp}</div></div>` : fp;
+        break;
+      }
       const dead = m.killed.length + m.expired.length;
       body = `<div class="m-art sunrise">${glyph('sun')}</div><span class="kicker">${t('Dawn · Day {n}', { n: roman(m.day) })}</span>
         <h1 class="m-title ${m.meDied ? 'blood' : ''}">${letters(t(m.meDied ? 'You did not wake' : dead ? 'Found dead' : 'Everyone woke'))}</h1>
@@ -834,6 +841,7 @@ function momentHtml(m) {
         <p class="m-sub small">${t('Keep this to yourself — or don\'t.')}</p>`;
       break;
     case 'revive':
+      if (onBoard() && m.ids?.length) { body = `<span class="kicker">${t('The grave opens')}</span><h1 class="m-title">${letters(t('Returned'))}</h1><div class="tvf-row">${m.ids.map((id, i) => tvFace(id, { cls: 'rises', i })).join('')}</div><p class="m-sub">${t('Until the next dawn.')}</p>`; break; }
       body = `<div class="m-art">${glyph('necro')}</div><span class="kicker">${t('The grave opens')}</span><h1 class="m-title">${letters(t('Returned'))}</h1><p class="m-sub">${th('{names} walk among you — until the next dawn.', { names: m.names })}</p>`;
       break;
     case 'call':
@@ -877,6 +885,13 @@ function momentHtml(m) {
     case 'gift': body = giftHtml(m.idx, { t, th, esc, product: m.product }); break;
     case 'mside': case 'mlottery': case 'mlantern': case 'mintro': case 'mcandle': case 'mcard': case 'mvotes': case 'mreveal': case 'mnamed': case 'munmask': case 'mreckon': body = missionMomentHtml(m, { letters, avatarSvg, onBoard, mode: V()?.mode }); break;
     case 'death':
+      // TV-N2: the portraits with the cause's etching between them.
+      if (onBoard() && m.ids?.length) {
+        const faces = m.ids.map((id, i) => tvFace(id, { cls: 'struck', role: true, i }));
+        const art = `<span class="tvf-cause">${glyph(m.art || 'dagger')}</span>`;
+        body = `<h1 class="m-title">${letters(t(m.title))}</h1><div class="tvf-row">${faces.length === 2 ? `${faces[0]}${art}${faces[1]}` : `${art}${faces.join('')}`}</div><p class="m-sub">${tmh(m.sub)}</p>`;
+        break;
+      }
       body = `<div class="m-art">${glyph(m.art || 'dagger')}</div><h1 class="m-title">${letters(t(m.title))}</h1>${m.names.length ? `<ul class="victims">${names(m.names)}</ul>` : ''}<p class="m-sub">${tmh(m.sub)}</p>`;
       break;
     case 'end': {
@@ -895,6 +910,16 @@ function momentHtml(m) {
     ${m.type === 'end' && WIN_CLASS[m.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<div class="m-body">${body}</div>
     <div class="m-foot">${auto ? `<span class="m-timer" style="--t:${left}ms"><i></i></span>` : ''}${onBoard() ? '' : `<span class="kicker">${t(m.at ? 'Everyone sees this together' : auto ? 'Tap to skip' : 'Tap to continue')}${S.moments.length ? ` · ${t('{n} more', { n: S.moments.length })}` : ''}</span>`}</div>
   </div>`;
+}
+
+/** TV-N2: the game's etched object on a medallion (250 units): silver for night, oxblood for a blood moon. */
+const tvMedal = (id, tone) => `<span class="tv-medal ${tone}" aria-hidden="true">${emblem(id)}</span>`;
+/** A scene portrait on the TV (210 units): the face, the name, and the role where the table may know it. */
+function tvFace(id, { cls = '', role = false, i = 0 } = {}) {
+  const p = V()?.players?.find((x) => x.id === id);
+  if (!p) return '';
+  const r = role && p.role ? roleF(p.role.id, 'name') : '';
+  return `<figure class="tvf ${cls}" style="--i:${i}" data-key="tvf-${p.id}"><span class="tvf-disc">${p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`}<i class="tvf-x" aria-hidden="true"></i></span><figcaption><b>${esc(p.name)}</b>${r ? `<small>${esc(r)}</small>` : ''}</figcaption></figure>`;
 }
 
 /**
@@ -1054,6 +1079,7 @@ function render() {
   const dark = night || (!!v && ['N_DEAL', 'N_NIGHT'].includes(v.phase) && ['room', 'board'].includes(S.route?.name));
   document.body.dataset.time = dark ? 'night' : 'day';
   document.body.classList.toggle('has-moment', !!S.moment);
+  document.body.dataset.moment = S.moment?.type ?? '';
   document.body.classList.toggle('blood-moon', !!v?.bloodMoon && night);
   const ghost = !!v?.me && !v.me.moderator && v.me.alive === false && v.phase !== 'LOBBY' && v.phase !== 'ENDED' && S.route?.name === 'room';
   document.body.classList.toggle('is-dead', ghost);

@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Trois missions ont échoué",
     "Use the Candle": "Utilise la Bougie",
     "Game mode": "Mode de jeu",
+    "Until the next dawn.": "Jusqu’à la prochaine aube.",
     "One rule card": "Une carte de règle",
     "Night 0 · the story": "Nuit 0 · l’histoire",
     "Night 0 · tonight's rules": "Nuit 0 · les règles de ce soir",

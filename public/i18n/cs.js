@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tři mise selhaly",
     "Use the Candle": "Použij Svíčku",
     "Game mode": "Herní režim",
+    "Until the next dawn.": "Do příštího úsvitu.",
     "One rule card": "Jedna karta pravidla",
     "Night 0 · the story": "Noc 0 · příběh",
     "Night 0 · tonight's rules": "Noc 0 · dnešní pravidla",

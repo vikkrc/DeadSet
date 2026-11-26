@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "Until the next dawn.": "A következő hajnalig.",
     "One rule card": "Egy szabálykártya",
     "Night 0 · the story": "0. éjszaka · a történet",
     "Night 0 · tonight's rules": "0. éjszaka · az esti szabályok",

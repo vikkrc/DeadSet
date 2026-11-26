@@ -6929,3 +6929,56 @@ body.is-board .m-night0 .n0-cards { justify-content: center; }
 .tvx .tok .tv-rc .sig { width: calc(var(--tvu) * 16); height: calc(var(--tvu) * 16); border-radius: 50%; display: grid; place-items: center; font: 700 calc(var(--tvu) * 8)/1 var(--mark); color: var(--gilt); background: var(--ink); box-shadow: 0 0 0 1px var(--gilt-2); }
 .tvx .tok .tv-rc.seen { transform: rotate(-38deg) translate(-6px, calc(var(--tvu) * 4)); opacity: 0.4; }
 @keyframes tvrc-deal { from { opacity: 0; transform: translate(calc(var(--tvu) * 40), -40px) rotate(30deg); } }
+
+/* TV-N2: the cycle scenes and their objects. */
+/* Nightfall and the blood moon play over the dimmed table rather than a blank ground. */
+body.is-board:is([data-moment=nightfall], [data-moment=bloodmoon]) #app > main.board2.tvx .tvx-body { visibility: visible; filter: brightness(0.22) saturate(0.4) blur(3px); transition: filter var(--t-scene) var(--ease); }
+body.is-board:has(.tvx) .moment:is(.m-nightfall, .m-bloodmoon) { background: radial-gradient(60% 70% at 50% 40%, color-mix(in srgb, var(--ink) 40%, transparent), color-mix(in srgb, var(--ink) 78%, transparent)); }
+.tv-medal { width: calc(var(--tvu) * 250); height: calc(var(--tvu) * 250); border-radius: 50%; display: grid; place-items: center; margin-bottom: calc(var(--tvu) * 8); position: relative; animation: tvm-rise var(--t-scene) var(--ease) both; }
+.tv-medal::before { content: ''; position: absolute; inset: calc(var(--tvu) * 10); border-radius: 50%; border: 1px solid currentColor; opacity: 0.45; }
+.tv-medal svg { width: 62%; height: 62%; }
+.tv-medal.silver { color: var(--sepia); background: radial-gradient(circle at 38% 32%, #f3f5f8, #b9c2cd 58%, #7d8896); /* literal-ok: the silver medallion */ box-shadow: 0 0 0 calc(var(--tvu) * 3) var(--ink), 0 0 0 calc(var(--tvu) * 5) color-mix(in srgb, var(--mirror) 70%, var(--bone)), 0 0 calc(var(--tvu) * 80) color-mix(in srgb, var(--mirror) 40%, transparent); --paper: #d9dee5; /* literal-ok: the etching's knock-out on silver */ }
+.tv-medal.oxblood { color: var(--bone); background: radial-gradient(circle at 38% 32%, var(--blood), var(--wax) 62%, var(--sepia)); box-shadow: 0 0 0 calc(var(--tvu) * 3) var(--ink), 0 0 0 calc(var(--tvu) * 5) var(--blood-ink), 0 0 calc(var(--tvu) * 90) color-mix(in srgb, var(--blood) 55%, transparent); --paper: var(--wax); }
+@keyframes tvm-rise { from { opacity: 0; transform: translateY(calc(var(--tvu) * 60)) scale(0.92); } }
+/* Portraits in scenes: 210 units, the name in 30 and the role under it. */
+.tvf-row { display: flex; justify-content: center; align-items: center; gap: calc(var(--tvu) * 56); margin: calc(var(--tvu) * 18) 0 calc(var(--tvu) * 6); flex-wrap: wrap; }
+.tvf { margin: 0; display: flex; flex-direction: column; align-items: center; gap: calc(var(--tvu) * 14); animation: fadeUp var(--t-slow) calc(0.5s + var(--i) * 0.15s) var(--ease) both; }
+.tvf-disc { position: relative; width: calc(var(--tvu) * 210); height: calc(var(--tvu) * 210); border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: var(--ink-3); box-shadow: 0 0 0 calc(var(--tvu) * 3) var(--ink), 0 0 0 calc(var(--tvu) * 5) var(--gilt-2); }
+.tvf-disc .tok-av, .tvf-disc .tok-ini { position: static; width: 100%; height: 100%; display: grid; place-items: center; font: 400 calc(var(--tvu) * 84)/1 var(--black); color: var(--bone); }
+.tvf figcaption { display: flex; flex-direction: column; align-items: center; gap: calc(var(--tvu) * 4); }
+.tvf figcaption b { font: 500 calc(var(--tvu) * 34)/1 var(--black); color: var(--bone); }
+.tvf figcaption small { font: 600 calc(var(--tvu) * 16)/1 var(--text); letter-spacing: 0.24em; text-transform: uppercase; color: var(--blood-ink); }
+.tvf-x { position: absolute; inset: 0; pointer-events: none; }
+.tvf-x::before, .tvf-x::after { content: ''; position: absolute; left: 14%; right: 14%; top: calc(50% - calc(var(--tvu) * 4)); height: calc(var(--tvu) * 8); border-radius: calc(var(--tvu) * 4); background: var(--blood); box-shadow: 0 0 0 2px color-mix(in srgb, var(--ink) 50%, transparent); transform: rotate(45deg) scaleX(0); animation: tvf-strike var(--t-stamp) var(--spring) calc(1.5s + var(--i) * 0.2s) forwards; }
+.tvf-x::after { transform: rotate(-45deg) scaleX(0); animation-name: tvf-strike2; animation-delay: calc(1.65s + var(--i) * 0.2s); }
+@keyframes tvf-strike { to { transform: rotate(45deg) scaleX(1); } }
+@keyframes tvf-strike2 { to { transform: rotate(-45deg) scaleX(1); } }
+.tvf.struck .tvf-disc { animation: tvf-grey var(--t-slow) var(--ease) calc(1.5s + var(--i) * 0.2s) forwards; }
+@keyframes tvf-grey { to { filter: grayscale(1) brightness(0.7); box-shadow: 0 0 0 calc(var(--tvu) * 3) var(--ink), 0 0 0 calc(var(--tvu) * 5) var(--blood); } }
+.tvf:not(.struck) .tvf-x { display: none; }
+.tvf.rises .tvf-disc { filter: grayscale(1) brightness(0.6); animation: tvf-rise 1.6s var(--ease) calc(0.6s + var(--i) * 0.2s) forwards; }
+@keyframes tvf-rise { 0% { filter: grayscale(1) brightness(0.6); transform: translateY(calc(var(--tvu) * 40)); } 100% { filter: none; transform: none; box-shadow: 0 0 0 calc(var(--tvu) * 3) var(--ink), 0 0 0 calc(var(--tvu) * 5) var(--gilt-hi), 0 0 calc(var(--tvu) * 60) color-mix(in srgb, var(--gilt-hi) 40%, transparent); } }
+.tvf-cause { width: calc(var(--tvu) * 120); height: calc(var(--tvu) * 120); border-radius: 50%; display: grid; place-items: center; color: var(--bone); background: radial-gradient(circle at 40% 35%, var(--blood), var(--wax)); box-shadow: 0 0 0 calc(var(--tvu) * 3) var(--ink), 0 0 0 calc(var(--tvu) * 5) var(--blood-ink); animation: tvm-rise var(--t-scene) var(--ease) 0.3s both; }
+.tvf-cause svg { width: 56%; height: 56%; }
+/* Dawn with deaths: the portraits first, then the front page. */
+.dw { display: grid; width: 100%; height: 100%; }
+.dw > * { grid-area: 1 / 1; min-height: 0; }
+.dw-a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: calc(var(--tvu) * 14); animation: n0-leave var(--t-slow) var(--ease-in) 3.6s forwards; }
+.dw-b { display: grid; place-items: center; opacity: 0; animation: n0-come var(--t-slow) var(--ease) 3.8s forwards; }
+
+/* TV-R2: the front page fits the scene area (712 units less the scene's padding) in TV units throughout. */
+body.is-board:has(.tvx) .moment .paper .mh h2 { font-size: calc(var(--tvu) * 60); }
+body.is-board:has(.tvx) .moment .paper .mh div { font-size: calc(var(--tvu) * 12); margin-top: calc(var(--tvu) * 8); padding: calc(var(--tvu) * 6) 2px calc(var(--tvu) * 5); }
+body.is-board:has(.tvx) .moment .paper .hl { font-size: calc(var(--tvu) * 68); line-height: 1; margin: calc(var(--tvu) * 18) 0 calc(var(--tvu) * 10); }
+body.is-board:has(.tvx) .moment .paper .dk { font-size: calc(var(--tvu) * 23); }
+body.is-board:has(.tvx) .moment .paper .cols { grid-template-columns: 1fr calc(var(--tvu) * 200) 1fr; gap: calc(var(--tvu) * 32); margin-top: calc(var(--tvu) * 16); padding-top: calc(var(--tvu) * 16); }
+body.is-board:has(.tvx) .moment .paper .cols p { font-size: calc(var(--tvu) * 17); }
+body.is-board:has(.tvx) .moment .paper .photo { font-size: calc(var(--tvu) * 15); gap: calc(var(--tvu) * 6); }
+body.is-board:has(.tvx) .moment .paper .photo .portrait { width: calc(var(--tvu) * 170); height: calc(var(--tvu) * 188); }
+body.is-board:has(.tvx) .moment .paper .photo .portrait :is(.gz-av, .gz-ini) { width: calc(var(--tvu) * 100); height: calc(var(--tvu) * 100); margin-top: calc(var(--tvu) * 48); }
+body.is-board:has(.tvx) .moment .paper .photo .portrait .gz-x { width: calc(var(--tvu) * 100); height: calc(var(--tvu) * 100); left: calc(50% - calc(var(--tvu) * 50)); top: calc(50% - calc(var(--tvu) * 50) + calc(var(--tvu) * 24)); }
+.tvf.struck .tvf-disc { animation: none; }
+.tvf.struck .tvf-disc > :not(.tvf-x) { animation: tvf-grey2 var(--t-slow) var(--ease) calc(1.5s + var(--i) * 0.2s) forwards; }
+@keyframes tvf-grey2 { to { filter: grayscale(1) brightness(0.7); } }
+.tvf.struck .tvf-disc::after { content: ''; position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 0 0 var(--blood); animation: tvf-rim var(--t-slow) var(--ease) calc(1.5s + var(--i) * 0.2s) forwards; }
+@keyframes tvf-rim { to { box-shadow: inset 0 0 0 calc(var(--tvu) * 5) var(--blood); } }
