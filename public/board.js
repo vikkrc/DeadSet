@@ -217,7 +217,7 @@ export function boardScreen(v, h) {
   }
   extra += `<div class="sky-orb ${night ? 'moon' : 'sun'}" data-orb aria-hidden="true"></div>`;
   if (night) extra += '<div class="b-fog" data-key="fog" aria-hidden="true"><i></i><i></i><i></i></div>';
-  const centerExtra = !night && v.phase !== 'ENDED' && v.phase !== 'DAY_VOTING' ? '<div class="b-candle" aria-hidden="true"><i></i><b></b></div>' : '';
+  const centerExtra = ''; // the day disc carries its own count; no candle
   const live = activeRuleNotes(v);
   const plaques = (v.activeRules || []).map((r) => `<span class="plaque ${live[r.id] ? 'on' : ''}" data-key="pl-${r.id}">${glyph(ruleGlyph(r.id))}<span>${esc(ruleF(r.id, 'name'))}${live[r.id] ? `<em>${tmh(live[r.id])}</em>` : ''}</span></span>`).join('');
   const mr = v.mode === 'missions' ? missionBoardRing(v) : null;

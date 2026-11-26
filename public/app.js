@@ -1147,7 +1147,7 @@ function render() {
   tickClock();
   syncWake();
   paceMoment();
-  if (onBoard()) fitLedger();
+  if (onBoard()) { fitLedger(); runArch(); }
   fitMoment();
   gainPass(app);
   beadPass(app);
@@ -3493,6 +3493,34 @@ function tvChrome() {
 }
 
 /** TV-L13: how long the lobby has gone without anyone joining (the host alone at the table). */
+// TV-I3: the arch's opening, a pointed arch as wide as the screen and as tall as it (x and y in fractions of the
+// screen). The outgoing screen is clipped to the region above this curve while the curve lifts from below the band
+// to above the top.
+const ARCH_MS = 950;
+const bez = (a, b, c, d, t) => ((1 - t) ** 3) * a + 3 * ((1 - t) ** 2) * t * b + 3 * (1 - t) * t * t * c + t ** 3 * d;
+const ARCH_PTS = (() => {
+  const seg = (p, n) => Array.from({ length: n + 1 }, (_, i) => [bez(p[0][0], p[1][0], p[2][0], p[3][0], i / n), bez(p[0][1], p[1][1], p[2][1], p[3][1], i / n)]);
+  const left = seg([[0, 1], [0, 0.55], [0.28, 0.18], [0.5, 0]], 14);
+  const right = seg([[0.5, 0], [0.72, 0.18], [1, 0.55], [1, 1]], 14).slice(1);
+  return [...left, ...right]; // from the left foot over the point to the right foot
+})();
+/** The clip for the outgoing screen with the arch's point at height `o` (1 = at the band, -1 = past the top). */
+const archClip = (o) => `polygon(${[[1, o - 2], [0, o - 2], ...ARCH_PTS.map(([x, y]) => [x, y + o])].map(([x, y]) => `${(x * 100).toFixed(2)}% ${(y * 100).toFixed(2)}%`).join(', ')})`;
+const ARCH_RIM = `M${ARCH_PTS.map(([x, y]) => `${(x * 100).toFixed(2)} ${(y * 100).toFixed(2)}`).join(' L')}`;
+const ARCH_RIM_IN = `M${ARCH_PTS.map(([x, y]) => `${(2 + x * 96).toFixed(2)} ${(1.6 + y * 100).toFixed(2)}`).join(' L')}`;
+const archRan = new WeakSet();
+/** Run the arch once per overlay (the overlay survives re-renders while it lives). */
+function runArch() {
+  const el = document.querySelector('.tv-arch');
+  if (!el || archRan.has(el)) return;
+  archRan.add(el);
+  const old = el.querySelector('.ta-old');
+  const rim = el.querySelector('.ta-rim');
+  const opts = { duration: calm.matches ? 1 : ARCH_MS, easing: 'cubic-bezier(0.45, 0, 0.2, 1)', fill: 'forwards' };
+  old?.animate([{ clipPath: archClip(1) }, { clipPath: archClip(-1.05) }], opts);
+  rim?.animate([{ transform: 'translateY(100%)' }, { transform: 'translateY(-105%)' }], opts);
+}
+
 function idleFor(v) {
   if (v.phase !== 'LOBBY') { S.board.joinAt = null; return 0; }
   if (S.board.seen !== v.players.length || S.board.joinAt == null) { S.board.seen = v.players.length; S.board.joinAt = Date.now(); }
@@ -3519,17 +3547,22 @@ function boardView() {
   const how = v.phase === 'LOBBY' ? guideHow(v.mode, v) : '';
   const steps = (how.match(/<li /g) || []).length || 1;
   const screen = boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark, cover, how, howStep: (S.board.howStep ?? 0) % steps, honStep: S.board.honStep ?? 0, emblem, lastResult: S.lastResult && S.lastResult.code === v.code ? S.lastResult : null, idleFor: idleFor(v), cycle: S.board.howStep ?? 0, avatar: (p) => (p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`) });
-  // TV-I3: every phase change opens through the Codex arch (600 ms): a gilt-rimmed pointed arch rises from the band
-  // and passes beyond the frame. Never during a timer under ten seconds.
+  // TV-I3: every phase change opens through the Codex arch. The outgoing screen is held as a still image (a copy of
+  // its DOM) and the new phase opens through a tall pointed arch, rimmed in gilt, that grows from the band and lifts
+  // past the top. Nothing flashes to ink: the room sees the old screen give way to the new one.
   const nowMs = Date.now();
-  if (S.board.archPhase && S.board.archPhase !== v.phaseId && !S.moment) { S.board.archUntil = nowMs + 1000; S.board.archKey = `${v.phaseId}-${nowMs}`; setTimeout(() => render(), 1050); }
+  if (S.board.archPhase && S.board.archPhase !== v.phaseId && !S.moment) {
+    const old = document.querySelector('#app > main.board2.tvx');
+    if (old) {
+      S.board.archOld = old.outerHTML.replace(/\sdata-(act|key)="[^"]*"/g, '');
+      S.board.archUntil = nowMs + ARCH_MS + 80; S.board.archKey = `${v.phaseId}-${nowMs}`;
+      setTimeout(() => render(), ARCH_MS + 120);
+    }
+  }
   S.board.archPhase = v.phaseId;
-  // An ink arch with a double gilt rim: its pointed head rises from the band and covers the old phase, then the new
-  // phase opens through the pointed arch cut into its trailing edge as it leaves through the top (one SVG).
-  const arch = nowMs < (S.board.archUntil ?? 0) ? `<div class="tv-arch" data-key="arch-${esc(S.board.archKey)}" aria-hidden="true"><svg viewBox="0 0 100 300" preserveAspectRatio="none">
-    <path class="ta-fill" d="M0 300V95C0 50 28 18 50 0C72 18 100 50 100 95V300C100 255 72 218 50 200C28 218 0 255 0 300Z"/>
-    <path class="ta-rim" d="M0 300V95C0 50 28 18 50 0C72 18 100 50 100 95V300"/><path class="ta-rim" d="M0 300C0 255 28 218 50 200C72 218 100 255 100 300"/>
-    <path class="ta-rim2" d="M3 300V97C3 54 30 24 50 7C70 24 97 54 97 97V300"/><path class="ta-rim2" d="M3 300C3 259 30 225 50 208C70 225 97 259 97 300"/></svg></div>` : '';
+  const arch = nowMs < (S.board.archUntil ?? 0) && S.board.archOld ? `<div class="tv-arch" data-key="arch-${esc(S.board.archKey)}" aria-hidden="true"><div class="ta-old">${S.board.archOld}</div>
+    <svg class="ta-rim" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="${ARCH_RIM}"/><path class="in" d="${ARCH_RIM_IN}"/></svg></div>` : '';
+  if (!arch) S.board.archOld = null;
   // Boards on the TV frame carry their own band (tvframe.js); the others keep the old caption strip.
   return screen + (screen.includes('board2 tvx') ? '' : caption) + arch + paused + hint;
 }
