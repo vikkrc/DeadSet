@@ -6999,3 +6999,32 @@ body.is-board:has(.tvx) .moment .paper .photo .portrait .gz-x { width: calc(var(
 body.is-board:has(.tvx) .sm-all { max-width: calc(var(--tvu) * 1300); gap: calc(var(--tvu) * 28); margin-top: calc(var(--tvu) * 24); }
 body.is-board:has(.tvx) .sm-all .vcard.tarot--thumb { width: calc(var(--tvu) * 132); font-size: calc(var(--tvu) * 14); }
 .sm-all figcaption { font: 500 calc(var(--tvu) * 24)/1.1 var(--black); color: var(--bone); max-width: calc(var(--tvu) * 150); text-align: center; overflow-wrap: anywhere; }
+
+/* TV-A4: Midnight's dawn on the ring. Each seat's final card turns in seat order, the table cards last; swaps as arcs. */
+.tvx .nb-rc { position: absolute; z-index: 3; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: calc(var(--tvu) * 4); pointer-events: none; }
+.tvx .nb-rc .tarot--thumb, .tvx .nb-final .tarot--thumb { width: calc(var(--tvu) * 48); font-size: calc(var(--tvu) * 7); }
+.tvx .nb-rc b { font: 600 calc(var(--tvu) * 13)/1.1 var(--text); letter-spacing: 0.04em; color: var(--bone); white-space: nowrap; opacity: 0; animation: nb-show var(--t-ui) var(--ease) calc(var(--d) + var(--t-card)) forwards; text-shadow: 0 1px calc(var(--tvu) * 3) var(--ink); }
+.tvx .nb-rc.won b { color: var(--gilt-hi); }
+.tvx .nb-rc.died b { color: var(--blood-ink); text-decoration: line-through; }
+.tvx .nb-rc.won .nb-f.front .tarot { box-shadow: 0 0 0 2px var(--gilt-hi), 0 0 calc(var(--tvu) * 24) color-mix(in srgb, var(--gilt-hi) 50%, transparent); }
+.nb-turn { position: relative; display: grid; perspective: calc(var(--tvu) * 600); }
+.nb-turn > .nb-f { grid-area: 1 / 1; backface-visibility: hidden; }
+.nb-turn > .nb-f.back { animation: tarot-turn-out-x var(--t-turn) var(--d) var(--ease-in) forwards; }
+.nb-turn > .nb-f.front { transform: perspective(calc(var(--tvu) * 600)) rotateX(90deg); visibility: hidden; animation: nb-turn-in var(--t-turn) calc(var(--d) + var(--t-turn)) var(--ease) forwards; }
+@keyframes nb-turn-in { from { visibility: visible; transform: perspective(calc(var(--tvu) * 600)) rotateX(90deg); } to { visibility: visible; transform: none; } }
+.tvx .nb-ghost { position: absolute; top: -6px; left: -14px; opacity: 0; transform: rotate(-10deg); filter: grayscale(0.6) brightness(0.6); animation: nb-ghost var(--t-slow) var(--ease) calc(var(--d) + var(--t-card)) forwards; }
+@keyframes nb-ghost { to { opacity: 0.55; } }
+.tvx .nb-swaps { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; overflow: visible; }
+.tvx .nb-swaps path { fill: none; stroke: var(--gilt-hi); stroke-width: 2px; vector-effect: non-scaling-stroke; stroke-dasharray: 2 5; stroke-linecap: round; opacity: 0; animation: nb-arc var(--t-slow) var(--ease) calc(var(--d) + var(--k) * 0.25s) forwards; }
+@keyframes nb-arc { to { opacity: 0.9; } }
+@keyframes nb-show { to { opacity: 1; } }
+.tvx .nb-swaps marker path { fill: var(--gilt-hi); stroke: none; opacity: 1; animation: none; }
+.tvx .nb-final { gap: calc(var(--tvu) * 10); }
+
+.tv-scores { list-style: none; margin: calc(var(--tvu) * 6) 0 0; padding: 0; display: flex; flex-direction: column; }
+.tv-scores li { display: flex; align-items: baseline; justify-content: space-between; gap: calc(var(--tvu) * 12); padding: calc(var(--tvu) * 3) 0; border-bottom: 1px solid color-mix(in srgb, var(--iron) 60%, transparent); }
+.tv-scores li:last-child { border-bottom: 0; }
+.tv-scores b { font: 500 calc(var(--tvu) * 20)/1.1 var(--text); color: var(--bone); }
+.tv-scores span { font: 600 calc(var(--tvu) * 22)/1 var(--black); color: var(--bone-2); min-width: 1.4em; text-align: right; }
+.tv-scores li.lead b, .tv-scores li.lead span { color: var(--gilt-hi); }
+.tvx-pnl .tv-note { display: block; margin-top: calc(var(--tvu) * 6); font: italic 400 calc(var(--tvu) * 17)/1.3 var(--text); color: var(--ash); }

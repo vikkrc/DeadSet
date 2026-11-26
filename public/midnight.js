@@ -5,7 +5,7 @@
 //
 // Privacy: during the night every phone shows the same step screen; only the
 // waking player's has controls. Nothing at night makes a sound or a buzz.
-import { tvFrame, nowCard, panel } from './tvframe.js';
+import { tvFrame, nowCard, panel, tvScores } from './tvframe.js';
 import { glyph } from './icons.js';
 import { waitText, waxSeal } from './kit.js';
 import { emblem } from './emblems.js';
@@ -344,6 +344,40 @@ export function midnightEndHtml(v) {
 }
 
 // ── TV ─────────────────────────────────────────────────────────────────────
+/**
+ * TV-A4 / TV-N3: dawn, the game's best moment. Every final card turns at its seat in seat order, the three table
+ * cards last in the disc; a dotted gilt arc traces every swap of the night; a card that moved keeps its dealt card
+ * as a ghost behind it. Votes sit on the seats, the dead are struck, the winners glow.
+ */
+function dawnReveal(v, ring) {
+  const N = v.midnight;
+  const players = [...v.players].sort((a, b) => a.seat - b.seat);
+  const { pos } = seatLayout(players.length);
+  const at = (id) => { if (isTable(id)) { const k = TABLE.indexOf(id); return { x: 50 + (k - 1) * 7, y: 50 }; } const i = players.findIndex((p) => p.id === id); return pos[i] ?? { x: 50, y: 50 }; };
+  const toward = (q, f) => ({ x: 50 + (q.x - 50) * f, y: 50 + (q.y - 50) * f });
+  const died = new Set(N.died ?? []);
+  const winners = new Set(N.winners?.players ?? []);
+  const shown = (id) => (N.cards[id] === 'MIMIC' && N.mimicAs ? N.mimicAs : N.cards[id]);
+  const cards = players.map((p, i) => {
+    const q = toward(at(p.id), 0.56);
+    const moved = N.dealt[p.id] !== N.cards[p.id];
+    return `<div class="nb-rc ${winners.has(p.id) ? 'won' : ''} ${died.has(p.id) ? 'died' : ''}" style="left:${q.x.toFixed(2)}%;top:${q.y.toFixed(2)}%;--d:${(0.6 + i * 0.3).toFixed(2)}s" data-key="nbrc-${p.id}">
+      ${moved ? `<span class="nb-ghost" aria-hidden="true">${ncard(N.dealt[p.id], { cls: 'thumb' })}</span>` : ''}
+      <span class="nb-turn"><span class="nb-f back">${ncard(null, { cls: 'thumb' })}</span><span class="nb-f front">${ncard(shown(p.id), { cls: 'thumb' })}</span></span>
+      <b>${esc(rname(shown(p.id)))}</b></div>`;
+  }).join('');
+  const swaps = (N.timeline ?? []).filter((e) => e.kind === 'swap' && e.seats?.length === 2).map((e, k) => {
+    const a = toward(at(e.seats[0]), isTable(e.seats[0]) ? 1 : 0.56); const b = toward(at(e.seats[1]), isTable(e.seats[1]) ? 1 : 0.56);
+    const mx = (a.x + b.x) / 2 + (50 - (a.x + b.x) / 2) * 0.35; const my = (a.y + b.y) / 2 + (50 - (a.y + b.y) / 2) * 0.35;
+    return `<path d="M${a.x.toFixed(2)} ${a.y.toFixed(2)} Q${mx.toFixed(2)} ${my.toFixed(2)} ${b.x.toFixed(2)} ${b.y.toFixed(2)}" style="--k:${k}" marker-start="url(#nb-ar)" marker-end="url(#nb-ar)"/>`;
+  }).join('');
+  const last = (0.6 + players.length * 0.3 + 0.8).toFixed(2);
+  const table = `<div class="nb-tablecards nb-final">${TABLE.map((c, i) => `<span class="nb-turn" style="--d:${(+last + i * 0.3).toFixed(2)}s"><span class="nb-f back">${ncard(null, { cls: 'thumb' })}</span><span class="nb-f front">${ncard(N.cards[c], { cls: 'thumb' })}</span></span>`).join('')}</div>`;
+  const extra = `<svg class="nb-swaps" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style="--d:${last}s"><defs><marker id="nb-ar" viewBox="0 0 6 6" refX="3" refY="3" markerWidth="2.2" markerHeight="2.2" orient="auto-start-reverse"><path d="M0 0L6 3L0 6z"/></marker></defs>${swaps}</svg>${cards}`;
+  const marks = Object.fromEntries(Object.entries(N.tally ?? {}).filter(([, n]) => n > 0).map(([id, n]) => [id, String(n)]));
+  return ring(v, { center: `<span class="nb-tlabel" aria-label="${esc(t('On the table at dawn'))}">${table}</span>`, extra, marks, acted: {} });
+}
+
 export function midnightBoard(v, h) {
   const { ring } = h;
   const N = v.midnight;
@@ -355,7 +389,7 @@ export function midnightBoard(v, h) {
   const center = v.phase === 'N_NIGHT'
     ? `<div class="nb-moon">${emblem('moon')}</div>${tableCards}<span class="c-sub">${esc(th('Night · {i} of {n}', { i: N.step + 1, n: N.steps.length }))}</span>`
     : `${tableCards}${v.phase === 'N_DEAL' ? `<span class="c-sub">${esc(t('Everyone looks at their card, once.'))}</span>` : ''}`;
-  const stage = ended ? `<div class="nb-end" data-autoscroll>${midnightEndHtml(v)}</div>` : ring ? ring(v, { center }) : '';
+  const stage = ended && ring && N.cards ? dawnReveal(v, ring) : ended ? `<div class="nb-end" data-autoscroll>${midnightEndHtml(v)}</div>` : ring ? ring(v, { center }) : '';
   const now = {
     N_DEAL: { kicker: t('Midnight'), title: t('Everyone looks at their card, once'), line: t('Then the night begins: every role wakes in turn.'), herald: t('Look at your card on your phone. Once.') },
     N_NIGHT: { kicker: th('Night · {i} of {n}', { i: N.step + 1, n: N.steps.length }), title: wakes(N.stepRole), line: t('Every step lasts the same, even when its card lies on the table.'), herald: t('Keep your eyes shut unless your phone wakes you.') },
@@ -366,6 +400,9 @@ export function midnightBoard(v, h) {
   // The wake order: every role in play, the one awake now lit, the done ones dimmed (TV-A4).
   const order = night ? panel(t('The wake order'), `<ol class="nb-order">${N.steps.map((r, i) => `<li class="${v.phase === 'N_NIGHT' && i < N.step ? 'past' : v.phase === 'N_NIGHT' && i === N.step ? 'now' : ''}">${nicon(r)}<b>${esc(rname(r))}</b></li>`).join('')}</ol>`, 'nborder') : '';
   const deck = panel(t('Cards in play'), `<ul class="nb-deck">${N.deck.map(({ id, n }) => `<li>${nicon(id)}<b>${esc(rname(id))}${n > 1 ? ` <small>×${n}</small>` : ''}</b></li>`).join('')}</ul>`, 'nbdeck');
-  const ledger = `${nowCard(now)}${order || deck}${scoreboard(v)}`;
+  // At the end the ring carries every card; the ledger keeps the whole night in order.
+  const nightLog = ended ? (N.timeline ?? []).map((e) => `<li>${nicon(e.step)}<span>${STEP_LINE[e.kind]?.(v, e) ?? ''}</span></li>`).join('') : '';
+  const ledger = ended && ring && N.cards ? `${nowCard(now)}${nightLog ? panel(t('The whole night'), `<ol class="nt-list">${nightLog}</ol>`, 'nbnight') : ''}${tvScores(v, v.nScores ?? N.scores, t('Every winner +1; the Jester +2.'))}`
+    : `${nowCard(now)}${order || deck}${scoreboard(v)}`;
   return tvFrame(v, h, { stage, ledger, herald: now.herald, night, key: 'board-n', cls: `nboard ${night ? 'is-night' : ''} ${ended ? 'is-ended' : ''}` });
 }

@@ -104,3 +104,11 @@ export function latestHeadlines(eds, h) {
   const rows = eds.slice(0, 3).map((e) => `<p class="${e.tone}"><small>${esc(when(e))}</small><b>${esc(e.title)}</b></p>`).join('');
   return rows ? panel(t('The Gazette · latest'), `<div class="tvx-lat">${rows}</div>`, 'tvlat') : '';
 }
+
+/** A match's running scores on the TV (games of several rounds): rank, name, points; the leader in gilt. */
+export function tvScores(v, scores, note = '') {
+  const list = v.players.map((p) => ({ p, s: scores?.[p.id] ?? 0 })).sort((a, b) => b.s - a.s);
+  if (!list.some((x) => x.s)) return '';
+  const top = list[0].s;
+  return panel(t('Scores'), `<ol class="tv-scores">${list.map(({ p, s }) => `<li class="${s === top ? 'lead' : ''}"><b>${esc(p.name)}</b><span>${s}</span></li>`).join('')}</ol>${note ? `<small class="tv-note">${esc(note)}</small>` : ''}`, 'tvscores');
+}
