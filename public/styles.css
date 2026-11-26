@@ -7028,3 +7028,14 @@ body.is-board:has(.tvx) .sm-all .vcard.tarot--thumb { width: calc(var(--tvu) * 1
 .tv-scores span { font: 600 calc(var(--tvu) * 22)/1 var(--black); color: var(--bone-2); min-width: 1.4em; text-align: right; }
 .tv-scores li.lead b, .tv-scores li.lead span { color: var(--gilt-hi); }
 .tvx-pnl .tv-note { display: block; margin-top: calc(var(--tvu) * 6); font: italic 400 calc(var(--tvu) * 17)/1.3 var(--text); color: var(--ash); }
+
+/* TV-A9 / TV-R5: the cemetery fits the stage at any row count (600 units for the stones and their gaps). */
+.tvx .g-yard.tv { width: min(100%, calc(((calc(var(--tvu) * 600) - (var(--rows) - 1) * calc(var(--tvu) * 10)) * 6 / (5 * var(--rows))) * 5 + calc(var(--tvu) * 40))); gap: calc(var(--tvu) * 10); margin: 0; }
+.tvx .g-yard.tv .g-stone { aspect-ratio: 6 / 5; }
+.tvx .g-yard.tv .gs-votes { bottom: calc(var(--tvu) * 6); gap: calc(var(--tvu) * 3); }
+.gv-ini { width: calc(var(--tvu) * 24); height: calc(var(--tvu) * 24); border-radius: 50%; display: grid; place-items: center; font: 600 calc(var(--tvu) * 14)/1 var(--text); font-style: normal; color: var(--ink); background: var(--crew, var(--gilt)); box-shadow: 0 0 0 2px var(--ink); }
+.tvx .g-yard.tv .g-stone.lead { box-shadow: 0 0 0 2px var(--crew, var(--gilt-hi)), 0 0 calc(var(--tvu) * 28) color-mix(in srgb, var(--crew, var(--gilt-hi)) 55%, transparent), 0 calc(var(--tvu) * 8) calc(var(--tvu) * 14) -4px var(--ink); }
+
+.tvx.gboard.turn-B .g-yard.tv { --crew: var(--lapis); }
+.tvx.gboard.turn-G .g-yard.tv { --crew: var(--gilt-hi); }
+.tvx.gboard.turn-V .g-yard.tv { --crew: var(--amethyst); }

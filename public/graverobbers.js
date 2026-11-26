@@ -61,18 +61,30 @@ export function cemetery(v, { register = null, act = '', mine = null, view = 'st
   const byTile = {};
   for (const [pid, x] of Object.entries(votes)) if (x !== 'stop') (byTile[x] ||= []).push(pid);
   const ended = v.phase === 'ENDED';
-  return `<div class="g-yard ${view === 'map' ? 'map' : ''} ${size}" data-key="gyard-${view}-${size}">${R.tiles.map((x, i) => {
+  // TV-A9: the stone the majority stands on glows (only while one stone leads alone).
+  const counts = Object.values(byTile).map((a) => a.length);
+  const top = Math.max(0, ...counts);
+  const leadAlone = top > 0 && counts.filter((n) => n === top).length === 1;
+  return `<div class="g-yard ${view === 'map' ? 'map' : ''} ${size}" style="--rows:${Math.ceil(R.tiles.length / 5)}" data-key="gyard-${view}-${size}">${R.tiles.map((x, i) => {
     const k = x.open || ended ? x.k : register?.[i] ?? null;
     const live = act && !x.open;
     const tag = live ? 'button' : 'span';
-    const cls = ['g-stone', x.open ? `open k-${x.k}` : '', !x.open && k ? `reg k-${k}` : '', mine === i ? 'sel' : '', x.icon ? 'icon' : 'word', x.open && x.by && x.k !== x.by && x.k !== 'N' && x.k !== 'D' ? 'gift' : ''].filter(Boolean).join(' ');
+    const cls = ['g-stone', x.open ? `open k-${x.k}` : '', !x.open && k ? `reg k-${k}` : '', mine === i ? 'sel' : '', x.icon ? 'icon' : 'word', x.open && x.by && x.k !== x.by && x.k !== 'N' && x.k !== 'D' ? 'gift' : '', leadAlone && (byTile[i]?.length ?? 0) === top ? 'lead' : ''].filter(Boolean).join(' ');
     const vs = byTile[i] ?? [];
     const label = x.icon ? '' : x.w;
     return `<${tag} class="${cls}" ${live ? `data-act="${act}" data-id="${i}" aria-pressed="${mine === i}"` : ''} data-key="gs-${i}" aria-label="${esc(label)}" ${x.w ? `title="${esc(x.w)}"` : ''}>
       ${x.open ? opened(x, i) : view === 'map' ? '' : carving(x)}${x.open && !x.icon && view !== 'map' ? `<span class="gs-word small">${esc(x.w)}</span>` : ''}
       ${!x.open && k === 'D' ? `<i class="gs-skull">${emblem('death')}</i>` : ''}
-      ${vs.length ? `<span class="gs-votes">${vs.map((id) => disc(v, id, 'xs')).join('')}</span>` : ''}</${tag}>`;
+      ${vs.length ? `<span class="gs-votes">${vs.map((id) => (size === 'tv' ? voterMark(v, id) : disc(v, id, 'xs'))).join('')}</span>` : ''}</${tag}>`;
   }).join('')}</div>`;
+}
+
+/** TV-A9: on the TV each digger's initial sits on the stone they voted for, in their crew's metal. */
+function voterMark(v, id) {
+  const R = v.graverobbers;
+  const c = Object.keys(R.crews).find((k) => R.crews[k].includes(id)) ?? '';
+  const nm = rawName(v, id);
+  return `<i class="gv-ini c-${c}" title="${esc(nm)}">${esc([...nm.trim()][0] ?? '?')}</i>`;
 }
 
 /** The two altars: each relic found lights one more bead of the deity's sigil. */
