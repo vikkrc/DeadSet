@@ -1646,6 +1646,8 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     if (pick?.stamp === p.id) badges.push(`<b class="bdg b-stamp" data-key="stamp-${p.id}">${glyph('check')}</b>`);
     // TV-N1 beat 3: at a role reveal each seat holds a card face down at its medallion's edge; it tips away once looked at.
     if (onBoard() && /REVEAL$/.test(v.phase) && actedMarks[p.id]) badges.push(`<i class="tv-rc ${actedMarks[p.id] === 'tv-ok' ? 'seen' : ''}" data-key="tvrc" aria-hidden="true"><span class="sig">DS</span></i>`);
+    // TV-Z2: a player reconnecting: the seat dashed, with a slow bead circling it (never red).
+    if (onBoard() && !lobby && p.connected === false && !p.bot) badges.push('<i class="tv-away" aria-hidden="true"></i>');
     if (actedMarks[p.id]) badges.push(`<i class="tv-mk ${actedMarks[p.id]}" data-key="tvmk">${actedMarks[p.id] === 'tv-ok' ? glyph('check') : ''}</i>`);
     // Y-scale: from 19 seats the medallions carry letters; the lens shows the portrait and name.
     const inner = reveal && p.role ? glyph(p.role.glyph) : p.avatar && !(crowded && !onBoard()) ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${initials(p.name)}</span>`;

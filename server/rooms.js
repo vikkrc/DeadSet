@@ -402,7 +402,7 @@ export class RoomManager {
   viewFor(room, client) {
     const m = room.match;
     const now = this.clock();
-    if (client.board) { const hint = mimicBoardHint(m); return { ...publicView(m, now), boardAudio: this.boardAudio(room), paused: room.paused ? { by: room.paused.by } : null, ...this.countdownView(room), evening: this.eveningView(room), endVotes: this.endVotesView(room), awards: m.phase === 'ENDED' ? room.awards ?? null : null, ...(hint ? { mimicHint: hint } : {}) }; }
+    if (client.board) { const hint = mimicBoardHint(m); return { ...publicView(m, now), boardAudio: this.boardAudio(room), paused: room.paused ? { by: room.paused.by } : null, ...this.presenceView(room), ...this.countdownView(room), evening: this.eveningView(room), endVotes: this.endVotesView(room), awards: m.phase === 'ENDED' ? room.awards ?? null : null, ...(hint ? { mimicHint: hint } : {}) }; }
     if (m.moderated && client.pid === m.moderatorId) {
       const v = moderatorView(m, now);
       v.moderatorName = room.moderatorName;
@@ -410,6 +410,18 @@ export class RoomManager {
       return this.decorate(room, client, v);
     }
     return this.decorate(room, client, playerView(m, client.pid, now));
+  }
+
+  /**
+   * TV-Z3 / TV-Z5, for the TV only: whether the host has stepped out (and whether the minute's grace is over, after
+   * which any player may take the host controls), and how many other screens are watching the board.
+   */
+  presenceView(room) {
+    const m = room.match;
+    const host = m.players.find((p) => p.id === m.hostId);
+    const out = host && !host.bot && !this.isConnected(room, m.hostId);
+    const watching = Math.max(0, [...room.clients].filter((c) => c.board).length - 1);
+    return { hostOut: out ? { name: host.name, free: this.clock() - room.hostSeen >= HOST_GRACE_MS } : null, watching };
   }
 
   eveningView(room) {

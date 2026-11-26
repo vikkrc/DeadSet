@@ -7110,3 +7110,13 @@ body.is-board:has(.tvx) .moment.m-end .m-sub { margin-bottom: 0; }
 .pd-d.g { fill: var(--gilt-hi); } .pd-d.b { fill: var(--bone-2); } .pd-d.a { fill: var(--ash); }
 .pd-n { font: 500 calc(var(--tvu) * 18) var(--text); opacity: 0; animation: nb-show var(--t-ui) var(--ease) 4s forwards; }
 .pd-n.g { fill: var(--gilt-hi); } .pd-n.b { fill: var(--bone-2); } .pd-n.a { fill: var(--ash); }
+
+/* TV-Z2: reconnecting; TV-Z3: the host stepped out; TV-Z5: others watching. */
+.tvx .tok.away .tok-disc { border-style: dashed; border-color: var(--bone-2); }
+.tvx .tok .tv-away { position: absolute; inset: -7px; border-radius: 50%; pointer-events: none; animation: tv-orbit 3.2s linear infinite; }
+.tvx .tok .tv-away::before { content: ''; position: absolute; left: calc(50% - calc(var(--tvu) * 4)); top: -4px; width: calc(var(--tvu) * 8); height: calc(var(--tvu) * 8); border-radius: 50%; background: var(--bone-2); box-shadow: 0 0 calc(var(--tvu) * 8) color-mix(in srgb, var(--bone) 60%, transparent); }
+@keyframes tv-orbit { to { transform: rotate(360deg); } }
+.tvx-watch { display: inline-flex; align-items: center; gap: calc(var(--tvu) * 8); margin-right: calc(var(--tvu) * 18); padding: calc(var(--tvu) * 5) calc(var(--tvu) * 14); border: 1px solid var(--iron); border-radius: calc(var(--tvu) * 999); font: 600 calc(var(--tvu) * 15)/1 var(--text); letter-spacing: 0.18em; text-transform: uppercase; color: var(--bone-2); }
+.tvx-watch svg { width: calc(var(--tvu) * 20); height: calc(var(--tvu) * 20); }
+.tvx-band.host-out .tvx-herald { color: var(--bone); }
+.tvx-band.host-out .tvx-herald .loz { background: var(--bone-2); }
