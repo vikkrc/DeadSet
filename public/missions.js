@@ -64,7 +64,7 @@ export function cardFace(id, { size = null, fails = null } = {}) {
   </div>`;
 }
 
-function cardBanner(v) {
+export function cardBanner(v) {
   const M = v.missions;
   if (!M?.card || v.phase === 'ENDED') return '';
   const s = M.sizes[M.mission];

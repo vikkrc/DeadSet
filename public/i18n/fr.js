@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Trois missions ont échoué",
     "Use the Candle": "Utilise la Bougie",
     "Game mode": "Mode de jeu",
+    "{done}/{total} done": "{done}/{total} fait",
     "Honours of the game": "Les honneurs de la partie",
     "Next: {title}": "Ensuite : {title}",
     "Cancel the start": "Annuler le lancement",

@@ -6793,3 +6793,22 @@ body.is-board:has(.tvx) .moment.m-end .m-title { font-size: calc(var(--tvu) * 10
 .tvx .tv-hon .hon-line { margin: 0; font: italic 400 calc(var(--tvu) * 22)/1.25 var(--text); color: var(--bone-2); }
 .tvx .tv-hon .hon-next { font: 400 calc(var(--tvu) * 17)/1 var(--text); color: var(--ash); }
 .tvx .tv-hon .lb-dots { margin-top: 2px; }
+
+/* TV-A2: the mission seals in the disc */
+.tvx .tv-mdisc .mtrack { margin: 0; }
+.tvx .tv-mdisc .mscore { gap: calc(var(--tvu) * 10); }
+.tvx .tv-mdisc .discs { gap: calc(var(--tvu) * 6); }
+.tvx .tv-mdisc .md { width: calc(var(--tvu) * 56); height: calc(var(--tvu) * 56); }
+.tvx .tv-mdisc .md-n { font-size: calc(var(--tvu) * 20); }
+.tvx .tv-mdisc .mscore > span b { font-size: calc(var(--tvu) * 34); }
+.tvx .tv-mdisc .pips { margin-top: calc(var(--tvu) * 10); }
+.tvx .tv-mdisc .pips .kicker { font-size: calc(var(--tvu) * 15); }
+.tvx [data-key="tvmcard"] .mc-banner b { font: 600 calc(var(--tvu) * 30)/1.05 var(--black); }
+.tvx [data-key="tvmcard"] .mc-banner small, .tvx [data-key="tvmcard"] .mcb-step { font-size: calc(var(--tvu) * 20); }
+/* the band is its own ground: backdrops and scenery never show through the herald */
+body.is-board .tvx > .tvx-band { background: var(--ink); z-index: 2; }
+
+/* the seals already show success and failure in colour: the disc keeps only the five of them */
+.tvx .tv-mdisc .mscore > span { display: none; }
+.tvx .tv-mdisc .md { width: calc(var(--tvu) * 54); height: calc(var(--tvu) * 54); }
+.tvx .tv-mdisc { max-width: calc(var(--tvu) * 380); }

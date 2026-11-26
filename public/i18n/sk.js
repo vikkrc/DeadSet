@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Tri misie zlyhali",
     "Use the Candle": "Použi Sviečku",
     "Game mode": "Herný režim",
+    "{done}/{total} done": "{done}/{total} hotovo",
     "Honours of the game": "Vyznamenania hry",
     "Next: {title}": "Ďalej: {title}",
     "Cancel the start": "Zrušiť štart",

@@ -13,7 +13,7 @@ import { mimicBoard } from './mimic.js';
 import { omenBoard } from './omen.js';
 import { mirrorBoard } from './mirror.js';
 import { cardArt, roleEmblemId } from './cards.js';
-import { missionBoardStage, missionBoardRing, gridHtml, hunchArrowsSvg, hunchLegend } from './missions.js';
+import { missionBoardStage, missionBoardRing, gridHtml, hunchArrowsSvg, hunchLegend, trackHtml, cardBanner } from './missions.js';
 import { modeInfo } from './modes.js';
 import { tvFrame, tvHeader, nowCard, panel, latestHeadlines } from './tvframe.js';
 import { modeTitle, modePitch, modeMeta } from './covers.js';
@@ -222,7 +222,9 @@ export function boardScreen(v, h) {
   const plaques = (v.activeRules || []).map((r) => `<span class="plaque ${live[r.id] ? 'on' : ''}" data-key="pl-${r.id}">${glyph(ruleGlyph(r.id))}<span>${esc(ruleF(r.id, 'name'))}${live[r.id] ? `<em>${tmh(live[r.id])}</em>` : ''}</span></span>`).join('');
   const mr = v.mode === 'missions' ? missionBoardRing(v) : null;
   if (mr && v.phase === 'ENDED') extra += hunchArrowsSvg(v);
-  const table = ring(v, { center: (mr ? '' : centerExtra) + centerFor(v), reveal: v.phase === 'ENDED', crack: true, extra, marks: mr?.marks ?? {}, pick: mr?.team.length ? { ids: [], selected: mr.team, act: '', keep: true } : null });
+  // TV-A2: Missions' five seals live in the table's disc, with the count of who has acted in this step.
+  const mCenter = mr && v.phase !== 'ENDED' ? `<div class="tv-mdisc">${trackHtml(v)}</div>${v.progress?.total ? `<span class="c-sub">${esc(th('{done}/{total} done', v.progress))}</span>` : ''}` : null;
+  const table = ring(v, { center: mCenter ?? ((mr ? '' : centerExtra) + centerFor(v)), reveal: v.phase === 'ENDED', crack: true, extra, marks: mr?.marks ?? {}, pick: mr?.team.length ? { ids: [], selected: mr.team, act: '', keep: true } : null });
   const where = (h.content?.scenario?.WHERE ?? []).indexOf(v.scenario?.where);
   const backdrop = v.table?.backdrops !== false && where >= 0 ? backdropHtml(where, night) : '';
   // TV-G1 / TV-A1: no left rail. The ledger holds the Now card (rules only when one applies), the town or the
@@ -231,7 +233,7 @@ export function boardScreen(v, h) {
   const rulesNow = Object.entries(live).map(([id, note]) => `<p class="tvx-rule">${glyph(ruleGlyph(id))}<span><b>${esc(ruleF(id, 'name'))}</b> ${tmh(note)}</span></p>`).join('');
   const town = rosterHtml(v, h);
   const ledger = mr
-    ? `${nowCard(now)}${missionBoardStage(v, h, 'rail')}${panel(t('The deduction'), gridHtml(v), 'tvgrid')}`
+    ? `${nowCard(now)}${cardBanner(v) ? panel('', cardBanner(v), 'tvmcard') : ''}${panel(t('The deduction'), gridHtml(v), 'tvgrid')}`
     : `${nowCard({ ...now, line: `${now.line ?? ''}${rulesNow}` })}${panel(v.phase === 'ENDED' ? t('The town') : t('The town'), town, 'tvtown')}${latestHeadlines(editions(v, h), h)}`;
   const stage = `${table}${mr && v.phase === 'ENDED' && v.missions?.hunches?.length ? hunchLegend() : ''}`;
   return tvFrame(v, h, { stage, ledger, herald: now.herald ?? '', night, backdrop, key: 'board-game', cls: `${night ? 'is-night' : 'is-day'} ${backdrop ? 'has-backdrop' : ''}` })

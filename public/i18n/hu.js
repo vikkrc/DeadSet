@@ -1282,6 +1282,7 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "{done}/{total} done": "{done}/{total} kész",
     "Honours of the game": "A játék kitüntetései",
     "Next: {title}": "Következik: {title}",
     "Cancel the start": "Indítás visszavonása",
