@@ -66,6 +66,7 @@
   --t-stagger: 60ms;
   --t-seal: 650ms;
   --t-pass: 600ms;
+  --t-slow: 600ms;   /* TV: the arch, a countdown beat, a stamp landing */
   --t-gain: 500ms;
   --t-tick: 400ms;
   --t-crack: 400ms;
@@ -6812,3 +6813,12 @@ body.is-board .tvx > .tvx-band { background: var(--ink); z-index: 2; }
 .tvx .tv-mdisc .mscore > span { display: none; }
 .tvx .tv-mdisc .md { width: calc(var(--tvu) * 54); height: calc(var(--tvu) * 54); }
 .tvx .tv-mdisc { max-width: calc(var(--tvu) * 380); }
+
+/* TV-I3: the arch. The old phase dims to ink under a gilt-rimmed pointed arch that rises from the band and passes
+   beyond the frame's top. */
+body.is-board .tv-arch { position: fixed; left: calc(var(--tvu) * 14); right: calc(var(--tvu) * 14); top: 0; bottom: calc(var(--tvu) * 84); z-index: calc(var(--z-moment) - 1); pointer-events: none; overflow: hidden; }
+body.is-board .tv-arch i { position: absolute; left: 4%; right: 4%; top: 0; height: 160%; clip-path: var(--arch); background: linear-gradient(var(--ink), var(--ink-2)); filter: drop-shadow(0 0 0 var(--gilt)); box-shadow: inset 0 0 0 calc(var(--tvu) * 3) var(--gilt-2); animation: archRise var(--t-slow) var(--ease-in) both; }
+@keyframes archRise { from { transform: translateY(62%); } 40% { transform: translateY(0); } to { transform: translateY(-105%); } }
+/* TV-Z1: paused, the stage dims to half and every loop stops */
+body.is-board:has(.tv-paused) .tvx-body { opacity: 0.5; }
+body.is-board:has(.tv-paused) .tvx-body * { animation-play-state: paused !important; }

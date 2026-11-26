@@ -3375,8 +3375,14 @@ function boardView() {
   const how = v.phase === 'LOBBY' ? guideHow(v.mode, v) : '';
   const steps = (how.match(/<li /g) || []).length || 1;
   const screen = boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark, cover, how, howStep: (S.board.howStep ?? 0) % steps, honStep: S.board.honStep ?? 0, emblem, avatar: (p) => (p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`) });
+  // TV-I3: every phase change opens through the Codex arch (600 ms): a gilt-rimmed pointed arch rises from the band
+  // and passes beyond the frame. Never during a timer under ten seconds.
+  const nowMs = Date.now();
+  if (S.board.archPhase && S.board.archPhase !== v.phaseId && !S.moment) { S.board.archUntil = nowMs + 700; setTimeout(() => render(), 750); }
+  S.board.archPhase = v.phaseId;
+  const arch = nowMs < (S.board.archUntil ?? 0) ? `<div class="tv-arch" data-verb data-key="arch-${esc(v.phaseId)}" aria-hidden="true"><i></i></div>` : '';
   // Boards on the TV frame carry their own band (tvframe.js); the others keep the old caption strip.
-  return screen + (screen.includes('board2 tvx') ? '' : caption) + paused + hint;
+  return screen + (screen.includes('board2 tvx') ? '' : caption) + arch + paused + hint;
 }
 
 // ── Dock (primary action) ──────────────────────────────────────────────────
