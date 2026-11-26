@@ -880,7 +880,7 @@ function momentHtml(m) {
       if (!m.frozen) m.frozen = verdict(V(), { winner: m.winner, result: m.result, sides: m.sides, whos: m.whos, who: m.who, pids: m.pids });
       const f = m.frozen;
       body = `<div class="m-art">${glyph(f.emblem)}</div>
-        <span class="kicker">${esc(f.kicker)}</span><h1 class="m-title ${m.winner === 'DEATH' ? 'blood' : ''}">${letters(f.title)}</h1><p class="m-sub">${tmh(m.reason)}</p>${stampHtml(f.stamp)}`;
+        <span class="kicker">${esc(f.kicker)}</span><h1 class="m-title ${m.winner === 'DEATH' ? 'blood' : ''}">${letters(f.title)}</h1><p class="m-sub">${tmh(m.reason)}</p>${onBoard() ? endFaces(V(), m.winner) : stampHtml(f.stamp)}`;
       break;
     }
     default: break;
@@ -891,6 +891,17 @@ function momentHtml(m) {
     ${m.type === 'end' && WIN_CLASS[m.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<div class="m-body">${body}</div>
     <div class="m-foot">${auto ? `<span class="m-timer" style="--t:${left}ms"><i></i></span>` : ''}${onBoard() ? '' : `<span class="kicker">${t(m.at ? 'Everyone sees this together' : auto ? 'Tap to skip' : 'Tap to continue')}${S.moments.length ? ` · ${t('{n} more', { n: S.moments.length })}` : ''}</span>`}</div>
   </div>`;
+}
+
+/** TV-C1: the peak shows faces, not only a title: the winners as portraits with names, everyone else smaller beneath. */
+function endFaces(v, winner) {
+  if (!v || ['DRAW', 'ABORTED'].includes(winner)) return '';
+  const seated = v.players.filter((p) => !p.moderator);
+  const won = seated.filter((p) => didIWin({ ...v, me: p }, winner) === true);
+  if (!won.length) return '';
+  const face = (p, cls) => `<figure class="ef ${cls}" data-key="ef-${p.id}"><span class="ef-disc">${p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`}</span><figcaption>${esc(p.name)}</figcaption></figure>`;
+  const rest = seated.filter((p) => !won.includes(p));
+  return `<div class="end-faces" data-key="endfaces"><div class="ef-win">${won.map((p, i) => face(p, 'win').replace('class="ef win"', `class="ef win" style="--i:${i}"`)).join('')}</div>${rest.length ? `<div class="ef-rest">${rest.map((p) => face(p, 'rest')).join('')}</div>` : ''}</div>`;
 }
 
 // ── DOM morphing (keeps elements alive so transitions actually animate) ────

@@ -6765,3 +6765,18 @@ body:has(.countdown-veil) .dock { z-index: calc(var(--z-moment) + 1); }
 .tvx .duo-h.qt-places .q-places { gap: calc(var(--tvu) * 12); }
 .tvx .duo-h.qt-places .scard { width: calc(var(--tvu) * 136); font-size: calc(var(--tvu) * 11); }
 .tvx .duo-h.qt-places .scard .nm { font-size: calc(var(--tvu) * 19); }
+
+/* TV-C1: the winners as portraits with names, the rest of the table smaller beneath */
+.end-faces { display: grid; gap: calc(var(--tvu) * 18); justify-items: center; margin-top: calc(var(--tvu) * 10); }
+.end-faces .ef-win, .end-faces .ef-rest { display: flex; flex-wrap: wrap; justify-content: center; gap: calc(var(--tvu) * 22); }
+.end-faces .ef { margin: 0; display: grid; justify-items: center; gap: calc(var(--tvu) * 8); }
+.end-faces .ef-disc { display: grid; place-items: center; overflow: hidden; border-radius: 50%; background: var(--ink-3); }
+.end-faces .ef-disc .tok-av, .end-faces .ef-disc .tok-ini { position: static; width: 100%; height: 100%; display: grid; place-items: center; }
+.end-faces .ef.win .ef-disc { width: calc(var(--tvu) * 150); height: calc(var(--tvu) * 150); box-shadow: 0 0 0 calc(var(--tvu) * 3) var(--gilt-hi), 0 0 calc(var(--tvu) * 40) color-mix(in srgb, var(--gilt-hi) 45%, transparent); animation: fadeUp var(--t-slow) calc(1.2s + var(--i, 0) * 0.15s) var(--ease) both; }
+.end-faces .ef.win figcaption { font: 600 calc(var(--tvu) * 26)/1 var(--black); color: var(--bone); }
+.end-faces .ef.rest .ef-disc { width: calc(var(--tvu) * 64); height: calc(var(--tvu) * 64); opacity: 0.55; filter: grayscale(0.7); }
+.end-faces .ef.rest figcaption { font: 500 calc(var(--tvu) * 17)/1 var(--text); color: var(--ash); }
+.moment.grim .end-faces .ef.win .ef-disc { box-shadow: 0 0 0 calc(var(--tvu) * 3) var(--blood-ink), 0 0 calc(var(--tvu) * 40) color-mix(in srgb, var(--blood-ink) 45%, transparent); }
+/* TV-C1: on the TV the faces carry the end; the emblem above the title gives them its room */
+body.is-board:has(.tvx) .moment.m-end .m-art { display: none; }
+body.is-board:has(.tvx) .moment.m-end .m-title { font-size: calc(var(--tvu) * 104); }
