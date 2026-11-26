@@ -52,7 +52,27 @@ export function tvBand(v, h, herald = '') {
 }
 
 /** The whole TV screen. `full` gives the stage the whole body (scenes, the lobby's idle loop). */
+/**
+ * TV-O0: honours, one component everywhere. One honour at a time (5 s each) in the ornate frame: the award's etching,
+ * the game it came from, the title, the holder's portrait and name, the line that earned it, a dot track and the next
+ * one named. Titles, emblems and lines come from engine/awards.js.
+ */
+export function honoursPanel(v, h) {
+  const list = v.awards ?? [];
+  if (!list.length || !h.emblem) return '';
+  const k = (h.honStep ?? 0) % list.length;
+  const a = list[k];
+  const p = v.players.find((x) => x.id === a.pid);
+  const next = list.length > 1 ? list[(k + 1) % list.length] : null;
+  return `<section class="tv-now tv-hon" data-key="tvhon-${k}"><span class="kicker">${t('Honours of the game')}</span>
+    <div class="hon-top"><span class="hon-emb">${h.emblem(a.emblem)}</span><span><b>${esc(t(a.title))}</b><span class="hon-who">${p ? `<i>${h.avatar(p)}</i>${esc(p.name)}` : ''}</span></span></div>
+    <p class="hon-line">${h.tmh(a.line)}</p>
+    ${list.length > 1 ? `<span class="lb-dots" aria-hidden="true">${list.map((_, i) => `<i class="${i === k ? 'on' : ''}"></i>`).join('')}</span><small class="hon-next">${esc(th('Next: {title}', { title: t(next.title) }))}</small>` : ''}</section>`;
+}
+
 export function tvFrame(v, h, { stage = '', ledger = '', herald = '', cls = '', key = 'board', night = false, backdrop = '', full = false, header = null, step = null } = {}) {
+  // TV-O1: at the end every game's ledger opens with its honours.
+  if (v.phase === 'ENDED') ledger = `${honoursPanel(v, h)}${ledger}`;
   return `<main class="board2 tvx mode-${esc(v.mode)} ${night ? 'night is-night' : ''} ${cls}" data-key="${key}">
     ${backdrop}<i class="cn tl" aria-hidden="true"></i><i class="cn tr" aria-hidden="true"></i><i class="cn bl" aria-hidden="true"></i><i class="cn br" aria-hidden="true"></i>
     ${header ?? tvHeader(v, h, { step })}

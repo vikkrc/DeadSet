@@ -6780,3 +6780,16 @@ body:has(.countdown-veil) .dock { z-index: calc(var(--z-moment) + 1); }
 /* TV-C1: on the TV the faces carry the end; the emblem above the title gives them its room */
 body.is-board:has(.tvx) .moment.m-end .m-art { display: none; }
 body.is-board:has(.tvx) .moment.m-end .m-title { font-size: calc(var(--tvu) * 104); }
+
+/* TV-O0: one honour at a time, in the ornate frame */
+.tvx .tv-hon { gap: calc(var(--tvu) * 10); animation: fadeIn var(--t-slow) var(--ease) both; }
+.tvx .tv-hon .hon-top { display: grid; grid-template-columns: calc(var(--tvu) * 72) minmax(0, 1fr); gap: calc(var(--tvu) * 18); align-items: center; }
+.tvx .tv-hon .hon-emb { width: calc(var(--tvu) * 72); height: calc(var(--tvu) * 72); display: grid; place-items: center; border-radius: 50%; background: var(--vellum); color: var(--sepia); box-shadow: 0 0 0 2px var(--gilt-2); }
+.tvx .tv-hon .hon-emb svg { width: calc(var(--tvu) * 52); height: calc(var(--tvu) * 52); }
+.tvx .tv-hon b { font: 600 calc(var(--tvu) * 30)/1 var(--black); color: var(--bone); display: block; margin-bottom: calc(var(--tvu) * 8); }
+.tvx .tv-hon .hon-who { display: flex; align-items: center; gap: calc(var(--tvu) * 10); font: 500 calc(var(--tvu) * 24)/1 var(--text); color: var(--bone); }
+.tvx .tv-hon .hon-who i { width: calc(var(--tvu) * 34); height: calc(var(--tvu) * 34); border-radius: 50%; overflow: hidden; display: grid; place-items: center; box-shadow: 0 0 0 2px var(--ink), 0 0 0 calc(var(--tvu) * 3) var(--gilt); background: var(--ink-3); }
+.tvx .tv-hon .hon-who i .tok-av, .tvx .tv-hon .hon-who i .tok-ini { position: static; width: 100%; height: 100%; }
+.tvx .tv-hon .hon-line { margin: 0; font: italic 400 calc(var(--tvu) * 22)/1.25 var(--text); color: var(--bone-2); }
+.tvx .tv-hon .hon-next { font: 400 calc(var(--tvu) * 17)/1 var(--text); color: var(--ash); }
+.tvx .tv-hon .lb-dots { margin-top: 2px; }

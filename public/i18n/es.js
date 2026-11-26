@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Tres misiones fracasaron",
     "Use the Candle": "Usa la Vela",
     "Game mode": "Modo de juego",
+    "Honours of the game": "Los honores de la partida",
+    "Next: {title}": "Después: {title}",
     "Cancel the start": "Cancelar el inicio",
     "Look at the TV": "Mira la tele",
     "The host called the start off.": "El anfitrión ha cancelado el inicio.",

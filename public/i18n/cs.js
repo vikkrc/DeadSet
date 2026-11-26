@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Tři mise selhaly",
     "Use the Candle": "Použij Svíčku",
     "Game mode": "Herní režim",
+    "Honours of the game": "Vyznamenání hry",
+    "Next: {title}": "Dále: {title}",
     "Cancel the start": "Zrušit start",
     "Look at the TV": "Podívej se na televizi",
     "The host called the start off.": "Hostitel zrušil start.",

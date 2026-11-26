@@ -3365,6 +3365,8 @@ function boardView() {
   S.board.fsHintAt ??= Date.now();
   const hint = !document.fullscreenElement && !S.board.fsAsked && localStorage.getItem(FS_KEY) !== 'off' && Date.now() - S.board.fsHintAt < 6000 ? `<div class="tv-fs-hint" data-key="tvfs">${t('Press F or tap for full screen')}</div>` : '';
   // T3: the lobby teaches while people join — the game's cover, and its How it works turning a step every 8 s.
+  // TV-O0: at the end the honours turn one at a time, every 5 s.
+  if (v.phase === 'ENDED' && !S.board.honTimer) S.board.honTimer = setInterval(() => { if (onBoard() && V()?.phase === 'ENDED' && (V()?.awards?.length ?? 0) > 1) { S.board.honStep = (S.board.honStep ?? 0) + 1; render(); } }, 5000);
   if (v.phase === 'LOBBY' && !S.board.howTimer) S.board.howTimer = setInterval(() => { if (onBoard() && V()?.phase === 'LOBBY') { S.board.howStep = (S.board.howStep ?? 0) + 1; render(); } }, 8000);
   // T1: the caption strip along the bottom of every TV board in play: a small join QR and the code for anyone
   // late or rejoining, the progress count at the right; news ribbons cross it in the middle (J6).
@@ -3372,7 +3374,7 @@ function boardView() {
   const caption = v.phase === 'LOBBY' ? '' : `<div class="tv-caption" data-key="tvcap"><span class="tc-join">${qrSvg(`${location.origin}/r/${v.code}`)}<span><small>${t('Join or rejoin')}</small><b>${esc(v.code)}</b></span></span><span class="tc-prog">${v.phase === 'ENDED' && v.endVotes?.total ? esc(th('Again? {n} of {m} say yes', { n: v.endVotes.again, m: v.endVotes.total })) : v.progress?.total ? esc(th('{done} of {total} done', v.progress)) : ''}</span></div>`;
   const how = v.phase === 'LOBBY' ? guideHow(v.mode, v) : '';
   const steps = (how.match(/<li /g) || []).length || 1;
-  const screen = boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark, cover, how, howStep: (S.board.howStep ?? 0) % steps, avatar: (p) => (p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`) });
+  const screen = boardScreen(v, { ...H, ring, centerFor, roman, codeTiles, qrSvg, STEP, stepOf, phaseWord, modeName, content: S.content, audio: S.board.audio, wordmark, cover, how, howStep: (S.board.howStep ?? 0) % steps, honStep: S.board.honStep ?? 0, emblem, avatar: (p) => (p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`) });
   // Boards on the TV frame carry their own band (tvframe.js); the others keep the old caption strip.
   return screen + (screen.includes('board2 tvx') ? '' : caption) + paused + hint;
 }
