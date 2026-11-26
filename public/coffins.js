@@ -497,5 +497,14 @@ export function coffinsBoard(v, h) {
       ${pl.out ? (C.wagersOn ? candles(pl.candles, C.rise) : `<small>${t('Out')}</small>`) : `<span class="cl-coffins" aria-label="${esc(th('{n} in hand', { n: pl.held }))}">${Array.from({ length: pl.held }, () => `<i>${emblem('undertaker')}</i>`).join('')}</span>`}
       ${winMarks(pl.wins, C.toWin, pl.id)}</li>`).join('')}</ul><p class="tvx-note">${t('Or be the last one with coffins.')}</p>`;
   const ledger = `${nowCard(now)}${panel(th(C.toWin === 1 ? 'One clean dig wins.' : '{n} clean digs win.', { n: C.toWin }), record, 'cledger')}${legend}${scoreboard(v)}`;
-  return tvFrame(v, h, { stage: graveyard(v, { big: true, reveal: ended }), ledger, herald: now.herald, backdrop, key: 'board-c', cls: `cboard ${ended ? 'is-ended' : ''} ${backdrop ? 'has-backdrop' : ''}` });
+  // TV-A11: during a dig, the dig as a row under the table: opened coffins in order with their owner's name, the next
+  // one waiting, the bid's last slot dashed.
+  const digging = ['C_DIG', 'C_LOSE'].includes(v.phase) && C.target > 0;
+  const row = digging ? `<ol class="c-digrow" data-key="cdigrow">${Array.from({ length: C.target }, (_, i) => {
+    const o = C.opened[i];
+    const state = o ? `open f-${o.face}` : i === C.opened.length && v.phase === 'C_DIG' ? 'next' : 'wait';
+    return `<li class="${state} ${i === C.target - 1 ? 'last' : ''}" data-key="cdr-${i}-${o?.face ?? 'x'}">${o ? coffinCard(o.face) : '<span class="cd-slot"></span>'}<small>${o ? esc(name(v, o.owner)) : ''}</small></li>`;
+  }).join('')}</ol>` : '';
+  const stage = `<div class="c-tvstage ${digging ? 'digging' : ''}">${graveyard(v, { big: true, reveal: ended })}${row}</div>`;
+  return tvFrame(v, h, { stage, ledger, herald: now.herald, backdrop, key: 'board-c', cls: `cboard ${ended ? 'is-ended' : ''} ${backdrop ? 'has-backdrop' : ''}` });
 }
