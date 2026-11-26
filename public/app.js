@@ -1689,7 +1689,7 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     <svg class="ring-fuse off" viewBox="0 0 100 100" data-ringfuse aria-hidden="true"><circle class="track" cx="50" cy="50" r="49"/><circle class="burn" cx="50" cy="50" r="49" pathLength="100"/></svg>
     <div class="ring-table" aria-hidden="true"></div>
     ${orb ? `<div class="ring-orb" data-key="ring-orb">${orb}</div>` : ''}
-    ${lobby ? '' : threadsSvg(v, players, pos, dense)}${extra}
+    ${lobby ? '' : threadsSvg(v, players, pos)}${extra}
     ${seats.join('')}
     ${beadFor}
     <div class="ring-center" data-key="center">${center}</div>
@@ -1699,11 +1699,10 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
 
 /**
  * Threads of suspicion: who accused whom, drawn on every table (TV and phones) when the setting is on. Each thread
- * runs in from the accuser's seat, follows the ring around the table's disc (never under it) and out to the accused;
- * today's threads are bold, older ones fade, and a pair accused more often draws thicker. Pairs share the ring at
- * slightly different radii so they don't sit on top of each other.
+ * curves from the accuser to the accused through the middle of the table, over the table's disc but under the
+ * disc's count and symbols; today's threads are bold, older ones fade, and a pair accused more often draws thicker.
  */
-function threadsSvg(v, players, pos, dense) {
+function threadsSvg(v, players, pos) {
   if (!v.table?.threads || v.phase === 'LOBBY') return '';
   const pairs = new Map();
   for (const l of v.log ?? []) {
@@ -1715,23 +1714,16 @@ function threadsSvg(v, players, pos, dense) {
     pairs.set(k, e);
   }
   if (!pairs.size) return '';
-  const disc = onBoard() ? (dense ? 18 : 30) : (dense ? 17 : 29); // the table disc's radius, in % of the ring
-  const at = (id) => { const i = players.findIndex((p) => p.id === id); const q = pos[i]; if (!q) return null; return { x: q.x, y: q.y, r: Math.hypot(q.x - 50, q.y - 50), a: Math.atan2(q.y - 50, q.x - 50) }; };
-  const pt = (r, a) => `${(50 + r * Math.cos(a)).toFixed(2)} ${(50 + r * Math.sin(a)).toFixed(2)}`;
+  const at = (id) => pos[players.findIndex((p) => p.id === id)];
   const today = v.dayNumber;
-  const paths = [...pairs.values()].map((e, k) => {
-    const s1 = at(e.by); const s2 = at(e.target);
-    if (!s1 || !s2) return '';
-    const room = Math.min(s1.r, s2.r) - disc;
-    const r = disc + Math.max(2.5, room * (0.42 + (k % 4) * 0.08));
-    let d = s2.a - s1.a;
-    while (d > Math.PI) d -= 2 * Math.PI;
-    while (d < -Math.PI) d += 2 * Math.PI;
-    const sweep = d > 0 ? 1 : 0;
+  const paths = [...pairs.values()].map((e) => {
+    const a = at(e.by); const b = at(e.target);
+    if (!a || !b) return '';
+    const mx = ((a.x + b.x) / 2) * 0.62 + 50 * 0.38; const my = ((a.y + b.y) / 2) * 0.62 + 50 * 0.38;
     const age = today - e.day;
-    const op = age <= 0 ? 0.9 : age === 1 ? 0.55 : 0.28;
-    const w = 1.4 + Math.min(4, e.n) * 1.1;
-    return `<path d="M${s1.x.toFixed(2)} ${s1.y.toFixed(2)} L${pt(r, s1.a)} A${r.toFixed(2)} ${r.toFixed(2)} 0 0 ${sweep} ${pt(r, s2.a)} L${s2.x.toFixed(2)} ${s2.y.toFixed(2)}" stroke-width="${w.toFixed(1)}" opacity="${op}"/>`;
+    const op = age <= 0 ? 0.85 : age === 1 ? 0.5 : 0.25;
+    const w = 1.2 + Math.min(4, e.n) * 1.1;
+    return `<path d="M${a.x.toFixed(2)} ${a.y.toFixed(2)} Q${mx.toFixed(2)} ${my.toFixed(2)} ${b.x.toFixed(2)} ${b.y.toFixed(2)}" stroke-width="${w.toFixed(1)}" opacity="${op}"/>`;
   }).join('');
   return `<svg class="b-threads" viewBox="0 0 100 100" data-key="threads" aria-hidden="true">${paths}</svg>`;
 }
