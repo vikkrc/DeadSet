@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Tri misie zlyhali",
     "Use the Candle": "Použi Sviečku",
     "Game mode": "Herný režim",
+    "Death was {names}": "Smrťou boli: {names}",
+    "Nobody suspected {name}": "{name} nikomu nebol podozrivý",
     "The dreams are dealt": "Sny sú rozdané",
     "The night's roles wake": "Nočné role sa prebúdzajú",
     "Death chooses": "Smrť vyberá",

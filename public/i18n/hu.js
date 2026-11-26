@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Három küldetés elbukott",
     "Use the Candle": "Használd a Gyertyát",
     "Game mode": "Játékmód",
+    "Death was {names}": "A Halál: {names}",
+    "Nobody suspected {name}": "{name} senkinek sem gyanús",
     "The dreams are dealt": "Kiosztják az álmokat",
     "The night's roles wake": "Felébrednek az éjszakai szerepek",
     "Death chooses": "A Halál választ",

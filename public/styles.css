@@ -7053,3 +7053,32 @@ body.is-board:has(.tvx) .sm-all .vcard.tarot--thumb { width: calc(var(--tvu) * 1
 .c-digrow li.last .cd-slot { border-style: dashed; border-color: var(--gilt-2); }
 .c-digrow li.open { animation: fadeUp var(--t-slow) var(--ease) both; }
 .c-digrow li.open.f-C small, .c-digrow li.open.f-D small { color: var(--blood-ink); }
+
+/* TV-C: the peak of an ending. */
+body.is-board:has(.tvx) .moment.m-end .m-body { position: relative; }
+.ec-candles { position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%); display: flex; gap: calc(var(--tvu) * 26); z-index: 2; animation: ec-gone var(--t-slow) var(--ease-in) 2.8s forwards; }
+.ec-candles .scdl { width: calc(var(--tvu) * 56); height: calc(var(--tvu) * 66); }
+.ec-candles .scdl .emblem path:first-child { animation: ec-out var(--t-ui) var(--ease-in) calc(0.4s + var(--i) * 0.3s) forwards, candleFlick 2.6s ease-in-out infinite; }
+.ec-candles .scdl { animation: ec-dim var(--t-ui) var(--ease-in) calc(0.4s + var(--i) * 0.3s) forwards; }
+@keyframes ec-out { to { opacity: 0; } }
+@keyframes ec-dim { to { color: var(--ash); opacity: 0.4; } }
+@keyframes ec-gone { to { opacity: 0; visibility: hidden; } }
+.moment.dark-end .m-body > :not(.ec-candles) { animation: ec-in var(--t-slow) var(--ease) 2.9s both; }
+@keyframes ec-in { from { opacity: 0; transform: translateY(calc(var(--tvu) * 16)); } }
+.end-faces.dark .ef-win { align-items: center; gap: calc(var(--tvu) * 30); }
+.end-faces.dark .ef.win .ef-disc { width: calc(var(--tvu) * 180); height: calc(var(--tvu) * 180); }
+.ef-skull { width: calc(var(--tvu) * 150); height: calc(var(--tvu) * 150); border-radius: 50%; display: grid; place-items: center; color: var(--bone); background: radial-gradient(circle at 40% 35%, var(--blood), var(--wax) 62%, var(--sepia)); box-shadow: 0 0 0 calc(var(--tvu) * 3) var(--ink), 0 0 0 calc(var(--tvu) * 5) var(--blood-ink), 0 0 calc(var(--tvu) * 80) color-mix(in srgb, var(--blood) 55%, transparent); --paper: var(--wax); animation: tvm-rise var(--t-scene) var(--ease) 3.2s both; }
+.ef-skull svg { width: 60%; height: 60%; }
+.end-faces .ef-line { margin: 0; font: italic 400 calc(var(--tvu) * 28)/1.2 var(--text); color: var(--bone-2); }
+.end-faces.dark .ef-line { color: var(--blood-ink); }
+.end-faces .ef figcaption { display: flex; flex-direction: column; align-items: center; gap: calc(var(--tvu) * 3); }
+.end-faces .ef figcaption small { font: italic 400 calc(var(--tvu) * 15)/1 var(--text); color: var(--ash); letter-spacing: 0; }
+.end-faces.dark .ef.rest .ef-disc { filter: grayscale(1) brightness(0.6); opacity: 0.6; }
+
+body.is-board:has(.tvx) .moment.m-end .end-faces { gap: calc(var(--tvu) * 12); margin-top: calc(var(--tvu) * 4); }
+body.is-board:has(.tvx) .moment.m-end .end-faces .ef.win .ef-disc { width: calc(var(--tvu) * 136); height: calc(var(--tvu) * 136); }
+body.is-board:has(.tvx) .moment.m-end .end-faces.dark .ef.win .ef-disc { width: calc(var(--tvu) * 170); height: calc(var(--tvu) * 170); }
+body.is-board:has(.tvx) .moment.m-end .end-faces .ef.rest .ef-disc { width: calc(var(--tvu) * 52); height: calc(var(--tvu) * 52); }
+body.is-board:has(.tvx) .moment.m-end .end-faces .ef-line { font-size: calc(var(--tvu) * 26); }
+body.is-board:has(.tvx) .moment.m-end .m-sub { margin-bottom: 0; }
+.ec-candles .scdl { width: calc(var(--tvu) * 72); height: calc(var(--tvu) * 84); }

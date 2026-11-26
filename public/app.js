@@ -899,14 +899,15 @@ function momentHtml(m) {
       if (!m.frozen) m.frozen = verdict(V(), { winner: m.winner, result: m.result, sides: m.sides, whos: m.whos, who: m.who, pids: m.pids });
       const f = m.frozen;
       body = `<div class="m-art">${glyph(f.emblem)}</div>
-        <span class="kicker">${esc(f.kicker)}</span><h1 class="m-title ${m.winner === 'DEATH' ? 'blood' : ''}">${letters(f.title)}</h1><p class="m-sub">${tmh(m.reason)}</p>${onBoard() ? endFaces(V(), m.winner) : stampHtml(f.stamp)}`;
+        <span class="kicker">${esc(f.kicker)}</span><h1 class="m-title ${m.winner === 'DEATH' || darkWin(m) ? 'blood' : ''}">${letters(f.title)}</h1><p class="m-sub">${tmh(m.reason)}</p>${onBoard() ? endFaces(V(), m.winner, m) : stampHtml(f.stamp)}`;
+      if (onBoard() && !['DRAW', 'ABORTED'].includes(m.winner)) body = `${endBeat(m)}${body}`;
       break;
     }
     default: break;
   }
   const auto = !m.tapOnly;
   const left = m.at ? Math.max(0, m.at + m.dur - (Date.now() + clockSkew)) : momentTime(m);
-  return `<div class="moment ${m.chained ? 'chained' : ''} ${m.at ? 'shared' : ''} m-${m.type} ${m.winner === 'DEATH' || m.winner === 'DEMON' || m.type === 'death' || m.type === 'munmask' ? 'grim' : ''} ${m.type === 'end' ? WIN_CLASS[m.winner] ?? '' : ''} ${onBoard() && m.type === 'dawn' ? 'front' : ''}" data-key="moment-${m.id}" data-act="momentNext" role="dialog" aria-live="assertive">
+  return `<div class="moment ${m.chained ? 'chained' : ''} ${m.at ? 'shared' : ''} m-${m.type} ${m.winner === 'DEATH' || m.winner === 'DEMON' || m.type === 'death' || m.type === 'munmask' || (m.type === 'end' && darkWin(m)) ? 'grim' : ''} ${m.type === 'end' && onBoard() && darkWin(m) ? 'dark-end' : ''} ${m.type === 'end' ? WIN_CLASS[m.winner] ?? '' : ''} ${onBoard() && m.type === 'dawn' ? 'front' : ''}" data-key="moment-${m.id}" data-act="momentNext" role="dialog" aria-live="assertive">
     ${m.type === 'end' && WIN_CLASS[m.winner] ? '<div class="sunburst" aria-hidden="true"></div>' : ''}<div class="m-body">${body}</div>
     <div class="m-foot">${auto ? `<span class="m-timer" style="--t:${left}ms"><i></i></span>` : ''}${onBoard() ? '' : `<span class="kicker">${t(m.at ? 'Everyone sees this together' : auto ? 'Tap to skip' : 'Tap to continue')}${S.moments.length ? ` · ${t('{n} more', { n: S.moments.length })}` : ''}</span>`}</div>
   </div>`;
@@ -968,15 +969,46 @@ function tallyColumns(m) {
 }
 
 /** TV-C1: the peak shows faces, not only a title: the winners as portraits with names, everyone else smaller beneath. */
-function endFaces(v, winner) {
+/** A dark ending: Death (or the Demon) took the table. */
+const darkWin = (m) => ['DEATH', 'DEMON'].includes(m.winner) || (m.winner === 'MIDNIGHT' && (m.sides ?? []).includes('DEATH') && !(m.sides ?? []).includes('LIVING'));
+/** When a player fell, in the table's words ("fell Day II"), or ''. */
+function fellWhen(p) {
+  const [k, n] = String(p.diedAt ?? '').split(' ');
+  return k === 'Day' ? th('fell Day {n}', { n: roman(Number(n)) }) : k === 'Night' ? th('fell Night {n}', { n: roman(Number(n)) }) : '';
+}
+/**
+ * TV-C: the peak of an ending. Faces, not a title (TV-C1). A town or shared win: the living winners large in gilt,
+ * the fallen of the winning side smaller beneath with when they fell, and one line naming the losing side. A dark
+ * win: the winners around the etched skull on an oxblood medallion, the rest of the table in a grey row, and one
+ * line naming a winner nobody accused, if there was one.
+ */
+function endFaces(v, winner, m = {}) {
   if (!v || ['DRAW', 'ABORTED'].includes(winner)) return '';
   const seated = v.players.filter((p) => !p.moderator);
   const won = seated.filter((p) => didIWin({ ...v, me: p }, winner) === true);
   if (!won.length) return '';
-  const face = (p, cls) => `<figure class="ef ${cls}" data-key="ef-${p.id}"><span class="ef-disc">${p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`}</span><figcaption>${esc(p.name)}</figcaption></figure>`;
+  const face = (p, cls, i = 0, sub = '') => `<figure class="ef ${cls}" style="--i:${i}" data-key="ef-${p.id}"><span class="ef-disc">${p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc(initials(p.name))}</span>`}</span><figcaption>${esc(p.name)}${sub ? `<small>${esc(sub)}</small>` : ''}</figcaption></figure>`;
   const rest = seated.filter((p) => !won.includes(p));
-  return `<div class="end-faces" data-key="endfaces"><div class="ef-win">${won.map((p, i) => face(p, 'win').replace('class="ef win"', `class="ef win" style="--i:${i}"`)).join('')}</div>${rest.length ? `<div class="ef-rest">${rest.map((p) => face(p, 'rest')).join('')}</div>` : ''}</div>`;
+  if (darkWin({ ...m, winner })) {
+    const accused = new Set(v.log.filter((l) => l.ev === 'nominate').map((l) => l.target));
+    const unseen = won.find((p) => !accused.has(p.id));
+    const half = Math.ceil(won.length / 2);
+    const faces = won.map((p, i) => face(p, 'win', i));
+    const skull = `<span class="ef-skull" aria-hidden="true">${emblem('death')}</span>`;
+    return `<div class="end-faces dark" data-key="endfaces"><div class="ef-win">${faces.slice(0, half).join('')}${skull}${faces.slice(half).join('')}</div>
+      ${unseen && v.mode === 'classic' ? `<p class="ef-line">${esc(th('Nobody suspected {name}', { name: unseen.name }))}</p>` : ''}
+      ${rest.length ? `<div class="ef-rest">${rest.map((p, i) => face(p, 'rest', i, p.alive === false ? fellWhen(p) : '')).join('')}</div>` : ''}</div>`;
+  }
+  const standing = won.filter((p) => p.alive !== false);
+  const fallen = won.filter((p) => p.alive === false);
+  const big = standing.length ? standing : won;
+  const losers = rest.filter((p) => v.mode === 'classic' && p.alignment === 'DEATH');
+  return `<div class="end-faces" data-key="endfaces"><div class="ef-win">${big.map((p, i) => face(p, 'win', i)).join('')}</div>
+    ${standing.length && fallen.length ? `<div class="ef-rest ef-fallen">${fallen.map((p, i) => face(p, 'rest', i, fellWhen(p))).join('')}</div>` : ''}
+    ${losers.length ? `<p class="ef-line">${esc(th('Death was {names}', { names: losers.map((p) => p.name) }))}</p>` : rest.length && !fallen.length ? `<div class="ef-rest">${rest.map((p, i) => face(p, 'rest', i)).join('')}</div>` : ''}</div>`;
 }
+/** TV-C: the first beat of a dark ending: the candles go out one by one before the title. (A town win keeps its confetti.) */
+const endBeat = (m) => (darkWin(m) ? `<div class="ec-candles" aria-hidden="true">${Array.from({ length: 7 }, (_, i) => `<i class="scdl" style="--i:${i}">${emblem('innocent')}</i>`).join('')}</div>` : '');
 
 // ── DOM morphing (keeps elements alive so transitions actually animate) ────
 function morph(el, html) {

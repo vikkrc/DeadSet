@@ -1282,6 +1282,8 @@ export default {
     "Three missions failed": "Drei Missionen gescheitert",
     "Use the Candle": "Benutze die Kerze",
     "Game mode": "Spielmodus",
+    "Death was {names}": "Der Tod war: {names}",
+    "Nobody suspected {name}": "Niemand verdächtigte {name}",
     "The dreams are dealt": "Die Träume werden ausgeteilt",
     "The night's roles wake": "Die Rollen der Nacht erwachen",
     "Death chooses": "Der Tod wählt",
