@@ -4,6 +4,7 @@
 // Every board hands this its stage and ledger; nothing else builds the grid.
 import { glyph } from './icons.js';
 import { t, th } from './i18n.js';
+import { avatarSvg } from './avatar.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -111,4 +112,43 @@ export function tvScores(v, scores, note = '') {
   if (!list.some((x) => x.s)) return '';
   const top = list[0].s;
   return panel(t('Scores'), `<ol class="tv-scores">${list.map(({ p, s }) => `<li class="${s === top ? 'lead' : ''}"><b>${esc(p.name)}</b><span>${s}</span></li>`).join('')}</ol>${note ? `<small class="tv-note">${esc(note)}</small>` : ''}`, 'tvscores');
+}
+
+const ROM = ['I', 'II', 'III'];
+/**
+ * TV-O2: the podium of a points game. The top three as portraits on vellum plinths with their roman place and points,
+ * the winner in the middle and tallest; they rise III, II, then I. Under it, the race: a quiet line chart of the top
+ * three's running points per round (gilt for the winner, two lighter tones, names at the line ends, no axis box).
+ * `rounds` is a list of { pid: points this round } in order; omit it for a podium alone.
+ */
+export function tvPodium(v, { scores = {}, rounds = null, unit = '' } = {}) {
+  const top = v.players.map((p) => ({ p, s: scores[p.id] ?? 0 })).sort((a, b) => b.s - a.s).slice(0, 3);
+  if (!top.length) return '';
+  // Places share a rank on a tie (two firsts are both I).
+  let rank = 0;
+  top.forEach((x, i) => { if (i === 0 || x.s < top[i - 1].s) rank = i; x.rank = rank; });
+  const order = top.length === 3 ? [top[2], top[0], top[1]] : top.length === 2 ? [top[1], top[0]] : [top[0]];
+  const face = (p) => (p.avatar ? avatarSvg(p.avatar, 'tok-av') : `<span class="tok-ini">${esc([...p.name][0] ?? '?')}</span>`);
+  const plinths = order.map((x) => `<figure class="pd-p r${x.rank + 1}" data-key="pd-${x.p.id}"><span class="pd-face">${face(x.p)}</span><figcaption>${esc(x.p.name)}</figcaption>
+    <span class="pd-plinth"><b>${ROM[x.rank]}</b><em>${x.s}${unit ? ` <small>${esc(unit)}</small>` : ''}</em></span></figure>`).join('');
+  let race = '';
+  if (rounds?.length > 1) {
+    const W = 760; const H = 150; const n = rounds.length;
+    const max = Math.max(1, ...top.map((x) => scores[x.p.id] ?? 0));
+    const tone = ['g', 'b', 'a'];
+    const series = top.map((x, k) => {
+      let run = 0;
+      const pts = [[0, H]].concat(rounds.map((r, i) => { run += r[x.p.id] ?? 0; return [((i + 1) / n) * W, H - (run / max) * H]; }));
+      return { x, k, pts, ly: pts[pts.length - 1][1] };
+    });
+    // Names at the line ends never sit on each other: a tie stacks them 22 units apart.
+    [...series].sort((a, b) => a.ly - b.ly).forEach((sr, i, arr) => { if (i && sr.ly - arr[i - 1].ly < 22) sr.ly = arr[i - 1].ly + 22; });
+    const lines = series.map(({ x, k, pts, ly }) => {
+      const d = pts.map(([px, py], i) => `${i ? 'L' : 'M'}${px.toFixed(1)} ${py.toFixed(1)}`).join(' ');
+      const [ex, ey] = pts[pts.length - 1];
+      return `<path class="pd-l ${tone[k]}" d="${d}" pathLength="100"/><circle class="pd-d ${tone[k]}" cx="${ex.toFixed(1)}" cy="${ey.toFixed(1)}" r="4"/><text class="pd-n ${tone[k]}" x="${(ex + 12).toFixed(1)}" y="${(ly + 6).toFixed(1)}">${esc(x.p.name)}</text>`;
+    }).join('');
+    race = `<figure class="pd-race" data-key="pdrace"><figcaption class="kicker">${t('The race')}</figcaption><svg viewBox="-6 -10 ${W + 150} ${H + 24}" aria-hidden="true"><path class="pd-base" d="M0 ${H} H${W}"/>${lines}</svg></figure>`;
+  }
+  return `<div class="tv-podium" data-key="tvpodium"><div class="pd-row">${plinths}</div>${race}</div>`;
 }

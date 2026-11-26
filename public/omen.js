@@ -4,7 +4,7 @@
 // it starts; every seer secretly predicts the finish and may turn it one step (one Influence). The
 // reveal turns the needle once, by the net total, and the ledger shows who pushed which way.
 
-import { tvFrame, nowCard, panel } from './tvframe.js';
+import { tvFrame, nowCard, panel, tvPodium, tvScores } from './tvframe.js';
 import { glyph } from './icons.js';
 import { emblem } from './emblems.js';
 import { cardArt } from './cards.js';
@@ -201,7 +201,9 @@ export function omenBoard(v, h) {
     line: v.phase === 'O_SHOW' ? t('Predict where it stops, and turn it if you like.') : v.phase === 'O_SECRET' ? t('Each seer seals a prediction and, perhaps, a turn.') : showing ? esc(sub) : '',
     herald: v.phase === 'O_SECRET' ? t('Seal your omen on your phone.') : ended ? t('The host chooses: again, or another game.') : '' };
   // TV-A5: the ornate wheel is the hero; the seers, with Influence and points, in the ledger.
-  const stage = ended ? `<div class="ot-end" data-autoscroll>${omenEndHtml(v)}</div>` : `<div class="ot-wheel">${wheel({ at, mark: showing || v.phase === 'O_SHOW' ? at : null, size: 'tv' })}</div>`;
-  const ledger = `${nowCard(now)}${ended ? '' : scoreLedger(v, O.scores, { title: t('The seers'), key: 'otled', extra })}`;
+  // TV-O2: the end is a podium with the race under it (the unused Influence counts as a last round).
+  const rounds = ended ? [...(O.history ?? []).map((r) => r.deltas ?? {}), ...(O.bonus ? [O.bonus] : [])] : null;
+  const stage = ended ? tvPodium(v, { scores: O.scores, rounds }) : `<div class="ot-wheel">${wheel({ at, mark: showing || v.phase === 'O_SHOW' ? at : null, size: 'tv' })}</div>`;
+  const ledger = `${nowCard(ended ? { ...now, title: '' } : now)}${ended ? tvScores(v, O.scores) : scoreLedger(v, O.scores, { title: t('The seers'), key: 'otled', extra })}`;
   return tvFrame(v, h, { stage, ledger, herald: now.herald, key: 'board-o', cls: `oboard ${ended ? 'is-ended' : ''}` });
 }

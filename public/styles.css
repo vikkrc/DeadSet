@@ -7082,3 +7082,31 @@ body.is-board:has(.tvx) .moment.m-end .end-faces .ef.rest .ef-disc { width: calc
 body.is-board:has(.tvx) .moment.m-end .end-faces .ef-line { font-size: calc(var(--tvu) * 26); }
 body.is-board:has(.tvx) .moment.m-end .m-sub { margin-bottom: 0; }
 .ec-candles .scdl { width: calc(var(--tvu) * 72); height: calc(var(--tvu) * 84); }
+
+/* TV-O2: the podium and the race. */
+.tv-podium { width: 100%; height: 100%; display: grid; grid-template-rows: minmax(0, 1fr) auto; align-items: end; justify-items: center; gap: calc(var(--tvu) * 18); padding-bottom: calc(var(--tvu) * 6); }
+.pd-row { display: flex; align-items: flex-end; justify-content: center; gap: calc(var(--tvu) * 28); }
+.pd-p { margin: 0; display: flex; flex-direction: column; align-items: center; gap: calc(var(--tvu) * 10); width: calc(var(--tvu) * 220); animation: pd-rise var(--t-scene) var(--ease) both; }
+.pd-p.r3 { animation-delay: 0.4s; } .pd-p.r2 { animation-delay: 1s; } .pd-p.r1 { animation-delay: 1.8s; }
+@keyframes pd-rise { from { opacity: 0; transform: translateY(calc(var(--tvu) * 80)); } }
+.pd-face { width: calc(var(--tvu) * 116); height: calc(var(--tvu) * 116); border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: var(--ink-3); box-shadow: 0 0 0 calc(var(--tvu) * 3) var(--ink), 0 0 0 calc(var(--tvu) * 5) var(--gilt-2); }
+.pd-p.r1 .pd-face { width: calc(var(--tvu) * 150); height: calc(var(--tvu) * 150); box-shadow: 0 0 0 calc(var(--tvu) * 3) var(--ink), 0 0 0 calc(var(--tvu) * 5) var(--gilt-hi), 0 0 calc(var(--tvu) * 50) color-mix(in srgb, var(--gilt-hi) 40%, transparent); }
+.pd-face .tok-av, .pd-face .tok-ini { position: static; width: 100%; height: 100%; display: grid; place-items: center; font: 400 calc(var(--tvu) * 56)/1 var(--black); color: var(--bone); }
+.pd-p figcaption { font: 500 calc(var(--tvu) * 28)/1 var(--black); color: var(--bone); text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pd-p.r1 figcaption { font-size: calc(var(--tvu) * 36); color: var(--gilt-hi); }
+.pd-plinth { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: calc(var(--tvu) * 4); padding-top: calc(var(--tvu) * 12); color: var(--sepia); background: linear-gradient(var(--vellum), var(--vellum-2)); box-shadow: inset 0 0 0 1px var(--paper-edge), inset 0 0 0 calc(var(--tvu) * 5) var(--vellum), inset 0 0 0 calc(var(--tvu) * 6) color-mix(in srgb, var(--paper-edge) 60%, transparent); }
+.pd-p.r1 .pd-plinth { height: calc(var(--tvu) * 190); } .pd-p.r2 .pd-plinth { height: calc(var(--tvu) * 140); } .pd-p.r3 .pd-plinth { height: calc(var(--tvu) * 100); }
+.pd-plinth b { font: 600 calc(var(--tvu) * 34)/1 var(--text); letter-spacing: 0.08em; color: var(--rubric); }
+.pd-plinth em { font: 600 calc(var(--tvu) * 44)/1 var(--black); font-style: normal; color: var(--sepia); }
+.pd-plinth em small { font: 600 calc(var(--tvu) * 14)/1 var(--text); letter-spacing: 0.16em; text-transform: uppercase; }
+.pd-race { margin: 0; width: min(100%, calc(var(--tvu) * 900)); display: grid; gap: calc(var(--tvu) * 4); }
+.pd-race .kicker { text-align: left; }
+.pd-race svg { width: 100%; height: auto; overflow: visible; }
+.pd-base { stroke: var(--iron); stroke-width: 1px; vector-effect: non-scaling-stroke; fill: none; }
+.pd-l { fill: none; stroke-width: calc(var(--tvu) * 3); vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 100; animation: pd-draw 1.6s var(--ease) 2.4s forwards; }
+@keyframes pd-draw { to { stroke-dashoffset: 0; } }
+.pd-l.g { stroke: var(--gilt-hi); } .pd-l.b { stroke: var(--bone-2); stroke-width: 2px; } .pd-l.a { stroke: var(--ash); stroke-width: 2px; }
+.pd-d { opacity: 0; animation: nb-show var(--t-ui) var(--ease) 4s forwards; }
+.pd-d.g { fill: var(--gilt-hi); } .pd-d.b { fill: var(--bone-2); } .pd-d.a { fill: var(--ash); }
+.pd-n { font: 500 calc(var(--tvu) * 18) var(--text); opacity: 0; animation: nb-show var(--t-ui) var(--ease) 4s forwards; }
+.pd-n.g { fill: var(--gilt-hi); } .pd-n.b { fill: var(--bone-2); } .pd-n.a { fill: var(--ash); }
