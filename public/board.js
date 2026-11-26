@@ -15,7 +15,7 @@ import { mirrorBoard } from './mirror.js';
 import { cardArt, roleEmblemId } from './cards.js';
 import { missionBoardStage, missionBoardRing, gridHtml, hunchArrowsSvg, hunchLegend, trackHtml, cardBanner } from './missions.js';
 import { modeInfo, MODE_IDS } from './modes.js';
-import { tvFrame, tvHeader, nowCard, panel, latestHeadlines } from './tvframe.js';
+import { tvFrame, tvHeader, nowCard, panel, latestHeadlines, honoursPanel } from './tvframe.js';
 import { modeTitle, modePitch, modeMeta } from './covers.js';
 import { editions } from './gazette.js';
 
@@ -299,7 +299,8 @@ function lobbyTv(v, h, { deckHtml, ruleCards, roles }) {
   const ev = v.evening;
   const last = h.lastResult;
   const between = !!(ev?.games?.length && last);
-  const header = between ? tvHeader(v, h, { word: t('Again?'), step: esc(th('Game {n} of the evening', { n: ev.games.length + 1 })) }) : tvHeader(v, h, { word: t('The gathering'), step: esc(arrival ? th('{n} seated · {m} expected', { n, m: expected }) : th('{n} seated · {r} ready', { n, r: ready })) });
+  const header = between && ev.games.length >= 3 && ev.rows?.length && !v.countdown ? tvHeader(v, h, { word: t('The evening'), step: esc(th('{n} games tonight · game {m} next', { n: ev.games.length, m: ev.games.length + 1 })) })
+    : between ? tvHeader(v, h, { word: t('Again?'), step: esc(th('Game {n} of the evening', { n: ev.games.length + 1 })) }) : tvHeader(v, h, { word: t('The gathering'), step: esc(arrival ? th('{n} seated · {m} expected', { n, m: expected }) : th('{n} seated · {r} ready', { n, r: ready })) });
   // TV-L9 / TV-L14: the start ceremony. The disc counts 3, 2, 1 in 210-unit blackletter; a cancel says why in the band.
   const counting = !!v.countdown;
   const offWhy = v.countdownOff ? { host: t('The host called the start off.'), table: t('The start was called off: the table changed.'), setup: t('The start was called off: the setup changed.') }[v.countdownOff.reason] : '';
@@ -315,7 +316,10 @@ function lobbyTv(v, h, { deckHtml, ruleCards, roles }) {
     : `<span class="c-big">${ready}<small>/${n}</small></span><span class="c-sub">${esc(t(ready === n ? 'all ready' : 'ready'))}</span>` });
   const lastCard = between ? `<section class="tv-now red lb-last" data-key="lblast"><span class="kicker">${esc(th('Last game · {game}', { game: modeTitle(last.mode) }))}</span><b>${esc(last.title)}</b>${last.reason ? `<span>${h.tmh(last.reason)}</span>` : ''}
       ${last.awards?.[0] ? `<p class="lb-lasthon">${h.emblem ? `<i>${h.emblem(last.awards[0].emblem)}</i>` : ''}<span><b>${esc(t(last.awards[0].title))}</b><small>${h.tmh(last.awards[0].line)}</small></span></p>` : ''}</section>` : '';
-  const stage = arrival && !counting && !between ? `<div class="duo lb-arrival">${join()}<div class="duo-h">${table}</div></div>` : between && !counting ? `<div class="duo lb-between">${lastCard}<div class="duo-h">${table}</div></div>` : table;
+  // TV-O3: from the third game on, between games is the evening: its champion, every game as its cover with the
+  // winners' faces, the top six and the evening's honours one at a time.
+  const evening = between && !counting && ev.games.length >= 3 && ev.rows?.length;
+  const stage = evening ? eveningStage(ev, h) : arrival && !counting && !between ? `<div class="duo lb-arrival">${join()}<div class="duo-h">${table}</div></div>` : between && !counting ? `<div class="duo lb-between">${lastCard}<div class="duo-h">${table}</div></div>` : table;
   // Gathering: the Now card is the teach step; the game and tonight's deck below it.
   const teachNow = teach ? `<section class="tv-now lb-now" data-key="lbnow"><span class="kicker">${th('How it works · {n} of {m}', { n: k + 1, m: steps.length })}</span>${teach}</section>` : '';
   // Every step at a glance, the one being taught lit (where there is no deck to show, this fills the record).
@@ -323,7 +327,7 @@ function lobbyTv(v, h, { deckHtml, ruleCards, roles }) {
   const outline = !deck && titles.length ? panel(t('The game in steps'), `<ol class="lb-outline">${titles.map((x, i) => `<li class="${i === k ? 'on' : ''}"><i>${i + 1}</i>${esc(x)}</li>`).join('')}</ol>`, 'lboutline') : '';
   const sofar = ev?.games?.length ? panel(h.tp ? h.tp('Tonight so far · {n} game', 'Tonight so far · {n} games', ev.games.length) : th('Tonight so far · {n} games', { n: ev.games.length }), `<ol class="lb-sofar">${ev.games.map((g) => `<li><span class="lb-sc">${h.emblem ? h.emblem(modeInfo(g.mode).emblem) : ''}</span><span><b>${esc(modeTitle(g.mode))}</b><small>${esc(g.winners?.length ? th('Won: {names}', { names: g.winners }) : t('Nobody won'))}</small></span></li>`).join('')}</ol>`, 'lbsofar') : '';
   const againNow = `<section class="tv-now lb-now" data-key="lbagain"><span class="kicker">${t('Again, or another game?')}</span><b>${esc(t('Same table, new roles'))}</b><span>${esc(t('Ready up on your phone; the host can also pick another game.'))}</span></section>`;
-  const ledger = between ? `${againNow}${sofar}` : arrival ? `${tonight}${how}${deck}` : `${teachNow}${tonight.replace('tv-now lb-tonight', 'tvx-pnl lb-tonight')}${deck || outline}`;
+  const ledger = evening ? `${againNow}${eveningLedger(ev, h)}` : between ? `${againNow}${sofar}` : arrival ? `${tonight}${how}${deck}` : `${teachNow}${tonight.replace('tv-now lb-tonight', 'tvx-pnl lb-tonight')}${deck || outline}`;
   return tvFrame(v, h, { stage, ledger, herald, header, key: 'board-lobby', cls: `lobby ${arrival && !counting && !between ? 'is-arrival' : 'is-gathering'} ${counting ? 'is-counting' : ''} ${between ? 'is-between' : ''} ${noteText ? 'has-ribbon' : ''}` });
 }
 
@@ -346,6 +350,27 @@ function rosterHtml(v, h) {
 }
 
 /** What the room needs to know now, in the TV's words (TV-G2), and the herald line for the band. */
+/** TV-O3: the evening's stage: the champion large, then every game played as its cover with its winners' faces. */
+function eveningStage(ev, h) {
+  const face = (r, cls = '') => `<span class="ev-face ${cls}">${h.avatar(r ?? { name: '?' })}</span>`;
+  const byName = (nm) => ev.rows.find((r) => r.name === nm);
+  const top = ev.rows[0];
+  const champ = `<section class="ev-champ" data-key="evchamp">${face(top, 'big')}<span><span class="kicker">${esc(h.t('Champion of the evening'))}</span><b>${esc(top.name)}</b>
+    <em>${esc(h.th('{w} won · {p} points tonight', { w: top.wins, p: top.pts }))}</em></span></section>`;
+  const games = ev.games.slice(-6).map((g, i) => `<figure class="ev-game" style="--i:${i}" data-key="evg-${i}"><span class="ev-cover">${h.cover ? h.cover(g.mode, { bare: true }) : ''}</span>
+    <span class="ev-wins">${(g.winners ?? []).slice(0, 4).map((nm) => face(byName(nm), 'sm')).join('')}${(g.winners ?? []).length > 4 ? `<i>+${g.winners.length - 4}</i>` : ''}</span>
+    <figcaption>${esc(g.winners?.length ? g.winners.length > 2 ? h.th('{n} winners', { n: g.winners.length }) : g.winners.join(' · ') : h.t('Nobody won'))}</figcaption></figure>`).join('');
+  return `<div class="ev-stage">${champ}<div class="ev-games">${games}</div></div>`;
+}
+/** TV-O3: the evening's ledger: the top six, then every honour earned tonight, one at a time. */
+function eveningLedger(ev, h) {
+  const six = ev.rows.slice(0, 6).map((r, i) => `<li class="${i === 0 ? 'lead' : ''}"><b>${esc(r.name)}</b><span>${r.pts}</span></li>`).join('');
+  const awards = ev.games.flatMap((g) => g.awards ?? []);
+  const players = awards.map((a) => { const r = ev.rows.find((x) => x.id === a.pid); return { id: a.pid, name: a.name || r?.name || '', avatar: r?.avatar ?? null }; });
+  const hon = awards.length ? honoursPanel({ awards, players }, h).replace(h.t('Honours of the game'), h.t('Honours of the evening')) : '';
+  return `${panel(h.t('Tonight'), `<ol class="tv-scores">${six}</ol>`, 'evtop')}${hon}`;
+}
+
 const NIGHT_PHASES = ['NIGHT_DREAM_SWAP', 'NIGHT_ACTIONS', 'NIGHT_RESOLVING'];
 /**
  * TV-A1b: the night's public steps. Every phone acts at once, so the steps light by phase, never by who has acted:

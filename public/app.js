@@ -3490,8 +3490,9 @@ function boardView() {
   S.board.fsHintAt ??= Date.now();
   const hint = !document.fullscreenElement && !S.board.fsAsked && localStorage.getItem(FS_KEY) !== 'off' && Date.now() - S.board.fsHintAt < 6000 ? `<div class="tv-fs-hint" data-key="tvfs">${t('Press F or tap for full screen')}</div>` : '';
   // T3: the lobby teaches while people join — the game's cover, and its How it works turning a step every 8 s.
-  // TV-O0: at the end the honours turn one at a time, every 5 s.
-  if (v.phase === 'ENDED' && !S.board.honTimer) S.board.honTimer = setInterval(() => { if (onBoard() && V()?.phase === 'ENDED' && (V()?.awards?.length ?? 0) > 1) { S.board.honStep = (S.board.honStep ?? 0) + 1; render(); } }, 5000);
+  // TV-O0: honours turn every 5 s, at the end of a game and, from the third game on, in the evening's ledger.
+  const honours = (x) => (x?.phase === 'ENDED' ? x.awards?.length ?? 0 : x?.phase === 'LOBBY' && (x.evening?.games?.length ?? 0) >= 3 ? x.evening.games.reduce((a, g) => a + (g.awards?.length ?? 0), 0) : 0);
+  if (honours(v) > 1 && !S.board.honTimer) S.board.honTimer = setInterval(() => { if (onBoard() && honours(V()) > 1) { S.board.honStep = (S.board.honStep ?? 0) + 1; render(); } }, 5000);
   if (v.phase === 'LOBBY' && !S.board.howTimer) S.board.howTimer = setInterval(() => { if (onBoard() && V()?.phase === 'LOBBY') { S.board.howStep = (S.board.howStep ?? 0) + 1; render(); } }, 8000);
   // T1: the caption strip along the bottom of every TV board in play: a small join QR and the code for anyone
   // late or rejoining, the progress count at the right; news ribbons cross it in the middle (J6).

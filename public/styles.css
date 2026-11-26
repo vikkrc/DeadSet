@@ -7121,3 +7121,22 @@ body.is-board:has(.tvx) .moment.m-end .m-sub { margin-bottom: 0; }
 body.is-board .tv-fs-hint { font-size: calc(var(--tvu) * 18); padding: calc(var(--tvu) * 10) calc(var(--tvu) * 20); }
 /* TV-Z3: the host stepped out: a chip in the header, so the band keeps the game's instruction. */
 .tvx-watch.host-out { letter-spacing: 0.04em; text-transform: none; font: italic 400 calc(var(--tvu) * 18)/1.1 var(--text); color: var(--bone); max-width: calc(var(--tvu) * 560); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* TV-O3: the evening. */
+.ev-stage { width: 100%; height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: calc(var(--tvu) * 26); align-content: center; justify-items: center; }
+.ev-champ { display: flex; align-items: center; gap: calc(var(--tvu) * 30); }
+.ev-champ > span:last-child { display: flex; flex-direction: column; gap: calc(var(--tvu) * 8); }
+.ev-champ b { font: 600 calc(var(--tvu) * 60)/1 var(--black); color: var(--gilt-hi); }
+.ev-champ em { font: italic 400 calc(var(--tvu) * 24)/1.2 var(--text); color: var(--bone-2); }
+.ev-face { display: grid; place-items: center; border-radius: 50%; overflow: hidden; background: var(--ink-3); flex: none; }
+.ev-face .tok-av, .ev-face .tok-ini { position: static; width: 100%; height: 100%; display: grid; place-items: center; }
+.ev-face.big { width: calc(var(--tvu) * 170); height: calc(var(--tvu) * 170); box-shadow: 0 0 0 calc(var(--tvu) * 3) var(--ink), 0 0 0 calc(var(--tvu) * 5) var(--gilt-hi), 0 0 calc(var(--tvu) * 60) color-mix(in srgb, var(--gilt-hi) 40%, transparent); }
+.ev-face.sm { width: calc(var(--tvu) * 40); height: calc(var(--tvu) * 40); box-shadow: 0 0 0 2px var(--ink), 0 0 0 calc(var(--tvu) * 3) var(--gilt-2); margin-left: -8px; }
+.ev-face.sm:first-child { margin-left: 0; }
+.ev-games { display: flex; gap: calc(var(--tvu) * 22); justify-content: center; align-items: flex-start; flex-wrap: wrap; align-self: start; }
+.ev-game { margin: 0; width: calc(var(--tvu) * 150); display: flex; flex-direction: column; align-items: center; gap: calc(var(--tvu) * 10); animation: fadeUp var(--t-slow) calc(0.4s + var(--i) * 0.15s) var(--ease) both; }
+.ev-cover { width: calc(var(--tvu) * 150); display: block; }
+.ev-cover > * { width: 100%; }
+.ev-wins { display: flex; align-items: center; }
+.ev-wins i { font: 600 calc(var(--tvu) * 16)/1 var(--text); font-style: normal; color: var(--bone-2); margin-left: calc(var(--tvu) * 6); }
+.ev-game figcaption { font: 500 calc(var(--tvu) * 18)/1.2 var(--text); color: var(--bone-2); text-align: center; }

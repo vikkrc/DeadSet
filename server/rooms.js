@@ -551,7 +551,9 @@ export class RoomManager {
     }
     room.awards = awardsFor(m, mode);
     for (const r of Object.values(ev.rows)) if (!m.players.some((p) => ev.rows[p.id] === r)) r.last = null; // sat this one out
-    ev.games.push({ mode, winner: m.winner, winners });
+    // TV-O3: each game's honours stay with the evening (with the holder's name, in case they leave).
+    const awards = (room.awards ?? []).map((a) => ({ ...a, mode, name: m.players.find((p) => p.id === a.pid)?.name ?? '' }));
+    ev.games.push({ mode, winner: m.winner, winners, awards });
   }
 
   changed(room) {
