@@ -1689,12 +1689,51 @@ function ring(v, { pick = null, center = '', slots = 0, reveal = false, marks = 
     <svg class="ring-fuse off" viewBox="0 0 100 100" data-ringfuse aria-hidden="true"><circle class="track" cx="50" cy="50" r="49"/><circle class="burn" cx="50" cy="50" r="49" pathLength="100"/></svg>
     <div class="ring-table" aria-hidden="true"></div>
     ${orb ? `<div class="ring-orb" data-key="ring-orb">${orb}</div>` : ''}
-    ${extra}
+    ${lobby ? '' : threadsSvg(v, players, pos, dense)}${extra}
     ${seats.join('')}
     ${beadFor}
     <div class="ring-center" data-key="center">${center}</div>
     ${lens}
   </div></div>`;
+}
+
+/**
+ * Threads of suspicion: who accused whom, drawn on every table (TV and phones) when the setting is on. Each thread
+ * runs in from the accuser's seat, follows the ring around the table's disc (never under it) and out to the accused;
+ * today's threads are bold, older ones fade, and a pair accused more often draws thicker. Pairs share the ring at
+ * slightly different radii so they don't sit on top of each other.
+ */
+function threadsSvg(v, players, pos, dense) {
+  if (!v.table?.threads || v.phase === 'LOBBY') return '';
+  const pairs = new Map();
+  for (const l of v.log ?? []) {
+    if (l.ev !== 'nominate' || l.by === l.target) continue;
+    const k = `${l.by}>${l.target}`;
+    const day = Number(String(l.at).split(' ')[1]) || 0;
+    const e = pairs.get(k) ?? { by: l.by, target: l.target, n: 0, day: 0 };
+    e.n++; e.day = Math.max(e.day, day);
+    pairs.set(k, e);
+  }
+  if (!pairs.size) return '';
+  const disc = onBoard() ? (dense ? 18 : 30) : (dense ? 17 : 29); // the table disc's radius, in % of the ring
+  const at = (id) => { const i = players.findIndex((p) => p.id === id); const q = pos[i]; if (!q) return null; return { x: q.x, y: q.y, r: Math.hypot(q.x - 50, q.y - 50), a: Math.atan2(q.y - 50, q.x - 50) }; };
+  const pt = (r, a) => `${(50 + r * Math.cos(a)).toFixed(2)} ${(50 + r * Math.sin(a)).toFixed(2)}`;
+  const today = v.dayNumber;
+  const paths = [...pairs.values()].map((e, k) => {
+    const s1 = at(e.by); const s2 = at(e.target);
+    if (!s1 || !s2) return '';
+    const room = Math.min(s1.r, s2.r) - disc;
+    const r = disc + Math.max(2.5, room * (0.42 + (k % 4) * 0.08));
+    let d = s2.a - s1.a;
+    while (d > Math.PI) d -= 2 * Math.PI;
+    while (d < -Math.PI) d += 2 * Math.PI;
+    const sweep = d > 0 ? 1 : 0;
+    const age = today - e.day;
+    const op = age <= 0 ? 0.9 : age === 1 ? 0.55 : 0.28;
+    const w = 1.4 + Math.min(4, e.n) * 1.1;
+    return `<path d="M${s1.x.toFixed(2)} ${s1.y.toFixed(2)} L${pt(r, s1.a)} A${r.toFixed(2)} ${r.toFixed(2)} 0 0 ${sweep} ${pt(r, s2.a)} L${s2.x.toFixed(2)} ${s2.y.toFixed(2)}" stroke-width="${w.toFixed(1)}" opacity="${op}"/>`;
+  }).join('');
+  return `<svg class="b-threads" viewBox="0 0 100 100" data-key="threads" aria-hidden="true">${paths}</svg>`;
 }
 
 const CREW_RAY = { B: 'var(--lapis)', G: 'var(--gilt-hi)', V: 'var(--amethyst)' };

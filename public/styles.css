@@ -7168,3 +7168,6 @@ button.tvx-bell:hover, button.tvx-bell:focus-visible { border-color: var(--gilt-
 .lb-fc { position: absolute; inset: 0; transform: rotateY(calc(var(--i) * 360deg / var(--n))) translateZ(calc(var(--tvu) * 440)); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .lb-fc > .tarot { width: 100%; height: auto; box-shadow: 0 calc(var(--tvu) * 30) calc(var(--tvu) * 50) -20px var(--ink); }
 @keyframes lb-turn { from { transform: rotateY(0); } to { transform: rotateY(-360deg); } }
+/* Threads of suspicion run around the table's disc, so they sit above it (and below the seats). */
+.ring > .b-threads { z-index: 1; }
+.b-threads path { stroke-linejoin: round; }

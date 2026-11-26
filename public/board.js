@@ -186,27 +186,7 @@ export function boardScreen(v, h) {
       extra += `<div class="b-spot ${hot ? 'hot' : ''}" data-key="spot-${id}" style="left:${x}%;top:${y}%"></div>`;
     }
   }
-  if (v.table?.threads) {
-    const pairs = new Map();
-    for (const l of v.log) {
-      if (l.ev !== 'nominate') continue;
-      const k = `${l.by}>${l.target}`;
-      const day = Number(String(l.at).split(' ')[1]) || 0;
-      const e = pairs.get(k) ?? { by: l.by, target: l.target, n: 0, day: 0 };
-      e.n++; e.day = Math.max(e.day, day);
-      pairs.set(k, e);
-    }
-    const today = v.dayNumber;
-    const paths = [...pairs.values()].map((e) => {
-      const [x1, y1] = pos(e.by); const [x2, y2] = pos(e.target);
-      const mx = ((x1 + x2) / 2) * 0.62 + 50 * 0.38; const my = ((y1 + y2) / 2) * 0.62 + 50 * 0.38;
-      const age = today - e.day;
-      const op = age <= 0 ? 0.85 : age === 1 ? 0.5 : 0.25;
-      const w = 1.2 + Math.min(4, e.n) * 1.1;
-      return `<path d="M${x1.toFixed(2)} ${y1.toFixed(2)} Q${mx.toFixed(2)} ${my.toFixed(2)} ${x2.toFixed(2)} ${y2.toFixed(2)}" stroke-width="${w}" opacity="${op}"/>`;
-    }).join('');
-    extra += `<svg class="b-threads" viewBox="0 0 100 100" data-key="threads" aria-hidden="true">${paths}</svg>`;
-  }
+  // Threads of suspicion are drawn by ring() itself, on the TV and on every phone alike.
   // Open Ballot: live vote lines from voter to target.
   if (v.day?.openBallots) {
     const lines = Object.entries(v.day.openBallots).filter(([, tg]) => tg !== 'ABSTAIN').map(([voter, tg]) => {
